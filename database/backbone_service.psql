@@ -1,0 +1,179 @@
+--
+-- PostgreSQL database dump
+--
+
+-- Dumped from database version 9.6.5
+-- Dumped by pg_dump version 9.6.5
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SET check_function_bodies = false;
+SET client_min_messages = warning;
+SET row_security = off;
+
+--
+-- Name: backbone_service; Type: SCHEMA; Schema: -; Owner: iwright
+--
+
+CREATE SCHEMA backbone_service;
+
+
+ALTER SCHEMA backbone_service OWNER TO iwright;
+
+--
+-- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: 
+--
+
+CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
+
+
+--
+-- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner: 
+--
+
+COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
+
+
+--
+-- Name: postgis; Type: EXTENSION; Schema: -; Owner: 
+--
+
+CREATE EXTENSION IF NOT EXISTS postgis WITH SCHEMA backbone_service;
+
+
+--
+-- Name: EXTENSION postgis; Type: COMMENT; Schema: -; Owner: 
+--
+
+COMMENT ON EXTENSION postgis IS 'PostGIS geometry, geography, and raster spatial types and functions';
+
+
+SET search_path = public, pg_catalog;
+
+SET default_tablespace = '';
+
+SET default_with_oids = false;
+
+--
+-- Name: identifiers; Type: TABLE; Schema: public; Owner: iwright
+--
+
+CREATE TABLE identifiers (
+    sample_id uuid,
+    identifier_type character varying(20),
+    identifier_value character varying(64)
+);
+
+
+ALTER TABLE identifiers OWNER TO iwright;
+
+--
+-- Name: locations; Type: TABLE; Schema: public; Owner: iwright
+--
+
+CREATE TABLE locations (
+    id uuid NOT NULL,
+    partner_name character varying,
+    location backbone_service.geometry(Point),
+    country character(3),
+    "precision" character varying,
+    curated_name character varying,
+    curation_method character varying
+);
+
+
+ALTER TABLE locations OWNER TO iwright;
+
+--
+-- Name: samples; Type: TABLE; Schema: public; Owner: iwright
+--
+
+CREATE TABLE samples (
+    id uuid NOT NULL,
+    study_id smallint,
+    doc date,
+    species integer,
+    sample_type character varying(20),
+    location_id uuid,
+    proxy_location_id uuid
+);
+
+
+ALTER TABLE samples OWNER TO iwright;
+
+--
+-- Name: locations location_id; Type: CONSTRAINT; Schema: public; Owner: iwright
+--
+
+ALTER TABLE ONLY locations
+    ADD CONSTRAINT location_id PRIMARY KEY (id);
+
+
+--
+-- Name: samples sample_id; Type: CONSTRAINT; Schema: public; Owner: iwright
+--
+
+ALTER TABLE ONLY samples
+    ADD CONSTRAINT sample_id PRIMARY KEY (id);
+
+
+--
+-- Name: locations uniq_partner_location; Type: CONSTRAINT; Schema: public; Owner: iwright
+--
+
+ALTER TABLE ONLY locations
+    ADD CONSTRAINT uniq_partner_location UNIQUE (partner_name);
+
+
+--
+-- Name: fki_location; Type: INDEX; Schema: public; Owner: iwright
+--
+
+CREATE INDEX fki_location ON samples USING btree (location_id);
+
+
+--
+-- Name: fki_proxy_location; Type: INDEX; Schema: public; Owner: iwright
+--
+
+CREATE INDEX fki_proxy_location ON samples USING btree (proxy_location_id);
+
+
+--
+-- Name: fki_sample; Type: INDEX; Schema: public; Owner: iwright
+--
+
+CREATE INDEX fki_sample ON identifiers USING btree (sample_id);
+
+
+--
+-- Name: samples fk_location; Type: FK CONSTRAINT; Schema: public; Owner: iwright
+--
+
+ALTER TABLE ONLY samples
+    ADD CONSTRAINT fk_location FOREIGN KEY (location_id) REFERENCES locations(id);
+
+
+--
+-- Name: samples fk_proxy_location; Type: FK CONSTRAINT; Schema: public; Owner: iwright
+--
+
+ALTER TABLE ONLY samples
+    ADD CONSTRAINT fk_proxy_location FOREIGN KEY (proxy_location_id) REFERENCES locations(id);
+
+
+--
+-- Name: identifiers fk_sample; Type: FK CONSTRAINT; Schema: public; Owner: iwright
+--
+
+ALTER TABLE ONLY identifiers
+    ADD CONSTRAINT fk_sample FOREIGN KEY (sample_id) REFERENCES samples(id);
+
+
+--
+-- PostgreSQL database dump complete
+--
+

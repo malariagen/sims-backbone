@@ -1,0 +1,2 @@
+class BackboneException(Exception):
+    pass

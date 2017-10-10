@@ -1,0 +1,373 @@
+swagger: '2.0'
+info:
+  description: ''
+  version: 1.0.0
+  title: Backbone
+  termsOfService: 'http://swagger.io/terms/'
+  contact:
+    email: sysadmin@malariagen.net
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+host: localhost
+basePath: /v1
+tags:
+  - name: source
+    description: Everything about your sources
+    externalDocs:
+      description: Find out more
+      url: 'http://swagger.io'
+  - name: sample
+    description: Access to Backbone samples
+  - name: report
+    description: Reports
+schemes:
+  - http
+paths:
+  '/source/{sourceId}/{sourceSampleId}':
+    get:
+      tags:
+        - source
+      summary: fetches an sample
+      description: ''
+      operationId: downloadSourceSample
+      produces:
+        - application/json
+      parameters:
+        - name: sourceId
+          in: path
+          description: ID of source to query
+          required: true
+          type: string
+        - name: sourceSampleId
+          in: path
+          description: ID of sample to fetch
+          required: true
+          type: string
+        - name: studyId
+          in: query
+          description: which study the sample belongs to
+          required: false
+          type: integer
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/Sample'
+        '404':
+          description: 'sample not found'
+          schema:
+              type: string
+        '422':
+          description: 'invalid key in sample'
+          schema:
+              type: string
+  '/location':
+    post:
+      tags:
+        - location
+      description: 'Create a location'
+      operationId: createLocation
+      produces:
+        - application/json
+      consumes:
+        - application/json
+      parameters:
+        - in: body
+          name: location
+          required: true
+          schema:
+            $ref: '#/definitions/Location'
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/Location'
+  '/location/{locationId}':
+    get:
+      tags:
+        - location
+      summary: fetches an location
+      description: ''
+      operationId: downloadLocation
+      produces:
+        - application/json
+      parameters:
+        - name: locationId
+          in: path
+          description: ID of location to fetch
+          required: true
+          type: string
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/Location'
+    put:
+      tags:
+        - location
+      summary: updates an location
+      description: ''
+      operationId: updateLocation
+      produces:
+        - application/json
+      consumes:
+        - application/json
+      parameters:
+        - name: locationId
+          in: path
+          description: ID of location to update
+          required: true
+          type: string
+        - in: body
+          name: location
+          required: true
+          schema:
+            $ref: '#/definitions/Location'
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/Location'
+        '404':
+          description: Location not found
+          schema:
+              type: string
+    delete:
+      tags:
+        - location
+      summary: deletes an location
+      description: ''
+      operationId: deleteLocation
+      produces:
+        - application/json
+      parameters:
+        - name: locationId
+          in: path
+          description: ID of location to fetch
+          required: true
+          type: string
+      responses:
+        '200':
+          description: successful operation
+        '404':
+          description: 'Location not found'
+          schema:
+              type: string
+  '/location/partner/{partnerId}':
+    get:
+      tags:
+        - location
+      summary: fetches a location
+      description: ''
+      operationId: downloadPartnerLocation
+      produces:
+        - application/json
+      parameters:
+        - name: partnerId
+          in: path
+          description: ID of location to fetch
+          required: true
+          type: string
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/Location'
+        '404':
+          description: 'location not found'
+          schema:
+              type: string
+        '422':
+          description: 'invalid key in location'
+          schema:
+              type: string
+  '/sample':
+    post:
+      tags:
+        - sample
+      description: 'Create a sample'
+      operationId: createSample
+      produces:
+        - application/json
+      consumes:
+        - application/json
+      parameters:
+        - in: body
+          name: sample
+          required: true
+          schema:
+            $ref: '#/definitions/Sample'
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/Sample'
+  '/sample/{sampleId}':
+    get:
+      tags:
+        - sample
+      summary: fetches an sample
+      description: ''
+      operationId: downloadSample
+      produces:
+        - application/json
+      parameters:
+        - name: sampleId
+          in: path
+          description: ID of sample to fetch
+          required: true
+          type: string
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/Sample'
+    put:
+      tags:
+        - sample
+      summary: updates an sample
+      description: ''
+      operationId: updateSample
+      produces:
+        - application/json
+      consumes:
+        - application/json
+      parameters:
+        - name: sampleId
+          in: path
+          description: ID of sample to update
+          required: true
+          type: string
+        - in: body
+          name: sample
+          required: true
+          schema:
+            $ref: '#/definitions/Sample'
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/Sample'
+        '404':
+          description: Sample not found
+          schema:
+              type: string
+    delete:
+      tags:
+        - sample
+      summary: deletes an sample
+      description: ''
+      operationId: deleteSample
+      produces:
+        - application/json
+      parameters:
+        - name: sampleId
+          in: path
+          description: ID of sample to fetch
+          required: true
+          type: string
+      responses:
+        '200':
+          description: successful operation
+        '404':
+          description: Sample not found
+  '/samples/property/{propName}/{propValue}':
+    get:
+      tags:
+        - sample
+      summary: fetches samples by property value
+      description: ''
+      operationId: downloadSamplesByProperty
+      produces:
+        - application/json
+      parameters:
+        - name: propName
+          in: path
+          description: name of property to search
+          required: true
+          type: string
+        - name: propValue
+          in: path
+          description: matching value of property to search
+          required: true
+          type: string
+        - name: start
+          in: query
+          description: for pagination start the result set at a record x
+          required: false
+          type: integer
+        - name: count
+          in: query
+          description: for pagination the number of entries to return
+          required: false
+          type: integer
+        - name: orderby
+          in: query
+          description: how to order the result set
+          required: false
+          type: string
+          default: value
+          enum:
+            - value
+            - source
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/Samples'
+definitions:
+  Samples:
+    type: object
+    properties:
+      samples:
+        type: array
+        items:
+          $ref: '#/definitions/Sample'
+      count:
+        type: integer
+        description: Used when pagination is applied to return the number of results
+  Sample:
+    type: object
+    properties:
+      sample_id:
+        type: string
+      study_id:
+        type: integer
+      doc:
+        type: string
+        format: date
+        description: 'Date of collection'
+      species:
+        type: integer
+      sample_type:
+        type: string
+      location_id:
+        type: string
+      proxy_location_id:
+        type: string
+      oxford_code:
+        type: string
+      roma_id:
+        type: string
+      partner_id:
+        type: string
+  Location:
+    type: object
+    properties:
+      location_id:
+        type: string
+      partner_name:
+        type: string
+      latitude:
+        type: number
+      longitude:
+        type: number
+      precision:
+        type: string
+      curated_name:
+        type: string
+      curation_method:
+        type: string
+      country:
+        type: string
