@@ -24,6 +24,38 @@ class LocationPut():
 
         cursor = self._connection.cursor()
 
+        stmt = '''SELECT id, partner_name, ST_X(location) as latitude, ST_Y(location) as longitude,
+        precision, curated_name, curation_method, country
+                       FROM locations WHERE  id = %s'''
+        cursor.execute( stmt, (location_id,))
+
+        existing_location = None
+
+        for (location_id, partner_name, latitude, longitude, precision, curated_name,
+             curation_method, country) in cursor:
+            existing_location = Location(location_id, partner_name, latitude, longitude, precision,
+                                curated_name, curation_method, country)
+
+        if not existing_location:
+            cursor.close()
+            raise MissingKeyException("Error updating location {}".format(location_id))
+
+        stmt = '''SELECT id, partner_name, ST_X(location) as latitude, ST_Y(location) as longitude,
+        precision, curated_name, curation_method, country
+                       FROM locations WHERE  location = ST_SetSRID(ST_MakePoint(%s, %s), 4326)'''
+        cursor.execute( stmt, (location.latitude, location.longitude,))
+
+        existing_location = None
+
+        for (location_id, partner_name, latitude, longitude, precision, curated_name,
+             curation_method, country) in cursor:
+            existing_location = Location(location_id, partner_name, latitude, longitude, precision,
+                                curated_name, curation_method, country)
+
+        if existing_location and str(existing_location.location_id) != location_id:
+            cursor.close()
+            raise DuplicateKeyException("Error inserting location {}".format(existing_location.partner_name))
+
         stmt = '''UPDATE locations 
                     SET partner_name = %s, location = ST_SetSRID(ST_MakePoint(%s, %s), 4326),
                     precision = %s, curated_name = %s, curation_method = %s, country = %s

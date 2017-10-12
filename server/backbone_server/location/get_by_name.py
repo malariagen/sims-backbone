@@ -1,4 +1,5 @@
 from swagger_server.models.location import Location
+from swagger_server.models.locations import Locations
 
 from backbone_server.errors.missing_key_exception import MissingKeyException
 
@@ -20,15 +21,19 @@ class LocationGetByPartnerName():
 
         cursor.execute("SELECT id FROM locations WHERE partner_name = %s", (partner_id,))
 
-        location = None
+        locations = Locations()
+        locations.locations = []
+        locations.count = 0
 
         #partner_name has a unique key
         for (location_id,) in cursor:
             location = Location(location_id)
+            locations.locations.append(location)
+            locations.count = locations.count + 1
 
         cursor.close()
 
-        if not location:
+        if len(locations.locations) == 0:
             raise MissingKeyException("Partner location not found {}".format(partner_id))
 
-        return location
+        return locations

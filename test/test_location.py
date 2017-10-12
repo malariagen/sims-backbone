@@ -96,7 +96,9 @@ class TestLocation(TestBase):
             loc = swagger_client.Location(None, 'partner_name', 27.46362, 90.49542, 'country',
                                           'Trongsa, Trongsa, Bhutan', 'pv_3_locations.txt', 'BHU')
             created = api_instance.create_location(loc)
-            looked_up = api_instance.download_partner_location(loc.partner_name)
+            looked_up_locs = api_instance.download_partner_location(loc.partner_name)
+            looked_up = looked_up_locs.locations[0]
+
             fetched = api_instance.download_location(looked_up.location_id)
             self.assertEqual(created, fetched, "create response != download response")
             fetched.location_id = None
@@ -117,7 +119,8 @@ class TestLocation(TestBase):
             loc = swagger_client.Location(None, 'partner_name', 27.46362, 90.49542, 'country',
                                           'Trongsa, Trongsa, Bhutan', 'pv_3_locations.txt', 'BHU')
             created = api_instance.create_location(loc)
-            looked_up = api_instance.download_partner_location(loc.partner_name)
+            looked_up_locs = api_instance.download_partner_location(loc.partner_name)
+            looked_up = looked_up_locs.locations[0]
             newloc = swagger_client.Location(None, 'new_partner_name', 28.46362, 91.49542, 'new_country',
                                         'new_Trongsa, Trongsa, Bhutan', 'new_pv_3_locations.txt', 'IND')
             updated = api_instance.update_location(looked_up.location_id, newloc)
@@ -141,7 +144,8 @@ class TestLocation(TestBase):
             loc = swagger_client.Location(None, 'partner_name', 27.46362, 90.49542, 'country',
                                           'Trongsa, Trongsa, Bhutan', 'pv_3_locations.txt', 'BHU')
             created = api_instance.create_location(loc)
-            looked_up = api_instance.download_partner_location(loc.partner_name)
+            looked_up_locs = api_instance.download_partner_location(loc.partner_name)
+            looked_up = looked_up_locs.locations[0]
             newloc = swagger_client.Location(None, 'new_partner_name', 28.46362, 91.49542, 'new_country',
                                         'new_Trongsa, Trongsa, Bhutan', 'new_pv_3_locations.txt', 'IND')
             new_created = api_instance.create_location(newloc)

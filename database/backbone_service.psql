@@ -121,14 +121,6 @@ ALTER TABLE ONLY samples
 
 
 --
--- Name: locations uniq_partner_location; Type: CONSTRAINT; Schema: public; Owner: iwright
---
-
-ALTER TABLE ONLY locations
-    ADD CONSTRAINT uniq_partner_location UNIQUE (partner_name);
-
-
---
 -- Name: fki_location; Type: INDEX; Schema: public; Owner: iwright
 --
 
