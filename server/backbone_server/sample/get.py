@@ -43,6 +43,8 @@ class SampleGetById():
             location = Location(location_id, partner_name, latitude, longitude, precision, curated_name, curation_method, country)
             proxy_location = Location(proxy_location_id, proxy_partner_name, proxy_latitude, proxy_longitude, proxy_precision, proxy_curated_name, proxy_curation_method, proxy_country)
             sample = Sample(sample_id, study_id, doc)
+            sample.location_id = location_id
+            sample.proxy_location_id = proxy_location_id
             sample.location = location
             sample.proxy_location = proxy_location
 
@@ -64,5 +66,6 @@ class SampleGetById():
 
         cursor.close()
 
+        print(sample)
 
         return sample

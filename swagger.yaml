@@ -321,8 +321,12 @@ definitions:
         description: 'Date of collection'
       location_id:
         type: string
+      location:
+        $ref: '#/definitions/Location'
       proxy_location_id:
         type: string
+      proxy_location:
+        $ref: '#/definitions/Location'
       partner_taxonomies:
         type: array
         items:
