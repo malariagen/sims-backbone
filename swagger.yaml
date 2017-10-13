@@ -272,13 +272,13 @@ paths:
           description: successful operation
         '404':
           description: Sample not found
-  '/samples/property/{propName}/{propValue}':
+  '/samples/identifier/{propName}/{propValue}':
     get:
       tags:
         - sample
-      summary: fetches samples by property value
+      summary: fetches a sample by property value
       description: ''
-      operationId: downloadSamplesByProperty
+      operationId: downloadSampleByIdentifier
       produces:
         - application/json
       parameters:
@@ -292,30 +292,11 @@ paths:
           description: matching value of property to search
           required: true
           type: string
-        - name: start
-          in: query
-          description: for pagination start the result set at a record x
-          required: false
-          type: integer
-        - name: count
-          in: query
-          description: for pagination the number of entries to return
-          required: false
-          type: integer
-        - name: orderby
-          in: query
-          description: how to order the result set
-          required: false
-          type: string
-          default: value
-          enum:
-            - value
-            - source
       responses:
         '200':
           description: successful operation
           schema:
-            $ref: '#/definitions/Samples'
+            $ref: '#/definitions/Sample'
 definitions:
   Samples:
     type: object
@@ -333,25 +314,23 @@ definitions:
       sample_id:
         type: string
       study_id:
-        type: integer
+        type: string
       doc:
         type: string
         format: date
         description: 'Date of collection'
-      species:
-        type: integer
-      sample_type:
-        type: string
       location_id:
         type: string
       proxy_location_id:
         type: string
-      oxford_code:
-        type: string
-      roma_id:
-        type: string
-      partner_id:
-        type: string
+      partner_taxonomies:
+        type: array
+        items:
+            $ref: '#/definitions/Taxonomy'
+      identifiers:
+        type: array
+        items:
+            $ref: '#/definitions/Identifier'
   Locations:
     type: object
     properties:
@@ -380,4 +359,18 @@ definitions:
       curation_method:
         type: string
       country:
+        type: string
+  Taxonomy:
+    type: object
+    properties:
+      taxonomy_id:
+        type: number
+      name:
+        type: string
+  Identifier:
+    type: object
+    properties:
+      identifier_type:
+        type: string
+      identifier_value:
         type: string

@@ -9,7 +9,7 @@ fi
 source client-env/bin/activate
 if [ "$1" = "one" ]
 then
-    python3 -m unittest test_location.TestLocation.test_update_duplicate
+    python3 -m unittest test_sample.TestSample.test_update_duplicate
 else
     python3 all_tests.py
 fi

@@ -58,6 +58,42 @@ SET default_tablespace = '';
 SET default_with_oids = false;
 
 --
+-- Name: archive; Type: TABLE; Schema: public; Owner: iwright
+--
+
+CREATE TABLE archive (
+    archive_id integer NOT NULL,
+    submitter character varying(20),
+    action_id uuid,
+    action json,
+    action_date timestamp without time zone
+);
+
+
+ALTER TABLE archive OWNER TO iwright;
+
+--
+-- Name: archive_archive_id_seq; Type: SEQUENCE; Schema: public; Owner: iwright
+--
+
+CREATE SEQUENCE archive_archive_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE archive_archive_id_seq OWNER TO iwright;
+
+--
+-- Name: archive_archive_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: iwright
+--
+
+ALTER SEQUENCE archive_archive_id_seq OWNED BY archive.archive_id;
+
+
+--
 -- Name: identifiers; Type: TABLE; Schema: public; Owner: iwright
 --
 
@@ -81,7 +117,8 @@ CREATE TABLE locations (
     country character(3),
     "precision" character varying,
     curated_name character varying,
-    curation_method character varying
+    curation_method character varying,
+    external_id character varying
 );
 
 
@@ -93,16 +130,21 @@ ALTER TABLE locations OWNER TO iwright;
 
 CREATE TABLE samples (
     id uuid NOT NULL,
-    study_id smallint,
+    study_id character varying,
     doc date,
-    species integer,
-    sample_type character varying(20),
     location_id uuid,
     proxy_location_id uuid
 );
 
 
 ALTER TABLE samples OWNER TO iwright;
+
+--
+-- Name: archive archive_id; Type: DEFAULT; Schema: public; Owner: iwright
+--
+
+ALTER TABLE ONLY archive ALTER COLUMN archive_id SET DEFAULT nextval('archive_archive_id_seq'::regclass);
+
 
 --
 -- Name: locations location_id; Type: CONSTRAINT; Schema: public; Owner: iwright
@@ -118,6 +160,14 @@ ALTER TABLE ONLY locations
 
 ALTER TABLE ONLY samples
     ADD CONSTRAINT sample_id PRIMARY KEY (id);
+
+
+--
+-- Name: identifiers uniq_id; Type: CONSTRAINT; Schema: public; Owner: iwright
+--
+
+ALTER TABLE ONLY identifiers
+    ADD CONSTRAINT uniq_id UNIQUE (identifier_type, identifier_value);
 
 
 --
