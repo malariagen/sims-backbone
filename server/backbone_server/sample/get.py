@@ -66,6 +66,4 @@ class SampleGetById():
 
         cursor.close()
 
-        print(sample)
-
         return sample
