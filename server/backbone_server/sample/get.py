@@ -45,8 +45,10 @@ class SampleGetById():
             sample = Sample(sample_id, study_id, doc)
             sample.location_id = location_id
             sample.proxy_location_id = proxy_location_id
-            sample.location = location
-            sample.proxy_location = proxy_location
+            if location.location_id:
+                sample.location = location
+            if proxy_location.location_id:
+                sample.proxy_location = proxy_location
 
         if not sample:
             cursor.close()
