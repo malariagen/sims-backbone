@@ -1,0 +1,73 @@
+{
+    "values": {
+        "name": {
+            "column": 7,
+            "type": "string",
+            "id": true
+        },
+        "country": {
+            "column": 8,
+            "replace": [
+                        [ "the Bolivarian Republic of Venezuela", "VEN" ],
+                        [ "the Democratic Republic of the Congo", "COD" ],
+                        [ "the Federal Democratic Republic of Ethiopia", "ETH" ],
+                        [ "the Federative Republic of Brazil", "BRA" ],
+                        [ "the Kingdom of Cambodia", "KHM" ],
+                        [ "the Kingdom of Thailand", "THA" ],
+                        [ "the United Kingdom of Great Britain and Northern Ireland", "GBR" ],
+                        [ "the Lao People's Democratic Republic", "LAO" ],
+                        [ "the Republic of Benin", "BEN" ],
+                        [ "the People's Republic of Bangladesh", "BGD" ],
+                        [ "the Republic of Cameroon", "CMR" ],
+                        [ "the Republic of Colombia", "COL" ],
+                        [ "the Republic of Ghana", "GHA" ],
+                        [ "the Republic of Guinea", "GIN" ],
+                        [ "the Republic of Indonesia", "IDN" ],
+                        [ "the Republic of Kenya", "KEN" ],
+                        [ "the Republic of Mali", "MLI" ],
+                        [ "the Republic of Peru", "PER" ],
+                        [ "the Republic of the Gambia", "GMB" ],
+                        [ "the Republic of the Philippines", "PHL" ],
+                        [ "the Republic of Senegal", "SEN" ],
+                        [ "the Republic of the Sudan", "SDN" ],
+                        [ "the Republic of the Union of Myanmar", "MMR" ],
+                        [ "the Socialist Republic of Viet Nam", "VNM" ],
+                        [ "the United Republic of Tanzania", "TZA" ],
+                        [ "Bangladesh", "BGD" ],
+                        [ "Bhutan", "BTN" ],
+                        [ "Brazil", "BRA" ],
+                        [ "Cambodia", "KHM" ],
+                        [ "China", "CHN" ],
+                        [ "Colombia", "COL" ],
+                        [ "El Salvador", "SLV" ],
+                        [ "Ethiopia", "ETH" ],
+                        [ "India", "IND" ],
+                        [ "Indonesia", "IDN" ],
+                        [ "Madagascar", "MDG" ],
+                        [ "Malaysia", "MYS" ],
+                        [ "Mauritania", "MRT" ],
+                        [ "Mexico", "MEX" ],
+                        [ "Myanmar", "MMR" ],
+                        [ "Nicaragua", "NIC" ],
+                        [ "North Korea", "PRK" ],
+                        [ "Panama", "PAN" ],
+                        [ "Papua New Guinea", "PNG" ],
+                        [ "Peru", "PER" ],
+                        [ "South Korea", "KOR" ],
+                        [ "Sri Lanka", "LKA" ],
+                        [ "Sudan", "SDN" ],
+                        [ "Thailand", "THA" ],
+                        [ "Vietnam", "VNM" ]
+                    ],
+            "type": "string"
+        },
+       "latitude": {
+            "column": 9,
+            "type": "float"
+        },
+        "longitude": {
+            "column": 10,
+            "type": "float"
+        }
+    }
+}

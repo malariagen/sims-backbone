@@ -1,0 +1,98 @@
+{
+    "values":
+    {
+        "location": {
+            "column": 0,
+            "type": "string",
+            "id": true
+        },
+        "code": {
+            "column": 1,
+            "type": "string"
+        },
+        "name": {
+            "column": 2,
+            "type": "string"
+        },
+        "country": {
+            "column": 3,
+            "type": "string",
+             "replace": [
+                 ["AF", "AFG"],
+                 ["AO", "AGO"],
+                 ["BD", "BGD"],
+                 ["BF", "BFA"],
+                 ["BJ", "BEN"],
+                 ["BR", "BRA"],
+                 ["CD", "COD"],
+                 ["CI", "CIV"],
+                 ["CM", "CMR"],
+                 ["CO", "COL"],
+                 ["ET", "ETH"],
+                 ["FR", "FRA"],
+                 ["GA", "GAB"],
+                 ["GB", "GBR"],
+                 ["GH", "GHA"],
+                 ["GM", "GMB"],
+                 ["GN", "GIN"],
+                 ["GQ", "GNQ"],
+                 ["GW", "GNB"],
+                 ["HN", "HND"],
+                 ["ID", "IDN"],
+                 ["IN", "IND"],
+                 ["KE", "KEN"],
+                 ["KH", "KHM"],
+                 ["KR", "KOR"],
+                 ["LA", "LAO"],
+                 ["LK", "LKA"],
+                 ["MG", "MDG"],
+                 ["ML", "MLI"],
+                 ["MM", "MMR"],
+                 ["MW", "MWI"],
+                 ["MY", "MYS"],
+                 ["MZ", "MOZ"],
+                 ["NG", "NGA"],
+                 ["NP", "NPL"],
+                 ["PE", "PER"],
+                 ["PG", "PNG"],
+                 ["RW", "RWA"],
+                 ["SD", "SDN"],
+                 ["SN", "SEN"],
+                 ["SV", "SLV"],
+                 ["TG", "TGO"],
+                 ["TH", "THA"],
+                 ["TZ", "TZA"],
+                 ["UG", "UGA"],
+                 ["US", "USA"],
+                 ["VN", "VNM"],
+                 ["ZW", "ZWE"]
+             ]
+        },
+        "description": {
+            "column": 4,
+            "type": "string"
+        },
+        "latitude": {
+            "column": 5,
+            "type": "float",
+            "regex": "^\\s*([-0-9]*\\.?\\d{0,3})"
+        },
+        "longitude": {
+            "column": 6,
+            "type": "float",
+            "regex": "([-0-9]*\\.?\\d{0,3})(\\d*)$"
+        },
+        "map_zoom": {
+            "column": 7,
+            "type": "string"
+        },
+        "resolution": {
+            "column": 8,
+            "type": "string"
+        },
+        "part_of_site": {
+            "column": 9,
+            "type": "string"
+        }
+    }
+}
