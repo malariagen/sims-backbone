@@ -10,9 +10,12 @@ from swagger_client.rest import ApiException
 
 from decimal import *
 
+import urllib.parse
+
 class Uploader():
 
     _location_cache = {}
+    _sample_cache = {}
 
     def __init__(self):
         super().__init__()
@@ -63,7 +66,7 @@ class Uploader():
                             #else:
                             #    print("No match: {} {}".format(defn['regex'], data_value))
                         if defn['type'] == 'datetime':
-                            date_format = data.default_date_format
+                            date_format = '%Y-%m-%d'
                             try:
                                 if not (data_value == '' or data_value == 'NULL'):
                                     if 'date_format' in defn:
@@ -95,11 +98,21 @@ class Uploader():
                         self._logger.critical(repr(row))
                         raise
 
-                    values[name] = data_value.strip()
+                    if defn['type'] == 'string':
+                        values[name] = data_value.strip()
+                    else:
+                        values[name] = data_value
 
-                self.process_location(values)
+                location_id = self.process_location(values, '')
+                proxy_location_id = self.process_location(values, 'proxy_')
 
-    def process_location(self, values):
+                self.process_sample(values, location_id, proxy_location_id)
+
+    def process_location(self, values, prefix):
+
+        if prefix + 'name' not in values:
+            return None
+
         api_instance = swagger_client.LocationApi()
         curated_name = None
         curation_method = None
@@ -107,37 +120,112 @@ class Uploader():
         longitude = None
         resolution = None
         try:
-            latitude = float(Decimal(values['latitude']))
-            longitude = float(Decimal(values['longitude']))
+            latitude = float(Decimal(values[prefix + 'latitude']))
+            longitude = float(Decimal(values[prefix + 'longitude']))
         except:
             pass
 
-        if 'resolution' in values:
-            resolution = values['resolution']
+        if prefix + 'resolution' in values:
+            resolution = values[prefix + 'resolution']
 
-        loc = swagger_client.Location(None, values['name'], latitude,
+        loc = swagger_client.Location(None, values[prefix + 'name'], latitude,
                                       longitude,
                                       resolution, curated_name, curation_method,
-                                      values['country'])
+                                      values[prefix + 'country'])
 
         if loc.to_str() in self._location_cache:
-            return
-        else:
-            self._location_cache[loc.to_str()]=loc
+            return self._location_cache[loc.to_str()]
 
         #print(repr(loc))
         try:
             looked_up = api_instance.download_partner_location(loc.partner_name)
-            loc.location_id = looked_up.location_id
-            looked_up = api_instance.download_location(loc.location_id)
+            looked_up = api_instance.download_location(looked_up.location_id)
+            self._location_cache[loc.to_str()]=looked_up.location_id
             if not looked_up == loc:
                 print("Duplicate non-matching partner_name\n{}\n{}".format(loc, looked_up))
         except:
             try:
                 created = api_instance.create_location(loc)
+                self._location_cache[loc.to_str()]=created.location_id
             except ApiException as err:
                 print("Error creating {} {}".format(loc, err))
 
+        return self._location_cache[loc.to_str()]
+
+    def process_sample(self, values, location_id, proxy_location_id):
+        api_instance = swagger_client.SampleApi()
+
+        doc = None
+        study_id = None
+        if 'doc' in values:
+            doc = values['doc']
+        if 'study_id' in values:
+            doc = values['study_id']
+
+        samp = swagger_client.Sample(None, study_id, doc, location_id)
+        idents = []
+        if 'sample_roma_id' in values:
+            idents.append(swagger_client.Identifier ('roma_id',
+                                                     urllib.parse.quote(values['sample_roma_id'],
+                                                                        safe='')))
+        if 'sample_partner_id' in values:
+            idents.append(swagger_client.Identifier ('partner_id',
+                                                     urllib.parse.quote(values['sample_partner_id'],
+                                                                       safe='')))
+        if 'sample_oxford_id' in values:
+            idents.append(swagger_client.Identifier ('oxford_id',
+                                                     urllib.parse.quote(values['sample_oxford_id'],
+                                                                       safe='')))
+        if 'sample_alternate_oxford_id' in values and len(values['sample_alternate_oxford_id']) > 0:
+            idents.append(swagger_client.Identifier ('alt_oxford_id',
+                                                     urllib.parse.quote(values['sample_alternate_oxford_id'],
+                                                                        safe='')))
+
+        existing_sample_id = None
+        if 'unique_id' in values:
+            if values['unique_id'] in self._sample_cache:
+                existing_sample_id = self._sample_cache[values['unique_id']]
+
+        if not existing_sample_id:
+            if len(idents) > 0:
+                samp.identifiers = idents
+                new_ident_value = False
+                for ident in idents:
+                    try:
+                        if new_ident.identifier_type == 'partner_id':
+                            #Not safe as partner id's can be the same across studies
+                            continue
+                        found = api_instance.download_sample_by_identifier(ident.identifier_type,
+                                                               ident.identifier_value)
+                        existing_sample_id = found.sample_id
+                        print ("found: {}".format(samp))
+                    except:
+    #                    print("Not found")
+                        pass
+
+        if existing_sample_id:
+            existing = api_instance.download_sample(existing_sample_id)
+            for new_ident in idents:
+                found = False
+                for existing_ident in existing.identifiers:
+                    if existing_ident == new_ident:
+                        found = True
+                if not found:
+                    new_ident_value = True
+                    print("Adding {} to {}".format(new_ident, existing))
+                    existing.identifiers.append(new_ident)
+
+            existing.study_id = study_id
+            existing.doc = doc
+            existing.location_id = location_id
+            existing.proxy_location_id = proxy_location_id
+            if new_ident_value:
+                api_instance.update_sample(existing.sample_id, existing)
+        else:
+            created = api_instance.create_sample(samp)
+
+            if 'unique_id' in values:
+                self._sample_cache[values['unique_id']] = created.sample_id
 
 if __name__ == '__main__':
     sd = Uploader()

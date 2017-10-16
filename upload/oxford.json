@@ -1,0 +1,20 @@
+{
+    "values": {
+        "sample_partner_id": {
+            "column": 2,
+            "type": "string"
+        },
+        "sample_oxford_id": {
+            "column": 3,
+            "type": "string"
+        },
+        "sample_alternate_oxford_id": {
+            "column": 5,
+            "type": "string"
+        },
+        "unique_id": {
+            "column": 6,
+            "type": "string"
+        }
+    }
+}

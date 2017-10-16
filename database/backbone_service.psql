@@ -163,14 +163,6 @@ ALTER TABLE ONLY samples
 
 
 --
--- Name: identifiers uniq_id; Type: CONSTRAINT; Schema: public; Owner: iwright
---
-
-ALTER TABLE ONLY identifiers
-    ADD CONSTRAINT uniq_id UNIQUE (identifier_type, identifier_value);
-
-
---
 -- Name: fki_location; Type: INDEX; Schema: public; Owner: iwright
 --
 
