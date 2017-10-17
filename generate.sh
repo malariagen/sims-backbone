@@ -1,4 +1,5 @@
-test -f swagger-codegen-cli.jar || wget http://central.maven.org/maven2/io/swagger/swagger-codegen-cli/2.2.3/swagger-codegen-cli-2.2.3.jar -O swagger-codegen-cli.jar
+#test -f swagger-codegen-cli.jar || wget http://central.maven.org/maven2/io/swagger/swagger-codegen-cli/2.2.3/swagger-codegen-cli-2.2.3.jar -O swagger-codegen-cli.jar
+test -f swagger-codegen-cli.jar || wget https://oss.sonatype.org/content/repositories/snapshots/io/swagger/swagger-codegen-cli/3.0.0-SNAPSHOT/swagger-codegen-cli-3.0.0-20171009.075709-6.jar -O swagger-codegen-cli.jar
 rm -rf python-flask-server
 java -jar swagger-codegen-cli.jar generate -i swagger.yaml -l python-flask -o python-flask-server
 rm -rf server/bb-server
