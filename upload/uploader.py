@@ -110,7 +110,12 @@ class Uploader():
 
     def process_location(self, values, prefix):
 
-        if prefix + 'name' not in values:
+        if prefix + 'location_name' not in values:
+            #print("No {}location name: {}".format(prefix, values))
+            return None
+
+        if not values[prefix + 'location_name']:
+            print("No location name: {}".format(values))
             return None
 
         api_instance = swagger_client.LocationApi()
@@ -119,36 +124,48 @@ class Uploader():
         latitude = None
         longitude = None
         resolution = None
+        country = None
         try:
-            latitude = float(Decimal(values[prefix + 'latitude']))
-            longitude = float(Decimal(values[prefix + 'longitude']))
+            latitude = round(float(Decimal(values[prefix + 'latitude'])),7)
+            longitude = round(float(Decimal(values[prefix + 'longitude'])),7)
         except:
             pass
 
         if prefix + 'resolution' in values:
             resolution = values[prefix + 'resolution']
 
-        loc = swagger_client.Location(None, values[prefix + 'name'], latitude,
+        if prefix + 'country' in values:
+            country = values[prefix + 'country']
+
+        loc = swagger_client.Location(None, values[prefix + 'location_name'], latitude,
                                       longitude,
                                       resolution, curated_name, curation_method,
-                                      values[prefix + 'country'])
+                                      country)
 
         if loc.to_str() in self._location_cache:
             return self._location_cache[loc.to_str()]
 
-        #print(repr(loc))
         try:
             looked_up = api_instance.download_partner_location(loc.partner_name)
-            looked_up = api_instance.download_location(looked_up.location_id)
-            self._location_cache[loc.to_str()]=looked_up.location_id
+            looked_up = api_instance.download_location(looked_up.locations[0].location_id)
+            loc.location_id = looked_up.location_id
             if not looked_up == loc:
-                print("Duplicate non-matching partner_name\n{}\n{}".format(loc, looked_up))
+                if looked_up.latitude == loc.latitude and looked_up.longitude == loc.longitude:
+                    print("non-matching metadata \n{}\nparsed\n{}\nlooked_up\n{}".format(prefix, loc, looked_up))
+                else:
+                    #Assume if null then it's a look up key
+                    if loc.latitude and loc.longitude:
+                        print("Duplicate non-matching partner_name\n{}\n{}".format(loc, looked_up))
+            #Location cache never has location id in key
+            loc.location_id = None
+            self._location_cache[loc.to_str()]=looked_up.location_id
         except:
             try:
                 created = api_instance.create_location(loc)
                 self._location_cache[loc.to_str()]=created.location_id
             except ApiException as err:
-                print("Error creating {} {}".format(loc, err))
+                print("Error creating location {} {}".format(loc, err))
+                return None
 
         return self._location_cache[loc.to_str()]
 
@@ -158,11 +175,13 @@ class Uploader():
         doc = None
         study_id = None
         if 'doc' in values:
-            doc = values['doc']
+            if isinstance(values['doc'], datetime.datetime):
+                doc = values['doc']
         if 'study_id' in values:
-            doc = values['study_id']
+            study_id = values['study_id']
 
-        samp = swagger_client.Sample(None, study_id, doc, location_id)
+        samp = swagger_client.Sample(None, study_id = study_id, doc = doc, location_id =
+                                     location_id, proxy_location_id = proxy_location_id)
         idents = []
         if 'sample_roma_id' in values:
             idents.append(swagger_client.Identifier ('roma_id',
@@ -198,7 +217,7 @@ class Uploader():
                         found = api_instance.download_sample_by_identifier(ident.identifier_type,
                                                                ident.identifier_value)
                         existing_sample_id = found.sample_id
-                        print ("found: {}".format(samp))
+#                        print ("found: {}".format(samp))
                     except:
     #                    print("Not found")
                         pass
@@ -212,7 +231,7 @@ class Uploader():
                         found = True
                 if not found:
                     new_ident_value = True
-                    print("Adding {} to {}".format(new_ident, existing))
+#                    print("Adding {} to {}".format(new_ident, existing))
                     existing.identifiers.append(new_ident)
 
             existing.study_id = study_id
@@ -222,7 +241,14 @@ class Uploader():
             if new_ident_value:
                 api_instance.update_sample(existing.sample_id, existing)
         else:
-            created = api_instance.create_sample(samp)
+            if len(idents) == 0:
+                return
+
+            try:
+                created = api_instance.create_sample(samp)
+            except:
+                self._logger.error("Error inserting {}".format(samp))
+                sys.exit(1)
 
             if 'unique_id' in values:
                 self._sample_cache[values['unique_id']] = created.sample_id
