@@ -1,0 +1,40 @@
+{
+    "values":
+    {
+        "sample_oxford_id": {
+            "column": 0,
+            "type": "string",
+            "id": true
+        },
+        "sample_partner_id": {
+            "column": 1,
+            "type": "string"
+        },
+        "study_id": {
+            "column": 4,
+            "type": "string"
+        },
+        "type": {
+            "column": 5,
+            "type": "string"
+        },
+        "location_name": {
+            "column": 6,
+            "type": "string"
+        },
+       "latitude": {
+            "column": 7,
+            "type": "float"
+        },
+        "longitude": {
+            "column": 8,
+            "type": "float"
+        },
+        "doc": {
+            "column": 9,
+            "type": "string",
+            "date_format": "%Y-%m-%d",
+            "comment": "inconsistent date format"
+        }
+    }
+}

@@ -10,7 +10,7 @@
             "column": 1,
             "type": "string"
         },
-        "name": {
+        "location_name": {
             "column": 2,
             "type": "string"
         },

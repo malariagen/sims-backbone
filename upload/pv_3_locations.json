@@ -1,12 +1,14 @@
 {
-    "values": {
+    "values":
+    {
         "location_name": {
-            "column": 7,
+            "column": 0,
             "type": "string",
             "id": true
         },
         "country": {
-            "column": 8,
+            "column": 1,
+            "type": "string",
             "replace": [
                         [ "the Bolivarian Republic of Venezuela", "VEN" ],
                         [ "the Democratic Republic of the Congo", "COD" ],
@@ -23,7 +25,6 @@
                         [ "the Republic of Ghana", "GHA" ],
                         [ "the Republic of Guinea", "GIN" ],
                         [ "the Republic of Indonesia", "IDN" ],
-                        [ "the Republic of India", "IND" ],
                         [ "the Republic of Kenya", "KEN" ],
                         [ "the Republic of Mali", "MLI" ],
                         [ "the Republic of Peru", "PER" ],
@@ -34,7 +35,6 @@
                         [ "the Republic of the Union of Myanmar", "MMR" ],
                         [ "the Socialist Republic of Viet Nam", "VNM" ],
                         [ "the United Republic of Tanzania", "TZA" ],
-                        [ "the Republic of Uganda", "UGA" ],
                         [ "Bangladesh", "BGD" ],
                         [ "Bhutan", "BTN" ],
                         [ "Brazil", "BRA" ],
@@ -60,16 +60,32 @@
                         [ "Sudan", "SDN" ],
                         [ "Thailand", "THA" ],
                         [ "Vietnam", "VNM" ]
-                    ],
-            "type": "string"
+                    ]
+
         },
-       "latitude": {
-            "column": 9,
-            "type": "float"
+        "latitude": {
+            "column": 2,
+            "type": "float",
+            "regex": "^\\s*([-0-9]*\\.?\\d{0,7})"
         },
         "longitude": {
-            "column": 10,
-            "type": "float"
+            "column": 2,
+            "type": "float",
+            "regex": "([-0-9]*\\.?\\d{0,7})(\\d*)$"
+        },
+        "proxy_location_name": {
+            "column": 3,
+            "type": "string"
+        },
+        "proxy_latitude": {
+            "column": 4,
+            "type": "float",
+            "regex": "^\\s*([-0-9]*\\.?\\d{0,7})"
+        },
+        "proxy_longitude": {
+            "column": 4,
+            "type": "float",
+            "regex": "([-0-9]*\\.?\\d{0,7})\\d*$"
         }
     }
 }

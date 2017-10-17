@@ -1,0 +1,14 @@
+{
+    "values":
+    {
+        "sample_oxford_id": {
+            "column": 0,
+            "type": "string"
+        },
+        "study_id": {
+            "column": 2,
+            "regex": "([0-9]{4})",
+            "type": "string"
+        }
+    }
+}

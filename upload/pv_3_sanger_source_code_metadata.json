@@ -1,0 +1,25 @@
+{
+    "values":
+    {
+        "study_id": {
+            "column": 0,
+            "type": "string",
+            "regex": "([0-9]{4})",
+            "id": true
+        },
+        "sample_partner_id": {
+            "column": 1,
+            "type": "string",
+            "id": true
+        },
+        "doc": {
+            "column": 7,
+            "type": "datetime",
+            "date_format": "%Y-%m-%d"
+        },
+        "location_name": {
+            "column": 8,
+            "type": "string"
+        }
+    }
+}
