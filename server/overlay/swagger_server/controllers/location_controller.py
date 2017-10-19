@@ -12,6 +12,7 @@ from backbone_server.location.put import LocationPut
 from backbone_server.location.get import LocationGetById
 from backbone_server.location.delete import LocationDelete
 from backbone_server.location.get_by_name import LocationGetByPartnerName
+from backbone_server.location.get_by_gps import LocationGetByGPS
 
 from backbone_server.connect  import get_connection
 
@@ -68,6 +69,30 @@ def delete_location(locationId):
     return None, retcode
 
 
+def download_gps_location(latitude, longitude):
+    """
+    fetches location(s) by partner name
+    
+    :param latitude: Latitude of location to fetch
+    :type latitude: float
+    :param longitude: Longitude of location to fetch
+    :type longitude: float
+
+    :rtype: Location
+    """
+    get = LocationGetByGPS(get_connection())
+
+    retcode = 200
+    loc = None
+
+    try:
+        loc = get.get(latitude, longitude)
+    except MissingKeyException as dme:
+        logging.getLogger(__name__).error("download_partner_location: {}".format(repr(dme)))
+        retcode = 404
+
+    return loc, retcode
+
 def download_location(locationId):
     """
     fetches an location
@@ -93,12 +118,12 @@ def download_location(locationId):
 
 def download_partner_location(partnerId):
     """
-    fetches a location
+    fetches location(s) by partner name
     
     :param partnerId: ID of location to fetch
     :type partnerId: str
 
-    :rtype: Location
+    :rtype: Locations
     """
     get = LocationGetByPartnerName(get_connection())
 
