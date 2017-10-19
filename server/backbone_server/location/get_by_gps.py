@@ -34,6 +34,6 @@ class LocationGetByGPS():
         cursor.close()
 
         if len(locations.locations) == 0:
-            raise MissingKeyException("Partner location not found {}".format(partner_id))
+            raise MissingKeyException("GPS location not found {}, {}".format(latitude, longitude))
 
         return locations.locations[0]

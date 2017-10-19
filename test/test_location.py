@@ -136,6 +136,22 @@ class TestLocation(TestBase):
 
     """
     """
+    def test_gps_lookup_not_found(self):
+
+        api_instance = swagger_client.LocationApi()
+
+        try:
+
+            with self.assertRaises(Exception) as context:
+                looked_up = api_instance.download_gps_location(27.46362, 90.49542)
+
+            self.assertEqual(context.exception.status, 404)
+
+        except ApiException as error:
+            self.fail("test_partner_lookup: Exception when calling LocationApi->create_location: %s\n" % error)
+
+    """
+    """
     def test_partner_lookup(self):
 
         api_instance = swagger_client.LocationApi()
