@@ -5,6 +5,7 @@ from typing import List, Dict
 from six import iteritems
 from ..util import deserialize_date, deserialize_datetime
 
+from decimal import *
 import logging
 
 from backbone_server.location.post import LocationPost
@@ -86,10 +87,15 @@ def download_gps_location(latitude, longitude):
     loc = None
 
     try:
-        loc = get.get(latitude, longitude)
+        lat = Decimal(latitude)
+        lng = Decimal(longitude)
+        loc = get.get(lat, lng)
     except MissingKeyException as dme:
         logging.getLogger(__name__).error("download_partner_location: {}".format(repr(dme)))
         retcode = 404
+    except InvalidOperation as nfe:
+        logging.getLogger(__name__).error("download_partner_location: {}".format(repr(nfe)))
+        retcode = 422
 
     return loc, retcode
 

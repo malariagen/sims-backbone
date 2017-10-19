@@ -159,7 +159,7 @@ paths:
       tags:
         - location
       summary: fetches location(s) by GPS
-      description: ''
+      description: 'Params must be string as negative numbers not handled - https://github.com/pallets/werkzeug/issues/729 - also want to avoid using float'
       operationId: downloadGPSLocation
       produces:
         - application/json
@@ -168,12 +168,12 @@ paths:
           in: path
           description: Latitude of location to fetch
           required: true
-          type: number
+          type: string
         - name: longitude
           in: path
           description: Longitude of location to fetch
           required: true
-          type: number
+          type: string
       responses:
         '200':
           description: successful operation
@@ -181,6 +181,10 @@ paths:
             $ref: '#/definitions/Location'
         '404':
           description: 'location not found'
+          schema:
+              type: string
+        '422':
+          description: 'bad parameters'
           schema:
               type: string
   '/location/partner/{partnerId}':
