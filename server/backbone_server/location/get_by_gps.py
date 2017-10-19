@@ -5,7 +5,7 @@ from backbone_server.errors.missing_key_exception import MissingKeyException
 
 import logging
 
-class LocationGetByPartnerName():
+class LocationGetByGPS():
 
     def __init__(self, conn):
         self._logger = logging.getLogger(__name__)
@@ -15,17 +15,17 @@ class LocationGetByPartnerName():
         if self._connection:
             self._connection.close()
 
-    def get(self, partner_id):
+    def get(self, latitude, longitude):
 
         cursor = self._connection.cursor()
 
-        cursor.execute('''SELECT DISTINCT location_id FROM location_identifiers 
-                       WHERE identifier_type = %s AND identifier_value = %s''', ('partner_name', partner_id,))
+        cursor.execute("SELECT id FROM locations WHERE ST_X(location) = %s AND ST_Y(location) = %s", (latitude, longitude,))
 
         locations = Locations()
         locations.locations = []
         locations.count = 0
 
+        #GPS should be unique
         for (location_id,) in cursor:
             location = Location(location_id)
             locations.locations.append(location)

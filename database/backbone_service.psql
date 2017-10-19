@@ -107,18 +107,32 @@ CREATE TABLE identifiers (
 ALTER TABLE identifiers OWNER TO iwright;
 
 --
+-- Name: location_identifiers; Type: TABLE; Schema: public; Owner: iwright
+--
+
+CREATE TABLE location_identifiers (
+    location_id uuid,
+    study_id uuid,
+    identifier_type character varying(20),
+    identifier_value character varying(64)
+);
+
+
+ALTER TABLE location_identifiers OWNER TO iwright;
+
+--
 -- Name: locations; Type: TABLE; Schema: public; Owner: iwright
 --
 
 CREATE TABLE locations (
     id uuid NOT NULL,
-    partner_name character varying,
+    mgid character(20),
     location backbone_service.geometry(Point),
     country character(3),
     "precision" character varying,
     curated_name character varying,
     curation_method character varying,
-    external_id character varying
+    notes character varying
 );
 
 
@@ -138,6 +152,19 @@ CREATE TABLE samples (
 
 
 ALTER TABLE samples OWNER TO iwright;
+
+--
+-- Name: studies; Type: TABLE; Schema: public; Owner: iwright
+--
+
+CREATE TABLE studies (
+    id uuid,
+    mgid character(20),
+    study_name character varying(64)
+);
+
+
+ALTER TABLE studies OWNER TO iwright;
 
 --
 -- Name: archive archive_id; Type: DEFAULT; Schema: public; Owner: iwright
@@ -170,6 +197,13 @@ CREATE INDEX fki_location ON samples USING btree (location_id);
 
 
 --
+-- Name: fki_location_id; Type: INDEX; Schema: public; Owner: iwright
+--
+
+CREATE INDEX fki_location_id ON location_identifiers USING btree (location_id);
+
+
+--
 -- Name: fki_proxy_location; Type: INDEX; Schema: public; Owner: iwright
 --
 
@@ -177,10 +211,10 @@ CREATE INDEX fki_proxy_location ON samples USING btree (proxy_location_id);
 
 
 --
--- Name: fki_sample; Type: INDEX; Schema: public; Owner: iwright
+-- Name: fki_sample_id; Type: INDEX; Schema: public; Owner: iwright
 --
 
-CREATE INDEX fki_sample ON identifiers USING btree (sample_id);
+CREATE INDEX fki_sample_id ON identifiers USING btree (sample_id);
 
 
 --
@@ -188,6 +222,14 @@ CREATE INDEX fki_sample ON identifiers USING btree (sample_id);
 --
 
 ALTER TABLE ONLY samples
+    ADD CONSTRAINT fk_location FOREIGN KEY (location_id) REFERENCES locations(id);
+
+
+--
+-- Name: location_identifiers fk_location; Type: FK CONSTRAINT; Schema: public; Owner: iwright
+--
+
+ALTER TABLE ONLY location_identifiers
     ADD CONSTRAINT fk_location FOREIGN KEY (location_id) REFERENCES locations(id);
 
 

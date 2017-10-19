@@ -1,6 +1,8 @@
 from backbone_server.errors.duplicate_key_exception import DuplicateKeyException
 from backbone_server.errors.missing_key_exception import MissingKeyException
 
+from backbone_server.sample.edit import SampleEdit
+
 from swagger_server.models.sample import Sample
 
 import mysql.connector
@@ -47,11 +49,7 @@ class SamplePut():
 
             cursor.execute('DELETE FROM identifiers WHERE sample_id = %s', (sample_id,))
 
-            if sample.identifiers:
-                for ident in sample.identifiers:
-                    stmt = '''INSERT INTO identifiers (sample_id, identifier_type, identifier_value)
-                    VALUES (%s, %s, %s)'''
-                    cursor.execute(stmt, (sample_id, ident.identifier_type, ident.identifier_value))
+            SampleEdit.add_identifiers(cursor, sample_id, sample)
 
         except mysql.connector.Error as err:
             cursor.close()
@@ -62,6 +60,9 @@ class SamplePut():
         except psycopg2.IntegrityError as err:
             cursor.close()
             raise DuplicateKeyException("Error updating sample {}".format(sample)) from err
+        except DuplicateKeyException as err:
+            cursor.close()
+            raise err
 
         self._connection.commit()
 

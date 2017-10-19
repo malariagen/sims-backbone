@@ -1,5 +1,7 @@
 from backbone_server.errors.duplicate_key_exception import DuplicateKeyException
 
+from backbone_server.sample.edit import SampleEdit
+
 from swagger_server.models.sample import Sample
 
 import mysql.connector
@@ -34,11 +36,7 @@ class SamplePost():
         try:
             cursor.execute(stmt, args)
 
-            if sample.identifiers:
-                for ident in sample.identifiers:
-                    stmt = '''INSERT INTO identifiers (sample_id, identifier_type, identifier_value)
-                    VALUES (%s, %s, %s)'''
-                    cursor.execute(stmt, (uuid_val, ident.identifier_type, ident.identifier_value))
+            SampleEdit.add_identifiers(cursor, uuid_val, sample)
 
         except mysql.connector.Error as err:
             cursor.close()
@@ -49,6 +47,9 @@ class SamplePost():
         except psycopg2.IntegrityError as err:
             cursor.close()
             raise DuplicateKeyException("Error inserting sample {}".format(sample)) from err
+        except DuplicateKeyException as err:
+            cursor.close()
+            raise err
 
         self._connection.commit()
 

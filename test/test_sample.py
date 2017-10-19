@@ -85,6 +85,31 @@ class TestSample(TestBase):
         except ApiException as error:
             self.fail("test_duplicate_key: Exception when calling SampleApi->create_sample: %s\n" % error)
 
+    """
+    """
+    def test_duplicate_partner_key(self):
+
+        api_instance = swagger_client.SampleApi()
+
+        try:
+
+            samp = swagger_client.Sample(None, '0000-MD-UP', date(2017, 10, 10))
+            samp.identifiers = [
+                swagger_client.Identifier ('partner_id', '1234')
+            ]
+            created = api_instance.create_sample(samp)
+
+            created1 = api_instance.create_sample(samp)
+
+
+            api_instance.delete_sample(created.sample_id)
+            api_instance.delete_sample(created1.sample_id)
+
+            self.assertNotEqual(created.sample_id, created1.sample_id)
+
+        except ApiException as error:
+            self.fail("test_duplicate_key: Exception when calling SampleApi->create_sample: %s\n" % error)
+
 
     """
     """

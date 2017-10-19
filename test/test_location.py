@@ -15,7 +15,7 @@ class TestLocation(TestBase):
 
         try:
 
-            loc = swagger_client.Location(None, 'partner_name', 27.46362, 90.49542, 'country',
+            loc = swagger_client.Location(None, 27.46362, 90.49542, 'country',
                                           'Trongsa, Trongsa, Bhutan', 'pv_3_locations.txt', 'BHU')
             created = api_instance.create_location(loc)
             fetched = api_instance.download_location(created.location_id)
@@ -35,7 +35,7 @@ class TestLocation(TestBase):
 
         try:
 
-            loc = swagger_client.Location(None, 'partner_name', 27.46362, 90.49542, 'country',
+            loc = swagger_client.Location(None, 27.46362, 90.49542, 'country',
                                           'Trongsa, Trongsa, Bhutan', 'pv_3_locations.txt', 'BHU')
             created = api_instance.create_location(loc)
             api_instance.delete_location(created.location_id)
@@ -70,7 +70,7 @@ class TestLocation(TestBase):
 
         try:
 
-            loc = swagger_client.Location(None, 'partner_name', 27.46362, 90.49542, 'country',
+            loc = swagger_client.Location(None, 27.46362, 90.49542, 'country',
                                           'Trongsa, Trongsa, Bhutan', 'pv_3_locations.txt', 'BHU')
             created = api_instance.create_location(loc)
 
@@ -93,10 +93,13 @@ class TestLocation(TestBase):
 
         try:
 
-            loc = swagger_client.Location(None, 'partner_name', 27.46362, 90.49542, 'country',
+            loc = swagger_client.Location(None, 27.46362, 90.49542, 'country',
                                           'Trongsa, Trongsa, Bhutan', 'pv_3_locations.txt', 'BHU')
+            loc.identifiers = [
+                swagger_client.Identifier('partner_name', 'bhutan', '1234-PV')
+            ]
             created = api_instance.create_location(loc)
-            looked_up_locs = api_instance.download_partner_location(loc.partner_name)
+            looked_up_locs = api_instance.download_partner_location(loc.identifiers[0].identifier_value)
             looked_up = looked_up_locs.locations[0]
 
             fetched = api_instance.download_location(looked_up.location_id)
@@ -116,13 +119,19 @@ class TestLocation(TestBase):
 
         try:
 
-            loc = swagger_client.Location(None, 'partner_name', 27.46362, 90.49542, 'country',
+            loc = swagger_client.Location(None, 27.46362, 90.49542, 'country',
                                           'Trongsa, Trongsa, Bhutan', 'pv_3_locations.txt', 'BHU')
+            loc.identifiers = [
+                swagger_client.Identifier('partner_name', 'bhutan', '1234-PV')
+            ]
             created = api_instance.create_location(loc)
-            looked_up_locs = api_instance.download_partner_location(loc.partner_name)
+            looked_up_locs = api_instance.download_partner_location(loc.identifiers[0].identifier_value)
             looked_up = looked_up_locs.locations[0]
-            newloc = swagger_client.Location(None, 'new_partner_name', 28.46362, 91.49542, 'new_country',
+            newloc = swagger_client.Location(None, 28.46362, 91.49542, 'new_country',
                                         'new_Trongsa, Trongsa, Bhutan', 'new_pv_3_locations.txt', 'IND')
+            newloc.identifiers = [
+                swagger_client.Identifier('partner_name', 'nepal', '1235-PV')
+            ]
             updated = api_instance.update_location(looked_up.location_id, newloc)
             fetched = api_instance.download_location(looked_up.location_id)
             self.assertEqual(updated, fetched, "update response != download response")
@@ -141,13 +150,19 @@ class TestLocation(TestBase):
 
         try:
 
-            loc = swagger_client.Location(None, 'partner_name', 27.46362, 90.49542, 'country',
+            loc = swagger_client.Location(None, 27.46362, 90.49542, 'country',
                                           'Trongsa, Trongsa, Bhutan', 'pv_3_locations.txt', 'BHU')
+            loc.identifiers = [
+                swagger_client.Identifier('partner_name', 'bhutan', '1234-PV')
+            ]
             created = api_instance.create_location(loc)
-            looked_up_locs = api_instance.download_partner_location(loc.partner_name)
+            looked_up_locs = api_instance.download_partner_location(loc.identifiers[0].identifier_value)
             looked_up = looked_up_locs.locations[0]
-            newloc = swagger_client.Location(None, 'new_partner_name', 28.46362, 91.49542, 'new_country',
+            newloc = swagger_client.Location(None, 28.46362, 91.49542, 'new_country',
                                         'new_Trongsa, Trongsa, Bhutan', 'new_pv_3_locations.txt', 'IND')
+            newloc.identifiers = [
+                swagger_client.Identifier('partner_name', 'bhutan', '1234-PV')
+            ]
             new_created = api_instance.create_location(newloc)
             with self.assertRaises(Exception) as context:
                 updated = api_instance.update_location(looked_up.location_id, newloc)
@@ -168,7 +183,7 @@ class TestLocation(TestBase):
 
         try:
 
-            newloc = swagger_client.Location(None, 'new_partner_name', 28.46362, 91.49542, 'new_country',
+            newloc = swagger_client.Location(None, 28.46362, 91.49542, 'new_country',
                                         'new_Trongsa, Trongsa, Bhutan', 'new_pv_3_locations.txt', 'IND')
             fake_id = uuid.uuid4()
             newloc.location_id = str(fake_id)

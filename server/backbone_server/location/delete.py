@@ -19,6 +19,10 @@ class LocationDelete():
 
         cursor = self._connection.cursor()
 
+        stmt = '''DELETE FROM location_identifiers WHERE location_id = %s'''
+
+        cursor.execute( stmt, (location_id,))
+
         stmt = '''DELETE FROM locations WHERE id = %s'''
 
         cursor.execute( stmt, (location_id,))
