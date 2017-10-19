@@ -87,6 +87,30 @@ class TestLocation(TestBase):
 
     """
     """
+    def test_gps_lookup_negative(self):
+
+        api_instance = swagger_client.LocationApi()
+
+        try:
+
+            loc = swagger_client.Location(None, 15.82083, -9.4145, None, None, None, None)
+            loc.identifiers = [
+                swagger_client.Identifier('partner_name', 'Kobeni', '1147-PF-MR-CONWAY')
+            ]
+            created = api_instance.create_location(loc)
+            looked_up = api_instance.download_gps_location(15.82083, -9.4145)
+
+            fetched = api_instance.download_location(looked_up.location_id)
+            self.assertEqual(created, fetched, "create response != download response")
+            fetched.location_id = None
+            self.assertEqual(loc, fetched, "upload != download response")
+            api_instance.delete_location(created.location_id)
+
+        except ApiException as error:
+            self.fail("test_partner_lookup: Exception when calling LocationApi->create_location: %s\n" % error)
+
+    """
+    """
     def test_gps_lookup(self):
 
         api_instance = swagger_client.LocationApi()
@@ -109,6 +133,7 @@ class TestLocation(TestBase):
 
         except ApiException as error:
             self.fail("test_partner_lookup: Exception when calling LocationApi->create_location: %s\n" % error)
+
     """
     """
     def test_partner_lookup(self):
