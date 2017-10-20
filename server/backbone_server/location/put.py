@@ -55,9 +55,9 @@ class LocationPut(LocationEdit):
             existing_location = Location(location_id, latitude, longitude, precision,
                                 curated_name, curation_method, country)
 
-        if existing_location and str(existing_location.location_id) != location_id:
+        if existing_location and existing_location.location_id != location_id:
             cursor.close()
-            raise DuplicateKeyException("Error updating location - duplicate GPS{}".format(existing_location))
+            raise DuplicateKeyException("Error updating location - duplicate GPS {}".format(existing_location))
 
         stmt = '''UPDATE locations 
                     SET location = ST_SetSRID(ST_MakePoint(%s, %s), 4326),
