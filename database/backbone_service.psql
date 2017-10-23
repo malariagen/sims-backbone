@@ -248,6 +248,8 @@ ALTER TABLE ONLY samples
 ALTER TABLE ONLY identifiers
     ADD CONSTRAINT fk_sample FOREIGN KEY (sample_id) REFERENCES samples(id);
 
+ALTER TABLE ONLY location_identifiers
+    ADD CONSTRAINT uniq_loc_ident UNIQUE (study_id, identifier_type, identifier_value);
 
 --
 -- PostgreSQL database dump complete

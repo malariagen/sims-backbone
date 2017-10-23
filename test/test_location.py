@@ -2,6 +2,7 @@ import swagger_client
 from swagger_client.rest import ApiException
 from test_base import TestBase
 
+import copy
 import uuid
 
 class TestLocation(TestBase):
@@ -83,6 +84,33 @@ class TestLocation(TestBase):
 
         except ApiException as error:
             self.fail("test_duplicate_key: Exception when calling LocationApi->create_location: %s\n" % error)
+
+    """
+    """
+    def test_duplicate_partner_name(self):
+
+        return
+
+        api_instance = swagger_client.LocationApi()
+
+        try:
+
+            loc = swagger_client.Location(None, 27.46362, 90.49542, 'country',
+                                          'Trongsa, Trongsa, Bhutan', 'pv_3_locations.txt', 'BHU')
+            loc.identifiers = [
+                swagger_client.Identifier('partner_name', 'Kobeni', '1147-PF-MR-CONWAY'),
+                swagger_client.Identifier('partner_name', 'Kobeni', '1147-PF-MR-CONWAY')
+            ]
+
+            with self.assertRaises(Exception) as context:
+                created = api_instance.create_location(loc)
+                api_instance.delete_location(created.location_id)
+
+            self.assertEqual(context.exception.status, 422)
+
+        except ApiException as error:
+            self.fail("test_duplicate_key: Exception when calling LocationApi->create_location: %s\n" % error)
+
 
 
     """
@@ -225,6 +253,36 @@ class TestLocation(TestBase):
 
     """
     """
+    def test_update_identifiers(self):
+
+        api_instance = swagger_client.LocationApi()
+
+        try:
+
+            loc = swagger_client.Location(None, 27.46362, 90.49542, 'country',
+                                          'Trongsa, Trongsa, Bhutan', 'pv_3_locations.txt', 'BHU')
+            loc.identifiers = [
+                swagger_client.Identifier('partner_name', 'bhutan', '1234-PV')
+            ]
+            created = api_instance.create_location(loc)
+            looked_up_locs = api_instance.download_partner_location(loc.identifiers[0].identifier_value)
+            looked_up = looked_up_locs.locations[0]
+            newloc = copy.deepcopy(loc)
+            newloc.identifiers = [
+                swagger_client.Identifier('partner_name', 'nepal', '1235-PV')
+            ]
+            updated = api_instance.update_location(looked_up.location_id, newloc)
+            fetched = api_instance.download_location(looked_up.location_id)
+            self.assertEqual(updated, fetched, "update response != download response")
+            fetched.location_id = None
+            self.assertEqual(newloc, fetched, "update != download response")
+            api_instance.delete_location(looked_up.location_id)
+
+        except ApiException as error:
+            self.fail("test_update: Exception when calling LocationApi->create_location: %s\n" % error)
+
+    """
+    """
     def test_update_duplicate(self):
 
         api_instance = swagger_client.LocationApi()
@@ -241,12 +299,12 @@ class TestLocation(TestBase):
             looked_up = looked_up_locs.locations[0]
             newloc = swagger_client.Location(None, 28.46362, 91.49542, 'new_country',
                                         'new_Trongsa, Trongsa, Bhutan', 'new_pv_3_locations.txt', 'IND')
-            newloc.identifiers = [
-                swagger_client.Identifier('partner_name', 'bhutan', '1234-PV')
-            ]
             new_created = api_instance.create_location(newloc)
             with self.assertRaises(Exception) as context:
-                updated = api_instance.update_location(looked_up.location_id, newloc)
+                new_created.identifiers = [
+                    swagger_client.Identifier('partner_name', 'bhutan', '1234-PV')
+                ]
+                updated = api_instance.update_location(new_created.location_id, new_created)
 
             self.assertEqual(context.exception.status, 422)
 
