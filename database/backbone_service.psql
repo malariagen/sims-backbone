@@ -190,6 +190,14 @@ ALTER TABLE ONLY samples
 
 
 --
+-- Name: location_identifiers uniq_loc_ident; Type: CONSTRAINT; Schema: public; Owner: iwright
+--
+
+ALTER TABLE ONLY location_identifiers
+    ADD CONSTRAINT uniq_loc_ident UNIQUE (study_id, identifier_type, identifier_value);
+
+
+--
 -- Name: fki_location; Type: INDEX; Schema: public; Owner: iwright
 --
 
@@ -248,8 +256,6 @@ ALTER TABLE ONLY samples
 ALTER TABLE ONLY identifiers
     ADD CONSTRAINT fk_sample FOREIGN KEY (sample_id) REFERENCES samples(id);
 
-ALTER TABLE ONLY location_identifiers
-    ADD CONSTRAINT uniq_loc_ident UNIQUE (study_id, identifier_type, identifier_value);
 
 --
 -- PostgreSQL database dump complete
