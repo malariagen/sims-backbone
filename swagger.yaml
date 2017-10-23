@@ -24,44 +24,6 @@ tags:
 schemes:
   - http
 paths:
-  '/source/{sourceId}/{sourceSampleId}':
-    get:
-      tags:
-        - source
-      summary: fetches an sample
-      description: ''
-      operationId: downloadSourceSample
-      produces:
-        - application/json
-      parameters:
-        - name: sourceId
-          in: path
-          description: ID of source to query
-          required: true
-          type: string
-        - name: sourceSampleId
-          in: path
-          description: ID of sample to fetch
-          required: true
-          type: string
-        - name: studyId
-          in: query
-          description: which study the sample belongs to
-          required: false
-          type: integer
-      responses:
-        '200':
-          description: successful operation
-          schema:
-            $ref: '#/definitions/Sample'
-        '404':
-          description: 'sample not found'
-          schema:
-              type: string
-        '422':
-          description: 'invalid key in sample'
-          schema:
-              type: string
   '/location':
     post:
       tags:
@@ -215,6 +177,45 @@ paths:
           description: 'invalid key in location'
           schema:
               type: string
+  '/locations':
+    get:
+      tags:
+        - location
+      summary: fetches locations
+      description: ''
+      operationId: downloadLocations
+      produces:
+        - application/json
+      parameters:
+        - name: studyName
+          in: query
+          description: restrict to a particular study
+          required: false
+          type: string
+        - name: start
+          in: query
+          description: for pagination start the result set at a record x
+          required: false
+          type: integer
+        - name: count
+          in: query
+          description: for pagination the number of entries to return
+          required: false
+          type: integer
+        - name: orderby
+          in: query
+          description: how to order the result set
+          required: false
+          type: string
+          default: location
+          enum:
+            - location
+            - study_name
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/Locations'
   '/sample':
     post:
       tags:
@@ -330,6 +331,47 @@ paths:
           description: successful operation
           schema:
             $ref: '#/definitions/Sample'
+  '/samples/location/{locationId}':
+    get:
+      tags:
+        - sample
+      summary: fetches samples for a location
+      description: ''
+      operationId: downloadSamplesByLocation
+      produces:
+        - application/json
+      parameters:
+        - name: locationId
+          in: path
+          description: location
+          required: true
+          type: string
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/Samples'
+  '/samples/study/{studyName}':
+    get:
+      tags:
+        - sample
+      summary: fetches samples for a study
+      description: ''
+      operationId: downloadSamplesByStudy
+      produces:
+        - application/json
+      parameters:
+        - name: studyName
+          in: path
+          description: location
+          required: true
+          type: string
+      responses:
+        '200':
+          description: successful operation
+          schema:
+definitions:
+  Samples:
 definitions:
   Samples:
     type: object

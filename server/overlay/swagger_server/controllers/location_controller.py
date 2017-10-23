@@ -11,6 +11,7 @@ import logging
 from backbone_server.location.post import LocationPost
 from backbone_server.location.put import LocationPut
 from backbone_server.location.get import LocationGetById
+from backbone_server.location.gets import LocationsGet
 from backbone_server.location.delete import LocationDelete
 from backbone_server.location.get_by_name import LocationGetByPartnerName
 from backbone_server.location.get_by_gps import LocationGetByGPS
@@ -72,12 +73,12 @@ def delete_location(locationId):
 
 def download_gps_location(latitude, longitude):
     """
-    fetches location(s) by partner name
-    
+    fetches location(s) by GPS
+    Params must be string as negative numbers not handled - https://github.com/pallets/werkzeug/issues/729 - also want to avoid using float
     :param latitude: Latitude of location to fetch
-    :type latitude: float
+    :type latitude: str
     :param longitude: Longitude of location to fetch
-    :type longitude: float
+    :type longitude: str
 
     :rtype: Location
     """
@@ -115,6 +116,35 @@ def download_location(locationId):
 
     try:
         loc = get.get(locationId)
+    except MissingKeyException as dme:
+        logging.getLogger(__name__).error("download_location: {}".format(repr(dme)))
+        retcode = 404
+
+    return loc, retcode
+
+
+def download_locations(studyName=None, start=None, count=None, orderby=None):
+    """
+    fetches locations
+    
+    :param studyName: restrict to a particular study
+    :type studyName: str
+    :param start: for pagination start the result set at a record x
+    :type start: int
+    :param count: for pagination the number of entries to return
+    :type count: int
+    :param orderby: how to order the result set
+    :type orderby: str
+
+    :rtype: Entities
+    """
+    get = LocationsGet(get_connection())
+
+    retcode = 200
+    loc = None
+
+    try:
+        loc = get.get(studyName, start, count, orderby)
     except MissingKeyException as dme:
         logging.getLogger(__name__).error("download_location: {}".format(repr(dme)))
         retcode = 404
