@@ -1,0 +1,15 @@
+@import '~@angular/material/_theming';
+
+@include mat-core();
+
+$sims-backbone-theme-primary: mat-palette($mat-light-blue);
+$sims-backbone-theme-accent: mat-palette($mat-orange, A200, A100, A400);
+$sims-backbone-theme-warn: mat-palette($mat-red);
+
+$sims-backbone-theme: mat-light-theme($sims-backbone-theme-primary, $sims-backbone-theme-accent, $sims-backbone-theme-warn);
+
+@mixin sims-backbone-theme($theme) {
+}
+
+@include angular-material-theme($sims-backbone-theme);
+@include sims-backbone-theme($sims-backbone-theme);
