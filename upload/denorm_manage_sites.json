@@ -1,0 +1,83 @@
+{
+    "values": {
+        "sample_oxford_id": {
+            "column": 0,
+            "type": "string",
+            "id": true
+        },
+        "location_name": {
+            "column": 1,
+            "type": "string"
+        },
+        "latitude": {
+            "column": 2,
+            "type": "float"
+        },
+        "longitude": {
+            "column": 3,
+            "type": "float"
+        },
+        "country": {
+            "column": 4,
+            "type": "string",
+             "replace": [
+                 ["AF", "AFG"],
+                 ["AO", "AGO"],
+                 ["BD", "BGD"],
+                 ["BF", "BFA"],
+                 ["BJ", "BEN"],
+                 ["BR", "BRA"],
+                 ["CD", "COD"],
+                 ["CI", "CIV"],
+                 ["CM", "CMR"],
+                 ["CO", "COL"],
+                 ["ET", "ETH"],
+                 ["FR", "FRA"],
+                 ["GA", "GAB"],
+                 ["GB", "GBR"],
+                 ["GH", "GHA"],
+                 ["GM", "GMB"],
+                 ["GN", "GIN"],
+                 ["GQ", "GNQ"],
+                 ["GW", "GNB"],
+                 ["HN", "HND"],
+                 ["ID", "IDN"],
+                 ["IN", "IND"],
+                 ["KE", "KEN"],
+                 ["KH", "KHM"],
+                 ["KR", "KOR"],
+                 ["LA", "LAO"],
+                 ["LK", "LKA"],
+                 ["MG", "MDG"],
+                 ["ML", "MLI"],
+                 ["MM", "MMR"],
+                 ["MW", "MWI"],
+                 ["MY", "MYS"],
+                 ["MZ", "MOZ"],
+                 ["NG", "NGA"],
+                 ["NP", "NPL"],
+                 ["PE", "PER"],
+                 ["PG", "PNG"],
+                 ["RW", "RWA"],
+                 ["SD", "SDN"],
+                 ["SN", "SEN"],
+                 ["SV", "SLV"],
+                 ["TG", "TGO"],
+                 ["TH", "THA"],
+                 ["TZ", "TZA"],
+                 ["UG", "UGA"],
+                 ["US", "USA"],
+                 ["VN", "VNM"],
+                 ["ZW", "ZWE"]
+             ]
+        },
+        "resolution": {
+            "column": 5,
+            "type": "string"
+        },
+        "description": {
+            "column": 6,
+            "type": "string"
+        }
+    }
+}

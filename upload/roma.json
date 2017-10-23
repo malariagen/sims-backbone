@@ -1,9 +1,26 @@
 {
     "values": {
+        "sample_roma_id": {
+            "column": 0,
+            "type": "string"
+        },
+        "sample_partner_id": {
+            "column": 1,
+            "type": "string"
+        },
+        "study_id": {
+            "column": 2,
+            "type": "string",
+            "regex": "(\\d{4}$)"
+        },
+        "doc": {
+            "column": 3,
+            "type": "string",
+            "date_format": "%Y-%m-%d"
+        },
         "location_name": {
             "column": 7,
-            "type": "string",
-            "id": true
+            "type": "string"
         },
         "country": {
             "column": 8,
@@ -12,6 +29,7 @@
                         [ "the Democratic Republic of the Congo", "COD" ],
                         [ "the Federal Democratic Republic of Ethiopia", "ETH" ],
                         [ "the Federative Republic of Brazil", "BRA" ],
+                        [ "the Islamic Republic of Pakistan", "PAK" ],
                         [ "the Kingdom of Cambodia", "KHM" ],
                         [ "the Kingdom of Thailand", "THA" ],
                         [ "the United Kingdom of Great Britain and Northern Ireland", "GBR" ],

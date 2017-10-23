@@ -1,12 +1,11 @@
 ./run.sh Central_plasmodium_anopheles_dump_01JUN2017_sample_grouping_13OCT2017.csv oxford.json
-./run.sh manage_sites.txt manage_sites.json
-./run.sh manage_sites_samples.txt manage_sites.json
-./run.sh pf_6_metadata.txt pf_6_metadata.json
-./run.sh pv_3_locations.txt pv_3_locations.json
-./run.sh pv_3_broad_metadata.txt pv_3_broad_metadata.json
-./run.sh pv_3_sanger_source_code_metadata.txt pv_3_sanger_source_code_metadata.json
 ./run.sh vw_vrpipe.txt vw_vrpipe.json
+./run.sh pf_6_metadata.txt pf_6_metadata.json
+./run.sh ./denormalize_pv_3.txt pv_3_sanger_source_code_metadata.json
+./run.sh ./denormalized_manage_sites.txt denorm_manage_sites.json
+./run.sh pv_3_broad_metadata.txt pv_3_broad_metadata.json
 ./run.sh genre.dump_samples.tsv roma.json
 ./run.sh spotmalaria.dump_samples.tsv roma.json
 ./run.sh vivax.dump_samples.tsv roma.json
 ./run.sh vobs.dump_samples.tsv roma.json
+./run.sh ag1000g.samples.meta.txt ag1000g.json

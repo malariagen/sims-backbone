@@ -1,46 +1,30 @@
 {
-    "values":
-    {
-        "sample_partner_id": {
-            "column": 0,
-            "type": "string",
-            "id": true
-        },
-        "study_id": {
+    "values": {
+        "sample_oxford_id": {
             "column": 1,
-            "type": "string",
-            "replace": [
-                        [ "1008", "1008-PF-SEA-RINGWALD" ],
-                        [ "1020", "1020-PF-VN-BONI" ],
-                        [ "1044", "1044-PF-KH-FAIRHURST" ],
-                        [ "1046", "1046-PV-BR-FERRERIA" ],
-                        [ "1047", "1047-PV-LK-KARUNAWEERA" ],
-                        [ "1049", "1049-PV-VN-BONI" ],
-                        [ "1050", "1050-PV-PN-MUELLER" ],
-                        [ "1052", "1052-PF-TRAC-WHITE" ],
-                        [ "1062", "1062-PF-PG-BARRY" ],
-                        [ "1098", "1098-PF-ET-GOLASSA" ],
-                        [ "1102", "1102-PF-MG-RANDRIANARIVELOJOSIA" ],
-                        [ "1125", "1125-PF-TH-NOSTEN" ],
-                        [ "1128", "1128-PV-GSKMULTI-RAYNER" ],
-                        [ "1154", "1154-PV-TH-PRICE" ],
-                        [ "1155", "1155-PF-ID-PRICE" ],
-                        [ "1156", "1156-PV-ID-PRICE" ],
-                        [ "1157", "1157-PV-MULTI-PRICE" ]
-            ]
+            "type": "string"
         },
-        "location_name": {
+        "sample_partner_id": {
             "column": 2,
             "type": "string"
         },
-        "country": {
-            "column": 4,
+        "doc": {
+            "column": 9,
             "type": "string",
+            "date_format": "%Y"
+        },
+        "location_name": {
+            "column": 6,
+            "type": "string"
+        },
+        "country": {
+            "column": 5,
             "replace": [
                         [ "the Bolivarian Republic of Venezuela", "VEN" ],
                         [ "the Democratic Republic of the Congo", "COD" ],
                         [ "the Federal Democratic Republic of Ethiopia", "ETH" ],
                         [ "the Federative Republic of Brazil", "BRA" ],
+                        [ "the Islamic Republic of Pakistan", "PAK" ],
                         [ "the Kingdom of Cambodia", "KHM" ],
                         [ "the Kingdom of Thailand", "THA" ],
                         [ "the United Kingdom of Great Britain and Northern Ireland", "GBR" ],
@@ -52,6 +36,7 @@
                         [ "the Republic of Ghana", "GHA" ],
                         [ "the Republic of Guinea", "GIN" ],
                         [ "the Republic of Indonesia", "IDN" ],
+                        [ "the Republic of India", "IND" ],
                         [ "the Republic of Kenya", "KEN" ],
                         [ "the Republic of Mali", "MLI" ],
                         [ "the Republic of Peru", "PER" ],
@@ -62,16 +47,24 @@
                         [ "the Republic of the Union of Myanmar", "MMR" ],
                         [ "the Socialist Republic of Viet Nam", "VNM" ],
                         [ "the United Republic of Tanzania", "TZA" ],
+                        [ "the Republic of Uganda", "UGA" ],
+                        [ "Angola", "AGO" ],
                         [ "Bangladesh", "BGD" ],
                         [ "Bhutan", "BTN" ],
                         [ "Brazil", "BRA" ],
+                        [ "Burkina Faso", "BFA" ],
                         [ "Cambodia", "KHM" ],
+                        [ "Cameroon", "CMR" ],
                         [ "China", "CHN" ],
                         [ "Colombia", "COL" ],
                         [ "El Salvador", "SLV" ],
                         [ "Ethiopia", "ETH" ],
+                        [ "Gabon", "GAB" ],
+                        [ "Guinea", "GIN" ],
+                        [ "Guinea-Bissau", "GNB" ],
                         [ "India", "IND" ],
                         [ "Indonesia", "IDN" ],
+                        [ "Kenya", "KEN" ],
                         [ "Madagascar", "MDG" ],
                         [ "Malaysia", "MYS" ],
                         [ "Mauritania", "MRT" ],
@@ -86,39 +79,18 @@
                         [ "Sri Lanka", "LKA" ],
                         [ "Sudan", "SDN" ],
                         [ "Thailand", "THA" ],
+                        [ "Uganda", "UGA" ],
                         [ "Vietnam", "VNM" ]
-                    ]
-
-        },
-        "latitude": {
-            "column": 3,
-            "type": "float",
-            "regex": "^\\s*([-0-9]*\\.?\\d{0,7})"
-        },
-        "longitude": {
-            "column": 3,
-            "type": "float",
-            "regex": "([-0-9]*\\.?\\d{0,7})(\\d*)$"
-        },
-        "proxy_location_name": {
-            "column": 5,
+                    ],
             "type": "string"
         },
-        "proxy_latitude": {
-            "column": 6,
-            "type": "float",
-            "regex": "^\\s*([-0-9]*\\.?\\d{0,7})"
+       "latitude": {
+            "column": 14,
+            "type": "float"
         },
-        "proxy_longitude": {
-            "column": 6,
-            "type": "float",
-            "regex": "([-0-9]*\\.?\\d{0,7})\\d*$"
-        },
-        "doc": {
-            "column": 7,
-            "type": "datetime",
-            "date_format": "%Y-%m-%d"
+        "longitude": {
+            "column": 15,
+            "type": "float"
         }
-
     }
 }
