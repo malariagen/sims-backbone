@@ -13,6 +13,8 @@ from backbone_server.sample.put import SamplePut
 from backbone_server.sample.get import SampleGetById
 from backbone_server.sample.delete import SampleDelete
 from backbone_server.sample.get_by_identifier import SampleGetByIdentifier
+from backbone_server.sample.get_by_location import SamplesGetByLocation
+from backbone_server.sample.get_by_study import SamplesGetByStudy
 
 from backbone_server.connect  import get_connection
 
@@ -115,6 +117,49 @@ def download_sample_by_identifier(propName, propValue):
 
     return samp, retcode
 
+def download_samples_by_location(locationId):
+    """
+    fetches samples for a location
+    
+    :param locationId: location
+    :type locationId: str
+
+    :rtype: Samples
+    """
+    get = SamplesGetByLocation(get_connection())
+
+    retcode = 200
+    samp = None
+
+    try:
+        samp = get.get(locationId)
+    except MissingKeyException as dme:
+        logging.getLogger(__name__).error("download_sample: {}".format(repr(dme)))
+        retcode = 404
+
+    return samp, retcode
+
+def download_samples_by_study(studyName):
+    """
+    fetches samples for a study
+    
+    :param studyName: location
+    :type studyName: str
+
+    :rtype: None
+    """
+    get = SamplesGetByStudy(get_connection())
+
+    retcode = 200
+    samp = None
+
+    try:
+        samp = get.get(studyName)
+    except MissingKeyException as dme:
+        logging.getLogger(__name__).error("download_sample: {}".format(repr(dme)))
+        retcode = 404
+
+    return samp, retcode
 
 def update_sample(sampleId, sample):
     """
