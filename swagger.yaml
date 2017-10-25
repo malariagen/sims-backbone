@@ -370,6 +370,27 @@ paths:
         '200':
           description: successful operation
           schema:
+            $ref: '#/definitions/Samples'
+  '/metadata/country/{countryId}':
+    get:
+      tags:
+        - metadata
+      summary: fetches all the names for a country
+      description: 'guesses the search criteria'
+      operationId: getCountryMetadata
+      produces:
+        - application/json
+      parameters:
+        - name: countryId
+          in: path
+          description: location
+          required: true
+          type: string
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/Country'
 definitions:
   Samples:
 definitions:
@@ -439,6 +460,7 @@ definitions:
         type: string
       notes:
         type: string
+        nullable: true
       identifiers:
         type: array
         items:
@@ -458,4 +480,13 @@ definitions:
       identifier_value:
         type: string
       study_name:
+        type: string
+  Country:
+    type: object
+    properties:
+      english:
+        type: string
+      alpha2:
+        type: string
+      alpha3:
         type: string

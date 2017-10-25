@@ -1,6 +1,7 @@
 from swagger_server.models.location import Location
 from swagger_server.models.locations import Locations
 
+from backbone_server.location.fetch import LocationFetch
 from backbone_server.errors.missing_key_exception import MissingKeyException
 
 import logging
@@ -27,7 +28,7 @@ class LocationGetByPartnerName():
         locations.count = 0
 
         for (location_id,) in cursor:
-            location = Location(location_id)
+            location = LocationFetch.fetch(cursor, location_id)
             locations.locations.append(location)
             locations.count = locations.count + 1
 

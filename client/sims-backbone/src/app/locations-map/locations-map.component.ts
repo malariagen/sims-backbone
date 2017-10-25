@@ -38,27 +38,66 @@ export class LocationsMapComponent {
   }
 
   leaflet_options = {
-    zoom: 3,
+    zoom: 5,
     maxZoom: 18,
     center: L.latLng([-4.6991, 20.8422]),
     layers: [
       this.LAYER_OSM.layer
     ]
-  };
+    };
+
+    leaflet_zoom : number = 5;
   // Marker cluster stuff
 
   markers = new Map<string, L.Layer[]>();
   groups = new Map<string, L.MarkerClusterGroup>();
   map;
+  
+  polygonLayer;
+
+  @Input()
+  set polygon(geojson) {
+  if (geojson && geojson.type == 'Polygon') {
+    this.polygonLayer = L.geoJSON().addTo(this.map);
+    this.polygonLayer.clearLayers();
+    this.polygonLayer.addData(geojson);
+      if (this._locations.count == 1) {
+        this.map.panTo(L.latLng([this._locations.locations[0].latitude, this._locations.locations[0].longitude]));
+      }
+        }
+  }
+
+  @Input()
+  set zoom(zoom: number) {
+  console.log("Setting zoom:" + zoom);
+  this.leaflet_zoom = zoom
+  this.centerMap();
+  }
+
+  centerMap() {
+      if (!this.map) {
+        return;
+      }
+      let center = null;
+      if (this._locations && this._locations.count == 1) {
+          center = L.latLng([this._locations.locations[0].latitude, this._locations.locations[0].longitude]);
+      } else {
+          center = this.map.getCenter();
+      }
+      //Can't use panTo
+      this.map.setView(center, this.leaflet_zoom);
+    }
 
   @Input()
   set locations(locations: Locations) {
 
+    console.log("locations-map set locations");
     this._locations = locations;
 
     if (this._locations) {
       let locationsArray: Array<Location> = this._locations.locations;
 
+      this.centerMap();
       locationsArray.forEach(location => {
 
         let layer_name: string = 'Unknown';
