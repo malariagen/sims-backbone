@@ -94,6 +94,21 @@ ALTER SEQUENCE archive_archive_id_seq OWNED BY archive.archive_id;
 
 
 --
+-- Name: countries; Type: TABLE; Schema: public; Owner: iwright
+--
+
+CREATE TABLE countries (
+    English character varying,
+    French character varying,
+    alpha2 character(2),
+    alpha3 character(3),
+    numeric_code integer
+);
+
+
+ALTER TABLE countries OWNER TO iwright;
+
+--
 -- Name: identifiers; Type: TABLE; Schema: public; Owner: iwright
 --
 

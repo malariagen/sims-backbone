@@ -7,4 +7,5 @@ ALTER DATABASE backbone_service SET search_path=public, backbone_service, contri
 \i backbone_service.psql;
 \connect backbone_service;
 SELECT postgis_full_version();
+\copy countries (English, French, alpha2, alpha3, numeric_code) FROM './country_codes.tsv' DELIMITER E'\t'  HEADER CSV;
 +++EOF
