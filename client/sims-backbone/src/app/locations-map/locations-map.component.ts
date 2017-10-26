@@ -44,49 +44,49 @@ export class LocationsMapComponent {
     layers: [
       this.LAYER_OSM.layer
     ]
-    };
+  };
 
-    leaflet_zoom : number = 5;
+  leaflet_zoom: number = 5;
   // Marker cluster stuff
 
   markers = new Map<string, L.Layer[]>();
   groups = new Map<string, L.MarkerClusterGroup>();
   map;
-  
+
   polygonLayer;
 
   @Input()
   set polygon(geojson) {
-  if (geojson && geojson.type == 'Polygon') {
-    this.polygonLayer = L.geoJSON().addTo(this.map);
-    this.polygonLayer.clearLayers();
-    this.polygonLayer.addData(geojson);
+    if (geojson && geojson.type == 'Polygon') {
+      this.polygonLayer = L.geoJSON().addTo(this.map);
+      this.polygonLayer.clearLayers();
+      this.polygonLayer.addData(geojson);
       if (this._locations.count == 1) {
         this.map.panTo(L.latLng([this._locations.locations[0].latitude, this._locations.locations[0].longitude]));
       }
-        }
+    }
   }
 
   @Input()
   set zoom(zoom: number) {
-  console.log("Setting zoom:" + zoom);
-  this.leaflet_zoom = zoom
-  this.centerMap();
+    console.log("Setting zoom:" + zoom);
+    this.leaflet_zoom = zoom
+    this.centerMap();
   }
 
   centerMap() {
-      if (!this.map) {
-        return;
-      }
-      let center = null;
-      if (this._locations && this._locations.count == 1) {
-          center = L.latLng([this._locations.locations[0].latitude, this._locations.locations[0].longitude]);
-      } else {
-          center = this.map.getCenter();
-      }
-      //Can't use panTo
-      this.map.setView(center, this.leaflet_zoom);
+    if (!this.map) {
+      return;
     }
+    let center = null;
+    if (this._locations && this._locations.count == 1) {
+      center = L.latLng([this._locations.locations[0].latitude, this._locations.locations[0].longitude]);
+    } else {
+      center = this.map.getCenter();
+    }
+    //Can't use panTo
+    this.map.setView(center, this.leaflet_zoom);
+  }
 
   @Input()
   set locations(locations: Locations) {
@@ -152,7 +152,7 @@ export class LocationsMapComponent {
           shadowUrl: 'assets/marker-shadow.png'
         })
       }
-    ).bindPopup('<a href="location/'+ lat + '/'+ lng +'">' + marker_title + '</a>');
+    ).bindPopup('<a href="location/' + lat + '/' + lng + '">' + marker_title + '</a>');
 
     if (!this.markers.has(country)) {
       this.markers.set(country, []);

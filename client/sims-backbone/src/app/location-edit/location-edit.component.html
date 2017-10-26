@@ -1,56 +1,56 @@
 <div fxLayout="column">
-    <div fxLayout="row">
+  <div fxLayout="row">
     <div style="width: 50%">
-    <app-locations-map [zoom]="zoom" [locations]="locations" [polygon]="polygon"></app-locations-map>
-  </div>
-  <div style="width: 50%">
+      <app-locations-map [zoom]="zoom" [locations]="locations" [polygon]="polygon"></app-locations-map>
+    </div>
+    <div style="width: 50%">
 
       <div>
         <form *ngIf="locationForm" [formGroup]="locationForm" (ngSubmit)="onSubmit(locationForm)">
           <p>
-          <mat-form-field class="curated_name">
-            <input matInput placeholder="Curated Name:" type="text" formControlName="curated_name">
-          </mat-form-field>
+            <mat-form-field class="curated_name">
+              <input matInput placeholder="Curated Name:" type="text" formControlName="curated_name">
+            </mat-form-field>
 
-          <mat-form-field>
-            <input matInput placeholder="Curation Method:" type="text" formControlName="curation_method">
-          </mat-form-field>
+            <mat-form-field>
+              <input matInput placeholder="Curation Method:" type="text" formControlName="curation_method">
+            </mat-form-field>
           </p>
 
           <p>
-          <mat-form-field>
-            <input matInput placeholder="Precision:" type="text" formControlName="precision">
-          </mat-form-field>
+            <mat-form-field>
+              <input matInput placeholder="Precision:" type="text" formControlName="precision">
+            </mat-form-field>
 
-          <mat-form-field>
-            <input matInput placeholder="Country:" type="text" formControlName="country">
-            <small [hidden]="locationForm.controls.country.valid"> Country is required (3 characters)</small>
-          </mat-form-field>
+            <mat-form-field>
+              <input matInput placeholder="Country:" type="text" formControlName="country">
+              <small [hidden]="locationForm.controls.country.valid"> Country is required (3 characters)</small>
+            </mat-form-field>
           </p>
 
           <p>
-          <mat-form-field>
-            <input matInput placeholder="Notes:" type="textarea" formControlName="notes">
-          </mat-form-field>
+            <mat-form-field>
+              <input matInput placeholder="Notes:" type="textarea" formControlName="notes">
+            </mat-form-field>
           </p>
 
           <div formArrayName="identifiers">
-              <div *ngFor="let ident of locationForm.controls.identifiers.controls; let i=index">
-                  <div [formGroupName]="i">
-                    <input type="text" formControlName="identifier_type"/>
-                    <input type="text" formControlName="identifier_value"/>
-                    <input type="text" formControlName="study_name"/>
-                  </div>
+            <div *ngFor="let ident of locationForm.controls.identifiers.controls; let i=index">
+              <div [formGroupName]="i">
+                <input type="text" formControlName="identifier_type" />
+                <input type="text" formControlName="identifier_value" />
+                <input type="text" formControlName="study_name" />
               </div>
+            </div>
           </div>
           <p>
             <button type="submit" [disabled]="!locationForm.valid">Submit</button>
           </p>
-          
+
           <p>
             <button (click)="onSubmitFetchOSM(locationForm)">Look up using OSM</button>
           </p>
-          
+
           <p>
             <button (click)="onSubmitFetchGoogleMaps(locationForm)">Look up using Google</button>
           </p>
@@ -60,43 +60,43 @@
         <button (click)="decrementZoom()">Zoom Out</button>
       </div>
       <div>
-          <div>
-            
-            <form *ngIf="osmForm" [formGroup]="osmForm" (ngSubmit)="useOSM(osmForm)">
-              <p>
-                <label>Display Name:</label>
-                <input class="curated_name" type="text" formControlName="display_name">
-              </p>
-              <p>
-                <label>Country Code:</label>
-                <input type="text" formControlName="country_code">
-              </p>
+        <div>
 
-              <p>
-                <button type="submit">Use OSM settings</button>
-              </p>
-            </form>
-          </div>
-          <div *ngIf="location">
-              <agm-map [latitude]="location.latitude" [longitude]="location.longitude" [zoom]="zoom">
-                    <agm-marker [latitude]="location.latitude" [longitude]="location.longitude"></agm-marker>
-              </agm-map>
-            <form *ngIf="googleForm" [formGroup]="googleForm" (ngSubmit)="useGoogle(googleForm)">
-              <p>
-                <label>Display Name:</label>
-                <input class="curated_name" type="text" formControlName="display_name">
-              </p>
-              <p>
-                <label>Country Code:</label>
-                <input type="text" formControlName="country_code">
-              </p>
+          <form *ngIf="osmForm" [formGroup]="osmForm" (ngSubmit)="useOSM(osmForm)">
+            <p>
+              <label>Display Name:</label>
+              <input class="curated_name" type="text" formControlName="display_name">
+            </p>
+            <p>
+              <label>Country Code:</label>
+              <input type="text" formControlName="country_code">
+            </p>
 
-              <p>
-                <button type="submit">Use Google settings</button>
-              </p>
-            </form>
-          </div>
+            <p>
+              <button type="submit">Use OSM settings</button>
+            </p>
+          </form>
+        </div>
+        <div *ngIf="location">
+          <agm-map [latitude]="location.latitude" [longitude]="location.longitude" [zoom]="zoom">
+            <agm-marker [latitude]="location.latitude" [longitude]="location.longitude"></agm-marker>
+          </agm-map>
+          <form *ngIf="googleForm" [formGroup]="googleForm" (ngSubmit)="useGoogle(googleForm)">
+            <p>
+              <label>Display Name:</label>
+              <input class="curated_name" type="text" formControlName="display_name">
+            </p>
+            <p>
+              <label>Country Code:</label>
+              <input type="text" formControlName="country_code">
+            </p>
+
+            <p>
+              <button type="submit">Use Google settings</button>
+            </p>
+          </form>
+        </div>
       </div>
-  </div>
     </div>
+  </div>
 </div>
