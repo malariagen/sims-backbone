@@ -5,6 +5,7 @@ import { HttpModule } from '@angular/http';
 
 import { MatFormFieldModule } from '@angular/material';
 import { MatInputModule } from '@angular/material';
+import {MatTableModule} from '@angular/material';
 
 import { AppRoutingModule }     from './app-routing.module';
 
@@ -21,13 +22,19 @@ import { AppComponent } from './app.component';
 import { AllLocationsMapComponent } from './all-locations-map/all-locations-map.component';
 import { LocationsMapComponent } from './locations-map/locations-map.component';
 import { LocationEditComponent } from './location-edit/location-edit.component';
+import { EventListComponent } from './event-list/event-list.component';
+import { StudyEventListComponent } from './study-event-list/study-event-list.component';
+import { CsvDownloaderComponent } from './csv-downloader/csv-downloader.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     AllLocationsMapComponent,
     LocationsMapComponent,
-    LocationEditComponent
+    LocationEditComponent,
+    EventListComponent,
+    StudyEventListComponent,
+    CsvDownloaderComponent
   ],
   imports: [
   BrowserModule,
@@ -35,6 +42,7 @@ import { LocationEditComponent } from './location-edit/location-edit.component';
   FormsModule,
   MatFormFieldModule,
   MatInputModule,
+  MatTableModule,
   ReactiveFormsModule,
   HttpModule,
   AppRoutingModule,
