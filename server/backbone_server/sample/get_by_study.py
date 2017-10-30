@@ -47,7 +47,7 @@ class SamplesGetByStudy():
 
             stmt = '''SELECT identifier_type, identifier_value FROM identifiers WHERE sample_id = %s'''
 
-            cursor.execute(stmt, (sample_id,))
+            cursor.execute(stmt, (sample.sample_id,))
 
             sample.identifiers = []
             for (name, value) in cursor:
