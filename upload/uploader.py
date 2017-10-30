@@ -280,6 +280,7 @@ class Uploader():
                         #print("Not found")
                         pass
 
+        #print("Existing {}".format(existing_sample_id))
         if existing_sample_id:
             existing = api_instance.download_sample(existing_sample_id)
             orig = deepcopy(existing)
@@ -295,7 +296,14 @@ class Uploader():
 
     #        print("existing {} {}".format(existing, study_id))
             if study_id:
-                existing.study_id = study_id
+                if existing.study_id:
+                    if study_id != existing.study_id:
+                        print("Conflicting study_id value {} {}".format(study_id, existing))
+                        existing.study_id = study_id
+                        new_ident_value = True
+                else:
+                    existing.study_id = study_id
+                    new_ident_value = True
             else:
                 if existing.study_id:
     #                print("Adding loc ident {} {}".format(location_name, existing.study_id))
@@ -303,15 +311,37 @@ class Uploader():
                     self.add_location_identifier(proxy_location, existing.study_id, proxy_location_name)
 
             if doc:
-                existing.doc = doc
+                if existing.doc:
+                    if doc != existing.doc:
+                        print("Conflicting doc value {} {}".format(doc, existing))
+                        existing.doc = doc
+                        new_ident_value = True
+                else:
+                    existing.doc = doc
+                    new_ident_value = True
             if location:
-                existing.location_id = location.location_id
+                if existing.location:
+                    if location.location_id != existing.location_id:
+                        print("Conflicting location value {} {}".format(location, existing))
+                        existing.location_id = location.location_id
+                        new_ident_value = True
+                else:
+                    existing.location_id = location.location_id
+                    new_ident_value = True
             if proxy_location:
-                existing.proxy_location_id = proxy_location.location_id
+                if existing.proxy_location:
+                    if proxy_location.location_id != existing.proxy_location_id:
+                        print("Conflicting location value {} {}".format(proxy_location, existing))
+                        existing.proxy_location_id = proxy_location.location_id
+                        new_ident_value = True
+                else:
+                    existing.proxy_location_id = proxy_location.location_id
+                    new_ident_value = True
             if new_ident_value:
-    #            print("Updating {} to {}".format(orig, existing))
+                #print("Updating {} to {}".format(orig, existing))
                 api_instance.update_sample(existing.sample_id, existing)
         else:
+            print("Creating {}".format(samp))
             if len(idents) == 0:
                 return
 
