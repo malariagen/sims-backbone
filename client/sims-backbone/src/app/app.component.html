@@ -1,5 +1,7 @@
 <h1>{{title}}</h1>
-<nav>
-  <a routerLink="/full-map" routerLinkActive="active">Location map</a>
-</nav>
+<mat-toolbar color="primary">
+  <nav>
+    <a mat-raised-button color="primary" routerLink="/full-map" routerLinkActive="active">Location map</a>
+  </nav>
+</mat-toolbar>
 <router-outlet></router-outlet>
