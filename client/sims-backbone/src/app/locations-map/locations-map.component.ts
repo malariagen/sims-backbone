@@ -58,8 +58,10 @@ export class LocationsMapComponent {
   @Input()
   set polygon(geojson) {
     if (geojson && geojson.type == 'Polygon') {
+      if (this.polygonLayer) {
+        this.polygonLayer.clearLayers();
+      }
       this.polygonLayer = L.geoJSON().addTo(this.map);
-      this.polygonLayer.clearLayers();
       this.polygonLayer.addData(geojson);
       if (this._locations.count == 1) {
         this.map.panTo(L.latLng([this._locations.locations[0].latitude, this._locations.locations[0].longitude]));

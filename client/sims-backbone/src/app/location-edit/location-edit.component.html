@@ -37,9 +37,7 @@
           <div formArrayName="identifiers">
             <div *ngFor="let ident of locationForm.controls.identifiers.controls; let i=index">
               <div [formGroupName]="i">
-                <input type="text" formControlName="identifier_type" />
-                <input type="text" formControlName="identifier_value" />
-                <input type="text" formControlName="study_name" />
+                {{ident.get('identifier_type').value}} {{ident.get('identifier_value').value}} <a href="study/events/{{ident.get('study_name').value}}">{{ident.get('study_name').value}}</a>
               </div>
             </div>
           </div>
@@ -55,7 +53,7 @@
             <button (click)="onSubmitFetchGoogleMaps(locationForm)">Look up using Google</button>
           </p>
         </form>
-        {{zoom}}
+        {{zoom}} {{precision}}
         <button (click)="incrementZoom()">Zoom In</button>
         <button (click)="decrementZoom()">Zoom Out</button>
       </div>

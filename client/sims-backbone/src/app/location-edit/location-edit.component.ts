@@ -41,22 +41,29 @@ export class LocationEditComponent implements OnInit {
   public googleForm: FormGroup;
 
   zoom: number = 10;
+  precision: string;
 
   constructor(private route: ActivatedRoute, private locationApi: LocationApi, private metadataApi: MetadataApi, private _fb: FormBuilder, protected http: Http, private mapsAPILoader: MapsAPILoader, private ngZone: NgZone
   ) { }
 
+  getPrecisionFromZoom() {
+    let ret = 'country';
+
+    if (this.zoom > 6) {
+      ret = 'region';
+    }
+    if (this.zoom > 9) {
+      ret = 'city';
+    }
+    if (this.zoom > 15) {
+      ret = 'building';
+    }
+    return ret;
+  }
+
   setPrecisionFromZoom() {
     if (this.locationForm) {
-      this.locationForm.controls['precision'].setValue('country');
-      if (this.zoom > 6) {
-        this.locationForm.controls['precision'].setValue('region');
-      }
-      if (this.zoom > 9) {
-        this.locationForm.controls['precision'].setValue('city');
-      }
-      if (this.zoom > 15) {
-        this.locationForm.controls['precision'].setValue('building');
-      }
+      this.locationForm.controls['precision'].setValue(this.getPrecisionFromZoom());
     }
   }
 
@@ -98,7 +105,7 @@ export class LocationEditComponent implements OnInit {
         };
         this.location = location;
         this.setZoomFromPrecision();
-
+        this.precision = this.getPrecisionFromZoom();
         locs.count = 1;
         locs.locations = [location];
         this.locations = locs;
@@ -276,9 +283,11 @@ export class LocationEditComponent implements OnInit {
   public incrementZoom(): void {
     this.zoom += 1;
     this.fetchOSM(this.location);
+    this.precision = this.getPrecisionFromZoom();
   }
   public decrementZoom(): void {
     this.zoom -= 1;
     this.fetchOSM(this.location);
+    this.precision = this.getPrecisionFromZoom();
   }
 }
