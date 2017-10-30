@@ -61,11 +61,12 @@ class LocationPut(LocationEdit):
 
         stmt = '''UPDATE locations 
                     SET location = ST_SetSRID(ST_MakePoint(%s, %s), 4326),
-                    precision = %s, curated_name = %s, curation_method = %s, country = %s
+                    precision = %s, curated_name = %s, curation_method = %s, country = %s,
+                    notes = %s
                     WHERE id = %s''' 
         args = (location.latitude, location.longitude,
                 location.precision, location.curated_name, location.curation_method,
-                location.country, location_id)
+                location.country, location.notes, location_id)
         try:
             cursor.execute(stmt, args)
             rc = cursor.rowcount

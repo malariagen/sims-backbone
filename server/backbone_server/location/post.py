@@ -46,11 +46,11 @@ class LocationPost(LocationEdit):
         uuid_val = uuid.uuid4()
 
         stmt = '''INSERT INTO locations 
-                    (id, location, precision, curated_name, curation_method, country) 
-                    VALUES (%s, ST_SetSRID(ST_MakePoint(%s, %s), 4326), %s, %s, %s, %s)'''
+                    (id, location, precision, curated_name, curation_method, country, notes) 
+                    VALUES (%s, ST_SetSRID(ST_MakePoint(%s, %s), 4326), %s, %s, %s, %s, %s)'''
         args = (uuid_val, location.latitude, location.longitude,
                 location.precision, location.curated_name, location.curation_method,
-                location.country)
+                location.country, location.notes)
         try:
             cursor.execute(stmt, args)
 

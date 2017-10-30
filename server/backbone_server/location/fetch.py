@@ -14,16 +14,16 @@ class LocationFetch():
             return None
 
         stmt = '''SELECT id, ST_X(location) as latitude, ST_Y(location) as longitude,
-        precision, curated_name, curation_method, country
+        precision, curated_name, curation_method, country, notes
                        FROM locations WHERE id = %s'''
         cursor.execute( stmt, (location_id,))
 
         location = None
 
         for (location_id, latitude, longitude, precision, curated_name,
-             curation_method, country) in cursor:
+             curation_method, country, notes) in cursor:
             location = Location(location_id, latitude, longitude, precision,
-                                curated_name, curation_method, country)
+                                curated_name, curation_method, country, notes)
 
         stmt = '''SELECT DISTINCT identifier_type, identifier_value, studies.study_name 
                 FROM location_identifiers 
