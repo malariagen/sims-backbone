@@ -33,5 +33,13 @@ agm-map {
   }
 
 .curated_name {
-  width: 300px;
+  width: 400px;
+}
+
+.location-edit-form {
+  margin: 10px;
+}
+
+.zoom {
+  margin: 10px;
 }

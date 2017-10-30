@@ -40,6 +40,9 @@ export class LocationEditComponent implements OnInit {
   public osmForm: FormGroup;
   public googleForm: FormGroup;
 
+  public locationEvents: string = '/location/events';
+  public studyEvents: string = '/study/events';
+
   zoom: number = 10;
   precision: string;
 

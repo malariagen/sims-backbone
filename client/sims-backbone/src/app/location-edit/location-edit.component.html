@@ -5,8 +5,9 @@
     </div>
     <div style="width: 50%">
 
-      <div>
+      <div class="location-edit-form">
         <form *ngIf="locationForm" [formGroup]="locationForm" (ngSubmit)="onSubmit(locationForm)">
+          <a mat-button [routerLink]="[locationEvents,latitude,longitude]">Sampling Events</a>
           <p>
             <mat-form-field class="curated_name">
               <input matInput placeholder="Curated Name:" type="text" formControlName="curated_name">
@@ -37,42 +38,39 @@
           <div formArrayName="identifiers">
             <div *ngFor="let ident of locationForm.controls.identifiers.controls; let i=index">
               <div [formGroupName]="i">
-                {{ident.get('identifier_type').value}} {{ident.get('identifier_value').value}} <a href="study/events/{{ident.get('study_name').value}}">{{ident.get('study_name').value}}</a>
+                {{ident.get('identifier_type').value}} {{ident.get('identifier_value').value}}
+                <a mat-button [routerLink]="[studyEvents,ident.get('study_name').value]">{{ident.get('study_name').value}}</a>
               </div>
             </div>
           </div>
           <p>
-            <button type="submit" [disabled]="!locationForm.valid">Submit</button>
-          </p>
-
-          <p>
-            <button (click)="onSubmitFetchOSM(locationForm)">Look up using OSM</button>
-          </p>
-
-          <p>
-            <button (click)="onSubmitFetchGoogleMaps(locationForm)">Look up using Google</button>
+            <button mat-raised-button type="submit" [disabled]="!locationForm.valid">Submit</button>
           </p>
         </form>
-        {{zoom}} {{precision}}
-        <button (click)="incrementZoom()">Zoom In</button>
-        <button (click)="decrementZoom()">Zoom Out</button>
+        <div>
+          <button mat-raised-button (click)="onSubmitFetchOSM(locationForm)">Look up GPS using OSM</button>
+          <button mat-raised-button (click)="onSubmitFetchGoogleMaps(locationForm)">Look GPS up using Google</button>
+        </div>
+
+        <div class="zoom">
+          {{zoom}} {{precision}}
+          <button mat-raised-button (click)="incrementZoom()">Zoom In</button>
+          <button mat-raised-button (click)="decrementZoom()">Zoom Out</button>
+        </div>
       </div>
       <div>
         <div>
 
           <form *ngIf="osmForm" [formGroup]="osmForm" (ngSubmit)="useOSM(osmForm)">
-            <p>
-              <label>Display Name:</label>
-              <input class="curated_name" type="text" formControlName="display_name">
-            </p>
-            <p>
-              <label>Country Code:</label>
-              <input type="text" formControlName="country_code">
-            </p>
+            <mat-form-field class="curated_name">
+              <input matInput placeholder="Display Name:" type="text" formControlName="display_name">
+            </mat-form-field>
+            <mat-form-field>
+              <input matInput placeholder="Country Code:" type="text" formControlName="country_code">
+            </mat-form-field>
 
-            <p>
-              <button type="submit">Use OSM settings</button>
-            </p>
+            <button mat-raised-button type="submit">Use OSM settings</button>
+
           </form>
         </div>
         <div *ngIf="location">
@@ -80,18 +78,15 @@
             <agm-marker [latitude]="location.latitude" [longitude]="location.longitude"></agm-marker>
           </agm-map>
           <form *ngIf="googleForm" [formGroup]="googleForm" (ngSubmit)="useGoogle(googleForm)">
-            <p>
-              <label>Display Name:</label>
-              <input class="curated_name" type="text" formControlName="display_name">
-            </p>
-            <p>
-              <label>Country Code:</label>
-              <input type="text" formControlName="country_code">
-            </p>
+            <mat-form-field class="curated_name">
+              <input matInput placeholder="Display Name:" type="text" formControlName="display_name">
+            </mat-form-field>
+            <mat-form-field>
+              <input matInput placeholder="Country Code:" type="text" formControlName="country_code">
+            </mat-form-field>
 
-            <p>
-              <button type="submit">Use Google settings</button>
-            </p>
+            <button mat-raised-button type="submit">Use Google settings</button>
+
           </form>
         </div>
       </div>

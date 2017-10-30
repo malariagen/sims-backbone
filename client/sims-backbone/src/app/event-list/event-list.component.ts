@@ -39,6 +39,9 @@ export class EventListComponent implements OnInit {
 
   @Input()
   set events(events: Observable<Samples>) {
+    if (!events) {
+      return;
+    }
     this._events = events;
     let eventDatabase = new EventDatabase();
     events.subscribe(samples => {
