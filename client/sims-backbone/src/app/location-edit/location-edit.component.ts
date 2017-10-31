@@ -248,28 +248,34 @@ export class LocationEditComponent implements OnInit {
             }
           );
           let country_code = false;
+          let display_name = '';
           results.forEach(result => {
             result.address_components.forEach(addr_component => {
               addr_component.types.forEach(type => {
                 if (type == 'administrative_area_level_1') {
                   console.log(result.formatted_address);
-                }
-                if (type == 'administrative_area_level_2') {
-                }
-                if (type == 'locality') {
-                }
-                if (type == 'sublocality') {
-                  this.googleForm.controls['display_name'].setValue(result.formatted_address);
-                }
-                if (type == 'country' && !country_code) {
-                  country_code = true;
-                  this.googleForm.controls['country_code'].setValue(addr_component.short_name);
-                  console.log(addr_component.long_name);
-                }
+                  display_name = result.formatted_address;
+                } else
+                  if (type == 'administrative_area_level_2' && display_name == '') {
+                    display_name = result.formatted_address;
+                  } else
+                    if (type == 'locality' && display_name == '') {
+                      display_name = result.formatted_address;
+                    } else
+                      if (type == 'sublocality' && display_name == '') {
+                        display_name = result.formatted_address;
+                      } else
+                        if (type == 'country' && !country_code) {
+                          country_code = true;
+                          this.googleForm.controls['country_code'].setValue(addr_component.short_name);
+                          console.log(addr_component.long_name);
+                        }
 
               });
             });
-          });
+            });
+            this.googleForm.controls['display_name'].setValue(display_name);
+
         });
       });
     });
