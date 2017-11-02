@@ -60,7 +60,7 @@ class SamplesGetByStudy():
 
         if samples.count == 0:
             cursor.close()
-            raise MissingKeyException("No samples for {}".format(location))
+            raise MissingKeyException("No samples for {}".format(study_name))
 
         cursor.close()
 
