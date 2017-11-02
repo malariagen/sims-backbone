@@ -1,0 +1,4 @@
+dev/backbone_server/connect.py
+node_modules/
+venv/
+.serverless/
