@@ -2,8 +2,8 @@
 test -f swagger-codegen-cli.jar || wget https://oss.sonatype.org/content/repositories/snapshots/io/swagger/swagger-codegen-cli/3.0.0-SNAPSHOT/swagger-codegen-cli-3.0.0-20171009.075709-6.jar -O swagger-codegen-cli.jar
 rm -rf python-flask-server
 java -jar swagger-codegen-cli.jar generate -i swagger.yaml -l python-flask -o python-flask-server
-rm -rf server/bb-server
-cp -pr python-flask-server server/bb-server
+rm -rf server/bb_server
+cp -pr python-flask-server server/bb_server
 rm -rf typescript-angular2-client
 java -jar swagger-codegen-cli.jar generate -i swagger.yaml -l typescript-angular2 -o typescript-angular2-client -c client.config.json
 rm -rf python_client
