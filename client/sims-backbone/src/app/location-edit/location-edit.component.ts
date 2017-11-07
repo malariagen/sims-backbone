@@ -2,22 +2,20 @@ import { Component, NgZone, OnInit } from '@angular/core';
 import { ActivatedRoute, Params } from '@angular/router';
 import { FormGroup, FormArray, FormControl, FormBuilder, Validators } from '@angular/forms';
 
-import { Http, Headers, URLSearchParams } from '@angular/http';
-import { RequestMethod, RequestOptions, RequestOptionsArgs } from '@angular/http';
-import { Response, ResponseContentType } from '@angular/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 
-import { Location } from '../typescript-angular2-client/model/Location';
-import { Country } from '../typescript-angular2-client/model/Country';
-import { Locations } from '../typescript-angular2-client/model/Locations';
-import { LocationApi } from '../typescript-angular2-client/api/LocationApi';
-import { MetadataApi } from '../typescript-angular2-client/api/MetadataApi';
+import { Location } from '../typescript-angular-client/model/location';
+import { Country } from '../typescript-angular-client/model/country';
+import { Locations } from '../typescript-angular-client/model/locations';
+import { LocationService } from '../typescript-angular-client/api/location.service';
+import { MetadataService } from '../typescript-angular-client/api/metadata.service';
 
 import { } from 'googlemaps';
 import { MapsAPILoader } from '@agm/core';
 
 @Component({
   selector: 'app-location-edit',
-  providers: [LocationApi, MetadataApi],
+  providers: [LocationService, MetadataService, HttpClient],
   templateUrl: './location-edit.component.html',
   styleUrls: ['./location-edit.component.css']
 })
@@ -44,9 +42,9 @@ export class LocationEditComponent implements OnInit {
   public studyEvents: string = '/study/events';
 
   zoom: number = 10;
-  precision: string;
+  accuracy: string;
 
-  constructor(private route: ActivatedRoute, private locationApi: LocationApi, private metadataApi: MetadataApi, private _fb: FormBuilder, protected http: Http, private mapsAPILoader: MapsAPILoader, private ngZone: NgZone
+  constructor(protected httpClient: HttpClient, private route: ActivatedRoute, private locationService: LocationService, private metadataService: MetadataService, private _fb: FormBuilder, private mapsAPILoader: MapsAPILoader, private ngZone: NgZone
   ) { }
 
   getPrecisionFromZoom() {
@@ -66,31 +64,31 @@ export class LocationEditComponent implements OnInit {
 
   setPrecisionFromZoom() {
     if (this.locationForm) {
-      this.locationForm.controls['precision'].setValue(this.getPrecisionFromZoom());
+      this.locationForm.controls['accuracy'].setValue(this.getPrecisionFromZoom());
     }
   }
 
 
   setZoomFromPrecision() {
     this.zoom = 4;
-    if (this.location && this.location.precision) {
-      if (this.location.precision == 'country') {
+    if (this.location && this.location.accuracy) {
+      if (this.location.accuracy == 'country') {
         this.zoom = 4;
       }
-      if (this.location.precision == 'region') {
+      if (this.location.accuracy == 'region') {
         this.zoom = 7;
       }
-      if (this.location.precision == 'city') {
+      if (this.location.accuracy == 'city') {
         this.zoom = 11;
       }
-      if (this.location.precision == 'building') {
+      if (this.location.accuracy == 'building') {
         this.zoom = 16;
       }
     }
   }
 
   setCountry(country: string) {
-    this.metadataApi.getCountryMetadata(country.toUpperCase()).subscribe((countryData) => {
+    this.metadataService.getCountryMetadata(country.toUpperCase()).subscribe((countryData) => {
       this.locationForm.controls['country'].setValue(countryData.alpha3);
     });
   }
@@ -99,7 +97,7 @@ export class LocationEditComponent implements OnInit {
     this.latitude = this.route.snapshot.params['latitude'];
     this.longitude = this.route.snapshot.params['longitude'];
 
-    this.locationApi.downloadGPSLocation(this.latitude, this.longitude).subscribe(
+    this.locationService.downloadGPSLocation(this.latitude, this.longitude).subscribe(
       (location) => {
         console.log("Downloaded location via GPS");
         let locs = {
@@ -108,7 +106,7 @@ export class LocationEditComponent implements OnInit {
         };
         this.location = location;
         this.setZoomFromPrecision();
-        this.precision = this.getPrecisionFromZoom();
+        this.accuracy = this.getPrecisionFromZoom();
         locs.count = 1;
         locs.locations = [location];
         this.locations = locs;
@@ -122,7 +120,7 @@ export class LocationEditComponent implements OnInit {
             curation_method: [this.location.curation_method, [Validators.required]],
             notes: [this.location.notes, []],
             country: [this.location.country, [Validators.required, Validators.minLength(3)]],
-            precision: [this.location.precision, [Validators.required]],
+            accuracy: [this.location.accuracy, [Validators.required]],
             identifiers: this._fb.array([]),
           }
         );
@@ -155,7 +153,7 @@ export class LocationEditComponent implements OnInit {
     if (!value.notes) {
       value.notes = '';
     }
-    this.locationApi.updateLocation(value.location_id, value).subscribe((result) => {
+    this.locationService.updateLocation(value.location_id, value).subscribe((result) => {
       console.log(result);
     },
       (err) => {
@@ -195,27 +193,15 @@ export class LocationEditComponent implements OnInit {
 
   public getOSM() {
 
-    let headers = new Headers();
+    let headers = new HttpHeaders();
+
     headers.set('Content-Type', 'application/json');
     headers.set('User-Agent', 'wrighting test app');
-    let requestOptions: RequestOptionsArgs = new RequestOptions({
-      method: RequestMethod.Post,
-      headers: headers,
-      body: null
-
-    });
 
 
     let path = 'http://nominatim.openstreetmap.org/reverse?format=json&polygon_geojson=1&lat=' + this.location.latitude + '&lon=' + this.location.longitude + '&zoom=' + this.zoom;
-    return this.http.request(path, requestOptions).map((response: Response) => {
-      if (response.status === 204) {
-        return undefined;
-      } else if (response.status === 503) {
-        console.log("Request to OSM failed");
-        return undefined;
-      } else {
-        return response.json() || {};
-      }
+    return this.httpClient.post<any>(path, null, {
+      headers: headers
     });
 
   }
@@ -252,8 +238,8 @@ export class LocationEditComponent implements OnInit {
           results.forEach(result => {
             result.address_components.forEach(addr_component => {
               addr_component.types.forEach(type => {
-                if (type == 'administrative_area_level_1') {
-                  console.log(result.formatted_address);
+                console.log(display_name + ":" + type + ":" + result.formatted_address);
+                if (type == 'administrative_area_level_1' && display_name == '') {
                   display_name = result.formatted_address;
                 } else
                   if (type == 'administrative_area_level_2' && display_name == '') {
@@ -273,8 +259,8 @@ export class LocationEditComponent implements OnInit {
 
               });
             });
-            });
-            this.googleForm.controls['display_name'].setValue(display_name);
+          });
+          this.googleForm.controls['display_name'].setValue(display_name);
 
         });
       });
@@ -292,11 +278,11 @@ export class LocationEditComponent implements OnInit {
   public incrementZoom(): void {
     this.zoom += 1;
     this.fetchOSM(this.location);
-    this.precision = this.getPrecisionFromZoom();
+    this.accuracy = this.getPrecisionFromZoom();
   }
   public decrementZoom(): void {
     this.zoom -= 1;
     this.fetchOSM(this.location);
-    this.precision = this.getPrecisionFromZoom();
+    this.accuracy = this.getPrecisionFromZoom();
   }
 }

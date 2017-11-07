@@ -3,28 +3,28 @@ import { ActivatedRoute, Params } from '@angular/router';
 
 import { Observable } from 'rxjs/Observable';
 
-import { Sample } from '../typescript-angular2-client/model/Sample';
-import { Samples } from '../typescript-angular2-client/model/Samples';
-import { SampleApi } from '../typescript-angular2-client/api/SampleApi';
+import { SamplingEvent } from '../typescript-angular-client/model/samplingEvent';
+import { SamplingEvents } from '../typescript-angular-client/model/samplingEvents';
+import { SamplingEventService } from '../typescript-angular-client/api/samplingEvent.service';
 
 @Component({
   selector: 'app-study-event-list',
-  providers: [SampleApi],
+  providers: [SamplingEventService],
   templateUrl: './study-event-list.component.html',
   styleUrls: ['./study-event-list.component.css']
 })
 export class StudyEventListComponent implements OnInit {
 
-  events: Observable<Samples>;
+  events: Observable<SamplingEvents>;
 
   studyName: string;
 
-  constructor(private route: ActivatedRoute, private sampleApi: SampleApi) { }
+  constructor(private route: ActivatedRoute, private sampleService: SamplingEventService) { }
 
   ngOnInit() {
     this.studyName = this.route.snapshot.params['studyName'];
-    
-    this.events = this.sampleApi.downloadSamplesByStudy(this.studyName);
+
+    this.events = this.sampleService.downloadSamplingEventsByStudy(this.studyName);
   }
 
 }

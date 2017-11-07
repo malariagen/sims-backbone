@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
 
-import { Locations } from '../typescript-angular2-client/model/Locations';
-import { Location } from '../typescript-angular2-client/model/Location';
+import { Locations } from '../typescript-angular-client/model/locations';
+import { Location } from '../typescript-angular-client/model/location';
 
 import * as L from 'leaflet';
 import 'leaflet.markercluster';

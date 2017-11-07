@@ -20,7 +20,7 @@
 
           <p>
             <mat-form-field>
-              <input matInput placeholder="Precision:" type="text" formControlName="precision">
+              <input matInput placeholder="Precision:" type="text" formControlName="accuracy">
             </mat-form-field>
 
             <mat-form-field>
@@ -53,7 +53,7 @@
         </div>
 
         <div class="zoom">
-          {{zoom}} {{precision}}
+          {{zoom}} {{accuracy}}
           <button mat-raised-button (click)="incrementZoom()">Zoom In</button>
           <button mat-raised-button (click)="decrementZoom()">Zoom Out</button>
         </div>

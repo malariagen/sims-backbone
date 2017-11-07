@@ -4,8 +4,8 @@ import { DataSource } from '@angular/cdk/collections';
 import { Observable } from 'rxjs/Observable';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 
-import { Samples } from '../typescript-angular2-client/model/Samples';
-import { Sample } from '../typescript-angular2-client/model/Sample';
+import { SamplingEvents } from '../typescript-angular-client/model/samplingEvents';
+import { SamplingEvent } from '../typescript-angular-client/model/samplingEvent';
 
 import { Angular2Csv } from 'angular2-csv/Angular2-csv';
 
@@ -19,7 +19,7 @@ export class EventListComponent implements OnInit {
 
   displayedColumns = ['oxford_id', 'partner_id', 'roma_id', 'doc', 'partner_location_name', 'location'];
 
-  _events: Observable<Samples>;
+  _events: Observable<SamplingEvents>;
   _studyName: string;
   dataSource: EventDataSource | null;
   count: number;
@@ -38,7 +38,7 @@ export class EventListComponent implements OnInit {
   }
 
   @Input()
-  set events(events: Observable<Samples>) {
+  set events(events: Observable<SamplingEvents>) {
     if (!events) {
       return;
     }
@@ -63,7 +63,7 @@ export class EventListComponent implements OnInit {
       //https://stackoverflow.com/questions/42067346/angular2-onpush-change-detection-and-ngfor     
       this.changeDetector.markForCheck();
       */
-      samples.samples.forEach(sample => {
+      samples.samplingEvents.forEach(sample => {
         let event = {};
         sample.identifiers.forEach(ident => {
           event[ident.identifier_type] = ident.identifier_value;

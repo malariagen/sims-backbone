@@ -1,16 +1,17 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { HttpModule } from '@angular/http';
+
+import { HttpClientModule } from '@angular/common/http';
 
 import { MatFormFieldModule } from '@angular/material';
 import { MatInputModule } from '@angular/material';
 import { MatTableModule } from '@angular/material';
 import { MatButtonModule } from '@angular/material';
 
-import { AppRoutingModule } from './app-routing.module';
-
 import { FlexLayoutModule } from '@angular/flex-layout';
+
+import { AppRoutingModule } from './app-routing.module';
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import 'hammerjs';
@@ -28,6 +29,7 @@ import { StudyEventListComponent } from './study-event-list/study-event-list.com
 import { CsvDownloaderComponent } from './csv-downloader/csv-downloader.component';
 import { LocationEventListComponent } from './location-event-list/location-event-list.component';
 
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -41,21 +43,21 @@ import { LocationEventListComponent } from './location-event-list/location-event
   ],
   imports: [
     BrowserModule,
-    FlexLayoutModule,
     FormsModule,
     MatFormFieldModule,
     MatInputModule,
     MatTableModule,
     MatButtonModule,
+    FlexLayoutModule,
     ReactiveFormsModule,
-    HttpModule,
+    HttpClientModule,
     AppRoutingModule,
     BrowserAnimationsModule,
     LeafletModule,
     AgmCoreModule.forRoot({
       apiKey: 'AIzaSyAXqsQD-9Gthal2ZU6cHIzNoggzMX3hi4o',
       libraries: ["places"]
-    })
+    }),
   ],
   providers: [],
   bootstrap: [AppComponent]
