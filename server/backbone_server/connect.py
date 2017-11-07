@@ -1,4 +1,5 @@
 import logging
+import os
 
 def get_connection():
     _postgres = True
@@ -11,8 +12,10 @@ def get_connection():
         from psycopg2.extras import LoggingConnection
 
         config = {
-            'user': 'iwright',
-            'database': 'backbone_service'
+            'user': os.getenv('DB_USER',os.getenv('USER')),
+            'database': os.getenv('DATABASE','backbone_service'),
+            'password': os.getenv('DB_PASSWORD',None),
+            'host': os.getenv('DB_HOST','localhost'),
         }
 
         psycopg2.extensions.register_type(register_uuid())
