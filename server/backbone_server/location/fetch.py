@@ -20,9 +20,9 @@ class LocationFetch():
 
         location = None
 
-        for (location_id, latitude, longitude, precision, curated_name,
+        for (location_id, latitude, longitude, accuracy, curated_name,
              curation_method, country, notes) in cursor:
-            location = Location(location_id, latitude, longitude, precision,
+            location = Location(location_id, latitude, longitude, accuracy,
                                 curated_name, curation_method, country, notes)
 
         stmt = '''SELECT DISTINCT identifier_type, identifier_value, studies.study_name 

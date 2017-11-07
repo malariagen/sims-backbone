@@ -34,9 +34,9 @@ class LocationPost(LocationEdit):
 
         existing_location = None
 
-        for (location_id, latitude, longitude, precision, curated_name,
+        for (location_id, latitude, longitude, accuracy, curated_name,
              curation_method, country) in cursor:
-            existing_location = Location(location_id, latitude, longitude, precision,
+            existing_location = Location(location_id, latitude, longitude, accuracy,
                                 curated_name, curation_method, country)
 
         if existing_location:
@@ -49,7 +49,7 @@ class LocationPost(LocationEdit):
                     (id, location, precision, curated_name, curation_method, country, notes) 
                     VALUES (%s, ST_SetSRID(ST_MakePoint(%s, %s), 4326), %s, %s, %s, %s, %s)'''
         args = (uuid_val, location.latitude, location.longitude,
-                location.precision, location.curated_name, location.curation_method,
+                location.accuracy, location.curated_name, location.curation_method,
                 location.country, location.notes)
         try:
             cursor.execute(stmt, args)

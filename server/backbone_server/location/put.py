@@ -34,9 +34,9 @@ class LocationPut(LocationEdit):
 
         existing_location = None
 
-        for (location_id, latitude, longitude, precision, curated_name,
+        for (location_id, latitude, longitude, accuracy, curated_name,
              curation_method, country) in cursor:
-            existing_location = Location(location_id, latitude, longitude, precision,
+            existing_location = Location(location_id, latitude, longitude, accuracy,
                                 curated_name, curation_method, country)
 
         if not existing_location:
@@ -50,9 +50,9 @@ class LocationPut(LocationEdit):
 
         existing_location = None
 
-        for (location_id, latitude, longitude, precision, curated_name,
+        for (location_id, latitude, longitude, accuracy, curated_name,
              curation_method, country) in cursor:
-            existing_location = Location(location_id, latitude, longitude, precision,
+            existing_location = Location(location_id, latitude, longitude, accuracy,
                                 curated_name, curation_method, country)
 
         if existing_location and existing_location.location_id != location_id:
@@ -65,7 +65,7 @@ class LocationPut(LocationEdit):
                     notes = %s
                     WHERE id = %s''' 
         args = (location.latitude, location.longitude,
-                location.precision, location.curated_name, location.curation_method,
+                location.accuracy, location.curated_name, location.curation_method,
                 location.country, location.notes, location_id)
         try:
             cursor.execute(stmt, args)
