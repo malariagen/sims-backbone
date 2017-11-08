@@ -23,6 +23,17 @@ tags:
     description: Reports
 schemes:
   - http
+securityDefinitions:
+    OauthSecurity:
+      type: oauth2
+      flow: accessCode
+      authorizationUrl: "https://sso-dev.cggh.org/sso/oauth2.0/authorize"
+      tokenUrl: "https://sso-dev.cggh.org/sso/oauth2.0/accessToken"
+      tokenUrl: "https://sso-dev.cggh.org/sso/oauth2.0/profile"
+    bearerAuth:            # arbitrary name for the security scheme
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
 paths:
   '/location':
     post:
@@ -186,6 +197,9 @@ paths:
       operationId: downloadLocations
       produces:
         - application/json
+      security:
+          - OauthSecurity: []
+          - bearerAuth: []
       parameters:
         - name: studyName
           in: query
