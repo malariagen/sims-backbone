@@ -17,6 +17,11 @@ export class AppComponent {
 
         this.oauthService.configure(casAuthConfig);
         this.oauthService.tokenValidationHandler = new JwksValidationHandler();
+
+        this.oauthService.silentRefreshRedirectUri = window.location.origin + "/assets/silent-refresh.html";
+        this.oauthService.setupAutomaticSilentRefresh();
+
+        this.oauthService.tryLogin();
     }
 
     public login() {

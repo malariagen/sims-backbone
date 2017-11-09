@@ -18,6 +18,11 @@ export class AuthService {
   }
 
   public getAccessToken(): string {
+      this.oauthService.silentRefresh().then(info => console.debug('refresh ok', info))
+                .catch(err => {
+                console.error('refresh error', err);
+                this.accessToken = null;
+                });
       this.accessToken = this.oauthService.getAccessToken();
       if (! this.accessToken) {
         this.oauthService.initImplicitFlow();
