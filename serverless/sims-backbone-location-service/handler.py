@@ -94,12 +94,15 @@ def download_location(event, context):
 
 def download_locations(event, context):
 
+    print((event['requestContext']['authorizer']['key']))
+    print((event['requestContext']['authorizer']['principalId']))
+
     study_name = None
     start =  None
     count =  None
     orderby =  'location'
 
-    if 'queryStringParameters' in event:
+    if 'queryStringParameters' in event and event["queryStringParameters"]:
         if 'study_name' in event["queryStringParameters"]:
             study_name = event["queryStringParameters"]["study_name"]
         if 'start' in event["queryStringParameters"]:
@@ -120,10 +123,12 @@ def download_locations(event, context):
         logging.getLogger(__name__).error("download_location: {}".format(repr(dme)))
         retcode = 404
 
-
     response = {
         "statusCode": retcode,
-        "body": str(loc)
+        "headers": {
+            "Access-Control-Allow-Origin" : "*"
+        },
+        "body": json.dumps(loc.to_dict())
     }
 
     return response
