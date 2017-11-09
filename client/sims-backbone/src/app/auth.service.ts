@@ -8,7 +8,8 @@ export class AuthService {
 
   accessToken: string;
 
-  constructor(private oauthService: OAuthService) { }
+  constructor(private oauthService: OAuthService) { 
+  }
 
   public getConfiguration() {
     return new Configuration({
@@ -22,6 +23,7 @@ export class AuthService {
                 .catch(err => {
                 console.error('refresh error', err);
                 this.accessToken = null;
+                this.oauthService.logOut();
                 });
       this.accessToken = this.oauthService.getAccessToken();
       if (! this.accessToken) {
