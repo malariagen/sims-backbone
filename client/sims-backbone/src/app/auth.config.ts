@@ -1,5 +1,5 @@
 import { AuthConfig } from 'angular-oauth2-oidc';
-import { environment } from './environment';
+import { environment } from '../environments/environment';
 
 export const casAuthConfig: AuthConfig = {
   'clientId': environment.clientId,
