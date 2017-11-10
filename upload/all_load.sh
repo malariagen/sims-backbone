@@ -5,7 +5,7 @@
 ./run.sh ./denormalized_manage_sites.txt denorm_manage_sites.json
 ./run.sh pv_3_broad_metadata.txt pv_3_broad_metadata.json
 ./run.sh genre.dump_samples.tsv roma.json
-./run.sh spotmalaria.dump_samples.tsv roma.json
+./run.sh spotmalaria.dump_samples.tsv spotmalaria.dump_samples.json
 ./run.sh vivax.dump_samples.tsv roma.json
 ./run.sh vobs.dump_samples.tsv roma.json
 ./run.sh ag1000g.samples.meta.txt ag1000g.json
