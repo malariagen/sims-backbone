@@ -28,7 +28,14 @@ export class AllLocationsMapComponent implements OnInit {
         this.locations = locations;
         console.log(this.locations);
       },
-      (err) => console.error(err),
+      (err) => {
+        
+        if (err.status == 401) {
+          //Unauth - will be dealt with via auth.service.ts
+        } else {
+          console.error(err);
+        }
+      },
       () => { console.log("Downloaded locations") }
     )
   }
