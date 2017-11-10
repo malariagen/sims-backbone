@@ -14,8 +14,8 @@
             "regex": "(\\d{4}$)"
         },
         "doc": {
-            "column": 3,
-            "type": "string",
+            "column": 6,
+            "type": "datetime",
             "date_format": "%Y-%m-%d"
         },
         "location_name": {

@@ -32,7 +32,7 @@
         },
         "doc": {
             "column": 9,
-            "type": "string",
+            "type": "datetime",
             "date_format": "%Y-%m-%d",
             "comment": "inconsistent date format"
         }
