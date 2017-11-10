@@ -136,7 +136,7 @@ def download_locations(studyName=None, start=None, count=None, orderby=None):
     :param orderby: how to order the result set
     :type orderby: str
 
-    :rtype: Entities
+    :rtype: Locations
     """
     get = LocationsGet(get_connection())
 
