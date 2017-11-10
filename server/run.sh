@@ -1,3 +1,4 @@
+#TOKENINFO_URL=
 VIRTUAL_ENV_HOME=.
 if [ "$1" = "build" ]
 then
