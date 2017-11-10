@@ -4,5 +4,13 @@
 // The list of which env maps to which file can be found in `.angular-cli.json`.
 
 export const environment = {
-  production: false
+  production: false,
+  clientId: 'asdfjasdljfasdkjf',
+  redirectUri: 'http://localhost/full-map',
+  postLogoutRedirectUri: '',
+  loginUrl: 'https://sso-dev.cggh.org/sso/oauth2.0/authorize',
+  scope: 'editor',
+  tokenEndpoint: 'https://sso-dev.cggh.org/sso/oauth2.0/accessToken',
+  showDebugInformation: true,
+  dummyClientSecret: '1912308409123890'
 };
