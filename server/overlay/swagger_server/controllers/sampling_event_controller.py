@@ -21,7 +21,7 @@ from backbone_server.connect  import get_connection
 from backbone_server.errors.duplicate_key_exception import DuplicateKeyException
 from backbone_server.errors.missing_key_exception import MissingKeyException
 
-def create_sampling_event(samplingEvent):
+def create_sampling_event(user, samplingEvent):
     """
     create_sampling_event
     Create a samplingEvent
@@ -47,7 +47,7 @@ def create_sampling_event(samplingEvent):
     return samp, retcode
 
 
-def delete_sampling_event(samplingEventId):
+def delete_sampling_event(user, samplingEventId):
     """
     deletes an samplingEvent
     
@@ -70,7 +70,7 @@ def delete_sampling_event(samplingEventId):
     return None, retcode
 
 
-def download_sampling_event(samplingEventId):
+def download_sampling_event(user, samplingEventId):
     """
     fetches an samplingEvent
     
@@ -93,7 +93,7 @@ def download_sampling_event(samplingEventId):
     return samp, retcode
 
 
-def download_sampling_event_by_identifier(propName, propValue):
+def download_sampling_event_by_identifier(user, propName, propValue):
     """
     fetches a samplingEvent by property value
     
@@ -117,7 +117,7 @@ def download_sampling_event_by_identifier(propName, propValue):
 
     return samp, retcode
 
-def download_sampling_events_by_location(locationId):
+def download_sampling_events_by_location(user, locationId):
     """
     fetches samplingEvents for a location
     
@@ -139,7 +139,7 @@ def download_sampling_events_by_location(locationId):
 
     return samp, retcode
 
-def download_sampling_events_by_study(studyName):
+def download_sampling_events_by_study(user, studyName):
     """
     fetches samplingEvents for a study
     
@@ -161,7 +161,7 @@ def download_sampling_events_by_study(studyName):
 
     return samp, retcode
 
-def update_sampling_event(samplingEventId, samplingEvent):
+def update_sampling_event(user, samplingEventId, samplingEvent):
     """
     updates an samplingEvent
     
