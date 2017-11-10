@@ -1,0 +1,17 @@
+{
+    "@class": "org.apereo.cas.support.oauth.services.OAuthRegisteredService",
+    "clientId": "asdfjasdljfasdkjf",
+    "clientSecret": "1912308409123890",
+    "bypassApprovalPrompt": true,
+    "serviceId": "https?://(w5h1d89orb\\.execute-api\\.eu-west-1\\.amazonaws\\.com/dev/sims-backbone-location-service/.*|129\\.67\\.46\\.199/.*|localhost/.*|sso-dev.cggh.org/sso/oauth2.0/callbackAuthorize.*)",
+    "name": "SIMS Backbone",
+    "id": 100000,
+    "attributeReleasePolicy": {
+        "@class": "org.apereo.cas.services.ReturnMappedAttributeReleasePolicy",
+        "allowedAttributes": {
+                    "@class": "java.util.TreeMap",
+                    "uid": "groovy { return attributes['malariagenUID']  }",
+                    "scope": "groovy {  def arr = attributes['memberOf']; def editor = arr.findAll{ 'cn=websitePeople,ou=malariagen,ou=groups,dc=malariagen,dc=net'.contains(it)}; if(editor) { return 'editor';} }"
+        }
+    }
+}
