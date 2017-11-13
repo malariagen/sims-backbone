@@ -2,3 +2,5 @@
 *.csv
 *.tsv
 ?
+config_dev.json
+upload-env/

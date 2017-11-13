@@ -1,3 +1,4 @@
+from __future__ import print_function
 import json
 import csv
 import re
@@ -13,14 +14,32 @@ from decimal import *
 import urllib.parse
 from copy import deepcopy
 
+from pprint import pprint
+
+import os
+import requests
+
 class Uploader():
 
     _location_cache = {}
     _sample_cache = {}
 
-    def __init__(self):
+    _auth_token = None
+
+    def __init__(self, config_file):
         super().__init__()
         self._logger = logging.getLogger(__name__)
+        # Configure OAuth2 access token for authorization: OauthSecurity
+        self._auth_token = self.get_access_token(config_file)
+
+    def get_access_token(self, config_file):
+
+        with open(config_file) as json_file:
+            args = json.load(json_file)
+            r = requests.get(os.getenv('TOKEN_URL'), args, headers = { 'service': 'http://localhost/full-map' })
+            at = r.text.split('=')
+            token = at[1].split('&')[0]
+            return(token)
 
     def load_data_file(self, data_def, filename):
 
@@ -127,7 +146,11 @@ class Uploader():
                 looked_up.identifiers = []
             #print("values: {} {}".format(study_id, partner_name))
             if study_id and partner_name:
-                api_instance = swagger_client.LocationApi()
+                # Configure OAuth2 access token for authorization: OauthSecurity
+                configuration = swagger_client.Configuration()
+                configuration.access_token = self._auth_token
+
+                api_instance = swagger_client.LocationApi(swagger_client.ApiClient(configuration))
 #                print("adding identifier {}".format(looked_up.identifiers))
                 new_ident = swagger_client.Identifier('partner_name', partner_name, study_id)
                 #print("adding identifier2 {}".format(new_ident))
@@ -158,7 +181,11 @@ class Uploader():
             print("No location name: {}".format(values))
             return None, None
 
-        api_instance = swagger_client.LocationApi()
+        # Configure OAuth2 access token for authorization: OauthSecurity
+        configuration = swagger_client.Configuration()
+        configuration.access_token = self._auth_token
+
+        api_instance = swagger_client.LocationApi(swagger_client.ApiClient(configuration))
         curated_name = None
         curation_method = None
         latitude = None
@@ -215,7 +242,13 @@ class Uploader():
         return partner_name, ret
 
     def process_sample(self, values, location_name, location, proxy_location_name, proxy_location):
-        api_instance = swagger_client.SampleApi()
+
+        # Configure OAuth2 access token for authorization: OauthSecurity
+        configuration = swagger_client.Configuration()
+        configuration.access_token = self._auth_token
+
+        # create an instance of the API class
+        api_instance = swagger_client.SamplingEventApi(swagger_client.ApiClient(configuration))
 
         doc = None
         study_id = None
@@ -233,7 +266,7 @@ class Uploader():
         if proxy_location:
             plid = proxy_location.location_id
 
-        samp = swagger_client.Sample(None, study_id = study_id, doc = doc, location_id =
+        samp = swagger_client.SamplingEvent(None, study_id = study_id, doc = doc, location_id =
                                      lid, proxy_location_id = plid)
         idents = []
         if 'sample_roma_id' in values:
@@ -341,13 +374,14 @@ class Uploader():
                 #print("Updating {} to {}".format(orig, existing))
                 api_instance.update_sample(existing.sample_id, existing)
         else:
-            print("Creating {}".format(samp))
+            #print("Creating {}".format(samp))
             if len(idents) == 0:
                 return
 
             try:
-                created = api_instance.create_sample(samp)
-            except:
+                created = api_instance.create_sampling_event(samp)
+            except ApiException as err:
+                self._logger.debug("Error adding sample {} {}".format(samp, err))
                 self._logger.error("Error inserting {}".format(samp))
                 sys.exit(1)
 
@@ -355,7 +389,7 @@ class Uploader():
                 self._sample_cache[values['unique_id']] = created.sample_id
 
 if __name__ == '__main__':
-    sd = Uploader()
+    sd = Uploader(sys.argv[3])
     with open(sys.argv[2]) as json_file:
         json_data = json.load(json_file)
         sd.load_data_file(json_data, sys.argv[1])
