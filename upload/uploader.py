@@ -126,7 +126,7 @@ class Uploader():
                 location_name, location = self.process_location(values, '')
                 proxy_location_name, proxy_location = self.process_location(values, 'proxy_')
 
-                self.process_sample(values, location_name, location, proxy_location_name, proxy_location)
+                self.process_sampling_event(values, location_name, location, proxy_location_name, proxy_location)
 
     def add_location_identifier(self, looked_up, study_id, partner_name):
 
@@ -241,7 +241,7 @@ class Uploader():
         #print("Returing location {}".format(ret))
         return partner_name, ret
 
-    def process_sample(self, values, location_name, location, proxy_location_name, proxy_location):
+    def process_sampling_event(self, values, location_name, location, proxy_location_name, proxy_location):
 
         # Configure OAuth2 access token for authorization: OauthSecurity
         configuration = swagger_client.Configuration()
@@ -294,7 +294,7 @@ class Uploader():
         if not existing_sample_id:
             #print ("not in cache: {}".format(samp))
             if len(idents) > 0:
-        #        print("Checking identifiers {}".format(idents))
+                #print("Checking identifiers {}".format(idents))
                 samp.identifiers = idents
                 new_ident_value = False
                 for ident in idents:
@@ -302,20 +302,20 @@ class Uploader():
                         if ident.identifier_type == 'partner_id':
                             #Not safe as partner id's can be the same across studies
                             continue
-                        #print("Looking for {} {}".format(ident.identifier_type,
-                        #                                 ident.identifier_value))
+                        #print("Looking for {} {}".format(ident.identifier_type, ident.identifier_value))
 
-                        found = api_instance.download_sample_by_identifier(ident.identifier_type,
+                        found = api_instance.download_sampling_event_by_identifier(ident.identifier_type,
                                                                ident.identifier_value)
-                        existing_sample_id = found.sample_id
+                        existing_sample_id = found.sampling_event_id
                         #print ("found: {}".format(samp))
-                    except:
+                    except ApiException as err:
+                        #self._logger.debug("Error looking for {}".format(ident))
                         #print("Not found")
                         pass
 
         #print("Existing {}".format(existing_sample_id))
         if existing_sample_id:
-            existing = api_instance.download_sample(existing_sample_id)
+            existing = api_instance.download_sampling_event(existing_sample_id)
             orig = deepcopy(existing)
             for new_ident in idents:
                 found = False
@@ -372,7 +372,7 @@ class Uploader():
                     new_ident_value = True
             if new_ident_value:
                 #print("Updating {} to {}".format(orig, existing))
-                api_instance.update_sample(existing.sample_id, existing)
+                api_instance.update_sampling_event(existing.sampling_event_id, existing)
         else:
             #print("Creating {}".format(samp))
             if len(idents) == 0:
@@ -386,7 +386,7 @@ class Uploader():
                 sys.exit(1)
 
             if 'unique_id' in values:
-                self._sample_cache[values['unique_id']] = created.sample_id
+                self._sample_cache[values['unique_id']] = created.sampling_event_id
 
 if __name__ == '__main__':
     sd = Uploader(sys.argv[3])
