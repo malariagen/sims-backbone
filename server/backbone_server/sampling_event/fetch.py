@@ -16,16 +16,20 @@ class SamplingEventFetch():
         if not sampling_event_id:
             return None
 
-        stmt = '''SELECT samples.id, studies.study_name AS study_id, doc, location_id, proxy_location_id
+        stmt = '''SELECT samples.id, studies.study_name AS study_id, doc, doc_accuracy,
+                            partner_species, location_id, proxy_location_id
         FROM samples
-        JOIN studies ON studies.id = samples.study_id
+        LEFT JOIN studies ON studies.id = samples.study_id
+        LEFT JOIN partner_species_identifiers ON partner_species_identifiers.id = samples.partner_species_id
         WHERE samples.id = %s'''
         cursor.execute( stmt, (sampling_event_id,))
 
         sample = None
 
-        for (sample_id, study_id, doc, location_id, proxy_location_id) in cursor:
-            sample = SamplingEvent(sample_id, study_id, doc)
+        for (sample_id, study_id, doc, doc_accuracy, partner_species, location_id, proxy_location_id) in cursor:
+            sample = SamplingEvent(sample_id, study_id = study_id, 
+                                   doc = doc, doc_accuracy = doc_accuracy,
+                                   partner_species = partner_species)
             sample.location_id = location_id
             sample.proxy_location_id = proxy_location_id
             if location_id:

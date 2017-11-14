@@ -29,6 +29,27 @@ class SamplingEventEdit():
         return study_id
 
     @staticmethod
+    def fetch_partner_species(cursor, sample, study_id):
+        partner_species = None
+
+        if not sample.partner_species:
+            return partner_species
+
+        cursor.execute('''SELECT id FROM partner_species_identifiers WHERE study_id = %s AND
+                       partner_species = %s''',
+                           (study_id, sample.partner_species))
+        result = cursor.fetchone()
+
+        if result:
+            partner_species = result[0]
+        else:
+            partner_species = uuid.uuid4()
+            cursor.execute('''INSERT INTO partner_species_identifiers (id, study_id,
+                           partner_species) VALUES (%s, %s, %s)''',
+                           (partner_species, study_id, sample.partner_species))
+        return partner_species
+
+    @staticmethod
     def add_identifiers(cursor, uuid_val, sample):
         if sample.identifiers:
             for ident in sample.identifiers:
