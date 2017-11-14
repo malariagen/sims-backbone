@@ -61,7 +61,6 @@ class TestTaxa(TestBase):
 
         try:
             taxas = api_instance.get_taxonomy_metadata()
-            print(taxas)
 
         except ApiException as error:
             self.fail("test_update: Exception when calling SamplingEventApi->create_sampling_event: %s\n" % error)
