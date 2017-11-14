@@ -12,7 +12,7 @@ class TestLocation(TestBase):
     """
     def test_create(self):
 
-        api_instance = swagger_client.LocationApi()
+        api_instance = swagger_client.LocationApi(self._api_client)
 
         try:
 
@@ -32,7 +32,7 @@ class TestLocation(TestBase):
     """
     def test_delete(self):
 
-        api_instance = swagger_client.LocationApi()
+        api_instance = swagger_client.LocationApi(self._api_client)
 
         try:
 
@@ -52,7 +52,7 @@ class TestLocation(TestBase):
     """
     def test_delete_missing(self):
 
-        api_instance = swagger_client.LocationApi()
+        api_instance = swagger_client.LocationApi(self._api_client)
 
         try:
 
@@ -67,7 +67,7 @@ class TestLocation(TestBase):
     """
     def test_duplicate_key(self):
 
-        api_instance = swagger_client.LocationApi()
+        api_instance = swagger_client.LocationApi(self._api_client)
 
         try:
 
@@ -91,7 +91,7 @@ class TestLocation(TestBase):
 
         return
 
-        api_instance = swagger_client.LocationApi()
+        api_instance = swagger_client.LocationApi(self._api_client)
 
         try:
 
@@ -117,7 +117,7 @@ class TestLocation(TestBase):
     """
     def test_gps_lookup_negative(self):
 
-        api_instance = swagger_client.LocationApi()
+        api_instance = swagger_client.LocationApi(self._api_client)
 
         try:
 
@@ -141,7 +141,7 @@ class TestLocation(TestBase):
     """
     def test_gps_lookup(self):
 
-        api_instance = swagger_client.LocationApi()
+        api_instance = swagger_client.LocationApi(self._api_client)
 
         try:
 
@@ -166,7 +166,7 @@ class TestLocation(TestBase):
     """
     def test_gps_lookup_not_found(self):
 
-        api_instance = swagger_client.LocationApi()
+        api_instance = swagger_client.LocationApi(self._api_client)
 
         try:
 
@@ -182,7 +182,7 @@ class TestLocation(TestBase):
     """
     def test_gps_lookup_invalid(self):
 
-        api_instance = swagger_client.LocationApi()
+        api_instance = swagger_client.LocationApi(self._api_client)
 
         try:
 
@@ -198,7 +198,7 @@ class TestLocation(TestBase):
     """
     def test_partner_lookup(self):
 
-        api_instance = swagger_client.LocationApi()
+        api_instance = swagger_client.LocationApi(self._api_client)
 
         try:
 
@@ -224,7 +224,7 @@ class TestLocation(TestBase):
     """
     def test_update(self):
 
-        api_instance = swagger_client.LocationApi()
+        api_instance = swagger_client.LocationApi(self._api_client)
 
         try:
 
@@ -255,7 +255,7 @@ class TestLocation(TestBase):
     """
     def test_update_identifiers(self):
 
-        api_instance = swagger_client.LocationApi()
+        api_instance = swagger_client.LocationApi(self._api_client)
 
         try:
 
@@ -285,7 +285,7 @@ class TestLocation(TestBase):
     """
     def test_update_duplicate(self):
 
-        api_instance = swagger_client.LocationApi()
+        api_instance = swagger_client.LocationApi(self._api_client)
 
         try:
 
@@ -318,7 +318,7 @@ class TestLocation(TestBase):
     """
     def test_update_missing(self):
 
-        api_instance = swagger_client.LocationApi()
+        api_instance = swagger_client.LocationApi(self._api_client)
 
         try:
 
