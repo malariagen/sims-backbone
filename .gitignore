@@ -7,5 +7,6 @@ apache2/
 server/git_push.sh
 swagger-codegen-cli.jar
 typescript-angular2-client/
+typescript-angular-client/
 *.tgz
 *.gz
