@@ -16,7 +16,8 @@ class TestSample(TestBase):
 
         try:
 
-            samp = swagger_client.SamplingEvent(None, '0000-MD-UP', date(2017, 10, 10))
+            samp = swagger_client.SamplingEvent(None, '0000-MD-UP', date(2017, 10, 10),
+                                                doc_accuracy = 'month')
             created = api_instance.create_sampling_event(samp)
             fetched = api_instance.download_sampling_event(created.sampling_event_id)
             self.assertEqual(created, fetched, "create response != download response")
