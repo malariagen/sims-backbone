@@ -11,8 +11,10 @@ info:
     url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
 host: localhost
 basePath: /v1
-#host: "n8wvh8wam3.execute-api.eu-west-1.amazonaws.com"
+#host: xxxx.execute-api.eu-west-1.amazonaws.com
 #basePath: "/dev/sims-backbone-location-service/v1"
+schemes:
+  - http
 tags:
   - name: source
     description: Everything about your sources
@@ -23,8 +25,6 @@ tags:
     description: Access to Backbone samplingEvents
   - name: report
     description: Reports
-schemes:
-  - http
 securityDefinitions:
     OauthSecurity:
       type: oauth2
@@ -32,10 +32,6 @@ securityDefinitions:
       authorizationUrl: "https://sso-dev.cggh.org/sso/oauth2.0/authorize"
       tokenUrl: "https://sso-dev.cggh.org/sso/oauth2.0/accessToken"
       x-tokenInfoUrl: "https://sso-dev.cggh.org/sso/oauth2.0/profile"
-    bearerAuth:            # arbitrary name for the security scheme
-      type: http
-      scheme: bearer
-      bearerFormat: JWT
 security:
   - OauthSecurity: []
 paths:
@@ -406,6 +402,65 @@ paths:
           description: successful operation
           schema:
             $ref: '#/definitions/Country'
+  '/metadata/taxonomy':
+    get:
+      tags:
+        - metadata
+      summary: fetches all the registered taxa
+      description: 'guesses the search criteria'
+      operationId: getTaxonomyMetadata
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/Taxonomies'
+    post:
+      tags:
+        - metadata
+      description: 'Create a Taxonomy'
+      operationId: createTaxonomy
+      produces:
+        - application/json
+      consumes:
+        - application/json
+      parameters:
+        - in: body
+          name: taxonomy
+          required: true
+          schema:
+            $ref: '#/definitions/Taxonomy'
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/Taxonomy'
+  '/studies':
+    get:
+      tags:
+        - study
+      summary: fetches studies
+      description: ''
+      operationId: downloadStudies
+      produces:
+        - application/json
+      parameters:
+        - name: start
+          in: query
+          description: for pagination start the result set at a record x
+          required: false
+          type: integer
+        - name: count
+          in: query
+          description: for pagination the number of entries to return
+          required: false
+          type: integer
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/Studies'
 definitions:
   SamplingEvents:
     type: object
@@ -442,6 +497,8 @@ definitions:
         type: string
       proxy_location:
         $ref: '#/definitions/Location'
+      partner_species:
+        type: string
       partner_taxonomies:
         type: array
         items:
@@ -490,6 +547,16 @@ definitions:
         type: array
         items:
             $ref: '#/definitions/Identifier'
+  Taxonomies:
+    type: object
+    properties:
+      taxonomies:
+        type: array
+        items:
+          $ref: '#/definitions/Taxonomy'
+      count:
+        type: integer
+        description: Used when pagination is applied to return the number of results
   Taxonomy:
     type: object
     properties:
@@ -514,4 +581,21 @@ definitions:
       alpha2:
         type: string
       alpha3:
+        type: string
+  Studies:
+    type: object
+    properties:
+      studies:
+        type: array
+        items:
+          $ref: '#/definitions/Study'
+      count:
+        type: integer
+        description: Used when pagination is applied to return the number of results
+  Study:
+    type: object
+    properties:
+      code:
+        type: string
+      name:
         type: string

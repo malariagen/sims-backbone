@@ -5,6 +5,7 @@ from swagger_server.models.identifier import Identifier
 from backbone_server.errors.missing_key_exception import MissingKeyException
 
 from backbone_server.location.fetch import LocationFetch
+from backbone_server.sampling_event.fetch import SamplingEventFetch
 
 import logging
 
@@ -23,40 +24,19 @@ class SamplingEventsGetByStudy():
 
         cursor = self._connection.cursor()
 
-        stmt = '''SELECT samples.id, study_id, doc, location_id, proxy_location_id
-        FROM samples
-        WHERE study_id = %s'''
+        stmt = '''SELECT samples.id FROM samples WHERE study_id = %s'''
         cursor.execute(stmt, (study_name, ))
 
         samples = SamplingEvents([], 0)
+        event_ids = []
 
-        for (sample_id, study_id, doc, loc_id, proxy_location_id) in cursor:
-            sample = SamplingEvent(sample_id, study_id, doc)
-            sample.location_id = loc_id
-            sample.proxy_location_id = proxy_location_id
+        for sample_id in cursor:
+            event_ids.append(sample_id)
+
+        for sample_id in event_ids:
+            sample = SamplingEventFetch.fetch(cursor, sample_id)
             samples.sampling_events.append(sample)
             samples.count = samples.count + 1
-
-        for sample in samples.sampling_events:
-            if sample.location_id:
-                samp_location = LocationFetch.fetch(cursor, sample.location_id)
-                sample.location = samp_location
-            if sample.proxy_location_id:
-                proxy_location = LocationFetch.fetch(cursor, sample.proxy_location_id)
-                sample.proxy_location = proxy_location
-
-            stmt = '''SELECT identifier_type, identifier_value FROM identifiers WHERE sample_id = %s'''
-
-            cursor.execute(stmt, (sample.sampling_event_id,))
-
-            sample.identifiers = []
-            for (name, value) in cursor:
-                ident = Identifier(name, value)
-                sample.identifiers.append(ident)
-
-            if len(sample.identifiers) == 0:
-                sample.identifiers = None
-
 
         if samples.count == 0:
             cursor.close()

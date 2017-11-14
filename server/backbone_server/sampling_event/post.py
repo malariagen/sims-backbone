@@ -28,10 +28,12 @@ class SamplingEventPost():
 
         uuid_val = uuid.uuid4()
 
+        study_id = SamplingEventEdit.fetch_study_id(cursor, sample)
+
         stmt = '''INSERT INTO samples 
                     (id, study_id, doc, location_id, proxy_location_id) 
                     VALUES (%s, %s, %s, %s, %s)'''
-        args = (uuid_val,sample.study_id, sample.doc, sample.location_id, sample.proxy_location_id)
+        args = (uuid_val,study_id, sample.doc, sample.location_id, sample.proxy_location_id)
 
         try:
             cursor.execute(stmt, args)

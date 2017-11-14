@@ -1,5 +1,7 @@
 import connexion
 from swagger_server.models.country import Country
+from swagger_server.models.taxonomies import Taxonomies
+from swagger_server.models.taxonomy import Taxonomy
 from datetime import date, datetime
 from typing import List, Dict
 from six import iteritems
@@ -12,6 +14,19 @@ from backbone_server.connect  import get_connection
 from backbone_server.errors.missing_key_exception import MissingKeyException
 
 import logging
+
+def create_taxonomy(taxonomy):
+    """
+    create_taxonomy
+    Create a Taxonomy
+    :param taxonomy: 
+    :type taxonomy: dict | bytes
+
+    :rtype: Taxonomy
+    """
+    if connexion.request.is_json:
+        taxonomy = Taxonomy.from_dict(connexion.request.get_json())
+    return 'do some magic!'
 
 def get_country_metadata(countryId):
     """
@@ -34,3 +49,12 @@ def get_country_metadata(countryId):
         retcode = 404
 
     return country, retcode
+
+def get_taxonomy_metadata():
+    """
+    fetches all the registered taxa
+    guesses the search criteria
+
+    :rtype: Taxonomies
+    """
+    return 'do some magic!'

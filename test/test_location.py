@@ -236,7 +236,7 @@ class TestLocation(TestBase):
             created = api_instance.create_location(loc)
             looked_up_locs = api_instance.download_partner_location(loc.identifiers[0].identifier_value)
             looked_up = looked_up_locs.locations[0]
-            newloc = swagger_client.Location(None, 28.46362, 91.49542, 'new_country',
+            newloc = swagger_client.Location(None, 28.46362, 91.49542, 'location',
                                         'new_Trongsa, Trongsa, Bhutan', 'new_pv_3_locations.txt', 'IND')
             newloc.identifiers = [
                 swagger_client.Identifier('partner_name', 'nepal', '1235-PV')
@@ -297,7 +297,7 @@ class TestLocation(TestBase):
             created = api_instance.create_location(loc)
             looked_up_locs = api_instance.download_partner_location(loc.identifiers[0].identifier_value)
             looked_up = looked_up_locs.locations[0]
-            newloc = swagger_client.Location(None, 28.46362, 91.49542, 'new_country',
+            newloc = swagger_client.Location(None, 28.46362, 91.49542, 'location',
                                         'new_Trongsa, Trongsa, Bhutan', 'new_pv_3_locations.txt', 'IND')
             new_created = api_instance.create_location(newloc)
             with self.assertRaises(Exception) as context:
@@ -322,7 +322,7 @@ class TestLocation(TestBase):
 
         try:
 
-            newloc = swagger_client.Location(None, 28.46362, 91.49542, 'new_country',
+            newloc = swagger_client.Location(None, 28.46362, 91.49542, 'location',
                                         'new_Trongsa, Trongsa, Bhutan', 'new_pv_3_locations.txt', 'IND')
             fake_id = uuid.uuid4()
             newloc.location_id = str(fake_id)

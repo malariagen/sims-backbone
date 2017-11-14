@@ -98,8 +98,8 @@ ALTER SEQUENCE archive_archive_id_seq OWNED BY archive.archive_id;
 --
 
 CREATE TABLE countries (
-    English character varying,
-    French character varying,
+    english character varying,
+    french character varying,
     alpha2 character(2),
     alpha3 character(3),
     numeric_code integer
@@ -154,13 +154,29 @@ CREATE TABLE locations (
 ALTER TABLE locations OWNER TO iwright;
 
 --
+-- Name: partner_species_identifiers; Type: TABLE; Schema: public; Owner: iwright
+--
+
+CREATE TABLE partner_species_identifiers (
+    id uuid NOT NULL,
+    study_id uuid,
+    partner_species character varying(128)
+);
+
+
+ALTER TABLE partner_species_identifiers OWNER TO iwright;
+
+--
 -- Name: samples; Type: TABLE; Schema: public; Owner: iwright
 --
 
 CREATE TABLE samples (
     id uuid NOT NULL,
-    study_id character varying,
+    mgid character(20),
+    study_id uuid,
     doc date,
+    doc_accuracy character varying,
+    partner_species_id uuid,
     location_id uuid,
     proxy_location_id uuid
 );
@@ -173,13 +189,40 @@ ALTER TABLE samples OWNER TO iwright;
 --
 
 CREATE TABLE studies (
-    id uuid,
+    id uuid NOT NULL,
     mgid character(20),
-    study_name character varying(64)
+    study_name character varying(64),
+    study_code character varying(4)
 );
 
 
 ALTER TABLE studies OWNER TO iwright;
+
+--
+-- Name: taxonomies; Type: TABLE; Schema: public; Owner: iwright
+--
+
+CREATE TABLE taxonomies (
+    id uuid NOT NULL,
+    taxonomy_id integer,
+    rank character varying(32),
+    name character varying(128)
+);
+
+
+ALTER TABLE taxonomies OWNER TO iwright;
+
+--
+-- Name: taxonomy_identifiers; Type: TABLE; Schema: public; Owner: iwright
+--
+
+CREATE TABLE taxonomy_identifiers (
+    taxomomy_id uuid,
+    partner_species_id uuid
+);
+
+
+ALTER TABLE taxonomy_identifiers OWNER TO iwright;
 
 --
 -- Name: archive archive_id; Type: DEFAULT; Schema: public; Owner: iwright
@@ -197,11 +240,35 @@ ALTER TABLE ONLY locations
 
 
 --
+-- Name: partner_species_identifiers partner_species_identifiers_id; Type: CONSTRAINT; Schema: public; Owner: iwright
+--
+
+ALTER TABLE ONLY partner_species_identifiers
+    ADD CONSTRAINT partner_species_identifiers_id PRIMARY KEY (id);
+
+
+--
 -- Name: samples sample_id; Type: CONSTRAINT; Schema: public; Owner: iwright
 --
 
 ALTER TABLE ONLY samples
     ADD CONSTRAINT sample_id PRIMARY KEY (id);
+
+
+--
+-- Name: studies studies_id; Type: CONSTRAINT; Schema: public; Owner: iwright
+--
+
+ALTER TABLE ONLY studies
+    ADD CONSTRAINT studies_id PRIMARY KEY (id);
+
+
+--
+-- Name: taxonomies taxonomy_id; Type: CONSTRAINT; Schema: public; Owner: iwright
+--
+
+ALTER TABLE ONLY taxonomies
+    ADD CONSTRAINT taxonomy_id PRIMARY KEY (id);
 
 
 --
@@ -257,6 +324,14 @@ ALTER TABLE ONLY location_identifiers
 
 
 --
+-- Name: taxonomy_identifiers fk_partner_sp; Type: FK CONSTRAINT; Schema: public; Owner: iwright
+--
+
+ALTER TABLE ONLY taxonomy_identifiers
+    ADD CONSTRAINT fk_partner_sp FOREIGN KEY (partner_species_id) REFERENCES partner_species_identifiers(id);
+
+
+--
 -- Name: samples fk_proxy_location; Type: FK CONSTRAINT; Schema: public; Owner: iwright
 --
 
@@ -270,6 +345,38 @@ ALTER TABLE ONLY samples
 
 ALTER TABLE ONLY identifiers
     ADD CONSTRAINT fk_sample FOREIGN KEY (sample_id) REFERENCES samples(id);
+
+
+--
+-- Name: samples fk_species; Type: FK CONSTRAINT; Schema: public; Owner: iwright
+--
+
+ALTER TABLE ONLY samples
+    ADD CONSTRAINT fk_species FOREIGN KEY (partner_species_id) REFERENCES partner_species_identifiers(id);
+
+
+--
+-- Name: samples fk_study; Type: FK CONSTRAINT; Schema: public; Owner: iwright
+--
+
+ALTER TABLE ONLY samples
+    ADD CONSTRAINT fk_study FOREIGN KEY (study_id) REFERENCES studies(id);
+
+
+--
+-- Name: location_identifiers fk_study_loc; Type: FK CONSTRAINT; Schema: public; Owner: iwright
+--
+
+ALTER TABLE ONLY location_identifiers
+    ADD CONSTRAINT fk_study_loc FOREIGN KEY (study_id) REFERENCES studies(id);
+
+
+--
+-- Name: taxonomy_identifiers fk_taxa; Type: FK CONSTRAINT; Schema: public; Owner: iwright
+--
+
+ALTER TABLE ONLY taxonomy_identifiers
+    ADD CONSTRAINT fk_taxa FOREIGN KEY (taxomomy_id) REFERENCES taxonomies(id);
 
 
 --

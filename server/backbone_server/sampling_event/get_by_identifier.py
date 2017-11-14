@@ -3,6 +3,8 @@ from swagger_server.models.sampling_events import SamplingEvents
 
 from backbone_server.errors.missing_key_exception import MissingKeyException
 
+from backbone_server.sampling_event.fetch import SamplingEventFetch
+
 import logging
 
 class SamplingEventGetByIdentifier():
@@ -21,18 +23,20 @@ class SamplingEventGetByIdentifier():
 
         cursor.execute("SELECT sample_id FROM identifiers WHERE identifier_type = %s AND identifier_value = %s", (identifier_type, identifier_value,))
 
-        samples = SamplingEvents()
-        samples.sampling_events = []
-        samples.count = 0
+        samples = SamplingEvents([], 0)
+        event_ids = []
 
-        #partner_name has a unique key
-        for (sample_id,) in cursor:
-            sample = SamplingEvent(sample_id)
+        for sample_id in cursor:
+            event_ids.append(sample_id)
+
+        for sample_id in event_ids:
+            sample = SamplingEventFetch.fetch(cursor, sample_id)
             samples.sampling_events.append(sample)
             samples.count = samples.count + 1
 
         cursor.close()
 
+        #partner_name has a unique key
         if samples.count == 0:
             raise MissingKeyException("SamplingEvent not found {} {}".format(identifier_type,
                                                                       identifier_value))
