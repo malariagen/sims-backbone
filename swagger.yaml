@@ -564,6 +564,8 @@ definitions:
         type: number
       name:
         type: string
+      rank:
+        type: string
   Identifier:
     type: object
     properties:

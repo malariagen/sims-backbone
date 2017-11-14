@@ -203,8 +203,7 @@ ALTER TABLE studies OWNER TO iwright;
 --
 
 CREATE TABLE taxonomies (
-    id uuid NOT NULL,
-    taxonomy_id integer,
+    id bigint NOT NULL,
     rank character varying(32),
     name character varying(128)
 );
@@ -217,7 +216,7 @@ ALTER TABLE taxonomies OWNER TO iwright;
 --
 
 CREATE TABLE taxonomy_identifiers (
-    taxomomy_id uuid,
+    taxomomy_id bigint,
     partner_species_id uuid
 );
 

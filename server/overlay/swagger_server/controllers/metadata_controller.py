@@ -7,11 +7,7 @@ from typing import List, Dict
 from six import iteritems
 from ..util import deserialize_date, deserialize_datetime
 
-from backbone_server.metadata.country import CountryGet
-
-from backbone_server.connect  import get_connection
-
-from backbone_server.errors.missing_key_exception import MissingKeyException
+from backbone_server.controllers.metadata_controller import MetadataController
 
 import logging
 
@@ -37,18 +33,9 @@ def get_country_metadata(countryId):
 
     :rtype: Country
     """
-    get = CountryGet(get_connection())
 
-    retcode = 200
-    country = None
+    return MetadataController.get_country_metadata(countryId)
 
-    try:
-        country = get.get(countryId)
-    except MissingKeyException as dme:
-        logging.getLogger(__name__).error("download_sample: {}".format(repr(dme)))
-        retcode = 404
-
-    return country, retcode
 
 def get_taxonomy_metadata():
     """
@@ -57,4 +44,4 @@ def get_taxonomy_metadata():
 
     :rtype: Taxonomies
     """
-    return 'do some magic!'
+    return MetadataController.get_taxonomy_metadata()

@@ -52,3 +52,16 @@ class TestTaxa(TestBase):
 
         except ApiException as error:
             self.fail("test_update: Exception when calling SamplingEventApi->create_sampling_event: %s\n" % error)
+
+    """
+    """
+    def test_get_taxonomies(self):
+
+        api_instance = swagger_client.MetadataApi(self._api_client)
+
+        try:
+            taxas = api_instance.get_taxonomy_metadata()
+            print(taxas)
+
+        except ApiException as error:
+            self.fail("test_update: Exception when calling SamplingEventApi->create_sampling_event: %s\n" % error)
