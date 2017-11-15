@@ -115,7 +115,7 @@ ALTER TABLE countries OWNER TO iwright;
 CREATE TABLE identifiers (
     sample_id uuid,
     identifier_type character varying(20),
-    identifier_value character varying(64)
+    identifier_value character varying(256)
 );
 
 
@@ -129,7 +129,7 @@ CREATE TABLE location_identifiers (
     location_id uuid,
     study_id uuid,
     identifier_type character varying(20),
-    identifier_value character varying(64)
+    identifier_value character varying(256)
 );
 
 
