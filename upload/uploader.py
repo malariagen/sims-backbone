@@ -86,13 +86,13 @@ class Uploader():
                             #else:
                             #    print("No match: {} {}".format(defn['regex'], data_value))
                         if defn['type'] == 'datetime':
-                            date_format = '%Y-%m-%d'
                             try:
                                 if not (data_value == '' or data_value == 'NULL'):
                                     if 'date_format' in defn:
                                         try:
+                                            date_format = '%Y-%m-%d'
                                             date_format = defn['date_format']
-                                            data_value = datetime.datetime(*(time.strptime(data_value, date_format))[:6])
+                                            data_value = datetime.datetime(*(time.strptime(data_value, date_format))[:6]).date()
                                         except ValueError as dpe:
                                             raise InvalidDateFormatException("Failed to parse date '{}' using {}".format(data_value, date_format)) from dpe
                           #          else:
@@ -228,7 +228,7 @@ class Uploader():
             loc.location_id = None
             ret = looked_up
         except Exception as err:
-            print(repr(err))
+            #print(repr(err))
             #print("Failed to find location {}".format(loc))
             try:
                 created = api_instance.create_location(loc)
@@ -285,6 +285,8 @@ class Uploader():
             idents.append(swagger_client.Identifier ('alt_oxford_id',
                                                      urllib.parse.quote(values['sample_alternate_oxford_id'],
                                                                         safe='')))
+        if 'species' in values and len(values['species']) > 0:
+            samp.partner_species = values['species']
 
         existing_sample_id = None
         if 'unique_id' in values:
@@ -346,7 +348,7 @@ class Uploader():
             if doc:
                 if existing.doc:
                     if doc != existing.doc:
-                        print("Conflicting doc value {} {}".format(doc, existing))
+                        print("Conflicting doc value {} {}\n{}".format(doc, existing.doc, existing))
                         existing.doc = doc
                         new_ident_value = True
                 else:
