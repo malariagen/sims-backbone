@@ -170,3 +170,46 @@ class TestStudies(TestBase):
         except ApiException as error:
             self.fail("test_create: Exception when calling StudyApi->update_study: %s\n" % error)
 
+    """
+    """
+    def test_download_samples_by_study(self):
+
+        api_instance = swagger_client.SamplingEventApi(self._api_client)
+        study_api = swagger_client.StudyApi(self._api_client)
+
+        try:
+
+            samp = swagger_client.SamplingEvent(None, '0005-MD-UP', date(2017, 10, 10),
+                                                doc_accuracy = 'month',
+                                                partner_species = 'P. falciparum')
+            created = api_instance.create_sampling_event(samp)
+
+            events = api_instance.download_sampling_events_by_study('0005-MD-UP')
+
+            self.assertEqual(events.count, 1, "Event expected")
+
+            api_instance.delete_sampling_event(created.sampling_event_id)
+
+        except ApiException as error:
+            self.fail("test_create: Exception when calling SamplingEventApi->create_sampling_event: %s\n" % error)
+
+
+
+    """
+    """
+    def test_download_samples_by_study_fail(self):
+
+        api_instance = swagger_client.SamplingEventApi(self._api_client)
+        study_api = swagger_client.StudyApi(self._api_client)
+
+        try:
+
+            with self.assertRaises(Exception) as context:
+                events = api_instance.download_sampling_events_by_study('0006-MD-UP')
+            self.assertEqual(context.exception.status, 404)
+
+
+        except ApiException as error:
+            self.fail("test_create: Exception when calling SamplingEventApi->create_sampling_event: %s\n" % error)
+
+

@@ -2,6 +2,7 @@ from backbone_server.errors.duplicate_key_exception import DuplicateKeyException
 from backbone_server.errors.missing_key_exception import MissingKeyException
 
 from backbone_server.sampling_event.edit import SamplingEventEdit
+from backbone_server.sampling_event.fetch import SamplingEventFetch
 
 from swagger_server.models.sampling_event import SamplingEvent
 
@@ -38,7 +39,7 @@ class SamplingEventPut():
             cursor.close()
             raise MissingKeyException("Could not find sample to update {}".format(sample_id))
 
-        study_id = SamplingEventEdit.fetch_study_id(cursor, sample.study_id)
+        study_id = SamplingEventEdit.fetch_study_id(cursor, sample.study_id, True)
         partner_species = SamplingEventEdit.fetch_partner_species(cursor, sample, study_id)
         stmt = '''UPDATE samples 
                     SET study_id = %s, doc = %s, doc_accuracy = %s,
@@ -69,11 +70,12 @@ class SamplingEventPut():
 
         self._connection.commit()
 
+        sample = SamplingEventFetch.fetch(cursor, sample_id)
+
         cursor.close()
 
         if rc != 1:
             raise MissingKeyException("Error updating sample {}".format(sample_id))
 
-        sample.sampling_event_id = sample_id
 
         return sample

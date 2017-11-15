@@ -26,7 +26,7 @@ class LocationEdit():
                 for ident in location.identifiers:
                     study_id = None
                     if ident.study_name:
-                        study_id = SamplingEventEdit.fetch_study_id(cursor, ident.study_name)
+                        study_id = SamplingEventEdit.fetch_study_id(cursor, ident.study_name, True)
                     stmt = '''INSERT INTO location_identifiers (location_id, study_id, identifier_type, identifier_value)
                     VALUES (%s, %s, %s, %s)'''
                     cursor.execute(stmt, (uuid_val, study_id, ident.identifier_type, ident.identifier_value))

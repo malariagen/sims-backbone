@@ -6,7 +6,7 @@ class SamplingEventEdit():
 
 
     @staticmethod
-    def fetch_study_id(cursor, study_name):
+    def fetch_study_id(cursor, study_name, create):
         study_id = None
 
         if not study_name:
@@ -18,6 +18,8 @@ class SamplingEventEdit():
         if result:
             study_id = result[0]
         else:
+            if not create:
+                return None
             study_id = uuid.uuid4()
             cursor.execute('''INSERT INTO studies (id, study_code, study_name) VALUES (%s, %s,
                            %s)''', (study_id, study_name[:4], study_name))

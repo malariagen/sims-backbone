@@ -7,6 +7,8 @@ from backbone_server.errors.missing_key_exception import MissingKeyException
 from backbone_server.location.fetch import LocationFetch
 from backbone_server.sampling_event.fetch import SamplingEventFetch
 
+from backbone_server.sampling_event.edit import SamplingEventEdit
+
 import logging
 
 class SamplingEventsGetByStudy():
@@ -24,8 +26,13 @@ class SamplingEventsGetByStudy():
 
         cursor = self._connection.cursor()
 
+        study_id = SamplingEventEdit.fetch_study_id(cursor, study_name, False)
+
+        if not study_id:
+            raise MissingKeyException("No study {}".format(study_name))
+
         stmt = '''SELECT samples.id FROM samples WHERE study_id = %s'''
-        cursor.execute(stmt, (study_name, ))
+        cursor.execute(stmt, (study_id, ))
 
         samples = SamplingEvents([], 0)
         event_ids = []
@@ -37,10 +44,6 @@ class SamplingEventsGetByStudy():
             sample = SamplingEventFetch.fetch(cursor, sample_id)
             samples.sampling_events.append(sample)
             samples.count = samples.count + 1
-
-        if samples.count == 0:
-            cursor.close()
-            raise MissingKeyException("No samples for {}".format(study_name))
 
         cursor.close()
 
