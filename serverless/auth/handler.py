@@ -5,6 +5,7 @@ import time
 import pprint
 import json
 
+import os
 import requests
 
 def auth(event, context):
@@ -38,24 +39,24 @@ def auth(event, context):
         token = tokens[1]
 
     args = { 'access_token': token }
-#    r = requests.get(os.getenv('AUTH_PROFILE_URL'), args, timeout=1)
-#    print (repr(r))
-    example = '''{
-          "attributes" : {
-                        "credentialType" : "UsernamePasswordCredential",
-                            "samlAuthenticationStatementAuthMethod" :
-              "urn:oasis:names:tc:SAML:1.0:am:password"
-                              },
-                            "id" : "ian.wright@well.ox.ac.uk"
-                                              }'''
-    user = json.loads(example)
-    principalId = user['id']
+    r = requests.get(os.getenv('AUTH_PROFILE_URL'), args, timeout=3)
+    print (repr(r.text))
+    if r.status_code == 200:
+        user = json.loads(r.text)
+        principalId = user['id']
+    elif r.status_code == 401:
+        principalId = None
+    else: #Error or ?
+        principalId = None
 
     policy = AuthPolicy(principalId, awsAccountId)
     policy.restApiId = apiGatewayArnTmp[0]
     policy.region = tmp[3]
     policy.stage = apiGatewayArnTmp[1]
-    policy.allowAllMethods()
+    if r.status_code == 200:
+        policy.allowAllMethods()
+    else:
+        policy.denyAllMethods()
 
     # Finally, build the policy
     authResponse = policy.build()
