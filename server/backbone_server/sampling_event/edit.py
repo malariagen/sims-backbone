@@ -12,12 +12,7 @@ class SamplingEventEdit():
         if not study_name:
             return study_id
 
-        if len(study_name) == 4:
-            cursor.execute('''SELECT id FROM studies WHERE study_code = %s''',
-                           (study_name,))
-        else:
-            cursor.execute('''SELECT id FROM studies WHERE study_name = %s''',
-                           (study_name,))
+        cursor.execute('''SELECT id FROM studies WHERE study_code = %s''', (study_name[:4],))
         result = cursor.fetchone()
 
         if result:

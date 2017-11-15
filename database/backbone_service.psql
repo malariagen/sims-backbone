@@ -279,6 +279,14 @@ ALTER TABLE ONLY location_identifiers
 
 
 --
+-- Name: studies uniq_study_code; Type: CONSTRAINT; Schema: public; Owner: iwright
+--
+
+ALTER TABLE ONLY studies
+    ADD CONSTRAINT uniq_study_code UNIQUE (study_code);
+
+
+--
 -- Name: fki_location; Type: INDEX; Schema: public; Owner: iwright
 --
 
