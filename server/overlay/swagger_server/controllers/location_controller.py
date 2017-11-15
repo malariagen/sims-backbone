@@ -22,7 +22,7 @@ from backbone_server.errors.duplicate_key_exception import DuplicateKeyException
 from backbone_server.errors.missing_key_exception import MissingKeyException
 
 
-def create_location(user, location):
+def create_location(location, user = None):
     """
     create_location
     Create a location
@@ -48,7 +48,7 @@ def create_location(user, location):
     return loc, retcode
 
 
-def delete_location(user, locationId):
+def delete_location(locationId, user = None):
     """
     deletes an location
     
@@ -71,7 +71,7 @@ def delete_location(user, locationId):
     return None, retcode
 
 
-def download_gps_location(user, latitude, longitude):
+def download_gps_location(latitude, longitude, user = None):
     """
     fetches location(s) by GPS
     Params must be string as negative numbers not handled - https://github.com/pallets/werkzeug/issues/729 - also want to avoid using float
@@ -100,7 +100,7 @@ def download_gps_location(user, latitude, longitude):
 
     return loc, retcode
 
-def download_location(user, locationId):
+def download_location(locationId, user = None):
     """
     fetches an location
     
@@ -123,7 +123,7 @@ def download_location(user, locationId):
     return loc, retcode
 
 
-def download_locations(user, studyName=None, start=None, count=None, orderby=None):
+def download_locations(studyName=None, start=None, count=None, orderby=None, user = None):
     """
     fetches locations
     
@@ -152,7 +152,7 @@ def download_locations(user, studyName=None, start=None, count=None, orderby=Non
     return loc, retcode
 
 
-def download_partner_location(user, partnerId):
+def download_partner_location(partnerId, user = None):
     """
     fetches location(s) by partner name
     
@@ -175,7 +175,7 @@ def download_partner_location(user, partnerId):
     return loc, retcode
 
 
-def update_location(user, locationId, location):
+def update_location(locationId, location, user = None):
     """
     updates an location
     

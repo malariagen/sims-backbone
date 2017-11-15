@@ -21,7 +21,7 @@ from backbone_server.connect  import get_connection
 from backbone_server.errors.duplicate_key_exception import DuplicateKeyException
 from backbone_server.errors.missing_key_exception import MissingKeyException
 
-def create_sampling_event(user, samplingEvent):
+def create_sampling_event(samplingEvent, user = None):
     """
     create_sampling_event
     Create a samplingEvent
@@ -47,7 +47,7 @@ def create_sampling_event(user, samplingEvent):
     return samp, retcode
 
 
-def delete_sampling_event(user, samplingEventId):
+def delete_sampling_event(samplingEventId, user = None):
     """
     deletes an samplingEvent
     
@@ -70,7 +70,7 @@ def delete_sampling_event(user, samplingEventId):
     return None, retcode
 
 
-def download_sampling_event(user, samplingEventId):
+def download_sampling_event(samplingEventId, user = None):
     """
     fetches an samplingEvent
     
@@ -93,7 +93,7 @@ def download_sampling_event(user, samplingEventId):
     return samp, retcode
 
 
-def download_sampling_event_by_identifier(user, propName, propValue):
+def download_sampling_event_by_identifier(propName, propValue, user = None):
     """
     fetches a samplingEvent by property value
     
@@ -117,7 +117,7 @@ def download_sampling_event_by_identifier(user, propName, propValue):
 
     return samp, retcode
 
-def download_sampling_events_by_location(user, locationId):
+def download_sampling_events_by_location(locationId, user = None):
     """
     fetches samplingEvents for a location
     
@@ -139,7 +139,7 @@ def download_sampling_events_by_location(user, locationId):
 
     return samp, retcode
 
-def download_sampling_events_by_study(user, studyName):
+def download_sampling_events_by_study(studyName, user = None):
     """
     fetches samplingEvents for a study
     
@@ -161,7 +161,7 @@ def download_sampling_events_by_study(user, studyName):
 
     return samp, retcode
 
-def update_sampling_event(user, samplingEventId, samplingEvent):
+def update_sampling_event(samplingEventId, samplingEvent, user = None):
     """
     updates an samplingEvent
     
