@@ -38,7 +38,7 @@ class SamplingEventPut():
             cursor.close()
             raise MissingKeyException("Could not find sample to update {}".format(sample_id))
 
-        study_id = SamplingEventEdit.fetch_study_id(cursor, sample)
+        study_id = SamplingEventEdit.fetch_study_id(cursor, sample.study_id)
         partner_species = SamplingEventEdit.fetch_partner_species(cursor, sample, study_id)
         stmt = '''UPDATE samples 
                     SET study_id = %s, doc = %s, doc_accuracy = %s,

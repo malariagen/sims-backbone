@@ -37,3 +37,31 @@ class TestStudies(TestBase):
             self.fail("test_create: Exception when calling SamplingEventApi->create_sampling_event: %s\n" % error)
 
 
+    """
+    """
+    def test_location_study(self):
+
+        api_instance = swagger_client.LocationApi(self._api_client)
+        study_api = swagger_client.StudyApi(self._api_client)
+
+        try:
+
+            loc = swagger_client.Location(None, 27.46362, 90.49542, 'country',
+                                          'Trongsa, Trongsa, Bhutan', 'pv_3_locations.txt', 'BHU')
+            loc.identifiers = [
+                swagger_client.Identifier('partner_name', 'bhutan', '4321-MD-UP')
+            ]
+            created = api_instance.create_location(loc)
+            studies = study_api.download_studies()
+
+            found = False
+            for study in studies.studies:
+                if study.name == '4321-MD-UP' and study.code == '4321':
+                    found = True
+
+            self.assertTrue(found, 'Study does not exist')
+
+            api_instance.delete_location(created.location_id)
+
+        except ApiException as error:
+            self.fail("test_location_study: Exception when calling LocationApi->create_location: %s\n" % error)

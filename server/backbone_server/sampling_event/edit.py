@@ -6,18 +6,18 @@ class SamplingEventEdit():
 
 
     @staticmethod
-    def fetch_study_id(cursor, sample):
+    def fetch_study_id(cursor, study_name):
         study_id = None
 
-        if not sample.study_id:
+        if not study_name:
             return study_id
 
-        if len(sample.study_id) == 4:
+        if len(study_name) == 4:
             cursor.execute('''SELECT id FROM studies WHERE study_code = %s''',
-                           (sample.study_id,))
+                           (study_name,))
         else:
             cursor.execute('''SELECT id FROM studies WHERE study_name = %s''',
-                           (sample.study_id,))
+                           (study_name,))
         result = cursor.fetchone()
 
         if result:
@@ -25,7 +25,7 @@ class SamplingEventEdit():
         else:
             study_id = uuid.uuid4()
             cursor.execute('''INSERT INTO studies (id, study_code, study_name) VALUES (%s, %s,
-                           %s)''', (study_id, sample.study_id[:4], sample.study_id))
+                           %s)''', (study_id, study_name[:4], study_name))
         return study_id
 
     @staticmethod

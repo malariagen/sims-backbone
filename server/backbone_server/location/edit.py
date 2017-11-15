@@ -3,6 +3,8 @@ from backbone_server.errors.duplicate_key_exception import DuplicateKeyException
 from swagger_server.models.location import Location
 from swagger_server.models.identifier import Identifier
 
+from backbone_server.sampling_event.edit import SamplingEventEdit
+
 import mysql.connector
 from mysql.connector import errorcode
 import psycopg2
@@ -24,16 +26,7 @@ class LocationEdit():
                 for ident in location.identifiers:
                     study_id = None
                     if ident.study_name:
-                        cursor.execute('''SELECT id FROM studies WHERE study_name = %s''',
-                                       (ident.study_name,))
-                        study = cursor.fetchone()
-                        if study:
-                            study_id = study[0]
-                        else:
-                            suuid = uuid.uuid4()
-                            cursor.execute('''INSERT INTO studies (id, study_name) 
-                                            VALUES (%s, %s)''', (suuid, ident.study_name))
-                            study_id = suuid
+                        study_id = SamplingEventEdit.fetch_study_id(cursor, ident.study_name)
                     stmt = '''INSERT INTO location_identifiers (location_id, study_id, identifier_type, identifier_value)
                     VALUES (%s, %s, %s, %s)'''
                     cursor.execute(stmt, (uuid_val, study_id, ident.identifier_type, ident.identifier_value))
