@@ -216,7 +216,7 @@ ALTER TABLE taxonomies OWNER TO iwright;
 --
 
 CREATE TABLE taxonomy_identifiers (
-    taxomomy_id bigint,
+    taxonomy_id bigint,
     partner_species_id uuid
 );
 
@@ -383,7 +383,7 @@ ALTER TABLE ONLY location_identifiers
 --
 
 ALTER TABLE ONLY taxonomy_identifiers
-    ADD CONSTRAINT fk_taxa FOREIGN KEY (taxomomy_id) REFERENCES taxonomies(id);
+    ADD CONSTRAINT fk_taxa FOREIGN KEY (taxonomy_id) REFERENCES taxonomies(id);
 
 
 --
