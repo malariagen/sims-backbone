@@ -253,7 +253,7 @@ class Uploader():
         doc = None
         study_id = None
         if 'doc' in values:
-            if isinstance(values['doc'], datetime.datetime):
+            if isinstance(values['doc'], datetime.date):
                 doc = values['doc']
         if 'study_id' in values:
             study_id = values['study_id']
