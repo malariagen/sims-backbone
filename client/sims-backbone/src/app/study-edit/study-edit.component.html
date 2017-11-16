@@ -1,0 +1,28 @@
+<div class="study-edit-form">
+  <form *ngIf="studyForm" [formGroup]="studyForm" (ngSubmit)="onSubmit(studyForm)">
+
+    <p>
+      <mat-form-field class="code">
+        <input matInput placeholder="Code:" type="text" formControlName="code">
+      </mat-form-field>
+
+      <mat-form-field>
+        <input matInput placeholder="Name:" type="text" formControlName="name">
+      </mat-form-field>
+    </p>
+
+    <div formArrayName="partner_species">
+      <div *ngFor="let species of studyForm.controls.partner_species.controls; let i=index">
+        <div [formGroupName]="i">
+          <app-taxonomy-edit [group]="studyForm.controls.partner_species.controls[i]"></app-taxonomy-edit>
+        </div>
+      </div>
+    </div>
+    <p>
+      <button mat-raised-button type="submit" [disabled]="!studyForm.valid">Submit</button>
+    </p>
+
+    <a mat-button [routerLink]="[studyEvents,studyCode]">Sampling Events</a>
+  </form>
+
+</div>

@@ -19,6 +19,8 @@ export class AuthService {
   }
 
   public getAccessToken(): string {
+    return this.accessToken;
+/*    
     this.oauthService.silentRefresh().then(info => console.debug('refresh ok', info))
       .catch(err => {
         console.error('refresh error', err);
@@ -31,5 +33,6 @@ export class AuthService {
     }
     console.log("AuthService getAuthToken:" + this.accessToken);
     return this.accessToken;
+    */
   }
 }

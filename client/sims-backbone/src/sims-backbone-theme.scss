@@ -1,5 +1,7 @@
 @import '~@angular/material/_theming';
 
+@import 'app/taxonomy-edit/taxonomy-edit-theme';
+
 @include mat-core();
 
 $sims-backbone-theme-primary: mat-palette($mat-light-blue);
@@ -9,6 +11,7 @@ $sims-backbone-theme-warn: mat-palette($mat-red);
 $sims-backbone-theme: mat-light-theme($sims-backbone-theme-primary, $sims-backbone-theme-accent, $sims-backbone-theme-warn);
 
 @mixin sims-backbone-theme($theme) {
+    @include taxonomy-edit-theme(theme);    
 }
 
 @include angular-material-theme($sims-backbone-theme);

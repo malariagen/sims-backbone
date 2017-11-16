@@ -1,0 +1,7 @@
+<div *ngIf="studies" class="grid grid-pad">
+    <a *ngFor="let study of studies.studies"  [routerLink]="['/study', study.code]"  class="col-1-4">
+      <div class="module">
+          <h4>{{study.name}}</h4>
+      </div>
+    </a>
+  </div>

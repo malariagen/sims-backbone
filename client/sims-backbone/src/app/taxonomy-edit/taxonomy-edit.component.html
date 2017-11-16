@@ -1,0 +1,42 @@
+<div fxLayout="row">
+  <div fxFlex="50%">
+    <div [formGroup]="taxaGroup">
+      {{taxaGroup.get('partner_species').value}}
+      <div formArrayName="taxa">
+        <div *ngFor="let taxonomy of taxaGroup.controls.taxa.controls; let i=index">
+          <mat-form-field [formGroup]="taxaGroup.controls.taxa.controls[i]">
+            <input matInput placeholder="Taxonomy ID:" type="text" formControlName="taxonomy_id" [matAutocomplete]="taxonomyList">
+          </mat-form-field>
+          <mat-autocomplete #taxonomyList="matAutocomplete">
+            <mat-option *ngFor="let t of taxonomies" [value]="t.taxonomy_id">
+              {{t.taxonomy_id}} {{t.rank}} {{t.name}}
+            </mat-option>
+          </mat-autocomplete>
+          <span mat-button (click)="removeClassification(i)">Remove Classification</span>
+        </div>
+      </div>
+      <div class="margin-20">
+        <a mat-button (click)="addClassification()" style="cursor: default">
+          Add another classification +
+        </a>
+      </div>
+    </div>
+  </div>
+  <div fxFlex="50%">
+    <div>
+      <div *ngFor="let t of taxonomies">
+        <div fxLayout="row">
+          <div fxFlex="10%">
+            {{t.taxonomy_id}}
+          </div>
+          <div fxFlex="10%">
+            {{t.rank}}
+          </div>
+          <div fxFlex="80%">
+            {{t.name}}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

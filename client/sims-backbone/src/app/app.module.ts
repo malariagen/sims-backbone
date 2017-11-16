@@ -8,6 +8,7 @@ import { MatFormFieldModule } from '@angular/material';
 import { MatInputModule } from '@angular/material';
 import { MatTableModule } from '@angular/material';
 import { MatButtonModule } from '@angular/material';
+import { MatAutocompleteModule } from '@angular/material';
 
 import { FlexLayoutModule } from '@angular/flex-layout';
 
@@ -34,6 +35,9 @@ import { HttpModule } from '@angular/http';
 import { OAuthModule } from 'angular-oauth2-oidc';
 
 import { Configuration } from './typescript-angular-client/configuration';
+import { StudiesListComponent } from './studies-list/studies-list.component';
+import { StudyEditComponent } from './study-edit/study-edit.component';
+import { TaxonomyEditComponent } from './taxonomy-edit/taxonomy-edit.component';
 
 export function getConfiguration(authService: AuthService) {
   return authService.getConfiguration();
@@ -49,17 +53,21 @@ export function getConfiguration(authService: AuthService) {
     EventListComponent,
     StudyEventListComponent,
     CsvDownloaderComponent,
-    LocationEventListComponent
+    LocationEventListComponent,
+    StudiesListComponent,
+    StudyEditComponent,
+    TaxonomyEditComponent
   ],
   imports: [
     BrowserModule,
     FormsModule,
+    ReactiveFormsModule,
     MatFormFieldModule,
     MatInputModule,
     MatTableModule,
     MatButtonModule,
+    MatAutocompleteModule,
     FlexLayoutModule,
-    ReactiveFormsModule,
     HttpClientModule,
     AppRoutingModule,
     BrowserAnimationsModule,
