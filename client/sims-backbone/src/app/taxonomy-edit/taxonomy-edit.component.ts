@@ -17,17 +17,12 @@ export class TaxonomyEditComponent implements OnInit {
 
   @Input('group') taxaGroup: FormGroup;
 
-  taxonomies: Taxonomy[];
+  @Input('taxonomies') taxonomies: Taxonomy[];
 
   constructor(private fb: FormBuilder, private metadataService: MetadataService) { }
 
   ngOnInit(): void {
-    this.metadataService.getTaxonomyMetadata().subscribe(
-      (taxas: Taxonomies) => {
-        this.taxonomies = taxas.taxonomies;
-        console.log('OnInit' + this);
-      }
-    );
+
   }
 
   addClassification() {
@@ -43,20 +38,18 @@ export class TaxonomyEditComponent implements OnInit {
   }
 
   displayFn(taxonomy_id: number): string {
-    console.log(taxonomy_id);
-    console.log(this);
     
+    let ret = String(taxonomy_id);
+
     if (this.taxonomies) {
-      console.log(this.taxonomies);
       this.taxonomies.forEach(taxa => {
-        console.log(taxa.taxonomy_id + taxonomy_id);
         if (taxa.taxonomy_id == taxonomy_id) {
-          return taxa.taxonomy_id + " " + taxa.rank + " " + taxa.name;
+          ret = taxa.taxonomy_id + " " + taxa.rank + " " + taxa.name;
         }
       });
     }
     if (taxonomy_id) {
-      return String(taxonomy_id);
+      return ret;
     } else {
       return '';
     }
