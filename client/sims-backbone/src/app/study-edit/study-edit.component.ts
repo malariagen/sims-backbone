@@ -5,19 +5,23 @@ import { FormGroup, FormArray, FormControl, FormBuilder, Validators } from '@ang
 import { Studies } from '../typescript-angular-client/model/studies';
 import { Study } from '../typescript-angular-client/model/study';
 import { Taxonomy } from '../typescript-angular-client/model/taxonomy';
+import { Taxonomies } from '../typescript-angular-client/model/taxonomies';
+import { MetadataService } from '../typescript-angular-client/api/metadata.service';
 import { StudyService } from '../typescript-angular-client/api/study.service';
 
 @Component({
   selector: 'app-study-edit',
-  providers: [StudyService],
+  providers: [StudyService, MetadataService],
   templateUrl: './study-edit.component.html',
   styleUrls: ['./study-edit.component.css']
 })
 export class StudyEditComponent implements OnInit {
 
-  constructor(private studyService: StudyService, private route: ActivatedRoute, private _fb: FormBuilder) { }
+  constructor(private studyService: StudyService, private metadataService: MetadataService, private route: ActivatedRoute, private _fb: FormBuilder) { }
 
   public studyEvents: string = '/study/events';
+
+  taxonomies: Taxonomy[];
 
   studyCode: string;
 
@@ -28,11 +32,16 @@ export class StudyEditComponent implements OnInit {
   ngOnInit() {
     this.studyCode = this.route.snapshot.params['studyCode'];
 
+    this.metadataService.getTaxonomyMetadata().subscribe(
+      (taxas: Taxonomies) => {
+        this.taxonomies = taxas.taxonomies;
+      }
+    );
+
     this.studyService.downloadStudy(this.studyCode).subscribe(
       (study) => {
 
         this.study = study;
-        console.log(study);
         this.studyForm = this._fb.group(
           {
             code: [this.study.code, [Validators.required]],
