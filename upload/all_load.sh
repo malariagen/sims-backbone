@@ -4,8 +4,8 @@
 ./run.sh ./denormalize_pv_3.txt pv_3_sanger_source_code_metadata.json
 ./run.sh ./denormalized_manage_sites.txt denorm_manage_sites.json
 ./run.sh pv_3_broad_metadata.txt pv_3_broad_metadata.json
-./run.sh genre.dump_samples.tsv roma.json
+./run.sh genre.dump_samples.tsv genre.json
 ./run.sh spotmalaria.dump_samples.tsv spotmalaria.dump_samples.json
-./run.sh vivax.dump_samples.tsv roma.json
-./run.sh vobs.dump_samples.tsv roma.json
+./run.sh vivax.dump_samples.tsv vivax.json
+./run.sh vobs.dump_samples.tsv vobs.json
 ./run.sh ag1000g.samples.meta.txt ag1000g.json
