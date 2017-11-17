@@ -12,10 +12,6 @@ class TaxonomiesGet():
         self._connection = conn
 
 
-    def __del__(self):
-        if self._connection:
-            self._connection.close()
-
     def get(self):
 
         cursor = self._connection.cursor()

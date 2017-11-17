@@ -14,10 +14,6 @@ class LocationsGet():
         self._connection = conn
 
 
-    def __del__(self):
-        if self._connection:
-            self._connection.close()
-
     def get(self, study_name=None, start=None, count=None, orderby=None):
 
         result = Locations()

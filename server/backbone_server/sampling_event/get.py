@@ -15,10 +15,6 @@ class SamplingEventGetById():
         self._connection = conn
 
 
-    def __del__(self):
-        if self._connection:
-            self._connection.close()
-
     def get(self, sample_id):
 
         cursor = self._connection.cursor()

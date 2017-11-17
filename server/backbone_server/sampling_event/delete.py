@@ -11,10 +11,6 @@ class SamplingEventDelete():
         self._connection = conn
 
 
-    def __del__(self):
-        if self._connection:
-            self._connection.close()
-
     def delete(self, sample_id):
 
         cursor = self._connection.cursor()

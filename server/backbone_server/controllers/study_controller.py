@@ -10,14 +10,13 @@ from backbone_server.study.gets import StudiesGet
 from backbone_server.study.get import StudyGet
 from backbone_server.study.put import StudyPut
 
-from backbone_server.connect  import get_connection
+from backbone_server.controllers.base_controller  import BaseController
 
 import logging
 
-class StudyController():
+class StudyController(BaseController):
 
-    @staticmethod
-    def download_studies(start=None, count=None):
+    def download_studies(self, start=None, count=None):
         """
         fetches studies
         
@@ -28,14 +27,13 @@ class StudyController():
 
         :rtype: Studies
         """
-        get = StudiesGet(get_connection())
+        get = StudiesGet(self.get_connection())
 
         studies = get.get()
 
         return studies, 200
 
-    @staticmethod
-    def download_study(studyId):
+    def download_study(self, studyId):
         """
         fetches a study
         
@@ -44,7 +42,7 @@ class StudyController():
 
         :rtype: Study
         """
-        get = StudyGet(get_connection())
+        get = StudyGet(self.get_connection())
 
         study = None
         retcode = 200
@@ -57,8 +55,7 @@ class StudyController():
         return study, retcode
 
 
-    @staticmethod
-    def update_study(studyId, study, user=None):
+    def update_study(self, studyId, study, user=None):
         """
         updates a study
         
@@ -74,7 +71,7 @@ class StudyController():
         updated_study = None
 
         try:
-            put = StudyPut(get_connection())
+            put = StudyPut(self.get_connection())
 
             updated_study = put.put(studyId, study)
         except IntegrityException as dme:

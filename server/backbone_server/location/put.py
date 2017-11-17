@@ -18,10 +18,6 @@ class LocationPut(LocationEdit):
         self._logger = logging.getLogger(__name__)
         self._connection = conn
 
-    def __del__(self):
-        if self._connection:
-            self._connection.close()
-
 
     def put(self, location_id, location):
 

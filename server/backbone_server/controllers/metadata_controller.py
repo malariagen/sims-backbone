@@ -1,23 +1,19 @@
 from swagger_server.models.country import Country
 from swagger_server.models.taxonomies import Taxonomies
 from swagger_server.models.taxonomy import Taxonomy
-from datetime import date, datetime
-from typing import List, Dict
-from six import iteritems
 
 from backbone_server.metadata.country import CountryGet
 from backbone_server.metadata.taxonomies import TaxonomiesGet
 
-from backbone_server.connect  import get_connection
+from backbone_server.controllers.base_controller  import BaseController
 
 from backbone_server.errors.missing_key_exception import MissingKeyException
 
 import logging
 
-class MetadataController():
+class MetadataController(BaseController):
 
-    @staticmethod
-    def create_taxonomy(taxonomy):
+    def create_taxonomy(self, taxonomy):
         """
         create_taxonomy
         Create a Taxonomy
@@ -29,8 +25,7 @@ class MetadataController():
         return 'do some magic!'
 
 
-    @staticmethod
-    def get_country_metadata(countryId):
+    def get_country_metadata(self, countryId):
         """
         fetches all the names for a country
         guesses the search criteria
@@ -39,7 +34,7 @@ class MetadataController():
 
         :rtype: Country
         """
-        get = CountryGet(get_connection())
+        get = CountryGet(self.get_connection())
 
         retcode = 200
         country = None
@@ -52,15 +47,14 @@ class MetadataController():
 
         return country, retcode
 
-    @staticmethod
-    def get_taxonomy_metadata():
+    def get_taxonomy_metadata(self):
         """
         fetches all the registered taxa
         guesses the search criteria
 
         :rtype: Taxonomies
         """
-        get = TaxonomiesGet(get_connection())
+        get = TaxonomiesGet(self.get_connection())
 
         taxas = get.get()
 

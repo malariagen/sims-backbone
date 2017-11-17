@@ -11,10 +11,6 @@ class CountryGet():
         self._connection = conn
 
 
-    def __del__(self):
-        if self._connection:
-            self._connection.close()
-
     def get(self, country_id):
 
         cursor = self._connection.cursor()

@@ -8,19 +8,11 @@ from ..util import deserialize_date, deserialize_datetime
 from decimal import *
 import logging
 
-from backbone_server.location.post import LocationPost
-from backbone_server.location.put import LocationPut
-from backbone_server.location.get import LocationGetById
-from backbone_server.location.gets import LocationsGet
-from backbone_server.location.delete import LocationDelete
-from backbone_server.location.get_by_name import LocationGetByPartnerName
-from backbone_server.location.get_by_gps import LocationGetByGPS
 
-from backbone_server.connect  import get_connection
+from backbone_server.controllers.location_controller  import LocationController
 
-from backbone_server.errors.duplicate_key_exception import DuplicateKeyException
-from backbone_server.errors.missing_key_exception import MissingKeyException
 
+location_controller = LocationController()
 
 def create_location(location, user = None):
     """
@@ -34,18 +26,7 @@ def create_location(location, user = None):
     if connexion.request.is_json:
         location = Location.from_dict(connexion.request.get_json())
 
-    retcode = 200
-    loc = None
-
-    try:
-        post = LocationPost(get_connection())
-
-        loc = post.post(location)
-    except DuplicateKeyException as dke:
-        logging.getLogger(__name__).error("create_location: {}".format(repr(dke)))
-        retcode = 422
-
-    return loc, retcode
+    return location_controller.create_location(location, user)
 
 
 def delete_location(locationId, user = None):
@@ -57,18 +38,7 @@ def delete_location(locationId, user = None):
 
     :rtype: None
     """
-    delete = LocationDelete(get_connection())
-
-    retcode = 200
-    loc = None
-
-    try:
-        delete.delete(locationId)
-    except MissingKeyException as dme:
-        logging.getLogger(__name__).error("delete_location: {}".format(repr(dme)))
-        retcode = 404
-
-    return None, retcode
+    return location_controller.delete_location(locationId, user)
 
 
 def download_gps_location(latitude, longitude, user = None):
@@ -82,23 +52,7 @@ def download_gps_location(latitude, longitude, user = None):
 
     :rtype: Location
     """
-    get = LocationGetByGPS(get_connection())
-
-    retcode = 200
-    loc = None
-
-    try:
-        lat = Decimal(latitude)
-        lng = Decimal(longitude)
-        loc = get.get(lat, lng)
-    except MissingKeyException as dme:
-        logging.getLogger(__name__).error("download_partner_location: {}".format(repr(dme)))
-        retcode = 404
-    except InvalidOperation as nfe:
-        logging.getLogger(__name__).error("download_partner_location: {}".format(repr(nfe)))
-        retcode = 422
-
-    return loc, retcode
+    return location_controller.download_gps_location(latitude, longitude, user)
 
 def download_location(locationId, user = None):
     """
@@ -109,18 +63,7 @@ def download_location(locationId, user = None):
 
     :rtype: Location
     """
-    get = LocationGetById(get_connection())
-
-    retcode = 200
-    loc = None
-
-    try:
-        loc = get.get(locationId)
-    except MissingKeyException as dme:
-        logging.getLogger(__name__).error("download_location: {}".format(repr(dme)))
-        retcode = 404
-
-    return loc, retcode
+    return location_controller.download_location(locationId, user)
 
 
 def download_locations(studyName=None, start=None, count=None, orderby=None, user = None):
@@ -138,18 +81,7 @@ def download_locations(studyName=None, start=None, count=None, orderby=None, use
 
     :rtype: Locations
     """
-    get = LocationsGet(get_connection())
-
-    retcode = 200
-    loc = None
-
-    try:
-        loc = get.get(studyName, start, count, orderby)
-    except MissingKeyException as dme:
-        logging.getLogger(__name__).error("download_location: {}".format(repr(dme)))
-        retcode = 404
-
-    return loc, retcode
+    return location_controller.download_locations(studyName, start, count, orderby, user)
 
 
 def download_partner_location(partnerId, user = None):
@@ -161,18 +93,7 @@ def download_partner_location(partnerId, user = None):
 
     :rtype: Locations
     """
-    get = LocationGetByPartnerName(get_connection())
-
-    retcode = 200
-    loc = None
-
-    try:
-        loc = get.get(partnerId)
-    except MissingKeyException as dme:
-        logging.getLogger(__name__).error("download_partner_location: {}".format(repr(dme)))
-        retcode = 404
-
-    return loc, retcode
+    return location_controller.download_partner_location(partnerId, user)
 
 
 def update_location(locationId, location, user = None):
@@ -189,18 +110,5 @@ def update_location(locationId, location, user = None):
     if connexion.request.is_json:
         location = Location.from_dict(connexion.request.get_json())
 
-    retcode = 200
-    loc = None
+    return location_controller.update_location(locationId, location, user)
 
-    try:
-        put = LocationPut(get_connection())
-
-        loc = put.put(locationId, location)
-    except DuplicateKeyException as dke:
-        logging.getLogger(__name__).error("update_location: {}".format(repr(dke)))
-        retcode = 422
-    except MissingKeyException as dme:
-        logging.getLogger(__name__).error("update_location: {}".format(repr(dme)))
-        retcode = 404
-
-    return loc, retcode

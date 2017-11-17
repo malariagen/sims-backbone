@@ -16,10 +16,6 @@ class SamplingEventsGetByLocation():
         self._connection = conn
 
 
-    def __del__(self):
-        if self._connection:
-            self._connection.close()
-
     def get(self, location_id):
 
         cursor = self._connection.cursor()

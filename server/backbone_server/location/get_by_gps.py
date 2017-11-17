@@ -12,10 +12,6 @@ class LocationGetByGPS():
         self._logger = logging.getLogger(__name__)
         self._connection = conn
 
-    def __del__(self):
-        if self._connection:
-            self._connection.close()
-
     def get(self, latitude, longitude):
 
         cursor = self._connection.cursor()

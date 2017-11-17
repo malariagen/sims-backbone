@@ -8,6 +8,8 @@ from ..util import deserialize_date, deserialize_datetime
 
 from backbone_server.controllers.study_controller import StudyController
 
+study_controller = StudyController()
+
 def download_studies(start=None, count=None):
     """
     fetches studies
@@ -19,7 +21,7 @@ def download_studies(start=None, count=None):
 
     :rtype: Studies
     """
-    return StudyController.download_studies(start, count)
+    return study_controller.download_studies(start, count)
 
 
 def download_study(studyId):
@@ -31,7 +33,7 @@ def download_study(studyId):
 
     :rtype: Study
     """
-    return StudyController.download_study(studyId)
+    return study_controller.download_study(studyId)
 
 
 def update_study(studyId, study, user=None):
@@ -47,4 +49,4 @@ def update_study(studyId, study, user=None):
     """
     if connexion.request.is_json:
         study = Study.from_dict(connexion.request.get_json())
-    return StudyController.update_study(studyId, study, user)
+    return study_controller.update_study(studyId, study, user)

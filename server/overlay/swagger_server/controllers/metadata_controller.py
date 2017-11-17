@@ -11,6 +11,8 @@ from backbone_server.controllers.metadata_controller import MetadataController
 
 import logging
 
+metadata_controller = MetadataController()
+
 def create_taxonomy(taxonomy):
     """
     create_taxonomy
@@ -22,7 +24,7 @@ def create_taxonomy(taxonomy):
     """
     if connexion.request.is_json:
         taxonomy = Taxonomy.from_dict(connexion.request.get_json())
-    return 'do some magic!'
+    return 'do some magic!', 501
 
 def get_country_metadata(countryId):
     """
@@ -34,7 +36,7 @@ def get_country_metadata(countryId):
     :rtype: Country
     """
 
-    return MetadataController.get_country_metadata(countryId)
+    return metadata_controller.get_country_metadata(countryId)
 
 
 def get_taxonomy_metadata():
@@ -44,4 +46,4 @@ def get_taxonomy_metadata():
 
     :rtype: Taxonomies
     """
-    return MetadataController.get_taxonomy_metadata()
+    return metadata_controller.get_taxonomy_metadata()
