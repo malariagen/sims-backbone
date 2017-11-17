@@ -95,7 +95,7 @@ package:
         - updateall.sh
         - ../../server/backbone_server/connect.py
     include:
-        - handler.py
+        - location/handler.py
         - ../../server/bb_server/**
         - ../../server/backbone_server/**/**
         - ../auth/**
@@ -105,25 +105,37 @@ functions:
   auth_func:
     handler: auth/handler.auth
   create_location:
-    handler: handler.create_location
+    handler: location/handler.create_location
     events:
       - http:
           path: sims-backbone-location-service/v1/location
           method: post
+          cors: true
+          authorizer:
+            name: auth_func
+            type: request
+            identitySource: method.request.header.Authorization
+            identityValidationExpression: .*
 
   location:
-    handler: handler.download_location
+    handler: location/handler.download_location
     events:
       - http:
           path: sims-backbone-location-service/v1/location/{location_id}
           method: get
+          cors: true
+          authorizer:
+            name: auth_func
+            type: request
+            identitySource: method.request.header.Authorization
+            identityValidationExpression: .*
           request:
             parameters:
               paths:
                 location_id: true
 
   locations:
-    handler: handler.download_locations
+    handler: location/handler.download_locations
     events:
       - http:
           path: sims-backbone-location-service/v1/locations
@@ -143,22 +155,34 @@ functions:
                 orderby: false
 
   location_update:
-    handler: handler.update_location
+    handler: location/handler.update_location
     events:
       - http:
           path: sims-backbone-location-service/v1/location/{location_id}
           method: put
+          cors: true
+          authorizer:
+            name: auth_func
+            type: request
+            identitySource: method.request.header.Authorization
+            identityValidationExpression: .*
           request:
               parameters:
                   paths:
                       location_id: true
 
   download_gps_location:
-    handler: handler.download_gps_location
+    handler: location/handler.download_gps_location
     events:
       - http:
           path: sims-backbone-location-service/v1/location/gps/{latitude}/{longitude}
           method: get
+          cors: true
+          authorizer:
+            name: auth_func
+            type: request
+            identitySource: method.request.header.Authorization
+            identityValidationExpression: .*
           request:
               parameters:
                   paths:
