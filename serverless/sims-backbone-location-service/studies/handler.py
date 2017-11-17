@@ -18,15 +18,16 @@ cmd_subfolder = os.path.realpath(os.path.abspath(os.path.join(os.path.split(insp
 if cmd_subfolder not in sys.path:
      sys.path.insert(0, cmd_subfolder)
 
-from swagger_server.models.location import Location
+from swagger_server.models.studies import Studies
+from swagger_server.models.study import Study
 
 import logging
 
 from decimal import *
 
-from backbone_server.controllers.location_controller import LocationController
+from backbone_server.controllers.studies_controller import StudiesController
 
-location_controller = LocationController()
+studies_controller = StudiesController()
 
 def create_response(retcode, value):
 
@@ -38,65 +39,36 @@ def create_response(retcode, value):
         "body": json.dumps(value.to_dict())
     }
 
-def create_location(event, context):
+def download_studies(self, start=None, count=None):
 
     user = event['requestContext']['authorizer']['principalId']
 
-    location = Location.from_dict(json.loads(event["body"]))
-
-    return create_response(location_controller.create_location(location, user))
-
-def download_location(event, context):
-
-    user = event['requestContext']['authorizer']['principalId']
-
-    if 'pathParameters' in event:
-        location_id = event["pathParameters"]["location_id"]
-
-    return create_response( location_controller.download_location(location_id, user))
-
-
-def download_locations(event, context):
-
-    user = event['requestContext']['authorizer']['principalId']
-
-    study_name = None
     start =  None
     count =  None
-    orderby =  'location'
 
     if 'queryStringParameters' in event and event["queryStringParameters"]:
-        if 'study_name' in event["queryStringParameters"]:
-            study_name = event["queryStringParameters"]["study_name"]
         if 'start' in event["queryStringParameters"]:
             start = event["queryStringParameters"]["start"]
         if 'count' in event["queryStringParameters"]:
             count = event["queryStringParameters"]["count"]
-        if 'orderby' in event["queryStringParameters"]:
-            orderby = event["queryStringParameters"]["orderby"]
 
-    return create_response(location_controller.download_locations(study_name, start, count, orderby, user))
+    return create_response(studies_controller.download_studies(start, count, user))
 
-def update_location(event, context):
+def download_study(self, studyId):
 
     user = event['requestContext']['authorizer']['principalId']
 
     if 'pathParameters' in event:
-        location_id = event["pathParameters"]["location_id"]
+        study_id = event["pathParameters"]["study_id"]
 
-    location = Location.from_dict(json.loads(event["body"]))
+    return create_response( studies_controller.download_study(study_id, user))
 
-    return create_response(location_controller.update_location(location_id, location, user))
 
-def download_gps_location(event, context):
+def update_study(self, studyId, study, user=None):
 
     user = event['requestContext']['authorizer']['principalId']
 
-    if 'pathParameters' in event:
-        latitude = event["pathParameters"]["latitude"]
-        longitude = event["pathParameters"]["longitude"]
+    study = Study.from_dict(json.loads(event["body"]))
 
-    lat = Decimal(latitude)
-    lng = Decimal(longitude)
+    return create_response(studies_controller.update_study(study, user))
 
-    return create_response(location_controller.download_gps_location(lat, lng, user))
