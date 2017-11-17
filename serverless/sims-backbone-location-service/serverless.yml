@@ -246,13 +246,13 @@ resources:
         DestinationCidrBlock: 0.0.0.0/0
         NatGatewayId:
           Ref: NatGateway
-#    SubnetRouteTableServerlessSubnetA:
-#      Type: "AWS:EC2::SubnetRouteTableAssociation"
-#      Properties:
-#        SubnetId:
-#          Ref: ServerlessSubnetA
-#        RouteTableId:
-#          Ref: ServerlessSubnetARouteTable
+    SubnetRouteTableServerlessSubnetA:
+      Type: AWS::EC2::SubnetRouteTableAssociation
+      Properties:
+        SubnetId:
+          Ref: ServerlessSubnetA
+        RouteTableId:
+          Ref: ServerlessSubnetARouteTable
     ServerlessSubnetBRouteTable:
       Type: AWS::EC2::RouteTable
       Properties:
@@ -267,13 +267,13 @@ resources:
         DestinationCidrBlock: 0.0.0.0/0
         NatGatewayId:
           Ref: NatGateway
-#    SubnetRouteTableServerlessSubnetB:
-#      Type: "AWS:EC2::SubnetRouteTableAssociation"
-#      Properties:
-#        SubnetId:
-#          Ref: ServerlessSubnetB
-#        RouteTableId:
-#          Ref: ServerlessSubnetBRouteTable
+    SubnetRouteTableServerlessSubnetB:
+      Type: AWS::EC2::SubnetRouteTableAssociation
+      Properties:
+        SubnetId:
+          Ref: ServerlessSubnetB
+        RouteTableId:
+          Ref: ServerlessSubnetBRouteTable
     ServerlessSubnetCRouteTable:
       Type: AWS::EC2::RouteTable
       Properties:
@@ -288,13 +288,13 @@ resources:
         DestinationCidrBlock: 0.0.0.0/0
         NatGatewayId:
           Ref: NatGateway
-#    SubnetRouteTableServerlessSubnetC:
-#      Type: "AWS:EC2::SubnetRouteTableAssociation"
-#      Properties:
-#        SubnetId:
-#          Ref: ServerlessSubnetC
-#        RouteTableId:
-#          Ref: ServerlessSubnetCRouteTable
+    SubnetRouteTableServerlessSubnetC:
+      Type: AWS::EC2::SubnetRouteTableAssociation
+      Properties:
+        SubnetId:
+          Ref: ServerlessSubnetC
+        RouteTableId:
+          Ref: ServerlessSubnetCRouteTable
     PublicRouteTable:
       Type: AWS::EC2::RouteTable
       Properties:
@@ -309,15 +309,15 @@ resources:
         DestinationCidrBlock: 0.0.0.0/0
         GatewayId:
           Ref: InternetGateway
-#    SubnetRouteTablePublic1:
-#      Type: "AWS:EC2::SubnetRouteTableAssociation"
-#      Properties:
-#        SubnetId:
-#          Ref: PublicSubnet
-#        RouteTableId:
-#          Ref: PublicRouteTable
+    SubnetRouteTablePublic1:
+      Type: AWS::EC2::SubnetRouteTableAssociation
+      Properties:
+        SubnetId:
+          Ref: PublicSubnet
+        RouteTableId:
+          Ref: PublicRouteTable
     VPCGateway:
-      Type: "AWS::EC2::VPCGatewayAttachment"
+      Type: AWS::EC2::VPCGatewayAttachment
       Properties:
         InternetGatewayId:
           Ref: InternetGateway
