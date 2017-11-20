@@ -31,7 +31,6 @@ import { CsvDownloaderComponent } from './csv-downloader/csv-downloader.componen
 import { LocationEventListComponent } from './location-event-list/location-event-list.component';
 
 import { AuthService } from './auth.service';
-import { HttpModule } from '@angular/http';
 import { OAuthModule } from 'angular-oauth2-oidc';
 
 import { Configuration } from './typescript-angular-client/configuration';
@@ -76,7 +75,6 @@ export function getConfiguration(authService: AuthService) {
       apiKey: 'AIzaSyAXqsQD-9Gthal2ZU6cHIzNoggzMX3hi4o',
       libraries: ["places"]
     }),
-    HttpModule,
     OAuthModule.forRoot()
   ],
   providers: [AuthService, {
