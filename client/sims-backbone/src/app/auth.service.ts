@@ -3,12 +3,17 @@ import { Injectable } from '@angular/core';
 import { OAuthService } from 'angular-oauth2-oidc';
 import { Configuration } from './typescript-angular-client/configuration';
 
+import { Location } from '@angular/common';
+
+import { ActivatedRoute, UrlSegment } from '@angular/router';
+import { Observable } from 'rxjs/Observable';
+
 @Injectable()
 export class AuthService {
 
   accessToken: string;
 
-  constructor(private oauthService: OAuthService) {
+  constructor(private oauthService: OAuthService, private route:ActivatedRoute, private location: Location ) {
   }
 
   public getConfiguration() {
@@ -19,20 +24,21 @@ export class AuthService {
   }
 
   public getAccessToken(): string {
-    return this.accessToken;
-/*    
+      /*
     this.oauthService.silentRefresh().then(info => console.debug('refresh ok', info))
       .catch(err => {
         console.error('refresh error', err);
         this.accessToken = null;
         this.oauthService.logOut();
       });
+      */
     this.accessToken = this.oauthService.getAccessToken();
     if (!this.accessToken) {
-      this.oauthService.initImplicitFlow();
+      console.log("Path:" + this.location.path());
+      this.oauthService.initImplicitFlow(this.location.path());     
     }
     console.log("AuthService getAuthToken:" + this.accessToken);
     return this.accessToken;
-    */
   }
+
 }

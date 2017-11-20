@@ -21,15 +21,15 @@ export class AppComponent {
         this.oauthService.silentRefreshRedirectUri = window.location.origin + "/assets/silent-refresh.html";
         this.oauthService.setupAutomaticSilentRefresh();
 
-        this.oauthService.tryLogin();
-    }
+        this.oauthService.tryLogin({
+            onTokenReceived: (info) => {
+                console.log('state', info.state);
+            }
+        });
 
-    public login() {
-        this.oauthService.initImplicitFlow();
-    }
-
-    public logout() {
-        this.oauthService.logOut();
+        this.oauthService.events.subscribe(e => {
+            console.log('oauth/oidc event', e);
+        })
     }
 
 
