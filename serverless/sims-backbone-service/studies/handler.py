@@ -21,9 +21,9 @@ import logging
 
 from decimal import *
 
-from backbone_server.controllers.studies_controller import StudiesController
+from backbone_server.controllers.study_controller import StudyController
 
-studies_controller = StudiesController()
+study_controller = StudyController()
 
 def create_response(retcode, value):
 
@@ -35,7 +35,7 @@ def create_response(retcode, value):
         "body": json.dumps(value.to_dict())
     }
 
-def download_studies(self, start=None, count=None):
+def download_studies(event, context):
 
     user = event['requestContext']['authorizer']['principalId']
 
@@ -48,23 +48,32 @@ def download_studies(self, start=None, count=None):
         if 'count' in event["queryStringParameters"]:
             count = event["queryStringParameters"]["count"]
 
-    return create_response(studies_controller.download_studies(start, count, user))
+    value, retcode = study_controller.download_studies(start, count, user)
 
-def download_study(self, studyId):
+    return create_response(retcode, value)
+
+def download_study(event, context):
 
     user = event['requestContext']['authorizer']['principalId']
 
     if 'pathParameters' in event:
         study_id = event["pathParameters"]["study_id"]
 
-    return create_response( studies_controller.download_study(study_id, user))
+    value, retcode =  study_controller.download_study(study_id, user)
+
+    return create_response(retcode, value)
 
 
-def update_study(self, studyId, study, user=None):
+def update_study(event, context):
 
     user = event['requestContext']['authorizer']['principalId']
 
+    if 'pathParameters' in event:
+        study_id = event["pathParameters"]["study_id"]
+
     study = Study.from_dict(json.loads(event["body"]))
 
-    return create_response(studies_controller.update_study(study, user))
+    value, retcode = study_controller.update_study(study_id, study, user)
+
+    return create_response(retcode, value)
 

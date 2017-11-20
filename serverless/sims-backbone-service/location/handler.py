@@ -40,7 +40,11 @@ def create_location(event, context):
 
     location = Location.from_dict(json.loads(event["body"]))
 
-    return create_response(location_controller.create_location(location, user))
+    value, retcode = location_controller.create_location(location, user)
+
+    value.location_id = str(value.location_id)
+
+    return create_response(retcode, value)
 
 def download_location(event, context):
 
@@ -49,8 +53,11 @@ def download_location(event, context):
     if 'pathParameters' in event:
         location_id = event["pathParameters"]["location_id"]
 
-    return create_response( location_controller.download_location(location_id, user))
+    value, retcode = location_controller.download_location(location_id, user)
 
+    value.location_id = str(value.location_id)
+
+    return create_response(retcode, value)
 
 def download_locations(event, context):
 
@@ -71,7 +78,13 @@ def download_locations(event, context):
         if 'orderby' in event["queryStringParameters"]:
             orderby = event["queryStringParameters"]["orderby"]
 
-    return create_response(location_controller.download_locations(study_name, start, count, orderby, user))
+    value, retcode = location_controller.download_locations(study_name, start, count,
+                                                                   orderby, user)
+
+    for loc in value.locations:
+        loc.location_id = str(loc.location_id)
+
+    return create_response(retcode, value)
 
 def update_location(event, context):
 
@@ -82,7 +95,11 @@ def update_location(event, context):
 
     location = Location.from_dict(json.loads(event["body"]))
 
-    return create_response(location_controller.update_location(location_id, location, user))
+    value, retcode = location_controller.update_location(location_id, location, user)
+
+    value.location_id = str(value.location_id)
+
+    return create_response(retcode, value)
 
 def download_gps_location(event, context):
 
@@ -95,4 +112,8 @@ def download_gps_location(event, context):
     lat = Decimal(latitude)
     lng = Decimal(longitude)
 
-    return create_response(location_controller.download_gps_location(lat, lng, user))
+    value, retcode = location_controller.download_gps_location(lat, lng, user)
+
+    value.location_id = str(value.location_id)
+
+    return create_response(retcode, value)

@@ -13,7 +13,7 @@ import logging
 
 class MetadataController(BaseController):
 
-    def create_taxonomy(self, taxonomy):
+    def create_taxonomy(self, taxonomy, user=None):
         """
         create_taxonomy
         Create a Taxonomy
@@ -25,7 +25,7 @@ class MetadataController(BaseController):
         return 'do some magic!'
 
 
-    def get_country_metadata(self, countryId):
+    def get_country_metadata(self, countryId, user=None):
         """
         fetches all the names for a country
         guesses the search criteria
@@ -47,7 +47,7 @@ class MetadataController(BaseController):
 
         return country, retcode
 
-    def get_taxonomy_metadata(self):
+    def get_taxonomy_metadata(self, user=None):
         """
         fetches all the registered taxa
         guesses the search criteria

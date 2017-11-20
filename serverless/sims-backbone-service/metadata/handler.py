@@ -14,13 +14,13 @@ cmd_subfolder = os.path.realpath(os.path.abspath(os.path.join(os.path.split(insp
 if cmd_subfolder not in sys.path:
      sys.path.insert(0, cmd_subfolder)
 
-from swagger_server.models.location import Location
+from swagger_server.models.taxonomy import Taxonomy
 
 import logging
 
 from decimal import *
 
-from backbone_server.controllers.metadata_controller import metadataController
+from backbone_server.controllers.metadata_controller import MetadataController
 
 metadata_controller = MetadataController()
 
@@ -40,7 +40,9 @@ def create_taxonomy(event, context):
 
     taxa = Taxonomy.from_dict(json.loads(event["body"]))
 
-    return create_response( metadata_controller.create_taxonomy(taxa, user))
+    value, retcode = metadata_controller.create_taxonomy(taxa, user)
+
+    return create_response(retcode, value)
 
 
 def get_country_metadata(event, context):
@@ -50,11 +52,15 @@ def get_country_metadata(event, context):
     if 'pathParameters' in event:
         country_id = event["pathParameters"]["country_id"]
 
-    return create_response( metadata_controller.get_country_metadata(country_id, user))
+    value, retcode = metadata_controller.get_country_metadata(country_id, user)
+
+    return create_response(retcode, value)
 
 def get_taxonomy_metadata(event, context):
 
     user = event['requestContext']['authorizer']['principalId']
 
-    return create_response( metadata_controller.get_taxonomy_metadata(user))
+    value, retcode = metadata_controller.get_taxonomy_metadata(user)
+
+    return create_response(retcode, value)
 

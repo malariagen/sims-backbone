@@ -1,8 +1,4 @@
-import connexion
 from swagger_server.models.studies import Studies
-from datetime import date, datetime
-from typing import List, Dict
-from six import iteritems
 
 from backbone_server.errors.missing_key_exception import MissingKeyException
 from backbone_server.errors.integrity_exception import IntegrityException
@@ -16,7 +12,7 @@ import logging
 
 class StudyController(BaseController):
 
-    def download_studies(self, start=None, count=None):
+    def download_studies(self, start=None, count=None, user=None):
         """
         fetches studies
         
@@ -33,7 +29,7 @@ class StudyController(BaseController):
 
         return studies, 200
 
-    def download_study(self, studyId):
+    def download_study(self, studyId, user=None):
         """
         fetches a study
         
