@@ -16,7 +16,7 @@ class StudiesGet():
 
         cursor = self._connection.cursor()
 
-        stmt = '''SELECT study_name, study_code FROM studies'''
+        stmt = '''SELECT study_name, study_code FROM studies ORDER BY study_code'''
         cursor.execute( stmt, )
 
         studies = Studies([], 0)
