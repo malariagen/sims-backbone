@@ -9,8 +9,17 @@ import os
 import requests
 
 def auth(event, context):
-    print("Client token: " + event['authorizationToken'])
-    print("Method ARN: " + event['methodArn'])
+
+    authToken = None
+
+    if 'authorizationToken' in event:
+        authToken = event['authorizationToken']
+    else:
+        authToken = event['headers']['Authorization']
+
+#    print (repr(event))
+#    print("Client token: " + authToken)
+#    print("Method ARN: " + event['methodArn'])
 
     """you can send a 401 Unauthorized response to the client by failing like so:"""
     """raise Exception('Unauthorized')"""
@@ -33,14 +42,14 @@ def auth(event, context):
 
     verb = apiGatewayArnTmp[2]
     dest = '/'.join(apiGatewayArnTmp[3:])
-    tokens = event['authorizationToken'].split(' ')
+    tokens = authToken.split(' ')
     token = None
     if tokens[0] == 'Bearer':
         token = tokens[1]
 
     args = { 'access_token': token }
     r = requests.get(os.getenv('AUTH_PROFILE_URL'), args, timeout=3)
-    print (repr(r.text))
+#    print (repr(r.text))
     if r.status_code == 200:
         user = json.loads(r.text)
         principalId = user['id']
