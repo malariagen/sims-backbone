@@ -18,6 +18,8 @@ from swagger_server.models.sampling_event import SamplingEvent
 
 import logging
 
+import datetime
+
 from backbone_server.controllers.sampling_event_controller import SamplingEventController
 
 sampling_event_controller = SamplingEventController()
@@ -31,6 +33,17 @@ def create_response(retcode, value):
         },
         "body": json.dumps(value.to_dict())
     }
+
+def prepare_for_serialization(sampling_event):
+    sampling_event.sampling_event_id = str(sampling_event.sampling_event_id)
+    sampling_event.doc = sampling_event.doc.strftime('%Y-%m-%d')
+    if sampling_event.location_id:
+        sampling_event.location_id = str(sampling_event.location_id)
+        sampling_event.location.location_id = str(sampling_event.location.location_id)
+    if sampling_event.proxy_location_id:
+        sampling_event.proxy_location_id = str(sampling_event.proxy_location_id)
+        sampling_event.proxy_location.location_id = str(sampling_event.proxy_location.location_id)
+
 
 def create_sampling_event(event, context):
 
@@ -64,6 +77,8 @@ def download_sampling_event(event, context):
 
     value, retcode =  sampling_event_controller.download_sampling_event(sampling_event_id, user)
 
+    prepare_for_serialization(value)
+
     return create_response(retcode, value)
 
 def download_sampling_event_by_identifier(event, context):
@@ -76,6 +91,8 @@ def download_sampling_event_by_identifier(event, context):
 
     value, retcode = sampling_event_controller.download_sampling_event_by_identifier(prop_name, prop_value, user)
 
+    prepare_for_serialization(value)
+
     return create_response(retcode, value)
 
 def download_sampling_events_by_location(event, context):
@@ -86,6 +103,9 @@ def download_sampling_events_by_location(event, context):
         location_id = event["pathParameters"]["location_id"]
 
     value, retcode = sampling_event_controller.download_sampling_events_by_location(location_id, user)
+
+    for se in value.sampling_events:
+        prepare_for_serialization(se)
 
     return create_response(retcode, value)
 
@@ -99,6 +119,9 @@ def download_sampling_events_by_study(event, context):
 
     value, retcode = sampling_event_controller.download_sampling_events_by_study(study_name, user)
 
+    for se in value.sampling_events:
+        prepare_for_serialization(se)
+
     return create_response(retcode, value)
 
 def update_sampling_event(event, context):
@@ -111,6 +134,8 @@ def update_sampling_event(event, context):
     sampling_event = SamplingEvent.from_dict(json.loads(event["body"]))
 
     value, retcode = sampling_event_controller.update_location(sampling_event_id, sampling_event, user)
+
+    prepare_for_serialization(value)
 
     return create_response(retcode, value)
 
