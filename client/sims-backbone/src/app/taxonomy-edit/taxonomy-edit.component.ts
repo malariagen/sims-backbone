@@ -54,4 +54,8 @@ export class TaxonomyEditComponent implements OnInit {
       return '';
     }
   }
+
+  getTaxas() {
+    return (<FormArray>(this.taxaGroup.controls['taxa'])).controls;
+  }
 }

@@ -1,7 +1,7 @@
 <div [formGroup]="taxaGroup">
   {{taxaGroup.get('partner_species').value}}
   <div formArrayName="taxa">
-    <div *ngFor="let taxonomy of taxaGroup.controls.taxa.controls; let i=index">
+    <div *ngFor="let taxonomy of getTaxas(); let i=index">
       <mat-form-field [formGroup]="taxaGroup.controls.taxa.controls[i]" style="width:30%">
         <input matInput placeholder="Taxonomy ID:" type="text" formControlName="taxonomy_id" [matAutocomplete]="taxonomyList">
       </mat-form-field>
