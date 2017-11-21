@@ -17,7 +17,7 @@ import { Angular2Csv } from 'angular2-csv/Angular2-csv';
 })
 export class EventListComponent implements OnInit {
 
-  displayedColumns = ['oxford_id', 'partner_id', 'roma_id', 'doc', 'partner_location_name', 'location'];
+  displayedColumns = ['oxford_id', 'partner_id', 'roma_id', 'doc', 'partner_species', 'partner_location_name', 'location'];
 
   _events: Observable<SamplingEvents>;
   _studyName: string;
@@ -45,6 +45,7 @@ export class EventListComponent implements OnInit {
     this._events = events;
     let eventDatabase = new EventDatabase();
     events.subscribe(samples => {
+    //console.log(samples);
       this.count = samples.count;
       /*
       This nearly works and might in future...
@@ -83,6 +84,7 @@ export class EventListComponent implements OnInit {
           event['location'] = '<a href="location/' + sample.location.latitude + '/' + sample.location.longitude + '">' + sample.location.latitude + ', ' + sample.location.longitude + '</a>';
         }
         event['doc'] = sample.doc;
+        event['partner_species'] = sample.partner_species;
         eventDatabase.addEvent(event);
       });
     });
