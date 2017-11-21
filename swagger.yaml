@@ -11,8 +11,8 @@ info:
     url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
 host: localhost
 basePath: /v1
-#host: xxxx.execute-api.eu-west-1.amazonaws.com
-#basePath: "/dev/sims-backbone-location-service/v1"
+#host: u3bjceceak.execute-api.eu-west-1.amazonaws.com
+#basePath: "/dev/sims-backbone-service/v1"
 schemes:
   - http
 tags:
@@ -515,7 +515,7 @@ definitions:
   SamplingEvents:
     type: object
     properties:
-      samplingEvents:
+      sampling_events:
         type: array
         items:
           $ref: '#/definitions/SamplingEvent'

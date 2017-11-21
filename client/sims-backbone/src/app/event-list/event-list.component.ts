@@ -64,7 +64,7 @@ export class EventListComponent implements OnInit {
       //https://stackoverflow.com/questions/42067346/angular2-onpush-change-detection-and-ngfor     
       this.changeDetector.markForCheck();
       */
-      samples.samplingEvents.forEach(sample => {
+      samples.sampling_events.forEach(sample => {
         let event = {};
         sample.identifiers.forEach(ident => {
           event[ident.identifier_type] = ident.identifier_value;
