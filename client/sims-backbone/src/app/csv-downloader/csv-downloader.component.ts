@@ -67,10 +67,12 @@ export class CsvDownloaderComponent implements CollectionViewer {
           if (k.hasOwnProperty(key) && k[key] != null) {
             let text: string = k[key];
             if (text.startsWith('<a href="location/')) {
-              let res = text.match(/(>)([0-9,.-]*)(<)/);
-              if (res.length > 2) {
-                text = res[2];
-              };
+                let res = text.match(/(>)([0-9,.-\s]*)(<)/);
+                if (res) {
+                  if (res.length > 2) {
+                    text = res[2];
+                  }
+                }
             }
             tabText += '"' + text + '"' + this.separator;
           } else {
