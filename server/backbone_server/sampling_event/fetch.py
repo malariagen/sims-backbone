@@ -1,5 +1,6 @@
 from swagger_server.models.location import Location
 from swagger_server.models.identifier import Identifier
+from swagger_server.models.taxonomy import Taxonomy
 from swagger_server.models.sampling_event import SamplingEvent
 from backbone_server.errors.missing_key_exception import MissingKeyException
 
@@ -53,6 +54,21 @@ class SamplingEventFetch():
 
         if len(sample.identifiers) == 0:
             sample.identifiers = None
+
+        stmt = '''select taxonomy_id, study_code, partner_species FROM taxonomy_identifiers
+        JOIN partner_species_identifiers ON partner_species_identifiers.id = partner_species_id
+        JOIN studies ON studies.id = study_id
+        WHERE partner_species = %s'''
+
+        cursor.execute(stmt, (sample.partner_species,))
+
+        sample.partner_taxonomies = []
+        for (taxa_id, study_code, partner_species) in cursor:
+            taxa = Taxonomy(taxa_id)
+            sample.partner_taxonomies.append(taxa)
+
+        if len(sample.partner_taxonomies) == 0:
+            sample.partner_taxonomies = None
 
         return sample
 

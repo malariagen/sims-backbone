@@ -6,6 +6,7 @@ import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 
 import { SamplingEvents } from '../typescript-angular-client/model/samplingEvents';
 import { SamplingEvent } from '../typescript-angular-client/model/samplingEvent';
+import { Taxonomy } from '../typescript-angular-client/model/taxonomy';
 
 import { Angular2Csv } from 'angular2-csv/Angular2-csv';
 
@@ -17,7 +18,7 @@ import { Angular2Csv } from 'angular2-csv/Angular2-csv';
 })
 export class EventListComponent implements OnInit {
 
-  displayedColumns = ['oxford_id', 'partner_id', 'roma_id', 'doc', 'partner_species', 'partner_location_name', 'location'];
+  displayedColumns = ['oxford_id', 'partner_id', 'roma_id', 'doc', 'partner_species', 'taxa', 'partner_location_name', 'location_curated_name', 'location'];
 
   _events: Observable<SamplingEvents>;
   _studyName: string;
@@ -64,7 +65,7 @@ export class EventListComponent implements OnInit {
       //https://stackoverflow.com/questions/42067346/angular2-onpush-change-detection-and-ngfor     
       this.changeDetector.markForCheck();
       */
-      samples.sampling_events.forEach(sample => {
+      samples.sampling_events.forEach((sample : SamplingEvent) => {
         let event = {};
         sample.identifiers.forEach(ident => {
           event[ident.identifier_type] = ident.identifier_value;
@@ -81,7 +82,15 @@ export class EventListComponent implements OnInit {
               event['partner_location_name'] = event['partner_location_name'] + ident_value;
             }
           });
+          event['location_curated_name'] = sample.location.curated_name;
           event['location'] = '<a href="location/' + sample.location.latitude + '/' + sample.location.longitude + '">' + sample.location.latitude + ', ' + sample.location.longitude + '</a>';
+        }
+        if (sample.partner_taxonomies) {
+          let taxas = [];
+          sample.partner_taxonomies.forEach(( taxa: Taxonomy) => {
+            taxas.push(taxa.taxonomy_id);
+          })
+          event['taxa'] = taxas.join(';');
         }
         event['doc'] = sample.doc;
         event['partner_species'] = sample.partner_species;
