@@ -1,0 +1,18 @@
+{
+    "ErrorDocument": {
+        "Key": "index.html"
+    },
+    "IndexDocument": {
+        "Suffix": "index.html"
+    },
+    "RoutingRules": [
+        {
+            "Condition": {
+                "KeyPrefixEquals": "location/"
+            },
+            "Redirect": {
+                "ReplaceKeyWith": "index.html"
+            }
+        }
+    ]
+}

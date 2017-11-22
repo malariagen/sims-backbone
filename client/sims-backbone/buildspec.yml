@@ -1,0 +1,29 @@
+version: 0.2
+env:
+    variables:
+        S3_BUCKET: "sims-backbone-dev"
+        BUILD_ENV: "prod"
+phases:
+    install:
+        commands:
+            - echo Installing source NPM dependencies...
+            - npm install
+            - npm install -g @angular/cli
+    build:
+        commands:
+            - echo Build started on `date`
+            - ng build --env=${BUILD_ENV}
+    post_build:
+         commands:
+            - aws s3 website s3://${S3_BUCKET} --index-document index.html --error-document index.html
+            - aws s3 sync --acl public-read --delete dist s3://${S3_BUCKET}
+            - aws s3api put-bucket-website --bucket ${S3_BUCKET} --website-configuration file://./s3_routes.json
+            - aws s3api put-bucket-policy --bucket 'sims-backbone-dev' --policy file://./policy.sims-backbone-dev.json
+            - echo Build completed on `date`
+            - echo "URL is http://${S3_BUCKET}.s3-website-eu-west-1.amazonaws.com/"
+artifacts:
+    files:
+        - '**/*'
+    base-directory: 'dist*'
+    discard-paths: yes
+
