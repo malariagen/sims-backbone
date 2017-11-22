@@ -130,7 +130,9 @@ export class LocationsMapComponent {
         mcg.addLayers(value);
         this.leaflet_layersControl['overlays'][key] = mcg;
         //So that the layer is visible by default
-        mcg.addTo(this.map);
+        if (this.map) {
+          mcg.addTo(this.map);
+        }
 
       });
 
