@@ -667,3 +667,5 @@ definitions:
           type: array
           items:
               $ref: '#/definitions/PartnerSpecies'
+      locations:
+          $ref: '#/definitions/Locations'
