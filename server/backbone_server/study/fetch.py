@@ -3,6 +3,7 @@ from swagger_server.models.taxonomy import Taxonomy
 from swagger_server.models.partner_species import PartnerSpecies
 from backbone_server.errors.missing_key_exception import MissingKeyException
 
+from backbone_server.location.gets import LocationsGet
 import logging
 
 class StudyFetch():
@@ -34,7 +35,7 @@ class StudyFetch():
         study.partner_species = []
         ps_id_map = {}
 
-        for (psid, study_id, partner_species) in cursor:
+        for (psid, study_uuid, partner_species) in cursor:
             ps = PartnerSpecies([], partner_species = partner_species)
             ps_id_map[partner_species] = psid
             study.partner_species.append(ps)
@@ -49,5 +50,11 @@ class StudyFetch():
             for (tid, rank, name) in cursor:
                 taxa = Taxonomy(tid, name = name, rank = rank)
                 ps.taxa.append(taxa)
+
+        get = LocationsGet(cursor.connection)
+
+        locs = get.get(study_id)
+
+        study.locations = locs
 
         return study

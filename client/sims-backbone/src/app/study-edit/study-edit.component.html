@@ -28,23 +28,30 @@
       </form>
     </div>
   </div>
-  <!--
+
   <div fxFlex="50%">
-    <div>
-      <div *ngFor="let t of taxonomies">
-        <div fxLayout="row">
-          <div fxFlex="10%">
-            {{t.taxonomy_id}}
-          </div>
-          <div fxFlex="10%">
-            {{t.rank}}
-          </div>
-          <div fxFlex="80%">
-            {{t.name}}
+    <div>Locations</div>
+    <div *ngIf="study">
+      <!-- Note layer will not be shown by default
+      <app-locations-map [locations]="study.locations"></app-locations-map>
+      -->
+      <div>
+        <div *ngFor="let s of study.locations.locations">
+          <div fxLayout="row">
+            <span fxFlex="40%">
+              <span *ngFor="let ident of s.identifiers">
+                <a mat-raised-button [routerLink]="['/location',s.latitude,s.longitude]">
+                  <span *ngIf="ident.study_name == studyCode">
+                    {{ ident.identifier_value}}
+                  </span>
+                </a>
+              </span>
+            </span>
+            <span fxFlex="40%">{{s.curated_name}}</span>
+            <span fxFlex="10%">{{ s.country }}</span>
           </div>
         </div>
       </div>
     </div>
+
   </div>
--->
-</div>

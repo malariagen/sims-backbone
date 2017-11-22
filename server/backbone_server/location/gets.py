@@ -14,7 +14,7 @@ class LocationsGet():
         self._connection = conn
 
 
-    def get(self, study_name=None, start=None, count=None, orderby=None):
+    def get(self, study_name=None, start=None, count=None, orderby='location'):
 
         result = Locations()
 
