@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
+import { OAuthService } from 'angular-oauth2-oidc';
+
 import { Locations } from '../typescript-angular-client/model/locations';
 import { Location } from '../typescript-angular-client/model/location';
 import { LocationService } from '../typescript-angular-client/api/location.service';
@@ -14,7 +16,7 @@ export class AllLocationsMapComponent implements OnInit {
 
   locations: Locations;
 
-  constructor(private locationService: LocationService) {
+  constructor(private locationService: LocationService, private oauthService: OAuthService) {
   }
 
   ngOnInit() {
@@ -29,9 +31,10 @@ export class AllLocationsMapComponent implements OnInit {
         console.log(this.locations);
       },
       (err) => {
-        
+        console.log(err);
         if (err.status == 401) {
-          //Unauth - will be dealt with via auth.service.ts
+          this.oauthService.logOut();
+          this.oauthService.initImplicitFlow();
         } else {
           console.error(err);
         }
