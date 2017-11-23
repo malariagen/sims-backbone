@@ -36,7 +36,8 @@ def create_response(retcode, value):
 
 def prepare_for_serialization(sampling_event):
     sampling_event.sampling_event_id = str(sampling_event.sampling_event_id)
-    sampling_event.doc = sampling_event.doc.strftime('%Y-%m-%d')
+    if sampling_event.doc:
+        sampling_event.doc = sampling_event.doc.strftime('%Y-%m-%d')
     if sampling_event.location_id:
         sampling_event.location_id = str(sampling_event.location_id)
         sampling_event.location.location_id = str(sampling_event.location.location_id)

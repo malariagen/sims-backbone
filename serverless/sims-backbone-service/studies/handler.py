@@ -61,6 +61,8 @@ def download_study(event, context):
 
     value, retcode =  study_controller.download_study(study_id, user)
 
+    for s in value.locations.locations:
+        s.location_id = str(s.location_id)
     return create_response(retcode, value)
 
 
