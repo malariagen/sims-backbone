@@ -26,3 +26,6 @@ Before running the tests make sure you are serving the app via `ng serve`.
 ## Further help
 
 To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+
+buildspec.yml contains the commands to build and deploy to an S3 bucket - see
+[Code Build](http://docs.aws.amazon.com/codebuild/latest/userguide/create-project.html#create-project-cli)
