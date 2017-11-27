@@ -22,8 +22,12 @@ class LocationGetByPartnerName():
         locations = Locations()
         locations.locations = []
         locations.count = 0
+        locs = []
 
         for (location_id,) in cursor:
+            locs.append(location_id)
+
+        for location_id in locs:
             location = LocationFetch.fetch(cursor, location_id)
             locations.locations.append(location)
             locations.count = locations.count + 1
