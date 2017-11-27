@@ -136,7 +136,7 @@ class Uploader():
         found = False
         if looked_up.identifiers:
             for ident in looked_up.identifiers:
-                if ident.study_name == study_id and \
+                if ident.study_name[:4] == study_id[:4] and \
                     ident.identifier_value == partner_name:
                     found = True
 
@@ -159,13 +159,15 @@ class Uploader():
                 try:
                     updated = api_instance.update_location(looked_up.location_id, looked_up)
                 except ApiException as err:
-                    self._logger.debug("Error adding location identifier {} {}".format(looked_up, err))
+                    print("Error adding location identifier {} {}".format(looked_up, err))
                     message = 'duplicate location\t' + study_id + '\t' + partner_name + '\t' + \
                                 str(looked_up.latitude) + '\t' + str(looked_up.longitude)
                     conflict = api_instance.download_partner_location(partner_name)
                     if conflict and conflict.locations:
                         conflict_loc = api_instance.download_location(conflict.locations[0].location_id)
-                        self._logger.debug("Probable conflict with {}".format(conflict_loc))
+                        conflict_loc = api_instance.download_gps_location(str(looked_up.latitude),
+                                                                          str(looked_up.longitude))
+                        print("Probable conflict with {}".format(conflict_loc))
                         message = message + '\t' + str(conflict_loc.latitude) + '\t' + str(conflict_loc.longitude)
                     print(message)
         #else:
@@ -179,6 +181,12 @@ class Uploader():
 
         if not values[prefix + 'location_name']:
             print("No location name: {}".format(values))
+            return None, None
+
+        if prefix + 'latitude' not in values:
+            return None, None
+
+        if not values[prefix + 'latitude']:
             return None, None
 
         # Configure OAuth2 access token for authorization: OauthSecurity
@@ -205,7 +213,7 @@ class Uploader():
         if prefix + 'country' in values:
             country = values[prefix + 'country']
         if 'study_id' in values:
-            study_id = values['study_id']
+            study_id = values['study_id'][:4]
         partner_name = values[prefix + 'location_name']
         loc = swagger_client.Location(None, latitude,
                                       longitude,
@@ -333,7 +341,11 @@ class Uploader():
             if study_id:
                 if existing.study_id:
                     if study_id != existing.study_id:
-                        print("Conflicting study_id value {} {}".format(study_id, existing))
+                        if study_id[:4] == existing.study_id[:4]:
+                            #print("#Short and full study ids used {} {} {}".format(values, study_id, existing.study_id))
+                            pass
+                        else:
+                            print("Conflicting study_id value {} {} {}".format(values, study_id, existing.study_id))
                         existing.study_id = study_id
                         new_ident_value = True
                 else:
@@ -348,7 +360,7 @@ class Uploader():
             if doc:
                 if existing.doc:
                     if doc != existing.doc:
-                        print("Conflicting doc value {} {}\n{}".format(doc, existing.doc, existing))
+                        print("Conflicting doc value {} {}\n{}".format(values, doc, existing.doc))
                         existing.doc = doc
                         new_ident_value = True
                 else:
@@ -357,7 +369,7 @@ class Uploader():
             if location:
                 if existing.location:
                     if location.location_id != existing.location_id:
-                        print("Conflicting location value {} {}".format(location, existing))
+                        print("Conflicting location value {}\n{}\n{}".format(values, location, existing.location))
                         existing.location_id = location.location_id
                         new_ident_value = True
                 else:
@@ -366,7 +378,7 @@ class Uploader():
             if proxy_location:
                 if existing.proxy_location:
                     if proxy_location.location_id != existing.proxy_location_id:
-                        print("Conflicting location value {} {}".format(proxy_location, existing))
+                        print("Conflicting proxy location value {}\n{}\n{}".format(values, proxy_location, existing.proxy_location))
                         existing.proxy_location_id = proxy_location.location_id
                         new_ident_value = True
                 else:
