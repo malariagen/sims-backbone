@@ -39,10 +39,9 @@ provider:
     securityGroupIds:
       - "Fn::GetAtt": ServerlessSecurityGroup.GroupId
     subnetIds:
-      - Ref: ServerlessSubnetA
-      - Ref: ServerlessSubnetB
-      - Ref: ServerlessSubnetC
-      - Ref: PublicSubnet
+      - Ref: PublicSubnetA
+      - Ref: PublicSubnetB
+      - Ref: PublicSubnetC
 
 # you can overwrite defaults here
 #  stage: dev
@@ -107,6 +106,13 @@ package:
 functions:
   auth_func:
     handler: auth/handler.auth
+    vpc:
+        securityGroupIds:
+          - "Fn::GetAtt": ServerlessAuthSecurityGroup.GroupId
+        subnetIds:
+          - Ref: ServerlessSubnetA
+          - Ref: ServerlessSubnetB
+          - Ref: ServerlessSubnetC
   create_location:
     handler: location/handler.create_location
     events:
@@ -406,8 +412,6 @@ resources:
       Type: AWS::EC2::VPC
       Properties:
         CidrBlock: "10.0.0.0/16"
-        EnableDnsSupport: True
-        EnableDnsHostnames: True
     ServerlessSubnetA:
       DependsOn: ServerlessVPC
       Type: AWS::EC2::Subnet
@@ -432,31 +436,75 @@ resources:
           Ref: ServerlessVPC
         AvailabilityZone: ${self:provider.region}c
         CidrBlock: "10.0.3.0/24"
-    PublicSubnet:
+    PublicSubnetA:
+      DependsOn: ServerlessVPC
+      Type: AWS::EC2::Subnet
+      Properties:
+        VpcId:
+          Ref: ServerlessVPC
+        AvailabilityZone: ${self:provider.region}a
+        CidrBlock: "10.0.4.0/24"
+        MapPublicIpOnLaunch: True
+    PublicSubnetB:
+      DependsOn: ServerlessVPC
+      Type: AWS::EC2::Subnet
+      Properties:
+        VpcId:
+          Ref: ServerlessVPC
+        AvailabilityZone: ${self:provider.region}b
+        CidrBlock: "10.0.5.0/24"
+    PublicSubnetC:
       DependsOn: ServerlessVPC
       Type: AWS::EC2::Subnet
       Properties:
         VpcId:
           Ref: ServerlessVPC
         AvailabilityZone: ${self:provider.region}c
-        CidrBlock: "10.0.4.0/24"
-        MapPublicIpOnLaunch: True
+        CidrBlock: "10.0.6.0/24"
     InternetGateway:
       Type: "AWS::EC2::InternetGateway"
-    NatEIP:
+    NatEIPA:
       Type: AWS::EC2::EIP
       Properties:
         Domain: vpc
-    NatGateway:
+    NatGatewayA:
       Type: AWS::EC2::NatGateway
       DependsOn: VPCGateway
       Properties:
         AllocationId:
           Fn::GetAtt:
-          - NatEIP
+          - NatEIPA
           - AllocationId
         SubnetId:
-          Ref: PublicSubnet
+          Ref: PublicSubnetA
+    NatEIPB:
+      Type: AWS::EC2::EIP
+      Properties:
+        Domain: vpc
+    NatGatewayB:
+      Type: AWS::EC2::NatGateway
+      DependsOn: VPCGateway
+      Properties:
+        AllocationId:
+          Fn::GetAtt:
+          - NatEIPB
+          - AllocationId
+        SubnetId:
+          Ref: PublicSubnetB
+    NatEIPC:
+      Type: AWS::EC2::EIP
+      Properties:
+        Domain: vpc
+    NatGatewayC:
+      Type: AWS::EC2::NatGateway
+      DependsOn: VPCGateway
+      Properties:
+        AllocationId:
+          Fn::GetAtt:
+          - NatEIPC
+          - AllocationId
+        SubnetId:
+          Ref: PublicSubnetC
     ServerlessSubnetARouteTable:
       Type: AWS::EC2::RouteTable
       Properties:
@@ -470,7 +518,7 @@ resources:
           Ref: ServerlessSubnetARouteTable
         DestinationCidrBlock: 0.0.0.0/0
         NatGatewayId:
-          Ref: NatGateway
+          Ref: NatGatewayA
     SubnetRouteTableServerlessSubnetA:
       Type: AWS::EC2::SubnetRouteTableAssociation
       Properties:
@@ -491,7 +539,7 @@ resources:
           Ref: ServerlessSubnetBRouteTable
         DestinationCidrBlock: 0.0.0.0/0
         NatGatewayId:
-          Ref: NatGateway
+          Ref: NatGatewayB
     SubnetRouteTableServerlessSubnetB:
       Type: AWS::EC2::SubnetRouteTableAssociation
       Properties:
@@ -512,7 +560,7 @@ resources:
           Ref: ServerlessSubnetCRouteTable
         DestinationCidrBlock: 0.0.0.0/0
         NatGatewayId:
-          Ref: NatGateway
+          Ref: NatGatewayB
     SubnetRouteTableServerlessSubnetC:
       Type: AWS::EC2::SubnetRouteTableAssociation
       Properties:
@@ -520,32 +568,81 @@ resources:
           Ref: ServerlessSubnetC
         RouteTableId:
           Ref: ServerlessSubnetCRouteTable
-    PublicRouteTable:
+    PublicRouteTableA:
       Type: AWS::EC2::RouteTable
       Properties:
         VpcId:
           Ref: ServerlessVPC
-    PublicRoute:
+    PublicRouteA:
       Type: AWS::EC2::Route
       DependsOn: VPCGateway
       Properties:
         RouteTableId:
-          Ref: PublicRouteTable
+          Ref: PublicRouteTableA
         DestinationCidrBlock: 0.0.0.0/0
         GatewayId:
           Ref: InternetGateway
-    SubnetRouteTablePublic1:
+    SubnetRouteTablePublicA:
       Type: AWS::EC2::SubnetRouteTableAssociation
       Properties:
         SubnetId:
-          Ref: PublicSubnet
+          Ref: PublicSubnetA
         RouteTableId:
-          Ref: PublicRouteTable
+          Ref: PublicRouteTableA
+    PublicRouteTableB:
+      Type: AWS::EC2::RouteTable
+      Properties:
+        VpcId:
+          Ref: ServerlessVPC
+    PublicRouteB:
+      Type: AWS::EC2::Route
+      DependsOn: VPCGateway
+      Properties:
+        RouteTableId:
+          Ref: PublicRouteTableB
+        DestinationCidrBlock: 0.0.0.0/0
+        GatewayId:
+          Ref: InternetGateway
+    SubnetRouteTablePublicB:
+      Type: AWS::EC2::SubnetRouteTableAssociation
+      Properties:
+        SubnetId:
+          Ref: PublicSubnetB
+        RouteTableId:
+          Ref: PublicRouteTableB
+    PublicRouteTableC:
+      Type: AWS::EC2::RouteTable
+      Properties:
+        VpcId:
+          Ref: ServerlessVPC
+    PublicRouteC:
+      Type: AWS::EC2::Route
+      DependsOn: VPCGateway
+      Properties:
+        RouteTableId:
+          Ref: PublicRouteTableC
+        DestinationCidrBlock: 0.0.0.0/0
+        GatewayId:
+          Ref: InternetGateway
+    SubnetRouteTablePublicC:
+      Type: AWS::EC2::SubnetRouteTableAssociation
+      Properties:
+        SubnetId:
+          Ref: PublicSubnetC
+        RouteTableId:
+          Ref: PublicRouteTableC
     VPCGateway:
       Type: AWS::EC2::VPCGatewayAttachment
       Properties:
         InternetGatewayId:
           Ref: InternetGateway
+        VpcId:
+          Ref: ServerlessVPC
+    ServerlessAuthSecurityGroup:
+      DependsOn: ServerlessVPC
+      Type: AWS::EC2::SecurityGroup
+      Properties:
+        GroupDescription: SecurityGroup for Serverless Functions
         VpcId:
           Ref: ServerlessVPC
     ServerlessSecurityGroup:
@@ -580,7 +677,6 @@ resources:
         - Ref: ServerlessSubnetA
         - Ref: ServerlessSubnetB
         - Ref: ServerlessSubnetC
-        - Ref: PublicSubnet
     ServerlessRDSCluster:
       DependsOn: ServerlessStorageSecurityGroup
       Type: AWS::RDS::DBInstance
