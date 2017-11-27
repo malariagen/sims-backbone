@@ -14,7 +14,7 @@ class LocationsGet():
         self._connection = conn
 
 
-    def get(self, study_name=None, start=None, count=None, orderby='location'):
+    def get(self, study_code=None, start=None, count=None, orderby='location'):
 
         result = Locations()
 
@@ -23,12 +23,12 @@ class LocationsGet():
 
             query_body = ' FROM locations l'
             args = ()
-            if study_name or orderby == 'study_name':
+            if study_code or orderby == 'study_name':
                 query_body = query_body + ''' LEFT JOIN location_identifiers li ON li.location_id = l.id
                 LEFT JOIN studies s ON s.id = li.study_id'''
-                if study_name:
-                    query_body = query_body + " WHERE study_name = %s"
-                    args = (study_name, )
+                if study_code:
+                    query_body = query_body + " WHERE study_code = %s"
+                    args = (study_code[:4], )
 
             count_args = args
             count_query = 'SELECT COUNT(DISTINCT l.id) ' + query_body
