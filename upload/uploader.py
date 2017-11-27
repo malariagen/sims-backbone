@@ -87,14 +87,19 @@ class Uploader():
                             #    print("No match: {} {}".format(defn['regex'], data_value))
                         if defn['type'] == 'datetime':
                             try:
-                                if not (data_value == '' or data_value == 'NULL'):
+                                if not (data_value == '' or data_value == 'NULL' or data_value == '-'):
                                     if 'date_format' in defn:
                                         try:
                                             date_format = '%Y-%m-%d'
                                             date_format = defn['date_format']
                                             data_value = datetime.datetime(*(time.strptime(data_value, date_format))[:6]).date()
                                         except ValueError as dpe:
-                                            raise InvalidDateFormatException("Failed to parse date '{}' using {}".format(data_value, date_format)) from dpe
+                                            try:
+                                                date_format = '%Y'
+                                                data_value = datetime.datetime(*(time.strptime(data_value, date_format))[:6]).date()
+                                                values[name + '_accuracy'] = 'year'
+                                            except ValueError as dpe:
+                                                raise InvalidDateFormatException("Failed to parse date '{}' using {}".format(data_value, date_format)) from dpe
                           #          else:
                                         #To make sure that the default conversion works
                           #              data.typed_data_value
@@ -243,7 +248,16 @@ class Uploader():
                 ret = created
             #    print("Created location {}".format(created))
             except ApiException as err:
-                print("Error creating location {} {}".format(loc, err))
+                if err.status == 422:
+                    named_locations = api_instance.download_partner_location(partner_name)
+                    for named_loc in named_locations.locations:
+                        for ident in named_loc.identifiers:
+                            if ident.study_name[:4] == study_id[:4]:
+                                print("Location name conflict\t{}\t{}\t{}\t{}\t{}\t{}\t{}".
+                                      format(study_id,partner_name,named_loc.latitude,named_loc.longitude,
+                                            latitude, longitude, values))
+                else:
+                    print("Error creating location {} {}".format(loc, err))
                 return None, None
 
         #print("Returing location {}".format(ret))
@@ -263,6 +277,14 @@ class Uploader():
         if 'doc' in values:
             if isinstance(values['doc'], datetime.date):
                 doc = values['doc']
+        else:
+            if 'year' in values:
+                if isinstance(values['year'], datetime.date):
+                    doc = values['year']
+
+            if 'year_accuracy' in values:
+                samp.doc_accuracy = values['year_accuracy']
+
         if 'study_id' in values:
             study_id = values['study_id']
 
@@ -276,6 +298,7 @@ class Uploader():
 
         samp = swagger_client.SamplingEvent(None, study_id = study_id, doc = doc, location_id =
                                      lid, proxy_location_id = plid)
+
         idents = []
         if 'sample_roma_id' in values:
             idents.append(swagger_client.Identifier ('roma_id',
