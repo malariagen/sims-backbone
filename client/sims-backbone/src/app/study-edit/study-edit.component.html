@@ -24,7 +24,7 @@
           <button mat-raised-button type="submit" [disabled]="!studyForm.valid">Submit</button>
         </p>
 
-        <a mat-button [routerLink]="[studyEvents,studyCode]">Sampling Events</a>
+        <a mat-raised-button color="accent" [routerLink]="[studyEvents,studyCode]">Sampling Events</a>
       </form>
     </div>
   </div>
@@ -40,7 +40,7 @@
           <div fxLayout="row">
             <span fxFlex="40%">
               <span *ngFor="let ident of s.identifiers">
-                <a mat-raised-button [routerLink]="['/location',s.latitude,s.longitude]">
+                <a mat-raised-button color="accent" [routerLink]="['/location',s.latitude,s.longitude]">
                   <span *ngIf="ident.study_name.startsWith(studyCode)">
                     {{ ident.identifier_value}}
                   </span>

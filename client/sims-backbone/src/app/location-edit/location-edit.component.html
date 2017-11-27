@@ -7,7 +7,7 @@
 
       <div class="location-edit-form">
         <form *ngIf="locationForm" [formGroup]="locationForm" (ngSubmit)="onSubmit(locationForm)">
-          <a mat-button [routerLink]="[locationEvents,latitude,longitude]">Sampling Events</a>
+          <a mat-raised-button color="accent" [routerLink]="[locationEvents,latitude,longitude]">Sampling Events</a>
           <p>
             <mat-form-field class="curated_name">
               <input matInput placeholder="Curated Name:" type="text" formControlName="curated_name">
@@ -39,7 +39,7 @@
             <div *ngFor="let ident of locationForm.controls.identifiers.controls; let i=index">
               <div [formGroupName]="i">
                 {{ident.get('identifier_type').value}} {{ident.get('identifier_value').value}}
-                <a mat-button [routerLink]="[studyEvents,ident.get('study_name').value]">{{ident.get('study_name').value}}</a>
+                <a mat-raised-button color="accent" [routerLink]="[studyEvents,ident.get('study_name').value]">{{ident.get('study_name').value}}</a>
               </div>
             </div>
           </div>
