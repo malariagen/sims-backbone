@@ -38,6 +38,8 @@ class LocationEdit():
             else:
                 self._logger.fatal(repr(error))
         except psycopg2.IntegrityError as err:
+            logging.getLogger(__name__).debug("Rollback")
+            cursor.connection.rollback()
             cursor.close()
             raise DuplicateKeyException("Error inserting location {}".format(location)) from err
 
