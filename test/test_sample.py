@@ -16,7 +16,7 @@ class TestSample(TestBase):
 
         try:
 
-            samp = swagger_client.SamplingEvent(None, '0000-MD-UP', date(2017, 10, 10),
+            samp = swagger_client.SamplingEvent(None, '1000-MD-UP', date(2017, 10, 10),
                                                 doc_accuracy = 'month')
             created = api_instance.create_sampling_event(samp)
             fetched = api_instance.download_sampling_event(created.sampling_event_id)
@@ -36,7 +36,7 @@ class TestSample(TestBase):
 
         try:
 
-            samp = swagger_client.SamplingEvent(None, '0000-MD-UP', date(2017, 10, 10))
+            samp = swagger_client.SamplingEvent(None, '1001-MD-UP', date(2017, 10, 11))
             created = api_instance.create_sampling_event(samp)
             api_instance.delete_sampling_event(created.sampling_event_id)
             with self.assertRaises(Exception) as context:
@@ -70,7 +70,7 @@ class TestSample(TestBase):
 
         try:
 
-            samp = swagger_client.SamplingEvent(None, '0000-MD-UP', date(2017, 10, 10))
+            samp = swagger_client.SamplingEvent(None, '1002-MD-UP', date(2017, 10, 12))
             samp.identifiers = [
                 swagger_client.Identifier ('oxford', '1234')
             ]
@@ -94,7 +94,7 @@ class TestSample(TestBase):
 
         try:
 
-            samp = swagger_client.SamplingEvent(None, '0000-MD-UP', date(2017, 10, 10))
+            samp = swagger_client.SamplingEvent(None, '1003-MD-UP', date(2017, 10, 13))
             samp.identifiers = [
                 swagger_client.Identifier ('partner_id', '1234')
             ]
@@ -120,7 +120,7 @@ class TestSample(TestBase):
 
         try:
 
-            samp = swagger_client.SamplingEvent(None, '0000-MD-UP', date(2017, 10, 10))
+            samp = swagger_client.SamplingEvent(None, '1004-MD-UP', date(2017, 10, 14))
             samp.identifiers = [
                 swagger_client.Identifier ('oxford', '1234')
             ]
@@ -145,7 +145,7 @@ class TestSample(TestBase):
 
         try:
 
-            samp = swagger_client.SamplingEvent(None, '0000-MD-UP', date(2017, 10, 10))
+            samp = swagger_client.SamplingEvent(None, '1005-MD-UP', date(2017, 10, 15))
             samp.identifiers = [
                 swagger_client.Identifier ('oxford', '1234')
             ]
@@ -170,7 +170,7 @@ class TestSample(TestBase):
 
         try:
 
-            samp = swagger_client.SamplingEvent(None, '0000-MD-UP', date(2017, 10, 10))
+            samp = swagger_client.SamplingEvent(None, '1006-MD-UP', date(2017, 10, 16))
             samp.identifiers = [
                 swagger_client.Identifier ('oxford', '1234')
             ]
@@ -200,7 +200,7 @@ class TestSample(TestBase):
 
         try:
 
-            new_samp = swagger_client.SamplingEvent(None, '0001-MD-UP', date(2018, 11, 11))
+            new_samp = swagger_client.SamplingEvent(None, '1007-MD-UP', date(2018, 11, 17))
             fake_id = uuid.uuid4()
             new_samp.sampling_event_id = str(fake_id)
             with self.assertRaises(Exception) as context:

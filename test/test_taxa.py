@@ -16,7 +16,7 @@ class TestTaxa(TestBase):
 
         try:
 
-            samp = swagger_client.SamplingEvent(None, '0000-MD-UP', date(2017, 10, 10),
+            samp = swagger_client.SamplingEvent(None, '3000-MD-UP', date(2017, 10, 10),
                                                 doc_accuracy = 'month',
                                                 partner_species = 'P. falciparum')
             created = api_instance.create_sampling_event(samp)
@@ -38,10 +38,10 @@ class TestTaxa(TestBase):
 
         try:
 
-            samp = swagger_client.SamplingEvent(None, '0000-MD-UP', date(2017, 10, 10),
+            samp = swagger_client.SamplingEvent(None, '3000-MD-UP', date(2017, 10, 10),
                                                 partner_species = 'P. falciparum')
             created = api_instance.create_sampling_event(samp)
-            new_samp = swagger_client.SamplingEvent(None, '0000-MD-UP', date(2017, 10, 10),
+            new_samp = swagger_client.SamplingEvent(None, '3000-MD-UP', date(2017, 10, 10),
                                                 partner_species = 'P. vivax')
             updated = api_instance.update_sampling_event(created.sampling_event_id, new_samp)
             fetched = api_instance.download_sampling_event(created.sampling_event_id)

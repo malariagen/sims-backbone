@@ -17,7 +17,7 @@ class TestStudies(TestBase):
 
         try:
 
-            samp = swagger_client.SamplingEvent(None, '0000-MD-UP', date(2017, 10, 10),
+            samp = swagger_client.SamplingEvent(None, '2000-MD-UP', date(2017, 10, 10),
                                                 doc_accuracy = 'month',
                                                 partner_species = 'P. falciparum')
             created = api_instance.create_sampling_event(samp)
@@ -26,7 +26,7 @@ class TestStudies(TestBase):
 
             found = False
             for study in studies.studies:
-                if study.name == '0000-MD-UP' and study.code == '0000':
+                if study.name == '2000-MD-UP' and study.code == '2000':
                     found = True
 
             self.assertTrue(found, 'Study does not exist')
@@ -49,14 +49,14 @@ class TestStudies(TestBase):
             loc = swagger_client.Location(None, 27.46362, 90.49542, 'country',
                                           'Trongsa, Trongsa, Bhutan', 'pv_3_locations.txt', 'BHU')
             loc.identifiers = [
-                swagger_client.Identifier('partner_name', 'bhutan', '4321-MD-UP')
+                swagger_client.Identifier('partner_name', 'bhutan', '2001-MD-UP')
             ]
             created = api_instance.create_location(loc)
             studies = study_api.download_studies()
 
             found = False
             for study in studies.studies:
-                if study.name == '4321-MD-UP' and study.code == '4321':
+                if study.name == '2001-MD-UP' and study.code == '2001':
                     found = True
 
             self.assertTrue(found, 'Study does not exist')
@@ -75,13 +75,13 @@ class TestStudies(TestBase):
 
         try:
 
-            samp = swagger_client.SamplingEvent(None, '0002-MD-UP', date(2017, 10, 10),
+            samp = swagger_client.SamplingEvent(None, '2002-MD-UP', date(2017, 10, 10),
                                                 doc_accuracy = 'month',
                                                 partner_species = 'P. falciparum')
             created = api_instance.create_sampling_event(samp)
 
-            study1 = study_api.download_study('0002-MD-UP')
-            study2 = study_api.download_study('0002')
+            study1 = study_api.download_study('2002-MD-UP')
+            study2 = study_api.download_study('2002')
 
             self.assertEqual(study1, study2, 'Study does not match')
             self.assertEqual(study1.partner_species[0].partner_species, 'P. falciparum', 'Species not set')
