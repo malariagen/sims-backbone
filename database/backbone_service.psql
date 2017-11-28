@@ -275,7 +275,7 @@ ALTER TABLE ONLY taxonomies
 --
 
 ALTER TABLE ONLY location_identifiers
-    ADD CONSTRAINT uniq_loc_ident UNIQUE (study_id, identifier_type, identifier_value);
+    ADD CONSTRAINT uniq_loc_ident UNIQUE (study_id, identifier_type);
 
 
 --

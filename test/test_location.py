@@ -89,7 +89,37 @@ class TestLocation(TestBase):
     """
     def test_duplicate_partner_name(self):
 
-        return
+        api_instance = swagger_client.LocationApi(self._api_client)
+
+        try:
+
+            loc = swagger_client.Location(None, 27.46362, 90.49542, 'country',
+                                          'Trongsa, Trongsa, Bhutan', 'pv_3_locations.txt', 'BHU')
+            loc.identifiers = [
+                swagger_client.Identifier('partner_name', 'Kobeni', '1147-PF-MR-CONWAY'),
+            ]
+
+            loc1 = swagger_client.Location(None, 28.46362, 91.49542, 'country',
+                                          'Trongsa, Trongsa, Bhutan', 'pv_3_locations.txt', 'BHU')
+            loc1.identifiers = [
+                swagger_client.Identifier('partner_name', 'Kobeni', '1147-PF-MR-CONWAY'),
+            ]
+
+            with self.assertRaises(Exception) as context:
+                created = api_instance.create_location(loc)
+                created1 = api_instance.create_location(loc1)
+                api_instance.delete_location(created1.location_id)
+
+            api_instance.delete_location(created.location_id)
+            self.assertEqual(context.exception.status, 422)
+
+        except ApiException as error:
+            self.fail("test_duplicate_key: Exception when calling LocationApi->create_location: %s\n" % error)
+
+
+    """
+    """
+    def test_duplicate_study_name(self):
 
         api_instance = swagger_client.LocationApi(self._api_client)
 
@@ -99,18 +129,16 @@ class TestLocation(TestBase):
                                           'Trongsa, Trongsa, Bhutan', 'pv_3_locations.txt', 'BHU')
             loc.identifiers = [
                 swagger_client.Identifier('partner_name', 'Kobeni', '1147-PF-MR-CONWAY'),
-                swagger_client.Identifier('partner_name', 'Kobeni', '1147-PF-MR-CONWAY')
+                swagger_client.Identifier('partner_name', 'location name', '1147')
             ]
 
             with self.assertRaises(Exception) as context:
                 created = api_instance.create_location(loc)
-                api_instance.delete_location(created.location_id)
 
             self.assertEqual(context.exception.status, 422)
 
         except ApiException as error:
             self.fail("test_duplicate_key: Exception when calling LocationApi->create_location: %s\n" % error)
-
 
 
     """
