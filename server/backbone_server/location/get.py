@@ -17,15 +17,10 @@ class LocationGetById():
 
         location = None
 
-        try:
-            cursor = self._connection.cursor()
+        with self._connection:
+            with self._connection.cursor() as cursor:
 
-            location = LocationFetch.fetch(cursor, location_id)
+                location = LocationFetch.fetch(cursor, location_id)
 
-        except MissingKeyException as mke:
-            cursor.close()
-            raise mke
-
-        cursor.close()
 
         return location

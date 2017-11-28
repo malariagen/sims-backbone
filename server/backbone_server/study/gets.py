@@ -14,18 +14,17 @@ class StudiesGet():
 
     def get(self):
 
-        cursor = self._connection.cursor()
+        with self._connection:
+            with self._connection.cursor() as cursor:
 
-        stmt = '''SELECT study_name, study_code FROM studies ORDER BY study_code'''
-        cursor.execute( stmt, )
+                stmt = '''SELECT study_name, study_code FROM studies ORDER BY study_code'''
+                cursor.execute( stmt, )
 
-        studies = Studies([], 0)
+                studies = Studies([], 0)
 
-        for (study_name, study_code) in cursor:
-            study = Study(name = study_name, code = study_code)
-            studies.studies.append(study)
-            studies.count = studies.count + 1
-
-        cursor.close()
+                for (study_name, study_code) in cursor:
+                    study = Study(name = study_name, code = study_code)
+                    studies.studies.append(study)
+                    studies.count = studies.count + 1
 
         return studies

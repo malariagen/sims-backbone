@@ -15,22 +15,21 @@ class SamplingEventGetByIdentifier():
 
     def get(self, identifier_type, identifier_value):
 
-        cursor = self._connection.cursor()
+        with self._connection:
+            with self._connection.cursor() as cursor:
 
-        cursor.execute("SELECT sample_id FROM identifiers WHERE identifier_type = %s AND identifier_value = %s", (identifier_type, identifier_value,))
+                cursor.execute("SELECT sample_id FROM identifiers WHERE identifier_type = %s AND identifier_value = %s", (identifier_type, identifier_value,))
 
-        samples = SamplingEvents([], 0)
-        event_ids = []
+                samples = SamplingEvents([], 0)
+                event_ids = []
 
-        for sample_id in cursor:
-            event_ids.append(sample_id)
+                for sample_id in cursor:
+                    event_ids.append(sample_id)
 
-        for sample_id in event_ids:
-            sample = SamplingEventFetch.fetch(cursor, sample_id)
-            samples.sampling_events.append(sample)
-            samples.count = samples.count + 1
-
-        cursor.close()
+                for sample_id in event_ids:
+                    sample = SamplingEventFetch.fetch(cursor, sample_id)
+                    samples.sampling_events.append(sample)
+                    samples.count = samples.count + 1
 
         #partner_name has a unique key
         if samples.count == 0:

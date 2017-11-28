@@ -18,47 +18,42 @@ class LocationsGet():
 
         result = Locations()
 
-        try:
-            cursor = self._connection.cursor()
+        with self._connection:
+            with self._connection.cursor() as cursor:
 
-            query_body = ' FROM locations l'
-            args = ()
-            if study_code or orderby == 'study_name':
-                query_body = query_body + ''' LEFT JOIN location_identifiers li ON li.location_id = l.id
-                LEFT JOIN studies s ON s.id = li.study_id'''
-                if study_code:
-                    query_body = query_body + " WHERE study_code = %s"
-                    args = (study_code[:4], )
+                query_body = ' FROM locations l'
+                args = ()
+                if study_code or orderby == 'study_name':
+                    query_body = query_body + ''' LEFT JOIN location_identifiers li ON li.location_id = l.id
+                    LEFT JOIN studies s ON s.id = li.study_id'''
+                    if study_code:
+                        query_body = query_body + " WHERE study_code = %s"
+                        args = (study_code[:4], )
 
-            count_args = args
-            count_query = 'SELECT COUNT(DISTINCT l.id) ' + query_body
+                count_args = args
+                count_query = 'SELECT COUNT(DISTINCT l.id) ' + query_body
 
-            query_body = query_body + " ORDER BY " + orderby + ", l.id"
+                query_body = query_body + " ORDER BY " + orderby + ", l.id"
 
-            if not (start is None and count is None):
-                query_body = query_body + ' LIMIT %s OFFSET %s'
-                args = args + (count, start)
+                if not (start is None and count is None):
+                    query_body = query_body + ' LIMIT %s OFFSET %s'
+                    args = args + (count, start)
 
-            cursor.execute('SELECT DISTINCT l.id, ' + orderby + query_body, args)
+                cursor.execute('SELECT DISTINCT l.id, ' + orderby + query_body, args)
 
-            locations = []
-            for (location_id, ignored) in cursor:
-                lcursor = self._connection.cursor()
-                location = LocationFetch.fetch(lcursor, location_id)
-                locations.append(location)
-                lcursor.close()
+                locations = []
+                for (location_id, ignored) in cursor:
+                    with self._connection.cursor() as lcursor:
+                        location = LocationFetch.fetch(lcursor, location_id)
+                        locations.append(location)
 
-        except MissingKeyException as mke:
-            cursor.close()
-            raise mke
 
-        if not (start is None and count is None):
-            cursor.execute(count_query, count_args)
-            result.count = cursor.fetchone()[0]
-        else:
-            result.count = len(locations)
+                if not (start is None and count is None):
+                    cursor.execute(count_query, count_args)
+                    result.count = cursor.fetchone()[0]
+                else:
+                    result.count = len(locations)
 
         result.locations = locations
-        cursor.close()
 
         return result

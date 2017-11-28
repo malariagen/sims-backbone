@@ -21,54 +21,48 @@ class SamplingEventPut():
 
     def put(self, sample_id, sample):
 
-        cursor = self._connection.cursor()
+        with self._connection:
+            with self._connection.cursor() as cursor:
 
-        stmt = '''SELECT id FROM samples WHERE  id = %s'''
-        cursor.execute( stmt, (sample_id,))
+                stmt = '''SELECT id FROM samples WHERE  id = %s'''
+                cursor.execute( stmt, (sample_id,))
 
-        existing_sample = None
+                existing_sample = None
 
-        for (sample_id, ) in cursor:
-            existing_sample = SamplingEvent(sample_id)
+                for (sample_id, ) in cursor:
+                    existing_sample = SamplingEvent(sample_id)
 
-        if not existing_sample:
-            cursor.close()
-            raise MissingKeyException("Could not find sample to update {}".format(sample_id))
+                if not existing_sample:
+                    raise MissingKeyException("Could not find sample to update {}".format(sample_id))
 
-        study_id = SamplingEventEdit.fetch_study_id(cursor, sample.study_id, True)
-        partner_species = SamplingEventEdit.fetch_partner_species(cursor, sample, study_id)
-        stmt = '''UPDATE samples 
-                    SET study_id = %s, doc = %s, doc_accuracy = %s,
-                    location_id = %s, proxy_location_id = %s, partner_species_id = %s
-                    WHERE id = %s'''
-        args = (study_id, sample.doc, sample.doc_accuracy, sample.location_id, sample.proxy_location_id, partner_species, sample_id)
+                study_id = SamplingEventEdit.fetch_study_id(cursor, sample.study_id, True)
+                partner_species = SamplingEventEdit.fetch_partner_species(cursor, sample, study_id)
+                stmt = '''UPDATE samples 
+                            SET study_id = %s, doc = %s, doc_accuracy = %s,
+                            location_id = %s, proxy_location_id = %s, partner_species_id = %s
+                            WHERE id = %s'''
+                args = (study_id, sample.doc, sample.doc_accuracy, sample.location_id, sample.proxy_location_id, partner_species, sample_id)
 
-        try:
-            cursor.execute(stmt, args)
-            rc = cursor.rowcount
+                try:
+                    cursor.execute(stmt, args)
+                    rc = cursor.rowcount
 
-            cursor.execute('DELETE FROM identifiers WHERE sample_id = %s', (sample_id,))
+                    cursor.execute('DELETE FROM identifiers WHERE sample_id = %s', (sample_id,))
 
-            SamplingEventEdit.add_identifiers(cursor, sample_id, sample)
+                    SamplingEventEdit.add_identifiers(cursor, sample_id, sample)
 
-        except mysql.connector.Error as err:
-            cursor.close()
-            if err.errno == errorcode.ER_DUP_ENTRY:
-                raise DuplicateKeyException("Error updating sample {}".format(sample)) from err
-            else:
-                self._logger.fatal(repr(error))
-        except psycopg2.IntegrityError as err:
-            cursor.close()
-            raise DuplicateKeyException("Error updating sample {}".format(sample)) from err
-        except DuplicateKeyException as err:
-            cursor.close()
-            raise err
+                except mysql.connector.Error as err:
+                    if err.errno == errorcode.ER_DUP_ENTRY:
+                        raise DuplicateKeyException("Error updating sample {}".format(sample)) from err
+                    else:
+                        self._logger.fatal(repr(error))
+                except psycopg2.IntegrityError as err:
+                    raise DuplicateKeyException("Error updating sample {}".format(sample)) from err
+                except DuplicateKeyException as err:
+                    raise err
 
-        self._connection.commit()
 
-        sample = SamplingEventFetch.fetch(cursor, sample_id)
-
-        cursor.close()
+                sample = SamplingEventFetch.fetch(cursor, sample_id)
 
         if rc != 1:
             raise MissingKeyException("Error updating sample {}".format(sample_id))

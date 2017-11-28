@@ -18,34 +18,32 @@ class SamplingEventsGetByLocation():
 
     def get(self, location_id):
 
-        cursor = self._connection.cursor()
+        with self._connection:
+            with self._connection.cursor() as cursor:
 
-        try:
-            location = LocationFetch.fetch(cursor, location_id)
-        except MissingKeyException as mke:
-            cursor.close()
-            raise mke
+                try:
+                    location = LocationFetch.fetch(cursor, location_id)
+                except MissingKeyException as mke:
+                    raise mke
 
-        stmt = '''SELECT samples.id FROM samples WHERE location_id = %s OR proxy_location_id = %s'''
-        cursor.execute(stmt, (location_id, location_id))
+                stmt = '''SELECT samples.id FROM samples WHERE location_id = %s OR proxy_location_id = %s'''
+                cursor.execute(stmt, (location_id, location_id))
 
-        samples = SamplingEvents([], 0)
-        event_ids = []
+                samples = SamplingEvents([], 0)
+                event_ids = []
 
-        for sample_id in cursor:
-            event_ids.append(sample_id)
-        for sample_id in event_ids:
-            sample = SamplingEventFetch.fetch(cursor, sample_id)
+                for sample_id in cursor:
+                    event_ids.append(sample_id)
+                for sample_id in event_ids:
+                    sample = SamplingEventFetch.fetch(cursor, sample_id)
 
-            #print("Adding sample {}".format(sample))
-            samples.sampling_events.append(sample)
-            samples.count = samples.count + 1
+                    #print("Adding sample {}".format(sample))
+                    samples.sampling_events.append(sample)
+                    samples.count = samples.count + 1
 
 
         if samples.count == 0:
-            cursor.close()
             raise MissingKeyException("No samples for {}".format(location))
 
-        cursor.close()
 
         return samples

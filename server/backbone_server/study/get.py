@@ -16,16 +16,10 @@ class StudyGet():
     def get(self, study_id):
 
         study = None
+        with self._connection:
+            with self._connection.cursor() as cursor:
 
-        try:
-            cursor = self._connection.cursor()
+                study = StudyFetch.fetch(cursor, study_id)
 
-            study = StudyFetch.fetch(cursor, study_id)
-
-        except MissingKeyException as mke:
-            cursor.close()
-            raise mke
-
-        cursor.close()
 
         return study

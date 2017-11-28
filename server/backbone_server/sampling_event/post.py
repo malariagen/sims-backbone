@@ -20,40 +20,37 @@ class SamplingEventPost():
 
     def post(self, sample):
 
-        cursor = self._connection.cursor()
+        with self._connection:
+            with self._connection.cursor() as cursor:
 
-        uuid_val = uuid.uuid4()
+                uuid_val = uuid.uuid4()
 
-        study_id = SamplingEventEdit.fetch_study_id(cursor, sample.study_id, True)
-        partner_species = SamplingEventEdit.fetch_partner_species(cursor, sample, study_id)
+                study_id = SamplingEventEdit.fetch_study_id(cursor, sample.study_id, True)
+                partner_species = SamplingEventEdit.fetch_partner_species(cursor, sample, study_id)
 
-        stmt = '''INSERT INTO samples 
-                    (id, study_id, doc, doc_accuracy, location_id, proxy_location_id, partner_species_id) 
-                    VALUES (%s, %s, %s, %s, %s, %s, %s)'''
-        args = (uuid_val,study_id, sample.doc, sample.doc_accuracy, sample.location_id, sample.proxy_location_id,
-                partner_species)
+                stmt = '''INSERT INTO samples 
+                            (id, study_id, doc, doc_accuracy, location_id, proxy_location_id, partner_species_id) 
+                            VALUES (%s, %s, %s, %s, %s, %s, %s)'''
+                args = (uuid_val,study_id, sample.doc, sample.doc_accuracy, sample.location_id, sample.proxy_location_id,
+                        partner_species)
 
-        try:
-            cursor.execute(stmt, args)
+                try:
+                    cursor.execute(stmt, args)
 
-            SamplingEventEdit.add_identifiers(cursor, uuid_val, sample)
+                    SamplingEventEdit.add_identifiers(cursor, uuid_val, sample)
 
-        except mysql.connector.Error as err:
-            cursor.close()
-            if err.errno == errorcode.ER_DUP_ENTRY:
-                raise DuplicateKeyException("Error inserting sample {}".format(sample)) from err
-            else:
-                self._logger.fatal(repr(error))
-        except psycopg2.IntegrityError as err:
-            cursor.close()
-            raise DuplicateKeyException("Error inserting sample {}".format(sample)) from err
-        except DuplicateKeyException as err:
-            cursor.close()
-            raise err
+                except mysql.connector.Error as err:
+                    if err.errno == errorcode.ER_DUP_ENTRY:
+                        raise DuplicateKeyException("Error inserting sample {}".format(sample)) from err
+                    else:
+                        self._logger.fatal(repr(error))
+                except psycopg2.IntegrityError as err:
+                    print(err.pgcode)
+                    print(err.pgerror)
+                    raise DuplicateKeyException("Error inserting sample {}".format(sample)) from err
+                except DuplicateKeyException as err:
+                    raise err
 
-        self._connection.commit()
-
-        cursor.close()
 
         sample.sampling_event_id = uuid_val
         return sample

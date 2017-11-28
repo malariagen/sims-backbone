@@ -32,15 +32,13 @@ class LocationEdit():
                     cursor.execute(stmt, (uuid_val, study_id, ident.identifier_type, ident.identifier_value))
 
         except mysql.connector.Error as err:
-            cursor.close()
             if err.errno == errorcode.ER_DUP_ENTRY:
                 raise DuplicateKeyException("Error inserting location {}".format(location)) from err
             else:
                 self._logger.fatal(repr(error))
         except psycopg2.IntegrityError as err:
-            logging.getLogger(__name__).debug("Rollback")
-            cursor.connection.rollback()
-            cursor.close()
+            print(err.pgcode)
+            print(err.pgerror)
             raise DuplicateKeyException("Error inserting location {}".format(location)) from err
 
 

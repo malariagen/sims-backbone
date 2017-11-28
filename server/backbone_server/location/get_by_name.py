@@ -14,25 +14,24 @@ class LocationGetByPartnerName():
 
     def get(self, partner_id):
 
-        cursor = self._connection.cursor()
+        with self._connection:
+            with self._connection.cursor() as cursor:
 
-        cursor.execute('''SELECT DISTINCT location_id FROM location_identifiers 
-                       WHERE identifier_type = %s AND identifier_value = %s''', ('partner_name', partner_id,))
+                cursor.execute('''SELECT DISTINCT location_id FROM location_identifiers 
+                               WHERE identifier_type = %s AND identifier_value = %s''', ('partner_name', partner_id,))
 
-        locations = Locations()
-        locations.locations = []
-        locations.count = 0
-        locs = []
+                locations = Locations()
+                locations.locations = []
+                locations.count = 0
+                locs = []
 
-        for (location_id,) in cursor:
-            locs.append(location_id)
+                for (location_id,) in cursor:
+                    locs.append(location_id)
 
-        for location_id in locs:
-            location = LocationFetch.fetch(cursor, location_id)
-            locations.locations.append(location)
-            locations.count = locations.count + 1
-
-        cursor.close()
+                for location_id in locs:
+                    location = LocationFetch.fetch(cursor, location_id)
+                    locations.locations.append(location)
+                    locations.count = locations.count + 1
 
         if len(locations.locations) == 0:
             raise MissingKeyException("Partner location not found {}".format(partner_id))

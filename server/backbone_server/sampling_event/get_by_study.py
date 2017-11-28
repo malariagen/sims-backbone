@@ -19,28 +19,27 @@ class SamplingEventsGetByStudy():
 
 
     def get(self, study_name):
+        with self._connection:
+            with self._connection.cursor() as cursor:
 
-        cursor = self._connection.cursor()
+                study_id = SamplingEventEdit.fetch_study_id(cursor, study_name, False)
 
-        study_id = SamplingEventEdit.fetch_study_id(cursor, study_name, False)
+                if not study_id:
+                    raise MissingKeyException("No study {}".format(study_name))
 
-        if not study_id:
-            raise MissingKeyException("No study {}".format(study_name))
+                stmt = '''SELECT samples.id FROM samples WHERE study_id = %s'''
+                cursor.execute(stmt, (study_id, ))
 
-        stmt = '''SELECT samples.id FROM samples WHERE study_id = %s'''
-        cursor.execute(stmt, (study_id, ))
+                samples = SamplingEvents([], 0)
+                event_ids = []
 
-        samples = SamplingEvents([], 0)
-        event_ids = []
+                for sample_id in cursor:
+                    event_ids.append(sample_id)
 
-        for sample_id in cursor:
-            event_ids.append(sample_id)
+                for sample_id in event_ids:
+                    sample = SamplingEventFetch.fetch(cursor, sample_id)
+                    samples.sampling_events.append(sample)
+                    samples.count = samples.count + 1
 
-        for sample_id in event_ids:
-            sample = SamplingEventFetch.fetch(cursor, sample_id)
-            samples.sampling_events.append(sample)
-            samples.count = samples.count + 1
-
-        cursor.close()
 
         return samples

@@ -13,21 +13,19 @@ class SamplingEventDelete():
 
     def delete(self, sample_id):
 
-        cursor = self._connection.cursor()
+        with self._connection:
+            with self._connection.cursor() as cursor:
 
-        stmt = '''DELETE FROM identifiers WHERE sample_id = %s'''
+                stmt = '''DELETE FROM identifiers WHERE sample_id = %s'''
 
-        cursor.execute( stmt, (sample_id,))
+                cursor.execute( stmt, (sample_id,))
 
-        stmt = '''DELETE FROM samples WHERE id = %s'''
+                stmt = '''DELETE FROM samples WHERE id = %s'''
 
-        cursor.execute( stmt, (sample_id,))
+                cursor.execute( stmt, (sample_id,))
 
-        rc = cursor.rowcount
+                rc = cursor.rowcount
 
-        self._connection.commit()
-
-        cursor.close()
 
         if rc != 1:
             raise MissingKeyException("Error deleting sample {}".format(sample_id))

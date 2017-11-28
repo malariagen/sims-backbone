@@ -14,18 +14,17 @@ class TaxonomiesGet():
 
     def get(self):
 
-        cursor = self._connection.cursor()
+        with self._connection:
+            with self._connection.cursor() as cursor:
 
-        stmt = '''SELECT id, rank, name FROM taxonomies '''
-        cursor.execute( stmt, )
+                stmt = '''SELECT id, rank, name FROM taxonomies '''
+                cursor.execute( stmt, )
 
-        taxonomies = Taxonomies([], 0)
+                taxonomies = Taxonomies([], 0)
 
-        for (taxonomy_id, rank, name) in cursor:
-            taxa = Taxonomy(taxonomy_id = taxonomy_id, name = name, rank = rank)
-            taxonomies.taxonomies.append(taxa)
-            taxonomies.count = taxonomies.count + 1
-
-        cursor.close()
+                for (taxonomy_id, rank, name) in cursor:
+                    taxa = Taxonomy(taxonomy_id = taxonomy_id, name = name, rank = rank)
+                    taxonomies.taxonomies.append(taxa)
+                    taxonomies.count = taxonomies.count + 1
 
         return taxonomies
