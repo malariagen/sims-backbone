@@ -55,20 +55,22 @@ class SamplingEventFetch():
         if len(sample.identifiers) == 0:
             sample.identifiers = None
 
-        stmt = '''select taxonomy_id, study_code, partner_species FROM taxonomy_identifiers
-        JOIN partner_species_identifiers ON partner_species_identifiers.id = partner_species_id
-        JOIN studies ON studies.id = study_id
-        WHERE partner_species = %s'''
+        if sample.study_id:
 
-        cursor.execute(stmt, (sample.partner_species,))
+            stmt = '''select taxonomy_id, study_code, partner_species FROM taxonomy_identifiers
+            JOIN partner_species_identifiers ON partner_species_identifiers.id = partner_species_id
+            JOIN studies ON studies.id = study_id
+            WHERE partner_species = %s AND study_name = %s'''
 
-        sample.partner_taxonomies = []
-        for (taxa_id, study_code, partner_species) in cursor:
-            taxa = Taxonomy(taxa_id)
-            sample.partner_taxonomies.append(taxa)
+            cursor.execute(stmt, (sample.partner_species, sample.study_id))
 
-        if len(sample.partner_taxonomies) == 0:
-            sample.partner_taxonomies = None
+            sample.partner_taxonomies = []
+            for (taxa_id, study_code, partner_species) in cursor:
+                taxa = Taxonomy(taxa_id)
+                sample.partner_taxonomies.append(taxa)
+
+            if len(sample.partner_taxonomies) == 0:
+                sample.partner_taxonomies = None
 
         return sample
 
