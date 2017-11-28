@@ -250,6 +250,36 @@ class TestLocation(TestBase):
 
     """
     """
+    def test_partner_lookup_multiple(self):
+
+        api_instance = swagger_client.LocationApi(self._api_client)
+
+        try:
+
+            loc = swagger_client.Location(None, 27.46362, 90.49542, 'country',
+                                          'Trongsa, Trongsa, Bhutan', 'pv_3_locations.txt', 'BHU')
+            loc.identifiers = [
+                swagger_client.Identifier('partner_name', 'bhutan', '5000-PV')
+            ]
+            created = api_instance.create_location(loc)
+            loc1 = swagger_client.Location(None, 25.46362, 95.49542, 'country',
+                                          'Trongsa, Trongsa, Bhutan', 'pv_3_locations.txt', 'BHU')
+            loc1.identifiers = [
+                swagger_client.Identifier('partner_name', 'bhutan', '5001-PV')
+            ]
+            created1 = api_instance.create_location(loc1)
+            looked_up_locs = api_instance.download_partner_location(loc.identifiers[0].identifier_value)
+            self.assertEqual(looked_up_locs.count, 2, 'Wrong number of locations')
+            looked_up = looked_up_locs.locations[0]
+
+            api_instance.delete_location(created.location_id)
+            api_instance.delete_location(created1.location_id)
+
+        except ApiException as error:
+            self.fail("test_partner_lookup: Exception when calling LocationApi->create_location: %s\n" % error)
+
+    """
+    """
     def test_update(self):
 
         api_instance = swagger_client.LocationApi(self._api_client)
