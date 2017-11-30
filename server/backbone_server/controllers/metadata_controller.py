@@ -27,6 +27,7 @@ class MetadataController(BaseController):
         try:
             self.check_permissions(None, auths)
         except PermissionException as pe:
+            self.log_action(user, 'create_taxonomy', None, taxonomy, None, 403)
             return pe.message, 403
 
         return 'do some magic!'
@@ -45,6 +46,7 @@ class MetadataController(BaseController):
         try:
             self.check_permissions(None, auths)
         except PermissionException as pe:
+            self.log_action(user, 'get_country_metadata', countryId, None, None, 403)
             return pe.message, 403
 
         get = CountryGet(self.get_connection())
@@ -57,6 +59,8 @@ class MetadataController(BaseController):
         except MissingKeyException as dme:
             logging.getLogger(__name__).error("download_sample: {}".format(repr(dme)))
             retcode = 404
+
+        self.log_action(user, 'get_country_metadata', countryId, None, country, retcode)
 
         return country, retcode
 
@@ -71,10 +75,13 @@ class MetadataController(BaseController):
         try:
             self.check_permissions(None, auths)
         except PermissionException as pe:
+            self.log_action(user, 'get_taxonomy_metadata', None, None, None, 403)
             return pe.message, 403
 
         get = TaxonomiesGet(self.get_connection())
 
         taxas = get.get()
+
+        self.log_action(user, 'get_taxonomy_metadata', None, None, taxas, 200)
 
         return taxas, 200

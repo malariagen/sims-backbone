@@ -1,5 +1,6 @@
 import logging
 import os
+import json
 
 class BaseController():
 
@@ -79,3 +80,29 @@ class BaseController():
     def check_permissions(self, study_id, perms):
 
         pass
+
+
+    def log_action(self, user, action, entity_id, content, result, retcode):
+
+        try:
+            #content_json = None
+            #if content:
+            #    content_json = json.dumps(content.to_dict())
+            #result_json = None
+            #if result:
+            #    result_json = json.dumps(content.to_dict())
+            args = (user, action, entity_id, str(content), str(result), retcode)
+
+            self._logger.debug("log_action {}".format(args))
+
+            if action.startswith('create') or action.startswith('update') or \
+                    action.startswith('delete') or retcode != 200:
+                with self._connection:
+                    with self._connection.cursor() as cursor:
+                        cursor.execute('''INSERT INTO archive (submitter, action_id, entity_id,
+                                       input_value, output_value, result_code) VALUES (%s, %s, %s, %s, %s, %s)''', args)
+        except Exception:
+            #Don't want to fail if it's just a logging problem
+            args = (user, action, entity_id, content, result, retcode)
+            print("log_action {}".format(args))
+            self._logger.exception('Failed to log action')

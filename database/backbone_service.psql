@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 9.6.5
--- Dumped by pg_dump version 9.6.5
+-- Dumped from database version 10.1
+-- Dumped by pg_dump version 10.1
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -63,10 +63,13 @@ SET default_with_oids = false;
 
 CREATE TABLE archive (
     archive_id integer NOT NULL,
-    submitter character varying(20),
-    action_id uuid,
-    action json,
-    action_date timestamp without time zone
+    submitter character varying(64),
+    action_id character varying(64),
+    entity_id character varying(64),
+    input_value text,
+    output_value text,
+    result_code integer,
+    action_date timestamp with time zone DEFAULT now() NOT NULL
 );
 
 

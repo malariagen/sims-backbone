@@ -29,11 +29,14 @@ class StudyController(BaseController):
         try:
             self.check_permissions(None, auths)
         except PermissionException as pe:
+            self.log_action(user, 'download_studies', None, None, None, 403)
             return pe.message, 403
 
         get = StudiesGet(self.get_connection())
 
         studies = get.get()
+
+        self.log_action(user, 'download_studies', None, None, studies, 403)
 
         return studies, 200
 
@@ -50,6 +53,7 @@ class StudyController(BaseController):
         try:
             self.check_permissions(None, auths)
         except PermissionException as pe:
+            self.log_action(user, 'download_study', studyId, None, None, 403)
             return pe.message, 403
 
         get = StudyGet(self.get_connection())
@@ -61,6 +65,8 @@ class StudyController(BaseController):
         except MissingKeyException as dme:
             logging.getLogger(__name__).error("update_study: {}".format(repr(dme)))
             retcode = 404
+
+        self.log_action(user, 'download_study', studyId, None, study, retcode)
 
         return study, retcode
 
@@ -84,6 +90,7 @@ class StudyController(BaseController):
 
             self.check_permissions(study_id, auths)
         except PermissionException as pe:
+            self.log_action(user, 'update_study', studyId, study, None, 403)
             return pe.message, 403
 
 
@@ -100,5 +107,7 @@ class StudyController(BaseController):
         except MissingKeyException as dme:
             logging.getLogger(__name__).error("update_study: {}".format(repr(dme)))
             retcode = 404
+
+        self.log_action(user, 'update_study', studyId, study, updated_study, retcode)
 
         return updated_study, retcode
