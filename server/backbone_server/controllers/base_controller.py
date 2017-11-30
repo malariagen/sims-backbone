@@ -60,3 +60,22 @@ class BaseController():
                     self._logger.critical(err)
         return conn
 
+    """
+    Convert the connexion token_info (OAuth) response into something that can be made consistent
+    with AWS Custom Auth details
+    """
+    def token_info(self, tok_info):
+        resp = []
+        for auth_grp in tok_info['memberOf']:
+            dns = auth_grp.split(',')
+            cn = dns[0].split('=')[1]
+            resp.append(cn)
+
+        return resp
+
+    """
+    Throw an exception if no permission
+    """
+    def check_permissions(self, study_id, perms):
+
+        pass

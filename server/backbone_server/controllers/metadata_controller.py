@@ -8,12 +8,13 @@ from backbone_server.metadata.taxonomies import TaxonomiesGet
 from backbone_server.controllers.base_controller  import BaseController
 
 from backbone_server.errors.missing_key_exception import MissingKeyException
+from backbone_server.errors.permission_exception import PermissionException
 
 import logging
 
 class MetadataController(BaseController):
 
-    def create_taxonomy(self, taxonomy, user=None):
+    def create_taxonomy(self, taxonomy, user=None, auths = None):
         """
         create_taxonomy
         Create a Taxonomy
@@ -22,10 +23,16 @@ class MetadataController(BaseController):
 
         :rtype: Taxonomy
         """
+
+        try:
+            self.check_permissions(None, auths)
+        except PermissionException as pe:
+            return pe.message, 403
+
         return 'do some magic!'
 
 
-    def get_country_metadata(self, countryId, user=None):
+    def get_country_metadata(self, countryId, user=None, auths = None):
         """
         fetches all the names for a country
         guesses the search criteria
@@ -34,6 +41,12 @@ class MetadataController(BaseController):
 
         :rtype: Country
         """
+
+        try:
+            self.check_permissions(None, auths)
+        except PermissionException as pe:
+            return pe.message, 403
+
         get = CountryGet(self.get_connection())
 
         retcode = 200
@@ -47,13 +60,19 @@ class MetadataController(BaseController):
 
         return country, retcode
 
-    def get_taxonomy_metadata(self, user=None):
+    def get_taxonomy_metadata(self, user=None, auths = None):
         """
         fetches all the registered taxa
         guesses the search criteria
 
         :rtype: Taxonomies
         """
+
+        try:
+            self.check_permissions(None, auths)
+        except PermissionException as pe:
+            return pe.message, 403
+
         get = TaxonomiesGet(self.get_connection())
 
         taxas = get.get()

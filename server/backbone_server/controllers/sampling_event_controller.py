@@ -13,10 +13,11 @@ from backbone_server.controllers.base_controller  import BaseController
 
 from backbone_server.errors.duplicate_key_exception import DuplicateKeyException
 from backbone_server.errors.missing_key_exception import MissingKeyException
+from backbone_server.errors.permission_exception import PermissionException
 
 class SamplingEventController(BaseController):
 
-    def create_sampling_event(self, samplingEvent, user = None):
+    def create_sampling_event(self, samplingEvent, user = None, auths = None):
         """
         create_sampling_event
         Create a samplingEvent
@@ -25,6 +26,16 @@ class SamplingEventController(BaseController):
 
         :rtype: SamplingEvent
         """
+
+        try:
+            study_id = None;
+            if samplingEvent.study_id:
+                study_id = samplingEvent.study_id[:4]
+
+            self.check_permissions(study_id, auths)
+        except PermissionException as pe:
+            return pe.message, 403
+
         retcode = 200
         samp = None
 
@@ -39,7 +50,7 @@ class SamplingEventController(BaseController):
         return samp, retcode
 
 
-    def delete_sampling_event(self, samplingEventId, user = None):
+    def delete_sampling_event(self, samplingEventId, user = None, auths = None):
         """
         deletes an samplingEvent
         
@@ -48,6 +59,12 @@ class SamplingEventController(BaseController):
 
         :rtype: None
         """
+
+        try:
+            self.check_permissions(None, auths)
+        except PermissionException as pe:
+            return pe.message, 403
+
         delete = SamplingEventDelete(self.get_connection())
 
         retcode = 200
@@ -62,7 +79,7 @@ class SamplingEventController(BaseController):
         return None, retcode
 
 
-    def download_sampling_event(self, samplingEventId, user = None):
+    def download_sampling_event(self, samplingEventId, user = None, auths = None):
         """
         fetches an samplingEvent
         
@@ -71,6 +88,12 @@ class SamplingEventController(BaseController):
 
         :rtype: SamplingEvent
         """
+
+        try:
+            self.check_permissions(None, auths)
+        except PermissionException as pe:
+            return pe.message, 403
+
         get = SamplingEventGetById(self.get_connection())
 
         retcode = 200
@@ -85,7 +108,7 @@ class SamplingEventController(BaseController):
         return samp, retcode
 
 
-    def download_sampling_event_by_identifier(self, propName, propValue, user = None):
+    def download_sampling_event_by_identifier(self, propName, propValue, user = None, auths = None):
         """
         fetches a samplingEvent by property value
         
@@ -96,6 +119,12 @@ class SamplingEventController(BaseController):
 
         :rtype: SamplingEvent
         """
+
+        try:
+            self.check_permissions(None, auths)
+        except PermissionException as pe:
+            return pe.message, 403
+
         get = SamplingEventGetByIdentifier(self.get_connection())
 
         retcode = 200
@@ -109,7 +138,7 @@ class SamplingEventController(BaseController):
 
         return samp, retcode
 
-    def download_sampling_events_by_location(self, locationId, user = None):
+    def download_sampling_events_by_location(self, locationId, user = None, auths = None):
         """
         fetches samplingEvents for a location
         
@@ -118,6 +147,12 @@ class SamplingEventController(BaseController):
 
         :rtype: SamplingEvents
         """
+
+        try:
+            self.check_permissions(None, auths)
+        except PermissionException as pe:
+            return pe.message, 403
+
         get = SamplingEventsGetByLocation(self.get_connection())
 
         retcode = 200
@@ -131,7 +166,7 @@ class SamplingEventController(BaseController):
 
         return samp, retcode
 
-    def download_sampling_events_by_study(self, studyName, user = None):
+    def download_sampling_events_by_study(self, studyName, user = None, auths = None):
         """
         fetches samplingEvents for a study
         
@@ -140,6 +175,16 @@ class SamplingEventController(BaseController):
 
         :rtype: SamplingEvents
         """
+
+        try:
+            study_id = None;
+            if studyName:
+                study_id = studyName[:4]
+
+            self.check_permissions(study_id, auths)
+        except PermissionException as pe:
+            return pe.message, 403
+
         get = SamplingEventsGetByStudy(self.get_connection())
 
         retcode = 200
@@ -153,7 +198,7 @@ class SamplingEventController(BaseController):
 
         return samp, retcode
 
-    def update_sampling_event(self, samplingEventId, samplingEvent, user = None):
+    def update_sampling_event(self, samplingEventId, samplingEvent, user = None, auths = None):
         """
         updates an samplingEvent
         
@@ -164,6 +209,16 @@ class SamplingEventController(BaseController):
 
         :rtype: SamplingEvent
         """
+
+        try:
+            study_id = None;
+            if samplingEvent.study_id:
+                study_id = samplingEvent.study_id[:4]
+
+            self.check_permissions(study_id, auths)
+        except PermissionException as pe:
+            return pe.message, 403
+
         retcode = 200
         samp = None
 

@@ -8,11 +8,13 @@ from backbone_server.study.put import StudyPut
 
 from backbone_server.controllers.base_controller  import BaseController
 
+from backbone_server.errors.permission_exception import PermissionException
+
 import logging
 
 class StudyController(BaseController):
 
-    def download_studies(self, start=None, count=None, user=None):
+    def download_studies(self, start=None, count=None, user=None, auths = None):
         """
         fetches studies
         
@@ -23,13 +25,19 @@ class StudyController(BaseController):
 
         :rtype: Studies
         """
+
+        try:
+            self.check_permissions(None, auths)
+        except PermissionException as pe:
+            return pe.message, 403
+
         get = StudiesGet(self.get_connection())
 
         studies = get.get()
 
         return studies, 200
 
-    def download_study(self, studyId, user=None):
+    def download_study(self, studyId, user=None, auths = None):
         """
         fetches a study
         
@@ -38,6 +46,12 @@ class StudyController(BaseController):
 
         :rtype: Study
         """
+
+        try:
+            self.check_permissions(None, auths)
+        except PermissionException as pe:
+            return pe.message, 403
+
         get = StudyGet(self.get_connection())
 
         study = None
@@ -51,7 +65,7 @@ class StudyController(BaseController):
         return study, retcode
 
 
-    def update_study(self, studyId, study, user=None):
+    def update_study(self, studyId, study, user=None, auths = None):
         """
         updates a study
         
@@ -62,6 +76,16 @@ class StudyController(BaseController):
 
         :rtype: Study
         """
+
+        try:
+            study_id = None;
+            if studyId:
+                study_id = studyId[:4]
+
+            self.check_permissions(study_id, auths)
+        except PermissionException as pe:
+            return pe.message, 403
+
 
         retcode = 200
         updated_study = None

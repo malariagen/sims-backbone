@@ -36,7 +36,7 @@ def download_study(studyId):
     return study_controller.download_study(studyId)
 
 
-def update_study(studyId, study, user=None):
+def update_study(studyId, study, user=None, token_info = None):
     """
     updates a study
     
@@ -49,4 +49,5 @@ def update_study(studyId, study, user=None):
     """
     if connexion.request.is_json:
         study = Study.from_dict(connexion.request.get_json())
-    return study_controller.update_study(studyId, study, user)
+    return study_controller.update_study(studyId, study, user,
+                                         study_controller.token_info(token_info))

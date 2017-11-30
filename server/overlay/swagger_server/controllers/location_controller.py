@@ -14,7 +14,7 @@ from backbone_server.controllers.location_controller  import LocationController
 
 location_controller = LocationController()
 
-def create_location(location, user = None):
+def create_location(location, user = None, token_info = None):
     """
     create_location
     Create a location
@@ -26,10 +26,11 @@ def create_location(location, user = None):
     if connexion.request.is_json:
         location = Location.from_dict(connexion.request.get_json())
 
-    return location_controller.create_location(location, user)
+    return location_controller.create_location(location, user,
+                                               location_controller.token_info(token_info))
 
 
-def delete_location(locationId, user = None):
+def delete_location(locationId, user = None, token_info = None):
     """
     deletes an location
     
@@ -38,10 +39,11 @@ def delete_location(locationId, user = None):
 
     :rtype: None
     """
-    return location_controller.delete_location(locationId, user)
+    return location_controller.delete_location(locationId, user,
+                                               location_controller.token_info(token_info))
 
 
-def download_gps_location(latitude, longitude, user = None):
+def download_gps_location(latitude, longitude, user = None, token_info = None):
     """
     fetches location(s) by GPS
     Params must be string as negative numbers not handled - https://github.com/pallets/werkzeug/issues/729 - also want to avoid using float
@@ -52,9 +54,10 @@ def download_gps_location(latitude, longitude, user = None):
 
     :rtype: Location
     """
-    return location_controller.download_gps_location(latitude, longitude, user)
+    return location_controller.download_gps_location(latitude, longitude, user,
+                                                     location_controller.token_info(token_info))
 
-def download_location(locationId, user = None):
+def download_location(locationId, user = None, token_info = None):
     """
     fetches an location
     
@@ -63,10 +66,12 @@ def download_location(locationId, user = None):
 
     :rtype: Location
     """
-    return location_controller.download_location(locationId, user)
+    return location_controller.download_location(locationId, user,
+                                                 location_controller.token_info(token_info))
 
 
-def download_locations(studyName=None, start=None, count=None, orderby=None, user = None):
+def download_locations(studyName=None, start=None, count=None, orderby=None, user = None,
+                       token_info = None):
     """
     fetches locations
     
@@ -81,10 +86,11 @@ def download_locations(studyName=None, start=None, count=None, orderby=None, use
 
     :rtype: Locations
     """
-    return location_controller.download_locations(studyName, start, count, orderby, user)
+    return location_controller.download_locations(studyName, start, count, orderby, user,
+                                                  location_controller.token_info(token_info))
 
 
-def download_partner_location(partnerId, user = None):
+def download_partner_location(partnerId, user = None, token_info = None):
     """
     fetches location(s) by partner name
     
@@ -93,10 +99,11 @@ def download_partner_location(partnerId, user = None):
 
     :rtype: Locations
     """
-    return location_controller.download_partner_location(partnerId, user)
+    return location_controller.download_partner_location(partnerId, user,
+                                                         location_controller.token_info(token_info))
 
 
-def update_location(locationId, location, user = None):
+def update_location(locationId, location, user = None, token_info = None):
     """
     updates an location
     
@@ -110,5 +117,6 @@ def update_location(locationId, location, user = None):
     if connexion.request.is_json:
         location = Location.from_dict(connexion.request.get_json())
 
-    return location_controller.update_location(locationId, location, user)
+    return location_controller.update_location(locationId, location, user,
+                                               location_controller.token_info(token_info))
 
