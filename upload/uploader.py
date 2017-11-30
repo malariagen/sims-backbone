@@ -26,6 +26,8 @@ class Uploader():
 
     _auth_token = None
 
+    _data_file = None
+
     def __init__(self, config_file):
         super().__init__()
         self._logger = logging.getLogger(__name__)
@@ -43,6 +45,7 @@ class Uploader():
 
     def load_data_file(self, data_def, filename):
 
+        self._data_file = filename
         input_stream = open(filename)
 
         return self.load_data(data_def, input_stream, True, False)
@@ -139,7 +142,7 @@ class Uploader():
             return
 
         found = False
-        if looked_up.identifiers:
+        if looked_up.identifiers and study_id:
             for ident in looked_up.identifiers:
                 if ident.study_name[:4] == study_id[:4] and \
                     ident.identifier_value == partner_name:
@@ -229,6 +232,11 @@ class Uploader():
                 swagger_client.Identifier('partner_name', partner_name, study_id)
             ]
 
+
+        if 'description' in values:
+            loc.notes = self._data_file + ' ' + values['description']
+        else:
+            loc.notes = self._data_file
 
         ret = None
         try:
