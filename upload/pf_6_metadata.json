@@ -35,6 +35,11 @@
             "type": "datetime",
             "date_format": "%Y-%m-%d",
             "comment": "inconsistent date format"
+        },
+        "year": {
+            "column": 10,
+            "type": "datetime",
+            "date_format": "%Y"
         }
     }
 }
