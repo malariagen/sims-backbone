@@ -406,7 +406,7 @@ class Uploader():
             if doc:
                 if existing.doc:
                     if doc != existing.doc:
-                        print("Conflicting doc value {} {}\n{}".format(values, doc, existing.doc))
+                        print("Conflicting doc value {} {} {}".format(values, doc, existing.doc))
                         existing.doc = doc
                         new_ident_value = True
                 else:
@@ -415,9 +415,11 @@ class Uploader():
             if location:
                 if existing.location:
                     if location.location_id != existing.location_id:
-                        print("Conflicting location value {}\n{}\n{}".format(values, location, existing.location))
-                        existing.location_id = location.location_id
-                        new_ident_value = True
+                        print("Conflicting location value {}\t{}\t{}\t{}\t{}\t{}\t{}".format(values, 
+                                                                           location.identifiers[0].identifier_value, location.latitude, location.longitude,
+                                                                           existing.location.identifiers[0].identifier_value, existing.location.latitude, existing.location.longitude))
+                        #existing.location_id = location.location_id
+                        #new_ident_value = True
                 else:
                     existing.location_id = location.location_id
                     new_ident_value = True
