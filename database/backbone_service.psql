@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 10.1
--- Dumped by pg_dump version 10.1
+-- Dumped from database version 9.6.5
+-- Dumped by pg_dump version 9.6.5
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -278,7 +278,15 @@ ALTER TABLE ONLY taxonomies
 --
 
 ALTER TABLE ONLY location_identifiers
-    ADD CONSTRAINT uniq_loc_ident UNIQUE (study_id, identifier_type);
+    ADD CONSTRAINT uniq_loc_ident UNIQUE (location_id, study_id, identifier_type);
+
+
+--
+-- Name: location_identifiers uniq_loc_name_ident; Type: CONSTRAINT; Schema: public; Owner: iwright
+--
+
+ALTER TABLE ONLY location_identifiers
+    ADD CONSTRAINT uniq_loc_name_ident UNIQUE (study_id, identifier_type, identifier_value);
 
 
 --
