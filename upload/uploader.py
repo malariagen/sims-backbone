@@ -170,13 +170,16 @@ class Uploader():
                     print("Error adding location identifier {} {}".format(looked_up, err))
                     message = 'duplicate location\t' + study_id + '\t' + partner_name + '\t' + \
                                 str(looked_up.latitude) + '\t' + str(looked_up.longitude)
-                    conflict = api_instance.download_partner_location(partner_name)
-                    if conflict and conflict.locations:
-                        conflict_loc = api_instance.download_location(conflict.locations[0].location_id)
-                        conflict_loc = api_instance.download_gps_location(str(looked_up.latitude),
-                                                                          str(looked_up.longitude))
-                        print("Probable conflict with {}".format(conflict_loc))
-                        message = message + '\t' + str(conflict_loc.latitude) + '\t' + str(conflict_loc.longitude)
+                    try:
+                        conflict = api_instance.download_partner_location(partner_name)
+                        if conflict and conflict.locations:
+                            conflict_loc = api_instance.download_location(conflict.locations[0].location_id)
+                            conflict_loc = api_instance.download_gps_location(str(looked_up.latitude),
+                                                                              str(looked_up.longitude))
+                            print("Probable conflict with {}".format(conflict_loc))
+                            message = message + '\t' + str(conflict_loc.latitude) + '\t' + str(conflict_loc.longitude)
+                    except ApiException as err:
+                        print(err)
                     print(message)
         #else:
         #    print("identifier exists")
