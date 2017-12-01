@@ -131,6 +131,9 @@ class Uploader():
                     else:
                         values[name] = data_value
 
+                if 'study_id' not in values:
+                    values['study_id'] = '0000-Unknown'
+
                 location_name, location = self.process_location(values, '')
                 proxy_location_name, proxy_location = self.process_location(values, 'proxy_')
 
@@ -379,9 +382,11 @@ class Uploader():
                             #print("#Short and full study ids used {} {} {}".format(values, study_id, existing.study_id))
                             pass
                         else:
-                            print("Conflicting study_id value {} {} {}".format(values, study_id, existing.study_id))
-                        existing.study_id = study_id
-                        new_ident_value = True
+                            if not (existing.study_id[:4] == '0000' or study_id[:4] == '0000'):
+                                print("Conflicting study_id value {} {} {}".format(values, study_id, existing.study_id))
+                        if not study_id[:4] == '0000':
+                            existing.study_id = study_id
+                            new_ident_value = True
                 else:
                     existing.study_id = study_id
                     new_ident_value = True
@@ -429,7 +434,7 @@ class Uploader():
             try:
                 created = api_instance.create_sampling_event(samp)
             except ApiException as err:
-                self._logger.debug("Error adding sample {} {}".format(samp, err))
+                print("Error adding sample {} {}".format(samp, err))
                 self._logger.error("Error inserting {}".format(samp))
                 sys.exit(1)
 
