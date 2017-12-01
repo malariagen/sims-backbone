@@ -85,13 +85,26 @@ def download_sampling_events_by_study(studyName, user = None, token_info = None)
     """
     fetches samplingEvents for a study
     
-    :param studyName: location
+    :param studyName: 4 digit study code
     :type studyName: str
 
     :rtype: SamplingEvents
     """
     return sampling_event_controller.download_sampling_events_by_study(studyName, user,
                                                                        sampling_event_controller.token_info(token_info))
+
+def download_sampling_events_by_taxa(taxaId, user = None, token_info = None):
+    """
+    fetches samplingEvents for a given taxonomy classification code
+    
+    :param taxaId: NCBI taxonomy code
+    :type taxaId: str
+
+    :rtype: SamplingEvents
+    """
+    return sampling_event_controller.download_sampling_events_by_taxa(taxaId, user,
+                                                                       sampling_event_controller.token_info(token_info))
+
 
 def update_sampling_event(samplingEventId, samplingEvent, user = None, token_info = None):
     """

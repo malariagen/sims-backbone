@@ -8,6 +8,7 @@ from backbone_server.sampling_event.delete import SamplingEventDelete
 from backbone_server.sampling_event.get_by_identifier import SamplingEventGetByIdentifier
 from backbone_server.sampling_event.get_by_location import SamplingEventsGetByLocation
 from backbone_server.sampling_event.get_by_study import SamplingEventsGetByStudy
+from backbone_server.sampling_event.get_by_taxa import SamplingEventsGetByTaxa
 
 from backbone_server.controllers.base_controller  import BaseController
 
@@ -216,6 +217,39 @@ class SamplingEventController(BaseController):
             retcode = 404
 
         self.log_action(user, 'download_sampling_events_by_study', studyName, None, samp, retcode)
+
+        return samp, retcode
+
+    def download_sampling_events_by_taxa(self, taxaId, user = None, auths = None):
+        """
+        fetches samplingEvents for a taxa
+        
+        :param taxaId: taxa
+        :type taxaId: str
+
+        :rtype: SamplingEvents
+        """
+
+        try:
+            study_id = None;
+
+            self.check_permissions(study_id, auths)
+        except PermissionException as pe:
+            self.log_action(user, 'download_sampling_events_by_taxa', taxaId, None, None, 403)
+            return pe.message, 403
+
+        get = SamplingEventsGetByTaxa(self.get_connection())
+
+        retcode = 200
+        samp = None
+
+        try:
+            samp = get.get(taxaId)
+        except MissingKeyException as dme:
+            logging.getLogger(__name__).error("download_sampling_events_by_taxa: {}".format(repr(dme)))
+            retcode = 404
+
+        self.log_action(user, 'download_sampling_events_by_taxa', taxaId, None, samp, retcode)
 
         return samp, retcode
 

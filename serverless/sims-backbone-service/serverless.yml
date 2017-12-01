@@ -311,7 +311,23 @@ functions:
               parameters:
                   paths:
                       studyName: true
-
+  download_sampling_events_by_taxa:
+    handler: sampling_event/handler.download_sampling_events_by_taxa
+    timeout: 20
+    events:
+      - http:
+          path: sims-backbone-service/v1/samplingEvents/taxa/{taxa_id}
+          method: get
+          cors: true
+          authorizer:
+            name: auth_func
+            type: request
+            identitySource: method.request.header.Authorization
+            identityValidationExpression: .*
+          request:
+              parameters:
+                  paths:
+                      taxaId: true
   get_country_metadata:
     handler: metadata/handler.get_country_metadata
     events:

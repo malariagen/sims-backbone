@@ -15,6 +15,8 @@ basePath: /v1
 #basePath: "/dev/sims-backbone-service/v1"
 schemes:
   - http
+#security:
+#  - OauthSecurity: []
 tags:
   - name: source
     description: Everything about your sources
@@ -32,8 +34,6 @@ securityDefinitions:
       authorizationUrl: "https://sso-dev.cggh.org/sso/oauth2.0/authorize"
       tokenUrl: "https://sso-dev.cggh.org/sso/oauth2.0/accessToken"
       x-tokenInfoUrl: "https://sso-dev.cggh.org/sso/oauth2.0/profile"
-security:
-  - OauthSecurity: []
 paths:
   '/location':
     post:
@@ -374,7 +374,27 @@ paths:
       parameters:
         - name: studyName
           in: path
-          description: location
+          description: 4 digit study code
+          required: true
+          type: string
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/SamplingEvents'
+  '/samplingEvents/taxa/{taxaId}':
+    get:
+      tags:
+        - samplingEvent
+      summary: fetches samplingEvents for a given taxonomy classification code
+      description: ''
+      operationId: downloadSamplingEventsByTaxa
+      produces:
+        - application/json
+      parameters:
+        - name: taxaId
+          in: path
+          description: NCBI taxonomy code
           required: true
           type: string
       responses:
