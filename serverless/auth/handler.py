@@ -54,7 +54,7 @@ def auth(event, context):
         user = json.loads(r.text)
         principalId = user['id']
     elif r.status_code == 401:
-        principalId = None
+        raise Exception('Unauthorized')
     else: #Error or ?
         principalId = None
 
