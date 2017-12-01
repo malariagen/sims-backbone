@@ -67,10 +67,11 @@ class BaseController():
     """
     def token_info(self, tok_info):
         resp = []
-        for auth_grp in tok_info['memberOf']:
-            dns = auth_grp.split(',')
-            cn = dns[0].split('=')[1]
-            resp.append(cn)
+        if tok_info and 'memberOf' in tok_info:
+            for auth_grp in tok_info['memberOf']:
+                dns = auth_grp.split(',')
+                cn = dns[0].split('=')[1]
+                resp.append(cn)
 
         return resp
 
