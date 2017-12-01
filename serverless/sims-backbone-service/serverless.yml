@@ -296,6 +296,7 @@ functions:
                       location_id: true
   download_sampling_events_by_study:
     handler: sampling_event/handler.download_sampling_events_by_study
+    timeout: 20
     events:
       - http:
           path: sims-backbone-service/v1/samplingEvents/study/{study_name}
