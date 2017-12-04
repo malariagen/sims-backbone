@@ -37,6 +37,8 @@ import { Configuration } from './typescript-angular-client/configuration';
 import { StudiesListComponent } from './studies-list/studies-list.component';
 import { StudyEditComponent } from './study-edit/study-edit.component';
 import { TaxonomyEditComponent } from './taxonomy-edit/taxonomy-edit.component';
+import { TaxaListComponent } from './taxa-list/taxa-list.component';
+import { TaxaEventListComponent } from './taxa-event-list/taxa-event-list.component';
 
 export function getConfiguration(authService: AuthService) {
   return authService.getConfiguration();
@@ -55,7 +57,9 @@ export function getConfiguration(authService: AuthService) {
     LocationEventListComponent,
     StudiesListComponent,
     StudyEditComponent,
-    TaxonomyEditComponent
+    TaxonomyEditComponent,
+    TaxaListComponent,
+    TaxaEventListComponent
   ],
   imports: [
     BrowserModule,

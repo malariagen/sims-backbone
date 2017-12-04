@@ -18,7 +18,7 @@ import { Angular2Csv } from 'angular2-csv/Angular2-csv';
 })
 export class EventListComponent implements OnInit {
 
-  displayedColumns = ['oxford_id', 'partner_id', 'roma_id', 'doc', 'partner_species', 'taxa', 'partner_location_name', 'location_curated_name', 'location'];
+  displayedColumns = ['study_id', 'oxford_id', 'partner_id', 'roma_id', 'doc', 'partner_species', 'taxa', 'partner_location_name', 'location_curated_name', 'location'];
 
   _events: Observable<SamplingEvents>;
   _studyName: string;
@@ -94,6 +94,7 @@ export class EventListComponent implements OnInit {
         }
         event['doc'] = sample.doc;
         event['partner_species'] = sample.partner_species;
+        event['study_id'] = sample.study_id;
         eventDatabase.addEvent(event);
       });
     });

@@ -4,8 +4,10 @@ import { RouterModule, Routes } from '@angular/router';
 import { AllLocationsMapComponent } from './all-locations-map/all-locations-map.component';
 import { LocationEditComponent } from './location-edit/location-edit.component';
 import { StudyEventListComponent } from './study-event-list/study-event-list.component';
+import { TaxaEventListComponent } from './taxa-event-list/taxa-event-list.component';
 import { LocationEventListComponent } from './location-event-list/location-event-list.component';
 import { StudiesListComponent } from './studies-list/studies-list.component';
+import { TaxaListComponent } from './taxa-list/taxa-list.component';
 import { StudyEditComponent } from './study-edit/study-edit.component';
 
 const routes: Routes = [
@@ -15,7 +17,9 @@ const routes: Routes = [
   { path: 'study/events/:studyName', component: StudyEventListComponent},
   { path: 'location/events/:latitude/:longitude', component: LocationEventListComponent},
   { path: 'studies', component: StudiesListComponent },
-  { path: 'study/:studyCode', component: StudyEditComponent }
+  { path: 'study/:studyCode', component: StudyEditComponent },
+  { path: 'taxa', component: TaxaListComponent },
+  { path: 'taxa/events/:taxaId', component: TaxaEventListComponent},
   
 ];
 

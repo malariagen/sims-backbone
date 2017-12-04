@@ -1,0 +1,17 @@
+<div *ngIf="taxonomies" class="grid grid-pad">
+  <div *ngFor="let t of taxonomies">
+    <div fxLayout="row">
+      <div fxFlex="10%">
+        <a [routerLink]="['/taxa/events', t.taxonomy_id]">
+          {{t.taxonomy_id}}
+        </a>
+      </div>
+      <div fxFlex="10%">
+        {{t.rank}}
+      </div>
+      <div fxFlex="80%">
+        {{t.name}}
+      </div>
+    </div>
+  </div>
+</div>
