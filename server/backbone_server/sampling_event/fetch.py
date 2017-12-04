@@ -18,7 +18,7 @@ class SamplingEventFetch():
             return None
 
         stmt = '''SELECT samples.id, studies.study_name AS study_id, doc, doc_accuracy,
-                            partner_species, location_id, proxy_location_id
+                            partner_species, partner_species_id, location_id, proxy_location_id
         FROM samples
         LEFT JOIN studies ON studies.id = samples.study_id
         LEFT JOIN partner_species_identifiers ON partner_species_identifiers.id = samples.partner_species_id
@@ -27,7 +27,7 @@ class SamplingEventFetch():
 
         sample = None
 
-        for (sample_id, study_id, doc, doc_accuracy, partner_species, location_id, proxy_location_id) in cursor:
+        for (sample_id, study_id, doc, doc_accuracy, partner_species, partner_species_id, location_id, proxy_location_id) in cursor:
             sample = SamplingEvent(sample_id, study_id = study_id, 
                                    doc = doc, doc_accuracy = doc_accuracy,
                                    partner_species = partner_species)
@@ -57,15 +57,12 @@ class SamplingEventFetch():
 
         if sample.study_id:
 
-            stmt = '''select taxonomy_id, study_code, partner_species FROM taxonomy_identifiers
-            JOIN partner_species_identifiers ON partner_species_identifiers.id = partner_species_id
-            JOIN studies ON studies.id = study_id
-            WHERE partner_species = %s AND study_code = %s'''
+            stmt = '''select taxonomy_id FROM taxonomy_identifiers WHERE partner_species_id = %s'''
 
-            cursor.execute(stmt, (sample.partner_species, sample.study_id[:4]))
+            cursor.execute(stmt, (partner_species_id,))
 
             sample.partner_taxonomies = []
-            for (taxa_id, study_code, partner_species) in cursor:
+            for (taxa_id) in cursor:
                 taxa = Taxonomy(taxa_id)
                 sample.partner_taxonomies.append(taxa)
 
