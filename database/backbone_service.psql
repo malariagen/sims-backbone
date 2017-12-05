@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 9.6.5
--- Dumped by pg_dump version 9.6.5
+-- Dumped from database version 10.1
+-- Dumped by pg_dump version 10.1
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -110,6 +110,42 @@ CREATE TABLE countries (
 
 
 ALTER TABLE countries OWNER TO iwright;
+
+--
+-- Name: event_set_members; Type: TABLE; Schema: public; Owner: iwright
+--
+
+CREATE TABLE event_set_members (
+    event_set_id character varying(128),
+    sampling_event_id uuid
+);
+
+
+ALTER TABLE event_set_members OWNER TO iwright;
+
+--
+-- Name: event_set_notes; Type: TABLE; Schema: public; Owner: iwright
+--
+
+CREATE TABLE event_set_notes (
+    event_set_id character varying(128) NOT NULL,
+    note_name character varying(128) NOT NULL,
+    note_text text
+);
+
+
+ALTER TABLE event_set_notes OWNER TO iwright;
+
+--
+-- Name: event_sets; Type: TABLE; Schema: public; Owner: iwright
+--
+
+CREATE TABLE event_sets (
+    id character varying(128) NOT NULL
+);
+
+
+ALTER TABLE event_sets OWNER TO iwright;
 
 --
 -- Name: identifiers; Type: TABLE; Schema: public; Owner: iwright
@@ -227,6 +263,46 @@ CREATE TABLE taxonomy_identifiers (
 ALTER TABLE taxonomy_identifiers OWNER TO iwright;
 
 --
+-- Name: v_sampling_events; Type: VIEW; Schema: public; Owner: iwright
+--
+
+CREATE VIEW v_sampling_events AS
+ SELECT samples.id,
+    studies.study_name AS study_id,
+    samples.doc,
+    samples.doc_accuracy,
+    partner_species_identifiers.partner_species,
+    samples.partner_species_id,
+    samples.location_id,
+    backbone_service.st_x(loc.location) AS latitude,
+    backbone_service.st_y(loc.location) AS longitude,
+    loc."precision" as accuracy,
+    loc.curated_name,
+    loc.curation_method,
+    loc.country,
+    loc.notes,
+    li.identifier_value AS partner_name,
+    samples.proxy_location_id,
+    backbone_service.st_x(proxy_loc.location) AS proxy_latitude,
+    backbone_service.st_y(proxy_loc.location) AS proxy_longitude,
+    proxy_loc."precision" AS proxy_accuracy,
+    proxy_loc.curated_name AS proxy_curated_name,
+    proxy_loc.curation_method AS proxy_curation_method,
+    proxy_loc.country AS proxy_country,
+    proxy_loc.notes AS proxy_notes,
+    pli.identifier_value AS proxy_partner_name
+   FROM ((((((samples
+     LEFT JOIN studies ON ((studies.id = samples.study_id)))
+     LEFT JOIN partner_species_identifiers ON ((partner_species_identifiers.id = samples.partner_species_id)))
+     LEFT JOIN locations loc ON ((loc.id = samples.location_id)))
+     LEFT JOIN location_identifiers li ON (((li.study_id = samples.study_id) AND (li.location_id = loc.id) AND ((li.identifier_type)::text = 'partner_name'::text))))
+     LEFT JOIN locations proxy_loc ON ((proxy_loc.id = samples.proxy_location_id)))
+     LEFT JOIN location_identifiers pli ON (((pli.study_id = samples.study_id) AND (pli.location_id = loc.id) AND ((pli.identifier_type)::text = 'partner_name'::text))));
+
+
+ALTER TABLE v_sampling_events OWNER TO iwright;
+
+--
 -- Name: archive archive_id; Type: DEFAULT; Schema: public; Owner: iwright
 --
 
@@ -247,6 +323,22 @@ ALTER TABLE ONLY locations
 
 ALTER TABLE ONLY partner_species_identifiers
     ADD CONSTRAINT partner_species_identifiers_id PRIMARY KEY (id);
+
+
+--
+-- Name: event_sets pk_es; Type: CONSTRAINT; Schema: public; Owner: iwright
+--
+
+ALTER TABLE ONLY event_sets
+    ADD CONSTRAINT pk_es PRIMARY KEY (id);
+
+
+--
+-- Name: event_set_notes pk_esn; Type: CONSTRAINT; Schema: public; Owner: iwright
+--
+
+ALTER TABLE ONLY event_set_notes
+    ADD CONSTRAINT pk_esn PRIMARY KEY (event_set_id, note_name);
 
 
 --
@@ -278,15 +370,7 @@ ALTER TABLE ONLY taxonomies
 --
 
 ALTER TABLE ONLY location_identifiers
-    ADD CONSTRAINT uniq_loc_ident UNIQUE (location_id, study_id, identifier_type);
-
-
---
--- Name: location_identifiers uniq_loc_name_ident; Type: CONSTRAINT; Schema: public; Owner: iwright
---
-
-ALTER TABLE ONLY location_identifiers
-    ADD CONSTRAINT uniq_loc_name_ident UNIQUE (study_id, identifier_type, identifier_value);
+    ADD CONSTRAINT uniq_loc_ident UNIQUE (study_id, identifier_type);
 
 
 --
@@ -295,6 +379,27 @@ ALTER TABLE ONLY location_identifiers
 
 ALTER TABLE ONLY studies
     ADD CONSTRAINT uniq_study_code UNIQUE (study_code);
+
+
+--
+-- Name: fki_fk_esm_es; Type: INDEX; Schema: public; Owner: iwright
+--
+
+CREATE INDEX fki_fk_esm_es ON event_set_members USING btree (event_set_id);
+
+
+--
+-- Name: fki_fk_esm_se; Type: INDEX; Schema: public; Owner: iwright
+--
+
+CREATE INDEX fki_fk_esm_se ON event_set_members USING btree (sampling_event_id);
+
+
+--
+-- Name: fki_fk_esn_es; Type: INDEX; Schema: public; Owner: iwright
+--
+
+CREATE INDEX fki_fk_esn_es ON event_set_notes USING btree (event_set_id);
 
 
 --
@@ -323,6 +428,30 @@ CREATE INDEX fki_proxy_location ON samples USING btree (proxy_location_id);
 --
 
 CREATE INDEX fki_sample_id ON identifiers USING btree (sample_id);
+
+
+--
+-- Name: event_set_members fk_esm_es; Type: FK CONSTRAINT; Schema: public; Owner: iwright
+--
+
+ALTER TABLE ONLY event_set_members
+    ADD CONSTRAINT fk_esm_es FOREIGN KEY (event_set_id) REFERENCES event_sets(id);
+
+
+--
+-- Name: event_set_members fk_esm_se; Type: FK CONSTRAINT; Schema: public; Owner: iwright
+--
+
+ALTER TABLE ONLY event_set_members
+    ADD CONSTRAINT fk_esm_se FOREIGN KEY (sampling_event_id) REFERENCES samples(id);
+
+
+--
+-- Name: event_set_notes fk_esn_es; Type: FK CONSTRAINT; Schema: public; Owner: iwright
+--
+
+ALTER TABLE ONLY event_set_notes
+    ADD CONSTRAINT fk_esn_es FOREIGN KEY (event_set_id) REFERENCES event_sets(id);
 
 
 --

@@ -1,0 +1,41 @@
+from backbone_server.errors.duplicate_key_exception import DuplicateKeyException
+
+from backbone_server.event_set.edit import EventSetEdit
+from backbone_server.event_set.fetch import EventSetFetch
+
+import mysql.connector
+from mysql.connector import errorcode
+import psycopg2
+
+import logging
+
+class EventSetPutNote():
+
+    def __init__(self, conn):
+        self._logger = logging.getLogger(__name__)
+        self._connection = conn
+
+
+    def put(self, event_set_id, note):
+
+        with self._connection:
+            with self._connection.cursor() as cursor:
+
+                try:
+                    stmt = '''UPDATE event_set_notes SET note_text = %s WHERE event_set_id = %s AND note_name = %s'''
+
+                    cursor.execute(stmt, (note.note_value, event_set_id, note.note_name))
+
+                except mysql.connector.Error as err:
+                    if err.errno == errorcode.ER_DUP_ENTRY:
+                        raise DuplicateKeyException("Error updating event set note {} {}".format(event_set_id, note_name)) from err
+                    else:
+                        self._logger.fatal(repr(error))
+                except psycopg2.IntegrityError as err:
+                    raise DuplicateKeyException("Error updating event set note {} {}".format(event_set_id, note_name)) from err
+                except DuplicateKeyException as err:
+                    raise err
+
+
+        return EventSetFetch.fetch(event_set_id)
+
