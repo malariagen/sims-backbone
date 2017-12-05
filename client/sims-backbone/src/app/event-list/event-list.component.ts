@@ -67,6 +67,9 @@ export class EventListComponent implements OnInit {
       */
       samples.sampling_events.forEach((sample : SamplingEvent) => {
         let event = {};
+        event['doc'] = sample.doc;
+        event['partner_species'] = sample.partner_species;
+        event['study_id'] = sample.study_id;
         sample.identifiers.forEach(ident => {
           event[ident.identifier_type] = ident.identifier_value;
         });
@@ -74,12 +77,14 @@ export class EventListComponent implements OnInit {
           event['partner_location_name'] = '';
           sample.location.identifiers.forEach(ident => {
             let ident_value = ident.identifier_value;
-            if (this._studyName) {
-              if (ident.study_name == this._studyName) {
+            if (this._studyName || event['study_id']) {
+            if (( this._studyName && (ident.study_name == this._studyName) ) ||
+                event['study_id'] && (ident.study_name == event['study_id']))
+            {
                 event['partner_location_name'] = ident_value;
               }
             } else {
-              event['partner_location_name'] = event['partner_location_name'] + ident_value;
+              event['partner_location_name'] = event['partner_location_name'] + ident_value + '('+ ident.study_name + ');';
             }
           });
           event['location_curated_name'] = sample.location.curated_name;
@@ -92,9 +97,6 @@ export class EventListComponent implements OnInit {
           })
           event['taxa'] = taxas.join(';');
         }
-        event['doc'] = sample.doc;
-        event['partner_species'] = sample.partner_species;
-        event['study_id'] = sample.study_id;
         eventDatabase.addEvent(event);
       });
     });
