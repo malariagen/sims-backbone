@@ -28,6 +28,8 @@ class Uploader():
 
     _data_file = None
 
+    _event_set = None
+
     def __init__(self, config_file):
         super().__init__()
         self._logger = logging.getLogger(__name__)
@@ -46,6 +48,23 @@ class Uploader():
     def load_data_file(self, data_def, filename):
 
         self._data_file = filename
+
+        self._event_set = filename.split('.')[0]
+
+        configuration = swagger_client.Configuration()
+        configuration.access_token = self._auth_token
+
+        api_instance = swagger_client.EventSetApi(swagger_client.ApiClient(configuration))
+        event_set_id = self._event_set # str | ID of eventSet to create
+        event_set = swagger_client.EventSet() # EventSet |  (optional)
+
+        try:
+            # creates an eventSet
+            api_response = api_instance.create_event_set(event_set_id, event_set=event_set)
+        except ApiException as e:
+            if e.status != 422: #Already existis
+                print("Exception when calling EventSetApi->create_event_set: %s\n" % e)
+
         input_stream = open(filename)
 
         return self.load_data(data_def, input_stream, True, False)
@@ -442,6 +461,18 @@ class Uploader():
 
             try:
                 created = api_instance.create_sampling_event(samp)
+
+                configuration = swagger_client.Configuration()
+                configuration.access_token = self._auth_token
+
+                es_api_instance = swagger_client.EventSetApi(swagger_client.ApiClient(configuration))
+
+                try:
+                    es_api_instance.create_event_set_item(self._event_set, created.sampling_event_id)
+                except ApiException as err:
+                    #Probably because it already exists
+                    self._logger.debug("Error adding sample {} to event set {} {}".format(created.sampling_event_id, self._event_set, err))
+
             except ApiException as err:
                 print("Error adding sample {} {}".format(samp, err))
                 self._logger.error("Error inserting {}".format(samp))
