@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 10.1
--- Dumped by pg_dump version 10.1
+-- Dumped from database version 9.6.5
+-- Dumped by pg_dump version 9.6.5
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -276,7 +276,7 @@ CREATE VIEW v_sampling_events AS
     samples.location_id,
     backbone_service.st_x(loc.location) AS latitude,
     backbone_service.st_y(loc.location) AS longitude,
-    loc."precision" as accuracy,
+    loc."precision" AS accuracy,
     loc.curated_name,
     loc.curation_method,
     loc.country,
@@ -366,11 +366,27 @@ ALTER TABLE ONLY taxonomies
 
 
 --
+-- Name: event_set_members uniq_event_set_members; Type: CONSTRAINT; Schema: public; Owner: iwright
+--
+
+ALTER TABLE ONLY event_set_members
+    ADD CONSTRAINT uniq_event_set_members UNIQUE (event_set_id, sampling_event_id);
+
+
+--
 -- Name: location_identifiers uniq_loc_ident; Type: CONSTRAINT; Schema: public; Owner: iwright
 --
 
 ALTER TABLE ONLY location_identifiers
-    ADD CONSTRAINT uniq_loc_ident UNIQUE (study_id, identifier_type);
+    ADD CONSTRAINT uniq_loc_ident UNIQUE (location_id, study_id, identifier_type);
+
+
+--
+-- Name: location_identifiers uniq_loc_name_ident; Type: CONSTRAINT; Schema: public; Owner: iwright
+--
+
+ALTER TABLE ONLY location_identifiers
+    ADD CONSTRAINT uniq_loc_name_ident UNIQUE (study_id, identifier_type, identifier_value);
 
 
 --
@@ -428,6 +444,34 @@ CREATE INDEX fki_proxy_location ON samples USING btree (proxy_location_id);
 --
 
 CREATE INDEX fki_sample_id ON identifiers USING btree (sample_id);
+
+
+--
+-- Name: idx_ident_type; Type: INDEX; Schema: public; Owner: iwright
+--
+
+CREATE INDEX idx_ident_type ON location_identifiers USING btree (identifier_type);
+
+
+--
+-- Name: idx_ident_value; Type: INDEX; Schema: public; Owner: iwright
+--
+
+CREATE INDEX idx_ident_value ON location_identifiers USING btree (identifier_value);
+
+
+--
+-- Name: idx_partner_species; Type: INDEX; Schema: public; Owner: iwright
+--
+
+CREATE INDEX idx_partner_species ON partner_species_identifiers USING btree (partner_species);
+
+
+--
+-- Name: idx_study_name; Type: INDEX; Schema: public; Owner: iwright
+--
+
+CREATE INDEX idx_study_name ON studies USING btree (study_name);
 
 
 --
