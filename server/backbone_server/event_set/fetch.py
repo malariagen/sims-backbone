@@ -5,6 +5,8 @@ from swagger_server.models.event_set import EventSet
 from swagger_server.models.location import Location
 from swagger_server.models.identifier import Identifier
 
+from backbone_server.sampling_event.fetch import SamplingEventFetch
+
 from backbone_server.errors.missing_key_exception import MissingKeyException
 
 import logging
@@ -69,6 +71,9 @@ class EventSetFetch():
                 sample.proxy_location = location
 
             samples.append(sample)
+
+        for sample in samples:
+            sample.identifiers = SamplingEventFetch.fetch_identifiers(cursor, sample.sampling_event_id)
 
         event_set.sampling_events = samples
 

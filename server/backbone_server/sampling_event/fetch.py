@@ -12,6 +12,24 @@ class SamplingEventFetch():
 
 
     @staticmethod
+    def fetch_identifiers(cursor, sampling_event_id):
+
+        stmt = '''SELECT identifier_type, identifier_value FROM identifiers WHERE sample_id = %s'''
+
+        cursor.execute(stmt, (sampling_event_id,))
+
+        identifiers = []
+        for (name, value) in cursor:
+            ident = Identifier(name, value)
+            identifiers.append(ident)
+
+        if len(identifiers) == 0:
+            identifiers = None
+
+        return identifiers
+
+
+    @staticmethod
     def fetch(cursor, sampling_event_id):
 
         if not sampling_event_id:
@@ -43,17 +61,8 @@ class SamplingEventFetch():
         if not sample:
             return sample
 
-        stmt = '''SELECT identifier_type, identifier_value FROM identifiers WHERE sample_id = %s'''
 
-        cursor.execute(stmt, (sample_id,))
-
-        sample.identifiers = []
-        for (name, value) in cursor:
-            ident = Identifier(name, value)
-            sample.identifiers.append(ident)
-
-        if len(sample.identifiers) == 0:
-            sample.identifiers = None
+        sample.identifiers = SamplingEventFetch.fetch_identifiers(cursor, sampling_event_id)
 
         if sample.study_id:
 

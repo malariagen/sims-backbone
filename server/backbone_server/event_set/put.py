@@ -18,18 +18,22 @@ class EventSetPut():
         self._connection = conn
 
 
-    def post(self, event_set_id, event_set):
+    def put(self, event_set_id, event_set):
 
+        ret = None
         with self._connection:
             with self._connection.cursor() as cursor:
 
-                args = (event_set_id)
+                args = (event_set_id,)
 
                 try:
-                    stmt = '''DELETE FROM event_set_members WHERE event_set_id = %s'''
-                    cursor.execute(stmt, args)
 
-                    EventSetEdit.add_sampling_events(cursor, event_set_id, event_set.sampling_events)
+                    #Allows the possibility of editing the metadata without the events
+                    if event_set.sampling_events and len(event_set.sampling_events) > 0:
+                        stmt = '''DELETE FROM event_set_members WHERE event_set_id = %s'''
+                        cursor.execute(stmt, args)
+
+                        EventSetEdit.add_sampling_events(cursor, event_set_id, event_set.sampling_events)
 
                     stmt = '''DELETE FROM event_set_notes WHERE event_set_id = %s'''
                     cursor.execute(stmt, args)
@@ -46,6 +50,8 @@ class EventSetPut():
                 except DuplicateKeyException as err:
                     raise err
 
+                ret = EventSetFetch.fetch(cursor, event_set_id)
 
-        return EventSetFetch.fetch(event_set_id)
+
+        return ret
 

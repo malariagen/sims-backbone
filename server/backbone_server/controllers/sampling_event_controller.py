@@ -10,6 +10,10 @@ from backbone_server.sampling_event.get_by_location import SamplingEventsGetByLo
 from backbone_server.sampling_event.get_by_study import SamplingEventsGetByStudy
 from backbone_server.sampling_event.get_by_taxa import SamplingEventsGetByTaxa
 
+from backbone_server.event_set.get import EventSetGetById
+
+from swagger_server.models.sampling_events import SamplingEvents
+
 from backbone_server.controllers.base_controller  import BaseController
 
 from backbone_server.errors.duplicate_key_exception import DuplicateKeyException
@@ -117,6 +121,42 @@ class SamplingEventController(BaseController):
 
         return samp, retcode
 
+    def download_sampling_events_by_event_set(self, event_set_id, user = None, auths = None):
+        """
+        fetches samplingEvents for a event_set
+        
+        :param event_set_id: event_set
+        :type event_set_id: str
+
+        :rtype: SamplingEvents
+        """
+
+        try:
+            study_id = None;
+
+            self.check_permissions(study_id, auths)
+        except PermissionException as pe:
+            self.log_action(user, 'download_sampling_events_by_event_set', event_set_id, None, None, 403)
+            return pe.message, 403
+
+        retcode = 200
+        samp = None
+
+        try:
+            get = EventSetGetById(self.get_connection())
+            evntSt = get.get(event_set_id)
+
+            samp = SamplingEvents()
+            samp.sampling_events = evntSt.sampling_events
+            samp.count = len (samp.sampling_events)
+
+        except MissingKeyException as dme:
+            logging.getLogger(__name__).error("download_sampling_events_by_event_set: {}".format(repr(dme)))
+            retcode = 404
+
+        self.log_action(user, 'download_sampling_events_by_event_set', event_set_id, None, samp, retcode)
+
+        return samp, retcode
 
     def download_sampling_event_by_identifier(self, propName, propValue, user = None, auths = None):
         """

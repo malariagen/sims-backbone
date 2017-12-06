@@ -69,6 +69,18 @@ def download_sampling_event_by_identifier(propName, propValue, user = None, toke
                                                                            user,
                                                                            sampling_event_controller.token_info(token_info))
 
+def download_sampling_events_by_event_set(eventSetId, user = None, token_info = None):
+    """
+    fetches samplingEvents in a given event set
+    
+    :param eventSetId: Event Set name
+    :type eventSetId: str
+
+    :rtype: SamplingEvents
+    """
+    return sampling_event_controller.download_sampling_events_by_event_set(eventSetId, user,
+                                                                       sampling_event_controller.token_info(token_info))
+
 def download_sampling_events_by_location(locationId, user = None, token_info = None):
     """
     fetches samplingEvents for a location

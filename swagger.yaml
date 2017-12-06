@@ -402,6 +402,26 @@ paths:
           description: successful operation
           schema:
             $ref: '#/definitions/SamplingEvents'
+  '/samplingEvents/eventSet/{eventSetId}':
+    get:
+      tags:
+        - samplingEvent
+      summary: fetches samplingEvents in a given event set
+      description: ''
+      operationId: downloadSamplingEventsByEventSet
+      produces:
+        - application/json
+      parameters:
+        - name: eventSetId
+          in: path
+          description: Event Set name
+          required: true
+          type: string
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/SamplingEvents'
   '/metadata/country/{countryId}':
     get:
       tags:
