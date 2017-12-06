@@ -5,22 +5,27 @@ import { AllLocationsMapComponent } from './all-locations-map/all-locations-map.
 import { LocationEditComponent } from './location-edit/location-edit.component';
 import { StudyEventListComponent } from './study-event-list/study-event-list.component';
 import { TaxaEventListComponent } from './taxa-event-list/taxa-event-list.component';
+import { EventSetEventListComponent } from './event-set-event-list/event-set-event-list.component';
 import { LocationEventListComponent } from './location-event-list/location-event-list.component';
 import { StudiesListComponent } from './studies-list/studies-list.component';
 import { TaxaListComponent } from './taxa-list/taxa-list.component';
+import { EventSetListComponent } from './event-set-list/event-set-list.component';
 import { StudyEditComponent } from './study-edit/study-edit.component';
+import { EventSetEditComponent } from './event-set-edit/event-set-edit.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/studies', pathMatch: 'full' },
   { path: 'full-map', component: AllLocationsMapComponent },
-  { path: 'location/:latitude/:longitude', component: LocationEditComponent},
-  { path: 'study/events/:studyName', component: StudyEventListComponent},
-  { path: 'location/events/:latitude/:longitude', component: LocationEventListComponent},
+  { path: 'location/:latitude/:longitude', component: LocationEditComponent },
+  { path: 'study/events/:studyName', component: StudyEventListComponent },
+  { path: 'location/events/:latitude/:longitude', component: LocationEventListComponent },
   { path: 'studies', component: StudiesListComponent },
   { path: 'study/:studyCode', component: StudyEditComponent },
   { path: 'taxa', component: TaxaListComponent },
-  { path: 'taxa/events/:taxaId', component: TaxaEventListComponent},
-  
+  { path: 'taxa/events/:taxaId', component: TaxaEventListComponent },
+  { path: 'eventSets', component: EventSetListComponent },
+  { path: 'eventSet/events/:eventSetId', component: EventSetEventListComponent },
+  { path: 'eventSet/:eventSetId', component: EventSetEditComponent },
 ];
 
 @NgModule({

@@ -1,6 +1,7 @@
 @import '~@angular/material/_theming';
 
 @import 'app/taxonomy-edit/taxonomy-edit-theme';
+@import 'app/event-set-edit/event-set-edit.component.scss';
 
 @include mat-core();
 
@@ -12,6 +13,7 @@ $sims-backbone-theme: mat-light-theme($sims-backbone-theme-primary, $sims-backbo
 
 @mixin sims-backbone-theme($theme) {
     @include taxonomy-edit-theme(theme);    
+    @include event-set-edit-theme(theme);    
 }
 
 @include angular-material-theme($sims-backbone-theme);

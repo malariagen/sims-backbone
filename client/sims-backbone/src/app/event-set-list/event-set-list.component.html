@@ -1,0 +1,22 @@
+<p>
+
+</p>
+<div *ngIf="eventSets" class="grid grid-pad">
+  <div *ngFor="let es of eventSets">
+    <div fxLayout="row">
+      <div fxFlex="50%">
+        {{es.event_set_name}}
+      </div>
+      <div fxFlex="20%">
+        <a [routerLink]="['/eventSet/events', es.event_set_name]">
+          Events
+        </a>
+      </div>
+      <div fxFlex="20%">
+          <a [routerLink]="['/eventSet/', es.event_set_name]">
+            Notes
+          </a>
+        </div>
+    </div>
+  </div>
+</div>

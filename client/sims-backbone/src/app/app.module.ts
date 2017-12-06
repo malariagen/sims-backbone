@@ -9,6 +9,7 @@ import { MatInputModule } from '@angular/material';
 import { MatTableModule } from '@angular/material';
 import { MatButtonModule } from '@angular/material';
 import { MatAutocompleteModule } from '@angular/material';
+import { MatDialogModule } from '@angular/material';
 
 import { FlexLayoutModule } from '@angular/flex-layout';
 
@@ -39,6 +40,10 @@ import { StudyEditComponent } from './study-edit/study-edit.component';
 import { TaxonomyEditComponent } from './taxonomy-edit/taxonomy-edit.component';
 import { TaxaListComponent } from './taxa-list/taxa-list.component';
 import { TaxaEventListComponent } from './taxa-event-list/taxa-event-list.component';
+import { EventSetEventListComponent } from './event-set-event-list/event-set-event-list.component';
+import { EventSetListComponent } from './event-set-list/event-set-list.component';
+import { EventSetEditComponent } from './event-set-edit/event-set-edit.component';
+import { ErrorDialogComponent } from './error-dialog/error-dialog.component';
 
 export function getConfiguration(authService: AuthService) {
   return authService.getConfiguration();
@@ -59,7 +64,11 @@ export function getConfiguration(authService: AuthService) {
     StudyEditComponent,
     TaxonomyEditComponent,
     TaxaListComponent,
-    TaxaEventListComponent
+    TaxaEventListComponent,
+    EventSetEventListComponent,
+    EventSetListComponent,
+    EventSetEditComponent,
+    ErrorDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -70,6 +79,7 @@ export function getConfiguration(authService: AuthService) {
     MatTableModule,
     MatButtonModule,
     MatAutocompleteModule,
+    MatDialogModule,
     FlexLayoutModule,
     HttpClientModule,
     AppRoutingModule,
@@ -87,6 +97,9 @@ export function getConfiguration(authService: AuthService) {
     deps: [AuthService],
     multi: false
   }
+  ],
+  entryComponents: [
+    ErrorDialogComponent
   ],
   bootstrap: [AppComponent]
 })
