@@ -15,19 +15,24 @@ from backbone_server.location.fetch import LocationFetch
 
 class EventSetFetch():
 
+    @staticmethod
+    def fetch_event_set_id(cursor, event_set_name):
+
+        stmt = '''SELECT id FROM event_sets WHERE event_set_name = %s'''
+
+        cursor.execute( stmt, (event_set_name,))
+
+        res = cursor.fetchone()
+
+        if not res:
+            raise MissingKeyException("No such event set {}".format(event_set_name))
+
+        return res[0]
 
     @staticmethod
     def fetch(cursor, event_set_id):
 
         if not event_set_id:
-            return None
-
-        stmt = '''SELECT id FROM event_sets WHERE id = %s'''
-
-        cursor.execute( stmt, (event_set_id,))
-
-        if not cursor.fetchone():
-            #Exception raised by calling method
             return None
 
         event_set = EventSet(event_set_id)

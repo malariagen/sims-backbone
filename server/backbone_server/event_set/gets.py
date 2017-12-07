@@ -17,7 +17,7 @@ class EventSetsGet():
         with self._connection:
             with self._connection.cursor() as cursor:
 
-                stmt = '''SELECT id from event_sets'''
+                stmt = '''SELECT event_set_name from event_sets'''
 
                 cursor.execute(stmt)
 

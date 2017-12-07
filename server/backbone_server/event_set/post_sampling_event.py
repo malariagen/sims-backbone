@@ -18,12 +18,14 @@ class EventSetPostSamplingEvent():
         self._connection = conn
 
 
-    def post(self, event_set_id, sampling_event_id):
+    def post(self, event_set_name, sampling_event_id):
 
         resp = None
 
         with self._connection:
             with self._connection.cursor() as cursor:
+
+                event_set_id = EventSetFetch.fetch_event_set_id(cursor,event_set_name)
 
                 try:
 

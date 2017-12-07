@@ -18,11 +18,13 @@ class EventSetPut():
         self._connection = conn
 
 
-    def put(self, event_set_id, event_set):
+    def put(self, event_set_name, event_set):
 
         ret = None
         with self._connection:
             with self._connection.cursor() as cursor:
+
+                event_set_id = EventSetFetch.fetch_event_set_id(cursor,event_set_name)
 
                 args = (event_set_id,)
 

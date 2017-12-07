@@ -16,10 +16,12 @@ class EventSetDeleteNote():
         self._connection = conn
 
 
-    def delete(self, event_set_id, note_name):
+    def delete(self, event_set_name, note_name):
 
         with self._connection:
             with self._connection.cursor() as cursor:
+
+                event_set_id = EventSetFetch.fetch_event_set_id(cursor,event_set_name)
 
                 try:
 

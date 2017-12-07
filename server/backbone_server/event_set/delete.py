@@ -18,10 +18,12 @@ class EventSetDelete():
         self._connection = conn
 
 
-    def delete(self, event_set_id):
+    def delete(self, event_set_name):
 
         with self._connection:
             with self._connection.cursor() as cursor:
+
+                event_set_id = EventSetFetch.fetch_event_set_id(cursor,event_set_name)
 
                 args = (event_set_id,)
 

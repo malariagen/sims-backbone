@@ -19,17 +19,20 @@ class EventSetPost():
         self._connection = conn
 
 
-    def post(self, event_set_id, event_set):
+    def post(self, event_set_name, event_set):
 
         resp = None
         with self._connection:
             with self._connection.cursor() as cursor:
 
-                stmt = '''INSERT INTO event_sets (id) VALUES (%s)'''
-                args = (event_set_id,)
-
                 try:
+                    stmt = '''INSERT INTO event_sets (event_set_name) VALUES (%s)'''
+
+                    args = (event_set_name,)
+
                     cursor.execute(stmt, args)
+
+                    event_set_id = EventSetFetch.fetch_event_set_id(cursor,event_set_name)
 
                     EventSetEdit.add_sampling_events(cursor, event_set_id, event_set.sampling_events)
                     EventSetEdit.add_notes(cursor, event_set_id, event_set.notes)

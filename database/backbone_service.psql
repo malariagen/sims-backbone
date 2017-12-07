@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 9.6.5
--- Dumped by pg_dump version 9.6.5
+-- Dumped from database version 10.1
+-- Dumped by pg_dump version 10.1
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -62,7 +62,7 @@ SET default_with_oids = false;
 --
 
 CREATE TABLE archive (
-    archive_id integer NOT NULL,
+    id integer NOT NULL,
     submitter character varying(64),
     action_id character varying(64),
     entity_id character varying(64),
@@ -76,10 +76,10 @@ CREATE TABLE archive (
 ALTER TABLE archive OWNER TO iwright;
 
 --
--- Name: archive_archive_id_seq; Type: SEQUENCE; Schema: public; Owner: iwright
+-- Name: archive_id_seq; Type: SEQUENCE; Schema: public; Owner: iwright
 --
 
-CREATE SEQUENCE archive_archive_id_seq
+CREATE SEQUENCE archive_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -87,13 +87,13 @@ CREATE SEQUENCE archive_archive_id_seq
     CACHE 1;
 
 
-ALTER TABLE archive_archive_id_seq OWNER TO iwright;
+ALTER TABLE archive_id_seq OWNER TO iwright;
 
 --
--- Name: archive_archive_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: iwright
+-- Name: archive_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: iwright
 --
 
-ALTER SEQUENCE archive_archive_id_seq OWNED BY archive.archive_id;
+ALTER SEQUENCE archive_id_seq OWNED BY archive.id;
 
 
 --
@@ -116,7 +116,7 @@ ALTER TABLE countries OWNER TO iwright;
 --
 
 CREATE TABLE event_set_members (
-    event_set_id character varying(128),
+    event_set_id integer,
     sampling_event_id uuid
 );
 
@@ -128,7 +128,7 @@ ALTER TABLE event_set_members OWNER TO iwright;
 --
 
 CREATE TABLE event_set_notes (
-    event_set_id character varying(128) NOT NULL,
+    event_set_id integer NOT NULL,
     note_name character varying(128) NOT NULL,
     note_text text
 );
@@ -141,11 +141,33 @@ ALTER TABLE event_set_notes OWNER TO iwright;
 --
 
 CREATE TABLE event_sets (
-    id character varying(128) NOT NULL
+    id integer NOT NULL,
+    event_set_name character varying(128) NOT NULL
 );
 
 
 ALTER TABLE event_sets OWNER TO iwright;
+
+--
+-- Name: event_sets_id_seq; Type: SEQUENCE; Schema: public; Owner: iwright
+--
+
+CREATE SEQUENCE event_sets_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE event_sets_id_seq OWNER TO iwright;
+
+--
+-- Name: event_sets_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: iwright
+--
+
+ALTER SEQUENCE event_sets_id_seq OWNED BY event_sets.id;
+
 
 --
 -- Name: identifiers; Type: TABLE; Schema: public; Owner: iwright
@@ -303,10 +325,17 @@ CREATE VIEW v_sampling_events AS
 ALTER TABLE v_sampling_events OWNER TO iwright;
 
 --
--- Name: archive archive_id; Type: DEFAULT; Schema: public; Owner: iwright
+-- Name: archive id; Type: DEFAULT; Schema: public; Owner: iwright
 --
 
-ALTER TABLE ONLY archive ALTER COLUMN archive_id SET DEFAULT nextval('archive_archive_id_seq'::regclass);
+ALTER TABLE ONLY archive ALTER COLUMN id SET DEFAULT nextval('archive_id_seq'::regclass);
+
+
+--
+-- Name: event_sets id; Type: DEFAULT; Schema: public; Owner: iwright
+--
+
+ALTER TABLE ONLY event_sets ALTER COLUMN id SET DEFAULT nextval('event_sets_id_seq'::regclass);
 
 
 --

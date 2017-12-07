@@ -16,10 +16,12 @@ class EventSetPutNote():
         self._connection = conn
 
 
-    def put(self, event_set_id, note):
+    def put(self, event_set_name, note):
 
         with self._connection:
             with self._connection.cursor() as cursor:
+
+                event_set_id = EventSetFetch.fetch_event_set_id(cursor,event_set_name)
 
                 try:
                     stmt = '''UPDATE event_set_notes SET note_text = %s WHERE event_set_id = %s AND note_name = %s'''
