@@ -403,6 +403,14 @@ ALTER TABLE ONLY event_set_members
 
 
 --
+-- Name: event_sets uniq_event_sets; Type: CONSTRAINT; Schema: public; Owner: iwright
+--
+
+ALTER TABLE ONLY event_sets
+    ADD CONSTRAINT uniq_event_sets UNIQUE (event_set_name);
+
+
+--
 -- Name: location_identifiers uniq_loc_ident; Type: CONSTRAINT; Schema: public; Owner: iwright
 --
 
