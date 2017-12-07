@@ -221,7 +221,7 @@ export class LocationEditComponent implements OnInit {
         let geocoder = new google.maps.Geocoder();
         let latlng = new google.maps.LatLng(this.location.latitude, this.location.longitude);
         let request = {
-          latLng: latlng
+          location: latlng
         };
         geocoder.geocode(request, (results, status) => {
           console.log('Google geocoded');

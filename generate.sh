@@ -10,7 +10,7 @@ fi
 if [ "$1" = "client" -o "$1" = "" ]
 then
     rm -rf typescript-angular-client
-    java -jar swagger-codegen-cli.jar generate -i swagger.yaml -l typescript-angular -o typescript-angular-client -c client.config.json
+    java -jar swagger-codegen-cli.jar generate -i swagger.yaml -l typescript-angular -o client/sims-backbone/src/app/typescript-angular-client -c client.config.json
     rm -rf python_client
     java -jar swagger-codegen-cli.jar generate -i swagger.yaml -l python -o python_client -c client.config.json
 fi

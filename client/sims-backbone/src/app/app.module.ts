@@ -7,6 +7,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { MatFormFieldModule } from '@angular/material';
 import { MatInputModule } from '@angular/material';
 import { MatTableModule } from '@angular/material';
+import { MatToolbarModule } from '@angular/material';
 import { MatButtonModule } from '@angular/material';
 import { MatAutocompleteModule } from '@angular/material';
 import { MatDialogModule } from '@angular/material';
@@ -74,6 +75,7 @@ export function getConfiguration(authService: AuthService) {
     BrowserModule,
     FormsModule,
     ReactiveFormsModule,
+    MatToolbarModule,
     MatFormFieldModule,
     MatInputModule,
     MatTableModule,
