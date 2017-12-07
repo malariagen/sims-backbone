@@ -1,0 +1,21 @@
+<h1 mat-dialog-title>{{data.action}} Sampling Events</h1>
+<div mat-dialog-content>
+  <div *ngIf="data.action == 'Remove'; else noEventSet">Remove items from {{ data.eventSet }}? </div>
+  <ng-template #noEventSet>
+    <form>
+      <mat-form-field style="width:30%">
+        <input matInput placeholder="Event Set Name:" type="text" [(ngModel)]="data.eventSet" [ngModelOptions]="{standalone: true}"
+          [matAutocomplete]="eventSetList">
+      </mat-form-field>
+      <mat-autocomplete #eventSetList="matAutocomplete">
+        <mat-option *ngFor="let es of eventSets" [value]="es.event_set_name">
+          {{es.event_set_name}}
+        </mat-option>
+      </mat-autocomplete>
+    </form>
+  </ng-template>
+</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="save()" tabindex="-1">{{ data.action }}</button>
+  <button mat-button (click)="close()" tabindex="-1">Close</button>
+</div>

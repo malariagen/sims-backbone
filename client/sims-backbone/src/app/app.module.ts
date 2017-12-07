@@ -45,6 +45,7 @@ import { EventSetEventListComponent } from './event-set-event-list/event-set-eve
 import { EventSetListComponent } from './event-set-list/event-set-list.component';
 import { EventSetEditComponent } from './event-set-edit/event-set-edit.component';
 import { ErrorDialogComponent } from './error-dialog/error-dialog.component';
+import { EventSetEditDialogComponent } from './event-set-edit-dialog/event-set-edit-dialog.component';
 
 export function getConfiguration(authService: AuthService) {
   return authService.getConfiguration();
@@ -69,7 +70,8 @@ export function getConfiguration(authService: AuthService) {
     EventSetEventListComponent,
     EventSetListComponent,
     EventSetEditComponent,
-    ErrorDialogComponent
+    ErrorDialogComponent,
+    EventSetEditDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -101,7 +103,8 @@ export function getConfiguration(authService: AuthService) {
   }
   ],
   entryComponents: [
-    ErrorDialogComponent
+    ErrorDialogComponent,
+    EventSetEditDialogComponent
   ],
   bootstrap: [AppComponent]
 })

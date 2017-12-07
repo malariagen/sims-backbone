@@ -1,5 +1,14 @@
 <app-csv-downloader [data]="dataSource" [fileName]="downloadFileName"></app-csv-downloader>
 {{count}}
+
+<div>
+  <button mat-raised-button (click)="selectAll()">Select all</button>
+  <button mat-raised-button (click)="selectNone()">Select none</button>
+
+  <button *ngIf="_eventSetName" mat-raised-button (click)="editEventSet('Remove')">Remove from event set</button>
+  <button *ngIf="!_eventSetName" mat-raised-button (click)="editEventSet('Add')">Add to event set</button>
+</div>
+
 <div  class="example-container mat-elevation-z8">
   <mat-table #table [dataSource]="dataSource" matSort>
 
@@ -10,6 +19,6 @@
     
     
     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;" (click)="select(row)" [ngClass]="{'row-highlight': selectedEvents.has(row.id) }"></mat-row>
   </mat-table>
 </div>
