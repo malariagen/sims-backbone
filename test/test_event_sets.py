@@ -17,6 +17,9 @@ class TestEventSets(TestBase):
 
             evs = swagger_client.EventSet()
             created = api_instance.create_event_set('EventSet1', event_set=evs)
+
+            self.assertEqual(created.event_set_name, 'EventSet1')
+
             created = api_instance.delete_event_set('EventSet1')
 
         except ApiException as error:

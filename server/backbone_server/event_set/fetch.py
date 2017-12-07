@@ -35,7 +35,13 @@ class EventSetFetch():
         if not event_set_id:
             return None
 
-        event_set = EventSet(event_set_id)
+        stmt = '''SELECT event_set_name FROM event_sets WHERE id = %s'''
+
+        cursor.execute( stmt, (event_set_id,))
+
+        res = cursor.fetchone()
+
+        event_set = EventSet(res[0])
 
         stmt = '''SELECT id, study_id, doc, doc_accuracy,
                         partner_species, partner_species_id,
