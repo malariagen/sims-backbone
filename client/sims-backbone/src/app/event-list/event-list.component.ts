@@ -9,6 +9,7 @@ import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 
 import { EventSetEditDialogComponent } from '../event-set-edit-dialog/event-set-edit-dialog.component';
 
+import { Identifier } from '../typescript-angular-client/model/identifier';
 import { SamplingEvents } from '../typescript-angular-client/model/samplingEvents';
 import { SamplingEvent } from '../typescript-angular-client/model/samplingEvent';
 import { Taxonomy } from '../typescript-angular-client/model/taxonomy';
@@ -91,7 +92,12 @@ export class EventListComponent implements OnInit {
         event['partner_species'] = sample.partner_species;
         event['study_id'] = sample.study_id;
         sample.identifiers.forEach(ident => {
-          event[ident.identifier_type] = ident.identifier_value;
+          if (ident.identifier_type in event) {
+            event[ident.identifier_type] = [ event[ident.identifier_type], ident.identifier_value].join(';');
+          } else {
+            event[ident.identifier_type] = ident.identifier_value;
+          }
+
         });
         if (sample.location) {
           event['partner_location_name'] = '';
