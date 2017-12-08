@@ -21,7 +21,7 @@ from backbone_server.errors.permission_exception import PermissionException
 
 class EventSetController(BaseController):
 
-    def create_event_set(self, eventSetId, eventSet=None, user = None, auths = None):
+    def create_event_set(self, eventSetId, user = None, auths = None):
         """
         creates an eventSet
         
@@ -38,7 +38,7 @@ class EventSetController(BaseController):
 
             self.check_permissions(study_id, auths)
         except PermissionException as pe:
-            self.log_action(user, 'create_event_set', eventSetId, eventSet, None, 403)
+            self.log_action(user, 'create_event_set', eventSetId, None, None, 403)
             return pe.message, 403
 
         retcode = 201
@@ -47,12 +47,12 @@ class EventSetController(BaseController):
         try:
             post = EventSetPost(self.get_connection())
 
-            evntSt = post.post(eventSetId, eventSet)
+            evntSt = post.post(eventSetId)
         except DuplicateKeyException as dke:
             logging.getLogger(__name__).error("create_event_set: {}".format(repr(dke)))
             retcode = 422
 
-        self.log_action(user, 'create_event_set', eventSetId, eventSet, evntSt, retcode)
+        self.log_action(user, 'create_event_set', eventSetId, None, evntSt, retcode)
 
         return evntSt, retcode
 

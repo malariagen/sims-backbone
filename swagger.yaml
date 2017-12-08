@@ -560,19 +560,12 @@ paths:
       operationId: createEventSet
       produces:
         - application/json
-      consumes:
-        - application/json
       parameters:
         - name: eventSetId
           in: path
           description: ID of eventSet to create
           required: true
           type: string
-        - in: body
-          name: eventSet
-          required: false
-          schema:
-            $ref: '#/definitions/EventSet'
       responses:
         '201':
           description: successful operation
@@ -669,8 +662,6 @@ paths:
       responses:
         '201':
           description: successful operation
-          schema:
-            $ref: '#/definitions/EventSet'
         '404':
           description: EventSet or samplingEvent not found
     delete:
@@ -723,10 +714,8 @@ paths:
           schema:
             $ref: '#/definitions/EventSetNote'
       responses:
-        '200':
+        '201':
           description: successful operation
-          schema:
-            $ref: '#/definitions/EventSet'
         '401':
           description: EventSet or samplingEvent not found
     put:
@@ -756,8 +745,6 @@ paths:
       responses:
         '200':
           description: successful operation
-          schema:
-            $ref: '#/definitions/EventSet'
         '404':
           description: EventSet or samplingEvent not found
     delete:

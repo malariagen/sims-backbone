@@ -19,7 +19,7 @@ class EventSetPost():
         self._connection = conn
 
 
-    def post(self, event_set_name, event_set):
+    def post(self, event_set_name):
 
         resp = None
         with self._connection:
@@ -34,16 +34,13 @@ class EventSetPost():
 
                     event_set_id = EventSetFetch.fetch_event_set_id(cursor,event_set_name)
 
-                    EventSetEdit.add_sampling_events(cursor, event_set_id, event_set.sampling_events)
-                    EventSetEdit.add_notes(cursor, event_set_id, event_set.notes)
-
                 except mysql.connector.Error as err:
                     if err.errno == errorcode.ER_DUP_ENTRY:
-                        raise DuplicateKeyException("Error inserting event set {}".format(event_set_id)) from err
+                        raise DuplicateKeyException("Error inserting event set {}".format(event_set_name)) from err
                     else:
                         self._logger.fatal(repr(error))
                 except psycopg2.IntegrityError as err:
-                    raise DuplicateKeyException("Error inserting event set {}".format(event_set_id)) from err
+                    raise DuplicateKeyException("Error inserting event set {}".format(event_set_name)) from err
                 except DuplicateKeyException as err:
                     raise err
 

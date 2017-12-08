@@ -15,8 +15,7 @@ class TestEventSets(TestBase):
 
         try:
 
-            evs = swagger_client.EventSet()
-            created = api_instance.create_event_set('EventSet1', event_set=evs)
+            created = api_instance.create_event_set('EventSet1')
 
             self.assertEqual(created.event_set_name, 'EventSet1')
 
@@ -35,15 +34,15 @@ class TestEventSets(TestBase):
         try:
 
             event_set = 'EventSet2'
-            evs = swagger_client.EventSet()
-            created = api_instance.create_event_set(event_set, event_set=evs)
+            created = api_instance.create_event_set(event_set)
 
             samp = swagger_client.SamplingEvent(None, '4000-MD-UP', date(2017, 10, 10))
             created = event_api_instance.create_sampling_event(samp)
            
             created_set = api_instance.create_event_set_item(event_set, created.sampling_event_id)
+            fetched_set = api_instance.download_event_set(event_set)
 
-            self.assertEqual(created_set.sampling_events[0].sampling_event_id, created.sampling_event_id)
+            self.assertEqual(fetched_set.sampling_events[0].sampling_event_id, created.sampling_event_id)
             
             api_instance.delete_event_set(event_set)
             event_api_instance.delete_sampling_event(created.sampling_event_id)
@@ -63,11 +62,13 @@ class TestEventSets(TestBase):
             event_set = 'EventSet3'
             evsn = swagger_client.EventSetNote('note3', 'note3text')
             evs = swagger_client.EventSet()
-            created = api_instance.create_event_set(event_set, event_set=evs)
+            created = api_instance.create_event_set(event_set)
 
             created_set = api_instance.create_event_set_note(event_set, evsn.note_name, evsn)
 
-            self.assertEqual(created_set.notes[0].note_name, evsn.note_name)
+            fetched_set = api_instance.download_event_set(event_set)
+
+            self.assertEqual(fetched_set.notes[0].note_name, evsn.note_name)
             
             api_instance.delete_event_set(event_set)
 
@@ -82,11 +83,10 @@ class TestEventSets(TestBase):
 
         try:
 
-            evs = swagger_client.EventSet()
             sets = [ 'EventSet3', 'EventSet4' ]
 
             for evset in sets:
-                created = api_instance.create_event_set(evset, event_set=evs)
+                created = api_instance.create_event_set(evset)
             downloaded = api_instance.download_event_sets()
 
             self.assertEqual(len(downloaded.event_sets), 2)

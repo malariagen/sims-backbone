@@ -42,7 +42,5 @@ class EventSetPostSamplingEvent():
                 except DuplicateKeyException as err:
                     raise err
 
-                resp = EventSetFetch.fetch(cursor, event_set_id)
-
         return resp
 

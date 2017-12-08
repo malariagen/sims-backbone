@@ -42,7 +42,5 @@ class EventSetPostNote():
                 except DuplicateKeyException as err:
                     raise err
 
-                ret = EventSetFetch.fetch(cursor, event_set_id)
-
         return ret
 

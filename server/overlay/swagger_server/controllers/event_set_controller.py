@@ -12,7 +12,7 @@ from backbone_server.controllers.event_set_controller import EventSetController
 
 event_set_controller = EventSetController()
 
-def create_event_set(eventSetId, eventSet=None, user = None, token_info = None):
+def create_event_set(eventSetId, user = None, token_info = None):
     """
     creates an eventSet
     
@@ -23,10 +23,8 @@ def create_event_set(eventSetId, eventSet=None, user = None, token_info = None):
 
     :rtype: EventSet
     """
-    if connexion.request.is_json:
-        eventSet = EventSet.from_dict(connexion.request.get_json())
 
-    return event_set_controller.create_event_set(eventSetId, eventSet, user,
+    return event_set_controller.create_event_set(eventSetId, user,
                                                  event_set_controller.token_info(token_info))
 
 
