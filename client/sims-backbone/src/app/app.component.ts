@@ -1,5 +1,9 @@
 import { Component } from '@angular/core';
 
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+
+import { EventSetAddDialogComponent } from './event-set-add-dialog/event-set-add-dialog.component';
+
 import { OAuthService } from 'angular-oauth2-oidc';
 import { JwksValidationHandler } from 'angular-oauth2-oidc';
 
@@ -13,7 +17,7 @@ import { casAuthConfig } from './auth.config';
 export class AppComponent {
     title = 'SIMS Backbone';
 
-    constructor(private oauthService: OAuthService) {
+    constructor(private oauthService: OAuthService, public dialog: MatDialog) {
 
         this.oauthService.configure(casAuthConfig);
         this.oauthService.tokenValidationHandler = new JwksValidationHandler();
@@ -32,5 +36,12 @@ export class AppComponent {
         })
     }
 
+    addEventSet(action) {
+
+        let dialogRef = this.dialog.open(EventSetAddDialogComponent, {
+            width: '600px'
+        });
+
+    }
 
 }

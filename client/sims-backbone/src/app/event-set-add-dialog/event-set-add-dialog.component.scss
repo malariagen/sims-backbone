@@ -1,0 +1,9 @@
+@import '~@angular/material/theming';
+
+@mixin event-set-add-dialog-theme($theme) {
+
+    .event-set-name {
+        width : 500px;
+    }
+
+}

@@ -11,6 +11,8 @@ import { MatToolbarModule } from '@angular/material';
 import { MatButtonModule } from '@angular/material';
 import { MatAutocompleteModule } from '@angular/material';
 import { MatDialogModule } from '@angular/material';
+import { MatIconRegistry, MatIconModule } from '@angular/material';
+import { MatMenuModule } from '@angular/material';
 
 import { FlexLayoutModule } from '@angular/flex-layout';
 
@@ -46,6 +48,7 @@ import { EventSetListComponent } from './event-set-list/event-set-list.component
 import { EventSetEditComponent } from './event-set-edit/event-set-edit.component';
 import { ErrorDialogComponent } from './error-dialog/error-dialog.component';
 import { EventSetEditDialogComponent } from './event-set-edit-dialog/event-set-edit-dialog.component';
+import { EventSetAddDialogComponent } from './event-set-add-dialog/event-set-add-dialog.component';
 
 export function getConfiguration(authService: AuthService) {
   return authService.getConfiguration();
@@ -71,7 +74,8 @@ export function getConfiguration(authService: AuthService) {
     EventSetListComponent,
     EventSetEditComponent,
     ErrorDialogComponent,
-    EventSetEditDialogComponent
+    EventSetEditDialogComponent,
+    EventSetAddDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -84,6 +88,8 @@ export function getConfiguration(authService: AuthService) {
     MatButtonModule,
     MatAutocompleteModule,
     MatDialogModule,
+    MatIconModule,
+    MatMenuModule,
     FlexLayoutModule,
     HttpClientModule,
     AppRoutingModule,
@@ -104,7 +110,8 @@ export function getConfiguration(authService: AuthService) {
   ],
   entryComponents: [
     ErrorDialogComponent,
-    EventSetEditDialogComponent
+    EventSetEditDialogComponent,
+    EventSetAddDialogComponent
   ],
   bootstrap: [AppComponent]
 })

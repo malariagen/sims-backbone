@@ -3,6 +3,7 @@
 @import 'app/taxonomy-edit/taxonomy-edit-theme';
 @import 'app/event-set-edit/event-set-edit.component.scss';
 @import 'app/event-set-edit-dialog/event-set-edit-dialog.component.scss';
+@import 'app/event-set-add-dialog/event-set-add-dialog.component.scss';
 @import 'app/event-list/event-list.component.scss';
 
 @include mat-core();
@@ -18,6 +19,7 @@ $sims-backbone-theme: mat-light-theme($sims-backbone-theme-primary, $sims-backbo
     @include event-set-edit-theme(theme);
     @include event-list-theme(theme);   
     @include event-set-edit-dialog-theme(theme); 
+    @include event-set-add-dialog-theme(theme); 
 }
 
 @include angular-material-theme($sims-backbone-theme);
