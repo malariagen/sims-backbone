@@ -56,11 +56,10 @@ class Uploader():
 
         api_instance = swagger_client.EventSetApi(swagger_client.ApiClient(configuration))
         event_set_id = self._event_set # str | ID of eventSet to create
-        event_set = swagger_client.EventSet() # EventSet |  (optional)
 
         try:
             # creates an eventSet
-            api_response = api_instance.create_event_set(event_set_id, event_set=event_set)
+            api_response = api_instance.create_event_set(event_set_id)
         except ApiException as e:
             if e.status != 422: #Already existis
                 print("Exception when calling EventSetApi->create_event_set: %s\n" % e)
@@ -312,6 +311,8 @@ class Uploader():
         # create an instance of the API class
         api_instance = swagger_client.SamplingEventApi(swagger_client.ApiClient(configuration))
 
+        es_api_instance = swagger_client.EventSetApi(swagger_client.ApiClient(configuration))
+
         doc = None
         study_id = None
         if 'doc' in values:
@@ -454,6 +455,13 @@ class Uploader():
             if new_ident_value:
                 #print("Updating {} to {}".format(orig, existing))
                 api_instance.update_sampling_event(existing.sampling_event_id, existing)
+
+            try:
+                es_api_instance.create_event_set_item(self._event_set, existing.sampling_event_id)
+            except ApiException as err:
+                #Probably because it already exists
+                self._logger.debug("Error adding sample {} to event set {} {}".format(existing.sampling_event_id, self._event_set, err))
+
         else:
             #print("Creating {}".format(samp))
             if len(idents) == 0:
@@ -461,11 +469,6 @@ class Uploader():
 
             try:
                 created = api_instance.create_sampling_event(samp)
-
-                configuration = swagger_client.Configuration()
-                configuration.access_token = self._auth_token
-
-                es_api_instance = swagger_client.EventSetApi(swagger_client.ApiClient(configuration))
 
                 try:
                     es_api_instance.create_event_set_item(self._event_set, created.sampling_event_id)
