@@ -65,6 +65,10 @@ CREATE OR REPLACE VIEW samples AS
     SELECT oxford.oxford_db_id_sample_code as sample_oxford_id, oxford.Oxford_db_id_source_code as
     sample_partner_id, solaris.alfresco as study_id, substring(solaris.alfresco,1, 4) as study_code FROM oxford
     LEFT JOIN solaris ON solaris.oxford_code = oxford.oxford_db_id_sample_code;
+SELECT 'oxford_code', 'study_id', 'oxford_src_code','location_name', 'location', 'country',
+    'proxy_location_name', 'public_location', 'collection_date', 'location_name', 'latitude',
+    'longitude', 'doc'
+    union
 select DISTINCT IFNULL(samples.sample_oxford_id,pf_6_metadata.oxford_code),
         IFNULL(samples.study_id, IFNULL(pf_6_metadata.study_id,
         pv_3_sanger_source_code_metadata.study_id)), pv_3_sanger_source_code_metadata.oxford_src_code as sample_partner_id,
@@ -81,4 +85,4 @@ select DISTINCT IFNULL(samples.sample_oxford_id,pf_6_metadata.oxford_code),
         pf_6_metadata.oxford_src_code AND pv_3_sanger_source_code_metadata.study_id = substring(pf_6_metadata.study_id,1,4)
    ;
 +++EOF
-sudo mv /var/lib/mysql-files/result.txt denormalized_pv_3.txt
+sudo mv /var/lib/mysql-files/result.txt pv_3.denormalized.txt
