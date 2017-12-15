@@ -34,11 +34,11 @@ class EventSetPostSamplingEvent():
 
                 except mysql.connector.Error as err:
                     if err.errno == errorcode.ER_DUP_ENTRY:
-                        raise DuplicateKeyException("Error inserting sampling event to event set {} {}".format(event_set_id, sampling_event_id)) from err
+                        raise DuplicateKeyException("Error inserting sampling event to event set {} {}".format(event_set_name, sampling_event_id)) from err
                     else:
                         self._logger.fatal(repr(error))
                 except psycopg2.IntegrityError as err:
-                    raise DuplicateKeyException("Error inserting sampling event to event set {} {}".format(event_set_id, sampling_event_id)) from err
+                    raise DuplicateKeyException("Error inserting sampling event to event set {} {}".format(event_set_name, sampling_event_id)) from err
                 except DuplicateKeyException as err:
                     raise err
 
