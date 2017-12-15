@@ -108,7 +108,10 @@ class Uploader():
                             #    print("No match: {} {}".format(defn['regex'], data_value))
                         if defn['type'] == 'datetime':
                             try:
-                                if not (data_value == '' or data_value == 'NULL' or data_value == '-'):
+                                if not (data_value == '' or
+                                        data_value == 'NULL' or
+                                        data_value == '-' or
+                                        data_value == 'None'):
                                     if 'date_format' in defn:
                                         try:
                                             date_format = '%Y-%m-%d'
