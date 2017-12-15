@@ -139,6 +139,20 @@ def download_sampling_events_by_taxa(event, context):
 
     return create_response(retcode, value)
 
+def download_sampling_events_by_event_set(event, context):
+
+    user = event['requestContext']['authorizer']['principalId']
+
+    if 'pathParameters' in event:
+        study_name = event["pathParameters"]["event_set_id"]
+
+    value, retcode = sampling_event_controller.download_sampling_events_by_event_set(event_set_id, user)
+
+    for se in value.sampling_events:
+        prepare_for_serialization(se)
+
+    return create_response(retcode, value)
+
 def update_sampling_event(event, context):
 
     user = event['requestContext']['authorizer']['principalId']
