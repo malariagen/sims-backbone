@@ -76,6 +76,13 @@ class BaseController():
         return resp
 
     """
+    Convert AWS authorizer into consistent format
+    """
+    def authorizer(self, authorizer):
+        resp = []
+        return resp
+
+    """
     Throw an exception if no permission
     """
     def check_permissions(self, study_id, perms):

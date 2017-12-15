@@ -48,7 +48,8 @@ def download_studies(event, context):
         if 'count' in event["queryStringParameters"]:
             count = event["queryStringParameters"]["count"]
 
-    value, retcode = study_controller.download_studies(start, count, user)
+    value, retcode = study_controller.download_studies(start, count, user,
+                                                       study_controller.authorizer(event['requestContext']['authorizer']))
 
     return create_response(retcode, value)
 
@@ -59,7 +60,8 @@ def download_study(event, context):
     if 'pathParameters' in event:
         study_id = event["pathParameters"]["study_id"]
 
-    value, retcode =  study_controller.download_study(study_id, user)
+    value, retcode =  study_controller.download_study(study_id, user,
+                                                      study_controller.authorizer(event['requestContext']['authorizer']))
 
     for s in value.locations.locations:
         s.location_id = str(s.location_id)
@@ -75,7 +77,8 @@ def update_study(event, context):
 
     study = Study.from_dict(json.loads(event["body"]))
 
-    value, retcode = study_controller.update_study(study_id, study, user)
+    value, retcode = study_controller.update_study(study_id, study, user,
+                                                   study_controller.authorizer(event['requestContext']['authorizer']))
 
     return create_response(retcode, value)
 

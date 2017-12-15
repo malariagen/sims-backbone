@@ -40,7 +40,8 @@ def create_location(event, context):
 
     location = Location.from_dict(json.loads(event["body"]))
 
-    value, retcode = location_controller.create_location(location, user)
+    value, retcode = location_controller.create_location(location, user,
+                                                         location_controller.authorizer(event['requestContext']['authorizer']))
 
     value.location_id = str(value.location_id)
 
@@ -53,7 +54,8 @@ def download_location(event, context):
     if 'pathParameters' in event:
         location_id = event["pathParameters"]["location_id"]
 
-    value, retcode = location_controller.download_location(location_id, user)
+    value, retcode = location_controller.download_location(location_id, user,
+                                                           location_controller.authorizer(event['requestContext']['authorizer']))
 
     value.location_id = str(value.location_id)
 
@@ -79,7 +81,8 @@ def download_locations(event, context):
             orderby = event["queryStringParameters"]["orderby"]
 
     value, retcode = location_controller.download_locations(study_name, start, count,
-                                                                   orderby, user)
+                                                               orderby, user,
+                                                               location_controller.authorizer(event['requestContext']['authorizer']))
 
     for loc in value.locations:
         loc.location_id = str(loc.location_id)
@@ -95,7 +98,8 @@ def update_location(event, context):
 
     location = Location.from_dict(json.loads(event["body"]))
 
-    value, retcode = location_controller.update_location(location_id, location, user)
+    value, retcode = location_controller.update_location(location_id, location, user,
+                                                         location_controller.authorizer(event['requestContext']['authorizer']))
 
     value.location_id = str(value.location_id)
 
@@ -112,7 +116,8 @@ def download_gps_location(event, context):
     lat = Decimal(latitude)
     lng = Decimal(longitude)
 
-    value, retcode = location_controller.download_gps_location(lat, lng, user)
+    value, retcode = location_controller.download_gps_location(lat, lng, user,
+                                                               location_controller.authorizer(event['requestContext']['authorizer']))
 
     value.location_id = str(value.location_id)
 

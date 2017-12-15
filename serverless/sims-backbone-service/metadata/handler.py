@@ -40,7 +40,8 @@ def create_taxonomy(event, context):
 
     taxa = Taxonomy.from_dict(json.loads(event["body"]))
 
-    value, retcode = metadata_controller.create_taxonomy(taxa, user)
+    value, retcode = metadata_controller.create_taxonomy(taxa, user,
+                                                         metadata_controller.authorizer(event['requestContext']['authorizer']))
 
     return create_response(retcode, value)
 
@@ -52,7 +53,8 @@ def get_country_metadata(event, context):
     if 'pathParameters' in event:
         country_id = event["pathParameters"]["country_id"]
 
-    value, retcode = metadata_controller.get_country_metadata(country_id, user)
+    value, retcode = metadata_controller.get_country_metadata(country_id, user,
+                                                              metadata_controller.authorizer(event['requestContext']['authorizer']))
 
     return create_response(retcode, value)
 
@@ -60,7 +62,8 @@ def get_taxonomy_metadata(event, context):
 
     user = event['requestContext']['authorizer']['principalId']
 
-    value, retcode = metadata_controller.get_taxonomy_metadata(user)
+    value, retcode = metadata_controller.get_taxonomy_metadata(user,
+                                                               metadata_controller.authorizer(event['requestContext']['authorizer']))
 
     return create_response(retcode, value)
 

@@ -52,7 +52,8 @@ def create_sampling_event(event, context):
 
     sampling_event = SamplingEvent.from_dict(json.loads(event["body"]))
 
-    value, retcode = sampling_event_controller.create_sampling_event(sampling_event, user)
+    value, retcode = sampling_event_controller.create_sampling_event(sampling_event, user,
+                                                                     sampling_event_controller.authorizer(event['requestContext']['authorizer']))
 
     return create_response(retcode, value)
 
@@ -64,7 +65,8 @@ def delete_sampling_event(event, context):
     if 'pathParameters' in event:
         sampling_event_id = event["pathParameters"]["sampling_event_id"]
 
-    value, retcode =  sampling_event_controller.delete_sampling_event(sampling_event_id, user)
+    value, retcode =  sampling_event_controller.delete_sampling_event(sampling_event_id, user,
+                                                                      sampling_event_controller.authorizer(event['requestContext']['authorizer']))
 
     return create_response(retcode, value)
 
@@ -76,7 +78,8 @@ def download_sampling_event(event, context):
     if 'pathParameters' in event:
         sampling_event_id = event["pathParameters"]["sampling_event_id"]
 
-    value, retcode =  sampling_event_controller.download_sampling_event(sampling_event_id, user)
+    value, retcode =  sampling_event_controller.download_sampling_event(sampling_event_id, user,
+                                                                        sampling_event_controller.authorizer(event['requestContext']['authorizer']))
 
     prepare_for_serialization(value)
 
@@ -90,7 +93,10 @@ def download_sampling_event_by_identifier(event, context):
         prop_name = event["pathParameters"]["prop_name"]
         prop_value = event["pathParameters"]["prop_value"]
 
-    value, retcode = sampling_event_controller.download_sampling_event_by_identifier(prop_name, prop_value, user)
+    value, retcode = sampling_event_controller.download_sampling_event_by_identifier(prop_name,
+                                                                                     prop_value,
+                                                                                     user,
+                                                                                     sampling_event_controller.authorizer(event['requestContext']['authorizer']))
 
     prepare_for_serialization(value)
 
@@ -103,7 +109,9 @@ def download_sampling_events_by_location(event, context):
     if 'pathParameters' in event:
         location_id = event["pathParameters"]["location_id"]
 
-    value, retcode = sampling_event_controller.download_sampling_events_by_location(location_id, user)
+    value, retcode = sampling_event_controller.download_sampling_events_by_location(location_id,
+                                                                                    user,
+                                                                                    sampling_event_controller.authorizer(event['requestContext']['authorizer']))
 
     for se in value.sampling_events:
         prepare_for_serialization(se)
@@ -118,7 +126,8 @@ def download_sampling_events_by_study(event, context):
     if 'pathParameters' in event:
         study_name = event["pathParameters"]["study_name"]
 
-    value, retcode = sampling_event_controller.download_sampling_events_by_study(study_name, user)
+    value, retcode = sampling_event_controller.download_sampling_events_by_study(study_name, user,
+                                                                                sampling_event_controller.authorizer(event['requestContext']['authorizer']))
 
     for se in value.sampling_events:
         prepare_for_serialization(se)
@@ -132,7 +141,8 @@ def download_sampling_events_by_taxa(event, context):
     if 'pathParameters' in event:
         study_name = event["pathParameters"]["taxa_id"]
 
-    value, retcode = sampling_event_controller.download_sampling_events_by_taxa(taxa_id, user)
+    value, retcode = sampling_event_controller.download_sampling_events_by_taxa(taxa_id, user,
+                                                                                sampling_event_controller.authorizer(event['requestContext']['authorizer']))
 
     for se in value.sampling_events:
         prepare_for_serialization(se)
@@ -146,7 +156,9 @@ def download_sampling_events_by_event_set(event, context):
     if 'pathParameters' in event:
         study_name = event["pathParameters"]["event_set_id"]
 
-    value, retcode = sampling_event_controller.download_sampling_events_by_event_set(event_set_id, user)
+    value, retcode = sampling_event_controller.download_sampling_events_by_event_set(event_set_id,
+                                                                                    user,
+                                                                                     sampling_event_controller.authorizer(event['requestContext']['authorizer']))
 
     for se in value.sampling_events:
         prepare_for_serialization(se)
@@ -162,7 +174,9 @@ def update_sampling_event(event, context):
 
     sampling_event = SamplingEvent.from_dict(json.loads(event["body"]))
 
-    value, retcode = sampling_event_controller.update_location(sampling_event_id, sampling_event, user)
+    value, retcode = sampling_event_controller.update_location(sampling_event_id, sampling_event,
+                                                               user,
+                                                               sampling_event_controller.authorizer(event['requestContext']['authorizer']))
 
     prepare_for_serialization(value)
 
