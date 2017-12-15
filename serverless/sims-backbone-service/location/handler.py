@@ -47,6 +47,20 @@ def create_location(event, context):
 
     return create_response(retcode, value)
 
+def delete_location(event, context):
+
+    user = event['requestContext']['authorizer']['principalId']
+
+    if 'pathParameters' in event:
+        location_id = event["pathParameters"]["location_id"]
+
+    location = Location.from_dict(json.loads(event["body"]))
+
+    value, retcode = location_controller.delete_location(location_id, user,
+                                                         location_controller.authorizer(event['requestContext']['authorizer']))
+
+    return create_response(retcode, value)
+
 def download_location(event, context):
 
     user = event['requestContext']['authorizer']['principalId']
@@ -86,6 +100,20 @@ def download_locations(event, context):
 
     for loc in value.locations:
         loc.location_id = str(loc.location_id)
+
+    return create_response(retcode, value)
+
+def download_partner_location(event, context):
+
+    user = event['requestContext']['authorizer']['principalId']
+
+    if 'pathParameters' in event:
+        partner_id = event["pathParameters"]["partner_id"]
+
+    value, retcode = location_controller.download_partner_location(partner_id, user,
+                                                               location_controller.authorizer(event['requestContext']['authorizer']))
+
+    value.location_id = str(value.location_id)
 
     return create_response(retcode, value)
 

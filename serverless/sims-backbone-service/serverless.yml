@@ -113,6 +113,7 @@ functions:
           - Ref: ServerlessSubnetA
           - Ref: ServerlessSubnetB
           - Ref: ServerlessSubnetC
+
   create_location:
     handler: location/handler.create_location
     events:
@@ -120,19 +121,55 @@ functions:
           path: sims-backbone-service/v1/location
           method: post
           cors: true
+          timeout: 20
           authorizer:
             name: auth_func
             type: request
             identitySource: method.request.header.Authorization
             identityValidationExpression: .*
 
-  location:
+  download_location:
     handler: location/handler.download_location
     events:
       - http:
           path: sims-backbone-service/v1/location/{location_id}
           method: get
           cors: true
+          timeout: 20
+          authorizer:
+            name: auth_func
+            type: request
+            identitySource: method.request.header.Authorization
+            identityValidationExpression: .*
+          request:
+            parameters:
+              paths:
+                location_id: true
+  update_location:
+    handler: location/handler.update_location
+    events:
+      - http:
+          path: sims-backbone-service/v1/location/{location_id}
+          method: put
+          cors: true
+          timeout: 20
+          authorizer:
+            name: auth_func
+            type: request
+            identitySource: method.request.header.Authorization
+            identityValidationExpression: .*
+          request:
+            parameters:
+              paths:
+                location_id: true
+  delete_location:
+    handler: location/handler.delete_location
+    events:
+      - http:
+          path: sims-backbone-service/v1/location/{location_id}
+          method: delete
+          cors: true
+          timeout: 20
           authorizer:
             name: auth_func
             type: request
@@ -143,13 +180,51 @@ functions:
               paths:
                 location_id: true
 
-  locations:
+  download_gps_location:
+    handler: location/handler.download_gps_location
+    events:
+      - http:
+          path: sims-backbone-service/v1/location/gps/{latitude}/{longitude}
+          method: get
+          cors: true
+          timeout: 20
+          authorizer:
+            name: auth_func
+            type: request
+            identitySource: method.request.header.Authorization
+            identityValidationExpression: .*
+          request:
+            parameters:
+              paths:
+                latitude: true
+                longitude: true
+
+  download_partner_location:
+    handler: location/handler.download_partner_location
+    events:
+      - http:
+          path: sims-backbone-service/v1/location/partner/{partner_id}
+          method: get
+          cors: true
+          timeout: 20
+          authorizer:
+            name: auth_func
+            type: request
+            identitySource: method.request.header.Authorization
+            identityValidationExpression: .*
+          request:
+            parameters:
+              paths:
+                partner_id: true
+
+  download_locations:
     handler: location/handler.download_locations
     events:
       - http:
           path: sims-backbone-service/v1/locations
           method: get
           cors: true
+          timeout: 20
           authorizer:
             name: auth_func
             type: request
@@ -158,45 +233,10 @@ functions:
           request:
             parameters:
               query:
-                study_name: true
+                study_name: false
                 start: false
                 count: false
                 orderby: false
-
-  location_update:
-    handler: location/handler.update_location
-    events:
-      - http:
-          path: sims-backbone-service/v1/location/{location_id}
-          method: put
-          cors: true
-          authorizer:
-            name: auth_func
-            type: request
-            identitySource: method.request.header.Authorization
-            identityValidationExpression: .*
-          request:
-              parameters:
-                  paths:
-                      location_id: true
-
-  download_gps_location:
-    handler: location/handler.download_gps_location
-    events:
-      - http:
-          path: sims-backbone-service/v1/location/gps/{latitude}/{longitude}
-          method: get
-          cors: true
-          authorizer:
-            name: auth_func
-            type: request
-            identitySource: method.request.header.Authorization
-            identityValidationExpression: .*
-          request:
-              parameters:
-                  paths:
-                      latitude: true
-                      longitude: true
 
   create_sampling_event:
     handler: sampling_event/handler.create_sampling_event
@@ -205,11 +245,13 @@ functions:
           path: sims-backbone-service/v1/samplingEvent
           method: post
           cors: true
+          timeout: 20
           authorizer:
             name: auth_func
             type: request
             identitySource: method.request.header.Authorization
             identityValidationExpression: .*
+
   download_sampling_event:
     handler: sampling_event/handler.download_sampling_event
     events:
@@ -217,49 +259,51 @@ functions:
           path: sims-backbone-service/v1/samplingEvent/{sampling_event_id}
           method: get
           cors: true
+          timeout: 20
           authorizer:
             name: auth_func
             type: request
             identitySource: method.request.header.Authorization
             identityValidationExpression: .*
           request:
-              parameters:
-                  paths:
-                      sampling_event_id: true
+            parameters:
+              paths:
+                sampling_event_id: true
   update_sampling_event:
     handler: sampling_event/handler.update_sampling_event
     events:
       - http:
           path: sims-backbone-service/v1/samplingEvent/{sampling_event_id}
           method: put
-          integration: lambda-proxy
           cors: true
+          timeout: 20
           authorizer:
             name: auth_func
             type: request
             identitySource: method.request.header.Authorization
             identityValidationExpression: .*
           request:
-              parameters:
-                  paths:
-                      sampling_event_id: true
+            parameters:
+              paths:
+                sampling_event_id: true
   delete_sampling_event:
     handler: sampling_event/handler.delete_sampling_event
     events:
       - http:
           path: sims-backbone-service/v1/samplingEvent/{sampling_event_id}
           method: delete
-          integration: lambda-proxy
           cors: true
+          timeout: 20
           authorizer:
             name: auth_func
             type: request
             identitySource: method.request.header.Authorization
             identityValidationExpression: .*
           request:
-              parameters:
-                  paths:
-                      sampling_event_id: true
+            parameters:
+              paths:
+                sampling_event_id: true
+
   download_sampling_event_by_identifier:
     handler: sampling_event/handler.download_sampling_event_by_identifier
     events:
@@ -267,105 +311,116 @@ functions:
           path: sims-backbone-service/v1/samplingEvents/identifier/{prop_name}/{prop_value}
           method: get
           cors: true
+          timeout: 20
           authorizer:
             name: auth_func
             type: request
             identitySource: method.request.header.Authorization
             identityValidationExpression: .*
           request:
-              parameters:
-                  paths:
-                      propName: true
-                      propValue: true
+            parameters:
+              paths:
+                prop_name: true
+                prop_value: true
+
   download_sampling_events_by_location:
     handler: sampling_event/handler.download_sampling_events_by_location
     events:
       - http:
           path: sims-backbone-service/v1/samplingEvents/location/{location_id}
           method: get
-          integration: lambda-proxy
           cors: true
+          timeout: 20
           authorizer:
             name: auth_func
             type: request
             identitySource: method.request.header.Authorization
             identityValidationExpression: .*
           request:
-              parameters:
-                  paths:
-                      location_id: true
+            parameters:
+              paths:
+                location_id: true
+
   download_sampling_events_by_study:
     handler: sampling_event/handler.download_sampling_events_by_study
-    timeout: 20
     events:
       - http:
           path: sims-backbone-service/v1/samplingEvents/study/{study_name}
           method: get
           cors: true
+          timeout: 20
           authorizer:
             name: auth_func
             type: request
             identitySource: method.request.header.Authorization
             identityValidationExpression: .*
           request:
-              parameters:
-                  paths:
-                      studyName: true
+            parameters:
+              paths:
+                study_name: true
+
   download_sampling_events_by_taxa:
     handler: sampling_event/handler.download_sampling_events_by_taxa
-    timeout: 20
     events:
       - http:
           path: sims-backbone-service/v1/samplingEvents/taxa/{taxa_id}
           method: get
           cors: true
+          timeout: 20
           authorizer:
             name: auth_func
             type: request
             identitySource: method.request.header.Authorization
             identityValidationExpression: .*
           request:
-              parameters:
-                  paths:
-                      taxaId: true
+            parameters:
+              paths:
+                taxa_id: true
+
   download_sampling_events_by_event_set:
     handler: sampling_event/handler.download_sampling_events_by_event_set
-    timeout: 20
     events:
       - http:
           path: sims-backbone-service/v1/samplingEvents/eventSet/{event_set_id}
           method: get
           cors: true
+          timeout: 20
           authorizer:
             name: auth_func
             type: request
             identitySource: method.request.header.Authorization
             identityValidationExpression: .*
           request:
-              parameters:
-                  paths:
-                      event_set_id: true
+            parameters:
+              paths:
+                event_set_id: true
+
   get_country_metadata:
     handler: metadata/handler.get_country_metadata
     events:
       - http:
           path: sims-backbone-service/v1/metadata/country/{country_id}
           method: get
-          integration: lambda-proxy
           cors: true
+          timeout: 20
           authorizer:
             name: auth_func
             type: request
             identitySource: method.request.header.Authorization
             identityValidationExpression: .*
+          request:
+            parameters:
+              paths:
+                country_id: true
+
   get_taxonomy_metadata:
     handler: metadata/handler.get_taxonomy_metadata
     events:
       - http:
           path: sims-backbone-service/v1/metadata/taxonomy
           method: get
-          integration: lambda-proxy
           cors: true
+          timeout: 20
           authorizer:
             name: auth_func
             type: request
@@ -378,6 +433,7 @@ functions:
           path: sims-backbone-service/v1/metadata/taxonomy
           method: post
           cors: true
+          timeout: 20
           authorizer:
             name: auth_func
             type: request
@@ -385,51 +441,234 @@ functions:
             identityValidationExpression: .*
 
   download_studies:
-    handler: studies/handler.download_studies
+    handler: study/handler.download_studies
     events:
       - http:
           path: sims-backbone-service/v1/studies
           method: get
           cors: true
+          timeout: 20
           authorizer:
             name: auth_func
             type: request
             identitySource: method.request.header.Authorization
             identityValidationExpression: .*
+          request:
+            parameters:
+              query:
+                start: false
+                count: false
+
   download_study:
-    handler: studies/handler.download_study
+    handler: study/handler.download_study
     events:
       - http:
           path: sims-backbone-service/v1/study/{study_id}
           method: get
-          integration: lambda-proxy
           cors: true
+          timeout: 20
           authorizer:
             name: auth_func
             type: request
             identitySource: method.request.header.Authorization
             identityValidationExpression: .*
           request:
-              parameters:
-                  paths:
-                      study_id: true
+            parameters:
+              paths:
+                study_id: true
   update_study:
-    handler: studies/handler.update_study
+    handler: study/handler.update_study
     events:
       - http:
           path: sims-backbone-service/v1/study/{study_id}
           method: put
-          integration: lambda-proxy
           cors: true
+          timeout: 20
           authorizer:
             name: auth_func
             type: request
             identitySource: method.request.header.Authorization
             identityValidationExpression: .*
           request:
-              parameters:
-                  paths:
-                      study_id: true
+            parameters:
+              paths:
+                study_id: true
+
+  create_event_set:
+    handler: event_set/handler.create_event_set
+    events:
+      - http:
+          path: sims-backbone-service/v1/eventSet/{event_set_id}
+          method: post
+          cors: true
+          timeout: 20
+          authorizer:
+            name: auth_func
+            type: request
+            identitySource: method.request.header.Authorization
+            identityValidationExpression: .*
+          request:
+            parameters:
+              paths:
+                event_set_id: true
+  download_event_set:
+    handler: event_set/handler.download_event_set
+    events:
+      - http:
+          path: sims-backbone-service/v1/eventSet/{event_set_id}
+          method: get
+          cors: true
+          timeout: 20
+          authorizer:
+            name: auth_func
+            type: request
+            identitySource: method.request.header.Authorization
+            identityValidationExpression: .*
+          request:
+            parameters:
+              paths:
+                event_set_id: true
+  update_event_set:
+    handler: event_set/handler.update_event_set
+    events:
+      - http:
+          path: sims-backbone-service/v1/eventSet/{event_set_id}
+          method: put
+          cors: true
+          timeout: 20
+          authorizer:
+            name: auth_func
+            type: request
+            identitySource: method.request.header.Authorization
+            identityValidationExpression: .*
+          request:
+            parameters:
+              paths:
+                event_set_id: true
+  delete_event_set:
+    handler: event_set/handler.delete_event_set
+    events:
+      - http:
+          path: sims-backbone-service/v1/eventSet/{event_set_id}
+          method: delete
+          cors: true
+          timeout: 20
+          authorizer:
+            name: auth_func
+            type: request
+            identitySource: method.request.header.Authorization
+            identityValidationExpression: .*
+          request:
+            parameters:
+              paths:
+                event_set_id: true
+
+  create_event_set_item:
+    handler: event_set/handler.create_event_set_item
+    events:
+      - http:
+          path: sims-backbone-service/v1/eventSet/{event_set_id}/{sampling_event_id}
+          method: post
+          cors: true
+          timeout: 20
+          authorizer:
+            name: auth_func
+            type: request
+            identitySource: method.request.header.Authorization
+            identityValidationExpression: .*
+          request:
+            parameters:
+              paths:
+                event_set_id: true
+                sampling_event_id: true
+  delete_event_set_item:
+    handler: event_set/handler.delete_event_set_item
+    events:
+      - http:
+          path: sims-backbone-service/v1/eventSet/{event_set_id}/{sampling_event_id}
+          method: delete
+          cors: true
+          timeout: 20
+          authorizer:
+            name: auth_func
+            type: request
+            identitySource: method.request.header.Authorization
+            identityValidationExpression: .*
+          request:
+            parameters:
+              paths:
+                event_set_id: true
+                sampling_event_id: true
+
+  create_event_set_note:
+    handler: event_set/handler.create_event_set_note
+    events:
+      - http:
+          path: sims-backbone-service/v1/eventSet/{event_set_id}/notes/{note_id}
+          method: post
+          cors: true
+          timeout: 20
+          authorizer:
+            name: auth_func
+            type: request
+            identitySource: method.request.header.Authorization
+            identityValidationExpression: .*
+          request:
+            parameters:
+              paths:
+                event_set_id: true
+                note_id: true
+  update_event_set_note:
+    handler: event_set/handler.update_event_set_note
+    events:
+      - http:
+          path: sims-backbone-service/v1/eventSet/{event_set_id}/notes/{note_id}
+          method: put
+          cors: true
+          timeout: 20
+          authorizer:
+            name: auth_func
+            type: request
+            identitySource: method.request.header.Authorization
+            identityValidationExpression: .*
+          request:
+            parameters:
+              paths:
+                event_set_id: true
+                note_id: true
+  delete_event_set_note:
+    handler: event_set/handler.delete_event_set_note
+    events:
+      - http:
+          path: sims-backbone-service/v1/eventSet/{event_set_id}/notes/{note_id}
+          method: delete
+          cors: true
+          timeout: 20
+          authorizer:
+            name: auth_func
+            type: request
+            identitySource: method.request.header.Authorization
+            identityValidationExpression: .*
+          request:
+            parameters:
+              paths:
+                event_set_id: true
+                note_id: true
+
+  download_event_sets:
+    handler: event_set/handler.download_event_sets
+    events:
+      - http:
+          path: sims-backbone-service/v1/eventSets
+          method: get
+          cors: true
+          timeout: 20
+          authorizer:
+            name: auth_func
+            type: request
+            identitySource: method.request.header.Authorization
+            identityValidationExpression: .*
+
 resources:
   Resources:
     GatewayResponseDefault4XX:
