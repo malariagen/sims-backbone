@@ -89,6 +89,8 @@ class Uploader():
                     #print(repr(defn))
                     #print(repr(row))
                     data_value = row[defn['column']]
+                    if data_value == '\\N':
+                        continue
                     #Convert data value - make sure you set data_value
                     try:
                         if 'regex' in defn:
@@ -107,36 +109,30 @@ class Uploader():
                             #else:
                             #    print("No match: {} {}".format(defn['regex'], data_value))
                         if defn['type'] == 'datetime':
-                            try:
-                                if not (data_value == '' or
-                                        data_value == 'NULL' or
-                                        data_value == '-' or
-                                        data_value == 'None'):
-                                    if 'date_format' in defn:
+                            if not (data_value == '' or
+                                    data_value == 'NULL' or
+                                    data_value == '-' or
+                                    data_value == 'None'):
+                                data_value = data_value.split(' ')[0]
+                                if 'date_format' in defn:
+                                    try:
+                                        date_format = '%Y-%m-%d'
+                                        date_format = defn['date_format']
+                                        data_value = datetime.datetime(*(time.strptime(data_value, date_format))[:6]).date()
+                                    except ValueError as dpe:
                                         try:
-                                            date_format = '%Y-%m-%d'
-                                            date_format = defn['date_format']
+                                            date_format = '%Y'
                                             data_value = datetime.datetime(*(time.strptime(data_value, date_format))[:6]).date()
+                                            values[name + '_accuracy'] = 'year'
                                         except ValueError as dpe:
-                                            try:
-                                                date_format = '%Y'
-                                                data_value = datetime.datetime(*(time.strptime(data_value, date_format))[:6]).date()
-                                                values[name + '_accuracy'] = 'year'
-                                            except ValueError as dpe:
-                                                raise InvalidDateFormatException("Failed to parse date '{}' using {}".format(data_value, date_format)) from dpe
-                          #          else:
-                                        #To make sure that the default conversion works
-                          #              data.typed_data_value
-                                else:
-                                    #Skip this property
-                                    continue
-                            except (InvalidDataValueException,InvalidDateFormatException) as idfe:
-
-                                self._connection.rollback()
-
-                                self._cursor.close()
-                                self._connection.close()
-                                raise
+                                            print("Failed to parse date '{}' using {}".format(data_value, date_format))
+                                            continue
+                      #          else:
+                                    #To make sure that the default conversion works
+                      #              data.typed_data_value
+                            else:
+                                #Skip this property
+                                continue
                         if 'replace' in defn:
                             for subs in defn['replace']:
                                 data_value = re.sub("^" + subs[0] + "$", subs[1], data_value)
