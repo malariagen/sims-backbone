@@ -1,7 +1,7 @@
 {
     "values":
     {
-        "sample_partner_id": {
+        "sample_oxford_id": {
             "column": 0,
             "type": "string",
             "id": true
@@ -29,12 +29,26 @@
                         [ "1157", "1157-PV-MULTI-PRICE" ]
             ]
         },
-        "location_name": {
+        "sample_partner_id": {
             "column": 2,
             "type": "string"
         },
-        "country": {
+        "location_name": {
+            "column": 3,
+            "type": "string"
+        },
+        "latitude": {
             "column": 4,
+            "type": "float",
+            "regex": "^\\s*([-0-9]*\\.?\\d{0,7})"
+        },
+        "longitude": {
+            "column": 4,
+            "type": "float",
+            "regex": "([-0-9]*\\.?\\d{0,7})(\\d*)$"
+        },
+        "country": {
+            "column": 5,
             "type": "string",
             "replace": [
                         [ "the Bolivarian Republic of Venezuela", "VEN" ],
@@ -90,32 +104,22 @@
                     ]
 
         },
-        "latitude": {
-            "column": 3,
-            "type": "float",
-            "regex": "^\\s*([-0-9]*\\.?\\d{0,7})"
-        },
-        "longitude": {
-            "column": 3,
-            "type": "float",
-            "regex": "([-0-9]*\\.?\\d{0,7})(\\d*)$"
-        },
         "proxy_location_name": {
-            "column": 5,
+            "column": 6,
             "type": "string"
         },
         "proxy_latitude": {
-            "column": 6,
+            "column": 7,
             "type": "float",
             "regex": "^\\s*([-0-9]*\\.?\\d{0,7})"
         },
         "proxy_longitude": {
-            "column": 6,
+            "column": 8,
             "type": "float",
             "regex": "([-0-9]*\\.?\\d{0,7})\\d*$"
         },
         "doc": {
-            "column": 7,
+            "column": 8,
             "type": "datetime",
             "date_format": "%Y-%m-%d"
         }
