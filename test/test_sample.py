@@ -2,6 +2,7 @@ import swagger_client
 from swagger_client.rest import ApiException
 from test_base import TestBase
 from datetime import date
+import urllib
 
 import uuid
 
@@ -212,3 +213,37 @@ class TestSample(TestBase):
         except ApiException as error:
             self.fail("test_update_missing: Exception when calling SamplingEventApi->create_sampling_event: %s\n" % error)
 
+    """
+    """
+    def test_identifier_lookup_encode(self):
+
+        api_instance = swagger_client.SamplingEventApi(self._api_client)
+
+        try:
+
+            test_id = 'MDG/DK_0005'
+            samp = swagger_client.SamplingEvent(None, '1008-MD-UP', date(2017, 10, 14))
+            samp.identifiers = [
+                swagger_client.Identifier ('partner_id', test_id)
+            ]
+            created = api_instance.create_sampling_event(samp)
+
+            fetched = api_instance.download_sampling_event(created.sampling_event_id)
+
+            self.assertEqual(created, fetched, "create response != download response")
+            fetched.sampling_event_id = None
+            self.assertEqual(samp, fetched, "upload != download response")
+
+            looked_up = api_instance.download_sampling_event_by_identifier('partner_id',
+                                                                           urllib.parse.quote_plus(test_id))
+            fetched = api_instance.download_sampling_event(looked_up.sampling_event_id)
+
+            self.assertEqual(created, fetched, "create response != download response")
+            fetched.sampling_event_id = None
+            self.assertEqual(samp, fetched, "upload != download response")
+
+
+            api_instance.delete_sampling_event(created.sampling_event_id)
+
+        except ApiException as error:
+            self.fail("test_partner_lookup_encode: Exception when calling SamplingEventApi->create_sampling_event: %s\n" % error)
