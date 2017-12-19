@@ -20,6 +20,10 @@ class SamplingEventDelete():
 
                 cursor.execute( stmt, (sample_id,))
 
+                stmt = '''DELETE FROM event_set_members WHERE sampling_event_id = %s'''
+
+                cursor.execute( stmt, (sample_id,))
+
                 stmt = '''DELETE FROM samples WHERE id = %s'''
 
                 cursor.execute( stmt, (sample_id,))
