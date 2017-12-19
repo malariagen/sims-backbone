@@ -313,6 +313,7 @@ class Uploader():
         es_api_instance = swagger_client.EventSetApi(swagger_client.ApiClient(configuration))
 
         doc = None
+        doc_accuracy = None
         study_id = None
         if 'doc' in values:
             if isinstance(values['doc'], datetime.date):
@@ -321,10 +322,10 @@ class Uploader():
             if 'year' in values:
                 if isinstance(values['year'], datetime.date):
                     doc = values['year']
+                    values['doc_accuracy'] = 'year'
 
-            if 'year_accuracy' in values:
-                samp.doc_accuracy = values['year_accuracy']
-
+        if 'doc_accuracy' in values:
+            doc_accuracy = values['doc_accuracy']
         if 'study_id' in values:
             study_id = values['study_id']
 
@@ -337,7 +338,7 @@ class Uploader():
             plid = proxy_location.location_id
 
         samp = swagger_client.SamplingEvent(None, study_id = study_id, doc = doc, location_id =
-                                     lid, proxy_location_id = plid)
+                                     lid, proxy_location_id = plid, doc_accuracy = doc_accuracy)
 
         idents = []
         if 'sample_roma_id' in values:
