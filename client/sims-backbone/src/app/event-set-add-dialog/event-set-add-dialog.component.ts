@@ -31,7 +31,7 @@ export class EventSetAddDialogComponent {
   save(): void {
 
 
-    this.eventSetService.createEventSet(this.eventSet, {}).subscribe(
+    this.eventSetService.createEventSet(this.eventSet).subscribe(
       (x) => {
         //console.log("Submitted");
       },
