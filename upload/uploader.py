@@ -342,21 +342,13 @@ class Uploader():
 
         idents = []
         if 'sample_roma_id' in values:
-            idents.append(swagger_client.Identifier ('roma_id',
-                                                     urllib.parse.quote(values['sample_roma_id'],
-                                                                        safe='')))
+            idents.append(swagger_client.Identifier ('roma_id', values['sample_roma_id']))
         if 'sample_partner_id' in values:
-            idents.append(swagger_client.Identifier ('partner_id',
-                                                     urllib.parse.quote(values['sample_partner_id'],
-                                                                       safe='')))
+            idents.append(swagger_client.Identifier ('partner_id', values['sample_partner_id']))
         if 'sample_oxford_id' in values:
-            idents.append(swagger_client.Identifier ('oxford_id',
-                                                     urllib.parse.quote(values['sample_oxford_id'],
-                                                                       safe='')))
+            idents.append(swagger_client.Identifier ('oxford_id', values['sample_oxford_id']))
         if 'sample_alternate_oxford_id' in values and len(values['sample_alternate_oxford_id']) > 0:
-            idents.append(swagger_client.Identifier ('alt_oxford_id',
-                                                     urllib.parse.quote(values['sample_alternate_oxford_id'],
-                                                                        safe='')))
+            idents.append(swagger_client.Identifier ('alt_oxford_id', values['sample_alternate_oxford_id']))
         if 'species' in values and len(values['species']) > 0:
             samp.partner_species = values['species']
 
@@ -379,7 +371,7 @@ class Uploader():
                         #print("Looking for {} {}".format(ident.identifier_type, ident.identifier_value))
 
                         found = api_instance.download_sampling_event_by_identifier(ident.identifier_type,
-                                                               ident.identifier_value)
+                                                               urllib.parse.quote_plus(ident.identifier_value))
                         existing_sample_id = found.sampling_event_id
                         #print ("found: {}".format(samp))
                     except ApiException as err:
