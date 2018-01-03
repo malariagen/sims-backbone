@@ -1,0 +1,261 @@
+# Welcome to Serverless!
+#
+# This file is the main config file for your service.
+# It's very minimal at this point and uses default values.
+# You can always add more config options for more control.
+# We've included some commented out config examples here.
+# Just uncomment any of them to get that config option.
+#
+# For full config options, check the docs:
+#    docs.serverless.com
+#
+# Happy Coding!
+
+service: event-set-service
+#service: sims-backbone-service
+
+# You can pin your service to only deploy with a specific Serverless version
+# Check out our docs for more details
+# frameworkVersion: "=X.X.X"
+
+provider:
+  name: aws
+  runtime: python3.6
+  region: eu-west-1
+  stage: ${opt:stage, 'dev'}
+  versionFunctions: false
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - ec2:CreateNetworkInterface
+        - ec2:DescribeNetworkInterfaces
+        - ec2:DeleteNetworkInterface
+      Resource: "*"
+  environment:
+    DB_USER: ${file(../config.${self:provider.stage}.json):db_user}
+    DATABASE: ${file(../config.${self:provider.stage}.json):database}
+    DB_PASSWORD: ${file(../config.${self:provider.stage}.json):db_password}
+    DB_HOST: ${cf:sims-backbone-service-${self:provider.stage}.DbHostOutput}
+    AUTH_PROFILE_URL: ${file(../config.${self:provider.stage}.json):auth_profile}
+  vpc:
+    securityGroupIds:
+      - ${cf:sims-backbone-service-${self:provider.stage}.ServerlessSecurityGroupOutput}
+    subnetIds:
+      - 'Fn::ImportValue': sims-backbone-service:PublicSubnetA-${self:provider.stage}
+      - 'Fn::ImportValue': sims-backbone-service:PublicSubnetB-${self:provider.stage}
+      - 'Fn::ImportValue': sims-backbone-service:PublicSubnetC-${self:provider.stage}
+
+plugins:
+      - serverless-python-requirements
+
+custom:
+  pythonRequirements:
+    dockerizePip: true
+
+package:
+    exclude:
+        - requirements.txt
+        - serverless.yml
+        - node_modules/**
+        - venv/**
+        - package.json
+        - package-lock.json
+        - endpoints.txt
+        - updateall.sh
+        - ../../server/backbone_server/connect.py
+    include:
+        - location/handler.py
+        - metadata/handler.py
+        - sampling_event/handler.py
+        - studies/handler.py
+        - ../../server/bb_server/**
+        - ../../server/backbone_server/**/**
+        - ../auth/**
+        - ../client_secrets.${self:provider.stage}.json
+
+functions:
+  auth_func:
+    handler: auth/handler.auth
+    vpc:
+        securityGroupIds:
+          - ${cf:sims-backbone-service-${self:provider.stage}.ServerlessSecurityGroupOutput}
+        subnetIds:
+          - 'Fn::ImportValue': sims-backbone-service:ServerlessSubnetA-${self:provider.stage}
+          - 'Fn::ImportValue': sims-backbone-service:ServerlessSubnetB-${self:provider.stage}
+          - 'Fn::ImportValue': sims-backbone-service:ServerlessSubnetC-${self:provider.stage}
+
+  create_event_set:
+    handler: event_set/handler.create_event_set
+    events:
+      - http:
+          path: sims-backbone-service/v1/eventSet/{event_set_id}
+          method: post
+          cors: true
+          timeout: 20
+          authorizer:
+            name: auth_func
+            type: request
+            identitySource: method.request.header.Authorization
+            identityValidationExpression: .*
+          request:
+            parameters:
+              paths:
+                event_set_id: true
+  download_event_set:
+    handler: event_set/handler.download_event_set
+    events:
+      - http:
+          path: sims-backbone-service/v1/eventSet/{event_set_id}
+          method: get
+          cors: true
+          timeout: 20
+          authorizer:
+            name: auth_func
+            type: request
+            identitySource: method.request.header.Authorization
+            identityValidationExpression: .*
+          request:
+            parameters:
+              paths:
+                event_set_id: true
+  update_event_set:
+    handler: event_set/handler.update_event_set
+    events:
+      - http:
+          path: sims-backbone-service/v1/eventSet/{event_set_id}
+          method: put
+          cors: true
+          timeout: 20
+          authorizer:
+            name: auth_func
+            type: request
+            identitySource: method.request.header.Authorization
+            identityValidationExpression: .*
+          request:
+            parameters:
+              paths:
+                event_set_id: true
+  delete_event_set:
+    handler: event_set/handler.delete_event_set
+    events:
+      - http:
+          path: sims-backbone-service/v1/eventSet/{event_set_id}
+          method: delete
+          cors: true
+          timeout: 20
+          authorizer:
+            name: auth_func
+            type: request
+            identitySource: method.request.header.Authorization
+            identityValidationExpression: .*
+          request:
+            parameters:
+              paths:
+                event_set_id: true
+
+  create_event_set_item:
+    handler: event_set/handler.create_event_set_item
+    events:
+      - http:
+          path: sims-backbone-service/v1/eventSet/{event_set_id}/{sampling_event_id}
+          method: post
+          cors: true
+          timeout: 20
+          authorizer:
+            name: auth_func
+            type: request
+            identitySource: method.request.header.Authorization
+            identityValidationExpression: .*
+          request:
+            parameters:
+              paths:
+                event_set_id: true
+                sampling_event_id: true
+  delete_event_set_item:
+    handler: event_set/handler.delete_event_set_item
+    events:
+      - http:
+          path: sims-backbone-service/v1/eventSet/{event_set_id}/{sampling_event_id}
+          method: delete
+          cors: true
+          timeout: 20
+          authorizer:
+            name: auth_func
+            type: request
+            identitySource: method.request.header.Authorization
+            identityValidationExpression: .*
+          request:
+            parameters:
+              paths:
+                event_set_id: true
+                sampling_event_id: true
+
+  create_event_set_note:
+    handler: event_set/handler.create_event_set_note
+    events:
+      - http:
+          path: sims-backbone-service/v1/eventSet/{event_set_id}/notes/{note_id}
+          method: post
+          cors: true
+          timeout: 20
+          authorizer:
+            name: auth_func
+            type: request
+            identitySource: method.request.header.Authorization
+            identityValidationExpression: .*
+          request:
+            parameters:
+              paths:
+                event_set_id: true
+                note_id: true
+  update_event_set_note:
+    handler: event_set/handler.update_event_set_note
+    events:
+      - http:
+          path: sims-backbone-service/v1/eventSet/{event_set_id}/notes/{note_id}
+          method: put
+          cors: true
+          timeout: 20
+          authorizer:
+            name: auth_func
+            type: request
+            identitySource: method.request.header.Authorization
+            identityValidationExpression: .*
+          request:
+            parameters:
+              paths:
+                event_set_id: true
+                note_id: true
+  delete_event_set_note:
+    handler: event_set/handler.delete_event_set_note
+    events:
+      - http:
+          path: sims-backbone-service/v1/eventSet/{event_set_id}/notes/{note_id}
+          method: delete
+          cors: true
+          timeout: 20
+          authorizer:
+            name: auth_func
+            type: request
+            identitySource: method.request.header.Authorization
+            identityValidationExpression: .*
+          request:
+            parameters:
+              paths:
+                event_set_id: true
+                note_id: true
+
+  download_event_sets:
+    handler: event_set/handler.download_event_sets
+    events:
+      - http:
+          path: sims-backbone-service/v1/eventSets
+          method: get
+          cors: true
+          timeout: 20
+          authorizer:
+            name: auth_func
+            type: request
+            identitySource: method.request.header.Authorization
+            identityValidationExpression: .*
+

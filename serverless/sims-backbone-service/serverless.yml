@@ -22,6 +22,7 @@ provider:
   runtime: python3.6
   region: eu-west-1
   stage: ${opt:stage, 'dev'}
+  versionFunctions: false
   iamRoleStatements:
     - Effect: "Allow"
       Action:
@@ -33,6 +34,7 @@ provider:
     DB_USER: ${file(../config.${self:provider.stage}.json):db_user}
     DATABASE: ${file(../config.${self:provider.stage}.json):database}
     DB_PASSWORD: ${file(../config.${self:provider.stage}.json):db_password}
+#    DB_HOST: Fn::GetAtt: ["ServerlessRDSCluster", "Endpoint.Address"]
     DB_HOST: ${file(../config.${self:provider.stage}.json):db_host}
     AUTH_PROFILE_URL: ${file(../config.${self:provider.stage}.json):auth_profile}
   vpc:
@@ -494,181 +496,6 @@ functions:
               paths:
                 study_id: true
 
-  create_event_set:
-    handler: event_set/handler.create_event_set
-    events:
-      - http:
-          path: sims-backbone-service/v1/eventSet/{event_set_id}
-          method: post
-          cors: true
-          timeout: 20
-          authorizer:
-            name: auth_func
-            type: request
-            identitySource: method.request.header.Authorization
-            identityValidationExpression: .*
-          request:
-            parameters:
-              paths:
-                event_set_id: true
-  download_event_set:
-    handler: event_set/handler.download_event_set
-    events:
-      - http:
-          path: sims-backbone-service/v1/eventSet/{event_set_id}
-          method: get
-          cors: true
-          timeout: 20
-          authorizer:
-            name: auth_func
-            type: request
-            identitySource: method.request.header.Authorization
-            identityValidationExpression: .*
-          request:
-            parameters:
-              paths:
-                event_set_id: true
-  update_event_set:
-    handler: event_set/handler.update_event_set
-    events:
-      - http:
-          path: sims-backbone-service/v1/eventSet/{event_set_id}
-          method: put
-          cors: true
-          timeout: 20
-          authorizer:
-            name: auth_func
-            type: request
-            identitySource: method.request.header.Authorization
-            identityValidationExpression: .*
-          request:
-            parameters:
-              paths:
-                event_set_id: true
-  delete_event_set:
-    handler: event_set/handler.delete_event_set
-    events:
-      - http:
-          path: sims-backbone-service/v1/eventSet/{event_set_id}
-          method: delete
-          cors: true
-          timeout: 20
-          authorizer:
-            name: auth_func
-            type: request
-            identitySource: method.request.header.Authorization
-            identityValidationExpression: .*
-          request:
-            parameters:
-              paths:
-                event_set_id: true
-
-  create_event_set_item:
-    handler: event_set/handler.create_event_set_item
-    events:
-      - http:
-          path: sims-backbone-service/v1/eventSet/{event_set_id}/{sampling_event_id}
-          method: post
-          cors: true
-          timeout: 20
-          authorizer:
-            name: auth_func
-            type: request
-            identitySource: method.request.header.Authorization
-            identityValidationExpression: .*
-          request:
-            parameters:
-              paths:
-                event_set_id: true
-                sampling_event_id: true
-  delete_event_set_item:
-    handler: event_set/handler.delete_event_set_item
-    events:
-      - http:
-          path: sims-backbone-service/v1/eventSet/{event_set_id}/{sampling_event_id}
-          method: delete
-          cors: true
-          timeout: 20
-          authorizer:
-            name: auth_func
-            type: request
-            identitySource: method.request.header.Authorization
-            identityValidationExpression: .*
-          request:
-            parameters:
-              paths:
-                event_set_id: true
-                sampling_event_id: true
-
-  create_event_set_note:
-    handler: event_set/handler.create_event_set_note
-    events:
-      - http:
-          path: sims-backbone-service/v1/eventSet/{event_set_id}/notes/{note_id}
-          method: post
-          cors: true
-          timeout: 20
-          authorizer:
-            name: auth_func
-            type: request
-            identitySource: method.request.header.Authorization
-            identityValidationExpression: .*
-          request:
-            parameters:
-              paths:
-                event_set_id: true
-                note_id: true
-  update_event_set_note:
-    handler: event_set/handler.update_event_set_note
-    events:
-      - http:
-          path: sims-backbone-service/v1/eventSet/{event_set_id}/notes/{note_id}
-          method: put
-          cors: true
-          timeout: 20
-          authorizer:
-            name: auth_func
-            type: request
-            identitySource: method.request.header.Authorization
-            identityValidationExpression: .*
-          request:
-            parameters:
-              paths:
-                event_set_id: true
-                note_id: true
-  delete_event_set_note:
-    handler: event_set/handler.delete_event_set_note
-    events:
-      - http:
-          path: sims-backbone-service/v1/eventSet/{event_set_id}/notes/{note_id}
-          method: delete
-          cors: true
-          timeout: 20
-          authorizer:
-            name: auth_func
-            type: request
-            identitySource: method.request.header.Authorization
-            identityValidationExpression: .*
-          request:
-            parameters:
-              paths:
-                event_set_id: true
-                note_id: true
-
-  download_event_sets:
-    handler: event_set/handler.download_event_sets
-    events:
-      - http:
-          path: sims-backbone-service/v1/eventSets
-          method: get
-          cors: true
-          timeout: 20
-          authorizer:
-            name: auth_func
-            type: request
-            identitySource: method.request.header.Authorization
-            identityValidationExpression: .*
-
 resources:
   Resources:
     GatewayResponseDefault4XX:
@@ -959,9 +786,56 @@ resources:
         MasterUsername: ${file(../config.${self:provider.stage}.json):db_user}
         MasterUserPassword: ${file(../config.${self:provider.stage}.json):db_password}
         DBInstanceClass: db.t2.micro
-        PubliclyAccessible: True
+        PubliclyAccessible: False
         AllocatedStorage: 10
         VPCSecurityGroups:
         - "Fn::GetAtt": ServerlessStorageSecurityGroup.GroupId
         DBSubnetGroupName:
           Ref: ServerlessRDSSubnetGroup
+  Outputs:
+      ServerlessVPCOutput:
+        Value:
+          Ref: ServerlessVPC
+        Export:
+          Name: ${self:service}:ServerlessVPC-${self:provider.stage}
+      PublicSubnetAOutput:
+        Value:
+          Ref: PublicSubnetA
+        Export:
+          Name: ${self:service}:PublicSubnetA-${self:provider.stage}
+      PublicSubnetBOutput:
+        Value:
+          Ref: PublicSubnetB
+        Export:
+          Name: ${self:service}:PublicSubnetB-${self:provider.stage}
+      PublicSubnetCOutput:
+        Value:
+          Ref: PublicSubnetC
+        Export:
+          Name: ${self:service}:PublicSubnetC-${self:provider.stage}
+      ServerlessSubnetAOutput:
+        Value:
+          Ref: ServerlessSubnetA
+        Export:
+          Name: ${self:service}:ServerlessSubnetA-${self:provider.stage}
+      ServerlessSubnetBOutput:
+        Value:
+          Ref: ServerlessSubnetB
+        Export:
+          Name: ${self:service}:ServerlessSubnetB-${self:provider.stage}
+      ServerlessSubnetCOutput:
+        Value:
+          Ref: ServerlessSubnetC
+        Export:
+          Name: ${self:service}:ServerlessSubnetC-${self:provider.stage}
+      ServerlessSecurityGroupOutput:
+        Value:
+          Ref: ServerlessSecurityGroup
+        Export:
+          Name: ${self:service}:ServerlessSecurityGroup-${self:provider.stage}
+      DbHostOutput:
+        Value:
+          Fn::GetAtt: [ ServerlessRDSCluster, Endpoint.Address ]
+        Export:
+          Name: ${self:service}:DbHost-${self:provider.stage}
+
