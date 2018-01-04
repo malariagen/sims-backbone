@@ -24,7 +24,7 @@ import { environment } from '../../environments/environment';
     },
     {
       provide: EventSetService,
-      useFactory: (httpClient, basePath) => new EventSetService(httpClient, basePath),
+      useFactory: (httpClient, basePath) => new EventSetService(httpClient, basePath, undefined),
       deps: [
         HttpClient,
         BASE_PATH

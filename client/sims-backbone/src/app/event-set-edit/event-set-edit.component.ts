@@ -30,7 +30,7 @@ import { environment } from '../../environments/environment';
     {
       provide: EventSetService,
       useFactory: (httpClient, basePath) => {
-        return new EventSetService(httpClient, basePath);
+        return new EventSetService(httpClient, basePath, undefined);
       },
       deps: [
         HttpClient,
