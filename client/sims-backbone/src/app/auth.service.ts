@@ -19,7 +19,6 @@ export class AuthService {
   }
 
   public getConfiguration() {
-    console.log("get config");
     return new Configuration({
       accessToken: this.getAccessToken(),
       basePath: environment.apiLocation,
