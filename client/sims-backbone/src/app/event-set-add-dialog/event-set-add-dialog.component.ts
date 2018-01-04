@@ -8,9 +8,30 @@ import { EventSets } from '../typescript-angular-client/model/eventSets';
 
 import { EventSetService } from '../typescript-angular-client/api/eventSet.service';
 
+import { HttpClient } from '@angular/common/http';
+
+import { BASE_PATH } from '../typescript-angular-client/variables';
+
+import { environment } from '../../environments/environment';
+
+
 @Component({
   selector: 'app-event-set-add-dialog',
-  providers: [EventSetService],
+  providers: [
+    {
+      provide: BASE_PATH,
+      useValue: environment.eventSetApiLocation
+      
+    },
+    {
+      provide: EventSetService,
+      useFactory: (httpClient, basePath) => new EventSetService(httpClient, basePath),
+      deps: [
+        HttpClient,
+        BASE_PATH
+      ]
+    }
+  ],
   templateUrl: './event-set-add-dialog.component.html',
   styleUrls: ['./event-set-add-dialog.component.scss']
 })
