@@ -12,5 +12,6 @@ export const environment = {
   scope: 'editor',
   tokenEndpoint: 'https://sso-dev.cggh.org/sso/oauth2.0/accessToken',
   showDebugInformation: true,
-  dummyClientSecret: '1912308409123890'
+  dummyClientSecret: '1912308409123890',
+  apiLocation: 'http://localhost/v1'
 };

@@ -8,6 +8,8 @@ import { Location } from '@angular/common';
 import { ActivatedRoute, UrlSegment } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
 
+import { environment } from '../environments/environment';
+
 @Injectable()
 export class AuthService {
 
@@ -17,8 +19,10 @@ export class AuthService {
   }
 
   public getConfiguration() {
+    console.log("get config");
     return new Configuration({
       accessToken: this.getAccessToken(),
+      basePath: environment.apiLocation,
       withCredentials: false
     });
   }
