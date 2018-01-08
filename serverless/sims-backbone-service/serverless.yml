@@ -443,7 +443,7 @@ functions:
             identityValidationExpression: .*
 
   download_studies:
-    handler: study/handler.download_studies
+    handler: studies/handler.download_studies
     events:
       - http:
           path: sims-backbone-service/v1/studies
@@ -462,7 +462,7 @@ functions:
                 count: false
 
   download_study:
-    handler: study/handler.download_study
+    handler: studies/handler.download_study
     events:
       - http:
           path: sims-backbone-service/v1/study/{study_id}
@@ -479,7 +479,7 @@ functions:
               paths:
                 study_id: true
   update_study:
-    handler: study/handler.update_study
+    handler: studies/handler.update_study
     events:
       - http:
           path: sims-backbone-service/v1/study/{study_id}
