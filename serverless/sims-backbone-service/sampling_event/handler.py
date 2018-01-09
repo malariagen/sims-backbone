@@ -139,7 +139,7 @@ def download_sampling_events_by_taxa(event, context):
     user = event['requestContext']['authorizer']['principalId']
 
     if 'pathParameters' in event:
-        study_name = event["pathParameters"]["taxa_id"]
+        taxa_id = event["pathParameters"]["taxa_id"]
 
     value, retcode = sampling_event_controller.download_sampling_events_by_taxa(taxa_id, user,
                                                                                 sampling_event_controller.authorizer(event['requestContext']['authorizer']))
@@ -154,7 +154,7 @@ def download_sampling_events_by_event_set(event, context):
     user = event['requestContext']['authorizer']['principalId']
 
     if 'pathParameters' in event:
-        study_name = event["pathParameters"]["event_set_id"]
+        event_set_id = event["pathParameters"]["event_set_id"]
 
     value, retcode = sampling_event_controller.download_sampling_events_by_event_set(event_set_id,
                                                                                     user,
