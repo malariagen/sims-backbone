@@ -821,6 +821,12 @@ definitions:
         type: string
       proxy_location:
         $ref: '#/definitions/Location'
+      public_location_id:
+        description: 'proxy location if set otherwise location'
+        type: string
+      public_location:
+        description: 'proxy location if set otherwise location'
+        $ref: '#/definitions/Location'
       partner_species:
         type: string
       partner_taxonomies:
