@@ -1,1 +1,1 @@
-pg_dump backbone_service -s > backbone_service.psql
+pg_dump backbone_service -s --no-owner > backbone_service.psql
