@@ -903,6 +903,8 @@ definitions:
         type: string
       identifier_value:
         type: string
+      identifier_source:
+        type: string
       study_name:
         type: string
   Country:
