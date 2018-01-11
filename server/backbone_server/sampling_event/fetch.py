@@ -14,13 +14,13 @@ class SamplingEventFetch():
     @staticmethod
     def fetch_identifiers(cursor, sampling_event_id):
 
-        stmt = '''SELECT identifier_type, identifier_value FROM identifiers WHERE sample_id = %s'''
+        stmt = '''SELECT identifier_type, identifier_value, identifier_source FROM identifiers WHERE sample_id = %s'''
 
         cursor.execute(stmt, (sampling_event_id,))
 
         identifiers = []
-        for (name, value) in cursor:
-            ident = Identifier(name, value)
+        for (name, value, source) in cursor:
+            ident = Identifier(name, value, source)
             identifiers.append(ident)
 
         if len(identifiers) == 0:

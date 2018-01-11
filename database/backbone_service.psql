@@ -160,7 +160,8 @@ ALTER SEQUENCE event_sets_id_seq OWNED BY event_sets.id;
 CREATE TABLE identifiers (
     sample_id uuid,
     identifier_type character varying(20),
-    identifier_value character varying(256)
+    identifier_value character varying(256),
+    identifier_source character varying(256)
 );
 
 
@@ -172,7 +173,8 @@ CREATE TABLE location_identifiers (
     location_id uuid,
     study_id uuid,
     identifier_type character varying(20),
-    identifier_value character varying(256)
+    identifier_value character varying(256),
+    identifier_source character varying(256)
 );
 
 

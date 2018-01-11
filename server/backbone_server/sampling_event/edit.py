@@ -52,15 +52,19 @@ class SamplingEventEdit():
             for ident in sample.identifiers:
                 if ident.identifier_type != 'partner_id':
                     cursor.execute('''SELECT * FROM identifiers
-                                   WHERE identifier_type = %s AND identifier_value = %s''',
-                                   (ident.identifier_type, ident.identifier_value))
+                                   WHERE identifier_type = %s AND identifier_value = %s AND
+                                   identifier_source = %s''',
+                                   (ident.identifier_type, ident.identifier_value,
+                                    ident.identifier_source))
                     if cursor.fetchone():
                         raise DuplicateKeyException("Error inserting sample identifier {} {}"
                                                     .format(ident.identifier_type, sample))
 
-                stmt = '''INSERT INTO identifiers (sample_id, identifier_type, identifier_value)
-                VALUES (%s, %s, %s)'''
-                cursor.execute(stmt, (uuid_val, ident.identifier_type, ident.identifier_value))
+                stmt = '''INSERT INTO identifiers 
+                    (sample_id, identifier_type, identifier_value, identifier_source)
+                    VALUES (%s, %s, %s, %s)'''
+                cursor.execute(stmt, (uuid_val, ident.identifier_type, ident.identifier_value,
+                                      ident.identifier_source))
 
 
 

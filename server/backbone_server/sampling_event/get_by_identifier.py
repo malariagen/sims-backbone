@@ -18,7 +18,7 @@ class SamplingEventGetByIdentifier():
         with self._connection:
             with self._connection.cursor() as cursor:
 
-                cursor.execute("SELECT sample_id FROM identifiers WHERE identifier_type = %s AND identifier_value = %s", (identifier_type, identifier_value,))
+                cursor.execute("SELECT DISTINCT sample_id FROM identifiers WHERE identifier_type = %s AND identifier_value = %s", (identifier_type, identifier_value,))
 
                 samples = SamplingEvents([], 0)
                 event_ids = []
