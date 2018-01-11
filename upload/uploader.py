@@ -45,7 +45,9 @@ class Uploader():
             token = at[1].split('&')[0]
             return(token)
 
-    def load_data_file(self, data_def, filename):
+
+
+    def setup(self, filename):
 
         self._data_file = filename
 
@@ -63,6 +65,10 @@ class Uploader():
         except ApiException as e:
             if e.status != 422: #Already existis
                 print("Exception when calling EventSetApi->create_event_set: %s\n" % e)
+
+    def load_data_file(self, data_def, filename):
+
+        self.setup(filename)
 
         input_stream = open(filename)
 
@@ -148,13 +154,18 @@ class Uploader():
                     else:
                         values[name] = data_value
 
-                if 'study_id' not in values:
-                    values['study_id'] = '0000-Unknown'
+                self.process_item(values)
 
-                location_name, location = self.process_location(values, '')
-                proxy_location_name, proxy_location = self.process_location(values, 'proxy_')
 
-                self.process_sampling_event(values, location_name, location, proxy_location_name, proxy_location)
+    def process_item(self, values):
+
+        if 'study_id' not in values:
+            values['study_id'] = '0000-Unknown'
+
+        location_name, location = self.process_location(values, '')
+        proxy_location_name, proxy_location = self.process_location(values, 'proxy_')
+
+        return self.process_sampling_event(values, location_name, location, proxy_location_name, proxy_location)
 
     def add_location_identifier(self, looked_up, study_id, partner_name):
 
@@ -180,7 +191,8 @@ class Uploader():
 
                 api_instance = swagger_client.LocationApi(swagger_client.ApiClient(configuration))
 #                print("adding identifier {}".format(looked_up.identifiers))
-                new_ident = swagger_client.Identifier('partner_name', partner_name, study_id)
+                new_ident = swagger_client.Identifier('partner_name', partner_name,
+                                                      self._event_set, study_id)
                 #print("adding identifier2 {}".format(new_ident))
                 looked_up.identifiers.append(new_ident)
                 #print("adding identifier3 {}".format(looked_up))
@@ -210,6 +222,29 @@ class Uploader():
                     print(message)
         #else:
         #    print("identifier exists")
+
+    def update_country(self, country, looked_up):
+
+        ret = looked_up
+        #print(country)
+        #print(looked_up)
+        if country:
+            update_country = False
+            if looked_up.country:
+                if looked_up.country != country:
+                    print("Country confict {} {}".format(country, looked_up))
+            else:
+                looked_up.country = country
+                update_country = True
+            if update_country:
+                configuration = swagger_client.Configuration()
+                configuration.access_token = self._auth_token
+
+                api_instance = swagger_client.LocationApi(swagger_client.ApiClient(configuration))
+                updated = api_instance.update_location(looked_up.location_id, looked_up)
+                ret = updated
+
+        return ret
 
     def process_location(self, values, prefix):
 
@@ -259,7 +294,7 @@ class Uploader():
                                       country)
         if study_id and partner_name:
             loc.identifiers = [
-                swagger_client.Identifier('partner_name', partner_name, study_id)
+                swagger_client.Identifier('partner_name', partner_name, self._event_set, study_id)
             ]
 
 
@@ -277,7 +312,8 @@ class Uploader():
             self.add_location_identifier(looked_up, study_id, partner_name)
 
             loc.location_id = None
-            ret = looked_up
+            ret = self.update_country(country, looked_up)
+
         except Exception as err:
             #print(repr(err))
             #print("Failed to find location {}".format(loc))
@@ -315,6 +351,8 @@ class Uploader():
         doc = None
         doc_accuracy = None
         study_id = None
+        ret = None
+
         if 'doc' in values:
             if isinstance(values['doc'], datetime.date):
                 doc = values['doc']
@@ -342,13 +380,18 @@ class Uploader():
 
         idents = []
         if 'sample_roma_id' in values:
-            idents.append(swagger_client.Identifier ('roma_id', values['sample_roma_id']))
+            idents.append(swagger_client.Identifier ('roma_id', values['sample_roma_id'],
+                                                     self._event_set))
         if 'sample_partner_id' in values:
-            idents.append(swagger_client.Identifier ('partner_id', values['sample_partner_id']))
+            idents.append(swagger_client.Identifier ('partner_id', values['sample_partner_id'],
+                                                     self._event_set))
         if 'sample_oxford_id' in values:
-            idents.append(swagger_client.Identifier ('oxford_id', values['sample_oxford_id']))
+            idents.append(swagger_client.Identifier ('oxford_id', values['sample_oxford_id'],
+                                                     self._event_set))
         if 'sample_alternate_oxford_id' in values and len(values['sample_alternate_oxford_id']) > 0:
-            idents.append(swagger_client.Identifier ('alt_oxford_id', values['sample_alternate_oxford_id']))
+            idents.append(swagger_client.Identifier ('alt_oxford_id',
+                                                     values['sample_alternate_oxford_id'],
+                                                     self._event_set))
         if 'species' in values and len(values['species']) > 0:
             samp.partner_species = values['species']
 
@@ -435,6 +478,16 @@ class Uploader():
                 else:
                     existing.location_id = location.location_id
                     new_ident_value = True
+            if samp.partner_species:
+                if existing.partner_species:
+                    if existing.partner_species != samp.partner_species:
+                        print("Conflicting partner_species value {} {}".format(values, doc,
+                                                                               existing.partner_species))
+
+                else:
+                    existing.partner_species = samp.partner_species
+                    new_ident_value = True
+
             if proxy_location:
                 if existing.proxy_location:
                     if proxy_location.location_id != existing.proxy_location_id:
@@ -444,9 +497,12 @@ class Uploader():
                 else:
                     existing.proxy_location_id = proxy_location.location_id
                     new_ident_value = True
+
+            ret = existing
+
             if new_ident_value:
                 #print("Updating {} to {}".format(orig, existing))
-                api_instance.update_sampling_event(existing.sampling_event_id, existing)
+                ret = api_instance.update_sampling_event(existing.sampling_event_id, existing)
 
             try:
                 es_api_instance.create_event_set_item(self._event_set, existing.sampling_event_id)
@@ -457,10 +513,12 @@ class Uploader():
         else:
             #print("Creating {}".format(samp))
             if len(idents) == 0:
-                return
+                return None
 
             try:
                 created = api_instance.create_sampling_event(samp)
+
+                ret = created
 
                 try:
                     es_api_instance.create_event_set_item(self._event_set, created.sampling_event_id)
@@ -475,6 +533,8 @@ class Uploader():
 
             if 'unique_id' in values:
                 self._sample_cache[values['unique_id']] = created.sampling_event_id
+
+        return ret
 
 if __name__ == '__main__':
     sd = Uploader(sys.argv[3])

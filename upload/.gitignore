@@ -1,6 +1,8 @@
 *.txt
 *.csv
 *.tsv
+*.xls
+*.log*
 ?
 config_dev.json
 upload-env/
