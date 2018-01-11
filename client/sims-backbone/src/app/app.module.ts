@@ -1,5 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import { NgModule, InjectionToken } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { HttpClientModule } from '@angular/common/http';
@@ -50,10 +50,16 @@ import { ErrorDialogComponent } from './error-dialog/error-dialog.component';
 import { EventSetEditDialogComponent } from './event-set-edit-dialog/event-set-edit-dialog.component';
 import { EventSetAddDialogComponent } from './event-set-add-dialog/event-set-add-dialog.component';
 
+import { HttpClient } from '@angular/common/http';
+import { environment } from '../environments/environment';
+
+import { EventSetService } from './typescript-angular-client/api/eventSet.service';
+
 export function getConfiguration(authService: AuthService) {
   return authService.getConfiguration();
 }
 
+export const EVENT_SET_PATH = new InjectionToken<string>('basePath');
 
 @NgModule({
   declarations: [
@@ -101,12 +107,27 @@ export function getConfiguration(authService: AuthService) {
     }),
     OAuthModule.forRoot()
   ],
-  providers: [AuthService, {
+  providers: [AuthService, 
+  {
     provide: Configuration,
     useFactory: getConfiguration,
     deps: [AuthService],
     multi: false
-  }
+  },
+    {
+      provide: EVENT_SET_PATH,
+      useValue: environment.eventSetApiLocation
+
+    },
+    {
+      provide: EventSetService,
+      useFactory: (httpClient, basePath, config) => new EventSetService(httpClient, basePath, config),
+      deps: [
+        HttpClient,
+        EVENT_SET_PATH,
+        Configuration
+      ]
+    }
   ],
   entryComponents: [
     ErrorDialogComponent,

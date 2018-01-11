@@ -13,31 +13,8 @@ import { EventSets } from '../typescript-angular-client/model/eventSets';
 
 import { EventSetService } from '../typescript-angular-client/api/eventSet.service';
 
-import { HttpClient } from '@angular/common/http';
-
-import { BASE_PATH } from '../typescript-angular-client/variables';
-
-import { environment } from '../../environments/environment';
-
 @Component({
   selector: 'app-event-set-edit',
-  providers: [
-    {
-      provide: BASE_PATH,
-      useValue: environment.eventSetApiLocation
-      
-    },
-    {
-      provide: EventSetService,
-      useFactory: (httpClient, basePath) => {
-        return new EventSetService(httpClient, basePath, undefined);
-      },
-      deps: [
-        HttpClient,
-        BASE_PATH
-      ]
-    }
-  ],
   templateUrl: './event-set-edit.component.html',
   styleUrls: ['./event-set-edit.component.scss']
 })
