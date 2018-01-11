@@ -1,0 +1,57 @@
+
+The deployment requires multiple cloud formation stacks (limits) and therefore uses cross stack
+references.
+
+To deploy
+
+In the following order change to the directory and run:
+
+For dev version:
+
+  sls deploy -v
+
+For production:
+
+  serverless deploy --stage production
+
+Order of deployment:
+
+  - sims-backbone-service
+  - event-set-service
+
+To see information about the deployed services
+
+  sls info -v
+
+To see the exported values:
+
+  aws cloudformation list-exports
+
+
+Bastion Host - for accessing the database directly
+
+Postgres clients
+
+pgAdmin IV is a web interface that's deployed as a docker instance but it's not especially good
+(III doesn't support psql 10)
+
+https://wiki.postgresql.org/wiki/Community_Guide_to_PostgreSQL_GUI_Tools
+
+Postico for Os X
+
+Command to connect is:
+
+  psql -h ##hostname## backbone_service bbs_admin
+
+The hostname is from ```aws cloudformation list-exports``` - sims-backbone-service:DbHost-###stage###
+The password is from config.##stage##.json
+
+Client deployment
+
+Get the API location values from ```sls info -v``` using the ServiceEndpoint value and update 
+
+../client/sims-backbone/src/environments/environment.prod.ts
+
+(Don't forget sims-backbone-service/v1 at the end)
+
+Look at the README.md in ../client/sims-backbone for deploying the webapp to S3
