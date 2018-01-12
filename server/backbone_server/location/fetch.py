@@ -37,7 +37,9 @@ class LocationFetch():
 
         location.identifiers = []
         for (name, value, study) in cursor:
-            ident = Identifier(name, value, study)
+            ident = Identifier(identifier_type = name, 
+                               identifier_value = value,
+                               study_name = study)
             location.identifiers.append(ident)
 
         if len(location.identifiers) == 0:
