@@ -4,5 +4,6 @@
 *.xls
 *.log*
 ?
+.??*
 config_dev.json
 upload-env/
