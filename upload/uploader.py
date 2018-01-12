@@ -74,6 +74,34 @@ class Uploader():
 
         return self.load_data(data_def, input_stream, True, False)
 
+
+    def parse_date(self, defn, data_value):
+
+        accuracy = None
+        data_value = data_value.split(' ')[0]
+        if 'date_format' in defn:
+            try:
+                date_format = '%Y-%m-%d'
+                date_format = defn['date_format']
+                data_value = datetime.datetime(*(time.strptime(data_value, date_format))[:6]).date()
+            except ValueError as dpe:
+                try:
+                    date_format = '%d/%m/%Y'
+                    data_value = datetime.datetime(*(time.strptime(data_value, date_format))[:6]).date()
+                except ValueError as dpe:
+                    try:
+                        date_format = '%d-%b-%Y'
+                        data_value = datetime.datetime(*(time.strptime(data_value, date_format))[:6]).date()
+                    except ValueError as dpe:
+                        date_format = '%Y'
+                        data_value = datetime.datetime(*(time.strptime(data_value[:4], date_format))[:6]).date()
+                        accuracy = 'year'
+#          else:
+            #To make sure that the default conversion works
+  #              data.typed_data_value
+
+        return data_value, accuracy
+
 #https://dev.mysql.com/doc/connector-python/en/connector-python-example-cursor-transaction.html
     def load_data(self, data_def, input_stream, skip_header, update_only):
 
@@ -119,26 +147,15 @@ class Uploader():
                                     data_value == 'NULL' or
                                     data_value == '-' or
                                     data_value == 'None'):
-                                data_value = data_value.split(' ')[0]
-                                if 'date_format' in defn:
-                                    try:
-                                        date_format = '%Y-%m-%d'
-                                        date_format = defn['date_format']
-                                        data_value = datetime.datetime(*(time.strptime(data_value, date_format))[:6]).date()
-                                    except ValueError as dpe:
-                                        try:
-                                            date_format = '%Y'
-                                            data_value = datetime.datetime(*(time.strptime(data_value, date_format))[:6]).date()
-                                            values[name + '_accuracy'] = 'year'
-                                        except ValueError as dpe:
-                                            print("Failed to parse date '{}' using {}".format(data_value, date_format))
-                                            continue
-                      #          else:
-                                    #To make sure that the default conversion works
-                      #              data.typed_data_value
+                                try:
+                                    data_value, values[name + '_accuracy'] = self.parse_date(defn, data_value)
+                                except ValueError as dpe:
+                                    print("Failed to parse date '{}'".format(data_value))
+                                    continue
                             else:
                                 #Skip this property
                                 continue
+
                         if 'replace' in defn:
                             for subs in defn['replace']:
                                 data_value = re.sub("^" + subs[0] + "$", subs[1], data_value)
@@ -175,6 +192,8 @@ class Uploader():
         found = False
         if looked_up.identifiers and study_id:
             for ident in looked_up.identifiers:
+#                print(ident)
+#                print(study_id)
                 if ident.study_name[:4] == study_id[:4] and \
                     ident.identifier_value == partner_name:
                     found = True
@@ -191,8 +210,10 @@ class Uploader():
 
                 api_instance = swagger_client.LocationApi(swagger_client.ApiClient(configuration))
 #                print("adding identifier {}".format(looked_up.identifiers))
-                new_ident = swagger_client.Identifier('partner_name', partner_name,
-                                                      self._event_set, study_id)
+                new_ident = swagger_client.Identifier( identifier_type = 'partner_name', 
+                                                      identifier_value = partner_name,
+                                                      identifier_source = self._event_set, 
+                                                      study_name = study_id)
                 #print("adding identifier2 {}".format(new_ident))
                 looked_up.identifiers.append(new_ident)
                 #print("adding identifier3 {}".format(looked_up))
@@ -454,7 +475,7 @@ class Uploader():
                     new_ident_value = True
             else:
                 if existing.study_id:
-    #                print("Adding loc ident {} {}".format(location_name, existing.study_id))
+#                    print("Adding loc ident {} {}".format(location_name, existing.study_id))
                     self.add_location_identifier(location, existing.study_id, location_name)
                     self.add_location_identifier(proxy_location, existing.study_id, proxy_location_name)
 
