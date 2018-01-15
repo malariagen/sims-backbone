@@ -7,7 +7,7 @@ import swagger_client
 from swagger_client.rest import ApiException
 import uploader
 
-class ExcelUploader(uploader.Uploader):
+class Upload_SSR(uploader.Uploader):
 
     _country_cache = {
         'nan': None
@@ -73,6 +73,15 @@ class ExcelUploader(uploader.Uploader):
                     print('Ignoring HS in sheet {}'.format(sheet))
                     human = True
                     continue
+                if taxon == 'PF':
+                    taxon = 'Plasmodium falciparum'
+                if taxon == 'PV':
+                    taxon = 'Plasmodium vivax'
+                if taxon == 'PK':
+                    taxon = 'Plasmodium knowlesi'
+                if taxon == 'PB':
+                    taxon = 'Plasmodium berghei'
+
                 values = {
                     'sample_oxford_id': oxford_code,
                     'sample_partner_id': source_code,
@@ -80,17 +89,6 @@ class ExcelUploader(uploader.Uploader):
                     'iso2': iso2,
                     'state': state
                 }
-                if iso2 not in self._country_cache:
-                    try:
-                        api_instance = swagger_client.MetadataApi(swagger_client.ApiClient(configuration))
-                        metadata = api_instance.get_country_metadata(iso2)
-                        self._country_cache[iso2] = metadata
-                    except ApiException as e:
-                        print("Exception when looking up country {} {}".format(iso2, values))
-
-
-                if iso2 in self._country_cache and self._country_cache[iso2]:
-                    values['country'] = self._country_cache[iso2].alpha3
 
                 if sheet in sheet_study_map:
                     values['study_id'] = sheet_study_map[sheet]
@@ -103,11 +101,6 @@ class ExcelUploader(uploader.Uploader):
                     except ApiException as err:
                         #Probably because it already exists
                         self._logger.debug("Error adding sample {} to event set {} {}".format(item.sampling_event_id, sheet, err))
-
-                if item.location and 'country' in values:
-                    item.location = self.update_country(values['country'], item.location)
-                else:
-                    print("No location {}".format(values))
 
 #                print(values)
 #                print(item)
@@ -125,7 +118,7 @@ class ExcelUploader(uploader.Uploader):
             print("No study id {} {}".format(input_values, output_values))
 
 if __name__ == '__main__':
-    el = ExcelUploader(sys.argv[1])
+    el = Upload_SSR(sys.argv[1])
     sheets = None
     if len(sys.argv) > 3:
         sheets = sys.argv[3]

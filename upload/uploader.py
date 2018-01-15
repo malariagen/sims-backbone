@@ -229,8 +229,8 @@ class Uploader():
                             conflict_loc = api_instance.download_location(conflict.locations[0].location_id)
                             conflict_loc = api_instance.download_gps_location(str(looked_up.latitude),
                                                                               str(looked_up.longitude))
-                            print("Probable conflict with {}".format(conflict_loc))
                             message = message + '\t' + str(conflict_loc.latitude) + '\t' + str(conflict_loc.longitude)
+                            message = message + "Probable conflict with {}".format(conflict_loc)
                     except ApiException as err:
                         try:
                             conflict_loc = api_instance.download_gps_location(str(looked_up.latitude),
@@ -254,6 +254,7 @@ class Uploader():
             if looked_up.country:
                 if looked_up.country != country:
                     print("Country confict {} {}".format(country, looked_up))
+                    raise Exception("Country confict {} {}".format(country, looked_up))
             else:
                 looked_up.country = country
                 update_country = True
@@ -413,6 +414,10 @@ class Uploader():
             idents.append(swagger_client.Identifier ('alt_oxford_id',
                                                      values['sample_alternate_oxford_id'],
                                                      self._event_set))
+        if 'sample_source_id' in values:
+            idents.append(swagger_client.Identifier (values['sample_source_type'],
+                                                     values['sample_source_id'],
+                                                     self._event_set))
         if 'species' in values and len(values['species']) > 0:
             samp.partner_species = values['species']
 
@@ -502,7 +507,8 @@ class Uploader():
             if samp.partner_species:
                 if existing.partner_species:
                     if existing.partner_species != samp.partner_species:
-                        print("Conflicting partner_species value {} {}".format(values, doc,
+                        print("Conflicting partner_species value {} {} {}".format(values,
+                                                                               samp.partner_species,
                                                                                existing.partner_species))
 
                 else:
