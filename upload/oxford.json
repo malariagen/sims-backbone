@@ -1,6 +1,6 @@
 {
     "values": {
-        "sample_partner_id": {
+        "unique_id": {
             "column": 2,
             "type": "string"
         },
@@ -9,11 +9,19 @@
             "type": "string"
         },
         "sample_alternate_oxford_id": {
-            "column": 5,
+            "column": 4,
             "type": "string"
         },
-        "unique_id": {
+        "sample_source_id": {
             "column": 6,
+            "type": "string"
+        },
+        "sample_source_type": {
+            "column": 8,
+            "type": "string"
+        },
+        "species": {
+            "column": 11,
             "type": "string"
         }
     }
