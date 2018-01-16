@@ -81,6 +81,8 @@ class Upload_SSR(uploader.Uploader):
                     taxon = 'Plasmodium knowlesi'
                 if taxon == 'PB':
                     taxon = 'Plasmodium berghei'
+                if taxon == 'PM':
+                    taxon = 'Plasmodium malariae'
 
                 values = {
                     'sample_oxford_id': oxford_code,
