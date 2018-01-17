@@ -37,7 +37,11 @@ class Upload_ROMA(uploader.Uploader):
             roma_manifest_id = fields['manifest']
             roma_study_id = items['samples.manifest'][roma_manifest_id]['fields']['study']
             study_id = items['managements.study'][roma_study_id]['fields']['project_code'][1:]
-            tags = json.loads(fields['tags'])
+
+            tags = {}
+            if 'tags' in fields and fields['tags']:
+                tags = json.loads(fields['tags'])
+
             oxford_code = None
             taxon = None
             if '27. original_oxford_code' in tags:
@@ -65,8 +69,6 @@ class Upload_ROMA(uploader.Uploader):
 #            print(sampling_event)
 
             self.validate(values, sampling_event)
-
-            break
 
 
     def validate(self, input_values, output_values):
