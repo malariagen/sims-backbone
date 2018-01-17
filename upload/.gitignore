@@ -5,5 +5,7 @@
 *.log*
 ?
 .??*
+test*
+archive/
 config_dev.json
 upload-env/
