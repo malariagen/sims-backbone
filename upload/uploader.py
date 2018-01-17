@@ -51,7 +51,7 @@ class Uploader():
 
         self._data_file = filename
 
-        self._event_set = filename.split('.')[0]
+        self._event_set = os.path.basename(filename).split('.')[0]
 
         configuration = swagger_client.Configuration()
         configuration.access_token = self._auth_token
@@ -63,7 +63,7 @@ class Uploader():
             # creates an eventSet
             api_response = api_instance.create_event_set(event_set_id)
         except ApiException as e:
-            if e.status != 422: #Already existis
+            if e.status != 422: #Already exists
                 print("Exception when calling EventSetApi->create_event_set: %s\n" % e)
 
     def load_data_file(self, data_def, filename):
@@ -93,9 +93,13 @@ class Uploader():
                         date_format = '%d-%b-%Y'
                         data_value = datetime.datetime(*(time.strptime(data_value, date_format))[:6]).date()
                     except ValueError as dpe:
-                        date_format = '%Y'
-                        data_value = datetime.datetime(*(time.strptime(data_value[:4], date_format))[:6]).date()
-                        accuracy = 'year'
+                        try:
+                            date_format = '%d/%m/%y'
+                            data_value = datetime.datetime(*(time.strptime(data_value, date_format))[:6]).date()
+                        except ValueError as dpe:
+                            date_format = '%Y'
+                            data_value = datetime.datetime(*(time.strptime(data_value[:4], date_format))[:6]).date()
+                            accuracy = 'year'
 #          else:
             #To make sure that the default conversion works
   #              data.typed_data_value
@@ -404,10 +408,10 @@ class Uploader():
         if 'sample_roma_id' in values:
             idents.append(swagger_client.Identifier ('roma_id', values['sample_roma_id'],
                                                      self._event_set))
-        if 'sample_partner_id' in values:
+        if 'sample_partner_id' in values and values['sample_partner_id']:
             idents.append(swagger_client.Identifier ('partner_id', values['sample_partner_id'],
                                                      self._event_set))
-        if 'sample_oxford_id' in values:
+        if 'sample_oxford_id' in values and values['sample_oxford_id']:
             idents.append(swagger_client.Identifier ('oxford_id', values['sample_oxford_id'],
                                                      self._event_set))
         if 'sample_alternate_oxford_id' in values and len(values['sample_alternate_oxford_id']) > 0:
@@ -487,9 +491,13 @@ class Uploader():
             if doc:
                 if existing.doc:
                     if doc != existing.doc:
-                        print("Conflicting doc value {} {} {}".format(values, doc, existing.doc))
-                        existing.doc = doc
-                        new_ident_value = True
+                        if existing.doc_accuracy == 'year':
+                            existing.doc = doc
+                            existing.doc_accuracy = doc_accuracy
+                            new_ident_value = True
+                            print("Conflicting doc value updated {} {} {}".format(values, doc, existing.doc))
+                        else:
+                            print("Conflicting doc value not updated {} {} {}".format(values, doc, existing.doc))
                 else:
                     existing.doc = doc
                     new_ident_value = True
@@ -507,7 +515,15 @@ class Uploader():
             if samp.partner_species:
                 if existing.partner_species:
                     if existing.partner_species != samp.partner_species:
-                        print("Conflicting partner_species value {} {} {}".format(values,
+                        fuzzyMatch = False
+                        if existing.partner_species == 'Plasmodium falciparum/vivax mixture':
+                            if samp.partner_species == 'Plasmodium vivax':
+                                fuzzyMatch = True
+                            if samp.partner_species == 'Plasmodium falciparum':
+                                fuzzyMatch = True
+
+                        if not fuzzyMatch:
+                            print("Conflicting partner_species value not updated record {}\t{}\t{}".format(values,
                                                                                samp.partner_species,
                                                                                existing.partner_species))
 
