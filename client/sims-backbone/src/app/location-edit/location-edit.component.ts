@@ -221,6 +221,10 @@ export class LocationEditComponent implements OnInit {
 
   private setGooglePolygon(geometry): void {
   
+    if (!geometry.bounds) {
+      return;
+    }
+    
     this.gPolygon = [];
     let point = {
       lat: geometry.bounds.getNorthEast().lat(),
