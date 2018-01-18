@@ -76,6 +76,7 @@
         <div *ngIf="location">
           <agm-map [latitude]="location.latitude" [longitude]="location.longitude" [zoom]="zoom">
             <agm-marker [latitude]="location.latitude" [longitude]="location.longitude"></agm-marker>
+            <agm-polygon [paths]="gPolygon"></agm-polygon>
           </agm-map>
           <form *ngIf="googleForm" [formGroup]="googleForm" (ngSubmit)="useGoogle(googleForm)">
             <mat-form-field class="curated_name">

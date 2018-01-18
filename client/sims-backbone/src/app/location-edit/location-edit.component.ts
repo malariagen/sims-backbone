@@ -12,6 +12,7 @@ import { MetadataService } from '../typescript-angular-client/api/metadata.servi
 
 import { } from 'googlemaps';
 import { MapsAPILoader } from '@agm/core';
+import { LatLngLiteral } from '@agm/core';
 
 @Component({
   selector: 'app-location-edit',
@@ -37,7 +38,7 @@ export class LocationEditComponent implements OnInit {
   public locationForm: FormGroup;
   public osmForm: FormGroup;
   public googleForm: FormGroup;
-
+  public gPolygon: Array<LatLngLiteral> = [];
   public locationEvents: string = '/location/events';
   public studyEvents: string = '/study/events';
 
@@ -99,7 +100,7 @@ export class LocationEditComponent implements OnInit {
 
     this.locationService.downloadGPSLocation(this.latitude, this.longitude).subscribe(
       (location) => {
-        console.log("Downloaded location via GPS");
+        //console.log("Downloaded location via GPS");
         let locs = {
           count: 0,
           locations: []
@@ -135,8 +136,8 @@ export class LocationEditComponent implements OnInit {
           formIdents.push(identControl);
         });
 
-        console.log(this.locationForm);
-        console.log(this.locations);
+        //console.log(this.locationForm);
+        //console.log(this.locations);
 
 
       },
@@ -154,7 +155,7 @@ export class LocationEditComponent implements OnInit {
       value.notes = '';
     }
     this.locationService.updateLocation(value.location_id, value).subscribe((result) => {
-      console.log(result);
+      //console.log(result);
     },
       (err) => {
         console.log(err); alert('Failed to save');
@@ -169,8 +170,8 @@ export class LocationEditComponent implements OnInit {
 
     this.ngZone.run(() => {
       this.getOSM().subscribe((resp) => {
-        console.log("OSM response:");
-        console.log(resp);
+        //console.log("OSM response:");
+        //console.log(resp);
         this.osmForm = this._fb.group(
           {
             'display_name': [resp.display_name],
@@ -215,6 +216,28 @@ export class LocationEditComponent implements OnInit {
   }
 
   public onSubmitFetchGoogleMaps({ value, valid }: { value: Location, valid: boolean }): void {
+    this.fetchGoogleMaps(value);
+  }
+
+  private setGooglePolygon(geometry): void {
+  
+    this.gPolygon = [];
+    let point = {
+      lat: geometry.bounds.getNorthEast().lat(),
+      lng: geometry.bounds.getSouthWest().lng()
+    };
+    this.gPolygon.push(point);
+    this.gPolygon.push(geometry.bounds.getNorthEast());
+    point = {
+      lat: geometry.bounds.getSouthWest().lat(),
+      lng: geometry.bounds.getNorthEast().lng()
+    };
+    this.gPolygon.push(point);
+    this.gPolygon.push(geometry.bounds.getSouthWest());
+    //console.log(geometry);
+  }
+
+  public fetchGoogleMaps(location): void {
 
     this.mapsAPILoader.load().then(() => {
       this.ngZone.run(() => {
@@ -224,8 +247,8 @@ export class LocationEditComponent implements OnInit {
           location: latlng
         };
         geocoder.geocode(request, (results, status) => {
-          console.log('Google geocoded');
-          console.log(results);
+          //console.log('Google geocoded');
+          //console.log(results);
 
           this.googleForm = this._fb.group(
             {
@@ -238,23 +261,27 @@ export class LocationEditComponent implements OnInit {
           results.forEach(result => {
             result.address_components.forEach(addr_component => {
               addr_component.types.forEach(type => {
-                console.log(display_name + ":" + type + ":" + result.formatted_address);
-                if (type == 'administrative_area_level_1' && display_name == '') {
+                //console.log(this.zoom + ":" + display_name + ":" + type + ":" + result.formatted_address);
+                if (this.zoom < 10 && type == 'administrative_area_level_1') {
                   display_name = result.formatted_address;
+                  this.setGooglePolygon(result.geometry);
                 } else
-                  if (type == 'administrative_area_level_2' && display_name == '') {
+                  if (this.zoom < 15 && type == 'administrative_area_level_2') {
                     display_name = result.formatted_address;
+                    this.setGooglePolygon(result.geometry);
                   } else
-                    if (type == 'locality' && display_name == '') {
+                    if (this.zoom > 16 && type == 'locality') {
                       display_name = result.formatted_address;
+                      this.setGooglePolygon(result.geometry);
                     } else
-                      if (type == 'sublocality' && display_name == '') {
+                      if (this.zoom > 16 && type == 'sublocality') {
                         display_name = result.formatted_address;
+                        this.setGooglePolygon(result.geometry);
                       } else
                         if (type == 'country' && !country_code) {
                           country_code = true;
                           this.googleForm.controls['country_code'].setValue(addr_component.short_name);
-                          console.log(addr_component.long_name);
+                          //console.log(addr_component.long_name);
                         }
 
               });
@@ -278,11 +305,13 @@ export class LocationEditComponent implements OnInit {
   public incrementZoom(): void {
     this.zoom += 1;
     this.fetchOSM(this.location);
+    this.fetchGoogleMaps(this.location);
     this.accuracy = this.getPrecisionFromZoom();
   }
   public decrementZoom(): void {
     this.zoom -= 1;
     this.fetchOSM(this.location);
+    this.fetchGoogleMaps(this.location);
     this.accuracy = this.getPrecisionFromZoom();
   }
 }
