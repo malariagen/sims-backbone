@@ -27,9 +27,11 @@ class LocationEdit():
                     study_id = None
                     if ident.study_name:
                         study_id = SamplingEventEdit.fetch_study_id(cursor, ident.study_name, True)
-                    stmt = '''INSERT INTO location_identifiers (location_id, study_id, identifier_type, identifier_value)
-                    VALUES (%s, %s, %s, %s)'''
-                    cursor.execute(stmt, (uuid_val, study_id, ident.identifier_type, ident.identifier_value))
+                    stmt = '''INSERT INTO location_identifiers 
+                    (location_id, study_id, identifier_type, identifier_value, identifier_source)
+                    VALUES (%s, %s, %s, %s, %s)'''
+                    cursor.execute(stmt, (uuid_val, study_id, ident.identifier_type,
+                                          ident.identifier_value, ident.identifier_source))
 
         except mysql.connector.Error as err:
             if err.errno == errorcode.ER_DUP_ENTRY:
