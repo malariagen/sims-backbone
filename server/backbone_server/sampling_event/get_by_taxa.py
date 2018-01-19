@@ -31,22 +31,21 @@ class SamplingEventsGetByTaxa():
                 if not vtaxa_id:
                     raise MissingKeyException("No taxa {}".format(taxa_id))
 
-                stmt = '''SELECT DISTINCT samples.id FROM samples
-                LEFT JOIN taxonomy_identifiers ti ON ti.partner_species_id = samples.partner_species_id
-                WHERE ti.taxonomy_id = %s'''
-
-                cursor.execute(stmt, (taxa_id, ))
-
                 samples = SamplingEvents([], 0)
-                event_ids = []
 
-                for sample_id in cursor:
-                    event_ids.append(sample_id)
+                stmt = '''SELECT id, study_id, doc, doc_accuracy,
+                                partner_species, v_sampling_events.partner_species_id,
+                                location_id, latitude, longitude, accuracy, curated_name, curation_method, country, notes, partner_name,
+                                proxy_location_id, proxy_latitude, proxy_longitude, proxy_accuracy,
+                                proxy_curated_name, proxy_curation_method, proxy_country, proxy_notes,
+                                proxy_partner_name FROM v_sampling_events
+                        LEFT JOIN taxonomy_identifiers ti ON ti.partner_species_id = v_sampling_events.partner_species_id
+                        WHERE ti.taxonomy_id = %s'''
 
-                for sample_id in event_ids:
-                    sample = SamplingEventFetch.fetch(cursor, sample_id)
-                    samples.sampling_events.append(sample)
-                    samples.count = samples.count + 1
+                cursor.execute(stmt, (taxa_id,))
+
+                samples.sampling_events = SamplingEventFetch.load_sampling_events(cursor, True)
+                samples.count = len(samples.sampling_events)
 
 
         return samples

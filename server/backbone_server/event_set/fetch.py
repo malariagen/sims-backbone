@@ -54,48 +54,7 @@ class EventSetFetch():
 
         cursor.execute(stmt, (event_set_id,))
 
-        sample = None
-        samples = []
-        for (sample_id, study_id, doc, doc_accuracy, partner_species, partner_species_id,
-             location_id, latitude, longitude, accuracy,
-             curated_name, curation_method, country, notes,
-             partner_name, proxy_location_id, proxy_latitude, proxy_longitude, proxy_accuracy,
-             proxy_curated_name, proxy_curation_method,
-             proxy_country, proxy_notes, proxy_partner_name) in cursor:
-            sample = SamplingEvent(sample_id, study_id=study_id,
-                                   doc=doc, doc_accuracy=doc_accuracy,
-                                   partner_species=partner_species)
-            sample.location_id = location_id
-            sample.proxy_location_id = proxy_location_id
-            if location_id:
-                location = Location(location_id,
-                                    latitude, longitude, accuracy,
-                                    curated_name, curation_method, country, notes)
-                #This will only return the identifier for the event study
-                if partner_name:
-                    ident = Identifier(identifier_type='partner_name',
-                                       identifier_value=partner_name,
-                                       study_name=study_id)
-                    location.identifiers = [ident]
-                sample.location = location
-            if proxy_location_id:
-                location = Location(proxy_location_id,
-                                    proxy_latitude, proxy_longitude,
-                                    proxy_accuracy,
-                                    proxy_curated_name, proxy_curation_method, proxy_country,
-                                    proxy_notes)
-                #This will only return the identifier for the event study
-                if proxy_partner_name:
-                    ident = Identifier(identifier_type='partner_name',
-                                       identifier_value=proxy_partner_name,
-                                       study_name=study_id)
-                    location.identifiers = [ident]
-                sample.proxy_location = location
-
-            samples.append(sample)
-
-        for sample in samples:
-            sample.identifiers = SamplingEventFetch.fetch_identifiers(cursor, sample.sampling_event_id)
+        samples = SamplingEventFetch.load_sampling_events(cursor, True)
 
         event_set.sampling_events = samples
 
