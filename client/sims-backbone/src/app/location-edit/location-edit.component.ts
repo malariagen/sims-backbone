@@ -224,7 +224,7 @@ export class LocationEditComponent implements OnInit {
     if (!geometry.bounds) {
       return;
     }
-    
+
     this.gPolygon = [];
     let point = {
       lat: geometry.bounds.getNorthEast().lat(),
@@ -270,11 +270,11 @@ export class LocationEditComponent implements OnInit {
                   display_name = result.formatted_address;
                   this.setGooglePolygon(result.geometry);
                 } else
-                  if (this.zoom < 15 && type == 'administrative_area_level_2') {
+                  if (this.zoom < 15 && (type == 'administrative_area_level_2' || type == 'sublocality')) {
                     display_name = result.formatted_address;
                     this.setGooglePolygon(result.geometry);
                   } else
-                    if (this.zoom > 16 && type == 'locality') {
+                    if (this.zoom > 16 && (type == 'locality' || type == 'sublocality')) {
                       display_name = result.formatted_address;
                       this.setGooglePolygon(result.geometry);
                     } else
