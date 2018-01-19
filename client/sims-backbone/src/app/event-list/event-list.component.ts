@@ -93,7 +93,12 @@ export class EventListComponent implements OnInit {
         event['study_id'] = sample.study_id;
         sample.identifiers.forEach(ident => {
           if (ident.identifier_type in event) {
-            event[ident.identifier_type] = [ event[ident.identifier_type], ident.identifier_value].join(';');
+            let ids : Array<String> = event[ident.identifier_type].split(';');
+            //Avoid duplicates from different sources
+            if (!ids.includes(ident.identifier_value)) {
+              event[ident.identifier_type] = [ event[ident.identifier_type], ident.identifier_value].join(';');
+            }
+            
           } else {
             event[ident.identifier_type] = ident.identifier_value;
           }
