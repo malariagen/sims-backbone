@@ -101,17 +101,19 @@ export class EventListComponent implements OnInit {
         });
         if (sample.location) {
           event['partner_location_name'] = '';
-          sample.location.identifiers.forEach(ident => {
-            let ident_value = ident.identifier_value;
-            if (this._studyName || event['study_id']) {
-              if ((this._studyName && (ident.study_name == this._studyName)) ||
-                event['study_id'] && (ident.study_name == event['study_id'])) {
-                event['partner_location_name'] = ident_value;
+          if (sample.location.identifiers) {
+            sample.location.identifiers.forEach(ident => {
+              let ident_value = ident.identifier_value;
+              if (this._studyName || event['study_id']) {
+                if ((this._studyName && (ident.study_name == this._studyName)) ||
+                  event['study_id'] && (ident.study_name == event['study_id'])) {
+                  event['partner_location_name'] = ident_value;
+                }
+              } else {
+                event['partner_location_name'] = event['partner_location_name'] + ident_value + '(' + ident.study_name + ');';
               }
-            } else {
-              event['partner_location_name'] = event['partner_location_name'] + ident_value + '(' + ident.study_name + ');';
-            }
-          });
+            });
+          }
           event['location_curated_name'] = sample.location.curated_name;
           event['location'] = '<a href="location/' + sample.location.latitude + '/' + sample.location.longitude + '">' + sample.location.latitude + ', ' + sample.location.longitude + '</a>';
         }
