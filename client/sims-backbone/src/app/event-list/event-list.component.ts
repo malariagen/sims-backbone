@@ -24,7 +24,7 @@ import { Angular2Csv } from 'angular2-csv/Angular2-csv';
 })
 export class EventListComponent implements OnInit {
 
-  displayedColumns = ['study_id', 'oxford_id', 'partner_id', 'roma_id', 'doc', 'partner_species', 'taxa', 'partner_location_name', 'location_curated_name', 'location'];
+  displayedColumns = ['study_id', 'oxford_id', 'partner_id', 'roma_id', 'sanger_lims_id', 'doc', 'partner_species', 'taxa', 'partner_location_name', 'location_curated_name', 'location'];
 
   _events: Observable<SamplingEvents>;
   _studyName: string;
