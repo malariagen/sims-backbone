@@ -69,23 +69,18 @@ export class EventListComponent implements OnInit {
     this._events.subscribe(samples => {
       //console.log(samples);
       this.count = samples.count;
-      /*
-      This nearly works and might in future...
-      samples.samples.forEach(sample => {
+      this.displayedColumns = ['study_id'];
+      samples.sampling_events.forEach(sample => {
         sample.identifiers.forEach(ident => {
           if (this.displayedColumns.indexOf(ident.identifier_type) < 0) {
             //This doesn't work as the table doesn't reload the displayedColumns
             this.displayedColumns.push(ident.identifier_type);
-            console.log("Unexpected identifier:" + ident.identifier_type);
           }
         });
       });
-      // Hacky column change detection
-      // https://stackoverflow.com/questions/40829951/angular2-ngfor-onpush-change-detection-with-array-mutations
-      //this.displayedColumns = this.displayedColumns.slice(); 
-      //https://stackoverflow.com/questions/42067346/angular2-onpush-change-detection-and-ngfor     
+      this.displayedColumns = this.displayedColumns.concat(['doc', 'partner_species', 'taxa', 'partner_location_name', 'location_curated_name', 'location']);
       this.changeDetector.markForCheck();
-      */
+
       samples.sampling_events.forEach((sample: SamplingEvent) => {
         let event = {};
         event['doc'] = sample.doc;
@@ -93,12 +88,12 @@ export class EventListComponent implements OnInit {
         event['study_id'] = sample.study_id;
         sample.identifiers.forEach(ident => {
           if (ident.identifier_type in event) {
-            let ids : Array<String> = event[ident.identifier_type].split(';');
+            let ids: Array<String> = event[ident.identifier_type].split(';');
             //Avoid duplicates from different sources
             if (!ids.includes(ident.identifier_value)) {
-              event[ident.identifier_type] = [ event[ident.identifier_type], ident.identifier_value].join(';');
+              event[ident.identifier_type] = [event[ident.identifier_type], ident.identifier_value].join(';');
             }
-            
+
           } else {
             event[ident.identifier_type] = ident.identifier_value;
           }
