@@ -3,9 +3,11 @@
 
 @mixin event-list-theme($theme) {
 
+    $accent: map-get($theme, accent);
+
     .row-highlight {
         //Should be using the theme!
-        background: #42A948; /* green */        
+        background: mat-color($accent)
     }
 
 }

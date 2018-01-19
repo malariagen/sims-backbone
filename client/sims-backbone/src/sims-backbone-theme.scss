@@ -15,11 +15,11 @@ $sims-backbone-theme-warn: mat-palette($mat-red);
 $sims-backbone-theme: mat-light-theme($sims-backbone-theme-primary, $sims-backbone-theme-accent, $sims-backbone-theme-warn);
 
 @mixin sims-backbone-theme($theme) {
-    @include taxonomy-edit-theme(theme);    
-    @include event-set-edit-theme(theme);
-    @include event-list-theme(theme);   
-    @include event-set-edit-dialog-theme(theme); 
-    @include event-set-add-dialog-theme(theme); 
+    @include taxonomy-edit-theme($theme);    
+    @include event-set-edit-theme($theme);
+    @include event-list-theme($theme);   
+    @include event-set-edit-dialog-theme($theme); 
+    @include event-set-add-dialog-theme($theme); 
 }
 
 @include angular-material-theme($sims-backbone-theme);
