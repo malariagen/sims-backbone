@@ -9,4 +9,5 @@ then
 fi
 source upload-env/bin/activate
 export TOKEN_URL=https://sso-dev.cggh.org/sso/oauth2.0/accessToken
+echo $*
 python3 uploader.py $1 $2 $3 config_dev.json
