@@ -96,13 +96,13 @@ class TestLocation(TestBase):
             loc = swagger_client.Location(None, 27.46362, 90.49542, 'country',
                                           'Trongsa, Trongsa, Bhutan', 'pv_3_locations.txt', 'BHU')
             loc.identifiers = [
-                swagger_client.Identifier('partner_name', 'Kobeni', '1147-PF-MR-CONWAY'),
+                swagger_client.Identifier(identifier_type='partner_name', identifier_value='Kobeni', study_name='1147-PF-MR-CONWAY'),
             ]
 
             loc1 = swagger_client.Location(None, 28.46362, 91.49542, 'country',
                                           'Trongsa, Trongsa, Bhutan', 'pv_3_locations.txt', 'BHU')
             loc1.identifiers = [
-                swagger_client.Identifier('partner_name', 'Kobeni', '1147-PF-MR-CONWAY'),
+                swagger_client.Identifier(identifier_type='partner_name', identifier_value='Kobeni', study_name='1147-PF-MR-CONWAY'),
             ]
 
             with self.assertRaises(Exception) as context:
@@ -128,8 +128,8 @@ class TestLocation(TestBase):
             loc = swagger_client.Location(None, 27.46362, 90.49542, 'country',
                                           'Trongsa, Trongsa, Bhutan', 'pv_3_locations.txt', 'BHU')
             loc.identifiers = [
-                swagger_client.Identifier('partner_name', 'Kobeni', '1147-PF-MR-CONWAY'),
-                swagger_client.Identifier('partner_name', 'location name', '1147')
+                swagger_client.Identifier(identifier_type='partner_name', identifier_value='Kobeni', study_name='1147-PF-MR-CONWAY'),
+                swagger_client.Identifier(identifier_type='partner_name', identifier_value='location name', study_name='1147')
             ]
 
             with self.assertRaises(Exception) as context:
@@ -151,7 +151,7 @@ class TestLocation(TestBase):
 
             loc = swagger_client.Location(None, 15.82083, -9.4145, None, None, None, None)
             loc.identifiers = [
-                swagger_client.Identifier('partner_name', 'Kobeni', '1147-PF-MR-CONWAY')
+                swagger_client.Identifier(identifier_type='partner_name', identifier_value='Kobeni', study_name='1147-PF-MR-CONWAY')
             ]
             created = api_instance.create_location(loc)
             looked_up = api_instance.download_gps_location(15.82083, -9.4145)
@@ -176,7 +176,7 @@ class TestLocation(TestBase):
             loc = swagger_client.Location(None, 27.46362, 90.49542, 'country',
                                           'Trongsa, Trongsa, Bhutan', 'pv_3_locations.txt', 'BHU')
             loc.identifiers = [
-                swagger_client.Identifier('partner_name', 'bhutan', '1234-PV')
+                swagger_client.Identifier(identifier_type='partner_name', identifier_value='bhutan', study_name='1234-PV')
             ]
             created = api_instance.create_location(loc)
             looked_up = api_instance.download_gps_location(27.46362, 90.49542)
@@ -233,7 +233,7 @@ class TestLocation(TestBase):
             loc = swagger_client.Location(None, 27.46362, 90.49542, 'country',
                                           'Trongsa, Trongsa, Bhutan', 'pv_3_locations.txt', 'BHU')
             loc.identifiers = [
-                swagger_client.Identifier('partner_name', 'bhutan', '1234-PV')
+                swagger_client.Identifier(identifier_type='partner_name', identifier_value='bhutan', study_name='1234-PV')
             ]
             created = api_instance.create_location(loc)
             looked_up_locs = api_instance.download_partner_location(loc.identifiers[0].identifier_value)
@@ -259,13 +259,13 @@ class TestLocation(TestBase):
             loc = swagger_client.Location(None, 27.46362, 90.49542, 'country',
                                           'Trongsa, Trongsa, Bhutan', 'pv_3_locations.txt', 'BHU')
             loc.identifiers = [
-                swagger_client.Identifier('partner_name', 'bhutan', '5000-PV')
+                swagger_client.Identifier(identifier_type='partner_name', identifier_value='bhutan', study_name='5000-PV')
             ]
             created = api_instance.create_location(loc)
             loc1 = swagger_client.Location(None, 25.46362, 95.49542, 'country',
                                           'Trongsa, Trongsa, Bhutan', 'pv_3_locations.txt', 'BHU')
             loc1.identifiers = [
-                swagger_client.Identifier('partner_name', 'bhutan', '5001-PV')
+                swagger_client.Identifier(identifier_type='partner_name', identifier_value='bhutan', study_name='5001-PV')
             ]
             created1 = api_instance.create_location(loc1)
             looked_up_locs = api_instance.download_partner_location(loc.identifiers[0].identifier_value)
@@ -289,7 +289,7 @@ class TestLocation(TestBase):
             loc = swagger_client.Location(None, 27.46362, 90.49542, 'country',
                                           'Trongsa, Trongsa, Bhutan', 'pv_3_locations.txt', 'BHU')
             loc.identifiers = [
-                swagger_client.Identifier('partner_name', 'bhutan', '1234-PV')
+                swagger_client.Identifier(identifier_type='partner_name', identifier_value='bhutan', study_name='1234-PV')
             ]
             created = api_instance.create_location(loc)
             looked_up_locs = api_instance.download_partner_location(loc.identifiers[0].identifier_value)
@@ -297,7 +297,7 @@ class TestLocation(TestBase):
             newloc = swagger_client.Location(None, 28.46362, 91.49542, 'location',
                                         'new_Trongsa, Trongsa, Bhutan', 'new_pv_3_locations.txt', 'IND')
             newloc.identifiers = [
-                swagger_client.Identifier('partner_name', 'nepal', '1235-PV')
+                swagger_client.Identifier(identifier_type='partner_name', identifier_value='nepal', study_name='1235-PV')
             ]
             updated = api_instance.update_location(looked_up.location_id, newloc)
             fetched = api_instance.download_location(looked_up.location_id)
@@ -320,14 +320,14 @@ class TestLocation(TestBase):
             loc = swagger_client.Location(None, 27.46362, 90.49542, 'country',
                                           'Trongsa, Trongsa, Bhutan', 'pv_3_locations.txt', 'BHU')
             loc.identifiers = [
-                swagger_client.Identifier('partner_name', 'bhutan', '1234-PV')
+                swagger_client.Identifier(identifier_type='partner_name', identifier_value='bhutan', study_name='1234-PV')
             ]
             created = api_instance.create_location(loc)
             looked_up_locs = api_instance.download_partner_location(loc.identifiers[0].identifier_value)
             looked_up = looked_up_locs.locations[0]
             newloc = copy.deepcopy(loc)
             newloc.identifiers = [
-                swagger_client.Identifier('partner_name', 'nepal', '1235-PV')
+                swagger_client.Identifier(identifier_type='partner_name', identifier_value='nepal', study_name='1235-PV')
             ]
             updated = api_instance.update_location(looked_up.location_id, newloc)
             fetched = api_instance.download_location(looked_up.location_id)
@@ -350,7 +350,7 @@ class TestLocation(TestBase):
             loc = swagger_client.Location(None, 27.46362, 90.49542, 'country',
                                           'Trongsa, Trongsa, Bhutan', 'pv_3_locations.txt', 'BHU')
             loc.identifiers = [
-                swagger_client.Identifier('partner_name', 'bhutan', '1234-PV')
+                swagger_client.Identifier(identifier_type='partner_name', identifier_value='bhutan', study_name='1234-PV')
             ]
             created = api_instance.create_location(loc)
             looked_up_locs = api_instance.download_partner_location(loc.identifiers[0].identifier_value)
@@ -360,7 +360,8 @@ class TestLocation(TestBase):
             new_created = api_instance.create_location(newloc)
             with self.assertRaises(Exception) as context:
                 new_created.identifiers = [
-                    swagger_client.Identifier('partner_name', 'bhutan', '1234-PV')
+                    swagger_client.Identifier(identifier_type='partner_name',
+                                              identifier_value='bhutan', study_name='1234-PV')
                 ]
                 updated = api_instance.update_location(new_created.location_id, new_created)
 

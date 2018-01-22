@@ -49,7 +49,8 @@ class TestStudies(TestBase):
             loc = swagger_client.Location(None, 27.46362, 90.49542, 'country',
                                           'Trongsa, Trongsa, Bhutan', 'pv_3_locations.txt', 'BHU')
             loc.identifiers = [
-                swagger_client.Identifier('partner_name', 'bhutan', '2001-MD-UP')
+                swagger_client.Identifier(identifier_type='partner_name',
+                                          identifier_value='bhutan', study_name='2001-MD-UP')
             ]
             created = api_instance.create_location(loc)
             studies = study_api.download_studies()

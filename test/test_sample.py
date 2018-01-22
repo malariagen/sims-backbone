@@ -73,7 +73,8 @@ class TestSample(TestBase):
 
             samp = swagger_client.SamplingEvent(None, '1002-MD-UP', date(2017, 10, 12))
             samp.identifiers = [
-                swagger_client.Identifier ('oxford', '1234')
+                swagger_client.Identifier (identifier_type='oxford', identifier_value='1234',
+                                           identifier_source='same')
             ]
             created = api_instance.create_sampling_event(samp)
 
@@ -97,7 +98,7 @@ class TestSample(TestBase):
 
             samp = swagger_client.SamplingEvent(None, '1003-MD-UP', date(2017, 10, 13))
             samp.identifiers = [
-                swagger_client.Identifier ('partner_id', '1234')
+                swagger_client.Identifier (identifier_type='partner_id', identifier_value='12345')
             ]
             created = api_instance.create_sampling_event(samp)
 
@@ -123,10 +124,10 @@ class TestSample(TestBase):
 
             samp = swagger_client.SamplingEvent(None, '1004-MD-UP', date(2017, 10, 14))
             samp.identifiers = [
-                swagger_client.Identifier ('oxford', '1234')
+                swagger_client.Identifier (identifier_type='oxford', identifier_value='123456')
             ]
             created = api_instance.create_sampling_event(samp)
-            looked_up = api_instance.download_sampling_event_by_identifier('oxford', '1234')
+            looked_up = api_instance.download_sampling_event_by_identifier('oxford', '123456')
 
             fetched = api_instance.download_sampling_event(looked_up.sampling_event_id)
 
@@ -148,10 +149,10 @@ class TestSample(TestBase):
 
             samp = swagger_client.SamplingEvent(None, '1005-MD-UP', date(2017, 10, 15))
             samp.identifiers = [
-                swagger_client.Identifier ('oxford', '1234')
+                swagger_client.Identifier (identifier_type='oxford', identifier_value='1234567')
             ]
             created = api_instance.create_sampling_event(samp)
-            looked_up = api_instance.download_sampling_event_by_identifier('oxford', '1234')
+            looked_up = api_instance.download_sampling_event_by_identifier('oxford', '1234567')
             new_samp = swagger_client.SamplingEvent(None, '0001-MD-UP', date(2018, 11, 11))
             updated = api_instance.update_sampling_event(looked_up.sampling_event_id, new_samp)
             fetched = api_instance.download_sampling_event(looked_up.sampling_event_id)
@@ -173,13 +174,15 @@ class TestSample(TestBase):
 
             samp = swagger_client.SamplingEvent(None, '1006-MD-UP', date(2017, 10, 16))
             samp.identifiers = [
-                swagger_client.Identifier ('oxford', '1234')
+                swagger_client.Identifier (identifier_type='oxford', identifier_value='12345678',
+                                           identifier_source='upd')
             ]
             created = api_instance.create_sampling_event(samp)
-            looked_up = api_instance.download_sampling_event_by_identifier('oxford', '1234')
+            looked_up = api_instance.download_sampling_event_by_identifier('oxford', '12345678')
             new_samp = swagger_client.SamplingEvent(None, '0001-MD-UP', date(2018, 10, 10))
             new_samp.identifiers = [
-                swagger_client.Identifier ('oxford', '12345')
+                swagger_client.Identifier (identifier_type='oxford', identifier_value='123456789',
+                                          identifier_source='upd')
             ]
             new_created = api_instance.create_sampling_event(new_samp)
             with self.assertRaises(Exception) as context:
@@ -224,7 +227,8 @@ class TestSample(TestBase):
             test_id = 'MDG/DK_0005'
             samp = swagger_client.SamplingEvent(None, '1008-MD-UP', date(2017, 10, 14))
             samp.identifiers = [
-                swagger_client.Identifier ('partner_id', test_id)
+                swagger_client.Identifier (identifier_type='partner_id', identifier_value=test_id,
+                                          identifier_source='encode')
             ]
             created = api_instance.create_sampling_event(samp)
 
