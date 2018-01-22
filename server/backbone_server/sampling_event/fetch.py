@@ -54,9 +54,13 @@ class SamplingEventFetch():
             if location_id:
                 location = LocationFetch.fetch(cursor, location_id)
                 sample.location = location
+                sample.public_location_id = location_id
+                sample.public_location = location
             if proxy_location_id:
                 proxy_location = LocationFetch.fetch(cursor, proxy_location_id)
                 sample.proxy_location = proxy_location
+                sample.public_location_id = proxy_location_id
+                sample.public_location = proxy_location
 
         if not sample:
             return sample
@@ -106,6 +110,8 @@ class SamplingEventFetch():
                                        study_name=study_id)
                     location.identifiers = [ident]
                 sample.location = location
+                sample.public_location_id = location_id
+                sample.public_location = location
             if proxy_location_id:
                 location = Location(proxy_location_id,
                                     proxy_latitude, proxy_longitude,
@@ -119,6 +125,8 @@ class SamplingEventFetch():
                                        study_name=study_id)
                     location.identifiers = [ident]
                 sample.proxy_location = location
+                sample.public_location_id = proxy_location_id
+                sample.public_location = proxy_location
 
             samples.append(sample)
 
