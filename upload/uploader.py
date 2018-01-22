@@ -353,8 +353,8 @@ class Uploader():
                     for named_loc in named_locations.locations:
                         for ident in named_loc.identifiers:
                             if ident.study_name[:4] == study_id[:4]:
-                                print("Location name conflict\t{}\t{}\t{}\t{}\t{}\t{}\t{}".
-                                      format(study_id,partner_name,named_loc.latitude,named_loc.longitude,
+                                print("Location name conflict\t{}\t{}\t{}\t{}\t{}\t{}".
+                                      format(study_id,partner_name,named_loc,
                                             latitude, longitude, values))
                 else:
                     print("Error creating location {} {}".format(loc, err))
@@ -414,15 +414,26 @@ class Uploader():
         if 'sample_oxford_id' in values and values['sample_oxford_id']:
             idents.append(swagger_client.Identifier ('oxford_id', values['sample_oxford_id'],
                                                      self._event_set))
+        if 'sample_lims_id' in values and values['sample_lims_id']:
+            idents.append(swagger_client.Identifier ('sanger_lims_id', values['sample_lims_id'],
+                                                     self._event_set))
         if 'sample_alternate_oxford_id' in values and len(values['sample_alternate_oxford_id']) > 0:
             idents.append(swagger_client.Identifier ('alt_oxford_id',
                                                      values['sample_alternate_oxford_id'],
                                                      self._event_set))
-        if 'sample_source_id' in values:
+        if 'sample_source_id' in values and values['sample_source_id'] and values['sample_source_type']:
             idents.append(swagger_client.Identifier (values['sample_source_type'],
                                                      values['sample_source_id'],
                                                      self._event_set))
-        if 'species' in values and len(values['species']) > 0:
+        if 'sample_source_id1' in values and values['sample_source_id1'] and values['sample_source_type1']:
+            idents.append(swagger_client.Identifier (values['sample_source_type1'],
+                                                     values['sample_source_id1'],
+                                                     self._event_set))
+        if 'sample_source_id2' in values and values['sample_source_id2'] and values['sample_source_type2']:
+            idents.append(swagger_client.Identifier (values['sample_source_type2'],
+                                                     values['sample_source_id2'],
+                                                     self._event_set))
+        if 'species' in values and values['species'] and len(values['species']) > 0:
             samp.partner_species = values['species']
 
         existing_sample_id = None
@@ -438,19 +449,31 @@ class Uploader():
                 new_ident_value = False
                 for ident in idents:
                     try:
-                        if ident.identifier_type == 'partner_id':
-                            #Not safe as partner id's can be the same across studies
-                            continue
                         #print("Looking for {} {}".format(ident.identifier_type, ident.identifier_value))
 
                         found = api_instance.download_sampling_event_by_identifier(ident.identifier_type,
                                                                urllib.parse.quote_plus(ident.identifier_value))
+                        if ident.identifier_type == 'partner_id':
+                            if 'sample_lims_id' in values and values['sample_lims_id']:
+                                #Partner id is not the only id
+                                if len(idents) > 2:
+                                    continue
+                                #Probably still not safe even though at this point it's a unique partner_id
+                                continue
+                            else:
+                                #Not safe as partner id's can be the same across studies
+                                continue
                         existing_sample_id = found.sampling_event_id
                         #print ("found: {}".format(samp))
                     except ApiException as err:
                         #self._logger.debug("Error looking for {}".format(ident))
                         #print("Not found")
                         pass
+
+        if 'sample_lims_id' in values and values['sample_lims_id']:
+            if not existing_sample_id:
+                print("Could not find not adding {}".format(values))
+                return None
 
         #print("Existing {}".format(existing_sample_id))
         if existing_sample_id:

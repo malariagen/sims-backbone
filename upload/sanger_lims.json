@@ -1,0 +1,45 @@
+{
+    "values": {
+        "sample_lims_id": {
+            "column": 0,
+            "type": "string"
+        },
+        "unique_id": {
+            "column": 1,
+            "type": "string"
+        },
+        "sample_source_id": {
+            "column": 3,
+            "type": "string"
+        },
+        "sample_source_type": {
+            "column": 4,
+            "type": "string",
+            "replace": [
+               [ "parner_id", "partner_id" ]
+            ]
+        },
+        "sample_source_id1": {
+            "column": 6,
+            "type": "string"
+        },
+        "sample_source_type1": {
+            "column": 7,
+            "type": "string",
+            "replace": [
+               [ "parner_id", "partner_id" ]
+            ]
+        },
+        "sample_source_id2": {
+            "column": 8,
+            "type": "string"
+        },
+        "sample_source_type2": {
+            "column": 9,
+            "type": "string",
+            "replace": [
+               [ "parner_id", "partner_id" ]
+            ]
+        }
+    }
+}
