@@ -160,6 +160,5 @@ if __name__ == '__main__':
     sd.set_countries(input_file, id_type, id_column, country_column)
 
     sheets = None
-    sheets = '1130-AG-GM-CAPUTO'
     sd.load_data_file(ssr, sheets)
 
