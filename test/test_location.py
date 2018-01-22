@@ -17,7 +17,7 @@ class TestLocation(TestBase):
         try:
 
             loc = swagger_client.Location(None, 27.46362, 90.49542, 'country',
-                                          'Trongsa, Trongsa, Bhutan', 'pv_3_locations.txt', 'BHU')
+                                          'Trongsa, Trongsa, Bhutan', 'pv_3_locations.txt', 'BTN')
             created = api_instance.create_location(loc)
             fetched = api_instance.download_location(created.location_id)
             self.assertEqual(created, fetched, "create response != download response")
@@ -37,7 +37,7 @@ class TestLocation(TestBase):
         try:
 
             loc = swagger_client.Location(None, 27.46362, 90.49542, 'country',
-                                          'Trongsa, Trongsa, Bhutan', 'pv_3_locations.txt', 'BHU')
+                                          'Trongsa, Trongsa, Bhutan', 'pv_3_locations.txt', 'BTN')
             created = api_instance.create_location(loc)
             api_instance.delete_location(created.location_id)
             with self.assertRaises(Exception) as context:
@@ -72,7 +72,7 @@ class TestLocation(TestBase):
         try:
 
             loc = swagger_client.Location(None, 27.46362, 90.49542, 'country',
-                                          'Trongsa, Trongsa, Bhutan', 'pv_3_locations.txt', 'BHU')
+                                          'Trongsa, Trongsa, Bhutan', 'pv_3_locations.txt', 'BTN')
             created = api_instance.create_location(loc)
 
             with self.assertRaises(Exception) as context:
@@ -94,13 +94,13 @@ class TestLocation(TestBase):
         try:
 
             loc = swagger_client.Location(None, 27.46362, 90.49542, 'country',
-                                          'Trongsa, Trongsa, Bhutan', 'pv_3_locations.txt', 'BHU')
+                                          'Trongsa, Trongsa, Bhutan', 'pv_3_locations.txt', 'BTN')
             loc.identifiers = [
                 swagger_client.Identifier(identifier_type='partner_name', identifier_value='Kobeni', study_name='1147-PF-MR-CONWAY'),
             ]
 
             loc1 = swagger_client.Location(None, 28.46362, 91.49542, 'country',
-                                          'Trongsa, Trongsa, Bhutan', 'pv_3_locations.txt', 'BHU')
+                                          'Trongsa, Trongsa, Bhutan', 'pv_3_locations.txt', 'BTN')
             loc1.identifiers = [
                 swagger_client.Identifier(identifier_type='partner_name', identifier_value='Kobeni', study_name='1147-PF-MR-CONWAY'),
             ]
@@ -110,8 +110,8 @@ class TestLocation(TestBase):
                 created1 = api_instance.create_location(loc1)
                 api_instance.delete_location(created1.location_id)
 
-            api_instance.delete_location(created.location_id)
             self.assertEqual(context.exception.status, 422)
+            api_instance.delete_location(created.location_id)
 
         except ApiException as error:
             self.fail("test_duplicate_key: Exception when calling LocationApi->create_location: %s\n" % error)
@@ -126,7 +126,7 @@ class TestLocation(TestBase):
         try:
 
             loc = swagger_client.Location(None, 27.46362, 90.49542, 'country',
-                                          'Trongsa, Trongsa, Bhutan', 'pv_3_locations.txt', 'BHU')
+                                          'Trongsa, Trongsa, Bhutan', 'pv_3_locations.txt', 'BTN')
             loc.identifiers = [
                 swagger_client.Identifier(identifier_type='partner_name', identifier_value='Kobeni', study_name='1147-PF-MR-CONWAY'),
                 swagger_client.Identifier(identifier_type='partner_name', identifier_value='location name', study_name='1147')
@@ -174,7 +174,7 @@ class TestLocation(TestBase):
         try:
 
             loc = swagger_client.Location(None, 27.46362, 90.49542, 'country',
-                                          'Trongsa, Trongsa, Bhutan', 'pv_3_locations.txt', 'BHU')
+                                          'Trongsa, Trongsa, Bhutan', 'pv_3_locations.txt', 'BTN')
             loc.identifiers = [
                 swagger_client.Identifier(identifier_type='partner_name', identifier_value='bhutan', study_name='1234-PV')
             ]
@@ -231,7 +231,7 @@ class TestLocation(TestBase):
         try:
 
             loc = swagger_client.Location(None, 27.46362, 90.49542, 'country',
-                                          'Trongsa, Trongsa, Bhutan', 'pv_3_locations.txt', 'BHU')
+                                          'Trongsa, Trongsa, Bhutan', 'pv_3_locations.txt', 'BTN')
             loc.identifiers = [
                 swagger_client.Identifier(identifier_type='partner_name', identifier_value='bhutan', study_name='1234-PV')
             ]
@@ -257,13 +257,13 @@ class TestLocation(TestBase):
         try:
 
             loc = swagger_client.Location(None, 27.46362, 90.49542, 'country',
-                                          'Trongsa, Trongsa, Bhutan', 'pv_3_locations.txt', 'BHU')
+                                          'Trongsa, Trongsa, Bhutan', 'pv_3_locations.txt', 'BTN')
             loc.identifiers = [
                 swagger_client.Identifier(identifier_type='partner_name', identifier_value='bhutan', study_name='5000-PV')
             ]
             created = api_instance.create_location(loc)
             loc1 = swagger_client.Location(None, 25.46362, 95.49542, 'country',
-                                          'Trongsa, Trongsa, Bhutan', 'pv_3_locations.txt', 'BHU')
+                                          'Trongsa, Trongsa, Bhutan', 'pv_3_locations.txt', 'BTN')
             loc1.identifiers = [
                 swagger_client.Identifier(identifier_type='partner_name', identifier_value='bhutan', study_name='5001-PV')
             ]
@@ -287,7 +287,7 @@ class TestLocation(TestBase):
         try:
 
             loc = swagger_client.Location(None, 27.46362, 90.49542, 'country',
-                                          'Trongsa, Trongsa, Bhutan', 'pv_3_locations.txt', 'BHU')
+                                          'Trongsa, Trongsa, Bhutan', 'pv_3_locations.txt', 'BTN')
             loc.identifiers = [
                 swagger_client.Identifier(identifier_type='partner_name', identifier_value='bhutan', study_name='1234-PV')
             ]
@@ -318,7 +318,7 @@ class TestLocation(TestBase):
         try:
 
             loc = swagger_client.Location(None, 27.46362, 90.49542, 'country',
-                                          'Trongsa, Trongsa, Bhutan', 'pv_3_locations.txt', 'BHU')
+                                          'Trongsa, Trongsa, Bhutan', 'pv_3_locations.txt', 'BTN')
             loc.identifiers = [
                 swagger_client.Identifier(identifier_type='partner_name', identifier_value='bhutan', study_name='1234-PV')
             ]
@@ -348,7 +348,7 @@ class TestLocation(TestBase):
         try:
 
             loc = swagger_client.Location(None, 27.46362, 90.49542, 'country',
-                                          'Trongsa, Trongsa, Bhutan', 'pv_3_locations.txt', 'BHU')
+                                          'Trongsa, Trongsa, Bhutan', 'pv_3_locations.txt', 'BTN')
             loc.identifiers = [
                 swagger_client.Identifier(identifier_type='partner_name', identifier_value='bhutan', study_name='1234-PV')
             ]
