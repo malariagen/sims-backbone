@@ -1,6 +1,8 @@
 
 import logging
 
+import urllib
+
 from backbone_server.sampling_event.post import SamplingEventPost
 from backbone_server.sampling_event.put import SamplingEventPut
 from backbone_server.sampling_event.get import SamplingEventGetById
@@ -183,6 +185,7 @@ class SamplingEventController(BaseController):
         samp = None
 
         try:
+            propValue = urllib.parse.unquote_plus(propValue)
             samp = get.get(propName, propValue)
         except MissingKeyException as dme:
             logging.getLogger(__name__).error("download_samplingEvent: {}".format(repr(dme)))
