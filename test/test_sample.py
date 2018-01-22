@@ -267,13 +267,17 @@ class TestSample(TestBase):
                                           'Trongsa, Trongsa, Bhutan', 'test_create_with_locations', 'BHU')
             loc = location_api_instance.create_location(loc)
 
+            samp.location_id = loc.location_id
+            created = api_instance.create_sampling_event(samp)
+            fetched = api_instance.download_sampling_event(created.sampling_event_id)
+            self.assertEqual(samp.location_id, fetched.location_id, "upload location != download response")
+            self.assertEqual(samp.location_id, fetched.public_location_id, "upload public_location != proxy download response")
+
             proxy_loc = swagger_client.Location(None, 27.4, 90.4, 'region',
                                           'Trongsa, Bhutan', 'test_create_with_locations', 'BHU')
             proxy_loc = location_api_instance.create_location(proxy_loc)
-            samp.location_id = loc.location_id
             samp.proxy_location_id = proxy_loc.location_id
-            created = api_instance.create_sampling_event(samp)
-            fetched = api_instance.download_sampling_event(created.sampling_event_id)
+            fetched = api_instance.update_sampling_event(fetched.sampling_event_id, samp)
             self.assertEqual(samp.location_id, fetched.location_id, "upload location != download response")
             self.assertEqual(samp.proxy_location_id, fetched.proxy_location_id, "upload proxy_location != download response")
             self.assertEqual(samp.proxy_location_id, fetched.public_location_id, "upload public_location != proxy download response")
