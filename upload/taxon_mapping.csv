@@ -1,0 +1,50 @@
+Fail - Culex spp.,1,mosquito,Culex spp,genus,Culex,7174
+Fail - Culex spp.,1,Mosquito,Culex spp,genus,Culex,53527
+An. aconitus,1,Mosquito,Anopheles aconitus,species,Anopheles aconitus,93947
+An. annularis,1,mosquito,Anopheles annularis,species,Anopheles annularis,59163
+An. arabiensis,1,mosquito,Anopheles arabiensis,species,Anopheles arabiensis,7173
+Anopheles arabiensis,30,mosquito,Anopheles arabiensis,species,Anopheles arabiensis,7173
+An. barbirostris s.s.,6,mosquito,Anopheles barbirostris,species,Anopheles barbirostris,112267
+An. coluzzii (M),22,mosquito,Anopheles coluzzii,species,Anopheles coluzzii,1518534
+An. coluzzii (Mopti),11,mosquito,Anopheles coluzzii,species,Anopheles coluzzii,1518534
+Anopheles coluzzii (Mopti),2,mosquito,Anopheles coluzzii,species,Anopheles coluzzii,1518534
+Anopheles coluzzii,472,mosquito,Anopheles coluzzii,species,Anopheles coluzzii,1518534
+An. dirus A,11,mosquito,Anopheles dirus s.s.,species,Anopheles dirus,7168
+An. dissidens,1,mosquito,Anopheles dissidens,species,Anopheles dissidens,1513311
+Anopheles Funestus,47,mosquito,Anopheles funestus,species,Anopheles funestus,62324
+An. gambiae (S),1,mosquito,Anopheles gambiae,species,Anopheles gambiae,7165
+An. gambiae (Savanna),3,mosquito,Anopheles gambiae,species,Anopheles gambiae,7165
+An. gambiae s.l.,7,mosquito,Anopheles gambiae s.l.,complex,Anopheles gambiae,44542
+Anopheles gambiae sensu lato,1318,mosquito,Anopheles gambiae s.l.,complex,Anopheles gambiae,44542
+An. gambiae Bamako,64,mosquito,Anopheles gambiae s.l.,Anopheles gambiae or Anophels coluzzi,Anopheles gambiae,44542
+Anopheles gambiae,2618,mosquito,Anopheles gambiae s.l.,Anopheles gambiae or Anophels coluzzi,Anopheles gambiae,44542
+An. hyrcanus,4,mosquito,Anopheles hyrcanus,species,Anopheles hyrcanus,138534
+An. jamesii,1,mosquito,Anopheles jamesii,species,Anopheles jamesii,308710
+An. maculatus,792,mosquito,Anopheles maculatus,species,Anopheles maculatus,74869
+An. maculatus A,10,mosquito,Anopheles maculatus,species,Anopheles maculatus,74869
+An. maculatus gr. (morph IDl),1,mosquito,Anopheles maculatus s.l,complex,Anopheles maculatus,74869
+An. minimus A,3,mosquito,Anopheles minimus,species,Anopheles minimus,112268
+An. nivipes,4,mosquito,Anopheles nivipes,species,Anopheles nivipes,74871
+An. pampanai,1,mosquito,Anopheles pampanai,species,Anopheles pampanai,123673
+An. peditaeniatus,1,mosquito,Anopheles peditaeniatus,species,Anopheles peditaeniatus,206113
+Fail - A. Pharoensis,1,mosquito,Anopheles pharoensis,species,Anopheles pharoensis,221566
+An. philippinensis (morph ID),2,mosquito,Anopheles philippinensis,species,Anopheles philippinensis,319534
+An. pseudojamesii,3,mosquito,Anopheles pseudojamesi,species,Anopheles pseudojamesi,516961
+An. rampae,2,mosquito,Anopheles rampae,species,Anopheles rampae,383384
+An. saeungae,1,mosquito,Anopheles saeungae,species,Anopheles saeungae,1513312
+An. sawadwongporni,1,mosquito,Anopheles sawadwongporni,species,Anopheles sawadwongporni,142886
+An. vagus,2,mosquito,Anopheles vagus,species,Anopheles vagus,142887
+An. vagus (morph ID),3,mosquito,Anopheles vagus,species,Anopheles vagus,142887
+Plasmodium berghei,18,Parasite,Plasmodium berghei,species,Plasmodium berghei,5821
+P. falciparum,382,Parasite,Plasmodium falciparum,species,Plasmodium falciparum,5833
+Plasmodium falciparum,38468,Parasite,Plasmodium falciparum,species,Plasmodium falciparum,5833
+Plasmodium knowlesi,18,Parasite,Plasmodium knowlesi,species,Plasmodium knowlesi,5850
+Plasmodium malariae,26,Parasite,Plasmodium malariae,species,Plasmodium malariae,5858
+Plasmodium ovale,20,Parasite,Plasmodium ovale,species,Plasmodium ovale,36330
+Plasmodium vivax,3107,Parasite,Plasmodium vivax,species,Plasmodium vivax,5855
+Plasmodium falciparum plus others mixture,69,Parasite,Plasmodium falciparum plus others mixture,Human malaria mixture,Plasmodium,5820
+Plasmodium falciparum/knowlesi mixture,1,Parasite,Plasmodium falciparum/knowlesi mixture,Human malaria mixture,Plasmodium,5833;5850
+Plasmodium falciparum/vivax mixture,304,Parasite,Plasmodium falciparum/vivax mixture,Human malaria mixture,Plasmodium,5833;5855
+Plasmodium falciparum/vivax/knowlesi mixture,65,Parasite,Plasmodium falciparum/vivax/knowlesi mixture,Human malaria mixture,Plasmodium,5833;5855;5850
+Plasmodium falciparum/vivax/knowlesi/malaria/ovale mixture,1,Parasite,Plasmodium falciparum/vivax/knowlesi/malaria/ovale mixture,Human malaria mixture,Plasmodium,5833;5855;5850;5858;36330
+Plasmodium vivax/knowlesi mixture,1,Parasite,Plasmodium vivax/knowlesi mixture,Human malaria mixture,Plasmodium,5855;5850
