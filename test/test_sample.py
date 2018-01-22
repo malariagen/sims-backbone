@@ -264,7 +264,7 @@ class TestSample(TestBase):
             samp = swagger_client.SamplingEvent(None, '1009-MD-UP', date(2017, 10, 10),
                                                 doc_accuracy='month')
             loc = swagger_client.Location(None, 27.463, 90.495, 'city',
-                                          'Trongsa, Trongsa, Bhutan', 'test_create_with_locations', 'BHU')
+                                          'Trongsa, Trongsa, Bhutan', 'test_create_with_locations', 'BTN')
             loc = location_api_instance.create_location(loc)
 
             samp.location_id = loc.location_id
@@ -274,7 +274,7 @@ class TestSample(TestBase):
             self.assertEqual(samp.location_id, fetched.public_location_id, "upload public_location != proxy download response")
 
             proxy_loc = swagger_client.Location(None, 27.4, 90.4, 'region',
-                                          'Trongsa, Bhutan', 'test_create_with_locations', 'BHU')
+                                          'Trongsa, Bhutan', 'test_create_with_locations', 'BTN')
             proxy_loc = location_api_instance.create_location(proxy_loc)
             samp.proxy_location_id = proxy_loc.location_id
             fetched = api_instance.update_sampling_event(fetched.sampling_event_id, samp)

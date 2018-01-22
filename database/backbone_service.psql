@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 9.6.6
--- Dumped by pg_dump version 9.6.6
+-- Dumped from database version 10.1
+-- Dumped by pg_dump version 10.1
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -22,12 +22,14 @@ ALTER TABLE ONLY public.samples DROP CONSTRAINT fk_study;
 ALTER TABLE ONLY public.samples DROP CONSTRAINT fk_species;
 ALTER TABLE ONLY public.identifiers DROP CONSTRAINT fk_sample;
 ALTER TABLE ONLY public.samples DROP CONSTRAINT fk_proxy_location;
+ALTER TABLE ONLY public.partner_species_identifiers DROP CONSTRAINT fk_partner_sp_study;
 ALTER TABLE ONLY public.taxonomy_identifiers DROP CONSTRAINT fk_partner_sp;
 ALTER TABLE ONLY public.location_identifiers DROP CONSTRAINT fk_location;
 ALTER TABLE ONLY public.samples DROP CONSTRAINT fk_location;
 ALTER TABLE ONLY public.event_set_notes DROP CONSTRAINT fk_esn_es;
 ALTER TABLE ONLY public.event_set_members DROP CONSTRAINT fk_esm_se;
 ALTER TABLE ONLY public.event_set_members DROP CONSTRAINT fk_esm_es;
+ALTER TABLE ONLY public.locations DROP CONSTRAINT fk_country;
 DROP INDEX public.idx_study_name;
 DROP INDEX public.idx_partner_species;
 DROP INDEX public.idx_ident_value;
@@ -51,6 +53,7 @@ ALTER TABLE ONLY public.event_set_notes DROP CONSTRAINT pk_esn;
 ALTER TABLE ONLY public.event_sets DROP CONSTRAINT pk_es;
 ALTER TABLE ONLY public.partner_species_identifiers DROP CONSTRAINT partner_species_identifiers_id;
 ALTER TABLE ONLY public.locations DROP CONSTRAINT location_id;
+ALTER TABLE ONLY public.countries DROP CONSTRAINT countries_id;
 ALTER TABLE public.event_sets ALTER COLUMN id DROP DEFAULT;
 ALTER TABLE public.archive ALTER COLUMN id DROP DEFAULT;
 DROP VIEW public.v_sampling_events;
@@ -171,7 +174,7 @@ CREATE TABLE countries (
     english character varying,
     french character varying,
     alpha2 character(2),
-    alpha3 character(3),
+    alpha3 character(3) NOT NULL,
     numeric_code integer
 );
 
@@ -257,7 +260,6 @@ CREATE TABLE location_identifiers (
 
 CREATE TABLE locations (
     id uuid NOT NULL,
-    mgid character(20),
     location backbone_service.geometry(Point),
     country character(3),
     "precision" character varying,
@@ -284,7 +286,6 @@ CREATE TABLE partner_species_identifiers (
 
 CREATE TABLE samples (
     id uuid NOT NULL,
-    mgid character(20),
     study_id uuid,
     doc date,
     doc_accuracy character varying,
@@ -300,7 +301,6 @@ CREATE TABLE samples (
 
 CREATE TABLE studies (
     id uuid NOT NULL,
-    mgid character(20),
     study_name character varying(64),
     study_code character varying(4)
 );
@@ -377,6 +377,14 @@ ALTER TABLE ONLY archive ALTER COLUMN id SET DEFAULT nextval('archive_id_seq'::r
 --
 
 ALTER TABLE ONLY event_sets ALTER COLUMN id SET DEFAULT nextval('event_sets_id_seq'::regclass);
+
+
+--
+-- Name: countries countries_id; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY countries
+    ADD CONSTRAINT countries_id PRIMARY KEY (alpha3);
 
 
 --
@@ -553,6 +561,14 @@ CREATE INDEX idx_study_name ON studies USING btree (study_name);
 
 
 --
+-- Name: locations fk_country; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY locations
+    ADD CONSTRAINT fk_country FOREIGN KEY (country) REFERENCES countries(alpha3);
+
+
+--
 -- Name: event_set_members fk_esm_es; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -598,6 +614,14 @@ ALTER TABLE ONLY location_identifiers
 
 ALTER TABLE ONLY taxonomy_identifiers
     ADD CONSTRAINT fk_partner_sp FOREIGN KEY (partner_species_id) REFERENCES partner_species_identifiers(id);
+
+
+--
+-- Name: partner_species_identifiers fk_partner_sp_study; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY partner_species_identifiers
+    ADD CONSTRAINT fk_partner_sp_study FOREIGN KEY (study_id) REFERENCES studies(id);
 
 
 --

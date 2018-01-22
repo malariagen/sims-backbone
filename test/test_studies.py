@@ -47,7 +47,7 @@ class TestStudies(TestBase):
         try:
 
             loc = swagger_client.Location(None, 27.46362, 90.49542, 'country',
-                                          'Trongsa, Trongsa, Bhutan', 'pv_3_locations.txt', 'BHU')
+                                          'Trongsa, Trongsa, Bhutan', 'pv_3_locations.txt', 'BTN')
             loc.identifiers = [
                 swagger_client.Identifier(identifier_type='partner_name',
                                           identifier_value='bhutan', study_name='2001-MD-UP')
