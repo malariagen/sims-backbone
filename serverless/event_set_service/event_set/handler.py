@@ -1,4 +1,5 @@
 import json
+import ujson
 import os, sys, inspect
 # realpath() will make your script run, even if you symlink it :)
 cmd_folder = os.path.realpath(os.path.abspath(os.path.split(inspect.getfile( inspect.currentframe() ))[0]))
@@ -29,7 +30,7 @@ def create_response(retcode, value):
         "headers": {
             "Access-Control-Allow-Origin" : "*"
         },
-        "body": json.dumps(value.to_dict())
+        "body": ujson.dumps(value.to_dict())
     }
 
 def create_event_set(event, context):
