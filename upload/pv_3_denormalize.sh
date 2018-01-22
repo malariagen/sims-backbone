@@ -67,14 +67,17 @@ CREATE OR REPLACE VIEW samples AS
     LEFT JOIN solaris ON solaris.oxford_code = oxford.oxford_db_id_sample_code;
 SELECT 'oxford_code', 'study_id', 'oxford_src_code','location_name', 'location', 'country',
     'proxy_location_name', 'public_location', 'collection_date', 'location_name', 'latitude',
-    'longitude', 'doc'
+    'longitude', 'doc', 'location_name', 'location'
     union
 select DISTINCT IFNULL(samples.sample_oxford_id,pf_6_metadata.oxford_code),
         IFNULL(samples.study_id, IFNULL(pf_6_metadata.study_id,
         pv_3_sanger_source_code_metadata.study_id)), pv_3_sanger_source_code_metadata.oxford_src_code as sample_partner_id,
     id as location_name, location, country, 
     public_id as proxy_location_name, public_location, collection_date,
-    pf_6_metadata.location_name, pf_6_metadata.latitude, pf_6_metadata.longitude, pf_6_metadata.doc
+    pf_6_metadata.location_name, pf_6_metadata.latitude, pf_6_metadata.longitude,
+    pf_6_metadata.doc, 
+    IFNULL(pf_6_metadata.location_name,id), 
+    IF(pf_6_metadata.latitude IS NOT NULL, CONCAT_WS(',',pf_6_metadata.latitude, pf_6_metadata.longitude), location)
     INTO OUTFILE '/var/lib/mysql-files/result.txt'
   FIELDS TERMINATED BY '\t' OPTIONALLY ENCLOSED BY '"'
     LINES TERMINATED BY '\n'

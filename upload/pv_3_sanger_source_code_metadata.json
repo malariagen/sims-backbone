@@ -34,16 +34,16 @@
             "type": "string"
         },
         "location_name": {
-            "column": 3,
+            "column": 9,
             "type": "string"
         },
         "latitude": {
-            "column": 4,
+            "column": 14,
             "type": "float",
             "regex": "^\\s*([-0-9]*\\.?\\d{0,7})"
         },
         "longitude": {
-            "column": 4,
+            "column": 14,
             "type": "float",
             "regex": "([-0-9]*\\.?\\d{0,7})(\\d*)$"
         },
@@ -115,7 +115,7 @@
             "regex": "^\\s*([-0-9]*\\.?\\d{0,7})"
         },
         "proxy_longitude": {
-            "column": 8,
+            "column": 7,
             "type": "float",
             "regex": "([-0-9]*\\.?\\d{0,7})\\d*$"
         },
