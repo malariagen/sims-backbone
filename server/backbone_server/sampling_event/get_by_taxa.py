@@ -31,21 +31,38 @@ class SamplingEventsGetByTaxa():
                 if not vtaxa_id:
                     raise MissingKeyException("No taxa {}".format(taxa_id))
 
-                samples = SamplingEvents([], 0)
-
-                stmt = '''SELECT id, study_id, doc, doc_accuracy,
+                fields = '''SELECT id, study_id, doc, doc_accuracy,
                                 partner_species, v_sampling_events.partner_species_id,
                                 location_id, latitude, longitude, accuracy, curated_name, curation_method, country, notes, partner_name,
                                 proxy_location_id, proxy_latitude, proxy_longitude, proxy_accuracy,
                                 proxy_curated_name, proxy_curation_method, proxy_country, proxy_notes,
-                                proxy_partner_name FROM v_sampling_events
+                                proxy_partner_name'''
+                query_body = ''' FROM v_sampling_events
                         LEFT JOIN taxonomy_identifiers ti ON ti.partner_species_id = v_sampling_events.partner_species_id
                         WHERE ti.taxonomy_id = %s'''
+                args = (taxa_id,)
 
-                cursor.execute(stmt, (taxa_id,))
+                count_args = args
+                count_query = 'SELECT COUNT(id) ' + query_body
+
+                query_body = query_body + ''' ORDER BY doc, study_id, id'''
+
+                if not (start is None and count is None):
+                    query_body = query_body + ' LIMIT %s OFFSET %s'
+                    args = args + (count, start)
+
+                samples = SamplingEvents([], 0)
+
+                stmt = fields + query_body
+
+                cursor.execute(stmt, args)
 
                 samples.sampling_events = SamplingEventFetch.load_sampling_events(cursor, True)
-                samples.count = len(samples.sampling_events)
 
+                if not (start is None and count is None):
+                    cursor.execute(count_query, count_args)
+                    samples.count = cursor.fetchone()[0]
+                else:
+                    samples.count = len(samples.sampling_events)
 
         return samples
