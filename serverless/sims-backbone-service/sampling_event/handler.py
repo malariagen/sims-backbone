@@ -32,19 +32,8 @@ def create_response(retcode, value):
         "headers": {
             "Access-Control-Allow-Origin" : "*"
         },
-        "body": ujson.dumps(value.to_dict())
+        "body": ujson.dumps(value.to_dict(), ensure_ascii=False)
     }
-
-def prepare_for_serialization(sampling_event):
-    sampling_event.sampling_event_id = str(sampling_event.sampling_event_id)
-    if sampling_event.doc:
-        sampling_event.doc = sampling_event.doc.strftime('%Y-%m-%d')
-    if sampling_event.location_id:
-        sampling_event.location_id = str(sampling_event.location_id)
-        sampling_event.location.location_id = str(sampling_event.location.location_id)
-    if sampling_event.proxy_location_id:
-        sampling_event.proxy_location_id = str(sampling_event.proxy_location_id)
-        sampling_event.proxy_location.location_id = str(sampling_event.proxy_location.location_id)
 
 
 def create_sampling_event(event, context):
@@ -82,8 +71,6 @@ def download_sampling_event(event, context):
     value, retcode =  sampling_event_controller.download_sampling_event(sampling_event_id, user,
                                                                         sampling_event_controller.authorizer(event['requestContext']['authorizer']))
 
-    prepare_for_serialization(value)
-
     return create_response(retcode, value)
 
 def download_sampling_event_by_identifier(event, context):
@@ -99,7 +86,6 @@ def download_sampling_event_by_identifier(event, context):
                                                                                      user,
                                                                                      sampling_event_controller.authorizer(event['requestContext']['authorizer']))
 
-    prepare_for_serialization(value)
 
     return create_response(retcode, value)
 
@@ -114,9 +100,6 @@ def download_sampling_events_by_location(event, context):
                                                                                     user,
                                                                                     sampling_event_controller.authorizer(event['requestContext']['authorizer']))
 
-    for se in value.sampling_events:
-        prepare_for_serialization(se)
-
     return create_response(retcode, value)
 
 
@@ -130,9 +113,6 @@ def download_sampling_events_by_study(event, context):
     value, retcode = sampling_event_controller.download_sampling_events_by_study(study_name, user,
                                                                                 sampling_event_controller.authorizer(event['requestContext']['authorizer']))
 
-    for se in value.sampling_events:
-        prepare_for_serialization(se)
-
     return create_response(retcode, value)
 
 def download_sampling_events_by_taxa(event, context):
@@ -144,9 +124,6 @@ def download_sampling_events_by_taxa(event, context):
 
     value, retcode = sampling_event_controller.download_sampling_events_by_taxa(taxa_id, user,
                                                                                 sampling_event_controller.authorizer(event['requestContext']['authorizer']))
-
-    for se in value.sampling_events:
-        prepare_for_serialization(se)
 
     return create_response(retcode, value)
 
@@ -160,9 +137,6 @@ def download_sampling_events_by_event_set(event, context):
     value, retcode = sampling_event_controller.download_sampling_events_by_event_set(event_set_id,
                                                                                     user,
                                                                                      sampling_event_controller.authorizer(event['requestContext']['authorizer']))
-
-    for se in value.sampling_events:
-        prepare_for_serialization(se)
 
     return create_response(retcode, value)
 
@@ -178,8 +152,6 @@ def update_sampling_event(event, context):
     value, retcode = sampling_event_controller.update_location(sampling_event_id, sampling_event,
                                                                user,
                                                                sampling_event_controller.authorizer(event['requestContext']['authorizer']))
-
-    prepare_for_serialization(value)
 
     return create_response(retcode, value)
 

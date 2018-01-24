@@ -350,7 +350,7 @@ functions:
           path: sims-backbone-service/v1/samplingEvents/study/{study_name}
           method: get
           cors: true
-          timeout: 20
+          timeout: 300
           authorizer:
             name: auth_func
             type: request
@@ -368,7 +368,7 @@ functions:
           path: sims-backbone-service/v1/samplingEvents/taxa/{taxa_id}
           method: get
           cors: true
-          timeout: 20
+          timeout: 300
           authorizer:
             name: auth_func
             type: request
@@ -386,7 +386,7 @@ functions:
           path: sims-backbone-service/v1/samplingEvents/eventSet/{event_set_id}
           method: get
           cors: true
-          timeout: 20
+          timeout: 300
           authorizer:
             name: auth_func
             type: request

@@ -46,20 +46,20 @@ class SamplingEventFetch():
         sample = None
 
         for (sample_id, study_id, doc, doc_accuracy, partner_species, partner_species_id, location_id, proxy_location_id) in cursor:
-            sample = SamplingEvent(sample_id, study_id = study_id, 
+            sample = SamplingEvent(str(sample_id), study_id = study_id, 
                                    doc = doc, doc_accuracy = doc_accuracy,
                                    partner_species = partner_species)
-            sample.location_id = location_id
-            sample.proxy_location_id = proxy_location_id
+            sample.location_id = str(location_id)
+            sample.proxy_location_id = str(proxy_location_id)
             if location_id:
                 location = LocationFetch.fetch(cursor, location_id)
                 sample.location = location
-                sample.public_location_id = location_id
+                sample.public_location_id = str(location_id)
                 sample.public_location = location
             if proxy_location_id:
                 proxy_location = LocationFetch.fetch(cursor, proxy_location_id)
                 sample.proxy_location = proxy_location
-                sample.public_location_id = proxy_location_id
+                sample.public_location_id = str(proxy_location_id)
                 sample.public_location = proxy_location
 
         if not sample:
@@ -94,13 +94,13 @@ class SamplingEventFetch():
              partner_name, proxy_location_id, proxy_latitude, proxy_longitude, proxy_accuracy,
              proxy_curated_name, proxy_curation_method,
              proxy_country, proxy_notes, proxy_partner_name) in cursor:
-            sample = SamplingEvent(sample_id, study_id=study_id,
+            sample = SamplingEvent(str(sample_id), study_id=study_id,
                                    doc=doc, doc_accuracy=doc_accuracy,
                                    partner_species=partner_species)
-            sample.location_id = location_id
-            sample.proxy_location_id = proxy_location_id
+            sample.location_id = str(location_id)
+            sample.proxy_location_id = str(proxy_location_id)
             if location_id:
-                location = Location(location_id,
+                location = Location(str(location_id),
                                     latitude, longitude, accuracy,
                                     curated_name, curation_method, country, notes)
                 #This will only return the identifier for the event study
@@ -110,10 +110,10 @@ class SamplingEventFetch():
                                        study_name=study_id)
                     location.identifiers = [ident]
                 sample.location = location
-                sample.public_location_id = location_id
+                sample.public_location_id = str(location_id)
                 sample.public_location = location
             if proxy_location_id:
-                location = Location(proxy_location_id,
+                location = Location(str(proxy_location_id),
                                     proxy_latitude, proxy_longitude,
                                     proxy_accuracy,
                                     proxy_curated_name, proxy_curation_method, proxy_country,
@@ -125,8 +125,8 @@ class SamplingEventFetch():
                                        study_name=study_id)
                     location.identifiers = [ident]
                 sample.proxy_location = location
-                sample.public_location_id = proxy_location_id
-                sample.public_location = proxy_location
+                sample.public_location_id = str(proxy_location_id)
+                sample.public_location =location
 
             samples.append(sample)
 
