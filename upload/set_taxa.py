@@ -42,7 +42,7 @@ class SetTaxa():
             for row in data_reader:
                 taxas = []
                 for taxa in row[6].split(';'):
-                    taxas.append(swagger_client.Taxonomy(taxonomy_id=taxa))
+                    taxas.append(swagger_client.Taxonomy(taxonomy_id=int(taxa)))
 
                 self._taxa_map[row[0]] = taxas
 
