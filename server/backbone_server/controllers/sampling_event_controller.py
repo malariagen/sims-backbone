@@ -123,7 +123,7 @@ class SamplingEventController(BaseController):
 
         return samp, retcode
 
-    def download_sampling_events_by_event_set(self, event_set_id, user = None, auths = None):
+    def download_sampling_events_by_event_set(self, event_set_id, start, count, user = None, auths = None):
         """
         fetches samplingEvents for a event_set
         
@@ -146,7 +146,7 @@ class SamplingEventController(BaseController):
 
         try:
             get = EventSetGetById(self.get_connection())
-            evntSt = get.get(event_set_id)
+            evntSt = get.get(event_set_id, start, count)
 
             samp = SamplingEvents()
             samp.sampling_events = evntSt.sampling_events
@@ -196,7 +196,7 @@ class SamplingEventController(BaseController):
 
         return samp, retcode
 
-    def download_sampling_events_by_location(self, locationId, user = None, auths = None):
+    def download_sampling_events_by_location(self, locationId, start, count, user = None, auths = None):
         """
         fetches samplingEvents for a location
         
@@ -218,7 +218,7 @@ class SamplingEventController(BaseController):
         samp = None
 
         try:
-            samp = get.get(locationId)
+            samp = get.get(locationId, start, count)
         except MissingKeyException as dme:
             logging.getLogger(__name__).error("download_samplingEvent: {}".format(repr(dme)))
             retcode = 404
@@ -228,7 +228,7 @@ class SamplingEventController(BaseController):
 
         return samp, retcode
 
-    def download_sampling_events_by_study(self, studyName, user = None, auths = None):
+    def download_sampling_events_by_study(self, studyName, start, count, user = None, auths = None):
         """
         fetches samplingEvents for a study
         
@@ -254,7 +254,7 @@ class SamplingEventController(BaseController):
         samp = None
 
         try:
-            samp = get.get(studyName)
+            samp = get.get(studyName, start, count)
         except MissingKeyException as dme:
             logging.getLogger(__name__).error("download_samplingEvent: {}".format(repr(dme)))
             retcode = 404
@@ -263,7 +263,7 @@ class SamplingEventController(BaseController):
 
         return samp, retcode
 
-    def download_sampling_events_by_taxa(self, taxaId, user = None, auths = None):
+    def download_sampling_events_by_taxa(self, taxaId, start, count, user = None, auths = None):
         """
         fetches samplingEvents for a taxa
         
@@ -287,7 +287,7 @@ class SamplingEventController(BaseController):
         samp = None
 
         try:
-            samp = get.get(taxaId)
+            samp = get.get(taxaId, start, count)
         except MissingKeyException as dme:
             logging.getLogger(__name__).error("download_sampling_events_by_taxa: {}".format(repr(dme)))
             retcode = 404

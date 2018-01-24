@@ -18,7 +18,7 @@ class SamplingEventsGetByStudy():
         self._connection = conn
 
 
-    def get(self, study_name):
+    def get(self, study_name, start, count):
         with self._connection:
             with self._connection.cursor() as cursor:
 

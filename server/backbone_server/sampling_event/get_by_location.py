@@ -16,7 +16,7 @@ class SamplingEventsGetByLocation():
         self._connection = conn
 
 
-    def get(self, location_id):
+    def get(self, location_id, start, count):
 
         with self._connection:
             with self._connection.cursor() as cursor:

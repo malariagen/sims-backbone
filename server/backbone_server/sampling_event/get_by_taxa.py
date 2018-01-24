@@ -18,7 +18,7 @@ class SamplingEventsGetByTaxa():
         self._connection = conn
 
 
-    def get(self, taxa_id):
+    def get(self, taxa_id, start, count):
         with self._connection:
             with self._connection.cursor() as cursor:
 

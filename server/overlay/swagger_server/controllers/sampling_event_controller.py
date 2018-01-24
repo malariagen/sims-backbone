@@ -69,52 +69,72 @@ def download_sampling_event_by_identifier(propName, propValue, user = None, toke
                                                                            user,
                                                                            sampling_event_controller.token_info(token_info))
 
-def download_sampling_events_by_event_set(eventSetId, user = None, token_info = None):
+def download_sampling_events_by_event_set(eventSetId, start=None, count=None, user = None, token_info = None):
     """
     fetches samplingEvents in a given event set
     
     :param eventSetId: Event Set name
     :type eventSetId: str
+    :param start: for pagination start the result set at a record x
+    :type start: int
+    :param count: for pagination the number of entries to return
+    :type count: int
 
     :rtype: SamplingEvents
     """
-    return sampling_event_controller.download_sampling_events_by_event_set(eventSetId, user,
+    return sampling_event_controller.download_sampling_events_by_event_set(eventSetId,start,
+                                                                           count, user,
                                                                        sampling_event_controller.token_info(token_info))
 
-def download_sampling_events_by_location(locationId, user = None, token_info = None):
+def download_sampling_events_by_location(locationId, start=None, count=None, user = None, token_info = None):
     """
     fetches samplingEvents for a location
     
     :param locationId: location
     :type locationId: str
+    :param start: for pagination start the result set at a record x
+    :type start: int
+    :param count: for pagination the number of entries to return
+    :type count: int
 
     :rtype: SamplingEvents
     """
-    return sampling_event_controller.download_sampling_events_by_location(locationId, user,
+    return sampling_event_controller.download_sampling_events_by_location(locationId, start,
+                                                                          count, user,
                                                                           sampling_event_controller.token_info(token_info))
 
-def download_sampling_events_by_study(studyName, user = None, token_info = None):
+def download_sampling_events_by_study(studyName, start=None, count=None, user = None, token_info = None):
     """
     fetches samplingEvents for a study
     
     :param studyName: 4 digit study code
     :type studyName: str
+    :param start: for pagination start the result set at a record x
+    :type start: int
+    :param count: for pagination the number of entries to return
+    :type count: int
 
     :rtype: SamplingEvents
     """
-    return sampling_event_controller.download_sampling_events_by_study(studyName, user,
+    return sampling_event_controller.download_sampling_events_by_study(studyName, start,
+                                                                       count, user,
                                                                        sampling_event_controller.token_info(token_info))
 
-def download_sampling_events_by_taxa(taxaId, user = None, token_info = None):
+def download_sampling_events_by_taxa(taxaId, start=None, count=None, user = None, token_info = None):
     """
     fetches samplingEvents for a given taxonomy classification code
     
     :param taxaId: NCBI taxonomy code
     :type taxaId: str
+    :param start: for pagination start the result set at a record x
+    :type start: int
+    :param count: for pagination the number of entries to return
+    :type count: int
 
     :rtype: SamplingEvents
     """
-    return sampling_event_controller.download_sampling_events_by_taxa(taxaId, user,
+    return sampling_event_controller.download_sampling_events_by_taxa(taxaId, start,
+                                                                      count, user,
                                                                        sampling_event_controller.token_info(token_info))
 
 
