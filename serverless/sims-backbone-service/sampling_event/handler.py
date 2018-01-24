@@ -1,5 +1,4 @@
 import json
-import ujson
 import os, sys, inspect
 # realpath() will make your script run, even if you symlink it :)
 cmd_folder = os.path.realpath(os.path.abspath(os.path.split(inspect.getfile( inspect.currentframe() ))[0]))
@@ -23,18 +22,9 @@ import datetime
 
 from backbone_server.controllers.sampling_event_controller import SamplingEventController
 
+from util.response_util import create_response
+
 sampling_event_controller = SamplingEventController()
-
-def create_response(retcode, value):
-
-    return {
-        "statusCode": retcode,
-        "headers": {
-            "Access-Control-Allow-Origin" : "*"
-        },
-        "body": ujson.dumps(value.to_dict(), ensure_ascii=False)
-    }
-
 
 def create_sampling_event(event, context):
 
@@ -45,7 +35,7 @@ def create_sampling_event(event, context):
     value, retcode = sampling_event_controller.create_sampling_event(sampling_event, user,
                                                                      sampling_event_controller.authorizer(event['requestContext']['authorizer']))
 
-    return create_response(retcode, value)
+    return create_response(event, retcode, value)
 
 
 def delete_sampling_event(event, context):
@@ -58,7 +48,7 @@ def delete_sampling_event(event, context):
     value, retcode =  sampling_event_controller.delete_sampling_event(sampling_event_id, user,
                                                                       sampling_event_controller.authorizer(event['requestContext']['authorizer']))
 
-    return create_response(retcode, value)
+    return create_response(event, retcode, value)
 
 
 def download_sampling_event(event, context):
@@ -71,7 +61,7 @@ def download_sampling_event(event, context):
     value, retcode =  sampling_event_controller.download_sampling_event(sampling_event_id, user,
                                                                         sampling_event_controller.authorizer(event['requestContext']['authorizer']))
 
-    return create_response(retcode, value)
+    return create_response(event, retcode, value)
 
 def download_sampling_event_by_identifier(event, context):
 
@@ -87,7 +77,7 @@ def download_sampling_event_by_identifier(event, context):
                                                                                      sampling_event_controller.authorizer(event['requestContext']['authorizer']))
 
 
-    return create_response(retcode, value)
+    return create_response(event, retcode, value)
 
 def download_sampling_events_by_location(event, context):
 
@@ -100,7 +90,7 @@ def download_sampling_events_by_location(event, context):
                                                                                     user,
                                                                                     sampling_event_controller.authorizer(event['requestContext']['authorizer']))
 
-    return create_response(retcode, value)
+    return create_response(event, retcode, value)
 
 
 def download_sampling_events_by_study(event, context):
@@ -113,7 +103,7 @@ def download_sampling_events_by_study(event, context):
     value, retcode = sampling_event_controller.download_sampling_events_by_study(study_name, user,
                                                                                 sampling_event_controller.authorizer(event['requestContext']['authorizer']))
 
-    return create_response(retcode, value)
+    return create_response(event, retcode, value)
 
 def download_sampling_events_by_taxa(event, context):
 
@@ -125,7 +115,7 @@ def download_sampling_events_by_taxa(event, context):
     value, retcode = sampling_event_controller.download_sampling_events_by_taxa(taxa_id, user,
                                                                                 sampling_event_controller.authorizer(event['requestContext']['authorizer']))
 
-    return create_response(retcode, value)
+    return create_response(event, retcode, value)
 
 def download_sampling_events_by_event_set(event, context):
 
@@ -138,7 +128,7 @@ def download_sampling_events_by_event_set(event, context):
                                                                                     user,
                                                                                      sampling_event_controller.authorizer(event['requestContext']['authorizer']))
 
-    return create_response(retcode, value)
+    return create_response(event, retcode, value)
 
 def update_sampling_event(event, context):
 
@@ -153,5 +143,5 @@ def update_sampling_event(event, context):
                                                                user,
                                                                sampling_event_controller.authorizer(event['requestContext']['authorizer']))
 
-    return create_response(retcode, value)
+    return create_response(event, retcode, value)
 

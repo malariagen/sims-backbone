@@ -103,6 +103,7 @@ package:
         - ../../server/bb_server/**
         - ../../server/backbone_server/**/**
         - ../auth/**
+        - ../util/**
         - ../client_secrets.${self:provider.stage}.json
 
 functions:
