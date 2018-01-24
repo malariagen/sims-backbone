@@ -49,16 +49,16 @@ class SamplingEventFetch():
             sample = SamplingEvent(str(sample_id), study_id = study_id, 
                                    doc = doc, doc_accuracy = doc_accuracy,
                                    partner_species = partner_species)
-            sample.location_id = str(location_id)
-            sample.proxy_location_id = str(proxy_location_id)
             if location_id:
                 location = LocationFetch.fetch(cursor, location_id)
                 sample.location = location
+                sample.location_id = str(location_id)
                 sample.public_location_id = str(location_id)
                 sample.public_location = location
             if proxy_location_id:
                 proxy_location = LocationFetch.fetch(cursor, proxy_location_id)
                 sample.proxy_location = proxy_location
+                sample.proxy_location_id = str(proxy_location_id)
                 sample.public_location_id = str(proxy_location_id)
                 sample.public_location = proxy_location
 
@@ -97,8 +97,6 @@ class SamplingEventFetch():
             sample = SamplingEvent(str(sample_id), study_id=study_id,
                                    doc=doc, doc_accuracy=doc_accuracy,
                                    partner_species=partner_species)
-            sample.location_id = str(location_id)
-            sample.proxy_location_id = str(proxy_location_id)
             if location_id:
                 location = Location(str(location_id),
                                     latitude, longitude, accuracy,
@@ -110,6 +108,7 @@ class SamplingEventFetch():
                                        study_name=study_id)
                     location.identifiers = [ident]
                 sample.location = location
+                sample.location_id = str(location_id)
                 sample.public_location_id = str(location_id)
                 sample.public_location = location
             if proxy_location_id:
@@ -125,6 +124,7 @@ class SamplingEventFetch():
                                        study_name=study_id)
                     location.identifiers = [ident]
                 sample.proxy_location = location
+                sample.proxy_location_id = str(proxy_location_id)
                 sample.public_location_id = str(proxy_location_id)
                 sample.public_location =location
 

@@ -52,6 +52,6 @@ class SamplingEventPost():
                     raise err
 
 
-        sample.sampling_event_id = uuid_val
+        sample.sampling_event_id = str(uuid_val)
         return sample
 
