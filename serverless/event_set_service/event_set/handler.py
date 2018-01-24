@@ -185,10 +185,19 @@ def download_event_set(event, context):
 
     user = event['requestContext']['authorizer']['principalId']
 
+    start =  None
+    count =  None
+
+    if 'queryStringParameters' in event and event["queryStringParameters"]:
+        if 'start' in event["queryStringParameters"]:
+            start = event["queryStringParameters"]["start"]
+        if 'count' in event["queryStringParameters"]:
+            count = event["queryStringParameters"]["count"]
+
     if 'pathParameters' in event:
         event_set_id = event["pathParameters"]["event_set_id"]
 
-    value, retcode = event_set_controller.download_event_set(event_set_id, user,
+    value, retcode = event_set_controller.download_event_set(event_set_id, start, count, user,
                                                   event_set_controller.authorizer(event['requestContext']['authorizer']))
 
     return create_response(retcode, value)
@@ -254,7 +263,7 @@ def update_event_set_note(event, context):
 
     note = EventSetNote.from_dict(json.loads(event["body"]))
 
-    value, retcode = event_set_controller.update_event_set_note(event_set_id, noteId, note, user,
+    value, retcode = event_set_controller.update_event_set_note(event_set_id, note_id, note, user,
                                                   event_set_controller.authorizer(event['requestContext']['authorizer']))
 
     return create_response(retcode, value)
