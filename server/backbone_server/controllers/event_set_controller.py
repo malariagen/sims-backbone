@@ -236,7 +236,7 @@ class EventSetController(BaseController):
         return evntSt, retcode
 
 
-    def download_event_set(self, eventSetId, user = None, auths = None):
+    def download_event_set(self, eventSetId, start=None, count=None, user = None, auths = None):
         """
         fetches an eventSet
         
@@ -246,7 +246,7 @@ class EventSetController(BaseController):
         :rtype: EventSet
         """
         try:
-            study_id = None;
+            study_id = None
 
             self.check_permissions(study_id, auths)
         except PermissionException as pe:
@@ -258,7 +258,7 @@ class EventSetController(BaseController):
 
         try:
             get = EventSetGetById(self.get_connection())
-            evntSt = get.get(eventSetId)
+            evntSt = get.get(eventSetId, start, count)
         except DuplicateKeyException as dke:
             logging.getLogger(__name__).error("download_event_set: {}".format(repr(dke)))
             retcode = 422

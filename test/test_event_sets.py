@@ -38,12 +38,12 @@ class TestEventSets(TestBase):
 
             samp = swagger_client.SamplingEvent(None, '4000-MD-UP', date(2017, 10, 10))
             created = event_api_instance.create_sampling_event(samp)
-           
+
             created_set = api_instance.create_event_set_item(event_set, created.sampling_event_id)
             fetched_set = api_instance.download_event_set(event_set)
 
-            self.assertEqual(fetched_set.sampling_events[0].sampling_event_id, created.sampling_event_id)
-            
+            self.assertEqual(fetched_set.members.sampling_events[0].sampling_event_id, created.sampling_event_id)
+
             api_instance.delete_event_set(event_set)
             event_api_instance.delete_sampling_event(created.sampling_event_id)
 

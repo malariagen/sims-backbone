@@ -105,7 +105,7 @@ def delete_event_set_note(eventSetId, noteId, user = None, token_info = None):
                                                   event_set_controller.token_info(token_info))
 
 
-def download_event_set(eventSetId, user = None, token_info = None):
+def download_event_set(eventSetId, start=None, count=None, user = None, token_info = None):
     """
     fetches an eventSet
     
@@ -114,7 +114,7 @@ def download_event_set(eventSetId, user = None, token_info = None):
 
     :rtype: EventSet
     """
-    return event_set_controller.download_event_set(eventSetId, user,
+    return event_set_controller.download_event_set(eventSetId, start, count, user,
                                                   event_set_controller.token_info(token_info))
 
 

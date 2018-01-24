@@ -148,9 +148,7 @@ class SamplingEventController(BaseController):
             get = EventSetGetById(self.get_connection())
             evntSt = get.get(event_set_id, start, count)
 
-            samp = SamplingEvents()
-            samp.sampling_events = evntSt.sampling_events
-            samp.count = len (samp.sampling_events)
+            samp = evntSt.members
 
         except MissingKeyException as dme:
             logging.getLogger(__name__).error("download_sampling_events_by_event_set: {}".format(repr(dme)))

@@ -11,13 +11,13 @@ class EventSetGetById():
         self._connection = conn
 
 
-    def get(self, event_set_name):
+    def get(self, event_set_name, start, count):
 
         with self._connection:
             with self._connection.cursor() as cursor:
 
                 event_set_id = EventSetFetch.fetch_event_set_id(cursor,event_set_name)
 
-                event_set = EventSetFetch.fetch(cursor, event_set_id)
+                event_set = EventSetFetch.fetch(cursor, event_set_id, start, count)
 
         return event_set

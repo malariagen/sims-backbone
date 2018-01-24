@@ -625,6 +625,16 @@ paths:
           description: ID of eventSet to fetch
           required: true
           type: string
+        - name: start
+          in: query
+          description: for pagination start the result set at a record x
+          required: false
+          type: integer
+        - name: count
+          in: query
+          description: for pagination the number of entries to return
+          required: false
+          type: integer
       responses:
         '200':
           description: successful operation
@@ -1005,10 +1015,8 @@ definitions:
     properties:
       event_set_name:
         type: string
-      sampling_events:
-        type: array
-        items:
-          $ref: '#/definitions/SamplingEvent'
+      members:
+        $ref: '#/definitions/SamplingEvents'
       notes:
         type: array
         items:
