@@ -27,19 +27,38 @@ class SamplingEventsGetByStudy():
                 if not study_id:
                     raise MissingKeyException("No study {}".format(study_name))
 
-                stmt = '''SELECT samples.id FROM samples WHERE study_id = %s'''
-                cursor.execute(stmt, (study_id, ))
+                fields = '''SELECT v_sampling_events.id, study_id, doc, doc_accuracy,
+                                partner_species, v_sampling_events.partner_species_id,
+                                location_id, latitude, longitude, accuracy, curated_name, curation_method, country, notes, partner_name,
+                                proxy_location_id, proxy_latitude, proxy_longitude, proxy_accuracy,
+                                proxy_curated_name, proxy_curation_method, proxy_country, proxy_notes,
+                                proxy_partner_name'''
+                query_body = ''' FROM v_sampling_events
+                        LEFT JOIN studies s ON s.study_name = v_sampling_events.study_id
+                        WHERE s.id = %s'''
+                args = (study_id,)
+
+                count_args = args
+                count_query = 'SELECT COUNT(v_sampling_events.id) ' + query_body
+
+                query_body = query_body + ''' ORDER BY doc, id'''
+
+                if not (start is None and count is None):
+                    query_body = query_body + ' LIMIT %s OFFSET %s'
+                    args = args + (count, start)
 
                 samples = SamplingEvents([], 0)
-                event_ids = []
 
-                for sample_id in cursor:
-                    event_ids.append(sample_id)
+                stmt = fields + query_body
 
-                for sample_id in event_ids:
-                    sample = SamplingEventFetch.fetch(cursor, sample_id)
-                    samples.sampling_events.append(sample)
-                    samples.count = samples.count + 1
+                cursor.execute(stmt, args)
 
+                samples.sampling_events = SamplingEventFetch.load_sampling_events(cursor, True)
+
+                if not (start is None and count is None):
+                    cursor.execute(count_query, count_args)
+                    samples.count = cursor.fetchone()[0]
+                else:
+                    samples.count = len(samples.sampling_events)
 
         return samples

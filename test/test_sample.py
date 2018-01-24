@@ -366,3 +366,72 @@ class TestSample(TestBase):
         except ApiException as error:
             self.fail("test_partner_lookup: Exception when calling SamplingEventApi->create_sampling_event: %s\n" % error)
 
+
+    """
+    """
+    def test_study_lookup(self):
+
+        api_instance = swagger_client.SamplingEventApi(self._api_client)
+        study_api = swagger_client.StudyApi(self._api_client)
+
+        try:
+            study_code = '1020-MD-UP'
+
+            samp = swagger_client.SamplingEvent(None, study_code, date(2017, 10, 14),
+                                                partner_species='PF')
+            created = api_instance.create_sampling_event(samp)
+
+            fetched = api_instance.download_sampling_events_by_study(study_code)
+
+            self.assertEqual(fetched.count,1, "Study not found")
+
+            self.assertEqual(created, fetched.sampling_events[0], "create response != download response")
+            api_instance.delete_sampling_event(created.sampling_event_id)
+
+        except ApiException as error:
+            self.fail("test_partner_lookup: Exception when calling SamplingEventApi->create_sampling_event: %s\n" % error)
+
+
+    """
+    """
+    def test_study_lookup_paged(self):
+
+        api_instance = swagger_client.SamplingEventApi(self._api_client)
+        study_api = swagger_client.StudyApi(self._api_client)
+
+        try:
+            study_code = '1021-MD-UP'
+
+            for i in range(5):
+                samp = swagger_client.SamplingEvent(None, study_code, date(2017, 10, 14),
+                                                    partner_species='PF')
+                created = api_instance.create_sampling_event(samp)
+
+
+            fetched1 = api_instance.download_sampling_events_by_study(study_code, start=0, count=2)
+
+            self.assertEqual(len(fetched1.sampling_events),2, "Wrong number of sampling_events returned")
+            self.assertEqual(fetched1.count, 5, "Wrong total of sampling_events returned")
+
+            fetched2 = api_instance.download_sampling_events_by_study(study_code, start=2, count=5)
+
+            #Gets second tranche and also attempts to retrieve more than exist
+            self.assertEqual(len(fetched2.sampling_events),3, "Wrong number of sampling_events returned")
+            self.assertEqual(fetched2.count, 5, "Wrong total of sampling_events returned")
+
+            ids = []
+            for sampling_event in fetched1.sampling_events + fetched2.sampling_events:
+                self.assertNotIn(sampling_event.sampling_event_id, ids, "SamplingEvent returned twice")
+                ids.append(sampling_event.sampling_event_id)
+
+            #Check that it's the correct number of *unique* events
+
+            #Clean up
+            fetch_all = api_instance.download_sampling_events_by_study(study_code)
+
+            for sampling_event in fetch_all.sampling_events:
+                api_instance.delete_sampling_event(sampling_event.sampling_event_id)
+
+        except ApiException as error:
+            self.fail("test_partner_lookup: Exception when calling SamplingEventApi->create_sampling_event: %s\n" % error)
+
