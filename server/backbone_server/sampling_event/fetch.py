@@ -30,6 +30,33 @@ class SamplingEventFetch():
 
 
     @staticmethod
+    def fetch_taxonomies(cursor, study_id, partner_species):
+
+        ret = None
+
+        if not study_id:
+            return None
+
+        if not partner_species:
+            return None
+
+        stmt = '''select DISTINCT taxonomy_id FROM taxonomy_identifiers ti
+                    JOIN partner_species_identifiers psi ON ti.partner_species_id=psi.id
+                    WHERE partner_species = %s'''
+
+        cursor.execute(stmt, (partner_species,))
+
+        partner_taxonomies = []
+        for (taxa_id,) in cursor:
+            taxa = Taxonomy(taxa_id)
+            partner_taxonomies.append(taxa)
+
+        if len(partner_taxonomies) == 0:
+            partner_taxonomies = None
+
+        return partner_taxonomies
+
+    @staticmethod
     def fetch(cursor, sampling_event_id):
 
         if not sampling_event_id:
@@ -68,24 +95,13 @@ class SamplingEventFetch():
 
         sample.identifiers = SamplingEventFetch.fetch_identifiers(cursor, sampling_event_id)
 
-        if sample.study_id:
-
-            stmt = '''select taxonomy_id FROM taxonomy_identifiers WHERE partner_species_id = %s'''
-
-            cursor.execute(stmt, (partner_species_id,))
-
-            sample.partner_taxonomies = []
-            for (taxa_id) in cursor:
-                taxa = Taxonomy(taxa_id)
-                sample.partner_taxonomies.append(taxa)
-
-            if len(sample.partner_taxonomies) == 0:
-                sample.partner_taxonomies = None
+        sample.partner_taxonomies = SamplingEventFetch.fetch_taxonomies(cursor, study_id,
+                                                                        partner_species)
 
         return sample
 
     @staticmethod
-    def load_sampling_events(cursor, all_identifiers=False):
+    def load_sampling_events(cursor, all_identifiers=True):
 
         samples = []
         for (sample_id, study_id, doc, doc_accuracy, partner_species, partner_species_id,
@@ -132,5 +148,7 @@ class SamplingEventFetch():
 
         for sample in samples:
             sample.identifiers = SamplingEventFetch.fetch_identifiers(cursor, sample.sampling_event_id)
+            sample.partner_taxonomies = SamplingEventFetch.fetch_taxonomies(cursor, sample.study_id,
+                                                                        sample.partner_species)
 
         return samples
