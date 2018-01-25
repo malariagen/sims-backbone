@@ -19,9 +19,11 @@ import { LocationService } from '../typescript-angular-client/api/location.servi
 
 export class LocationEventListComponent implements OnInit {
 
-  events: Observable<SamplingEvents>;
+  locationId: string;
 
-  studyName: string;
+  events: SamplingEvents;
+
+  _pageSize: number;
 
   constructor(private route: ActivatedRoute, private sampleService: SamplingEventService, private locationService: LocationService) { }
 
@@ -31,13 +33,27 @@ export class LocationEventListComponent implements OnInit {
 
     this.locationService.downloadGPSLocation(latitude, longitude).subscribe(
       (location) => {
-        console.log("Downloaded location via GPS");
-        if (location) {
+        //console.log("Downloaded location via GPS");
 
-          this.events = this.sampleService.downloadSamplingEventsByLocation(location.location_id);
+        if (location) {
+          this.locationId = location.location_id;
+
         }
 
       });
   }
 
+  pageNumber(pageNum: number) {
+    let start = pageNum * this._pageSize;
+   // console.log('Page number:' + start + "," + this._pageSize);
+    if (this.locationId) {
+      this.sampleService.downloadSamplingEventsByLocation(this.locationId, start, this._pageSize).subscribe(samples => {
+        this.events = samples;
+      });
+    }
+  }
+
+  pageSize(pageSize: number) {
+    this._pageSize = pageSize;
+  }
 }

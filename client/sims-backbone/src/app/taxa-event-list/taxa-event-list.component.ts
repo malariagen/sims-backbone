@@ -15,7 +15,9 @@ import { SamplingEventService } from '../typescript-angular-client/api/samplingE
 })
 export class TaxaEventListComponent implements OnInit {
 
-  events: Observable<SamplingEvents>;
+  events: SamplingEvents;
+
+  _pageSize: number;
 
   taxaId: string;
 
@@ -23,8 +25,17 @@ export class TaxaEventListComponent implements OnInit {
 
   ngOnInit() {
     this.taxaId = this.route.snapshot.params['taxaId'];
-
-    this.events = this.sampleService.downloadSamplingEventsByTaxa(this.taxaId);
   }
 
+  pageNumber(pageNum: number) {
+    let start = pageNum * this._pageSize;
+    //console.log('Page number:' + start + "," + this._pageSize);
+    this.sampleService.downloadSamplingEventsByTaxa(this.taxaId, start, this._pageSize).subscribe(samples => {
+      this.events = samples;
+    });
+  }
+
+  pageSize(pageSize: number) {
+    this._pageSize = pageSize;
+  }
 }

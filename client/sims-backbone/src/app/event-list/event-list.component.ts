@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy, ChangeDetectorRef, SimpleChanges } from '@angular/core';
 
 import { MatPaginator, MatSort, MatTableDataSource } from '@angular/material';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
@@ -15,6 +15,7 @@ import { SamplingEvent } from '../typescript-angular-client/model/samplingEvent'
 import { Taxonomy } from '../typescript-angular-client/model/taxonomy';
 
 import { Angular2Csv } from 'angular2-csv/Angular2-csv';
+import { AfterViewChecked, AfterViewInit } from '@angular/core/src/metadata/lifecycle_hooks';
 
 @Component({
   selector: 'app-event-list',
@@ -22,16 +23,22 @@ import { Angular2Csv } from 'angular2-csv/Angular2-csv';
   styleUrls: ['./event-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class EventListComponent implements OnInit {
+export class EventListComponent implements AfterViewInit {
 
   displayedColumns = ['study_id', 'oxford_id', 'partner_id', 'roma_id', 'sanger_lims_id', 'doc', 'partner_species', 'taxa', 'partner_location_name', 'location_curated_name', 'location'];
 
-  _events: Observable<SamplingEvents>;
+  _events: SamplingEvents;
   _studyName: string;
   _eventSetName: string;
   dataSource: EventDataSource | null;
   eventDatabase: EventDatabase;
   count: number;
+
+  _pageNumber: number;
+  _pageSize: number;
+
+  @Output() pageNumber = new EventEmitter<number>(true);
+  @Output() pageSize = new EventEmitter<number>(true);
 
   selectedEvents = new Set<string>();
 
@@ -39,7 +46,11 @@ export class EventListComponent implements OnInit {
 
   constructor(private changeDetector: ChangeDetectorRef, public dialog: MatDialog) { }
 
-  ngOnInit() {
+  ngAfterViewInit() {
+    this._pageNumber = 0;
+    this._pageSize = 1000;
+    this.pageSize.emit(this._pageSize);
+    this.pageNumber.emit(this._pageNumber);
   }
 
   @Input()
@@ -55,79 +66,100 @@ export class EventListComponent implements OnInit {
   }
 
   @Input()
-  set events(events: Observable<SamplingEvents>) {
+  set events(events: SamplingEvents) {
     if (!events) {
       return;
     }
-    this._events = events;
 
-    this.loadEvents();
+    if (this._pageNumber == 0) {
+      this._events = events;
+    } else {
+      this._events.sampling_events = this._events.sampling_events.concat(events.sampling_events);
+    }
+
+    if (((this._pageNumber + 1) * this._pageSize) < events.count) {
+      this._pageNumber++;
+      this.pageNumber.emit(this._pageNumber);
+    } else {
+      this.loadEvents();
+    }
+
+  }
+
+  defineColumnHeaders(sampling_events) {
+    this.displayedColumns = ['study_id'];
+    sampling_events.forEach(sample => {
+      sample.identifiers.forEach(ident => {
+        if (this.displayedColumns.indexOf(ident.identifier_type) < 0) {
+          this.displayedColumns.push(ident.identifier_type);
+        }
+      });
+    });
+    this.displayedColumns = this.displayedColumns.concat(['doc', 'partner_species', 'taxa', 'partner_location_name', 'location_curated_name', 'location']);
+    this.changeDetector.markForCheck();
+  }
+
+  mapSamplingEventToRow(sample) {
+    let event = {};
+    event['doc'] = sample.doc;
+    event['partner_species'] = sample.partner_species;
+    event['study_id'] = sample.study_id;
+    sample.identifiers.forEach(ident => {
+      if (ident.identifier_type in event) {
+        let ids: Array<String> = event[ident.identifier_type].split(';');
+        //Avoid duplicates from different sources
+        if (!ids.includes(ident.identifier_value)) {
+          event[ident.identifier_type] = [event[ident.identifier_type], ident.identifier_value].join(';');
+        }
+
+      } else {
+        event[ident.identifier_type] = ident.identifier_value;
+      }
+
+    });
+    if (sample.location) {
+      event['partner_location_name'] = '';
+      if (sample.location.identifiers) {
+        sample.location.identifiers.forEach(ident => {
+          let ident_value = ident.identifier_value;
+          if (this._studyName || event['study_id']) {
+            if ((this._studyName && (ident.study_name == this._studyName)) ||
+              event['study_id'] && (ident.study_name == event['study_id'])) {
+              event['partner_location_name'] = ident_value;
+            }
+          } else {
+            event['partner_location_name'] = event['partner_location_name'] + ident_value + '(' + ident.study_name + ');';
+          }
+        });
+      }
+      event['location_curated_name'] = sample.location.curated_name;
+      event['location'] = '<a href="location/' + sample.location.latitude + '/' + sample.location.longitude + '">' + sample.location.latitude + ', ' + sample.location.longitude + '</a>';
+    }
+    if (sample.partner_taxonomies) {
+      let taxas = [];
+      sample.partner_taxonomies.forEach((taxa: Taxonomy) => {
+        taxas.push(taxa.taxonomy_id);
+      })
+      event['taxa'] = taxas.join(';');
+    }
+    event['id'] = sample.samplingEvent_id;
+    return event;
   }
 
   loadEvents() {
     let eventDatabase = new EventDatabase();
-    this._events.subscribe(samples => {
-      //console.log(samples);
-      this.count = samples.count;
-      this.displayedColumns = ['study_id'];
-      samples.sampling_events.forEach(sample => {
-        sample.identifiers.forEach(ident => {
-          if (this.displayedColumns.indexOf(ident.identifier_type) < 0) {
-            //This doesn't work as the table doesn't reload the displayedColumns
-            this.displayedColumns.push(ident.identifier_type);
-          }
-        });
-      });
-      this.displayedColumns = this.displayedColumns.concat(['doc', 'partner_species', 'taxa', 'partner_location_name', 'location_curated_name', 'location']);
-      this.changeDetector.markForCheck();
+    let samples = this._events;
 
-      samples.sampling_events.forEach((sample: SamplingEvent) => {
-        let event = {};
-        event['doc'] = sample.doc;
-        event['partner_species'] = sample.partner_species;
-        event['study_id'] = sample.study_id;
-        sample.identifiers.forEach(ident => {
-          if (ident.identifier_type in event) {
-            let ids: Array<String> = event[ident.identifier_type].split(';');
-            //Avoid duplicates from different sources
-            if (!ids.includes(ident.identifier_value)) {
-              event[ident.identifier_type] = [event[ident.identifier_type], ident.identifier_value].join(';');
-            }
+    //console.log(samples);
+    this.count = samples.count;
 
-          } else {
-            event[ident.identifier_type] = ident.identifier_value;
-          }
+    this.defineColumnHeaders(samples.sampling_events);
 
-        });
-        if (sample.location) {
-          event['partner_location_name'] = '';
-          if (sample.location.identifiers) {
-            sample.location.identifiers.forEach(ident => {
-              let ident_value = ident.identifier_value;
-              if (this._studyName || event['study_id']) {
-                if ((this._studyName && (ident.study_name == this._studyName)) ||
-                  event['study_id'] && (ident.study_name == event['study_id'])) {
-                  event['partner_location_name'] = ident_value;
-                }
-              } else {
-                event['partner_location_name'] = event['partner_location_name'] + ident_value + '(' + ident.study_name + ');';
-              }
-            });
-          }
-          event['location_curated_name'] = sample.location.curated_name;
-          event['location'] = '<a href="location/' + sample.location.latitude + '/' + sample.location.longitude + '">' + sample.location.latitude + ', ' + sample.location.longitude + '</a>';
-        }
-        if (sample.partner_taxonomies) {
-          let taxas = [];
-          sample.partner_taxonomies.forEach((taxa: Taxonomy) => {
-            taxas.push(taxa.taxonomy_id);
-          })
-          event['taxa'] = taxas.join(';');
-        }
-        event['id'] = sample.samplingEvent_id;
-        eventDatabase.addEvent(event);
-      });
+    samples.sampling_events.forEach((sample: SamplingEvent) => {
+      let event = this.mapSamplingEventToRow(sample);
+      eventDatabase.addEvent(event);
     });
+
     this.dataSource = new EventDataSource(eventDatabase);
     this.eventDatabase = eventDatabase;
   }

@@ -15,17 +15,27 @@ import { SamplingEventService } from '../typescript-angular-client/api/samplingE
 })
 export class EventSetEventListComponent implements OnInit {
 
-  events: Observable<SamplingEvents>;
+  events: SamplingEvents;
 
+  _pageSize: number;
   eventSetId: string;
 
   constructor(private route: ActivatedRoute, private sampleService: SamplingEventService) { }
 
   ngOnInit() {
     this.eventSetId = this.route.snapshot.params['eventSetId'];
-
-    this.events = this.sampleService.downloadSamplingEventsByEventSet(this.eventSetId);
+    
   }
 
+  pageNumber(pageNum: number) {
+    let start = pageNum * this._pageSize;
+    //console.log('Page number:' + start + "," + this._pageSize);
+    this.sampleService.downloadSamplingEventsByEventSet(this.eventSetId, start, this._pageSize).subscribe(samples => {
+      this.events = samples;
+    });
+  }
 
+  pageSize(pageSize: number) {
+    this._pageSize = pageSize;
+  }
 }
