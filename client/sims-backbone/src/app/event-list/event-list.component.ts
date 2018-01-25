@@ -33,6 +33,7 @@ export class EventListComponent implements AfterViewInit {
   dataSource: EventDataSource | null;
   eventDatabase: EventDatabase;
   count: number;
+  progress: number;
 
   _pageNumber: number;
   _pageSize: number;
@@ -76,8 +77,11 @@ export class EventListComponent implements AfterViewInit {
     } else {
       this._events.sampling_events = this._events.sampling_events.concat(events.sampling_events);
     }
+    let numLoaded = Math.min((this._pageNumber + 1) * this._pageSize, events.count);
 
-    if (((this._pageNumber + 1) * this._pageSize) < events.count) {
+    this.progress = (numLoaded / events.count) * 100;
+    
+    if (numLoaded < events.count) {
       this._pageNumber++;
       this.pageNumber.emit(this._pageNumber);
     } else {

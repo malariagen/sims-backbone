@@ -4,7 +4,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { HttpClientModule } from '@angular/common/http';
 
-import { MatFormFieldModule } from '@angular/material';
+import { MatFormFieldModule, MatProgressBarModule } from '@angular/material';
 import { MatInputModule } from '@angular/material';
 import { MatTableModule } from '@angular/material';
 import { MatToolbarModule } from '@angular/material';
@@ -96,6 +96,7 @@ export const EVENT_SET_PATH = new InjectionToken<string>('basePath');
     MatDialogModule,
     MatIconModule,
     MatMenuModule,
+    MatProgressBarModule,
     FlexLayoutModule,
     HttpClientModule,
     AppRoutingModule,
