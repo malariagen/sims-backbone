@@ -127,15 +127,16 @@ export class LocationEditComponent implements OnInit {
         );
         const formIdents = <FormArray>this.locationForm.controls['identifiers'];
 
-        this.location.identifiers.forEach(ident => {
-          let identControl = new FormGroup({
-            identifier_type: new FormControl(ident.identifier_type, Validators.required),
-            identifier_value: new FormControl(ident.identifier_value, Validators.required),
-            study_name: new FormControl(ident.study_name, Validators.required),
+        if (this.location.identifiers) {
+          this.location.identifiers.forEach(ident => {
+            let identControl = new FormGroup({
+              identifier_type: new FormControl(ident.identifier_type, Validators.required),
+              identifier_value: new FormControl(ident.identifier_value, Validators.required),
+              study_name: new FormControl(ident.study_name, Validators.required),
+            });
+            formIdents.push(identControl);
           });
-          formIdents.push(identControl);
-        });
-
+        }
         //console.log(this.locationForm);
         //console.log(this.locations);
 
@@ -220,7 +221,7 @@ export class LocationEditComponent implements OnInit {
   }
 
   private setGooglePolygon(geometry): void {
-  
+
     if (!geometry.bounds) {
       return;
     }
