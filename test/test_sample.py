@@ -306,12 +306,17 @@ class TestSample(TestBase):
             study_detail.partner_species[0].taxa = [ swagger_client.Taxonomy(taxonomy_id=5833) ]
             study_api.update_study(study_code, study_detail)
 
-
-
             fetched = api_instance.download_sampling_events_by_taxa(5833)
 
             self.assertEqual(fetched.count,1, "Taxa not found")
 
+            self.assertIsNotNone(fetched.sampling_events[0].partner_taxonomies,
+                                 'Taxonomies missing')
+            self.assertEqual(int(fetched.sampling_events[0].partner_taxonomies[0].taxonomy_id), 5833,
+                              'Wrong Taxonomy')
+            #As the taxonomy wasn't set when created was created it won't be in the response
+            #separate test for this
+            fetched.sampling_events[0].partner_taxonomies = None
             self.assertEqual(created, fetched.sampling_events[0], "create response != download response")
             api_instance.delete_sampling_event(created.sampling_event_id)
 
@@ -362,6 +367,37 @@ class TestSample(TestBase):
 
             for sampling_event in fetch_all.sampling_events:
                 api_instance.delete_sampling_event(sampling_event.sampling_event_id)
+
+        except ApiException as error:
+            self.fail("test_partner_lookup: Exception when calling SamplingEventApi->create_sampling_event: %s\n" % error)
+
+
+    """
+    """
+    def test_taxa_on_create(self):
+
+        api_instance = swagger_client.SamplingEventApi(self._api_client)
+        study_api = swagger_client.StudyApi(self._api_client)
+
+        try:
+            study_code = '1015-MD-UP'
+
+            samp = swagger_client.SamplingEvent(None, study_code, date(2017, 10, 14),
+                                                partner_species='PF')
+            created = api_instance.create_sampling_event(samp)
+            study_detail = study_api.download_study(study_code)
+            study_detail.partner_species[0].taxa = [ swagger_client.Taxonomy(taxonomy_id=5833) ]
+            study_api.update_study(study_code, study_detail)
+
+
+            created2 = api_instance.create_sampling_event(samp)
+
+            self.assertIsNotNone(created2.partner_taxonomies,
+                                 'Taxonomies missing')
+            self.assertEqual(int(created2.partner_taxonomies[0].taxonomy_id), 5833,
+                              'Wrong Taxonomy')
+            api_instance.delete_sampling_event(created.sampling_event_id)
+            api_instance.delete_sampling_event(created2.sampling_event_id)
 
         except ApiException as error:
             self.fail("test_partner_lookup: Exception when calling SamplingEventApi->create_sampling_event: %s\n" % error)
