@@ -42,9 +42,10 @@ class SamplingEventFetch():
 
         stmt = '''select DISTINCT taxonomy_id FROM taxonomy_identifiers ti
                     JOIN partner_species_identifiers psi ON ti.partner_species_id=psi.id
-                    WHERE partner_species = %s'''
+                    JOIN studies s ON psi.study_id=s.id
+                    WHERE partner_species = %s AND s.study_name = %s'''
 
-        cursor.execute(stmt, (partner_species,))
+        cursor.execute(stmt, (partner_species, study_id))
 
         partner_taxonomies = []
         for (taxa_id,) in cursor:

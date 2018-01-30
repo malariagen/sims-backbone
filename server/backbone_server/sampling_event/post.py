@@ -1,6 +1,7 @@
 from backbone_server.errors.duplicate_key_exception import DuplicateKeyException
 
 from backbone_server.sampling_event.edit import SamplingEventEdit
+from backbone_server.sampling_event.fetch import SamplingEventFetch
 
 from swagger_server.models.sampling_event import SamplingEvent
 
@@ -51,7 +52,7 @@ class SamplingEventPost():
                 except DuplicateKeyException as err:
                     raise err
 
+                sample = SamplingEventFetch.fetch(cursor, uuid_val)
 
-        sample.sampling_event_id = str(uuid_val)
         return sample
 
