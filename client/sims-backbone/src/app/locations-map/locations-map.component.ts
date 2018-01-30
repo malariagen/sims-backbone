@@ -165,4 +165,22 @@ export class LocationsMapComponent {
     this.markers.get(country).push(marker);
 
   }
+
+  disableLayers() {
+    
+    Object.entries(this.leaflet_layersControl['overlays']).forEach(([key, value]) => {
+      if (this.map.hasLayer(value)) {
+        this.map.removeLayer(value);
+      }
+    });
+  }
+
+  enableLayers() {
+    Object.entries(this.leaflet_layersControl['overlays']).forEach(([key, value]) => {
+      if (!this.map.hasLayer(value)) {
+        this.map.addLayer(value);
+      }
+    });
+  }
+
 }
