@@ -793,6 +793,98 @@ resources:
         - "Fn::GetAtt": ServerlessStorageSecurityGroup.GroupId
         DBSubnetGroupName:
           Ref: ServerlessRDSSubnetGroup
+    AuthUnderscorefuncLogGroup:
+      Type: AWS::Logs::LogGroup
+      Properties:
+        RetentionInDays: "30"
+    CreateUnderscorelocationLogGroup:
+      Type: AWS::Logs::LogGroup
+      Properties:
+        RetentionInDays: "30"
+    DownloadUnderscorelocationLogGroup:
+      Type: AWS::Logs::LogGroup
+      Properties:
+        RetentionInDays: "30"
+    UpdateUnderscorelocationLogGroup:
+      Type: AWS::Logs::LogGroup
+      Properties:
+        RetentionInDays: "30"
+    DeleteUnderscorelocationLogGroup:
+      Type: AWS::Logs::LogGroup
+      Properties:
+        RetentionInDays: "30"
+    DownloadUnderscoregpsUnderscorelocationLogGroup:
+      Type: AWS::Logs::LogGroup
+      Properties:
+        RetentionInDays: "30"
+    DownloadUnderscorepartnerUnderscorelocationLogGroup:
+      Type: AWS::Logs::LogGroup
+      Properties:
+        RetentionInDays: "30"
+    DownloadUnderscorelocationsLogGroup:
+      Type: AWS::Logs::LogGroup
+      Properties:
+        RetentionInDays: "30"
+    CreateUnderscoresamplingUnderscoreeventLogGroup:
+      Type: AWS::Logs::LogGroup
+      Properties:
+        RetentionInDays: "30"
+    DownloadUnderscoresamplingUnderscoreeventLogGroup:
+      Type: AWS::Logs::LogGroup
+      Properties:
+        RetentionInDays: "30"
+    UpdateUnderscoresamplingUnderscoreeventLogGroup:
+      Type: AWS::Logs::LogGroup
+      Properties:
+        RetentionInDays: "30"
+    DeleteUnderscoresamplingUnderscoreeventLogGroup:
+      Type: AWS::Logs::LogGroup
+      Properties:
+        RetentionInDays: "30"
+    DownloadUnderscoresamplingUnderscoreeventUnderscorebyUnderscoreidentifierLogGroup:
+      Type: AWS::Logs::LogGroup
+      Properties:
+        RetentionInDays: "30"
+    DownloadUnderscoresamplingUnderscoreeventsUnderscorebyUnderscorelocationLogGroup:
+      Type: AWS::Logs::LogGroup
+      Properties:
+        RetentionInDays: "30"
+    DownloadUnderscoresamplingUnderscoreeventsUnderscorebyUnderscorestudyLogGroup:
+      Type: AWS::Logs::LogGroup
+      Properties:
+        RetentionInDays: "30"
+    DownloadUnderscoresamplingUnderscoreeventsUnderscorebyUnderscoretaxaLogGroup:
+      Type: AWS::Logs::LogGroup
+      Properties:
+        RetentionInDays: "30"
+    DownloadUnderscoresamplingUnderscoreeventsUnderscorebyUnderscoreeventUnderscoresetLogGroup:
+      Type: AWS::Logs::LogGroup
+      Properties:
+        RetentionInDays: "30"
+    GetUnderscorecountryUnderscoremetadataLogGroup:
+      Type: AWS::Logs::LogGroup
+      Properties:
+        RetentionInDays: "30"
+    GetUnderscoretaxonomyUnderscoremetadataLogGroup:
+      Type: AWS::Logs::LogGroup
+      Properties:
+        RetentionInDays: "30"
+    CreateUnderscoretaxonomyLogGroup:
+      Type: AWS::Logs::LogGroup
+      Properties:
+        RetentionInDays: "30"
+    DownloadUnderscorestudiesLogGroup:
+      Type: AWS::Logs::LogGroup
+      Properties:
+        RetentionInDays: "30"
+    DownloadUnderscorestudyLogGroup:
+      Type: AWS::Logs::LogGroup
+      Properties:
+        RetentionInDays: "30"
+    UpdateUnderscorestudyLogGroup:
+      Type: AWS::Logs::LogGroup
+      Properties:
+        RetentionInDays: "30"
   Outputs:
       ServerlessVPCOutput:
         Value:
@@ -839,4 +931,3 @@ resources:
           Fn::GetAtt: [ ServerlessRDSCluster, Endpoint.Address ]
         Export:
           Name: ${self:service}:DbHost-${self:provider.stage}
-
