@@ -90,6 +90,7 @@ class SetCountry(upload_ssr.Upload_SSR):
         configuration.access_token = self._auth_token
 
         api_instance = swagger_client.SamplingEventApi(swagger_client.ApiClient(configuration))
+        location_api_instance = swagger_client.LocationApi(swagger_client.ApiClient(configuration))
 
         if country_value not in self._country_cache:
             try:
@@ -98,6 +99,12 @@ class SetCountry(upload_ssr.Upload_SSR):
                 self._country_cache[country_value] = metadata
             except ApiException as e:
                 print("Exception when looking up country {} {}".format(country_value, found))
+                return found
+
+        ident = swagger_client.Identifier('partner_name',
+                                          identifier_value=self._country_cache[country_value].english,
+                                          identifier_source='set_country',
+                                          study_name=found.study_id)
 
         if found.location:
             try:
@@ -113,7 +120,6 @@ class SetCountry(upload_ssr.Upload_SSR):
                         location = cached_country['location']
                         found.location = self.update_country(self._country_cache[country_value].alpha3, location)
                     else:
-                        location_api_instance = swagger_client.LocationApi(swagger_client.ApiClient(configuration))
 
                         location = None
                         try:
@@ -126,6 +132,9 @@ class SetCountry(upload_ssr.Upload_SSR):
                                                           lng,
                                                           accuracy='country',
                                                           country=self._country_cache[country_value].alpha3)
+                            loc.identifiers = [
+                                ident
+                            ]
                             location = location_api_instance.create_location(loc)
                         cached_country['location'] = location
                         self._country_location_cache[country_value]['location'] = location
@@ -137,6 +146,34 @@ class SetCountry(upload_ssr.Upload_SSR):
                     print("Country update failed for {}".format(found))
             else:
                 print("Unknown country {}".format(country_value))
+
+        study_ident = False
+        if found.location.identifiers:
+            for identifier in found.location.identifiers:
+                if identifier.study_name[:4] == found.study_id[:4]:
+                    study_ident = True
+        else:
+            found.location.identifiers = []
+
+        if not study_ident:
+            try:
+                #Check if there's an existing location for that study/country name
+                existing = location_api_instance.download_partner_location(ident.identifier_value)
+                for loc in existing.locations:
+                    for identifier in loc.identifiers:
+                        if identifier.study_name[:4] == found.study_id[:4]:
+                            found.location_id = loc.location_id
+                            found.location = loc
+                            found = api_instance.update_sampling_event(found.sampling_event_id, found)
+                            study_ident = True
+            except Exception:
+                #No location with the country name
+                pass
+
+        if not study_ident:
+            found.location.identifiers.append(ident)
+            #print("adding study ident for {}".format(found))
+            location_api_instance.update_location(found.location_id, found.location)
 
         return found
 
