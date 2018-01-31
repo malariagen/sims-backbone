@@ -72,6 +72,8 @@ export class EventListComponent implements AfterViewInit {
       return;
     }
 
+    this.count = events.count;
+
     if (this._pageNumber == 0) {
       this._events = events;
     } else {
