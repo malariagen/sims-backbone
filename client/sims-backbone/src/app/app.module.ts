@@ -59,8 +59,6 @@ export function getConfiguration(authService: AuthService) {
   return authService.getConfiguration();
 }
 
-export const EVENT_SET_PATH = new InjectionToken<string>('basePath');
-
 @NgModule({
   declarations: [
     AppComponent,
@@ -114,21 +112,7 @@ export const EVENT_SET_PATH = new InjectionToken<string>('basePath');
     useFactory: getConfiguration,
     deps: [AuthService],
     multi: false
-  },
-    {
-      provide: EVENT_SET_PATH,
-      useValue: environment.eventSetApiLocation
-
-    },
-    {
-      provide: EventSetService,
-      useFactory: (httpClient, basePath, config) => new EventSetService(httpClient, basePath, config),
-      deps: [
-        HttpClient,
-        EVENT_SET_PATH,
-        Configuration
-      ]
-    }
+  }
   ],
   entryComponents: [
     ErrorDialogComponent,

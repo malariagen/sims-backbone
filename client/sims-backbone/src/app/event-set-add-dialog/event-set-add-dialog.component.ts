@@ -11,6 +11,7 @@ import { EventSetService } from '../typescript-angular-client/api/eventSet.servi
 
 @Component({
   selector: 'app-event-set-add-dialog',
+  providers: [EventSetService],
   templateUrl: './event-set-add-dialog.component.html',
   styleUrls: ['./event-set-add-dialog.component.scss']
 })

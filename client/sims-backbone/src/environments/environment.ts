@@ -13,6 +13,5 @@ export const environment = {
   tokenEndpoint: 'https://sso-dev.cggh.org/sso/oauth2.0/accessToken',
   showDebugInformation: true,
   dummyClientSecret: '1912308409123890',
-  apiLocation: 'http://localhost/v1',
-  eventSetApiLocation: 'http://localhost/v1'
+  apiLocation: 'http://localhost/v1'
 };

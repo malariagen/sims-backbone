@@ -9,7 +9,7 @@ import { EventSetService } from '../typescript-angular-client/api/eventSet.servi
 
 @Component({
   selector: 'app-event-set-list',
-  providers: [],
+  providers: [EventSetService],
   templateUrl: './event-set-list.component.html',
   styleUrls: ['./event-set-list.component.scss']
 })

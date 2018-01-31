@@ -15,6 +15,7 @@ import { EventSetService } from '../typescript-angular-client/api/eventSet.servi
 
 @Component({
   selector: 'app-event-set-edit',
+  providers: [EventSetService],
   templateUrl: './event-set-edit.component.html',
   styleUrls: ['./event-set-edit.component.scss']
 })
