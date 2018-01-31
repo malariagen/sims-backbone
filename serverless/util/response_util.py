@@ -15,13 +15,19 @@ def gzip_b64encode(data):
 
 def create_response(event, retcode, value):
 
+    response_dict = {}
+    if value:
+        response_dict = value.to_dict()
+
     gzip = False
     if 'Accept-Encoding' in event['headers']:
         if 'gzip' in event['headers']['Accept-Encoding']:
-            gzip = True
+            if 'Accept' in event['headers']:
+                #Otherwise base64 decoding doesn't happen
+                #See gateway settings in serverless.yml
+                if 'application/json' in event['headers']['Accept']:
+                    gzip = True
 
-    #Haven't worked out the necessary configuration magic yet
-    gzip = False
     if gzip:
         return {
             "statusCode": retcode,
@@ -31,7 +37,7 @@ def create_response(event, retcode, value):
                 'Content-Type': 'application/json',
                 'Content-Encoding': 'gzip'
             },
-            "body": gzip_b64encode(value.to_dict())
+            "body": gzip_b64encode(response_dict)
         }
     else:
         return {
@@ -40,6 +46,6 @@ def create_response(event, retcode, value):
                 "Access-Control-Allow-Origin" : "*",
                 'Content-Type': 'application/json'
             },
-            "body": ujson.dumps(value.to_dict(), ensure_ascii=False)
+            "body": ujson.dumps(response_dict, ensure_ascii=False)
         }
 
