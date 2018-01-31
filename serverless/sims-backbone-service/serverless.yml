@@ -102,12 +102,12 @@ package:
         - studies/handler.py
         - ../../server/bb_server/**
         - ../../server/backbone_server/**/**
-        - ../auth/**
+        - auth/**
         - ../util/**
         - ../client_secrets.${self:provider.stage}.json
 
 functions:
-  auth_func:
+  authFunc:
     handler: auth/handler.auth
     vpc:
         securityGroupIds:
@@ -126,7 +126,7 @@ functions:
           cors: true
           timeout: 20
           authorizer:
-            name: auth_func
+            name: authFunc
             type: request
             identitySource: method.request.header.Authorization
             identityValidationExpression: .*
@@ -140,7 +140,7 @@ functions:
           cors: true
           timeout: 20
           authorizer:
-            name: auth_func
+            name: authFunc
             type: request
             identitySource: method.request.header.Authorization
             identityValidationExpression: .*
@@ -157,7 +157,7 @@ functions:
           cors: true
           timeout: 20
           authorizer:
-            name: auth_func
+            name: authFunc
             type: request
             identitySource: method.request.header.Authorization
             identityValidationExpression: .*
@@ -174,7 +174,7 @@ functions:
           cors: true
           timeout: 20
           authorizer:
-            name: auth_func
+            name: authFunc
             type: request
             identitySource: method.request.header.Authorization
             identityValidationExpression: .*
@@ -192,7 +192,7 @@ functions:
           cors: true
           timeout: 20
           authorizer:
-            name: auth_func
+            name: authFunc
             type: request
             identitySource: method.request.header.Authorization
             identityValidationExpression: .*
@@ -211,7 +211,7 @@ functions:
           cors: true
           timeout: 20
           authorizer:
-            name: auth_func
+            name: authFunc
             type: request
             identitySource: method.request.header.Authorization
             identityValidationExpression: .*
@@ -229,7 +229,7 @@ functions:
           cors: true
           timeout: 20
           authorizer:
-            name: auth_func
+            name: authFunc
             type: request
             identitySource: method.request.header.Authorization
             identityValidationExpression: .*
@@ -250,7 +250,7 @@ functions:
           cors: true
           timeout: 20
           authorizer:
-            name: auth_func
+            name: authFunc
             type: request
             identitySource: method.request.header.Authorization
             identityValidationExpression: .*
@@ -264,7 +264,7 @@ functions:
           cors: true
           timeout: 20
           authorizer:
-            name: auth_func
+            name: authFunc
             type: request
             identitySource: method.request.header.Authorization
             identityValidationExpression: .*
@@ -281,7 +281,7 @@ functions:
           cors: true
           timeout: 20
           authorizer:
-            name: auth_func
+            name: authFunc
             type: request
             identitySource: method.request.header.Authorization
             identityValidationExpression: .*
@@ -298,7 +298,7 @@ functions:
           cors: true
           timeout: 20
           authorizer:
-            name: auth_func
+            name: authFunc
             type: request
             identitySource: method.request.header.Authorization
             identityValidationExpression: .*
@@ -316,7 +316,7 @@ functions:
           cors: true
           timeout: 20
           authorizer:
-            name: auth_func
+            name: authFunc
             type: request
             identitySource: method.request.header.Authorization
             identityValidationExpression: .*
@@ -335,7 +335,7 @@ functions:
           cors: true
           timeout: 20
           authorizer:
-            name: auth_func
+            name: authFunc
             type: request
             identitySource: method.request.header.Authorization
             identityValidationExpression: .*
@@ -353,7 +353,7 @@ functions:
           cors: true
           timeout: 300
           authorizer:
-            name: auth_func
+            name: authFunc
             type: request
             identitySource: method.request.header.Authorization
             identityValidationExpression: .*
@@ -371,7 +371,7 @@ functions:
           cors: true
           timeout: 300
           authorizer:
-            name: auth_func
+            name: authFunc
             type: request
             identitySource: method.request.header.Authorization
             identityValidationExpression: .*
@@ -389,7 +389,7 @@ functions:
           cors: true
           timeout: 300
           authorizer:
-            name: auth_func
+            name: authFunc
             type: request
             identitySource: method.request.header.Authorization
             identityValidationExpression: .*
@@ -407,7 +407,7 @@ functions:
           cors: true
           timeout: 20
           authorizer:
-            name: auth_func
+            name: authFunc
             type: request
             identitySource: method.request.header.Authorization
             identityValidationExpression: .*
@@ -425,7 +425,7 @@ functions:
           cors: true
           timeout: 20
           authorizer:
-            name: auth_func
+            name: authFunc
             type: request
             identitySource: method.request.header.Authorization
             identityValidationExpression: .*
@@ -438,7 +438,7 @@ functions:
           cors: true
           timeout: 20
           authorizer:
-            name: auth_func
+            name: authFunc
             type: request
             identitySource: method.request.header.Authorization
             identityValidationExpression: .*
@@ -452,7 +452,7 @@ functions:
           cors: true
           timeout: 20
           authorizer:
-            name: auth_func
+            name: authFunc
             type: request
             identitySource: method.request.header.Authorization
             identityValidationExpression: .*
@@ -471,7 +471,7 @@ functions:
           cors: true
           timeout: 20
           authorizer:
-            name: auth_func
+            name: authFunc
             type: request
             identitySource: method.request.header.Authorization
             identityValidationExpression: .*
@@ -488,7 +488,7 @@ functions:
           cors: true
           timeout: 20
           authorizer:
-            name: auth_func
+            name: authFunc
             type: request
             identitySource: method.request.header.Authorization
             identityValidationExpression: .*
@@ -499,6 +499,12 @@ functions:
 
 resources:
   Resources:
+    ApiGatewayRestApi:
+      Type: "AWS::ApiGateway::RestApi"
+      Properties:
+        Name: ${self:provider.stage}-${self:service}
+        BinaryMediaTypes:
+          - "application~1json"
     GatewayResponseDefault4XX:
       Type: 'AWS::ApiGateway::GatewayResponse'
       Properties:
@@ -793,7 +799,7 @@ resources:
         - "Fn::GetAtt": ServerlessStorageSecurityGroup.GroupId
         DBSubnetGroupName:
           Ref: ServerlessRDSSubnetGroup
-    AuthUnderscorefuncLogGroup:
+    AuthFuncLogGroup:
       Type: AWS::Logs::LogGroup
       Properties:
         RetentionInDays: "30"
@@ -906,21 +912,6 @@ resources:
           Ref: PublicSubnetC
         Export:
           Name: ${self:service}:PublicSubnetC-${self:provider.stage}
-      ServerlessSubnetAOutput:
-        Value:
-          Ref: ServerlessSubnetA
-        Export:
-          Name: ${self:service}:ServerlessSubnetA-${self:provider.stage}
-      ServerlessSubnetBOutput:
-        Value:
-          Ref: ServerlessSubnetB
-        Export:
-          Name: ${self:service}:ServerlessSubnetB-${self:provider.stage}
-      ServerlessSubnetCOutput:
-        Value:
-          Ref: ServerlessSubnetC
-        Export:
-          Name: ${self:service}:ServerlessSubnetC-${self:provider.stage}
       ServerlessSecurityGroupOutput:
         Value:
           Ref: ServerlessSecurityGroup
@@ -931,3 +922,19 @@ resources:
           Fn::GetAtt: [ ServerlessRDSCluster, Endpoint.Address ]
         Export:
           Name: ${self:service}:DbHost-${self:provider.stage}
+      ApiGatewayRestApi:
+        Value:
+          Ref: 'ApiGatewayRestApi'
+        Export:
+          Name: ${self:service}:ApiGatewayRestApi-${self:provider.stage}
+      ApiGatewayRestApiRootResource:
+        Value:
+          Ref: "ApiGatewayResourceSimsDashbackboneDashserviceV1"
+        Export:
+          Name: ${self:service}:ApiGatewayRestApiRootResource-${self:provider.stage}
+      AuthFunc:
+        Value:
+          Fn::GetAtt: [ "AuthFuncLambdaFunction", "Arn" ]
+        Export:
+          Name: ${self:service}:AuthFunc-${self:provider.stage}
+

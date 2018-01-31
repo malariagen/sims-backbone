@@ -44,6 +44,9 @@ provider:
       - 'Fn::ImportValue': sims-backbone-service:PublicSubnetA-${self:provider.stage}
       - 'Fn::ImportValue': sims-backbone-service:PublicSubnetB-${self:provider.stage}
       - 'Fn::ImportValue': sims-backbone-service:PublicSubnetC-${self:provider.stage}
+  apiGateway:
+    restApiId: ${cf:sims-backbone-service-${self:provider.stage}.ApiGatewayRestApi}
+    restApiRootResourceId: ${cf:sims-backbone-service-${self:provider.stage}.ApiGatewayRestApiRootResource}
 
 plugins:
       - serverless-python-requirements
@@ -70,30 +73,21 @@ package:
         - studies/handler.py
         - ../../server/bb_server/**
         - ../../server/backbone_server/**/**
-        - ../auth/**
         - ../client_secrets.${self:provider.stage}.json
 
 functions:
-  auth_func:
-    handler: auth/handler.auth
-    vpc:
-        securityGroupIds:
-          - ${cf:sims-backbone-service-${self:provider.stage}.ServerlessSecurityGroupOutput}
-        subnetIds:
-          - 'Fn::ImportValue': sims-backbone-service:ServerlessSubnetA-${self:provider.stage}
-          - 'Fn::ImportValue': sims-backbone-service:ServerlessSubnetB-${self:provider.stage}
-          - 'Fn::ImportValue': sims-backbone-service:ServerlessSubnetC-${self:provider.stage}
 
   create_event_set:
     handler: event_set/handler.create_event_set
     events:
       - http:
-          path: sims-backbone-service/v1/eventSet/{event_set_id}
+          path: eventSet/{event_set_id}
           method: post
           cors: true
           timeout: 20
           authorizer:
-            name: auth_func
+            name: esAuthFunc
+            arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
             type: request
             identitySource: method.request.header.Authorization
             identityValidationExpression: .*
@@ -105,12 +99,13 @@ functions:
     handler: event_set/handler.download_event_set
     events:
       - http:
-          path: sims-backbone-service/v1/eventSet/{event_set_id}
+          path: eventSet/{event_set_id}
           method: get
           cors: true
           timeout: 20
           authorizer:
-            name: auth_func
+            name: esAuthFunc
+            arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
             type: request
             identitySource: method.request.header.Authorization
             identityValidationExpression: .*
@@ -122,12 +117,13 @@ functions:
     handler: event_set/handler.update_event_set
     events:
       - http:
-          path: sims-backbone-service/v1/eventSet/{event_set_id}
+          path: eventSet/{event_set_id}
           method: put
           cors: true
           timeout: 20
           authorizer:
-            name: auth_func
+            name: esAuthFunc
+            arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
             type: request
             identitySource: method.request.header.Authorization
             identityValidationExpression: .*
@@ -139,12 +135,13 @@ functions:
     handler: event_set/handler.delete_event_set
     events:
       - http:
-          path: sims-backbone-service/v1/eventSet/{event_set_id}
+          path: eventSet/{event_set_id}
           method: delete
           cors: true
           timeout: 20
           authorizer:
-            name: auth_func
+            name: esAuthFunc
+            arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
             type: request
             identitySource: method.request.header.Authorization
             identityValidationExpression: .*
@@ -157,12 +154,13 @@ functions:
     handler: event_set/handler.create_event_set_item
     events:
       - http:
-          path: sims-backbone-service/v1/eventSet/{event_set_id}/{sampling_event_id}
+          path: eventSet/{event_set_id}/{sampling_event_id}
           method: post
           cors: true
           timeout: 20
           authorizer:
-            name: auth_func
+            name: esAuthFunc
+            arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
             type: request
             identitySource: method.request.header.Authorization
             identityValidationExpression: .*
@@ -175,12 +173,13 @@ functions:
     handler: event_set/handler.delete_event_set_item
     events:
       - http:
-          path: sims-backbone-service/v1/eventSet/{event_set_id}/{sampling_event_id}
+          path: eventSet/{event_set_id}/{sampling_event_id}
           method: delete
           cors: true
           timeout: 20
           authorizer:
-            name: auth_func
+            name: esAuthFunc
+            arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
             type: request
             identitySource: method.request.header.Authorization
             identityValidationExpression: .*
@@ -194,12 +193,13 @@ functions:
     handler: event_set/handler.create_event_set_note
     events:
       - http:
-          path: sims-backbone-service/v1/eventSet/{event_set_id}/notes/{note_id}
+          path: eventSet/{event_set_id}/notes/{note_id}
           method: post
           cors: true
           timeout: 20
           authorizer:
-            name: auth_func
+            name: esAuthFunc
+            arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
             type: request
             identitySource: method.request.header.Authorization
             identityValidationExpression: .*
@@ -212,12 +212,13 @@ functions:
     handler: event_set/handler.update_event_set_note
     events:
       - http:
-          path: sims-backbone-service/v1/eventSet/{event_set_id}/notes/{note_id}
+          path: eventSet/{event_set_id}/notes/{note_id}
           method: put
           cors: true
           timeout: 20
           authorizer:
-            name: auth_func
+            name: esAuthFunc
+            arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
             type: request
             identitySource: method.request.header.Authorization
             identityValidationExpression: .*
@@ -230,12 +231,13 @@ functions:
     handler: event_set/handler.delete_event_set_note
     events:
       - http:
-          path: sims-backbone-service/v1/eventSet/{event_set_id}/notes/{note_id}
+          path: eventSet/{event_set_id}/notes/{note_id}
           method: delete
           cors: true
           timeout: 20
           authorizer:
-            name: auth_func
+            name: esAuthFunc
+            arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
             type: request
             identitySource: method.request.header.Authorization
             identityValidationExpression: .*
@@ -249,32 +251,19 @@ functions:
     handler: event_set/handler.download_event_sets
     events:
       - http:
-          path: sims-backbone-service/v1/eventSets
+          path: eventSets
           method: get
           cors: true
           timeout: 20
           authorizer:
-            name: auth_func
+            name: esAuthFunc
+            arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
             type: request
             identitySource: method.request.header.Authorization
             identityValidationExpression: .*
 
 resources:
   Resources:
-    GatewayResponseDefault4XX:
-      Type: 'AWS::ApiGateway::GatewayResponse'
-      Properties:
-        ResponseParameters:
-          gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
-          gatewayresponse.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
-          gatewayresponse.header.Access-Control-Allow-Methods: "'GET,OPTIONS'"
-        ResponseType: DEFAULT_4XX
-        RestApiId:
-          Ref: 'ApiGatewayRestApi'
-    AuthUnderscorefuncLogGroup:
-      Type: AWS::Logs::LogGroup
-      Properties:
-        RetentionInDays: "30"
     CreateUnderscoreeventUnderscoresetLogGroup:
       Type: AWS::Logs::LogGroup
       Properties:
