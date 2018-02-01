@@ -20,13 +20,14 @@ def create_response(event, retcode, value):
         response_dict = value.to_dict()
 
     gzip = False
-    if 'Accept-Encoding' in event['headers']:
-        if 'gzip' in event['headers']['Accept-Encoding']:
-            if 'Accept' in event['headers']:
-                #Otherwise base64 decoding doesn't happen
-                #See gateway settings in serverless.yml
-                if 'application/json' in event['headers']['Accept']:
-                    gzip = True
+    if 'headers' in event and event['headers'] is not None:
+        if 'Accept-Encoding' in event['headers']:
+            if 'gzip' in event['headers']['Accept-Encoding']:
+                if 'Accept' in event['headers']:
+                    #Otherwise base64 decoding doesn't happen
+                    #See gateway settings in serverless.yml
+                    if 'application/json' in event['headers']['Accept']:
+                        gzip = True
 
     if gzip:
         return {
