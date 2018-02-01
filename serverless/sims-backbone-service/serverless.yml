@@ -37,6 +37,7 @@ provider:
     DB_HOST:
       Fn::GetAtt: [ ServerlessRDSCluster, Endpoint.Address ]
     AUTH_PROFILE_URL: ${file(../config.${self:provider.stage}.json):auth_profile}
+    PYTHON_PATH: '.:../server:../server/bb_server'
   vpc:
     securityGroupIds:
       - "Fn::GetAtt": ServerlessSecurityGroup.GroupId
@@ -53,8 +54,8 @@ plugins:
       - serverless-python-requirements
 
 custom:
-      pythonRequirements:
-              dockerizePip: true
+  pythonRequirements:
+    dockerizePip: true
 
 # you can add statements to the Lambda function's IAM Role here
 #  iamRoleStatements:
@@ -499,12 +500,13 @@ functions:
 
 resources:
   Resources:
-    ApiGatewayRestApi:
-      Type: "AWS::ApiGateway::RestApi"
-      Properties:
-        Name: ${self:provider.stage}-${self:service}
-        BinaryMediaTypes:
-          - "application~1json"
+    #Causes OPTIONS request to fail
+#    ApiGatewayRestApi:
+#      Type: "AWS::ApiGateway::RestApi"
+#      Properties:
+#        Name: ${self:provider.stage}-${self:service}
+#        BinaryMediaTypes:
+#          - "application/json"
     GatewayResponseDefault4XX:
       Type: 'AWS::ApiGateway::GatewayResponse'
       Properties:
