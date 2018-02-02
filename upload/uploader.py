@@ -49,7 +49,7 @@ class Uploader():
 
     def setup(self, filename):
 
-        self._data_file = filename
+        self._data_file = os.path.basename(filename)
 
         self._event_set = os.path.basename(filename).split('.')[0]
 
