@@ -160,6 +160,9 @@ class EventSetController(BaseController):
         except DuplicateKeyException as dke:
             logging.getLogger(__name__).error("delete_event_set: {}".format(repr(dke)))
             retcode = 422
+        except MissingKeyException as mke:
+            logging.getLogger(__name__).error("delete_event_set: {}".format(repr(mke)))
+            retcode = 404
 
         self.log_action(user, 'delete_event_set', eventSetId, None, evntSt, retcode)
 
