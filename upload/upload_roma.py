@@ -56,9 +56,9 @@ class Upload_ROMA(uploader.Uploader):
             else:
                 if filename.startswith('spot'):
                     taxon = 'P. falciparum'
-                else if filename.startswith('vobs'):
+                elif filename.startswith('vobs'):
                     taxon = 'Anopheles'
-                else if filename.startswith('vivax'):
+                elif filename.startswith('vivax'):
                     taxon = 'Plasmodium'
 
             values = {
