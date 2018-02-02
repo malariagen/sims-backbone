@@ -106,7 +106,6 @@ class Uploader():
 
         return data_value, accuracy
 
-#https://dev.mysql.com/doc/connector-python/en/connector-python-example-cursor-transaction.html
     def load_data(self, data_def, input_stream, skip_header, update_only):
 
         processed = 0
@@ -272,7 +271,7 @@ class Uploader():
 
         return ret
 
-    def process_location(self, values, prefix):
+    def create_location_from_values(self, values, prefix):
 
         if prefix + 'location_name' not in values:
             #print("No {}location name: {}".format(prefix, values))
@@ -288,18 +287,12 @@ class Uploader():
         if not values[prefix + 'latitude']:
             return None, None
 
-        # Configure OAuth2 access token for authorization: OauthSecurity
-        configuration = swagger_client.Configuration()
-        configuration.access_token = self._auth_token
-
-        api_instance = swagger_client.LocationApi(swagger_client.ApiClient(configuration))
         curated_name = None
         curation_method = None
         latitude = None
         longitude = None
         resolution = None
         country = None
-        study_id = None
         try:
             latitude = round(float(Decimal(values[prefix + 'latitude'])),7)
             longitude = round(float(Decimal(values[prefix + 'longitude'])),7)
@@ -311,16 +304,15 @@ class Uploader():
 
         if prefix + 'country' in values:
             country = values[prefix + 'country']
-        if 'study_id' in values:
-            study_id = values['study_id'][:4]
-        partner_name = values[prefix + 'location_name']
         loc = swagger_client.Location(None, latitude,
                                       longitude,
                                       resolution, curated_name, curation_method,
                                       country)
         if study_id and partner_name:
             loc.identifiers = [
-                swagger_client.Identifier('partner_name', partner_name, self._event_set, study_id)
+                swagger_client.Identifier(identifier_type='partner_name',
+                                          identifier_value=partner_name,
+                                          identifier_source=self._event_set, study_id=study_id)
             ]
 
 
@@ -329,20 +321,60 @@ class Uploader():
         else:
             loc.notes = self._data_file
 
-        ret = None
+        partner_name = values[prefix + 'location_name']
+
+        return partner_name, loc
+
+    def lookup_location(self, api_instance, loc):
+
+        looked_up = None
+
         try:
-            looked_up = api_instance.download_gps_location(str(latitude), str(longitude))
+            looked_up = api_instance.download_gps_location(str(loc.latitude), str(loc.longitude))
             looked_up = api_instance.download_location(looked_up.location_id)
-            #print("Found location {}".format(looked_up))
-            loc.location_id = looked_up.location_id
-            self.add_location_identifier(looked_up, study_id, partner_name)
-
-            loc.location_id = None
-            ret = self.update_country(country, looked_up)
-
         except Exception as err:
             #print(repr(err))
             #print("Failed to find location {}".format(loc))
+            pass
+
+        return looked_up
+
+    def process_location(self, values, prefix):
+
+        partner_name, loc = self.create_location_from_values(values, prefix)
+
+        if loc is None:
+            return None, None
+
+        study_id = None
+        if 'study_id' in values:
+            study_id = values['study_id'][:4]
+
+
+        # Configure OAuth2 access token for authorization: OauthSecurity
+        configuration = swagger_client.Configuration()
+        configuration.access_token = self._auth_token
+
+        api_instance = swagger_client.LocationApi(swagger_client.ApiClient(configuration))
+
+        looked_up = self.lookup_location(api_instance, loc)
+
+        ret = None
+
+        if looked_up is not None:
+            try:
+                #print("Found location {}".format(looked_up))
+                loc.location_id = looked_up.location_id
+                self.add_location_identifier(looked_up, study_id, partner_name)
+
+                loc.location_id = None
+                ret = self.update_country(country, looked_up)
+
+            except Exception as err:
+                print(repr(err))
+                #print("Failed to find location {}".format(loc))
+        else:
+
             try:
                 created = api_instance.create_location(loc)
                 ret = created
@@ -363,16 +395,7 @@ class Uploader():
         #print("Returing location {}".format(ret))
         return partner_name, ret
 
-    def process_sampling_event(self, values, location_name, location, proxy_location_name, proxy_location):
-
-        # Configure OAuth2 access token for authorization: OauthSecurity
-        configuration = swagger_client.Configuration()
-        configuration.access_token = self._auth_token
-
-        # create an instance of the API class
-        api_instance = swagger_client.SamplingEventApi(swagger_client.ApiClient(configuration))
-
-        es_api_instance = swagger_client.EventSetApi(swagger_client.ApiClient(configuration))
+    def create_sampling_event_from_values(self, values, location_name, location, proxy_location_name, proxy_location):
 
         doc = None
         doc_accuracy = None
@@ -404,6 +427,9 @@ class Uploader():
         samp = swagger_client.SamplingEvent(None, study_id = study_id, doc = doc, location_id =
                                      lid, proxy_location_id = plid, doc_accuracy = doc_accuracy)
 
+        if 'species' in values and values['species'] and len(values['species']) > 0:
+            samp.partner_species = values['species']
+
         idents = []
         if 'sample_roma_id' in values:
             idents.append(swagger_client.Identifier ('roma_id', values['sample_roma_id'],
@@ -433,53 +459,76 @@ class Uploader():
             idents.append(swagger_client.Identifier (values['sample_source_type2'],
                                                      values['sample_source_id2'],
                                                      self._event_set))
-        if 'species' in values and values['species'] and len(values['species']) > 0:
-            samp.partner_species = values['species']
 
-        existing_sample_id = None
+        samp.identifiers = idents
+
+        return samp
+
+    def lookup_sampling_event(self, api_instance, samp, values):
+
+        existing = None
+
         if 'unique_id' in values:
             if values['unique_id'] in self._sample_cache:
                 existing_sample_id = self._sample_cache[values['unique_id']]
+                existing = api_instance.download_sampling_event(existing_sample_id)
+                return existing
 
-        if not existing_sample_id:
-            #print ("not in cache: {}".format(samp))
-            if len(idents) > 0:
-                #print("Checking identifiers {}".format(idents))
-                samp.identifiers = idents
-                new_ident_value = False
-                for ident in idents:
-                    try:
-                        #print("Looking for {} {}".format(ident.identifier_type, ident.identifier_value))
+        #print ("not in cache: {}".format(samp))
+        if len(samp.identifiers) > 0:
+            #print("Checking identifiers {}".format(idents))
+            new_ident_value = False
+            for ident in samp.identifiers:
+                try:
+                    #print("Looking for {} {}".format(ident.identifier_type, ident.identifier_value))
 
-                        found = api_instance.download_sampling_event_by_identifier(ident.identifier_type,
-                                                               urllib.parse.quote_plus(ident.identifier_value))
-                        if ident.identifier_type == 'partner_id':
-                            if 'sample_lims_id' in values and values['sample_lims_id']:
-                                #Partner id is not the only id
-                                if len(idents) > 2:
-                                    continue
-                                #Probably still not safe even though at this point it's a unique partner_id
+                    if ident.identifier_type == 'partner_id':
+                        if 'sample_lims_id' in values and values['sample_lims_id']:
+                            #Partner id is not the only id
+                            if len(idents) > 2:
                                 continue
-                            else:
-                                #Not safe as partner id's can be the same across studies
-                                continue
-                        existing_sample_id = found.sampling_event_id
-                        #print ("found: {}".format(samp))
-                    except ApiException as err:
-                        #self._logger.debug("Error looking for {}".format(ident))
-                        #print("Not found")
+                            #Probably still not safe even though at this point it's a unique partner_id
+                            continue
+                        else:
+                            #Not safe as partner id's can be the same across studies
+                            #Could potentially check study id as well
+                            continue
+
+                    existing = api_instance.download_sampling_event_by_identifier(ident.identifier_type,
+                                                           urllib.parse.quote_plus(ident.identifier_value))
+                    #Only here if found - otherwise 404 exception
+                    break
+                    #print ("found: {}".format(samp))
+                except ApiException as err:
+                    #self._logger.debug("Error looking for {}".format(ident))
+                    #print("Not found")
                         pass
 
+        return existing
+
+    def process_sampling_event(self, values, location_name, location, proxy_location_name, proxy_location):
+
+        # Configure OAuth2 access token for authorization: OauthSecurity
+        configuration = swagger_client.Configuration()
+        configuration.access_token = self._auth_token
+
+        # create an instance of the API class
+        api_instance = swagger_client.SamplingEventApi(swagger_client.ApiClient(configuration))
+
+        es_api_instance = swagger_client.EventSetApi(swagger_client.ApiClient(configuration))
+
+        samp = self.create_sampling_event_from_values(values, location_name, location, proxy_location_name, proxy_location)
+
+        existing = self.lookup_sampling_event(api_instance, samp, values)
+
         if 'sample_lims_id' in values and values['sample_lims_id']:
-            if not existing_sample_id:
+            if not existing:
                 print("Could not find not adding {}".format(values))
                 return None
 
-        #print("Existing {}".format(existing_sample_id))
-        if existing_sample_id:
-            existing = api_instance.download_sampling_event(existing_sample_id)
+        if existing:
             orig = deepcopy(existing)
-            for new_ident in idents:
+            for new_ident in samp.identifiers:
                 found = False
                 for existing_ident in existing.identifiers:
                     if existing_ident == new_ident:
@@ -490,20 +539,20 @@ class Uploader():
                     existing.identifiers.append(new_ident)
 
     #        print("existing {} {}".format(existing, study_id))
-            if study_id:
+            if samp.study_id:
                 if existing.study_id:
-                    if study_id != existing.study_id:
-                        if study_id[:4] == existing.study_id[:4]:
+                    if samp.study_id != existing.study_id:
+                        if samp.study_id[:4] == existing.study_id[:4]:
                             #print("#Short and full study ids used {} {} {}".format(values, study_id, existing.study_id))
                             pass
                         else:
-                            if not (existing.study_id[:4] == '0000' or study_id[:4] == '0000'):
+                            if not (existing.study_id[:4] == '0000' or samp.study_id[:4] == '0000'):
                                 print("Conflicting study_id value {} {} {}".format(values, study_id, existing.study_id))
-                        if not study_id[:4] == '0000':
-                            existing.study_id = study_id
+                        if not samp.study_id[:4] == '0000':
+                            existing.study_id = samp.study_id
                             new_ident_value = True
                 else:
-                    existing.study_id = study_id
+                    existing.study_id = samp.study_id
                     new_ident_value = True
             else:
                 if existing.study_id:
@@ -511,29 +560,30 @@ class Uploader():
                     self.add_location_identifier(location, existing.study_id, location_name)
                     self.add_location_identifier(proxy_location, existing.study_id, proxy_location_name)
 
-            if doc:
+            if samp.doc:
                 if existing.doc:
-                    if doc != existing.doc:
+                    if samp.doc != existing.doc:
                         if existing.doc_accuracy == 'year':
-                            existing.doc = doc
-                            existing.doc_accuracy = doc_accuracy
+                            existing.doc = samp.doc
+                            existing.doc_accuracy = samp.doc_accuracy
                             new_ident_value = True
                             print("Conflicting doc value updated {} {} {}".format(values, doc, existing.doc))
                         else:
                             print("Conflicting doc value not updated {} {} {}".format(values, doc, existing.doc))
                 else:
-                    existing.doc = doc
+                    existing.doc = samp.doc
                     new_ident_value = True
-            if location:
+            if samp.location:
                 if existing.location:
-                    if location.location_id != existing.location_id:
+                    if samp.location.location_id != existing.location_id:
+                        location = samp.location
                         print("Conflicting location value {}\t{}\t{}\t{}\t{}\t{}\t{}".format(values, 
                                                                            location.identifiers[0].identifier_value, location.latitude, location.longitude,
                                                                            existing.location.identifiers[0].identifier_value, existing.location.latitude, existing.location.longitude))
                         #existing.location_id = location.location_id
                         #new_ident_value = True
                 else:
-                    existing.location_id = location.location_id
+                    existing.location_id = samp.location.location_id
                     new_ident_value = True
             if samp.partner_species:
                 if existing.partner_species:
@@ -554,14 +604,15 @@ class Uploader():
                     existing.partner_species = samp.partner_species
                     new_ident_value = True
 
-            if proxy_location:
+            if samp.proxy_location:
                 if existing.proxy_location:
                     if proxy_location.location_id != existing.proxy_location_id:
+                        proxy_location = samp.proxy_location
                         print("Conflicting proxy location value {}\n{}\n{}".format(values, proxy_location, existing.proxy_location))
                         existing.proxy_location_id = proxy_location.location_id
                         new_ident_value = True
                 else:
-                    existing.proxy_location_id = proxy_location.location_id
+                    existing.proxy_location_id = samp.proxy_location.location_id
                     new_ident_value = True
 
             ret = existing
