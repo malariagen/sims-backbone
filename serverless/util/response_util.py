@@ -29,6 +29,8 @@ def create_response(event, retcode, value):
                     if 'application/json' in event['headers']['Accept']:
                         gzip = True
 
+    gzip = False
+
     if gzip:
         return {
             "statusCode": retcode,
