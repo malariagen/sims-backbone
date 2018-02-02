@@ -27,7 +27,8 @@ class Upload_ROMA(uploader.Uploader):
         for key, item in items['samples.sample'].items():
             fields = item['fields']
             roma_id = fields['sample_name']
-            source_code = fields['external_id']
+            #source_code = fields['external_id']
+            source_code = None
             doc = fields['collection_date']
             loc = items['locations.location'][fields['location']]
             latitude = loc['fields']['latitude']
@@ -45,15 +46,26 @@ class Upload_ROMA(uploader.Uploader):
             oxford_code = None
             taxon = None
             if '27. original_oxford_code' in tags:
-                oxford_code = tags['27. original_oxford_code']
+                #oxford_code = tags['27. original_oxford_code']
+                pass
+            if '24. Patient Id' in tags:
+                #oxford_code = tags['24. Patient Id']
+                pass
             if 'Species' in tags:
                 taxon = tags['Species']
+            else:
+                if filename.startswith('spot'):
+                    taxon = 'P. falciparum'
+                else if filename.startswith('vobs'):
+                    taxon = 'Anopheles'
+                else if filename.startswith('vivax'):
+                    taxon = 'Plasmodium'
 
             values = {
                 'study_id': study_id,
                 'sample_roma_id': roma_id,
-                'sample_oxford_id': oxford_code,
-                'sample_partner_id': source_code,
+                #'sample_oxford_id': oxford_code,
+                #'sample_partner_id': source_code,
                 'species': taxon,
                 'doc': doc,
                 'location_name': loc_name,
