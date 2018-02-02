@@ -148,12 +148,14 @@ class SetCountry(upload_ssr.Upload_SSR):
                 print("Unknown country {}".format(country_value))
 
         study_ident = False
-        if found.location.identifiers:
-            for identifier in found.location.identifiers:
-                if identifier.study_name[:4] == found.study_id[:4]:
-                    study_ident = True
-        else:
-            found.location.identifiers = []
+
+        if found.location:
+            if found.location.identifiers:
+                for identifier in found.location.identifiers:
+                    if identifier.study_name[:4] == found.study_id[:4]:
+                        study_ident = True
+            else:
+                found.location.identifiers = []
 
         if not study_ident:
             try:
@@ -171,9 +173,10 @@ class SetCountry(upload_ssr.Upload_SSR):
                 pass
 
         if not study_ident:
-            found.location.identifiers.append(ident)
-            #print("adding study ident for {}".format(found))
-            location_api_instance.update_location(found.location_id, found.location)
+            if found.location:
+                found.location.identifiers.append(ident)
+                #print("adding study ident for {}".format(found))
+                location_api_instance.update_location(found.location_id, found.location)
 
         return found
 
