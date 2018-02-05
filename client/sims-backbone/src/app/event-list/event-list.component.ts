@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy, ChangeDetectorRef, SimpleChanges } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy, ChangeDetectorRef, SimpleChanges, Renderer } from '@angular/core';
 
 import { MatPaginator, MatSort, MatTableDataSource } from '@angular/material';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
@@ -45,7 +45,9 @@ export class EventListComponent implements AfterViewInit {
 
   downloadFileName: string = 'data.csv';
 
-  constructor(private changeDetector: ChangeDetectorRef, public dialog: MatDialog) { }
+  jsonDownloadFileName: string = 'data.json';
+
+  constructor(private changeDetector: ChangeDetectorRef, public dialog: MatDialog, private renderer: Renderer) { }
 
   ngAfterViewInit() {
     this._pageNumber = 0;
@@ -57,13 +59,15 @@ export class EventListComponent implements AfterViewInit {
   @Input()
   set eventSetName(eventSetName) {
     this._eventSetName = eventSetName;
-    this.downloadFileName = eventSetName + '_sampling_events.csv'
+    this.downloadFileName = eventSetName + '_sampling_events.csv';
+    this.jsonDownloadFileName = eventSetName + '_sampling_events.json';
   }
 
   @Input()
   set studyName(studyName: string) {
     this._studyName = studyName;
-    this.downloadFileName = studyName + '_sampling_events.csv'
+    this.downloadFileName = studyName + '_sampling_events.csv';
+    this.jsonDownloadFileName = studyName + '_sampling_events.json';
   }
 
   @Input()
@@ -82,7 +86,7 @@ export class EventListComponent implements AfterViewInit {
     let numLoaded = Math.min((this._pageNumber + 1) * this._pageSize, events.count);
 
     this.progress = (numLoaded / events.count) * 100;
-    
+
     if (numLoaded < events.count) {
       this._pageNumber++;
       this.pageNumber.emit(this._pageNumber);
@@ -208,6 +212,19 @@ export class EventListComponent implements AfterViewInit {
         this.changeDetector.markForCheck();
       }
     });
+  }
+
+  downloadJSON() {
+    let anchor = this.renderer.createElement(document.body, 'a');
+    this.renderer.setElementStyle(anchor, 'visibility', 'hidden');
+    this.renderer.setElementAttribute(anchor, 'href', 'data:application/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(this._events.sampling_events));
+    this.renderer.setElementAttribute(anchor, 'target', '_blank');
+    this.renderer.setElementAttribute(anchor, 'download', this.jsonDownloadFileName);
+
+    setTimeout(() => {
+      this.renderer.invokeElementMethod(anchor, 'click');
+      this.renderer.invokeElementMethod(anchor, 'remove');
+    }, 5);
   }
 }
 
