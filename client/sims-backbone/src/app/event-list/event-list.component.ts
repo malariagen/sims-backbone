@@ -217,7 +217,7 @@ export class EventListComponent implements AfterViewInit {
   downloadJSON() {
     let anchor = this.renderer.createElement(document.body, 'a');
     this.renderer.setElementStyle(anchor, 'visibility', 'hidden');
-    this.renderer.setElementAttribute(anchor, 'href', 'data:application/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(this._events.sampling_events));
+    this.renderer.setElementAttribute(anchor, 'href', 'data:application/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(this._events.sampling_events)));
     this.renderer.setElementAttribute(anchor, 'target', '_blank');
     this.renderer.setElementAttribute(anchor, 'download', this.jsonDownloadFileName);
 
