@@ -859,6 +859,7 @@ definitions:
         description: 'Date of collection'
       doc_accuracy:
         type: string
+        default: 'day'
         enum:
             - day
             - month

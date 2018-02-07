@@ -79,27 +79,28 @@ class Uploader():
 
         accuracy = None
         data_value = data_value.split(' ')[0]
-        if 'date_format' in defn:
-            try:
-                date_format = '%Y-%m-%d'
+        try:
+            if 'date_format' in defn:
                 date_format = defn['date_format']
+            else:
+                date_format = '%Y-%m-%d'
+            data_value = datetime.datetime(*(time.strptime(data_value, date_format))[:6]).date()
+        except ValueError as dpe:
+            try:
+                date_format = '%d/%m/%Y'
                 data_value = datetime.datetime(*(time.strptime(data_value, date_format))[:6]).date()
             except ValueError as dpe:
                 try:
-                    date_format = '%d/%m/%Y'
+                    date_format = '%d-%b-%Y'
                     data_value = datetime.datetime(*(time.strptime(data_value, date_format))[:6]).date()
                 except ValueError as dpe:
                     try:
-                        date_format = '%d-%b-%Y'
+                        date_format = '%d/%m/%y'
                         data_value = datetime.datetime(*(time.strptime(data_value, date_format))[:6]).date()
                     except ValueError as dpe:
-                        try:
-                            date_format = '%d/%m/%y'
-                            data_value = datetime.datetime(*(time.strptime(data_value, date_format))[:6]).date()
-                        except ValueError as dpe:
-                            date_format = '%Y'
-                            data_value = datetime.datetime(*(time.strptime(data_value[:4], date_format))[:6]).date()
-                            accuracy = 'year'
+                        date_format = '%Y'
+                        data_value = datetime.datetime(*(time.strptime(data_value[:4], date_format))[:6]).date()
+                        accuracy = 'year'
 #          else:
             #To make sure that the default conversion works
   #              data.typed_data_value
@@ -121,7 +122,9 @@ class Uploader():
                 values = {}
                 prop_by_column = {}
                 processed = processed + 1
-                for name, defn in data_def['values'].items():
+                #Ensure columns are processed in order - see also doc_accuracy comment below
+                #For more predictable behaviour
+                for name, defn in sorted(data_def['values'].items(), key=lambda x: x[1]['column']):
                     identity = False
                     #print(repr(defn))
                     #print(repr(row))
@@ -170,7 +173,14 @@ class Uploader():
                         raise
 
                     if defn['type'] == 'string':
-                        values[name] = data_value.strip()
+                        #Ignore empty values
+                        #This can be important e.g. if date is parsed and set doc_accuracy to year
+                        #and doc_accuracy accuracy defined column is empty
+                        if data_value and data_value.strip():
+                            values[name] = data_value.strip()
+                        #else:
+                        #    print('Ignoring {} {} {}'.format(name, data_value, values))
+
                     else:
                         values[name] = data_value
 
@@ -422,6 +432,7 @@ class Uploader():
 
         if 'doc_accuracy' in values:
             doc_accuracy = values['doc_accuracy']
+
         if 'study_id' in values:
             study_id = values['study_id']
 
@@ -434,10 +445,13 @@ class Uploader():
             plid = proxy_location.location_id
 
         samp = swagger_client.SamplingEvent(None, study_id = study_id, doc = doc, location_id =
-                                     lid, proxy_location_id = plid, doc_accuracy = doc_accuracy)
+                                     lid, proxy_location_id = plid)
 
         if 'species' in values and values['species'] and len(values['species']) > 0:
             samp.partner_species = values['species']
+
+        if doc_accuracy:
+            samp.doc_accuracy = doc_accuracy
 
         idents = []
         if 'sample_roma_id' in values:
@@ -471,6 +485,8 @@ class Uploader():
 
         samp.identifiers = idents
 
+        #print(values)
+        #print(samp)
         return samp
 
     def lookup_sampling_event(self, api_instance, samp, values):
@@ -604,7 +620,12 @@ class Uploader():
             if samp.doc:
                 if existing.doc:
                     if samp.doc != existing.doc:
-                        if existing.doc_accuracy == 'year':
+                        update_doc = True
+                        if samp.doc_accuracy and samp.doc_accuracy == 'year':
+                            if existing.doc_accuracy and existing.doc_accuracy != 'year':
+                                update_doc = False
+
+                        if update_doc:
                             existing.doc = samp.doc
                             existing.doc_accuracy = samp.doc_accuracy
                             new_ident_value = True
