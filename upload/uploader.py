@@ -493,7 +493,7 @@ class Uploader():
                     if ident.identifier_type == 'partner_id':
                         if 'sample_lims_id' in values and values['sample_lims_id']:
                             #Partner id is not the only id
-                            if len(samp.idents) > 2:
+                            if len(samp.identifiers) > 2:
                                 continue
                             #Probably still not safe even though at this point it's a unique partner_id
                             continue

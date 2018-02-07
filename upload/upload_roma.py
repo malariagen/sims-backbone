@@ -62,14 +62,14 @@ class Upload_ROMA(uploader.Uploader):
                     taxon = 'Plasmodium'
 
             values = {
-                'study_id': study_id,
-                'sample_roma_id': roma_id,
-                'sample_oxford_id': oxford_code,
-                'sample_partner_id': source_code,
-                'species': taxon,
+                'study_id': study_id.strip(),
+                'sample_roma_id': roma_id.strip(),
+                'sample_oxford_id': oxford_code.strip(),
+                'sample_partner_id': source_code.strip(),
+                'species': taxon.strip(),
                 'doc': doc,
-                'location_name': loc_name,
-                'country': country,
+                'location_name': loc_name.strip(),
+                'country': country.strip(),
                 'latitude': latitude,
                 'longitude': longitude,
             }
