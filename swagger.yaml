@@ -849,7 +849,7 @@ definitions:
   SamplingEvent:
     type: object
     properties:
-      samplingEvent_id:
+      sampling_event_id:
         type: string
       study_id:
         type: string
