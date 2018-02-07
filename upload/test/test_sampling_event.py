@@ -35,7 +35,6 @@ class TestSampling_Event(TestBase):
 
         looked_up = event_api_instance.download_sampling_event_by_identifier('oxford_id', '123456')
 
-        print(looked_up)
         for study in [ "9011 Upload test study", "9012 Upload test study 3"]:
             eset = "Additional events: {}".format(study)
             fetched_set = event_set_api_instance.download_event_set(eset)
@@ -48,12 +47,12 @@ class TestSampling_Event(TestBase):
 
         self.assertEqual(looked_up.study_id, '9010 Upload test study 2', 'Not lowest study code')
 
+        for study in [ "0000 Upload test study", "1089 R&D special study"]:
+            eset = "Additional events: {}".format(study)
+            print(eset)
+            with self.assertRaises(Exception) as context:
+                event_set_api_instance.delete_event_set(eset)
+            print(repr(context.exception.status))
+            #self.assertEqual(context.exception.status, 404)
+
         event_api_instance.delete_sampling_event(looked_up.sampling_event_id)
-
-
-        eset = "Additional events: {}".format('R&D special study')
-        with self.assertRaises(Exception) as context:
-            event_set_api_instance.delete_event_set(eset)
-        
-        self.assertEqual(context.exception.status, 404)
-
