@@ -256,7 +256,7 @@ class Uploader():
             update_country = False
             if looked_up.country:
                 if looked_up.country != country:
-                    print("Country confict {} {}".format(country, looked_up))
+                    #print("Country confict {} {}".format(country, looked_up))
                     raise Exception("Country confict {} {}".format(country, looked_up))
             else:
                 looked_up.country = country
@@ -287,6 +287,10 @@ class Uploader():
         if not values[prefix + 'latitude']:
             return None, None
 
+        study_id = None
+        if 'study_id' in values:
+            study_id = values['study_id'][:4]
+
         curated_name = None
         curation_method = None
         latitude = None
@@ -304,6 +308,9 @@ class Uploader():
 
         if prefix + 'country' in values:
             country = values[prefix + 'country']
+
+        partner_name = values[prefix + 'location_name']
+
         loc = swagger_client.Location(None, latitude,
                                       longitude,
                                       resolution, curated_name, curation_method,
@@ -312,7 +319,7 @@ class Uploader():
             loc.identifiers = [
                 swagger_client.Identifier(identifier_type='partner_name',
                                           identifier_value=partner_name,
-                                          identifier_source=self._event_set, study_id=study_id)
+                                          identifier_source=self._event_set, study_name=study_id)
             ]
 
 
@@ -321,7 +328,6 @@ class Uploader():
         else:
             loc.notes = self._data_file
 
-        partner_name = values[prefix + 'location_name']
 
         return partner_name, loc
 
@@ -368,7 +374,10 @@ class Uploader():
                 self.add_location_identifier(looked_up, study_id, partner_name)
 
                 loc.location_id = None
-                ret = self.update_country(country, looked_up)
+                try:
+                    ret = self.update_country(loc.country, looked_up)
+                except Exception as err:
+                    print("Country conflict {} {}".format(loc.country, looked_up))
 
             except Exception as err:
                 print(repr(err))
@@ -387,7 +396,7 @@ class Uploader():
                             if ident.study_name[:4] == study_id[:4]:
                                 print("Location name conflict\t{}\t{}\t{}\t{}\t{}\t{}".
                                       format(study_id,partner_name,named_loc,
-                                            latitude, longitude, values))
+                                            loc.latitude, loc.longitude, values))
                 else:
                     print("Error creating location {} {}".format(loc, err))
                 return None, None
@@ -484,7 +493,7 @@ class Uploader():
                     if ident.identifier_type == 'partner_id':
                         if 'sample_lims_id' in values and values['sample_lims_id']:
                             #Partner id is not the only id
-                            if len(idents) > 2:
+                            if len(samp.idents) > 2:
                                 continue
                             #Probably still not safe even though at this point it's a unique partner_id
                             continue
@@ -506,6 +515,9 @@ class Uploader():
         return existing
 
     def set_additional_event(self, es_api_instance, sampling_event_id, study_id):
+
+        if study_id[:4] == '0000' or study_id[:4] == '1089':
+            return
 
         event_set_id = 'Additional events: {}'.format(study_id)
 
@@ -569,15 +581,17 @@ class Uploader():
                             if not (existing.study_id[:4] == '0000' or samp.study_id[:4] == '0000'):
                                 print("Conflicting study_id value {} {} {}".format(values, samp.study_id, existing.study_id))
                         if not samp.study_id[:4] == '0000':
-                            if ((int(samp.study_id[:4]) < int(existing.study_id[:4])) and
+                            if ((int(samp.study_id[:4]) < int(existing.study_id[:4]) or
+                                 existing.study_id[:4] == '0000') and
                                 (samp.study_id[:4] != '1089')):
                                 self.set_additional_event(es_api_instance,
                                                           existing.sampling_event_id, existing.study_id)
                                 existing.study_id = samp.study_id
                                 new_ident_value = True
                             else:
-                                self.set_additional_event(es_api_instance,
-                                                          existing.sampling_event_id, samp.study_id)
+                                if not (samp.study_id[:4] == '0000' or samp.study_id[:4] == '1089'):
+                                    self.set_additional_event(es_api_instance,
+                                                              existing.sampling_event_id, samp.study_id)
                 else:
                     existing.study_id = samp.study_id
                     new_ident_value = True
@@ -594,9 +608,9 @@ class Uploader():
                             existing.doc = samp.doc
                             existing.doc_accuracy = samp.doc_accuracy
                             new_ident_value = True
-                            print("Conflicting doc value updated {} {} {}".format(values, doc, existing.doc))
+                            print("Conflicting doc value updated {} {} {}".format(values, samp.doc, existing.doc))
                         else:
-                            print("Conflicting doc value not updated {} {} {}".format(values, doc, existing.doc))
+                            print("Conflicting doc value not updated {} {} {}".format(values, samp.doc, existing.doc))
                 else:
                     existing.doc = samp.doc
                     new_ident_value = True
@@ -605,8 +619,12 @@ class Uploader():
                     if samp.location.location_id != existing.location_id:
                         location = samp.location
                         print("Conflicting location value {}\t{}\t{}\t{}\t{}\t{}\t{}".format(values, 
-                                                                           location.identifiers[0].identifier_value, location.latitude, location.longitude,
-                                                                           existing.location.identifiers[0].identifier_value, existing.location.latitude, existing.location.longitude))
+                                                                           samp.location.identifiers[0].identifier_value,
+                                                                                             samp.location.latitude,
+                                                                                             samp.location.longitude,
+                                                                           existing.location.identifiers[0].identifier_value,
+                                                                                             existing.location.latitude,
+                                                                                             existing.location.longitude))
                         #existing.location_id = location.location_id
                         #new_ident_value = True
                 else:

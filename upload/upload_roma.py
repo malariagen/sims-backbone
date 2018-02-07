@@ -27,8 +27,8 @@ class Upload_ROMA(uploader.Uploader):
         for key, item in items['samples.sample'].items():
             fields = item['fields']
             roma_id = fields['sample_name']
-            #source_code = fields['external_id']
-            source_code = None
+            source_code = fields['external_id']
+            #source_code = None
             doc = fields['collection_date']
             loc = items['locations.location'][fields['location']]
             latitude = loc['fields']['latitude']
@@ -46,7 +46,7 @@ class Upload_ROMA(uploader.Uploader):
             oxford_code = None
             taxon = None
             if '27. original_oxford_code' in tags:
-                #oxford_code = tags['27. original_oxford_code']
+                oxford_code = tags['27. original_oxford_code']
                 pass
             if '24. Patient Id' in tags:
                 #oxford_code = tags['24. Patient Id']
@@ -64,8 +64,8 @@ class Upload_ROMA(uploader.Uploader):
             values = {
                 'study_id': study_id,
                 'sample_roma_id': roma_id,
-                #'sample_oxford_id': oxford_code,
-                #'sample_partner_id': source_code,
+                'sample_oxford_id': oxford_code,
+                'sample_partner_id': source_code,
                 'species': taxon,
                 'doc': doc,
                 'location_name': loc_name,
@@ -88,7 +88,8 @@ class Upload_ROMA(uploader.Uploader):
         if 'study_id' in input_values:
             if input_values['study_id'][:4] != output_values.study_id[:4]:
                 if input_values['study_id'][:4] != '0000':
-                    print("Conflicting study id {} {}".format(input_values, output_values))
+                    pass
+                    #print("Conflicting study id {} {}".format(input_values, output_values))
         else:
             print("No study id {} {}".format(input_values, output_values))
 

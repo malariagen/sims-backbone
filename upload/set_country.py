@@ -98,7 +98,8 @@ class SetCountry(upload_ssr.Upload_SSR):
                 metadata = metadata_api_instance.get_country_metadata(country_value)
                 self._country_cache[country_value] = metadata
             except ApiException as e:
-                print("Exception when looking up country {} {}".format(country_value, found))
+                if country_value != 'nan':
+                    print("Exception when looking up country {} {}".format(country_value, found))
                 return found
 
         ident = swagger_client.Identifier('partner_name',
@@ -109,8 +110,9 @@ class SetCountry(upload_ssr.Upload_SSR):
         if found.location:
             try:
                 found.location = self.update_country(self._country_cache[country_value].alpha3, found.location)
-            except Exception:
-                print("Country update failed for {}".format(found))
+            except Exception as cue:
+                print("Country update failed for {} {} {}"
+                        .format(self._country_cache[country_value].alpha3, found, cue))
         else:
             if country_value in self._country_location_cache:
                 cached_country = self._country_location_cache[country_value]
@@ -142,8 +144,8 @@ class SetCountry(upload_ssr.Upload_SSR):
                     found.location_id = location.location_id
                     found = api_instance.update_sampling_event(found.sampling_event_id, found)
 
-                except Exception:
-                    print("Country update failed for {}".format(found))
+                except Exception as excp:
+                    print("Country update add location failed for {} {}".format(found, excp))
             else:
                 print("Unknown country {}".format(country_value))
 
