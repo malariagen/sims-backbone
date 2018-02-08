@@ -30,12 +30,29 @@ class Uploader():
 
     _event_set = None
 
+    _message_buffer = []
+
     def __init__(self, config_file):
         super().__init__()
         self._logger = logging.getLogger(__name__)
         # Configure OAuth2 access token for authorization: OauthSecurity
         self._auth_token = self.get_access_token(config_file)
 
+        self._use_message_buffer = False
+
+    @property
+    def message_buffer(self):
+        return self._message_buffer
+
+    @property
+    def use_message_buffer(self):
+        return self._use_message_buffer
+
+    @use_message_buffer.setter
+    def use_message_buffer(self, use_buffer):
+        self._use_message_buffer = use_buffer
+
+    
     def get_access_token(self, config_file):
 
         with open(config_file) as json_file:
@@ -44,8 +61,6 @@ class Uploader():
             at = r.text.split('=')
             token = at[1].split('&')[0]
             return(token)
-
-
 
     def setup(self, filename):
 
@@ -65,6 +80,18 @@ class Uploader():
         except ApiException as e:
             if e.status != 422: #Already exists
                 print("Exception when calling EventSetApi->create_event_set: %s\n" % e)
+
+    def report(self, message, values):
+
+        if values:
+            msg = "{}\t{}".format(message, sorted(values.items(), key=lambda x: x))
+        else:
+            msg = message
+
+        if self.use_message_buffer:
+            self._message_buffer.append(msg)
+        else:
+            print(msg)
 
     def load_data_file(self, data_def, filename):
 
@@ -156,7 +183,8 @@ class Uploader():
                                 try:
                                     data_value, values[name + '_accuracy'] = self.parse_date(defn, data_value)
                                 except ValueError as dpe:
-                                    print("Failed to parse date '{}'".format(data_value))
+                                    self.report("Failed to parse date '{}'".format(data_value),
+                                                                                   values)
                                     continue
                             else:
                                 #Skip this property
@@ -253,7 +281,7 @@ class Uploader():
                                     message = message + '\t' + cname.identifier_value
                         except ApiException as err:
                             print(err)
-                    print(message)
+                    self.report(message, None)
         #else:
         #    print("identifier exists")
 
@@ -288,7 +316,7 @@ class Uploader():
             return None, None
 
         if not values[prefix + 'location_name']:
-            print("No location name: {}".format(values))
+            self.report("No location name: ",values)
             return None, None
 
         if prefix + 'latitude' not in values:
@@ -387,7 +415,7 @@ class Uploader():
                 try:
                     ret = self.update_country(loc.country, looked_up)
                 except Exception as err:
-                    print("Country conflict {} {}".format(loc.country, looked_up))
+                    self.report("Country conflict {} {}".format(loc.country, looked_up), values)
 
             except Exception as err:
                 print(repr(err))
@@ -404,11 +432,11 @@ class Uploader():
                     for named_loc in named_locations.locations:
                         for ident in named_loc.identifiers:
                             if ident.study_name[:4] == study_id[:4]:
-                                print("Location name conflict\t{}\t{}\t{}\t{}\t{}\t{}".
+                                self.report("Location name conflict\t{}\t{}\t{}\t{}\t{}".
                                       format(study_id,partner_name,named_loc,
-                                            loc.latitude, loc.longitude, values))
+                                            loc.latitude, loc.longitude), values)
                 else:
-                    print("Error creating location {} {}".format(loc, err))
+                    self.report("Error creating location {} {}".format(loc, err), values)
                 return None, None
 
         #print("Returing location {}".format(ret))
@@ -569,7 +597,7 @@ class Uploader():
 
         if 'sample_lims_id' in values and values['sample_lims_id']:
             if not existing:
-                print("Could not find not adding {}".format(values))
+                self.report("Could not find not adding ", values)
                 return None
 
         if existing:
@@ -595,7 +623,8 @@ class Uploader():
                             pass
                         else:
                             if not (existing.study_id[:4] == '0000' or samp.study_id[:4] == '0000'):
-                                print("Conflicting study_id value {} {} {}".format(values, samp.study_id, existing.study_id))
+                                self.report("Conflicting study_id value {} {}"
+                                                .format(samp.study_id, existing.study_id), values)
                         if not samp.study_id[:4] == '0000':
                             if ((int(samp.study_id[:4]) < int(existing.study_id[:4]) or
                                  existing.study_id[:4] == '0000') and
@@ -629,9 +658,11 @@ class Uploader():
                             existing.doc = samp.doc
                             existing.doc_accuracy = samp.doc_accuracy
                             new_ident_value = True
-                            print("Conflicting doc value updated {} {} {}".format(values, samp.doc, existing.doc))
+                            self.report("Conflicting doc value updated {} {}"
+                                            .format(samp.doc, existing.doc), values)
                         else:
-                            print("Conflicting doc value not updated {} {} {}".format(values, samp.doc, existing.doc))
+                            self.report("Conflicting doc value not updated {} {}"
+                                            .format(samp.doc, existing.doc), values)
                 else:
                     existing.doc = samp.doc
                     new_ident_value = True
@@ -639,13 +670,14 @@ class Uploader():
                 if existing.location:
                     if samp.location.location_id != existing.location_id:
                         location = samp.location
-                        print("Conflicting location value {}\t{}\t{}\t{}\t{}\t{}\t{}".format(values, 
+                        self.report("Conflicting location value {}\t{}\t{}\t{}\t{}\t{}".format(
                                                                            samp.location.identifiers[0].identifier_value,
                                                                                              samp.location.latitude,
                                                                                              samp.location.longitude,
                                                                            existing.location.identifiers[0].identifier_value,
                                                                                              existing.location.latitude,
-                                                                                             existing.location.longitude))
+                                                                                             existing.location.longitude)
+                                        ,values)
                         #existing.location_id = location.location_id
                         #new_ident_value = True
                 else:
@@ -662,9 +694,10 @@ class Uploader():
                                 fuzzyMatch = True
 
                         if not fuzzyMatch:
-                            print("Conflicting partner_species value not updated record {}\t{}\t{}".format(values,
+                            self.report("Conflicting partner_species value not updated record {}\t{}".format(
                                                                                samp.partner_species,
-                                                                               existing.partner_species))
+                                                                               existing.partner_species),
+                                            values)
 
                 else:
                     existing.partner_species = samp.partner_species
@@ -674,7 +707,8 @@ class Uploader():
                 if existing.proxy_location:
                     if proxy_location.location_id != existing.proxy_location_id:
                         proxy_location = samp.proxy_location
-                        print("Conflicting proxy location value {}\n{}\n{}".format(values, proxy_location, existing.proxy_location))
+                        self.report("Conflicting proxy location value {}\n{}".format(proxy_location, existing.proxy_location),
+                                   values)
                         existing.proxy_location_id = proxy_location.location_id
                         new_ident_value = True
                 else:
