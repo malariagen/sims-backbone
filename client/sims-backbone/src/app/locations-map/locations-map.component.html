@@ -1,5 +1,5 @@
-<button mat-raised-button (click)="disableLayers()">No layers</button>
-<button mat-raised-button (click)="enableLayers()">All layers</button>
+<button *ngIf="_locations && _locations.count > 1" mat-raised-button (click)="disableLayers()">No layers</button>
+<button *ngIf="_locations && _locations.count > 1" mat-raised-button (click)="enableLayers()">All layers</button>
 <div leaflet style="height: 800px;"
 [leafletOptions]="leaflet_options"
 [leafletLayersControlOptions]="leaflet_layersControlOptions"
