@@ -8,7 +8,7 @@ import json
 
 class Upload_ROMA(uploader.Uploader):
 
-    def load_data_file(self, filename, sheets):
+    def load_data_file(self, filename):
 
         self.setup(filename)
 
@@ -27,7 +27,7 @@ class Upload_ROMA(uploader.Uploader):
         for key, item in items['samples.sample'].items():
             fields = item['fields']
             roma_id = fields['sample_name']
-            source_code = fields['external_id']
+            source_code = fields['external_id'].strip()
             #source_code = None
             doc = fields['collection_date']
             loc = items['locations.location'][fields['location']]
@@ -46,13 +46,13 @@ class Upload_ROMA(uploader.Uploader):
             oxford_code = None
             taxon = None
             if '27. original_oxford_code' in tags:
-                oxford_code = tags['27. original_oxford_code']
+                oxford_code = tags['27. original_oxford_code'].strip()
                 pass
             if '24. Patient Id' in tags:
                 #oxford_code = tags['24. Patient Id']
                 pass
             if 'Species' in tags:
-                taxon = tags['Species']
+                taxon = tags['Species'].strip()
             else:
                 if filename.startswith('spot'):
                     taxon = 'P. falciparum'
@@ -64,9 +64,9 @@ class Upload_ROMA(uploader.Uploader):
             values = {
                 'study_id': study_id.strip(),
                 'sample_roma_id': roma_id.strip(),
-                'sample_oxford_id': oxford_code.strip(),
-                'sample_partner_id': source_code.strip(),
-                'species': taxon.strip(),
+                'sample_oxford_id': oxford_code,
+                'sample_partner_id': source_code,
+                'species': taxon,
                 'doc': doc,
                 'location_name': loc_name.strip(),
                 'country': country.strip(),
@@ -95,7 +95,4 @@ class Upload_ROMA(uploader.Uploader):
 
 if __name__ == '__main__':
     el = Upload_ROMA(sys.argv[1])
-    sheets = None
-    if len(sys.argv) > 3:
-        sheets = sys.argv[3]
-    el.load_data_file(sys.argv[2], sheets)
+    el.load_data_file(sys.argv[2])

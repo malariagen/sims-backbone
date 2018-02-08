@@ -25,8 +25,8 @@ class LocationFetch():
             location = Location(str(location_id), latitude, longitude, accuracy,
                                 curated_name, curation_method, country, notes)
 
-        stmt = '''SELECT DISTINCT identifier_type, identifier_value, studies.study_name 
-                FROM location_identifiers 
+        stmt = '''SELECT DISTINCT identifier_type, identifier_value, identifier_source, studies.study_name
+                FROM location_identifiers
                 LEFT JOIN studies ON location_identifiers.study_id = studies.id
                 WHERE location_id = %s AND location_identifiers.identifier_type = %s'''
 
@@ -36,9 +36,10 @@ class LocationFetch():
             raise MissingKeyException("No location {}".format(location_id))
 
         location.identifiers = []
-        for (name, value, study) in cursor:
+        for (name, value, source, study) in cursor:
             ident = Identifier(identifier_type = name, 
                                identifier_value = value,
+                               identifier_source = source,
                                study_name = study)
             location.identifiers.append(ident)
 
