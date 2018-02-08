@@ -1,0 +1,5 @@
+oxford_id	study	latitude	longitude	name	country	proxy_latitude	proxy_longitude	proxy_name
+22345	9040 Upload location test study	13.86208	107.097015	Ratanakiri	KHM	13.9	107.1	Ratanakiri
+22346	9041 Upload location test study	13.86	107.097	Ratanakiri	KHM			
+22347	9042 Upload location test study	13.86208	107.097015	Not Ratanakiri	KHM			
+22348	9040 Upload location test study				YN			
