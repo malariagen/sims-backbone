@@ -888,6 +888,10 @@ definitions:
         type: array
         items:
             $ref: '#/definitions/Identifier'
+      event_sets:
+        type: array
+        items:
+            type: string
   Locations:
     type: object
     properties:

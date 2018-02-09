@@ -517,6 +517,37 @@ class Uploader():
         #print(samp)
         return samp
 
+    def merge_events(self, api_instance, existing, found, values):
+
+        es_api_instance = None
+
+        configuration = swagger_client.Configuration()
+        configuration.access_token = self._auth_token
+
+        es_api_instance = swagger_client.EventSetApi(swagger_client.ApiClient(configuration))
+
+        existing, changed = self.merge_sampling_event_objects(es_api_instance, existing, found,
+                                                              values)
+        ret = existing
+
+        if changed:
+
+            for event_set in found.event_sets:
+                try:
+                    es_api_instance.create_event_set_item(event_set, existing.sampling_event_id)
+                except ApiException as err:
+                    #Probably because it already exists
+                    self._logger.debug("Error adding sample {} to event set {} {}".format(existing.sampling_event_id, self._event_set, err))
+
+            api_instance.delete_sampling_event(found.sampling_event_id)
+
+            #print("Updating {} to {}".format(orig, existing))
+            existing = api_instance.update_sampling_event(existing.sampling_event_id, existing)
+        else:
+            self.report("Merge didn't change anything {} {}".format(existing, found), None)
+
+        return existing
+
     def lookup_sampling_event(self, api_instance, samp, values):
 
         existing = None
@@ -546,10 +577,15 @@ class Uploader():
                             #Could potentially check study id as well
                             continue
 
-                    existing = api_instance.download_sampling_event_by_identifier(ident.identifier_type,
+                    found = api_instance.download_sampling_event_by_identifier(ident.identifier_type,
                                                            urllib.parse.quote_plus(ident.identifier_value))
                     #Only here if found - otherwise 404 exception
-                    break
+                    if existing and existing.sampling_event_id != found.sampling_event_id:
+                        self.report("Merging into {} {} using {}"
+                                        .format(existing.sampling_event_id, found.identifiers,
+                                                           ident.identifier_type), values)
+                        found = self.merge_events(api_instance, existing, found, values)
+                    existing = found
                     #print ("found: {}".format(samp))
                 except ApiException as err:
                     #self._logger.debug("Error looking for {}".format(ident))
@@ -579,6 +615,123 @@ class Uploader():
             self._logger.debug("Error adding sample {} to event set {} {}".format(sampling_event_id, event_set_id, err))
 
 
+    def merge_sampling_event_objects(self, es_api_instance, existing, samp, values):
+
+        orig = deepcopy(existing)
+        new_ident_value = False
+
+        for new_ident in samp.identifiers:
+            found = False
+            for existing_ident in existing.identifiers:
+                if existing_ident == new_ident:
+                    found = True
+            if not found:
+                new_ident_value = True
+                #print("Adding {} to {}".format(new_ident, existing))
+                existing.identifiers.append(new_ident)
+
+#        print("existing {} {}".format(existing, study_id))
+        if samp.study_id:
+            if existing.study_id:
+                if samp.study_id != existing.study_id:
+                    if samp.study_id[:4] == existing.study_id[:4]:
+                        #print("#Short and full study ids used {} {} {}".format(values, study_id, existing.study_id))
+                        pass
+                    else:
+                        if not (existing.study_id[:4] == '0000' or samp.study_id[:4] == '0000'):
+                            self.report("Conflicting study_id value {} {}"
+                                            .format(samp.study_id, existing.study_id), values)
+                    if not samp.study_id[:4] == '0000':
+                        if ((int(samp.study_id[:4]) < int(existing.study_id[:4]) or
+                             existing.study_id[:4] == '0000') and
+                            (samp.study_id[:4] != '1089')):
+                            self.set_additional_event(es_api_instance,
+                                                      existing.sampling_event_id, existing.study_id)
+                            existing.study_id = samp.study_id
+                            new_ident_value = True
+                        else:
+                            if not (samp.study_id[:4] == '0000' or samp.study_id[:4] == '1089'):
+                                self.set_additional_event(es_api_instance,
+                                                          existing.sampling_event_id, samp.study_id)
+            else:
+                existing.study_id = samp.study_id
+                new_ident_value = True
+        else:
+            if existing.study_id:
+#                    print("Adding loc ident {} {}".format(location_name, existing.study_id))
+                self.add_location_identifier(location, existing.study_id, location_name)
+                self.add_location_identifier(proxy_location, existing.study_id, proxy_location_name)
+
+        if samp.doc:
+            if existing.doc:
+                if samp.doc != existing.doc:
+                    update_doc = True
+                    if samp.doc_accuracy and samp.doc_accuracy == 'year':
+                        if existing.doc_accuracy and existing.doc_accuracy != 'year':
+                            update_doc = False
+
+                    if update_doc:
+                        existing.doc = samp.doc
+                        existing.doc_accuracy = samp.doc_accuracy
+                        new_ident_value = True
+                        self.report("Conflicting doc value updated {} {}"
+                                        .format(samp.doc, existing.doc), values)
+                    else:
+                        self.report("Conflicting doc value not updated {} {}"
+                                        .format(samp.doc, existing.doc), values)
+            else:
+                existing.doc = samp.doc
+                new_ident_value = True
+        if samp.location:
+            if existing.location:
+                if samp.location.location_id != existing.location_id:
+                    location = samp.location
+                    self.report("Conflicting location value {}\t{}\t{}\t{}\t{}\t{}".format(
+                                                                       samp.location.identifiers[0].identifier_value,
+                                                                                         samp.location.latitude,
+                                                                                         samp.location.longitude,
+                                                                       existing.location.identifiers[0].identifier_value,
+                                                                                         existing.location.latitude,
+                                                                                         existing.location.longitude)
+                                    ,values)
+                    #existing.location_id = location.location_id
+                    #new_ident_value = True
+            else:
+                existing.location_id = samp.location.location_id
+                new_ident_value = True
+        if samp.partner_species:
+            if existing.partner_species:
+                if existing.partner_species != samp.partner_species:
+                    fuzzyMatch = False
+                    if existing.partner_species == 'Plasmodium falciparum/vivax mixture':
+                        if samp.partner_species == 'Plasmodium vivax':
+                            fuzzyMatch = True
+                        if samp.partner_species == 'Plasmodium falciparum':
+                            fuzzyMatch = True
+
+                    if not fuzzyMatch:
+                        self.report("Conflicting partner_species value not updated record {}\t{}".format(
+                                                                           samp.partner_species,
+                                                                           existing.partner_species),
+                                        values)
+
+            else:
+                existing.partner_species = samp.partner_species
+                new_ident_value = True
+
+        if samp.proxy_location:
+            if existing.proxy_location:
+                if proxy_location.location_id != existing.proxy_location_id:
+                    proxy_location = samp.proxy_location
+                    self.report("Conflicting proxy location value {}\n{}".format(proxy_location, existing.proxy_location),
+                               values)
+                    existing.proxy_location_id = proxy_location.location_id
+                    new_ident_value = True
+            else:
+                existing.proxy_location_id = samp.proxy_location.location_id
+                new_ident_value = True
+
+        return existing, new_ident_value
 
     def process_sampling_event(self, values, location_name, location, proxy_location_name, proxy_location):
 
@@ -601,123 +754,12 @@ class Uploader():
                 return None
 
         if existing:
-            orig = deepcopy(existing)
-            new_ident_value = False
 
-            for new_ident in samp.identifiers:
-                found = False
-                for existing_ident in existing.identifiers:
-                    if existing_ident == new_ident:
-                        found = True
-                if not found:
-                    new_ident_value = True
-                    #print("Adding {} to {}".format(new_ident, existing))
-                    existing.identifiers.append(new_ident)
-
-    #        print("existing {} {}".format(existing, study_id))
-            if samp.study_id:
-                if existing.study_id:
-                    if samp.study_id != existing.study_id:
-                        if samp.study_id[:4] == existing.study_id[:4]:
-                            #print("#Short and full study ids used {} {} {}".format(values, study_id, existing.study_id))
-                            pass
-                        else:
-                            if not (existing.study_id[:4] == '0000' or samp.study_id[:4] == '0000'):
-                                self.report("Conflicting study_id value {} {}"
-                                                .format(samp.study_id, existing.study_id), values)
-                        if not samp.study_id[:4] == '0000':
-                            if ((int(samp.study_id[:4]) < int(existing.study_id[:4]) or
-                                 existing.study_id[:4] == '0000') and
-                                (samp.study_id[:4] != '1089')):
-                                self.set_additional_event(es_api_instance,
-                                                          existing.sampling_event_id, existing.study_id)
-                                existing.study_id = samp.study_id
-                                new_ident_value = True
-                            else:
-                                if not (samp.study_id[:4] == '0000' or samp.study_id[:4] == '1089'):
-                                    self.set_additional_event(es_api_instance,
-                                                              existing.sampling_event_id, samp.study_id)
-                else:
-                    existing.study_id = samp.study_id
-                    new_ident_value = True
-            else:
-                if existing.study_id:
-#                    print("Adding loc ident {} {}".format(location_name, existing.study_id))
-                    self.add_location_identifier(location, existing.study_id, location_name)
-                    self.add_location_identifier(proxy_location, existing.study_id, proxy_location_name)
-
-            if samp.doc:
-                if existing.doc:
-                    if samp.doc != existing.doc:
-                        update_doc = True
-                        if samp.doc_accuracy and samp.doc_accuracy == 'year':
-                            if existing.doc_accuracy and existing.doc_accuracy != 'year':
-                                update_doc = False
-
-                        if update_doc:
-                            existing.doc = samp.doc
-                            existing.doc_accuracy = samp.doc_accuracy
-                            new_ident_value = True
-                            self.report("Conflicting doc value updated {} {}"
-                                            .format(samp.doc, existing.doc), values)
-                        else:
-                            self.report("Conflicting doc value not updated {} {}"
-                                            .format(samp.doc, existing.doc), values)
-                else:
-                    existing.doc = samp.doc
-                    new_ident_value = True
-            if samp.location:
-                if existing.location:
-                    if samp.location.location_id != existing.location_id:
-                        location = samp.location
-                        self.report("Conflicting location value {}\t{}\t{}\t{}\t{}\t{}".format(
-                                                                           samp.location.identifiers[0].identifier_value,
-                                                                                             samp.location.latitude,
-                                                                                             samp.location.longitude,
-                                                                           existing.location.identifiers[0].identifier_value,
-                                                                                             existing.location.latitude,
-                                                                                             existing.location.longitude)
-                                        ,values)
-                        #existing.location_id = location.location_id
-                        #new_ident_value = True
-                else:
-                    existing.location_id = samp.location.location_id
-                    new_ident_value = True
-            if samp.partner_species:
-                if existing.partner_species:
-                    if existing.partner_species != samp.partner_species:
-                        fuzzyMatch = False
-                        if existing.partner_species == 'Plasmodium falciparum/vivax mixture':
-                            if samp.partner_species == 'Plasmodium vivax':
-                                fuzzyMatch = True
-                            if samp.partner_species == 'Plasmodium falciparum':
-                                fuzzyMatch = True
-
-                        if not fuzzyMatch:
-                            self.report("Conflicting partner_species value not updated record {}\t{}".format(
-                                                                               samp.partner_species,
-                                                                               existing.partner_species),
-                                            values)
-
-                else:
-                    existing.partner_species = samp.partner_species
-                    new_ident_value = True
-
-            if samp.proxy_location:
-                if existing.proxy_location:
-                    if proxy_location.location_id != existing.proxy_location_id:
-                        proxy_location = samp.proxy_location
-                        self.report("Conflicting proxy location value {}\n{}".format(proxy_location, existing.proxy_location),
-                                   values)
-                        existing.proxy_location_id = proxy_location.location_id
-                        new_ident_value = True
-                else:
-                    existing.proxy_location_id = samp.proxy_location.location_id
-                    new_ident_value = True
-
+            existing, changed = self.merge_sampling_event_objects(es_api_instance, existing, samp,
+                                                                 values)
             ret = existing
 
-            if new_ident_value:
+            if changed:
                 #print("Updating {} to {}".format(orig, existing))
                 ret = api_instance.update_sampling_event(existing.sampling_event_id, existing)
 

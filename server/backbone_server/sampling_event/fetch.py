@@ -28,6 +28,24 @@ class SamplingEventFetch():
 
         return identifiers
 
+    @staticmethod
+    def fetch_event_sets(cursor, sampling_event_id):
+
+        stmt = '''select event_set_name FROM event_set_members 
+        JOIN event_sets ON event_set_id = event_sets.id 
+        WHERE sampling_event_id = %s'''
+
+        cursor.execute(stmt, (sampling_event_id,))
+
+        identifiers = []
+        for (name,) in cursor:
+            identifiers.append(name)
+
+        if len(identifiers) == 0:
+            identifiers = None
+
+        return identifiers
+
 
     @staticmethod
     def fetch_taxonomies(cursor, study_id, partner_species):
@@ -98,6 +116,8 @@ class SamplingEventFetch():
 
         sample.partner_taxonomies = SamplingEventFetch.fetch_taxonomies(cursor, study_id,
                                                                         partner_species)
+
+        sample.event_sets = SamplingEventFetch.fetch_event_sets(cursor, sampling_event_id)
 
         return sample
 
