@@ -137,7 +137,49 @@ class TestSample(TestBase):
             api_instance.delete_sampling_event(created.sampling_event_id)
 
         except ApiException as error:
-            self.fail("test_partner_lookup: Exception when calling SamplingEventApi->create_sampling_event: %s\n" % error)
+            self.fail("test_identifier_lookup: Exception when calling SamplingEventApi->create_sampling_event: %s\n" % error)
+
+    """
+    """
+    def test_identifier_merge(self):
+
+        api_instance = swagger_client.SamplingEventApi(self._api_client)
+
+        try:
+
+            ident1 = swagger_client.Identifier (identifier_type='oxford_id', identifier_value='1234')
+            ident2 = swagger_client.Identifier (identifier_type='roma_id', identifier_value='12345')
+            ident3 = swagger_client.Identifier (identifier_type='lims_id', identifier_value='123456')
+            samp1 = swagger_client.SamplingEvent(None, '1022-MD-UP', date(2017, 10, 14))
+            samp1.identifiers = [
+                ident1
+            ]
+            created1 = api_instance.create_sampling_event(samp1)
+
+            samp2 = swagger_client.SamplingEvent(None, '1022-MD-UP', date(2017, 10, 14))
+            samp2.identifiers = [
+                ident2
+            ]
+            created2 = api_instance.create_sampling_event(samp2)
+
+
+            samp3 = swagger_client.SamplingEvent(None, '1022-MD-UP', date(2017, 10, 14))
+            samp3.identifiers = [
+                ident1,
+                ident2,
+                ident3
+            ]
+            with self.assertRaises(Exception) as context:
+                created3 = api_instance.create_sampling_event(samp3)
+
+            self.assertEqual(context.exception.status, 422)
+
+            api_instance.delete_sampling_event(created1.sampling_event_id)
+            api_instance.delete_sampling_event(created2.sampling_event_id)
+
+
+        except ApiException as error:
+            self.fail("test_identifier_merge: Exception when calling SamplingEventApi->create_sampling_event: %s\n" % error)
 
     """
     """

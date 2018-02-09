@@ -60,6 +60,15 @@ class SamplingEventEdit():
                         raise DuplicateKeyException("Error inserting sample identifier {} {}"
                                                     .format(ident.identifier_type, sample))
 
+                    cursor.execute('''SELECT * FROM identifiers
+                                   WHERE identifier_type = %s AND identifier_value = %s AND
+                                   sample_id != %s''',
+                                   (ident.identifier_type, ident.identifier_value,
+                                    uuid_val))
+                    if cursor.fetchone():
+                        raise DuplicateKeyException("Error inserting sample identifier {} {}"
+                                                    .format(ident.identifier_type, sample))
+
                 stmt = '''INSERT INTO identifiers 
                     (sample_id, identifier_type, identifier_value, identifier_source)
                     VALUES (%s, %s, %s, %s)'''
