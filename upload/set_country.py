@@ -204,7 +204,10 @@ class SetCountry(upload_ssr.Upload_SSR):
 
         item = self.lookup_sampling_event(api_instance, samp, values)
 
-        item = self.set_country(item, values['iso2'])
+        if item:
+            item = self.set_country(item, values['iso2'])
+        else:
+            self.report("sampling event not found - probably duplicate key", values)
 
         return item
 

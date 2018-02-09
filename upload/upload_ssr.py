@@ -112,6 +112,13 @@ class Upload_SSR(uploader.Uploader):
 
     def validate(self, input_values, output_values):
 
+        if not input_values:
+            return
+
+
+        if not output_values:
+            return
+
         if 'study_id' in input_values:
             if input_values['study_id'][:4] != output_values.study_id[:4]:
                 if input_values['study_id'][:4] != '0000':
