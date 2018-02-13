@@ -14,7 +14,8 @@ class SamplingEventFetch():
     @staticmethod
     def fetch_identifiers(cursor, sampling_event_id):
 
-        stmt = '''SELECT identifier_type, identifier_value, identifier_source FROM identifiers WHERE sample_id = %s'''
+        stmt = '''SELECT identifier_type, identifier_value, identifier_source FROM identifiers WHERE sample_id = %s
+                ORDER BY identifier_type, identifier_value, identifier_source'''
 
         cursor.execute(stmt, (sampling_event_id,))
 
