@@ -225,7 +225,7 @@ class Uploader():
 
         return self.process_sampling_event(values, location_name, location, proxy_location_name, proxy_location)
 
-    def add_location_identifier(self, looked_up, study_id, partner_name):
+    def add_location_identifier(self, looked_up, study_id, partner_name, values):
 
         if not looked_up:
             return
@@ -271,7 +271,7 @@ class Uploader():
                             conflict_loc = api_instance.download_gps_location(str(looked_up.latitude),
                                                                               str(looked_up.longitude))
                             message = message + '\t' + str(conflict_loc.latitude) + '\t' + str(conflict_loc.longitude)
-                            message = message + "Probable conflict with {}".format(conflict_loc)
+                            message = message + "\nProbable conflict with {}".format(conflict_loc)
                     except ApiException as err:
                         try:
                             conflict_loc = api_instance.download_gps_location(str(looked_up.latitude),
@@ -281,7 +281,7 @@ class Uploader():
                                     message = message + '\t' + cname.identifier_value
                         except ApiException as err:
                             print(err)
-                    self.report(message, None)
+                    self.report(message, values)
         #else:
         #    print("identifier exists")
 
@@ -409,7 +409,7 @@ class Uploader():
             try:
                 #print("Found location {}".format(looked_up))
                 loc.location_id = looked_up.location_id
-                self.add_location_identifier(looked_up, study_id, partner_name)
+                self.add_location_identifier(looked_up, study_id, partner_name, values)
 
                 loc.location_id = None
                 try:
@@ -661,8 +661,9 @@ class Uploader():
         else:
             if existing.study_id:
 #                    print("Adding loc ident {} {}".format(location_name, existing.study_id))
-                self.add_location_identifier(location, existing.study_id, location_name)
-                self.add_location_identifier(proxy_location, existing.study_id, proxy_location_name)
+                self.add_location_identifier(location, existing.study_id, location_name, values)
+                self.add_location_identifier(proxy_location, existing.study_id,
+                                             proxy_location_name, values)
 
         if samp.doc:
             if existing.doc:

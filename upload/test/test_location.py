@@ -67,6 +67,7 @@ class TestLocation(TestBase):
 
         self._messages = sd.message_buffer
 
+
     """
     """
     @classmethod
@@ -144,3 +145,31 @@ class TestLocation(TestBase):
             self.fail("test_location_duplicate_name: Exception when calling download_sampling_event_by_identifier {}"
                         .format(error))
 
+    """
+    """
+    def test_location_duplicate_gps_simple(self):
+
+        errmsg = '''duplicate location      9040    Not Ratanakiri  13.86208        107.097015      13.86208        107.097015
+Probable conflict with {'accuracy': None,
+ 'country': 'KHM',
+ 'curated_name': None,
+ 'curation_method': None,
+ 'identifiers': [{'identifier_source': 'locations',
+                  'identifier_type': 'partner_name',
+                  'identifier_value': 'Not Ratanakiri',
+                  'study_name': '9042'},
+                 {'identifier_source': 'locations',
+                  'identifier_type': 'partner_name',
+                  'identifier_value': 'Ratanakiri',
+                  'study_name': '9040'}],
+ 'latitude': 13.86208,
+ 'location_id': '6a33d4e8-3e3a-4a3d-88c6-3a3de1e578e7',
+ 'longitude': 107.097015,
+ 'notes': 'locations.tsv'}      [('country', 'KHM'), ('latitude', '13.86208'), ('location_name', 'Not Ratanakiri'), ('longitude', '107.097015'), ('proxy_latitude', ''), ('proxy_longitude', ''), ('sample_oxford_id', '22349'), ('study_id', '9040 Upload location test study')]'''
+        self.assertIn(errmsg, self._messages)
+
+    """
+    """
+    def test_location_duplicate_gps_simple(self):
+        errmsg = '''duplicate location\t9040\tDuplicate GPS Ratanakiri\t13.86208\t107.097015\tRatanakiri\t[('country', 'KHM'), ('latitude', '13.86208'), ('location_name', 'Duplicate GPS Ratanakiri'), ('longitude', '107.097015'), ('proxy_latitude', ''), ('proxy_longitude', ''), ('sample_oxford_id', '22350'), ('study_id', '9040 Upload location test study')]'''
+        self.assertIn(errmsg, self._messages)

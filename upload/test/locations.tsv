@@ -3,3 +3,5 @@ oxford_id	study	latitude	longitude	name	country	proxy_latitude	proxy_longitude	p
 22346	9041 Upload location test study	13.86	107.097	Ratanakiri	KHM			
 22347	9042 Upload location test study	13.86208	107.097015	Not Ratanakiri	KHM			
 22348	9040 Upload location test study				YN			
+22349	9040 Upload location test study	13.86208	107.097015	Not Ratanakiri	KHM			
+22350	9040 Upload location test study	13.86208	107.097015	Duplicate GPS Ratanakiri	KHM			
