@@ -565,6 +565,9 @@ class Uploader():
                 try:
                     #print("Looking for {} {}".format(ident.identifier_type, ident.identifier_value))
 
+                    found = api_instance.download_sampling_event_by_identifier(ident.identifier_type,
+                                                           urllib.parse.quote_plus(ident.identifier_value))
+
                     if ident.identifier_type == 'partner_id':
                         if 'sample_lims_id' in values and values['sample_lims_id']:
                             #Partner id is not the only id
@@ -574,11 +577,10 @@ class Uploader():
                             continue
                         else:
                             #Not safe as partner id's can be the same across studies
-                            #Could potentially check study id as well
-                            continue
+                            #unless check study id as well
+                            if found.study_id[:4] != samp.study_id[:4]:
+                                continue
 
-                    found = api_instance.download_sampling_event_by_identifier(ident.identifier_type,
-                                                           urllib.parse.quote_plus(ident.identifier_value))
                     #Only here if found - otherwise 404 exception
                     if existing and existing.sampling_event_id != found.sampling_event_id:
                         self.report("Merging into {} {} using {}"
@@ -672,7 +674,12 @@ class Uploader():
 
                     if update_doc:
                         existing.doc = samp.doc
-                        existing.doc_accuracy = samp.doc_accuracy
+                        if samp.doc_accuracy:
+                            existing.doc_accuracy = samp.doc_accuracy
+                        else:
+                            if existing.doc_accuracy:
+                                existing.doc_accuracy = 'day'
+
                         new_ident_value = True
                         self.report("Conflicting doc value updated {} {}"
                                         .format(samp.doc, existing.doc), values)

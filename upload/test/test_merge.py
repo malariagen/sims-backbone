@@ -19,6 +19,18 @@ class TestMerge(TestBase):
     def setUpClass(self):
 
         super(TestMerge, self).setUpClass()
+
+    """
+    """
+    @classmethod
+    def tearDownClass(self):
+
+        pass
+
+    """
+    """
+    def test_merge(self):
+
         sd = Uploader(self._config_file)
         sd.use_message_buffer = True
 
@@ -53,23 +65,6 @@ class TestMerge(TestBase):
         sd.load_data_file(json_data, 'merge_oxford.tsv')
 
         self._messages = sd.message_buffer
-
-    """
-    """
-    @classmethod
-    def tearDownClass(self):
-
-        event_api_instance = swagger_client.SamplingEventApi(self._api_client)
-
-        looked_up = event_api_instance.download_sampling_event_by_identifier('oxford_id',
-                                                                             'EXTST000002')
-
-        event_api_instance.delete_sampling_event(looked_up.sampling_event_id)
-
-    """
-    """
-    def test_merge(self):
-
         el = Upload_ROMA(self._config_file)
         el.use_message_buffer = True
         el.load_data_file('roma_dump.20180116103346.json')
@@ -162,3 +157,105 @@ class TestMerge(TestBase):
         self.assertEquals(looked_up.partner_species, 'Plasmodium falciparum')
 
         self.assertEquals(looked_up.location.latitude, 12.5)
+
+        event_api_instance = swagger_client.SamplingEventApi(self._api_client)
+
+        looked_up = event_api_instance.download_sampling_event_by_identifier('oxford_id',
+                                                                             'EXTST000002')
+
+        event_api_instance.delete_sampling_event(looked_up.sampling_event_id)
+        test_events = event_api_instance.download_sampling_events_by_study('9030')
+
+        for event in test_events.sampling_events:
+            event_api_instance.delete_sampling_event(event.sampling_event_id)
+
+
+
+    def test_merge_on_partner_id(self):
+
+        el = Upload_ROMA(self._config_file)
+        el.use_message_buffer = True
+        el.load_data_file('roma_dump.20180116103346.json')
+
+
+        sd = Uploader(self._config_file)
+        sd.use_message_buffer = True
+
+        json_data = json.loads('''{
+    "values":
+    {
+        "sample_oxford_id": {
+            "column": 0,
+            "type": "string",
+            "id": true
+        },
+        "sample_partner_id": {
+            "column": 1,
+            "type": "string"
+        },
+        "study_id": {
+            "column": 4,
+            "type": "string"
+        },
+        "type": {
+            "column": 5,
+            "type": "string"
+        },
+        "location_name": {
+            "column": 6,
+            "type": "string"
+        },
+       "latitude": {
+            "column": 7,
+            "type": "float"
+        },
+        "longitude": {
+            "column": 8,
+            "type": "float"
+        },
+        "doc": {
+            "column": 9,
+            "type": "datetime",
+            "date_format": "%Y-%m-%d",
+            "comment": "inconsistent date format"
+        },
+        "year": {
+            "column": 10,
+            "type": "datetime",
+            "date_format": "%Y"
+        }
+    }
+}''')
+
+        sd.load_data_file(json_data, 'merge_pf_6.tsv')
+
+        event_api_instance = swagger_client.SamplingEventApi(self._api_client)
+
+
+        with self.assertRaises(Exception) as context:
+            looked_up = event_api_instance.download_sampling_event_by_identifier('partner_id',
+                                                                             'EXTST000003')
+
+        looked_up1 = event_api_instance.download_sampling_event_by_identifier('roma_id',
+                                                                             'TST00003')
+
+        looked_up2 = event_api_instance.download_sampling_event_by_identifier('oxford_id',
+                                                                             'OX0008-C')
+
+        looked_up3 = event_api_instance.download_sampling_event_by_identifier('oxford_id',
+                                                                             'OX0009-C')
+
+        self.assertEqual(looked_up1.sampling_event_id, looked_up2.sampling_event_id)
+        
+        self.assertNotEqual(looked_up1.sampling_event_id, looked_up3.sampling_event_id)
+
+        test_events = event_api_instance.download_sampling_events_by_study('9030')
+
+        for event in test_events.sampling_events:
+            event_api_instance.delete_sampling_event(event.sampling_event_id)
+
+        test_events = event_api_instance.download_sampling_events_by_study('9031')
+
+        for event in test_events.sampling_events:
+            event_api_instance.delete_sampling_event(event.sampling_event_id)
+
