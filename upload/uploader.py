@@ -674,6 +674,8 @@ class Uploader():
                             update_doc = False
 
                     if update_doc:
+                        self.report("Conflicting doc value updated {} {}"
+                                        .format(samp.doc, existing.doc), values)
                         existing.doc = samp.doc
                         if samp.doc_accuracy:
                             existing.doc_accuracy = samp.doc_accuracy
@@ -682,8 +684,6 @@ class Uploader():
                                 existing.doc_accuracy = 'day'
 
                         new_ident_value = True
-                        self.report("Conflicting doc value updated {} {}"
-                                        .format(samp.doc, existing.doc), values)
                     else:
                         self.report("Conflicting doc value not updated {} {}"
                                         .format(samp.doc, existing.doc), values)

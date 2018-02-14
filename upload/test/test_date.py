@@ -155,7 +155,7 @@ class TestDate(TestBase):
             looked_up = api_instance.download_sampling_event_by_identifier('oxford_id', '12353')
             self.assertEqual(looked_up.doc, datetime.date(2017, 2, 7))
 
-            self.assertIn("Conflicting doc value updated 2017-02-07 2017-02-07\t" +
+            self.assertIn("Conflicting doc value updated 2017-02-07 2017-03-12\t" +
                           "[('doc', datetime.date(2017, 2, 7)), ('doc_accuracy', None), " +
                           "('sample_oxford_id', '12353'), ('study_id', '9020 Upload test study 2')]", self._messages)
         except ApiException as error:
@@ -174,7 +174,7 @@ class TestDate(TestBase):
             looked_up = api_instance.download_sampling_event_by_identifier('oxford_id', '12352')
             self.assertEqual(looked_up.doc_accuracy, 'day')
             self.assertEqual(looked_up.doc, datetime.date(2017, 2, 7))
-            self.assertIn("Conflicting doc value updated 2017-02-07 2017-02-07\t" +
+            self.assertIn("Conflicting doc value updated 2017-02-07 2017-01-01\t" +
                           "[('doc', datetime.date(2017, 2, 7)), ('doc_accuracy', None), " +
                           "('sample_oxford_id', '12352'), " +
                           "('study_id', '9020 Upload test study 2')]", self._messages)
