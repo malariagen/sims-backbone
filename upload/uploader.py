@@ -225,7 +225,7 @@ class Uploader():
 
         return self.process_sampling_event(values, location_name, location, proxy_location_name, proxy_location)
 
-    def add_location_identifier(self, looked_up, study_id, partner_name, values):
+    def add_location_identifier(self, looked_up, study_id, partner_name):
 
         if not looked_up:
             return
@@ -281,7 +281,7 @@ class Uploader():
                                     message = message + '\t' + cname.identifier_value
                         except ApiException as err:
                             print(err)
-                    self.report(message, values)
+                    raise Exception(message)
         #else:
         #    print("identifier exists")
 
@@ -409,13 +409,17 @@ class Uploader():
             try:
                 #print("Found location {}".format(looked_up))
                 loc.location_id = looked_up.location_id
-                self.add_location_identifier(looked_up, study_id, partner_name, values)
-
-                loc.location_id = None
                 try:
-                    ret = self.update_country(loc.country, looked_up)
+                    self.add_location_identifier(looked_up, study_id, partner_name)
+
+                    loc.location_id = None
+                    try:
+                        ret = self.update_country(loc.country, looked_up)
+                    except ApiException as err:
+                        print(err)
                 except Exception as err:
-                    self.report("Country conflict {} {}".format(loc.country, looked_up), values)
+                    #Either a duplicate or country conflict
+                    self.report(err, values)
 
             except Exception as err:
                 print(repr(err))
@@ -661,9 +665,17 @@ class Uploader():
         else:
             if existing.study_id:
 #                    print("Adding loc ident {} {}".format(location_name, existing.study_id))
-                self.add_location_identifier(location, existing.study_id, location_name, values)
-                self.add_location_identifier(proxy_location, existing.study_id,
-                                             proxy_location_name, values)
+                try:
+                    self.add_location_identifier(location, existing.study_id, location_name)
+                except Exception as err:
+                    #Almost certainly a duplicate
+                    self.report(err, values)
+                try:
+                    self.add_location_identifier(proxy_location, existing.study_id,
+                                             proxy_location_name)
+                except Exception as err:
+                    #Almost certainly a duplicate
+                    self.report(err, values)
 
         if samp.doc:
             if existing.doc:
