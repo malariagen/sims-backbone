@@ -587,8 +587,8 @@ class Uploader():
 
                     #Only here if found - otherwise 404 exception
                     if existing and existing.sampling_event_id != found.sampling_event_id:
-                        self.report("Merging into {} {} using {}"
-                                        .format(existing.sampling_event_id, found.identifiers,
+                        self.report("Merging into {} using {}"
+                                        .format(existing.sampling_event_id,
                                                            ident.identifier_type), values)
                         found = self.merge_events(api_instance, existing, found, values)
                     existing = found
