@@ -75,13 +75,6 @@ DROP TABLE public.archive;
 DROP EXTENSION postgis;
 DROP EXTENSION plpgsql;
 DROP SCHEMA public;
-DROP SCHEMA backbone_service;
---
--- Name: backbone_service; Type: SCHEMA; Schema: -; Owner: -
---
-
-CREATE SCHEMA backbone_service;
-
 
 --
 -- Name: public; Type: SCHEMA; Schema: -; Owner: -
@@ -115,7 +108,7 @@ COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
 -- Name: postgis; Type: EXTENSION; Schema: -; Owner: -
 --
 
-CREATE EXTENSION IF NOT EXISTS postgis WITH SCHEMA backbone_service;
+CREATE EXTENSION IF NOT EXISTS postgis WITH SCHEMA public;
 
 
 --
@@ -260,7 +253,7 @@ CREATE TABLE location_identifiers (
 
 CREATE TABLE locations (
     id uuid NOT NULL,
-    location backbone_service.geometry(Point),
+    location geometry(Point),
     country character(3),
     "precision" character varying,
     curated_name character varying,
@@ -339,8 +332,8 @@ CREATE VIEW v_sampling_events AS
     partner_species_identifiers.partner_species,
     samples.partner_species_id,
     samples.location_id,
-    backbone_service.st_x(loc.location) AS latitude,
-    backbone_service.st_y(loc.location) AS longitude,
+    st_x(loc.location) AS latitude,
+    st_y(loc.location) AS longitude,
     loc."precision" AS accuracy,
     loc.curated_name,
     loc.curation_method,
@@ -348,8 +341,8 @@ CREATE VIEW v_sampling_events AS
     loc.notes,
     li.identifier_value AS partner_name,
     samples.proxy_location_id,
-    backbone_service.st_x(proxy_loc.location) AS proxy_latitude,
-    backbone_service.st_y(proxy_loc.location) AS proxy_longitude,
+    st_x(proxy_loc.location) AS proxy_latitude,
+    st_y(proxy_loc.location) AS proxy_longitude,
     proxy_loc."precision" AS proxy_accuracy,
     proxy_loc.curated_name AS proxy_curated_name,
     proxy_loc.curation_method AS proxy_curation_method,

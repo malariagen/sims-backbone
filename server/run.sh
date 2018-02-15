@@ -17,5 +17,10 @@ then
     export PYTHONPATH=$(pwd):$(pwd)/bb_server:${PYTHONPATH}
     cd bb_server
     echo "http://localhost:8080/v1/ui/"
+    if [ "$1" = "test" ]
+    then
+        DATABASE=backbone_test
+        export DATABASE
+    fi
     python3 -m swagger_server
 fi
