@@ -168,8 +168,7 @@ class TestCountry(TestBase):
 
         api_instance = swagger_client.EventSetApi(self._api_client)
 
-        for evs in ['TestSSR','Report','Sequencescape','countries', 'Additional events: 9050',
-                    'oxford_country']:
+        for evs in ['TestSSR','Report','Sequencescape','countries', 'oxford_country']:
             api_instance.delete_event_set(evs)
 
         for loc in self._locations:

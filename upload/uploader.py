@@ -653,17 +653,18 @@ class Uploader():
                         if not (existing.study_id[:4] == '0000' or samp.study_id[:4] == '0000'):
                             self.report("Conflicting study_id value {} {}"
                                             .format(samp.study_id, existing.study_id), values)
-                    if not samp.study_id[:4] == '0000':
-                        if ((int(samp.study_id[:4]) < int(existing.study_id[:4]) or
-                             existing.study_id[:4] == '0000') and
-                            (samp.study_id[:4] != '1089')):
-                            self.set_additional_event(es_api_instance,
-                                                      existing.sampling_event_id, existing.study_id)
-                            existing.study_id = samp.study_id
-                            new_ident_value = True
-                        else:
-                            if not (samp.study_id[:4] == '0000' or samp.study_id[:4] == '1089'):
+
+                        if not samp.study_id[:4] == '0000':
+                            if ((int(samp.study_id[:4]) < int(existing.study_id[:4]) or
+                                 existing.study_id[:4] == '0000') and
+                                (samp.study_id[:4] != '1089')):
                                 self.set_additional_event(es_api_instance,
+                                                          existing.sampling_event_id, existing.study_id)
+                                existing.study_id = samp.study_id
+                                new_ident_value = True
+                            else:
+                                if not (samp.study_id[:4] == '0000' or samp.study_id[:4] == '1089'):
+                                    self.set_additional_event(es_api_instance,
                                                           existing.sampling_event_id, samp.study_id)
             else:
                 existing.study_id = samp.study_id
