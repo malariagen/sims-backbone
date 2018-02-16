@@ -9,4 +9,4 @@ then
 fi
 source upload-env/bin/activate
 export TOKEN_URL=https://sso-dev.cggh.org/sso/oauth2.0/accessToken
-python3 set_country.py config_dev.json oxford_id ox.csv 3 10 2017_06_07_report_sample_status.xls
+python3 set_country.py config_dev.json oxford_id $1 3 10 $2

@@ -26,13 +26,15 @@ class SetCountry(upload_ssr.Upload_SSR):
 
     _country_cache = {}
     _country_location_cache = {}
+    _country_study_location_cache = {}
 
+    _countries_file = 'country_locations.csv'
 
     def load_location_cache(self):
 
         skip_header = True
 
-        input_stream = open('country_locations.csv')
+        input_stream = open(self._countries_file)
 
         configuration = swagger_client.Configuration()
         configuration.access_token = self._auth_token
@@ -82,9 +84,65 @@ class SetCountry(upload_ssr.Upload_SSR):
                     print("Exception when looking for event {} {} \n".format(id_column, e))
                     continue
 
-                self.set_country(found, country_value)
+                self.set_country(found, country_value, filename)
 
-    def set_country(self, found, country_value):
+    def find_country_for_study(self, country_value, study, country_ident):
+
+        if study[:4] in self._country_study_location_cache:
+            return self._country_study_location_cache[study[:4]]
+
+        configuration = swagger_client.Configuration()
+        configuration.access_token = self._auth_token
+
+        location_api_instance = swagger_client.LocationApi(swagger_client.ApiClient(configuration))
+
+        named_locations = location_api_instance.download_partner_location(self._country_cache[country_value].english)
+
+        #print('Locations for {}'.format(self._country_cache[country_value].english))
+        #print(named_locations)
+
+        for named_loc in named_locations.locations:
+            for ident in named_loc.identifiers:
+                if ident.study_name[:4] == study[:4]:
+                    self._country_study_location_cache[study[:4]] = named_loc
+                    #print('Found location')
+                    return named_loc
+
+        #print('location not found for study {}'.format(study))
+        location = None
+
+        if country_value in self._country_location_cache:
+            cached_country = self._country_location_cache[country_value]
+
+            if 'location' in cached_country:
+                location = cached_country['location']
+            else:
+                try:
+                    location = location_api_instance.download_gps_location(cached_country['latitude'],
+                                                                           cached_country['longitude'])
+                except ApiException as exp:
+                    lat = round(float(Decimal(cached_country['latitude'])), 7)
+                    lng = round(float(Decimal(cached_country['longitude'])), 7)
+                    loc = swagger_client.Location(None, lat,
+                                                  lng,
+                                                  accuracy='country',
+                                                  country=self._country_cache[country_value].alpha3)
+                    loc.identifiers = [
+                        country_ident
+                    ]
+                    location = location_api_instance.create_location(loc)
+                cached_country['location'] = location
+                self._country_location_cache[country_value]['location'] = location
+
+            if location:
+                self._country_study_location_cache[study[:4]] = location
+
+        else:
+            self._report("Unknown country {} in study {}".format(country_value, study), None)
+
+        return location
+
+    def set_country(self, found, country_value, filename):
 
         configuration = swagger_client.Configuration()
         configuration.access_token = self._auth_token
@@ -99,55 +157,51 @@ class SetCountry(upload_ssr.Upload_SSR):
                 self._country_cache[country_value] = metadata
             except ApiException as e:
                 if country_value != 'nan':
-                    print("Exception when looking up country {} {}".format(country_value, found))
+                    self.report("Exception when looking up country {} {}".format(country_value,
+                                                                                 found), None)
                 return found
 
         ident = swagger_client.Identifier('partner_name',
                                           identifier_value=self._country_cache[country_value].english,
-                                          identifier_source='set_country',
+                                          identifier_source='set_country {}'.format(filename),
                                           study_name=found.study_id)
 
         if found.location:
             try:
                 found.location = self.update_country(self._country_cache[country_value].alpha3, found.location)
             except Exception as cue:
-                print("Country update failed for {} {} {}"
-                        .format(self._country_cache[country_value].alpha3, found, cue))
-        else:
-            if country_value in self._country_location_cache:
-                cached_country = self._country_location_cache[country_value]
-                location = None
-                try:
-                    if 'location' in cached_country:
-                        location = cached_country['location']
-                        found.location = self.update_country(self._country_cache[country_value].alpha3, location)
-                    else:
+                msg = "Country conflict {} vs {} in {} for {}".format(country_value,
+                                                                found.location.country,
+                                                                '\t'.join(str(x) for x in found.identifiers),
+                                                                  filename)
+                self.report(msg, None)
 
-                        location = None
-                        try:
-                            location = location_api_instance.download_gps_location(cached_country['latitude'],
-                                                                                   cached_country['longitude'])
-                        except ApiException as exp:
-                            lat = round(float(Decimal(cached_country['latitude'])), 7)
-                            lng = round(float(Decimal(cached_country['longitude'])), 7)
-                            loc = swagger_client.Location(None, lat,
-                                                          lng,
-                                                          accuracy='country',
-                                                          country=self._country_cache[country_value].alpha3)
-                            loc.identifiers = [
-                                ident
-                            ]
-                            location = location_api_instance.create_location(loc)
-                        cached_country['location'] = location
-                        self._country_location_cache[country_value]['location'] = location
+        if found.proxy_location:
+            try:
+                found.proxy_location = self.update_country(self._country_cache[country_value].alpha3, found.proxy_location)
+            except Exception as cue:
+                msg = "Country conflict in proxy {} vs {} in {} for {}".format(country_value,
+                                                                found.proxy_location.country,
+                                                                '\t'.join(str(x) for x in found.identifiers),
+                                                                  filename)
+                self.report(msg, None)
+
+        if not found.location:
+
+            location = self.find_country_for_study(country_value, found.study_id, ident)
+
+            if location:
+                try:
 
                     found.location_id = location.location_id
+                    found.location = location
                     found = api_instance.update_sampling_event(found.sampling_event_id, found)
 
                 except Exception as excp:
-                    print("Country update add location failed for {} {}".format(found, excp))
+                    #print(str(excp), None)
+                    self.report(str(excp), None)
             else:
-                print("Unknown country {}".format(country_value))
+                self.report("Unknown country {}".format(country_value), None)
 
         study_ident = False
 
@@ -156,23 +210,6 @@ class SetCountry(upload_ssr.Upload_SSR):
                 for identifier in found.location.identifiers:
                     if identifier.study_name[:4] == found.study_id[:4]:
                         study_ident = True
-            else:
-                found.location.identifiers = []
-
-        if not study_ident:
-            try:
-                #Check if there's an existing location for that study/country name
-                existing = location_api_instance.download_partner_location(ident.identifier_value)
-                for loc in existing.locations:
-                    for identifier in loc.identifiers:
-                        if identifier.study_name[:4] == found.study_id[:4]:
-                            found.location_id = loc.location_id
-                            found.location = loc
-                            found = api_instance.update_sampling_event(found.sampling_event_id, found)
-                            study_ident = True
-            except Exception:
-                #No location with the country name
-                pass
 
         if not study_ident:
             if found.location:
@@ -205,7 +242,7 @@ class SetCountry(upload_ssr.Upload_SSR):
         item = self.lookup_sampling_event(api_instance, samp, values)
 
         if item:
-            item = self.set_country(item, values['iso2'])
+            item = self.set_country(item, values['iso2'], self._data_file)
         else:
             self.report("sampling event not found - probably duplicate key", values)
 

@@ -479,6 +479,9 @@ class Uploader():
         samp = swagger_client.SamplingEvent(None, study_id = study_id, doc = doc, location_id =
                                      lid, proxy_location_id = plid)
 
+        samp.location = location
+        samp.proxy_location = proxy_location
+
         if 'species' in values and values['species'] and len(values['species']) > 0:
             samp.partner_species = values['species']
 
@@ -582,7 +585,10 @@ class Uploader():
                         else:
                             #Not safe as partner id's can be the same across studies
                             #unless check study id as well
-                            if found.study_id[:4] != samp.study_id[:4]:
+                            if samp.study_id:
+                                if found.study_id[:4] != samp.study_id[:4]:
+                                    continue
+                            else:
                                 continue
 
                     #Only here if found - otherwise 404 exception
@@ -702,6 +708,7 @@ class Uploader():
             else:
                 existing.doc = samp.doc
                 new_ident_value = True
+
         if samp.location:
             if existing.location:
                 if samp.location.location_id != existing.location_id:
@@ -719,6 +726,19 @@ class Uploader():
             else:
                 existing.location_id = samp.location.location_id
                 new_ident_value = True
+
+        if samp.proxy_location:
+            if existing.proxy_location:
+                if samp.proxy_location.location_id != existing.proxy_location_id:
+                    proxy_location = samp.proxy_location
+                    self.report("Conflicting proxy location value {}\n{}".format(proxy_location, existing.proxy_location),
+                               values)
+                    existing.proxy_location_id = proxy_location.location_id
+                    new_ident_value = True
+            else:
+                existing.proxy_location_id = samp.proxy_location.location_id
+                new_ident_value = True
+
         if samp.partner_species:
             if existing.partner_species:
                 if existing.partner_species != samp.partner_species:
@@ -739,21 +759,11 @@ class Uploader():
                 existing.partner_species = samp.partner_species
                 new_ident_value = True
 
-        if samp.proxy_location:
-            if existing.proxy_location:
-                if proxy_location.location_id != existing.proxy_location_id:
-                    proxy_location = samp.proxy_location
-                    self.report("Conflicting proxy location value {}\n{}".format(proxy_location, existing.proxy_location),
-                               values)
-                    existing.proxy_location_id = proxy_location.location_id
-                    new_ident_value = True
-            else:
-                existing.proxy_location_id = samp.proxy_location.location_id
-                new_ident_value = True
-
         return existing, new_ident_value
 
     def process_sampling_event(self, values, location_name, location, proxy_location_name, proxy_location):
+
+        #print('process_sampling event {} {} {} {} {}'.format(values, location_name, location, proxy_location_name, proxy_location))
 
         # Configure OAuth2 access token for authorization: OauthSecurity
         configuration = swagger_client.Configuration()
@@ -766,6 +776,8 @@ class Uploader():
 
         samp = self.create_sampling_event_from_values(values, location_name, location, proxy_location_name, proxy_location)
 
+        #print(samp)
+
         existing = self.lookup_sampling_event(api_instance, samp, values)
 
         if 'sample_lims_id' in values and values['sample_lims_id']:
@@ -775,8 +787,12 @@ class Uploader():
 
         if existing:
 
+            #print("existing pre merge")
+            #print(existing)
             existing, changed = self.merge_sampling_event_objects(es_api_instance, existing, samp,
                                                                  values)
+            #print("existing post merge")
+            #print(existing)
             ret = existing
 
             if changed:
