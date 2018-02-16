@@ -1,1 +1,3 @@
 !*.tsv
+!*.xls
+client-env/
