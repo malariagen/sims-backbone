@@ -15,6 +15,7 @@ import urllib.parse
 from copy import deepcopy
 
 from pprint import pprint
+from pprint import pformat
 
 import os
 import requests
@@ -96,17 +97,20 @@ class SetCountry(upload_ssr.Upload_SSR):
 
         location_api_instance = swagger_client.LocationApi(swagger_client.ApiClient(configuration))
 
-        named_locations = location_api_instance.download_partner_location(self._country_cache[country_value].english)
+        try:
+            named_locations = location_api_instance.download_partner_location(self._country_cache[country_value].english)
 
-        #print('Locations for {}'.format(self._country_cache[country_value].english))
-        #print(named_locations)
+            #print('Locations for {}'.format(self._country_cache[country_value].english))
+            #print(named_locations)
 
-        for named_loc in named_locations.locations:
-            for ident in named_loc.identifiers:
-                if ident.study_name[:4] == study[:4]:
-                    self._country_study_location_cache[study[:4]] = named_loc
-                    #print('Found location')
-                    return named_loc
+            for named_loc in named_locations.locations:
+                for ident in named_loc.identifiers:
+                    if ident.study_name[:4] == study[:4]:
+                        self._country_study_location_cache[study[:4]] = named_loc
+                        #print('Found location')
+                        return named_loc
+        except ApiException as e:
+            pass
 
         #print('location not found for study {}'.format(study))
         location = None
@@ -166,14 +170,15 @@ class SetCountry(upload_ssr.Upload_SSR):
                                           identifier_source='set_country {}'.format(filename),
                                           study_name=found.study_id)
 
+        idents = '\t'.join(pformat(x.to_dict(), width=1000, compact=True) for x in found.identifiers)
+
         if found.location:
             try:
                 found.location = self.update_country(self._country_cache[country_value].alpha3, found.location)
             except Exception as cue:
                 msg = "Country conflict {} vs {} in {} for {}".format(country_value,
-                                                                found.location.country,
-                                                                '\t'.join(str(x) for x in found.identifiers),
-                                                                  filename)
+                                                                      found.location.country, idents,
+                                                                      filename)
                 self.report(msg, None)
 
         if found.proxy_location:
@@ -181,9 +186,9 @@ class SetCountry(upload_ssr.Upload_SSR):
                 found.proxy_location = self.update_country(self._country_cache[country_value].alpha3, found.proxy_location)
             except Exception as cue:
                 msg = "Country conflict in proxy {} vs {} in {} for {}".format(country_value,
-                                                                found.proxy_location.country,
-                                                                '\t'.join(str(x) for x in found.identifiers),
-                                                                  filename)
+                                                                               found.proxy_location.country,
+                                                                               idents,
+                                                                               filename)
                 self.report(msg, None)
 
         if not found.location:
@@ -213,10 +218,28 @@ class SetCountry(upload_ssr.Upload_SSR):
 
         if not study_ident:
             if found.location:
-                found.location.identifiers.append(ident)
                 #print("adding study ident for {}".format(found))
-                location_api_instance.update_location(found.location_id, found.location)
+                found.location.identifiers.append(ident)
+                try:
+                    location_api_instance.update_location(found.location_id, found.location)
+                except Exception as excp:
+                    #print(str(excp), None)
+                    #The location is more specific than the country but does not have a name for
+                    #that study - probably because it was unknown when added
+                    self.report('Unable to add country location identifier name for study ', { 'identifier_source': ident.identifier_source,
+                                            'identifer_value' : ident.identifier_value,
+                                            'identifier_type': ident.identifier_type,
+                                            'study_id': found.study_id,
+                                            'latitude': found.location.latitude,
+                                            'longitude': found.location.longitude,
+                                            'sampling_event_id': found.sampling_event_id
+                                                                                      })
 
+        if found.location and found.proxy_location:
+            if found.location.country != found.proxy_location.country:
+                self.report('Country {} != proxy country {} for {}'.format(found.location.country,
+                                                                           found.proxy_location.country,
+                                                                           idents), None)
         return found
 
 
