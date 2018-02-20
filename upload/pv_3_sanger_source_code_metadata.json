@@ -40,12 +40,12 @@
         "latitude": {
             "column": 14,
             "type": "float",
-            "regex": "^\\s*([-0-9]*\\.?\\d{0,7})"
+            "regex": "^\\s*([-0-9]*\\.?\\d{0,9})"
         },
         "longitude": {
             "column": 14,
             "type": "float",
-            "regex": "([-0-9]*\\.?\\d{0,7})(\\d*)$"
+            "regex": "([-0-9]*\\.?\\d{0,9})(\\d*)$"
         },
         "country": {
             "column": 5,
@@ -112,12 +112,12 @@
         "proxy_latitude": {
             "column": 7,
             "type": "float",
-            "regex": "^\\s*([-0-9]*\\.?\\d{0,7})"
+            "regex": "^\\s*([-0-9]*\\.?\\d{0,9})"
         },
         "proxy_longitude": {
             "column": 7,
             "type": "float",
-            "regex": "([-0-9]*\\.?\\d{0,7})\\d*$"
+            "regex": "([-0-9]*\\.?\\d{0,9})\\d*$"
         },
         "doc": {
             "column": 8,
