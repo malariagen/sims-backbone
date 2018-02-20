@@ -85,14 +85,12 @@ class SetCountry(upload_ssr.Upload_SSR):
                     print("Exception when looking for event {} {} \n".format(id_column, e))
                     continue
 
-                self.set_country(found, country_value, filename, None)
+                self.set_country(found, country_value, filename)
 
     def find_country_for_study(self, country_value, study, country_ident):
 
-        if study[:4] not in self._country_study_location_cache:
-            self._country_study_location_cache[study[:4]] = {}
-        elif country_value in self._country_study_location_cache[study[:4]]:
-            return self._country_study_location_cache[study[:4]][country_value]
+        if study[:4] in self._country_study_location_cache:
+            return self._country_study_location_cache[study[:4]]
 
         configuration = swagger_client.Configuration()
         configuration.access_token = self._auth_token
@@ -108,7 +106,7 @@ class SetCountry(upload_ssr.Upload_SSR):
             for named_loc in named_locations.locations:
                 for ident in named_loc.identifiers:
                     if ident.study_name[:4] == study[:4]:
-                        self._country_study_location_cache[study[:4]][country_value] = named_loc
+                        self._country_study_location_cache[study[:4]] = named_loc
                         #print('Found location')
                         return named_loc
         except ApiException as e:
@@ -141,16 +139,14 @@ class SetCountry(upload_ssr.Upload_SSR):
                 self._country_location_cache[country_value]['location'] = location
 
             if location:
-                self._country_study_location_cache[study[:4]][country_value] = location
+                self._country_study_location_cache[study[:4]] = location
 
         else:
             self._report("Unknown country {} in study {}".format(country_value, study), None)
 
         return location
 
-    def set_country(self, found, country_value, filename, values):
-
-        orig = deepcopy(found)
+    def set_country(self, found, country_value, filename):
 
         configuration = swagger_client.Configuration()
         configuration.access_token = self._auth_token
@@ -183,9 +179,7 @@ class SetCountry(upload_ssr.Upload_SSR):
                 msg = "Country conflict {} vs {} in {} for {}".format(country_value,
                                                                       found.location.country, idents,
                                                                       filename)
-                #print(orig)
-                #print(found)
-                self.report(msg, values)
+                self.report(msg, None)
 
         if found.proxy_location:
             try:
@@ -195,7 +189,7 @@ class SetCountry(upload_ssr.Upload_SSR):
                                                                                found.proxy_location.country,
                                                                                idents,
                                                                                filename)
-                self.report(msg, values)
+                self.report(msg, None)
 
         if not found.location:
 
@@ -271,7 +265,7 @@ class SetCountry(upload_ssr.Upload_SSR):
         item = self.lookup_sampling_event(api_instance, samp, values)
 
         if item:
-            item = self.set_country(item, values['iso2'], self._data_file, values)
+            item = self.set_country(item, values['iso2'], self._data_file)
         else:
             self.report("sampling event not found - probably duplicate key", values)
 

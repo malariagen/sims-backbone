@@ -151,6 +151,7 @@ class TestCountry(TestBase):
         sd.load_data_file(ssr, sheets)
 
         self._messages = sd.message_buffer
+        #print('\n'.join(self._messages))
     """
     """
     @classmethod
@@ -259,11 +260,11 @@ class TestCountry(TestBase):
             self.assertEqual(looked_up.proxy_location.longitude, 47.0)
             self.assertEqual(looked_up.proxy_location.identifiers[0].identifier_value, 'Madagascar')
 
-            msg = "Country conflict IN vs MDG in {'identifier_source': 'oxford_country',\n 'identifier_type': 'alt_oxford_id',\n 'identifier_value': '905094',\n 'study_name': None}\t{'identifier_source': 'countries',\n 'identifier_type': 'oxford_id',\n 'identifier_value': 'CT0004-C',\n 'study_name': None}\t{'identifier_source': 'oxford_country',\n 'identifier_type': 'oxford_id',\n 'identifier_value': 'CT0004-C',\n 'study_name': None}\t{'identifier_source': 'countries',\n 'identifier_type': 'partner_id',\n 'identifier_value': 'MDG/TST_0004',\n 'study_name': None}\t{'identifier_source': 'oxford_country',\n 'identifier_type': 'partner_id',\n 'identifier_value': 'MDG/TST_0004',\n 'study_name': None} for oxford_country.tsv"
+            msg = "Country conflict IN vs MDG in {'identifier_source': 'oxford_country', 'identifier_type': 'alt_oxford_id', 'identifier_value': '905094', 'study_name': None}\t{'identifier_source': 'countries', 'identifier_type': 'oxford_id', 'identifier_value': 'CT0004-C', 'study_name': None}\t{'identifier_source': 'oxford_country', 'identifier_type': 'oxford_id', 'identifier_value': 'CT0004-C', 'study_name': None}\t{'identifier_source': 'countries', 'identifier_type': 'partner_id', 'identifier_value': 'MDG/TST_0004', 'study_name': None}\t{'identifier_source': 'oxford_country', 'identifier_type': 'partner_id', 'identifier_value': 'MDG/TST_0004', 'study_name': None} for oxford_country.tsv"
 
             self.assertIn(msg, self._messages)
 
-            msg = "Country conflict in proxy IN vs MDG in {'identifier_source': 'oxford_country',\n 'identifier_type': 'alt_oxford_id',\n 'identifier_value': '905094',\n 'study_name': None}\t{'identifier_source': 'countries',\n 'identifier_type': 'oxford_id',\n 'identifier_value': 'CT0004-C',\n 'study_name': None}\t{'identifier_source': 'oxford_country',\n 'identifier_type': 'oxford_id',\n 'identifier_value': 'CT0004-C',\n 'study_name': None}\t{'identifier_source': 'countries',\n 'identifier_type': 'partner_id',\n 'identifier_value': 'MDG/TST_0004',\n 'study_name': None}\t{'identifier_source': 'oxford_country',\n 'identifier_type': 'partner_id',\n 'identifier_value': 'MDG/TST_0004',\n 'study_name': None} for oxford_country.tsv"
+            msg = "Country conflict in proxy IN vs MDG in {'identifier_source': 'oxford_country', 'identifier_type': 'alt_oxford_id', 'identifier_value': '905094', 'study_name': None}\t{'identifier_source': 'countries', 'identifier_type': 'oxford_id', 'identifier_value': 'CT0004-C', 'study_name': None}\t{'identifier_source': 'oxford_country', 'identifier_type': 'oxford_id', 'identifier_value': 'CT0004-C', 'study_name': None}\t{'identifier_source': 'countries', 'identifier_type': 'partner_id', 'identifier_value': 'MDG/TST_0004', 'study_name': None}\t{'identifier_source': 'oxford_country', 'identifier_type': 'partner_id', 'identifier_value': 'MDG/TST_0004', 'study_name': None} for oxford_country.tsv"
             
             self.assertIn(msg, self._messages)
             self.assertEqual(looked_up.location.country, 'MDG')
