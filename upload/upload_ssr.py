@@ -97,7 +97,7 @@ class Upload_SSR(uploader.Uploader):
 
                 item = self.process_item(values)
 
-                if not sheet[0].isdigit():
+                if not sheet[0].isdigit() and item:
                     try:
                         event_set_api_instance.create_event_set_item(sheet, item.sampling_event_id)
                     except ApiException as err:
