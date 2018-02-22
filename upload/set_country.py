@@ -79,8 +79,11 @@ class SetCountry(upload_ssr.Upload_SSR):
                 country_value = row[country_column]
 
                 try:
-                    found = api_instance.download_sampling_event_by_identifier(id_type,
+                    found_events = api_instance.download_sampling_event_by_identifier(id_type,
                                                                urllib.parse.quote_plus(id_value))
+                    if found_events:
+                        found = found_events.sampling_events[0]
+
                 except ApiException as e:
                     print("Exception when looking for event {} {} \n".format(id_column, e))
                     continue
@@ -180,7 +183,7 @@ class SetCountry(upload_ssr.Upload_SSR):
             try:
                 found.location = self.update_country(self._country_cache[country_value].alpha3, found.location)
             except Exception as cue:
-                msg = "Country conflict {} vs {} in {} for {}".format(country_value,
+                msg = "Country conflict not updated {} vs {} in {} for {}".format(country_value,
                                                                       found.location.country, idents,
                                                                       filename)
                 #print(orig)
@@ -191,7 +194,7 @@ class SetCountry(upload_ssr.Upload_SSR):
             try:
                 found.proxy_location = self.update_country(self._country_cache[country_value].alpha3, found.proxy_location)
             except Exception as cue:
-                msg = "Country conflict in proxy {} vs {} in {} for {}".format(country_value,
+                msg = "Country conflict not updated in proxy {} vs {} in {} for {}".format(country_value,
                                                                                found.proxy_location.country,
                                                                                idents,
                                                                                filename)
