@@ -96,13 +96,13 @@ class TestLocation(TestBase):
             loc = swagger_client.Location(None, 27.46362, 90.49542, 'country',
                                           'Trongsa, Trongsa, Bhutan', 'pv_3_locations.txt', 'BTN')
             loc.identifiers = [
-                swagger_client.Identifier(identifier_type='partner_name', identifier_value='Kobeni', study_name='1147-PF-MR-CONWAY'),
+                swagger_client.Identifier(identifier_type='partner_name', identifier_value='Kobeni', study_name='5002-PF-MR-ANON'),
             ]
 
             loc1 = swagger_client.Location(None, 28.46362, 91.49542, 'country',
                                           'Trongsa, Trongsa, Bhutan', 'pv_3_locations.txt', 'BTN')
             loc1.identifiers = [
-                swagger_client.Identifier(identifier_type='partner_name', identifier_value='Kobeni', study_name='1147-PF-MR-CONWAY'),
+                swagger_client.Identifier(identifier_type='partner_name', identifier_value='Kobeni', study_name='5002-PF-MR-ANON'),
             ]
 
             with self.assertRaises(Exception) as context:
@@ -128,8 +128,8 @@ class TestLocation(TestBase):
             loc = swagger_client.Location(None, 27.46362, 90.49542, 'country',
                                           'Trongsa, Trongsa, Bhutan', 'pv_3_locations.txt', 'BTN')
             loc.identifiers = [
-                swagger_client.Identifier(identifier_type='partner_name', identifier_value='Kobeni', study_name='1147-PF-MR-CONWAY'),
-                swagger_client.Identifier(identifier_type='partner_name', identifier_value='location name', study_name='1147')
+                swagger_client.Identifier(identifier_type='partner_name', identifier_value='Kobeni', study_name='5002-PF-MR-ANON'),
+                swagger_client.Identifier(identifier_type='partner_name', identifier_value='location name', study_name='5002')
             ]
 
             with self.assertRaises(Exception) as context:
@@ -151,7 +151,7 @@ class TestLocation(TestBase):
 
             loc = swagger_client.Location(None, 15.82083, -9.4145, None, None, None, None)
             loc.identifiers = [
-                swagger_client.Identifier(identifier_type='partner_name', identifier_value='Kobeni', study_name='1147-PF-MR-CONWAY')
+                swagger_client.Identifier(identifier_type='partner_name', identifier_value='Kobeni', study_name='5002-PF-MR-ANON')
             ]
             created = api_instance.create_location(loc)
             looked_up = api_instance.download_gps_location(15.82083, -9.4145)

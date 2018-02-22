@@ -295,7 +295,7 @@ class Uploader():
             if looked_up.country:
                 if looked_up.country != country:
                     #print("Country confict {} {}".format(country, looked_up))
-                    raise Exception("Country confict {} {}".format(country, looked_up))
+                    raise Exception("Country conflict not updating {} {}".format(country, looked_up))
             else:
                 looked_up.country = country
                 update_country = True
@@ -567,43 +567,51 @@ class Uploader():
 
         #print ("not in cache: {}".format(samp))
         if len(samp.identifiers) > 0:
-            #print("Checking identifiers {}".format(idents))
+            #print("Checking identifiers {}".format(samp.identifiers))
             for ident in samp.identifiers:
                 try:
                     #print("Looking for {} {}".format(ident.identifier_type, ident.identifier_value))
 
-                    found = api_instance.download_sampling_event_by_identifier(ident.identifier_type,
+                    found_events = api_instance.download_sampling_event_by_identifier(ident.identifier_type,
                                                            urllib.parse.quote_plus(ident.identifier_value))
 
-                    if ident.identifier_type == 'partner_id':
-                        if 'sample_lims_id' in values and values['sample_lims_id']:
-                            #Partner id is not the only id
-                            if len(samp.identifiers) > 2:
-                                continue
-                            #Probably still not safe even though at this point it's a unique partner_id
-                            continue
-                        else:
-                            #Not safe as partner id's can be the same across studies
-                            #unless check study id as well
-                            if samp.study_id:
-                                if found.study_id[:4] != samp.study_id[:4]:
+                    for found in found_events.sampling_events:
+                        if ident.identifier_type == 'partner_id':
+                            if 'sample_lims_id' in values and values['sample_lims_id']:
+                                #Partner id is not the only id
+                                if len(samp.identifiers) > 2:
                                     continue
-                            else:
+                                #Probably still not safe even though at this point it's a unique partner_id
                                 continue
+                            else:
+                                #Not safe as partner id's can be the same across studies
+                                #unless check study id as well
+                                #print('Checking study ids {} {} {}'.format(samp.study_id,
+                                #                                           found.study_id, ident))
+                                if samp.study_id:
+                                    if samp.study_id[:4] == '0000':
+                                        continue
+                                    if found.study_id[:4] != samp.study_id[:4]:
+                                        continue
+                                else:
+                                    continue
 
-                    #Only here if found - otherwise 404 exception
-                    if existing and existing.sampling_event_id != found.sampling_event_id:
-                        self.report("Merging into {} using {}"
-                                        .format(existing.sampling_event_id,
-                                                           ident.identifier_type), values)
-                        found = self.merge_events(api_instance, existing, found, values)
-                    existing = found
-                    #print ("found: {}".format(samp))
+                        #Only here if found - otherwise 404 exception
+                        if existing and existing.sampling_event_id != found.sampling_event_id:
+                            self.report("Merging into {} using {}"
+                                            .format(existing.sampling_event_id,
+                                                               ident.identifier_type), values)
+                            found = self.merge_events(api_instance, existing, found, values)
+                        existing = found
+                        break
+                        #print ("found: {} {}".format(samp, found))
                 except ApiException as err:
                     #self._logger.debug("Error looking for {}".format(ident))
                     #print("Not found")
                         pass
 
+        #if not existing:
+        #    print('Not found {}'.format(samp))
         return existing
 
     def set_additional_event(self, es_api_instance, sampling_event_id, study_id):

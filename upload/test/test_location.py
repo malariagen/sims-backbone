@@ -99,6 +99,7 @@ class TestLocation(TestBase):
 
         try:
             looked_up = api_instance.download_sampling_event_by_identifier('oxford_id', '22345')
+            looked_up = looked_up.sampling_events[0]
             errmsg = "Location name conflict\t9040\tRatanakiri\t{'accuracy': None,\n 'country': 'KHM',\n 'curated_name': None,\n 'curation_method': None,\n 'identifiers': [" +\
                     "{'identifier_source': 'locations',\n                  " +\
                     "'identifier_type': 'partner_name',\n                  " +\
@@ -128,6 +129,7 @@ class TestLocation(TestBase):
 
         try:
             looked_up = api_instance.download_sampling_event_by_identifier('oxford_id', '22346')
+            looked_up = looked_up.sampling_events[0]
 
             self.assertIsNotNone(looked_up.location_id)
 
@@ -135,6 +137,7 @@ class TestLocation(TestBase):
                 self._locations.append(looked_up.location_id)
 
             looked_up = api_instance.download_sampling_event_by_identifier('oxford_id', '22347')
+            looked_up = looked_up.sampling_events[0]
 
             self.assertIsNotNone(looked_up.location_id)
 

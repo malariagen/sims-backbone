@@ -65,6 +65,7 @@ class TestDate(TestBase):
 
         try:
             looked_up = api_instance.download_sampling_event_by_identifier('oxford_id', '12345')
+            looked_up = looked_up.sampling_events[0]
             self.assertEqual(looked_up.doc_accuracy, 'year')
             self.assertEqual(looked_up.doc, datetime.date(2017, 1, 1))
         except ApiException as error:
@@ -80,6 +81,7 @@ class TestDate(TestBase):
 
         try:
             looked_up = api_instance.download_sampling_event_by_identifier('oxford_id', '12346')
+            looked_up = looked_up.sampling_events[0]
             self.assertEqual(looked_up.doc_accuracy, 'year')
             self.assertEqual(looked_up.doc, datetime.date(2017, 1, 1))
         except ApiException as error:
@@ -94,6 +96,7 @@ class TestDate(TestBase):
 
         try:
             looked_up = api_instance.download_sampling_event_by_identifier('oxford_id', '12347')
+            looked_up = looked_up.sampling_events[0]
             self.assertEqual(looked_up.doc_accuracy, 'day')
             self.assertEqual(looked_up.doc, datetime.date(2017, 2, 7))
         except ApiException as error:
@@ -108,6 +111,7 @@ class TestDate(TestBase):
 
         try:
             looked_up = api_instance.download_sampling_event_by_identifier('oxford_id', '12348')
+            looked_up = looked_up.sampling_events[0]
             self.assertEqual(looked_up.doc_accuracy, 'day')
             self.assertEqual(looked_up.doc, datetime.date(2017, 2, 7))
         except ApiException as error:
@@ -122,6 +126,7 @@ class TestDate(TestBase):
 
         try:
             looked_up = api_instance.download_sampling_event_by_identifier('oxford_id', '12349')
+            looked_up = looked_up.sampling_events[0]
             self.assertEqual(looked_up.doc_accuracy, 'day')
             self.assertEqual(looked_up.doc, datetime.date(2017, 2, 7))
         except ApiException as error:
@@ -136,6 +141,7 @@ class TestDate(TestBase):
 
         try:
             looked_up = api_instance.download_sampling_event_by_identifier('oxford_id', '12350')
+            looked_up = looked_up.sampling_events[0]
             self.assertEqual(looked_up.doc_accuracy, 'month')
             self.assertEqual(looked_up.doc, datetime.date(2017, 2, 1))
         except ApiException as error:
@@ -153,6 +159,7 @@ class TestDate(TestBase):
 
         try:
             looked_up = api_instance.download_sampling_event_by_identifier('oxford_id', '12353')
+            looked_up = looked_up.sampling_events[0]
             self.assertEqual(looked_up.doc, datetime.date(2017, 2, 7))
 
             self.assertIn("Conflicting doc value updated 2017-02-07 2017-03-12\t" +
@@ -172,6 +179,7 @@ class TestDate(TestBase):
 
         try:
             looked_up = api_instance.download_sampling_event_by_identifier('oxford_id', '12352')
+            looked_up = looked_up.sampling_events[0]
             self.assertEqual(looked_up.doc_accuracy, 'day')
             self.assertEqual(looked_up.doc, datetime.date(2017, 2, 7))
             self.assertIn("Conflicting doc value updated 2017-02-07 2017-01-01\t" +
@@ -180,6 +188,7 @@ class TestDate(TestBase):
                           "('study_id', '9020 Upload test study 2')]", self._messages)
 
             looked_up = api_instance.download_sampling_event_by_identifier('oxford_id', '12351')
+            looked_up = looked_up.sampling_events[0]
             self.assertEqual(looked_up.doc_accuracy, 'day')
             self.assertEqual(looked_up.doc, datetime.date(2017, 2, 7))
             self.assertIn("Conflicting doc value not updated 2017-01-01 2017-02-07\t" +

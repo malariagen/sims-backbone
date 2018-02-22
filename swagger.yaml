@@ -321,7 +321,7 @@ paths:
     get:
       tags:
         - samplingEvent
-      summary: fetches a samplingEvent by property value
+      summary: fetches one or more samplingEvents by property value
       description: ''
       operationId: downloadSamplingEventByIdentifier
       produces:
@@ -341,7 +341,7 @@ paths:
         '200':
           description: successful operation
           schema:
-            $ref: '#/definitions/SamplingEvent'
+            $ref: '#/definitions/SamplingEvents'
   '/samplingEvents/location/{locationId}':
     get:
       tags:
@@ -859,7 +859,6 @@ definitions:
         description: 'Date of collection'
       doc_accuracy:
         type: string
-        default: 'day'
         enum:
             - day
             - month

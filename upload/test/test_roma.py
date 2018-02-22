@@ -51,6 +51,7 @@ class TestROMA(TestBase):
 
         try:
             looked_up = api_instance.download_sampling_event_by_identifier('roma_id', 'TST00003')
+            looked_up = looked_up.sampling_events[0]
             self.assertEquals(looked_up.location.identifiers[0].identifier_value,
                               'Test name with spaces')
             if looked_up.location.location_id not in self._locations:
@@ -68,7 +69,9 @@ class TestROMA(TestBase):
 
         try:
             r_looked_up = api_instance.download_sampling_event_by_identifier('roma_id', 'TST00002')
+            r_looked_up = r_looked_up.sampling_events[0]
             p_looked_up = api_instance.download_sampling_event_by_identifier('partner_id', 'EXTST000002')
+            p_looked_up = p_looked_up.sampling_events[0]
             self.assertEquals(r_looked_up.sampling_event_id, p_looked_up.sampling_event_id)
         except ApiException as error:
             self.fail("test_year_accuracy: Exception when calling download_sampling_event_by_identifier {}"
@@ -84,7 +87,9 @@ class TestROMA(TestBase):
 
         try:
             r_looked_up = api_instance.download_sampling_event_by_identifier('roma_id', 'TST00002')
+            r_looked_up = r_looked_up.sampling_events[0]
             ox_looked_up = api_instance.download_sampling_event_by_identifier('oxford_id', 'OX0001-C')
+            ox_looked_up = ox_looked_up.sampling_events[0]
             self.assertEquals(r_looked_up.sampling_event_id, ox_looked_up.sampling_event_id)
 
         except ApiException as error:
@@ -99,6 +104,7 @@ class TestROMA(TestBase):
 
         try:
             looked_up = api_instance.download_sampling_event_by_identifier('roma_id', 'TST00002')
+            looked_up = looked_up.sampling_events[0]
             self.assertEquals(looked_up.partner_species, 'Plasmodium falciparum')
         except ApiException as error:
             self.fail("test_year_accuracy: Exception when calling download_sampling_event_by_identifier {}"
@@ -113,6 +119,7 @@ class TestROMA(TestBase):
 
         try:
             looked_up = api_instance.download_sampling_event_by_identifier('roma_id', 'TST00001')
+            looked_up = looked_up.sampling_events[0]
             self.assertEquals(looked_up.location.latitude, 12.5)
             self.assertEquals(looked_up.location.longitude, 103.9)
             self.assertEquals(looked_up.location.country, 'KHM')

@@ -45,6 +45,7 @@ class TestSampling_Event(TestBase):
         event_api_instance = swagger_client.SamplingEventApi(self._api_client)
 
         looked_up = event_api_instance.download_sampling_event_by_identifier('oxford_id', '123456')
+        looked_up = looked_up.sampling_events[0]
 
         event_api_instance.delete_sampling_event(looked_up.sampling_event_id)
 
@@ -57,6 +58,7 @@ class TestSampling_Event(TestBase):
         event_set_api_instance = swagger_client.EventSetApi(self._api_client)
 
         looked_up = event_api_instance.download_sampling_event_by_identifier('oxford_id', '123456')
+        looked_up = looked_up.sampling_events[0]
 
         for study in ["9011 Upload test study", "9012 Upload test study 3"]:
             eset = "Additional events: {}".format(study)

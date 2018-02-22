@@ -128,6 +128,7 @@ class TestSample(TestBase):
             ]
             created = api_instance.create_sampling_event(samp)
             looked_up = api_instance.download_sampling_event_by_identifier('oxford', '123456')
+            looked_up = looked_up.sampling_events[0]
 
             fetched = api_instance.download_sampling_event(looked_up.sampling_event_id)
 
@@ -195,6 +196,7 @@ class TestSample(TestBase):
             ]
             created = api_instance.create_sampling_event(samp)
             looked_up = api_instance.download_sampling_event_by_identifier('oxford', '1234567')
+            looked_up = looked_up.sampling_events[0]
             new_samp = swagger_client.SamplingEvent(None, '0001-MD-UP', date(2018, 11, 11))
             updated = api_instance.update_sampling_event(looked_up.sampling_event_id, new_samp)
             fetched = api_instance.download_sampling_event(looked_up.sampling_event_id)
@@ -221,6 +223,7 @@ class TestSample(TestBase):
             ]
             created = api_instance.create_sampling_event(samp)
             looked_up = api_instance.download_sampling_event_by_identifier('oxford', '12345678')
+            looked_up = looked_up.sampling_events[0]
             new_samp = swagger_client.SamplingEvent(None, '0001-MD-UP', date(2018, 10, 10))
             new_samp.identifiers = [
                 swagger_client.Identifier (identifier_type='oxford', identifier_value='123456789',
@@ -282,6 +285,7 @@ class TestSample(TestBase):
 
             looked_up = api_instance.download_sampling_event_by_identifier('partner_id',
                                                                            urllib.parse.quote_plus(test_id))
+            looked_up = looked_up.sampling_events[0]
             fetched = api_instance.download_sampling_event(looked_up.sampling_event_id)
 
             self.assertEqual(created, fetched, "create response != download response")

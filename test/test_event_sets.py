@@ -49,6 +49,70 @@ class TestEventSets(TestBase):
 
         except ApiException as error:
             self.fail("test_create: Exception when calling EventSetsApi->create_event_set: %s\n" % error)
+#
+#    """
+#    """
+#    def test_create_member_implicit(self):
+#
+#        api_instance = swagger_client.EventSetApi(self._api_client)
+#        event_api_instance = swagger_client.SamplingEventApi(self._api_client)
+#
+#        try:
+#
+#            event_set = 'EventSet6'
+#            created = api_instance.create_event_set(event_set)
+#
+#            samp = swagger_client.SamplingEvent(None, '4000-MD-UP', date(2017, 10, 10))
+#            samp.event_sets = [ event_set ]
+#            created = event_api_instance.create_sampling_event(samp)
+#
+#            fetched_set = api_instance.download_event_set(event_set)
+#
+#            self.assertEqual(fetched_set.members.sampling_events[0].sampling_event_id, created.sampling_event_id)
+#
+#            api_instance.delete_event_set(event_set)
+#            event_api_instance.delete_sampling_event(created.sampling_event_id)
+#
+#        except ApiException as error:
+#            self.fail("test_create_member: Exception when calling EventSetsApi->create_event_set: %s\n" % error)
+#
+#    """
+#    """
+#    def test_update_member_implicit(self):
+#
+#        api_instance = swagger_client.EventSetApi(self._api_client)
+#        event_api_instance = swagger_client.SamplingEventApi(self._api_client)
+#
+#        try:
+#
+#            event_set = 'EventSet7'
+#            created = api_instance.create_event_set(event_set)
+#
+#            samp = swagger_client.SamplingEvent(None, '4000-MD-UP', date(2017, 10, 10))
+#            created = event_api_instance.create_sampling_event(samp)
+#
+#            created.event_sets = [ event_set ]
+#
+#            updated = event_api_instance.update_sampling_event(created.sampling_event_id, created)
+#
+#            fetched_set = api_instance.download_event_set(event_set)
+#
+#            self.assertEqual(fetched_set.members.sampling_events[0].sampling_event_id, created.sampling_event_id)
+#
+#            create.event_sets = None
+#
+#            updated = event_api_instance.update_sampling_event(created)
+#
+#            fetched_set = api_instance.download_event_set(event_set)
+#
+#            self.assertIsNone(fetched_set.members)
+#
+#            api_instance.delete_event_set(event_set)
+#
+#            event_api_instance.delete_sampling_event(created.sampling_event_id)
+#
+#        except ApiException as error:
+#            self.fail("test_update_member: Exception when calling EventSetsApi->create_event_set: %s\n" % error)
 
     """
     """
@@ -83,7 +147,7 @@ class TestEventSets(TestBase):
 
         try:
 
-            sets = [ 'EventSet3', 'EventSet4' ]
+            sets = [ 'EventSet4', 'EventSet5' ]
 
             for evset in sets:
                 created = api_instance.create_event_set(evset)

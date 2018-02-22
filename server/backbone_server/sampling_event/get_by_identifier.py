@@ -35,8 +35,9 @@ class SamplingEventGetByIdentifier():
         if samples.count == 0:
             raise MissingKeyException("SamplingEvent not found {} {}".format(identifier_type,
                                                                       identifier_value))
-        if samples.count > 1:
-            raise MissingKeyException("Too many samples not found {} {}".format(identifier_type,
-                                                                      identifier_value))
+#Allow for when partner ident is used in different studies
+#        if samples.count > 1:
+#            raise MissingKeyException("Too many samples not found {} {}".format(identifier_type,
+#                                                                      identifier_value))
 
-        return samples.sampling_events[0]
+        return samples

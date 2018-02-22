@@ -185,6 +185,8 @@ class TestCountry(TestBase):
             looked_up = api_instance.download_sampling_event_by_identifier('partner_id',
                                                                            urllib.parse.quote_plus('MDG/TST_0001'))
 
+            looked_up = looked_up.sampling_events[0]
+
             #print(looked_up)
             self.assertEqual(looked_up.proxy_location.country, 'MDG')
             self.assertEqual(looked_up.proxy_location.latitude, -19.0)
@@ -214,6 +216,7 @@ class TestCountry(TestBase):
             looked_up = api_instance.download_sampling_event_by_identifier('oxford_id',
                                                                            urllib.parse.quote_plus('CT0003-C'))
 
+            looked_up = looked_up.sampling_events[0]
 #            print(looked_up)
             self.assertEqual(looked_up.location.country, 'MDG')
             self.assertEqual(looked_up.location.latitude, -18.766947)
@@ -234,6 +237,7 @@ class TestCountry(TestBase):
             looked_up = api_instance.download_sampling_event_by_identifier('oxford_id',
                                                                            urllib.parse.quote_plus('CT0002-C'))
 
+            looked_up = looked_up.sampling_events[0]
 #            print(looked_up)
             self.assertEqual(looked_up.location.country, 'MDG')
             self.assertEqual(looked_up.location.latitude, -18.766947)
@@ -255,6 +259,7 @@ class TestCountry(TestBase):
             looked_up = api_instance.download_sampling_event_by_identifier('partner_id',
                                                                            urllib.parse.quote_plus('MDG/TST_0004'))
 
+            looked_up = looked_up.sampling_events[0]
             self.assertEqual(looked_up.proxy_location.country, 'MDG')
             self.assertEqual(looked_up.proxy_location.latitude, -19.0)
             self.assertEqual(looked_up.proxy_location.longitude, 47.0)
