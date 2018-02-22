@@ -1,0 +1,18 @@
+<div>
+  <span>
+    <mat-input-container>
+      <mat-select [(value)]="identifier_type">
+        <mat-option value="oxford_id">oxford_id</mat-option>
+        <mat-option value="roma_id">roma_id</mat-option>
+        <mat-option value="partner_id">partner_id</mat-option>
+      </mat-select>
+    </mat-input-container>
+  
+    <mat-input-container>
+      <input matInput placeholder="Value e.g. QS0167-C" hintLabel="e.g. QS0167-C" [(ngModel)]="identifier_value" />
+      <mat-label>Value</mat-label>
+    </mat-input-container>
+  </span>
+  <button mat-button color="accent" (click)="search()">Search</button>
+</div>
+<app-event-detail [samplingEvents]="samplingEvents"></app-event-detail>

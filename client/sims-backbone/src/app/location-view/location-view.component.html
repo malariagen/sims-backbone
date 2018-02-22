@@ -1,0 +1,19 @@
+<p>
+  Curated Name: {{_location.curated_name}} Curation Method: {{_location.curation_method}}
+</p>
+
+<p>
+  Accuracy: {{_location.accuracy}} Country: {{_location.country}}
+</p>
+<p>
+
+  <a mat-raised-button color="accent" [routerLink]="['/location',_location.latitude,_location.longitude]">
+    Latitude: {{_location.latitude}} Longitude: {{_location.longitude}}
+  </a>
+</p>
+<p>
+  Notes: {{_location.notes}}
+</p>
+
+<app-identifier-table [identifiers]="_location.identifiers" studies="true"></app-identifier-table>
+<app-locations-map [zoom]="zoom" [locations]="locations"></app-locations-map>

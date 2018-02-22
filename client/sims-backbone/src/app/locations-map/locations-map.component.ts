@@ -50,7 +50,6 @@ export class LocationsMapComponent {
   // Marker cluster stuff
 
   markers = new Map<string, L.Layer[]>();
-  groups = new Map<string, L.MarkerClusterGroup>();
   map;
 
   polygonLayer;
@@ -83,23 +82,40 @@ export class LocationsMapComponent {
     let center = null;
     if (this._locations && this._locations.count == 1) {
       center = L.latLng([this._locations.locations[0].latitude, this._locations.locations[0].longitude]);
+      //Seems to be needed as well as setView
+      this.map.panTo(center);
     } else {
       center = this.map.getCenter();
     }
     //Can't use panTo
     this.map.setView(center, this.leaflet_zoom);
+
   }
 
   @Input()
   set locations(locations: Locations) {
 
-    console.log("locations-map set locations");
     this._locations = locations;
+    this.showLocations();
+  }
+
+  showLocations() {
+
+    if(!this.map) {
+      return;
+    }
 
     if (this._locations) {
+
+      Object.entries(this.leaflet_layersControl['overlays']).forEach(([key, value]) => {
+        if (this.map.hasLayer(value)) {
+          this.map.clearLayers(value);
+        }
+      });
+      this.centerMap();
+
       let locationsArray: Array<Location> = this._locations.locations;
 
-      this.centerMap();
       locationsArray.forEach(location => {
 
         let layer_name: string = 'Unknown';
@@ -121,7 +137,6 @@ export class LocationsMapComponent {
             this.addMarker(location.country, location.latitude, location.longitude, layer_name);
           }
         }
-
       });
 
       this.markers.forEach((value: L.Layer[], key: string) => {
@@ -136,12 +151,12 @@ export class LocationsMapComponent {
 
       });
 
-
     }
   }
 
   onMapReady(map: L.Map) {
     this.map = map;
+    this.showLocations();
   }
 
   addMarker(country, lat, lng, marker_title) {
@@ -167,7 +182,7 @@ export class LocationsMapComponent {
   }
 
   disableLayers() {
-    
+
     Object.entries(this.leaflet_layersControl['overlays']).forEach(([key, value]) => {
       if (this.map.hasLayer(value)) {
         this.map.removeLayer(value);

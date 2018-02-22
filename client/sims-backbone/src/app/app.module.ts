@@ -4,7 +4,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { HttpClientModule } from '@angular/common/http';
 
-import { MatFormFieldModule, MatProgressBarModule } from '@angular/material';
+import { MatFormFieldModule, MatProgressBarModule, MatSelectModule } from '@angular/material';
 import { MatInputModule } from '@angular/material';
 import { MatTableModule } from '@angular/material';
 import { MatToolbarModule } from '@angular/material';
@@ -54,6 +54,10 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from '../environments/environment';
 
 import { EventSetService } from './typescript-angular-client/api/eventSet.service';
+import { EventSearchComponent } from './event-search/event-search.component';
+import { EventDetailComponent } from './event-detail/event-detail.component';
+import { IdentifierTableComponent } from './identifier-table/identifier-table.component';
+import { LocationViewComponent } from './location-view/location-view.component';
 
 export function getConfiguration(authService: AuthService) {
   return authService.getConfiguration();
@@ -79,7 +83,11 @@ export function getConfiguration(authService: AuthService) {
     EventSetEditComponent,
     ErrorDialogComponent,
     EventSetEditDialogComponent,
-    EventSetAddDialogComponent
+    EventSetAddDialogComponent,
+    EventSearchComponent,
+    EventDetailComponent,
+    IdentifierTableComponent,
+    LocationViewComponent
   ],
   imports: [
     BrowserModule,
@@ -95,6 +103,7 @@ export function getConfiguration(authService: AuthService) {
     MatIconModule,
     MatMenuModule,
     MatProgressBarModule,
+    MatSelectModule,
     FlexLayoutModule,
     HttpClientModule,
     AppRoutingModule,

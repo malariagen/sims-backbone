@@ -1,0 +1,40 @@
+<div *ngIf="_samplingEvents">
+  {{ _samplingEvents.count }} matching events
+  <div fxLayout="column" *ngFor="let _samplingEvent of _samplingEvents.sampling_events">
+    <div fxLayout="row">
+      <div [fxFlex]="grow">
+        <h3>Event Details</h3>
+        <div>Event ID:        {{_samplingEvent.sampling_event_id}}</div>
+        <div>Study Name:      {{_samplingEvent.study_id}}</div>
+        <div>Collection Date: {{_samplingEvent.doc}} {{_samplingEvent.doc_accuracy}}</div>
+        <div>Partner Species: {{_samplingEvent.partner_species}}</div>
+      </div>
+      <div [fxFlex]="grow">
+        <div *ngIf="_samplingEvent.event_sets">
+          <h3>Event Sets</h3>
+          <div *ngFor="let es of _samplingEvent.event_sets">
+            {{es}}
+          </div>
+        </div>
+      </div>
+    </div>
+    <div fxLayout="row">
+      <div [fxFlex]="grow">
+          <app-identifier-table [identifiers]="_samplingEvent.identifiers"></app-identifier-table>
+      </div>
+    </div>
+    <div fxLayout="row">
+      <div [fxFlex]="grow">
+        <div *ngIf="_samplingEvent.location">
+          <h3>Location</h3>
+          <app-location-view [location]="_samplingEvent.location"></app-location-view>
+        </div>
+      </div>
+      <div [fxFlex]="grow">
+        <div *ngIf="_samplingEvent.proxy_location">
+          <h3>Proxy Location</h3>
+          <app-location-view [location]="_samplingEvent.proxy_location"></app-location-view>
+        </div>
+      </div>
+    </div>
+  </div>

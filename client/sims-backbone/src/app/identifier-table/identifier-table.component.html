@@ -1,0 +1,27 @@
+<mat-table #table [dataSource]="dataSource">
+
+    <ng-container matColumnDef="identifier_source">
+      <mat-header-cell *matHeaderCellDef> Source </mat-header-cell>
+      <mat-cell *matCellDef="let item"> {{item.identifier_source}}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="identifier_type">
+      <mat-header-cell *matHeaderCellDef>Type</mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{element.identifier_type}} </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="identifier_value">
+      <mat-header-cell *matHeaderCellDef>Value </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{element.identifier_value}} </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="study_name">
+        <mat-header-cell *matHeaderCellDef>Study</mat-header-cell>
+        <mat-cell *matCellDef="let element"> <a mat-raised-button color="accent" [routerLink]="[studyEvents,element.study_name]">{{element.study_name}}</a> </mat-cell>
+      </ng-container>
+  
+    <mat-header-row *matHeaderRowDef="identifierColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: identifierColumns;"></mat-row>
+
+
+  </mat-table>

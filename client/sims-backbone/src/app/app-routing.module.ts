@@ -12,6 +12,7 @@ import { TaxaListComponent } from './taxa-list/taxa-list.component';
 import { EventSetListComponent } from './event-set-list/event-set-list.component';
 import { StudyEditComponent } from './study-edit/study-edit.component';
 import { EventSetEditComponent } from './event-set-edit/event-set-edit.component';
+import { EventSearchComponent } from './event-search/event-search.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/studies', pathMatch: 'full' },
@@ -26,6 +27,7 @@ const routes: Routes = [
   { path: 'eventSets', component: EventSetListComponent },
   { path: 'eventSet/events/:eventSetId', component: EventSetEventListComponent },
   { path: 'eventSet/:eventSetId', component: EventSetEditComponent },
+  { path: 'search', component: EventSearchComponent }
 ];
 
 @NgModule({

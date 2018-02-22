@@ -31,18 +31,12 @@
 
           <p>
             <mat-form-field>
-              <input matInput placeholder="Notes:" type="textarea" formControlName="notes">
+              <textarea matInput placeholder="Notes:" matTextareaAutosize formControlName="notes">
+              </textarea>
             </mat-form-field>
           </p>
+          <app-identifier-table [identifiers]="location.identifiers" studies="true"></app-identifier-table>
 
-          <div formArrayName="identifiers">
-            <div *ngFor="let ident of locationForm.controls.identifiers.controls; let i=index">
-              <div [formGroupName]="i">
-                {{ident.get('identifier_type').value}} {{ident.get('identifier_value').value}}
-                <a mat-raised-button color="accent" [routerLink]="[studyEvents,ident.get('study_name').value]">{{ident.get('study_name').value}}</a>
-              </div>
-            </div>
-          </div>
           <p>
             <button mat-raised-button type="submit" [disabled]="!locationForm.valid">Submit</button>
           </p>

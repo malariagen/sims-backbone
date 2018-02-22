@@ -40,7 +40,6 @@ export class LocationEditComponent implements OnInit {
   public googleForm: FormGroup;
   public gPolygon: Array<LatLngLiteral> = [];
   public locationEvents: string = '/location/events';
-  public studyEvents: string = '/study/events';
 
   zoom: number = 10;
   accuracy: string;
