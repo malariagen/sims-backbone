@@ -97,7 +97,7 @@ class TestDate(TestBase):
         try:
             looked_up = api_instance.download_sampling_event_by_identifier('oxford_id', '12347')
             looked_up = looked_up.sampling_events[0]
-            self.assertEqual(looked_up.doc_accuracy, 'day')
+            self.assertIsNone(looked_up.doc_accuracy)
             self.assertEqual(looked_up.doc, datetime.date(2017, 2, 7))
         except ApiException as error:
             self.fail("test_year_accuracy: Exception when calling download_sampling_event_by_identifier {}"
@@ -112,7 +112,7 @@ class TestDate(TestBase):
         try:
             looked_up = api_instance.download_sampling_event_by_identifier('oxford_id', '12348')
             looked_up = looked_up.sampling_events[0]
-            self.assertEqual(looked_up.doc_accuracy, 'day')
+            self.assertIsNone(looked_up.doc_accuracy)
             self.assertEqual(looked_up.doc, datetime.date(2017, 2, 7))
         except ApiException as error:
             self.fail("test_year_accuracy: Exception when calling download_sampling_event_by_identifier {}"
@@ -127,7 +127,7 @@ class TestDate(TestBase):
         try:
             looked_up = api_instance.download_sampling_event_by_identifier('oxford_id', '12349')
             looked_up = looked_up.sampling_events[0]
-            self.assertEqual(looked_up.doc_accuracy, 'day')
+            self.assertIsNone(looked_up.doc_accuracy)
             self.assertEqual(looked_up.doc, datetime.date(2017, 2, 7))
         except ApiException as error:
             self.fail("test_year_accuracy: Exception when calling download_sampling_event_by_identifier {}"
@@ -189,7 +189,7 @@ class TestDate(TestBase):
 
             looked_up = api_instance.download_sampling_event_by_identifier('oxford_id', '12351')
             looked_up = looked_up.sampling_events[0]
-            self.assertEqual(looked_up.doc_accuracy, 'day')
+            self.assertIsNone(looked_up.doc_accuracy)
             self.assertEqual(looked_up.doc, datetime.date(2017, 2, 7))
             self.assertIn("Conflicting doc value not updated 2017-01-01 2017-02-07\t" +
                           "[('doc', datetime.date(2017, 1, 1)), ('doc_accuracy', 'year'), " +
