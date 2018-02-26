@@ -215,15 +215,44 @@ class Uploader():
                 self.process_item(values)
 
 
+    def add_locations_from_values(self, existing, sampling_event, values):
+
+        if existing and values['study_id'][:4] == '0000':
+            values['study_id'] = existing.study_id
+
+        location_name, location = self.process_location(values, '', existing)
+        proxy_location_name, proxy_location = self.process_location(values, 'proxy_', existing)
+
+        if location:
+            sampling_event.location_id = location.location_id
+        if proxy_location:
+            sampling_event.proxy_location_id = proxy_location.location_id
+
+        sampling_event.location = location
+        sampling_event.proxy_location = proxy_location
+
+
     def process_item(self, values):
 
         if 'study_id' not in values:
             values['study_id'] = '0000-Unknown'
 
-        location_name, location = self.process_location(values, '')
-        proxy_location_name, proxy_location = self.process_location(values, 'proxy_')
+        # Configure OAuth2 access token for authorization: OauthSecurity
+        configuration = swagger_client.Configuration()
+        configuration.access_token = self._auth_token
 
-        return self.process_sampling_event(values, location_name, location, proxy_location_name, proxy_location)
+        # create an instance of the API class
+        api_instance = swagger_client.SamplingEventApi(swagger_client.ApiClient(configuration))
+
+        samp = self.create_sampling_event_from_values(values)
+
+        #print(samp)
+
+        existing = self.lookup_sampling_event(api_instance, samp, values)
+
+        self.add_locations_from_values(existing, samp, values)
+
+        return self.process_sampling_event(values, samp, existing)
 
     def add_location_identifier(self, looked_up, study_id, partner_name):
 
@@ -383,7 +412,7 @@ class Uploader():
 
         return looked_up
 
-    def process_location(self, values, prefix):
+    def process_location(self, values, prefix, existing_event):
 
         partner_name, loc = self.create_location_from_values(values, prefix)
 
@@ -394,6 +423,19 @@ class Uploader():
         if 'study_id' in values:
             study_id = values['study_id'][:4]
 
+        existing_location = None
+        if prefix == 'proxy_':
+            if existing_event and existing_event.proxy_location:
+                existing_location = deepcopy(existing_event.proxy_location)
+        else:
+            if existing_event and existing_event.location:
+                existing_location = deepcopy(existing_event.location)
+
+        if existing_location:
+            orig = deepcopy(existing_location)
+            orig.location_id = None
+            if orig == loc:
+                return partner_name, existing_location
 
         # Configure OAuth2 access token for authorization: OauthSecurity
         configuration = swagger_client.Configuration()
@@ -446,7 +488,7 @@ class Uploader():
         #print("Returing location {}".format(ret))
         return partner_name, ret
 
-    def create_sampling_event_from_values(self, values, location_name, location, proxy_location_name, proxy_location):
+    def create_sampling_event_from_values(self, values):
 
         doc = None
         doc_accuracy = None
@@ -468,19 +510,8 @@ class Uploader():
         if 'study_id' in values:
             study_id = values['study_id']
 
-        lid = None
-        plid = None
+        samp = swagger_client.SamplingEvent(None, study_id = study_id, doc = doc)
 
-        if location:
-            lid = location.location_id
-        if proxy_location:
-            plid = proxy_location.location_id
-
-        samp = swagger_client.SamplingEvent(None, study_id = study_id, doc = doc, location_id =
-                                     lid, proxy_location_id = plid)
-
-        samp.location = location
-        samp.proxy_location = proxy_location
 
         if 'species' in values and values['species'] and len(values['species']) > 0:
             samp.partner_species = values['species']
@@ -577,6 +608,9 @@ class Uploader():
 
                     for found in found_events.sampling_events:
                         if ident.identifier_type == 'partner_id':
+                            #Partner ids within 1087 are not unique
+                            if samp.study_id[:4] == '1087':
+                                continue
                             if 'sample_lims_id' in values and values['sample_lims_id']:
                                 #Partner id is not the only id
                                 if len(samp.identifiers) > 2:
@@ -598,9 +632,9 @@ class Uploader():
 
                         #Only here if found - otherwise 404 exception
                         if existing and existing.sampling_event_id != found.sampling_event_id:
-                            self.report("Merging into {} using {}"
-                                            .format(existing.sampling_event_id,
-                                                               ident.identifier_type), values)
+                            #self.report("Merging into {} using {}"
+                            #                .format(existing.sampling_event_id,
+                            #                                   ident.identifier_type), values)
                             found = self.merge_events(api_instance, existing, found, values)
                         existing = found
                         break
@@ -697,6 +731,8 @@ class Uploader():
                 if samp.doc != existing.doc:
                     update_doc = True
                     if samp.doc_accuracy and samp.doc_accuracy == 'year':
+                        if not existing.doc_accuracy:
+                            update_doc = False
                         if existing.doc_accuracy and existing.doc_accuracy != 'year':
                             update_doc = False
 
@@ -758,6 +794,10 @@ class Uploader():
                         if samp.partner_species == 'Plasmodium falciparum':
                             fuzzyMatch = True
 
+                    if existing.partner_species == 'Plasmodium falciparum':
+                        if samp.partner_species == 'P. falciparum':
+                            fuzzyMatch = True
+
                     if not fuzzyMatch:
                         self.report("Conflicting partner_species value not updated record {}\t{}".format(
                                                                            samp.partner_species,
@@ -770,7 +810,7 @@ class Uploader():
 
         return existing, new_ident_value
 
-    def process_sampling_event(self, values, location_name, location, proxy_location_name, proxy_location):
+    def process_sampling_event(self, values, samp, existing):
 
         #print('process_sampling event {} {} {} {} {}'.format(values, location_name, location, proxy_location_name, proxy_location))
 
@@ -782,12 +822,6 @@ class Uploader():
         api_instance = swagger_client.SamplingEventApi(swagger_client.ApiClient(configuration))
 
         es_api_instance = swagger_client.EventSetApi(swagger_client.ApiClient(configuration))
-
-        samp = self.create_sampling_event_from_values(values, location_name, location, proxy_location_name, proxy_location)
-
-        #print(samp)
-
-        existing = self.lookup_sampling_event(api_instance, samp, values)
 
         if 'sample_lims_id' in values and values['sample_lims_id']:
             if not existing:

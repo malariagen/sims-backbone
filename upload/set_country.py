@@ -260,16 +260,10 @@ class SetCountry(upload_ssr.Upload_SSR):
 
         location_api_instance = swagger_client.LocationApi(swagger_client.ApiClient(configuration))
 
-        location_name, loc = self.create_location_from_values(values, '')
-        proxy_location_name, proxy_loc = self.create_location_from_values(values, 'proxy_')
-
-        location = self.lookup_location(location_api_instance, loc)
-        proxy_location = self.lookup_location(location_api_instance, proxy_loc)
-
         # create an instance of the API class
         api_instance = swagger_client.SamplingEventApi(swagger_client.ApiClient(configuration))
 
-        samp = self.create_sampling_event_from_values(values, location_name, location, proxy_location_name, proxy_location)
+        samp = self.create_sampling_event_from_values(values)
 
         item = self.lookup_sampling_event(api_instance, samp, values)
 
