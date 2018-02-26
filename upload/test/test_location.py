@@ -13,7 +13,41 @@ from swagger_client.rest import ApiException
 class TestLocation(TestBase):
 
 
-    _locations = []
+    _ag_json = '''
+{
+    "values": {
+        "sample_oxford_id": {
+            "column": 1,
+            "type": "string"
+        },
+        "sample_partner_id": {
+            "column": 2,
+            "type": "string"
+        },
+        "doc": {
+            "column": 9,
+            "type": "datetime",
+            "date_format": "%Y"
+        },
+        "location_name": {
+            "column": 6,
+            "type": "string"
+        },
+        "country": {
+            "column": 5,
+            "type": "string"
+        },
+       "latitude": {
+            "column": 14,
+            "type": "float"
+        },
+        "longitude": {
+            "column": 15,
+            "type": "float"
+        }
+    }
+}
+    '''
 
     """
     """
@@ -67,6 +101,12 @@ class TestLocation(TestBase):
 
         self._messages = sd.message_buffer
 
+        self.setUpSSR()
+
+        sd = Uploader(self._config_file)
+#        sd.use_message_buffer = True
+        json_data = json.loads(self._ag_json)
+        sd.load_data_file(json_data, 'loc_no_study.tsv')
 
     """
     """
@@ -75,20 +115,12 @@ class TestLocation(TestBase):
 
         event_api_instance = swagger_client.SamplingEventApi(self._api_client)
 
-        for study in ['9040', '9041', '9042']:
-            test_events = event_api_instance.download_sampling_events_by_study(study)
+        self.deleteStudies(['9040', '9041', '9042'])
 
-            for event in test_events.sampling_events:
-                event_api_instance.delete_sampling_event(event.sampling_event_id)
+        self.deleteEventSets(['locations', 'loc_no_study'])
 
-        location_api_instance = swagger_client.LocationApi(self._api_client)
-
-        api_instance = swagger_client.EventSetApi(self._api_client)
-
-        api_instance.delete_event_set('locations')
-
-        for loc in self._locations:
-            location_api_instance.delete_location(loc)
+        self.tearDownSSR()
+        self.tearDownLocations()
 
 
     """
@@ -107,8 +139,10 @@ class TestLocation(TestBase):
                 "],\n 'latitude': 13.86208,\n " +\
 "'location_id': '{}'".format(looked_up.location_id) +\
 ",\n 'longitude': 107.097015,\n 'notes': 'locations.tsv'}\t13.9\t107.1\t[('country', 'KHM'), ('latitude', '13.86208'), ('location_name', 'Ratanakiri'), ('longitude', '107.097015'), ('proxy_latitude', '13.9'), ('proxy_location_name', 'Ratanakiri'), ('proxy_longitude', '107.1'), ('sample_oxford_id', '22345'), ('study_id', '9040 Upload location test study')]"
-            #Used for diagnosis - may not be _messages[0]
-            #print('\n'.join(difflib.context_diff(errmsg.split('\n'), self._messages[0].split('\n'))))
+            #Used for diagnosis
+            for msg in self._messages:
+                if msg.startswith(errmsg[:5]):
+                    print('\n'.join(difflib.context_diff(errmsg.split('\n'), msg.split('\n'))))
             self.assertIn(errmsg, self._messages)
             self.assertIsNone(looked_up.proxy_location_id)
             self.assertIsNone(looked_up.proxy_location)
@@ -145,34 +179,34 @@ class TestLocation(TestBase):
                 self._locations.append(looked_up.location_id)
 
         except ApiException as error:
-            self.fail("test_location_duplicate_name: Exception when calling download_sampling_event_by_identifier {}"
+            self.fail("test_location_duplicate_name_ok: Exception when calling download_sampling_event_by_identifier {}"
                         .format(error))
 
-    """
-    """
-    def test_location_duplicate_gps_simple(self):
-
-        errmsg = '''duplicate location      9040    Not Ratanakiri  13.86208        107.097015      13.86208        107.097015
-Probable conflict with {'accuracy': None,
- 'country': 'KHM',
- 'curated_name': None,
- 'curation_method': None,
- 'identifiers': [{'identifier_source': 'locations',
-                  'identifier_type': 'partner_name',
-                  'identifier_value': 'Not Ratanakiri',
-                  'study_name': '9042'},
-                 {'identifier_source': 'locations',
-                  'identifier_type': 'partner_name',
-                  'identifier_value': 'Ratanakiri',
-                  'study_name': '9040'}],
- 'latitude': 13.86208,
- 'location_id': '6a33d4e8-3e3a-4a3d-88c6-3a3de1e578e7',
- 'longitude': 107.097015,
- 'notes': 'locations.tsv'}      [('country', 'KHM'), ('latitude', '13.86208'), ('location_name', 'Not Ratanakiri'), ('longitude', '107.097015'), ('proxy_latitude', ''), ('proxy_longitude', ''), ('sample_oxford_id', '22349'), ('study_id', '9040 Upload location test study')]'''
-        self.assertIn(errmsg, self._messages)
 
     """
     """
     def test_location_duplicate_gps_simple(self):
         errmsg = '''duplicate location\t9040\tDuplicate GPS Ratanakiri\t13.86208\t107.097015\tRatanakiri\t[('country', 'KHM'), ('latitude', '13.86208'), ('location_name', 'Duplicate GPS Ratanakiri'), ('longitude', '107.097015'), ('proxy_latitude', ''), ('proxy_longitude', ''), ('sample_oxford_id', '22350'), ('study_id', '9040 Upload location test study')]'''
         self.assertIn(errmsg, self._messages)
+
+
+    """
+    """
+    def test_location_name_study(self):
+        api_instance = swagger_client.SamplingEventApi(self._api_client)
+
+        try:
+            looked_up = api_instance.download_sampling_event_by_identifier('oxford_id', 'AG0001-C')
+            looked_up = looked_up.sampling_events[0]
+
+            self.assertIsNotNone(looked_up.location)
+
+            self.assertEqual(looked_up.location.identifiers[0].study_name[:4], looked_up.study_id[:4])
+
+            if looked_up.location_id not in self._locations:
+                self._locations.append(looked_up.location_id)
+
+        except ApiException as error:
+            self.fail("test_location_name_study: Exception when calling download_sampling_event_by_identifier {}"
+                        .format(error))
+

@@ -15,9 +15,6 @@ from swagger_client.rest import ApiException
 
 class TestCountry(TestBase):
 
-
-    _locations = []
-
     """
     """
     @classmethod
@@ -59,9 +56,7 @@ class TestCountry(TestBase):
         sd.load_data_file(json_data, 'oxford_country.tsv')
 
 
-        el = Upload_SSR(self._config_file)
-        sheets = None
-        el.load_data_file('TestSSR.xls', sheets)
+        self.setUpSSR()
 
         sd = Uploader(self._config_file)
         json_data = json.loads('''{
@@ -157,23 +152,11 @@ class TestCountry(TestBase):
     @classmethod
     def tearDownClass(self):
 
-        event_api_instance = swagger_client.SamplingEventApi(self._api_client)
+        self.deleteStudies(['9052', '0000', '9060'])
+        self.deleteEventSets(['countries', 'oxford_country'])
 
-        for study in ['9050', '9051', '9052', '0000']:
-            test_events = event_api_instance.download_sampling_events_by_study(study)
-
-            for event in test_events.sampling_events:
-                event_api_instance.delete_sampling_event(event.sampling_event_id)
-
-        location_api_instance = swagger_client.LocationApi(self._api_client)
-
-        api_instance = swagger_client.EventSetApi(self._api_client)
-
-        for evs in ['TestSSR','Report','Sequencescape','countries', 'oxford_country']:
-            api_instance.delete_event_set(evs)
-
-        for loc in self._locations:
-            location_api_instance.delete_location(loc)
+        self.tearDownSSR()
+        self.tearDownLocations()
 
 
     """

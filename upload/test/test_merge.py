@@ -5,7 +5,6 @@ import json
 
 from uploader import Uploader
 from upload_roma import Upload_ROMA
-from upload_ssr import Upload_SSR
 
 import swagger_client
 from swagger_client.rest import ApiException
@@ -167,10 +166,7 @@ class TestMerge(TestBase):
 
         self._messages = sd.message_buffer
 
-        el = Upload_SSR(self._config_file)
-        el.use_message_buffer = True
-        sheets = None
-        el.load_data_file('TestSSR.xls', sheets)
+        self.setUpSSR()
 
         sd = Uploader(self._config_file)
         sd.use_message_buffer = True
@@ -252,24 +248,18 @@ class TestMerge(TestBase):
                                                                                  oxid)
                 looked_up = looked_up.sampling_events[0]
 
-                event_api_instance.delete_sampling_event(looked_up.sampling_event_id)
+                self.deleteSamplingEvent(looked_up)
+
             except ApiException:
                 pass
 
-        for study_id in ['9030','9031']:
-            test_events = event_api_instance.download_sampling_events_by_study(study_id)
+        self.deleteStudies(['9030','9031'])
 
-            for event in test_events.sampling_events:
-                event_api_instance.delete_sampling_event(event.sampling_event_id)
+        self.deleteEventSets(['merge_oxford', 'merge_pf_6', 'merge_pv_3', 'roma_dump',
+                          'merge_sanger_lims'])
 
-        api_instance = swagger_client.EventSetApi(self._api_client)
-
-        for event_set in ['merge_oxford', 'merge_pf_6', 'merge_pv_3', 'roma_dump',
-                          'merge_sanger_lims']:
-            api_instance.delete_event_set(event_set)
-
-        for event_set in ['TestSSR', 'Report', 'Sequencescape', 'PV4', 'PF27']:
-            api_instance.delete_event_set(event_set)
+        self.tearDownSSR()
+        self.tearDownLocations()
 
     """
     """

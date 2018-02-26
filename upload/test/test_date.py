@@ -51,10 +51,9 @@ class TestDate(TestBase):
 
         event_api_instance = swagger_client.SamplingEventApi(self._api_client)
 
-        test_events = event_api_instance.download_sampling_events_by_study('9020')
+        self.deleteStudies(['9020'])
 
-        for event in test_events.sampling_events:
-            event_api_instance.delete_sampling_event(event.sampling_event_id)
+        self.deleteEventSets(['dates'])
 
 
     """

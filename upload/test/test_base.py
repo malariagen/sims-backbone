@@ -1,9 +1,13 @@
 from __future__ import print_function
 import unittest
-import swagger_client
 import json
 import requests
 import os
+
+from upload_ssr import Upload_SSR
+
+import swagger_client
+from swagger_client.rest import ApiException
 
 class TestBase(unittest.TestCase):
 
@@ -13,6 +17,8 @@ class TestBase(unittest.TestCase):
     _api_client = None
 
     _config_file = '../config_dev.json'
+
+    _locations = []
 
     """
     """
@@ -33,4 +39,69 @@ class TestBase(unittest.TestCase):
     def tearDown(self):
         pass
 
+
+    """
+    """
+    @classmethod
+    def setUpSSR(self):
+
+        el = Upload_SSR(self._config_file)
+        sheets = None
+        el.load_data_file('TestSSR.xls', sheets)
+
+    """
+    """
+    @classmethod
+    def deleteSamplingEvent(self, event):
+        event_api_instance = swagger_client.SamplingEventApi(self._api_client)
+        if event.location_id and event.location_id not in self._locations:
+            self._locations.append(event.location_id)
+        event_api_instance.delete_sampling_event(event.sampling_event_id)
+
+    """
+    """
+    @classmethod
+    def deleteEventSets(self, event_sets):
+
+        api_instance = swagger_client.EventSetApi(self._api_client)
+        event_api_instance = swagger_client.SamplingEventApi(self._api_client)
+
+        for event_set in event_sets:
+            test_events = event_api_instance.download_sampling_events_by_event_set(event_set)
+
+            for event in test_events.sampling_events:
+                self.deleteSamplingEvent(event)
+
+            api_instance.delete_event_set(event_set)
+
+    """
+    """
+    @classmethod
+    def deleteStudies(self, studies):
+
+        event_api_instance = swagger_client.SamplingEventApi(self._api_client)
+
+        for study in studies:
+            test_events = event_api_instance.download_sampling_events_by_study(study)
+
+            for event in test_events.sampling_events:
+               self.deleteSamplingEvent(event)
+    """
+    """
+    @classmethod
+    def tearDownSSR(self):
+
+        self.deleteStudies(['9050', '9051'])
+
+        self.deleteEventSets(['TestSSR', 'Report', 'Sequencescape', 'PV4', 'PF27', 'Ag'])
+
+    """
+    """
+    @classmethod
+    def tearDownLocations(self):
+        location_api_instance = swagger_client.LocationApi(self._api_client)
+
+        for loc in self._locations:
+            self._locations.remove(loc)
+            location_api_instance.delete_location(loc)
 

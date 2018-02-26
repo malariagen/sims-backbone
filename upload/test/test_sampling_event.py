@@ -49,6 +49,8 @@ class TestSampling_Event(TestBase):
 
         event_api_instance.delete_sampling_event(looked_up.sampling_event_id)
 
+        self.deleteEventSets(['multiple_study'])
+
     """
     """
     def test_multiple_study(self):

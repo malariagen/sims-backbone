@@ -11,8 +11,6 @@ from swagger_client.rest import ApiException
 class TestROMA(TestBase):
 
 
-    _locations = []
-
     """
     """
     @classmethod
@@ -30,17 +28,9 @@ class TestROMA(TestBase):
     @classmethod
     def tearDownClass(self):
 
-        event_api_instance = swagger_client.SamplingEventApi(self._api_client)
+        self.deleteStudies(['9030'])
 
-        test_events = event_api_instance.download_sampling_events_by_study('9030')
-
-        for event in test_events.sampling_events:
-            event_api_instance.delete_sampling_event(event.sampling_event_id)
-
-        location_api_instance = swagger_client.LocationApi(self._api_client)
-
-        for loc in self._locations:
-            location_api_instance.delete_location(loc)
+        self.tearDownLocations()
 
 
     """
