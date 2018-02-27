@@ -152,7 +152,7 @@ export class EventListComponent implements AfterViewInit {
       })
       event['taxa'] = taxas.join(';');
     }
-    event['id'] = sample.samplingEvent_id;
+    event['id'] = sample.sampling_event_id;
     return event;
   }
 
