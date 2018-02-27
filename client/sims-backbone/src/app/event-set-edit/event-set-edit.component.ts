@@ -32,7 +32,7 @@ export class EventSetEditComponent implements OnInit {
 
     this.eventSetId = this.route.snapshot.params['eventSetId'];
 
-    this.eventSetService.downloadEventSet(this.eventSetId).subscribe(
+    this.eventSetService.downloadEventSet(this.eventSetId,0,0).subscribe(
       (eventSet: EventSet) => {
         this.eventSet = eventSet;
 
