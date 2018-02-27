@@ -53,7 +53,6 @@ import { EventSetAddDialogComponent } from './event-set-add-dialog/event-set-add
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../environments/environment';
 
-import { EventSetService } from './typescript-angular-client/api/eventSet.service';
 import { EventSearchComponent } from './event-search/event-search.component';
 import { EventDetailComponent } from './event-detail/event-detail.component';
 import { IdentifierTableComponent } from './identifier-table/identifier-table.component';

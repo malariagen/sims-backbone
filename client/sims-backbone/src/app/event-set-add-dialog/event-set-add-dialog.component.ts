@@ -8,6 +8,8 @@ import { EventSets } from '../typescript-angular-client/model/eventSets';
 
 import { EventSetService } from '../typescript-angular-client/api/eventSet.service';
 
+import { OAuthService } from 'angular-oauth2-oidc';
+
 
 @Component({
   selector: 'app-event-set-add-dialog',
@@ -20,7 +22,7 @@ export class EventSetAddDialogComponent {
 
   eventSet: string;
 
-  constructor(private eventSetService: EventSetService, public dialog: MatDialog,
+  constructor(private eventSetService: EventSetService, private oauthService: OAuthService, public dialog: MatDialog,
     public dialogRef: MatDialogRef<EventSetAddDialogComponent>) {
 
   }
