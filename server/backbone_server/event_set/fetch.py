@@ -44,6 +44,22 @@ class EventSetFetch():
 
         event_set = EventSet(res[0])
 
+
+        stmt = '''SELECT note_name, note_text FROM event_set_notes WHERE event_set_id = %s'''
+
+        cursor.execute(stmt, (event_set_id,))
+
+        event_set.notes = []
+        for (name, value) in cursor:
+            note = EventSetNote(name, value)
+            event_set.notes.append(note)
+
+        if len(event_set.notes) == 0:
+            event_set.notes = None
+
+        if count and count == 0:
+            return event_set
+
         fields = '''SELECT id, study_id, doc, doc_accuracy,
                         partner_species, partner_species_id,
                         location_id, latitude, longitude, accuracy, curated_name, curation_method, country, notes, partner_name,
@@ -81,17 +97,4 @@ class EventSetFetch():
             samples.count = len(samples.sampling_events)
 
         event_set.members = samples
-
-        stmt = '''SELECT note_name, note_text FROM event_set_notes WHERE event_set_id = %s'''
-
-        cursor.execute(stmt, (event_set_id,))
-
-        event_set.notes = []
-        for (name, value) in cursor:
-            note = EventSetNote(name, value)
-            event_set.notes.append(note)
-
-        if len(event_set.notes) == 0:
-            event_set.notes = None
-
         return event_set

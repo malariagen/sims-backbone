@@ -31,11 +31,11 @@ class EventSetPut():
                 try:
 
                     #Allows the possibility of editing the metadata without the events
-                    if event_set.sampling_events and len(event_set.sampling_events) > 0:
+                    if event_set.members and len(event_set.members.sampling_events) > 0:
                         stmt = '''DELETE FROM event_set_members WHERE event_set_id = %s'''
                         cursor.execute(stmt, args)
 
-                        EventSetEdit.add_sampling_events(cursor, event_set_id, event_set.sampling_events)
+                        EventSetEdit.add_sampling_events(cursor, event_set_id, event_set.members)
 
                     stmt = '''DELETE FROM event_set_notes WHERE event_set_id = %s'''
                     cursor.execute(stmt, args)
@@ -52,7 +52,7 @@ class EventSetPut():
                 except DuplicateKeyException as err:
                     raise err
 
-                ret = EventSetFetch.fetch(cursor, event_set_id)
+                ret = EventSetFetch.fetch(cursor, event_set_id, 0, 0)
 
 
         return ret
