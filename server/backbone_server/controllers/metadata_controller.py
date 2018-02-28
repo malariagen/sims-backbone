@@ -57,7 +57,7 @@ class MetadataController(BaseController):
         try:
             country = get.get(countryId)
         except MissingKeyException as dme:
-            logging.getLogger(__name__).error("download_sample: {}".format(repr(dme)))
+            logging.getLogger(__name__).error("get_country_metadata: {}".format(repr(dme)))
             retcode = 404
 
         self.log_action(user, 'get_country_metadata', countryId, None, country, retcode)

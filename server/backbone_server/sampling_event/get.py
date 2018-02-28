@@ -15,14 +15,14 @@ class SamplingEventGetById():
         self._connection = conn
 
 
-    def get(self, sample_id):
+    def get(self, sampling_event_id):
 
         with self._connection:
             with self._connection.cursor() as cursor:
 
-                sample = SamplingEventFetch.fetch(cursor, sample_id)
+                sampling_event = SamplingEventFetch.fetch(cursor, sampling_event_id)
 
-        if not sample:
-            raise MissingKeyException("No sample {}".format(sample_id))
+        if not sampling_event:
+            raise MissingKeyException("No sampling_event {}".format(sampling_event_id))
 
-        return sample
+        return sampling_event

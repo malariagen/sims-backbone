@@ -11,27 +11,27 @@ class SamplingEventDelete():
         self._connection = conn
 
 
-    def delete(self, sample_id):
+    def delete(self, sampling_event_id):
 
         with self._connection:
             with self._connection.cursor() as cursor:
 
-                stmt = '''DELETE FROM identifiers WHERE sample_id = %s'''
+                stmt = '''DELETE FROM identifiers WHERE sampling_event_id = %s'''
 
-                cursor.execute( stmt, (sample_id,))
+                cursor.execute( stmt, (sampling_event_id,))
 
                 stmt = '''DELETE FROM event_set_members WHERE sampling_event_id = %s'''
 
-                cursor.execute( stmt, (sample_id,))
+                cursor.execute( stmt, (sampling_event_id,))
 
-                stmt = '''DELETE FROM samples WHERE id = %s'''
+                stmt = '''DELETE FROM sampling_events WHERE id = %s'''
 
-                cursor.execute( stmt, (sample_id,))
+                cursor.execute( stmt, (sampling_event_id,))
 
                 rc = cursor.rowcount
 
 
         if rc != 1:
-            raise MissingKeyException("Error deleting sample {}".format(sample_id))
+            raise MissingKeyException("Error deleting sampling_event {}".format(sampling_event_id))
 
 

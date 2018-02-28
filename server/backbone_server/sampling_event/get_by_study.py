@@ -47,18 +47,18 @@ class SamplingEventsGetByStudy():
                     query_body = query_body + ' LIMIT %s OFFSET %s'
                     args = args + (count, start)
 
-                samples = SamplingEvents([], 0)
+                sampling_events = SamplingEvents([], 0)
 
                 stmt = fields + query_body
 
                 cursor.execute(stmt, args)
 
-                samples.sampling_events = SamplingEventFetch.load_sampling_events(cursor, True)
+                sampling_events.sampling_events = SamplingEventFetch.load_sampling_events(cursor, True)
 
                 if not (start is None and count is None):
                     cursor.execute(count_query, count_args)
-                    samples.count = cursor.fetchone()[0]
+                    sampling_events.count = cursor.fetchone()[0]
                 else:
-                    samples.count = len(samples.sampling_events)
+                    sampling_events.count = len(sampling_events.sampling_events)
 
-        return samples
+        return sampling_events

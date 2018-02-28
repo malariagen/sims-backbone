@@ -25,7 +25,7 @@ class LocationPut(LocationEdit):
             with self._connection.cursor() as cursor:
 
                 stmt = '''SELECT id, ST_X(location) as latitude, ST_Y(location) as longitude,
-                precision, curated_name, curation_method, country
+                accuracy, curated_name, curation_method, country
                                FROM locations WHERE  id = %s'''
                 cursor.execute( stmt, (location_id,))
 
@@ -40,7 +40,7 @@ class LocationPut(LocationEdit):
                     raise MissingKeyException("Error updating location {}".format(location_id))
 
                 stmt = '''SELECT id, ST_X(location) as latitude, ST_Y(location) as longitude,
-                precision, curated_name, curation_method, country
+                accuracy, curated_name, curation_method, country
                                FROM locations WHERE  location = ST_SetSRID(ST_MakePoint(%s, %s), 4326)'''
                 cursor.execute( stmt, (location.latitude, location.longitude,))
 
@@ -56,7 +56,7 @@ class LocationPut(LocationEdit):
 
                 stmt = '''UPDATE locations 
                             SET location = ST_SetSRID(ST_MakePoint(%s, %s), 4326),
-                            precision = %s, curated_name = %s, curation_method = %s, country = %s,
+                            accuracy = %s, curated_name = %s, curation_method = %s, country = %s,
                             notes = %s
                             WHERE id = %s''' 
                 args = (location.latitude, location.longitude,

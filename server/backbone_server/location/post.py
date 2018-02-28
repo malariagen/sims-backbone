@@ -25,7 +25,7 @@ class LocationPost(LocationEdit):
             with self._connection.cursor() as cursor:
 
                 stmt = '''SELECT id, ST_X(location) as latitude, ST_Y(location) as longitude,
-                precision, curated_name, curation_method, country
+                accuracy, curated_name, curation_method, country
                                FROM locations WHERE  location = ST_SetSRID(ST_MakePoint(%s, %s), 4326)'''
                 cursor.execute( stmt, (location.latitude, location.longitude,))
 
@@ -42,7 +42,7 @@ class LocationPost(LocationEdit):
                 uuid_val = uuid.uuid4()
 
                 stmt = '''INSERT INTO locations 
-                            (id, location, precision, curated_name, curation_method, country, notes) 
+                            (id, location, accuracy, curated_name, curation_method, country, notes) 
                             VALUES (%s, ST_SetSRID(ST_MakePoint(%s, %s), 4326), %s, %s, %s, %s, %s)'''
                 args = (uuid_val, location.latitude, location.longitude,
                         location.accuracy, location.curated_name, location.curation_method,

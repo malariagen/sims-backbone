@@ -26,24 +26,24 @@ class SamplingEventsGetByLocation():
                 except MissingKeyException as mke:
                     raise mke
 
-                stmt = '''SELECT samples.id FROM samples WHERE location_id = %s OR proxy_location_id = %s'''
+                stmt = '''SELECT sampling_events.id FROM sampling_events WHERE location_id = %s OR proxy_location_id = %s'''
                 cursor.execute(stmt, (location_id, location_id))
 
-                samples = SamplingEvents([], 0)
+                sampling_events = SamplingEvents([], 0)
                 event_ids = []
 
-                for sample_id in cursor:
-                    event_ids.append(sample_id)
-                for sample_id in event_ids:
-                    sample = SamplingEventFetch.fetch(cursor, sample_id)
+                for sampling_event_id in cursor:
+                    event_ids.append(sampling_event_id)
+                for sampling_event_id in event_ids:
+                    sampling_event = SamplingEventFetch.fetch(cursor, sampling_event_id)
 
-                    #print("Adding sample {}".format(sample))
-                    samples.sampling_events.append(sample)
-                    samples.count = samples.count + 1
-
-
-        if samples.count == 0:
-            raise MissingKeyException("No samples for {}".format(location))
+                    #print("Adding sampling_event {}".format(sampling_event))
+                    sampling_events.sampling_events.append(sampling_event)
+                    sampling_events.count = sampling_events.count + 1
 
 
-        return samples
+        if sampling_events.count == 0:
+            raise MissingKeyException("No sampling_events for {}".format(location))
+
+
+        return sampling_events

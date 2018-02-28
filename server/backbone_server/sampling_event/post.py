@@ -19,40 +19,41 @@ class SamplingEventPost():
         self._connection = conn
 
 
-    def post(self, sample):
+    def post(self, sampling_event):
 
         with self._connection:
             with self._connection.cursor() as cursor:
 
                 uuid_val = uuid.uuid4()
 
-                study_id = SamplingEventEdit.fetch_study_id(cursor, sample.study_id, True)
-                partner_species = SamplingEventEdit.fetch_partner_species(cursor, sample, study_id)
+                study_id = SamplingEventEdit.fetch_study_id(cursor, sampling_event.study_id, True)
+                partner_species = SamplingEventEdit.fetch_partner_species(cursor, sampling_event, study_id)
 
-                stmt = '''INSERT INTO samples 
+                stmt = '''INSERT INTO sampling_events 
                             (id, study_id, doc, doc_accuracy, location_id, proxy_location_id, partner_species_id) 
                             VALUES (%s, %s, %s, %s, %s, %s, %s)'''
-                args = (uuid_val,study_id, sample.doc, sample.doc_accuracy, sample.location_id, sample.proxy_location_id,
+                args = (uuid_val,study_id, sampling_event.doc, sampling_event.doc_accuracy,
+                        sampling_event.location_id, sampling_event.proxy_location_id,
                         partner_species)
 
                 try:
                     cursor.execute(stmt, args)
 
-                    SamplingEventEdit.add_identifiers(cursor, uuid_val, sample)
+                    SamplingEventEdit.add_identifiers(cursor, uuid_val, sampling_event)
 
                 except mysql.connector.Error as err:
                     if err.errno == errorcode.ER_DUP_ENTRY:
-                        raise DuplicateKeyException("Error inserting sample {}".format(sample)) from err
+                        raise DuplicateKeyException("Error inserting sampling_event {}".format(sampling_event)) from err
                     else:
                         self._logger.fatal(repr(error))
                 except psycopg2.IntegrityError as err:
                     print(err.pgcode)
                     print(err.pgerror)
-                    raise DuplicateKeyException("Error inserting sample {}".format(sample)) from err
+                    raise DuplicateKeyException("Error inserting sampling_event {}".format(sampling_event)) from err
                 except DuplicateKeyException as err:
                     raise err
 
-                sample = SamplingEventFetch.fetch(cursor, uuid_val)
+                sampling_event = SamplingEventFetch.fetch(cursor, uuid_val)
 
-        return sample
+        return sampling_event
 

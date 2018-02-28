@@ -14,7 +14,7 @@ class LocationFetch():
             return None
 
         stmt = '''SELECT id, ST_X(location) as latitude, ST_Y(location) as longitude,
-        precision, curated_name, curation_method, country, notes
+        accuracy, curated_name, curation_method, country, notes
                        FROM locations WHERE id = %s'''
         cursor.execute( stmt, (location_id,))
 

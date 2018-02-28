@@ -14,7 +14,8 @@ class SamplingEventFetch():
     @staticmethod
     def fetch_identifiers(cursor, sampling_event_id):
 
-        stmt = '''SELECT identifier_type, identifier_value, identifier_source FROM identifiers WHERE sample_id = %s
+        stmt = '''SELECT identifier_type, identifier_value, identifier_source FROM identifiers
+        WHERE sampling_event_id = %s
                 ORDER BY identifier_type, identifier_value, identifier_source'''
 
         cursor.execute(stmt, (sampling_event_id,))
@@ -82,57 +83,57 @@ class SamplingEventFetch():
         if not sampling_event_id:
             return None
 
-        stmt = '''SELECT samples.id, studies.study_name AS study_id, doc, doc_accuracy,
+        stmt = '''SELECT sampling_events.id, studies.study_name AS study_id, doc, doc_accuracy,
                             partner_species, partner_species_id, location_id, proxy_location_id
-        FROM samples
-        LEFT JOIN studies ON studies.id = samples.study_id
-        LEFT JOIN partner_species_identifiers ON partner_species_identifiers.id = samples.partner_species_id
-        WHERE samples.id = %s'''
+        FROM sampling_events
+        LEFT JOIN studies ON studies.id = sampling_events.study_id
+        LEFT JOIN partner_species_identifiers ON partner_species_identifiers.id = sampling_events.partner_species_id
+        WHERE sampling_events.id = %s'''
         cursor.execute( stmt, (sampling_event_id,))
 
-        sample = None
+        sampling_event = None
 
-        for (sample_id, study_id, doc, doc_accuracy, partner_species, partner_species_id, location_id, proxy_location_id) in cursor:
-            sample = SamplingEvent(str(sample_id), study_id = study_id, 
+        for (sampling_event_id, study_id, doc, doc_accuracy, partner_species, partner_species_id, location_id, proxy_location_id) in cursor:
+            sampling_event = SamplingEvent(str(sampling_event_id), study_id = study_id, 
                                    doc = doc, doc_accuracy = doc_accuracy,
                                    partner_species = partner_species)
             if location_id:
                 location = LocationFetch.fetch(cursor, location_id)
-                sample.location = location
-                sample.location_id = str(location_id)
-                sample.public_location_id = str(location_id)
-                sample.public_location = location
+                sampling_event.location = location
+                sampling_event.location_id = str(location_id)
+                sampling_event.public_location_id = str(location_id)
+                sampling_event.public_location = location
             if proxy_location_id:
                 proxy_location = LocationFetch.fetch(cursor, proxy_location_id)
-                sample.proxy_location = proxy_location
-                sample.proxy_location_id = str(proxy_location_id)
-                sample.public_location_id = str(proxy_location_id)
-                sample.public_location = proxy_location
+                sampling_event.proxy_location = proxy_location
+                sampling_event.proxy_location_id = str(proxy_location_id)
+                sampling_event.public_location_id = str(proxy_location_id)
+                sampling_event.public_location = proxy_location
 
-        if not sample:
-            return sample
+        if not sampling_event:
+            return sampling_event
 
 
-        sample.identifiers = SamplingEventFetch.fetch_identifiers(cursor, sampling_event_id)
+        sampling_event.identifiers = SamplingEventFetch.fetch_identifiers(cursor, sampling_event_id)
 
-        sample.partner_taxonomies = SamplingEventFetch.fetch_taxonomies(cursor, study_id,
+        sampling_event.partner_taxonomies = SamplingEventFetch.fetch_taxonomies(cursor, study_id,
                                                                         partner_species)
 
-        sample.event_sets = SamplingEventFetch.fetch_event_sets(cursor, sampling_event_id)
+        sampling_event.event_sets = SamplingEventFetch.fetch_event_sets(cursor, sampling_event_id)
 
-        return sample
+        return sampling_event
 
     @staticmethod
     def load_sampling_events(cursor, all_identifiers=True):
 
-        samples = []
-        for (sample_id, study_id, doc, doc_accuracy, partner_species, partner_species_id,
+        sampling_events = []
+        for (sampling_event_id, study_id, doc, doc_accuracy, partner_species, partner_species_id,
              location_id, latitude, longitude, accuracy,
              curated_name, curation_method, country, notes,
              partner_name, proxy_location_id, proxy_latitude, proxy_longitude, proxy_accuracy,
              proxy_curated_name, proxy_curation_method,
              proxy_country, proxy_notes, proxy_partner_name) in cursor:
-            sample = SamplingEvent(str(sample_id), study_id=study_id,
+            sampling_event = SamplingEvent(str(sampling_event_id), study_id=study_id,
                                    doc=doc, doc_accuracy=doc_accuracy,
                                    partner_species=partner_species)
             if location_id:
@@ -145,10 +146,10 @@ class SamplingEventFetch():
                                        identifier_value=partner_name,
                                        study_name=study_id)
                     location.identifiers = [ident]
-                sample.location = location
-                sample.location_id = str(location_id)
-                sample.public_location_id = str(location_id)
-                sample.public_location = location
+                sampling_event.location = location
+                sampling_event.location_id = str(location_id)
+                sampling_event.public_location_id = str(location_id)
+                sampling_event.public_location = location
             if proxy_location_id:
                 location = Location(str(proxy_location_id),
                                     proxy_latitude, proxy_longitude,
@@ -161,16 +162,18 @@ class SamplingEventFetch():
                                        identifier_value=proxy_partner_name,
                                        study_name=study_id)
                     location.identifiers = [ident]
-                sample.proxy_location = location
-                sample.proxy_location_id = str(proxy_location_id)
-                sample.public_location_id = str(proxy_location_id)
-                sample.public_location =location
+                sampling_event.proxy_location = location
+                sampling_event.proxy_location_id = str(proxy_location_id)
+                sampling_event.public_location_id = str(proxy_location_id)
+                sampling_event.public_location =location
 
-            samples.append(sample)
+            sampling_events.append(sampling_event)
 
-        for sample in samples:
-            sample.identifiers = SamplingEventFetch.fetch_identifiers(cursor, sample.sampling_event_id)
-            sample.partner_taxonomies = SamplingEventFetch.fetch_taxonomies(cursor, sample.study_id,
-                                                                        sample.partner_species)
+        for sampling_event in sampling_events:
+            sampling_event.identifiers = SamplingEventFetch.fetch_identifiers(cursor,
+                                                                              sampling_event.sampling_event_id)
+            sampling_event.partner_taxonomies = SamplingEventFetch.fetch_taxonomies(cursor,
+                                                                                    sampling_event.study_id,
+                                                                        sampling_event.partner_species)
 
-        return samples
+        return sampling_events

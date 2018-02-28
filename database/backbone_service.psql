@@ -18,14 +18,14 @@ SET search_path = public, pg_catalog;
 
 ALTER TABLE ONLY public.taxonomy_identifiers DROP CONSTRAINT fk_taxa;
 ALTER TABLE ONLY public.location_identifiers DROP CONSTRAINT fk_study_loc;
-ALTER TABLE ONLY public.samples DROP CONSTRAINT fk_study;
-ALTER TABLE ONLY public.samples DROP CONSTRAINT fk_species;
-ALTER TABLE ONLY public.identifiers DROP CONSTRAINT fk_sample;
-ALTER TABLE ONLY public.samples DROP CONSTRAINT fk_proxy_location;
+ALTER TABLE ONLY public.sampling_events DROP CONSTRAINT fk_study;
+ALTER TABLE ONLY public.sampling_events DROP CONSTRAINT fk_species;
+ALTER TABLE ONLY public.identifiers DROP CONSTRAINT fk_sampling_event;
+ALTER TABLE ONLY public.sampling_events DROP CONSTRAINT fk_proxy_location;
 ALTER TABLE ONLY public.partner_species_identifiers DROP CONSTRAINT fk_partner_sp_study;
 ALTER TABLE ONLY public.taxonomy_identifiers DROP CONSTRAINT fk_partner_sp;
 ALTER TABLE ONLY public.location_identifiers DROP CONSTRAINT fk_location;
-ALTER TABLE ONLY public.samples DROP CONSTRAINT fk_location;
+ALTER TABLE ONLY public.sampling_events DROP CONSTRAINT fk_location;
 ALTER TABLE ONLY public.event_set_notes DROP CONSTRAINT fk_esn_es;
 ALTER TABLE ONLY public.event_set_members DROP CONSTRAINT fk_esm_se;
 ALTER TABLE ONLY public.event_set_members DROP CONSTRAINT fk_esm_es;
@@ -34,7 +34,7 @@ DROP INDEX public.idx_study_name;
 DROP INDEX public.idx_partner_species;
 DROP INDEX public.idx_ident_value;
 DROP INDEX public.idx_ident_type;
-DROP INDEX public.fki_sample_id;
+DROP INDEX public.fki_sampling_event_id;
 DROP INDEX public.fki_proxy_location;
 DROP INDEX public.fki_location_id;
 DROP INDEX public.fki_location;
@@ -48,7 +48,7 @@ ALTER TABLE ONLY public.event_sets DROP CONSTRAINT uniq_event_sets;
 ALTER TABLE ONLY public.event_set_members DROP CONSTRAINT uniq_event_set_members;
 ALTER TABLE ONLY public.taxonomies DROP CONSTRAINT taxonomy_id;
 ALTER TABLE ONLY public.studies DROP CONSTRAINT studies_id;
-ALTER TABLE ONLY public.samples DROP CONSTRAINT sample_id;
+ALTER TABLE ONLY public.sampling_events DROP CONSTRAINT sampling_event_id;
 ALTER TABLE ONLY public.event_set_notes DROP CONSTRAINT pk_esn;
 ALTER TABLE ONLY public.event_sets DROP CONSTRAINT pk_es;
 ALTER TABLE ONLY public.partner_species_identifiers DROP CONSTRAINT partner_species_identifiers_id;
@@ -60,7 +60,7 @@ DROP VIEW public.v_sampling_events;
 DROP TABLE public.taxonomy_identifiers;
 DROP TABLE public.taxonomies;
 DROP TABLE public.studies;
-DROP TABLE public.samples;
+DROP TABLE public.sampling_events;
 DROP TABLE public.partner_species_identifiers;
 DROP TABLE public.locations;
 DROP TABLE public.location_identifiers;
@@ -75,6 +75,13 @@ DROP TABLE public.archive;
 DROP EXTENSION postgis;
 DROP EXTENSION plpgsql;
 DROP SCHEMA public;
+DROP SCHEMA backbone_service;
+--
+-- Name: backbone_service; Type: SCHEMA; Schema: -; Owner: -
+--
+
+CREATE SCHEMA backbone_service;
+
 
 --
 -- Name: public; Type: SCHEMA; Schema: -; Owner: -
@@ -108,7 +115,7 @@ COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
 -- Name: postgis; Type: EXTENSION; Schema: -; Owner: -
 --
 
-CREATE EXTENSION IF NOT EXISTS postgis WITH SCHEMA public;
+CREATE EXTENSION IF NOT EXISTS postgis WITH SCHEMA backbone_service;
 
 
 --
@@ -227,7 +234,7 @@ ALTER SEQUENCE event_sets_id_seq OWNED BY event_sets.id;
 --
 
 CREATE TABLE identifiers (
-    sample_id uuid,
+    sampling_event_id uuid,
     identifier_type character varying(20),
     identifier_value character varying(256),
     identifier_source character varying(256)
@@ -253,9 +260,9 @@ CREATE TABLE location_identifiers (
 
 CREATE TABLE locations (
     id uuid NOT NULL,
-    location geometry(Point),
+    location backbone_service.geometry(Point),
     country character(3),
-    "precision" character varying,
+    accuracy character varying,
     curated_name character varying,
     curation_method character varying,
     notes character varying
@@ -274,10 +281,10 @@ CREATE TABLE partner_species_identifiers (
 
 
 --
--- Name: samples; Type: TABLE; Schema: public; Owner: -
+-- Name: sampling_events; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE samples (
+CREATE TABLE sampling_events (
     id uuid NOT NULL,
     study_id uuid,
     doc date,
@@ -325,37 +332,37 @@ CREATE TABLE taxonomy_identifiers (
 --
 
 CREATE VIEW v_sampling_events AS
- SELECT samples.id,
+ SELECT sampling_events.id,
     studies.study_name AS study_id,
-    samples.doc,
-    samples.doc_accuracy,
+    sampling_events.doc,
+    sampling_events.doc_accuracy,
     partner_species_identifiers.partner_species,
-    samples.partner_species_id,
-    samples.location_id,
-    st_x(loc.location) AS latitude,
-    st_y(loc.location) AS longitude,
-    loc."precision" AS accuracy,
+    sampling_events.partner_species_id,
+    sampling_events.location_id,
+    backbone_service.st_x(loc.location) AS latitude,
+    backbone_service.st_y(loc.location) AS longitude,
+    loc.accuracy,
     loc.curated_name,
     loc.curation_method,
     loc.country,
     loc.notes,
     li.identifier_value AS partner_name,
-    samples.proxy_location_id,
-    st_x(proxy_loc.location) AS proxy_latitude,
-    st_y(proxy_loc.location) AS proxy_longitude,
-    proxy_loc."precision" AS proxy_accuracy,
+    sampling_events.proxy_location_id,
+    backbone_service.st_x(proxy_loc.location) AS proxy_latitude,
+    backbone_service.st_y(proxy_loc.location) AS proxy_longitude,
+    proxy_loc.accuracy AS proxy_accuracy,
     proxy_loc.curated_name AS proxy_curated_name,
     proxy_loc.curation_method AS proxy_curation_method,
     proxy_loc.country AS proxy_country,
     proxy_loc.notes AS proxy_notes,
     pli.identifier_value AS proxy_partner_name
-   FROM ((((((samples
-     LEFT JOIN studies ON ((studies.id = samples.study_id)))
-     LEFT JOIN partner_species_identifiers ON ((partner_species_identifiers.id = samples.partner_species_id)))
-     LEFT JOIN locations loc ON ((loc.id = samples.location_id)))
-     LEFT JOIN location_identifiers li ON (((li.study_id = samples.study_id) AND (li.location_id = loc.id) AND ((li.identifier_type)::text = 'partner_name'::text))))
-     LEFT JOIN locations proxy_loc ON ((proxy_loc.id = samples.proxy_location_id)))
-     LEFT JOIN location_identifiers pli ON (((pli.study_id = samples.study_id) AND (pli.location_id = loc.id) AND ((pli.identifier_type)::text = 'partner_name'::text))));
+   FROM ((((((sampling_events
+     LEFT JOIN studies ON ((studies.id = sampling_events.study_id)))
+     LEFT JOIN partner_species_identifiers ON ((partner_species_identifiers.id = sampling_events.partner_species_id)))
+     LEFT JOIN locations loc ON ((loc.id = sampling_events.location_id)))
+     LEFT JOIN location_identifiers li ON (((li.study_id = sampling_events.study_id) AND (li.location_id = loc.id) AND ((li.identifier_type)::text = 'partner_name'::text))))
+     LEFT JOIN locations proxy_loc ON ((proxy_loc.id = sampling_events.proxy_location_id)))
+     LEFT JOIN location_identifiers pli ON (((pli.study_id = sampling_events.study_id) AND (pli.location_id = loc.id) AND ((pli.identifier_type)::text = 'partner_name'::text))));
 
 
 --
@@ -413,11 +420,11 @@ ALTER TABLE ONLY event_set_notes
 
 
 --
--- Name: samples sample_id; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: sampling_events sampling_event_id; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY samples
-    ADD CONSTRAINT sample_id PRIMARY KEY (id);
+ALTER TABLE ONLY sampling_events
+    ADD CONSTRAINT sampling_event_id PRIMARY KEY (id);
 
 
 --
@@ -501,7 +508,7 @@ CREATE INDEX fki_fk_esn_es ON event_set_notes USING btree (event_set_id);
 -- Name: fki_location; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX fki_location ON samples USING btree (location_id);
+CREATE INDEX fki_location ON sampling_events USING btree (location_id);
 
 
 --
@@ -515,14 +522,14 @@ CREATE INDEX fki_location_id ON location_identifiers USING btree (location_id);
 -- Name: fki_proxy_location; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX fki_proxy_location ON samples USING btree (proxy_location_id);
+CREATE INDEX fki_proxy_location ON sampling_events USING btree (proxy_location_id);
 
 
 --
--- Name: fki_sample_id; Type: INDEX; Schema: public; Owner: -
+-- Name: fki_sampling_event_id; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX fki_sample_id ON identifiers USING btree (sample_id);
+CREATE INDEX fki_sampling_event_id ON identifiers USING btree (sampling_event_id);
 
 
 --
@@ -574,7 +581,7 @@ ALTER TABLE ONLY event_set_members
 --
 
 ALTER TABLE ONLY event_set_members
-    ADD CONSTRAINT fk_esm_se FOREIGN KEY (sampling_event_id) REFERENCES samples(id);
+    ADD CONSTRAINT fk_esm_se FOREIGN KEY (sampling_event_id) REFERENCES sampling_events(id);
 
 
 --
@@ -586,10 +593,10 @@ ALTER TABLE ONLY event_set_notes
 
 
 --
--- Name: samples fk_location; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: sampling_events fk_location; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY samples
+ALTER TABLE ONLY sampling_events
     ADD CONSTRAINT fk_location FOREIGN KEY (location_id) REFERENCES locations(id);
 
 
@@ -618,34 +625,34 @@ ALTER TABLE ONLY partner_species_identifiers
 
 
 --
--- Name: samples fk_proxy_location; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: sampling_events fk_proxy_location; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY samples
+ALTER TABLE ONLY sampling_events
     ADD CONSTRAINT fk_proxy_location FOREIGN KEY (proxy_location_id) REFERENCES locations(id);
 
 
 --
--- Name: identifiers fk_sample; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: identifiers fk_sampling_event; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY identifiers
-    ADD CONSTRAINT fk_sample FOREIGN KEY (sample_id) REFERENCES samples(id);
+    ADD CONSTRAINT fk_sampling_event FOREIGN KEY (sampling_event_id) REFERENCES sampling_events(id);
 
 
 --
--- Name: samples fk_species; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: sampling_events fk_species; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY samples
+ALTER TABLE ONLY sampling_events
     ADD CONSTRAINT fk_species FOREIGN KEY (partner_species_id) REFERENCES partner_species_identifiers(id);
 
 
 --
--- Name: samples fk_study; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: sampling_events fk_study; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY samples
+ALTER TABLE ONLY sampling_events
     ADD CONSTRAINT fk_study FOREIGN KEY (study_id) REFERENCES studies(id);
 
 
