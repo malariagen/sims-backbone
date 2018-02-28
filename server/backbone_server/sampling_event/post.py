@@ -26,7 +26,7 @@ class SamplingEventPost():
 
                 uuid_val = uuid.uuid4()
 
-                study_id = SamplingEventEdit.fetch_study_id(cursor, sampling_event.study_id, True)
+                study_id = SamplingEventEdit.fetch_study_id(cursor, sampling_event.study_name, True)
                 partner_species = SamplingEventEdit.fetch_partner_species(cursor, sampling_event, study_id)
 
                 stmt = '''INSERT INTO sampling_events 

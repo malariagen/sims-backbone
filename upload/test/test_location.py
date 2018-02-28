@@ -130,7 +130,7 @@ class TestLocation(TestBase):
         api_instance = swagger_client.SamplingEventApi(self._api_client)
 
         try:
-            looked_up = api_instance.download_sampling_event_by_identifier('oxford_id', '22345')
+            looked_up = api_instance.download_sampling_events_by_identifier('oxford_id', '22345')
             looked_up = looked_up.sampling_events[0]
             errmsg = "Location name conflict\t9040\tRatanakiri\t{'accuracy': None,\n 'country': 'KHM',\n 'curated_name': None,\n 'curation_method': None,\n 'identifiers': [" +\
                     "{'identifier_source': 'locations',\n                  " +\
@@ -162,7 +162,7 @@ class TestLocation(TestBase):
         api_instance = swagger_client.SamplingEventApi(self._api_client)
 
         try:
-            looked_up = api_instance.download_sampling_event_by_identifier('oxford_id', '22346')
+            looked_up = api_instance.download_sampling_events_by_identifier('oxford_id', '22346')
             looked_up = looked_up.sampling_events[0]
 
             self.assertIsNotNone(looked_up.location_id)
@@ -170,7 +170,7 @@ class TestLocation(TestBase):
             if looked_up.location_id not in self._locations:
                 self._locations.append(looked_up.location_id)
 
-            looked_up = api_instance.download_sampling_event_by_identifier('oxford_id', '22347')
+            looked_up = api_instance.download_sampling_events_by_identifier('oxford_id', '22347')
             looked_up = looked_up.sampling_events[0]
 
             self.assertIsNotNone(looked_up.location_id)
@@ -196,17 +196,17 @@ class TestLocation(TestBase):
         api_instance = swagger_client.SamplingEventApi(self._api_client)
 
         try:
-            looked_up = api_instance.download_sampling_event_by_identifier('oxford_id', 'AG0001-C')
+            looked_up = api_instance.download_sampling_events_by_identifier('oxford_id', 'AG0001-C')
             looked_up = looked_up.sampling_events[0]
 
             self.assertIsNotNone(looked_up.location)
 
-            self.assertEqual(looked_up.location.identifiers[0].study_name[:4], looked_up.study_id[:4])
+            self.assertEqual(looked_up.location.identifiers[0].study_name[:4], looked_up.study_name[:4])
 
             if looked_up.location_id not in self._locations:
                 self._locations.append(looked_up.location_id)
 
         except ApiException as error:
-            self.fail("test_location_name_study: Exception when calling download_sampling_event_by_identifier {}"
+            self.fail("test_location_name_study: Exception when calling download_sampling_events_by_identifier {}"
                         .format(error))
 

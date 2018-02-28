@@ -79,7 +79,7 @@ class SetCountry(upload_ssr.Upload_SSR):
                 country_value = row[country_column]
 
                 try:
-                    found_events = api_instance.download_sampling_event_by_identifier(id_type,
+                    found_events = api_instance.download_sampling_events_by_identifier(id_type,
                                                                urllib.parse.quote_plus(id_value))
                     if found_events:
                         found = found_events.sampling_events[0]
@@ -175,7 +175,7 @@ class SetCountry(upload_ssr.Upload_SSR):
         ident = swagger_client.Identifier('partner_name',
                                           identifier_value=self._country_cache[country_value].english,
                                           identifier_source='set_country {}'.format(filename),
-                                          study_name=found.study_id)
+                                          study_name=found.study_name)
 
         idents = '\t'.join(pformat(x.to_dict(), width=1000, compact=True) for x in found.identifiers)
 
@@ -202,7 +202,7 @@ class SetCountry(upload_ssr.Upload_SSR):
 
         if not found.location:
 
-            location = self.find_country_for_study(country_value, found.study_id, ident)
+            location = self.find_country_for_study(country_value, found.study_name, ident)
 
             if location:
                 try:
@@ -222,7 +222,7 @@ class SetCountry(upload_ssr.Upload_SSR):
         if found.location:
             if found.location.identifiers:
                 for identifier in found.location.identifiers:
-                    if identifier.study_name[:4] == found.study_id[:4]:
+                    if identifier.study_name[:4] == found.study_name[:4]:
                         study_ident = True
 
         if not study_ident:
@@ -238,7 +238,7 @@ class SetCountry(upload_ssr.Upload_SSR):
                     self.report('Unable to add country location identifier name for study ', { 'identifier_source': ident.identifier_source,
                                             'identifer_value' : ident.identifier_value,
                                             'identifier_type': ident.identifier_type,
-                                            'study_id': found.study_id,
+                                            'study_id': found.study_name,
                                             'latitude': found.location.latitude,
                                             'longitude': found.location.longitude,
                                             'sampling_event_id': found.sampling_event_id

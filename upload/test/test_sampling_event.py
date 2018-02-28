@@ -44,7 +44,7 @@ class TestSampling_Event(TestBase):
 
         event_api_instance = swagger_client.SamplingEventApi(self._api_client)
 
-        looked_up = event_api_instance.download_sampling_event_by_identifier('oxford_id', '123456')
+        looked_up = event_api_instance.download_sampling_events_by_identifier('oxford_id', '123456')
         looked_up = looked_up.sampling_events[0]
 
         event_api_instance.delete_sampling_event(looked_up.sampling_event_id)
@@ -59,7 +59,7 @@ class TestSampling_Event(TestBase):
         event_api_instance = swagger_client.SamplingEventApi(self._api_client)
         event_set_api_instance = swagger_client.EventSetApi(self._api_client)
 
-        looked_up = event_api_instance.download_sampling_event_by_identifier('oxford_id', '123456')
+        looked_up = event_api_instance.download_sampling_events_by_identifier('oxford_id', '123456')
         looked_up = looked_up.sampling_events[0]
 
         for study in ["9011 Upload test study", "9012 Upload test study 3"]:
@@ -72,7 +72,7 @@ class TestSampling_Event(TestBase):
             self.assertTrue(found, "Not added to additional events")
             event_set_api_instance.delete_event_set(eset)
 
-        self.assertEqual(looked_up.study_id, '9010 Upload test study 2', 'Not lowest study code')
+        self.assertEqual(looked_up.study_name, '9010 Upload test study 2', 'Not lowest study code')
 
         for study in ["0000 Upload test study", "1089 R&D special study"]:
             eset = "Additional events: {}".format(study)

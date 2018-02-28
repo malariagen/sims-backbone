@@ -1,9 +1,9 @@
 import connexion
-from swagger_server.models.location import Location
-from datetime import date, datetime
-from typing import List, Dict
-from six import iteritems
-from ..util import deserialize_date, deserialize_datetime
+import six
+
+from swagger_server.models.location import Location  # noqa: E501
+from swagger_server.models.locations import Locations  # noqa: E501
+from swagger_server import util
 
 from decimal import *
 import logging

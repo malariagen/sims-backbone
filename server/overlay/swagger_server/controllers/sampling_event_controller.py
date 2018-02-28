@@ -1,13 +1,11 @@
 import connexion
-from swagger_server.models.sampling_event import SamplingEvent
-from swagger_server.models.sampling_events import SamplingEvents
-from datetime import date, datetime
-from typing import List, Dict
-from six import iteritems
-from ..util import deserialize_date, deserialize_datetime
+import six
+
+from swagger_server.models.sampling_event import SamplingEvent  # noqa: E501
+from swagger_server.models.sampling_events import SamplingEvents  # noqa: E501
+from swagger_server import util
 
 import logging
-
 
 from backbone_server.controllers.sampling_event_controller  import SamplingEventController
 
@@ -54,21 +52,6 @@ def download_sampling_event(samplingEventId, user = None, token_info = None):
                                                              sampling_event_controller.token_info(token_info))
 
 
-def download_sampling_event_by_identifier(propName, propValue, user = None, token_info = None):
-    """
-    fetches a samplingEvent by property value
-    
-    :param propName: name of property to search
-    :type propName: str
-    :param propValue: matching value of property to search
-    :type propValue: str
-
-    :rtype: SamplingEvent
-    """
-    return sampling_event_controller.download_sampling_event_by_identifier(propName, propValue,
-                                                                           user,
-                                                                           sampling_event_controller.token_info(token_info))
-
 def download_sampling_events_by_event_set(eventSetId, start=None, count=None, user = None, token_info = None):
     """
     fetches samplingEvents in a given event set
@@ -85,6 +68,22 @@ def download_sampling_events_by_event_set(eventSetId, start=None, count=None, us
     return sampling_event_controller.download_sampling_events_by_event_set(eventSetId,start,
                                                                            count, user,
                                                                        sampling_event_controller.token_info(token_info))
+
+def download_sampling_events_by_identifier(propName, propValue, studyName=None, user = None, token_info = None):
+    """
+    fetches a samplingEvent by property value
+    
+    :param propName: name of property to search
+    :type propName: str
+    :param propValue: matching value of property to search
+    :type propValue: str
+
+    :rtype: SamplingEvent
+    """
+    return sampling_event_controller.download_sampling_events_by_identifier(propName, propValue,
+                                                                           studyName,
+                                                                           user,
+                                                                           sampling_event_controller.token_info(token_info))
 
 def download_sampling_events_by_location(locationId, start=None, count=None, user = None, token_info = None):
     """

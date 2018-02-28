@@ -13,12 +13,23 @@ class SamplingEventGetByIdentifier():
         self._logger = logging.getLogger(__name__)
         self._connection = conn
 
-    def get(self, identifier_type, identifier_value):
+    def get(self, identifier_type, identifier_value, study_name):
 
         with self._connection:
             with self._connection.cursor() as cursor:
 
-                cursor.execute("SELECT DISTINCT sampling_event_id FROM identifiers WHERE identifier_type = %s AND identifier_value = %s", (identifier_type, identifier_value,))
+                stmt = '''SELECT DISTINCT sampling_event_id FROM identifiers
+                WHERE identifier_type = %s AND identifier_value = %s'''
+                args = (identifier_type, identifier_value)
+
+                if study_name:
+                    stmt = '''SELECT DISTINCT sampling_event_id FROM identifiers
+                    LEFT JOIN sampling_events ON identifiers.sampling_event_id=sampling_events.id
+                    LEFT JOIN studies ON sampling_events.study_id=studies.id
+                WHERE identifier_type = %s AND identifier_value = %s AND study_code = %s'''
+                    args = args + (study_name[:4],)
+
+                cursor.execute(stmt, args)
 
                 sampling_events = SamplingEvents([], 0)
                 event_ids = []

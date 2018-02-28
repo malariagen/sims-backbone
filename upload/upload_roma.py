@@ -86,7 +86,7 @@ class Upload_ROMA(uploader.Uploader):
     def validate(self, input_values, output_values):
 
         if 'study_id' in input_values:
-            if input_values['study_id'][:4] != output_values.study_id[:4]:
+            if input_values['study_id'][:4] != output_values.study_name[:4]:
                 if input_values['study_id'][:4] != '0000':
                     pass
                     #print("Conflicting study id {} {}".format(input_values, output_values))

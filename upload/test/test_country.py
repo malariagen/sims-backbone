@@ -165,7 +165,7 @@ class TestCountry(TestBase):
         api_instance = swagger_client.SamplingEventApi(self._api_client)
 
         try:
-            looked_up = api_instance.download_sampling_event_by_identifier('partner_id',
+            looked_up = api_instance.download_sampling_events_by_identifier('partner_id',
                                                                            urllib.parse.quote_plus('MDG/TST_0001'))
 
             looked_up = looked_up.sampling_events[0]
@@ -179,7 +179,7 @@ class TestCountry(TestBase):
             self.assertEqual(looked_up.location.latitude, -16.94223)
             self.assertEqual(looked_up.location.longitude, 46.83144)
             self.assertEqual(looked_up.location.identifiers[0].identifier_value, 'Maevatanana')
-            self.assertEqual(looked_up.study_id[:4], '9050')
+            self.assertEqual(looked_up.study_name[:4], '9050')
 
             if looked_up.location_id not in self._locations:
                 self._locations.append(looked_up.location_id)
@@ -187,7 +187,7 @@ class TestCountry(TestBase):
                 self._locations.append(looked_up.proxy_location_id)
 
         except ApiException as error:
-            self.fail("test_location_duplicate_name: Exception when calling download_sampling_event_by_identifier {}"
+            self.fail("test_location_duplicate_name: Exception when calling download_sampling_events_by_identifier {}"
                         .format(error))
 
     """
@@ -196,7 +196,7 @@ class TestCountry(TestBase):
         api_instance = swagger_client.SamplingEventApi(self._api_client)
 
         try:
-            looked_up = api_instance.download_sampling_event_by_identifier('oxford_id',
+            looked_up = api_instance.download_sampling_events_by_identifier('oxford_id',
                                                                            urllib.parse.quote_plus('CT0003-C'))
 
             looked_up = looked_up.sampling_events[0]
@@ -204,11 +204,11 @@ class TestCountry(TestBase):
             self.assertEqual(looked_up.location.country, 'MDG')
             self.assertEqual(looked_up.location.latitude, -18.766947)
             self.assertEqual(looked_up.location.longitude, 46.869107)
-            self.assertEqual(looked_up.study_id[:4], '0000')
+            self.assertEqual(looked_up.study_name[:4], '0000')
             if looked_up.location_id not in self._locations:
                 self._locations.append(looked_up.location_id)
         except ApiException as error:
-            self.fail("test_location_duplicate_name: Exception when calling download_sampling_event_by_identifier {}"
+            self.fail("test_location_duplicate_name: Exception when calling download_sampling_events_by_identifier {}"
                         .format(error))
 
     """
@@ -217,7 +217,7 @@ class TestCountry(TestBase):
         api_instance = swagger_client.SamplingEventApi(self._api_client)
 
         try:
-            looked_up = api_instance.download_sampling_event_by_identifier('oxford_id',
+            looked_up = api_instance.download_sampling_events_by_identifier('oxford_id',
                                                                            urllib.parse.quote_plus('CT0002-C'))
 
             looked_up = looked_up.sampling_events[0]
@@ -225,7 +225,7 @@ class TestCountry(TestBase):
             self.assertEqual(looked_up.location.country, 'MDG')
             self.assertEqual(looked_up.location.latitude, -18.766947)
             self.assertEqual(looked_up.location.longitude, 46.869107)
-            self.assertEqual(looked_up.study_id[:4], '9051')
+            self.assertEqual(looked_up.study_name[:4], '9051')
             if looked_up.location_id not in self._locations:
                 self._locations.append(looked_up.location_id)
         except ApiException as error:
@@ -239,7 +239,7 @@ class TestCountry(TestBase):
 
         try:
 
-            looked_up = api_instance.download_sampling_event_by_identifier('partner_id',
+            looked_up = api_instance.download_sampling_events_by_identifier('partner_id',
                                                                            urllib.parse.quote_plus('MDG/TST_0004'))
 
             looked_up = looked_up.sampling_events[0]
@@ -259,7 +259,7 @@ class TestCountry(TestBase):
             self.assertEqual(looked_up.location.latitude, -16.94223)
             self.assertEqual(looked_up.location.longitude, 46.83144)
             self.assertEqual(looked_up.location.identifiers[0].identifier_value, 'Maevatanana')
-            self.assertEqual(looked_up.study_id[:4], '9052')
+            self.assertEqual(looked_up.study_name[:4], '9052')
             if looked_up.location_id not in self._locations:
                 self._locations.append(looked_up.location_id)
         except ApiException as error:

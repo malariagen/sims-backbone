@@ -94,7 +94,7 @@ class SamplingEventFetch():
         sampling_event = None
 
         for (sampling_event_id, study_id, doc, doc_accuracy, partner_species, partner_species_id, location_id, proxy_location_id) in cursor:
-            sampling_event = SamplingEvent(str(sampling_event_id), study_id = study_id, 
+            sampling_event = SamplingEvent(str(sampling_event_id), study_name = study_id, 
                                    doc = doc, doc_accuracy = doc_accuracy,
                                    partner_species = partner_species)
             if location_id:
@@ -133,7 +133,7 @@ class SamplingEventFetch():
              partner_name, proxy_location_id, proxy_latitude, proxy_longitude, proxy_accuracy,
              proxy_curated_name, proxy_curation_method,
              proxy_country, proxy_notes, proxy_partner_name) in cursor:
-            sampling_event = SamplingEvent(str(sampling_event_id), study_id=study_id,
+            sampling_event = SamplingEvent(str(sampling_event_id), study_name=study_id,
                                    doc=doc, doc_accuracy=doc_accuracy,
                                    partner_species=partner_species)
             if location_id:
@@ -173,7 +173,7 @@ class SamplingEventFetch():
             sampling_event.identifiers = SamplingEventFetch.fetch_identifiers(cursor,
                                                                               sampling_event.sampling_event_id)
             sampling_event.partner_taxonomies = SamplingEventFetch.fetch_taxonomies(cursor,
-                                                                                    sampling_event.study_id,
+                                                                                    sampling_event.study_name,
                                                                         sampling_event.partner_species)
 
         return sampling_events

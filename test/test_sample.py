@@ -127,7 +127,7 @@ class TestSample(TestBase):
                 swagger_client.Identifier (identifier_type='oxford', identifier_value='123456')
             ]
             created = api_instance.create_sampling_event(samp)
-            looked_up = api_instance.download_sampling_event_by_identifier('oxford', '123456')
+            looked_up = api_instance.download_sampling_events_by_identifier('oxford', '123456')
             looked_up = looked_up.sampling_events[0]
 
             fetched = api_instance.download_sampling_event(looked_up.sampling_event_id)
@@ -136,6 +136,42 @@ class TestSample(TestBase):
             fetched.sampling_event_id = None
             self.assertEqual(samp, fetched, "upload != download response")
             api_instance.delete_sampling_event(created.sampling_event_id)
+
+        except ApiException as error:
+            self.fail("test_identifier_lookup: Exception when calling SamplingEventApi->create_sampling_event: %s\n" % error)
+
+    """
+    """
+    def test_identifier_lookup_by_study(self):
+
+        api_instance = swagger_client.SamplingEventApi(self._api_client)
+
+        try:
+
+            samp = swagger_client.SamplingEvent(None, '1022-MD-UP', date(2017, 10, 14))
+            samp.identifiers = [
+                swagger_client.Identifier (identifier_type='partner_id', identifier_value='123456')
+            ]
+            created = api_instance.create_sampling_event(samp)
+            looked_up = api_instance.download_sampling_events_by_identifier('partner_id', '123456',
+                                                                            study_name='1022')
+            self.assertEquals(looked_up.count, 1)
+
+
+            with self.assertRaises(Exception) as context:
+                looked_up = api_instance.download_sampling_events_by_identifier('oxford', '123456',
+                                                                            study_name='9999')
+            self.assertEqual(context.exception.status, 404)
+
+            created1 = api_instance.create_sampling_event(samp)
+
+            looked_up = api_instance.download_sampling_events_by_identifier('partner_id', '123456',
+                                                                            study_name='1022')
+            self.assertEquals(looked_up.count, 2)
+
+
+            api_instance.delete_sampling_event(created.sampling_event_id)
+            api_instance.delete_sampling_event(created1.sampling_event_id)
 
         except ApiException as error:
             self.fail("test_identifier_lookup: Exception when calling SamplingEventApi->create_sampling_event: %s\n" % error)
@@ -195,7 +231,7 @@ class TestSample(TestBase):
                 swagger_client.Identifier (identifier_type='oxford', identifier_value='1234567')
             ]
             created = api_instance.create_sampling_event(samp)
-            looked_up = api_instance.download_sampling_event_by_identifier('oxford', '1234567')
+            looked_up = api_instance.download_sampling_events_by_identifier('oxford', '1234567')
             looked_up = looked_up.sampling_events[0]
             new_samp = swagger_client.SamplingEvent(None, '0001-MD-UP', date(2018, 11, 11))
             updated = api_instance.update_sampling_event(looked_up.sampling_event_id, new_samp)
@@ -222,7 +258,7 @@ class TestSample(TestBase):
                                            identifier_source='upd')
             ]
             created = api_instance.create_sampling_event(samp)
-            looked_up = api_instance.download_sampling_event_by_identifier('oxford', '12345678')
+            looked_up = api_instance.download_sampling_events_by_identifier('oxford', '12345678')
             looked_up = looked_up.sampling_events[0]
             new_samp = swagger_client.SamplingEvent(None, '0001-MD-UP', date(2018, 10, 10))
             new_samp.identifiers = [
@@ -283,7 +319,7 @@ class TestSample(TestBase):
             fetched.sampling_event_id = None
             self.assertEqual(samp, fetched, "upload != download response")
 
-            looked_up = api_instance.download_sampling_event_by_identifier('partner_id',
+            looked_up = api_instance.download_sampling_events_by_identifier('partner_id',
                                                                            urllib.parse.quote_plus(test_id))
             looked_up = looked_up.sampling_events[0]
             fetched = api_instance.download_sampling_event(looked_up.sampling_event_id)

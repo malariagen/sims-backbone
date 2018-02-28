@@ -40,12 +40,12 @@ class StudyController(BaseController):
 
         return studies, 200
 
-    def download_study(self, studyId, user=None, auths = None):
+    def download_study(self, studyName, user=None, auths = None):
         """
         fetches a study
         
-        :param studyId: ID of study to fetch
-        :type studyId: str
+        :param studyName: ID of study to fetch
+        :type studyName: str
 
         :rtype: Study
         """
@@ -53,7 +53,7 @@ class StudyController(BaseController):
         try:
             self.check_permissions(None, auths)
         except PermissionException as pe:
-            self.log_action(user, 'download_study', studyId, None, None, 403)
+            self.log_action(user, 'download_study', studyName, None, None, 403)
             return pe.message, 403
 
         get = StudyGet(self.get_connection())
@@ -61,22 +61,22 @@ class StudyController(BaseController):
         study = None
         retcode = 200
         try:
-            study = get.get(studyId)
+            study = get.get(studyName)
         except MissingKeyException as dme:
             logging.getLogger(__name__).error("update_study: {}".format(repr(dme)))
             retcode = 404
 
-        self.log_action(user, 'download_study', studyId, None, study, retcode)
+        self.log_action(user, 'download_study', studyName, None, study, retcode)
 
         return study, retcode
 
 
-    def update_study(self, studyId, study, user=None, auths = None):
+    def update_study(self, studyName, study, user=None, auths = None):
         """
         updates a study
         
-        :param studyId: ID of study to update
-        :type studyId: str
+        :param studyName: ID of study to update
+        :type studyName: str
         :param study: 
         :type study: dict | bytes
 
@@ -85,12 +85,12 @@ class StudyController(BaseController):
 
         try:
             study_id = None;
-            if studyId:
-                study_id = studyId[:4]
+            if studyName:
+                study_id = studyName[:4]
 
             self.check_permissions(study_id, auths)
         except PermissionException as pe:
-            self.log_action(user, 'update_study', studyId, study, None, 403)
+            self.log_action(user, 'update_study', studyName, study, None, 403)
             return pe.message, 403
 
 
@@ -100,7 +100,7 @@ class StudyController(BaseController):
         try:
             put = StudyPut(self.get_connection())
 
-            updated_study = put.put(studyId, study)
+            updated_study = put.put(studyName, study)
         except IntegrityException as dme:
             logging.getLogger(__name__).error("update_study: {}".format(repr(dme)))
             retcode = 422
@@ -108,6 +108,6 @@ class StudyController(BaseController):
             logging.getLogger(__name__).error("update_study: {}".format(repr(dme)))
             retcode = 404
 
-        self.log_action(user, 'update_study', studyId, study, updated_study, retcode)
+        self.log_action(user, 'update_study', studyName, study, updated_study, retcode)
 
         return updated_study, retcode

@@ -35,9 +35,7 @@ class SamplingEventController(BaseController):
         """
 
         try:
-            study_id = None;
-            if samplingEvent.study_id:
-                study_id = samplingEvent.study_id[:4]
+            study_id = samplingEvent.study_name
 
             self.check_permissions(study_id, auths)
         except PermissionException as pe:
@@ -158,7 +156,7 @@ class SamplingEventController(BaseController):
 
         return samp, retcode
 
-    def download_sampling_event_by_identifier(self, propName, propValue, user = None, auths = None):
+    def download_sampling_events_by_identifier(self, propName, propValue, studyName, user = None, auths = None):
         """
         fetches a samplingEvent by property value
         
@@ -173,7 +171,7 @@ class SamplingEventController(BaseController):
         try:
             self.check_permissions(None, auths)
         except PermissionException as pe:
-            self.log_action(user, 'download_sampling_event_by_identifier', propName + '/' +
+            self.log_action(user, 'download_sampling_events_by_identifier', propName + '/' +
                             propValue, None, None, 403)
             return pe.message, 403
 
@@ -184,12 +182,12 @@ class SamplingEventController(BaseController):
 
         try:
             propValue = urllib.parse.unquote_plus(propValue)
-            samp = get.get(propName, propValue)
+            samp = get.get(propName, propValue, studyName)
         except MissingKeyException as dme:
             logging.getLogger(__name__).error("download_samplingEvent: {}".format(repr(dme)))
             retcode = 404
 
-        self.log_action(user, 'download_sampling_event_by_identifier', propName + '/' +
+        self.log_action(user, 'download_sampling_events_by_identifier', propName + '/' +
                         propValue, None, samp, retcode)
 
         return samp, retcode
@@ -237,9 +235,7 @@ class SamplingEventController(BaseController):
         """
 
         try:
-            study_id = None;
-            if studyName:
-                study_id = studyName[:4]
+            study_id = studyName;
 
             self.check_permissions(study_id, auths)
         except PermissionException as pe:
@@ -307,9 +303,7 @@ class SamplingEventController(BaseController):
         """
 
         try:
-            study_id = None;
-            if samplingEvent.study_id:
-                study_id = samplingEvent.study_id[:4]
+            study_id = samplingEvent.study_name
 
             self.check_permissions(study_id, auths)
         except PermissionException as pe:

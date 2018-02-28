@@ -323,7 +323,7 @@ paths:
         - samplingEvent
       summary: fetches one or more samplingEvents by property value
       description: ''
-      operationId: downloadSamplingEventByIdentifier
+      operationId: downloadSamplingEventsByIdentifier
       produces:
         - application/json
       parameters:
@@ -336,6 +336,11 @@ paths:
           in: path
           description: matching value of property to search
           required: true
+          type: string
+        - name: studyName
+          in: query
+          description: if you want to restrict the search to a study e.g. for partner_id
+          required: false
           type: string
       responses:
         '200':
@@ -541,7 +546,7 @@ paths:
           description: successful operation
           schema:
             $ref: '#/definitions/Studies'
-  '/study/{studyId}':
+  '/study/{studyName}':
     get:
       tags:
         - study
@@ -551,7 +556,7 @@ paths:
       produces:
         - application/json
       parameters:
-        - name: studyId
+        - name: studyName
           in: path
           description: ID of study to fetch
           required: true
@@ -572,7 +577,7 @@ paths:
       consumes:
         - application/json
       parameters:
-        - name: studyId
+        - name: studyName
           in: path
           description: ID of study to update
           required: true
@@ -851,7 +856,7 @@ definitions:
     properties:
       sampling_event_id:
         type: string
-      study_id:
+      study_name:
         type: string
       doc:
         type: string

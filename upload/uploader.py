@@ -218,7 +218,7 @@ class Uploader():
     def add_locations_from_values(self, existing, sampling_event, values):
 
         if existing and values['study_id'][:4] == '0000':
-            values['study_id'] = existing.study_id
+            values['study_id'] = existing.study_name
 
         location_name, location = self.process_location(values, '', existing)
         proxy_location_name, proxy_location = self.process_location(values, 'proxy_', existing)
@@ -510,7 +510,7 @@ class Uploader():
         if 'study_id' in values:
             study_id = values['study_id']
 
-        samp = swagger_client.SamplingEvent(None, study_id = study_id, doc = doc)
+        samp = swagger_client.SamplingEvent(None, study_name = study_id, doc = doc)
 
 
         if 'species' in values and values['species'] and len(values['species']) > 0:
@@ -603,13 +603,13 @@ class Uploader():
                 try:
                     #print("Looking for {} {}".format(ident.identifier_type, ident.identifier_value))
 
-                    found_events = api_instance.download_sampling_event_by_identifier(ident.identifier_type,
+                    found_events = api_instance.download_sampling_events_by_identifier(ident.identifier_type,
                                                            urllib.parse.quote_plus(ident.identifier_value))
 
                     for found in found_events.sampling_events:
                         if ident.identifier_type == 'partner_id':
                             #Partner ids within 1087 are not unique
-                            if samp.study_id[:4] == '1087':
+                            if samp.study_name[:4] == '1087':
                                 continue
                             if 'sample_lims_id' in values and values['sample_lims_id']:
                                 #Partner id is not the only id
@@ -620,12 +620,12 @@ class Uploader():
                             else:
                                 #Not safe as partner id's can be the same across studies
                                 #unless check study id as well
-                                #print('Checking study ids {} {} {}'.format(samp.study_id,
-                                #                                           found.study_id, ident))
-                                if samp.study_id:
-                                    if samp.study_id[:4] == '0000':
+                                #print('Checking study ids {} {} {}'.format(samp.study_name,
+                                #                                           found.study_name, ident))
+                                if samp.study_name:
+                                    if samp.study_name[:4] == '0000':
                                         continue
-                                    if found.study_id[:4] != samp.study_id[:4]:
+                                    if found.study_name[:4] != samp.study_name[:4]:
                                         continue
                                 else:
                                     continue
@@ -685,42 +685,44 @@ class Uploader():
                 existing.identifiers.append(new_ident)
 
 #        print("existing {} {}".format(existing, study_id))
-        if samp.study_id:
-            if existing.study_id:
-                if samp.study_id != existing.study_id:
-                    if samp.study_id[:4] == existing.study_id[:4]:
-                        #print("#Short and full study ids used {} {} {}".format(values, study_id, existing.study_id))
+        if samp.study_name:
+            if existing.study_name:
+                if samp.study_name != existing.study_name:
+                    if samp.study_name[:4] == existing.study_name[:4]:
+                        #print("#Short and full study ids used {} {} {}".format(values, study_id, existing.study_name))
                         pass
                     else:
-                        if not (existing.study_id[:4] == '0000' or samp.study_id[:4] == '0000'):
+                        if not (existing.study_name[:4] == '0000' or samp.study_name[:4] == '0000'):
                             self.report("Conflicting study_id value {} {}"
-                                            .format(samp.study_id, existing.study_id), values)
+                                            .format(samp.study_name, existing.study_name), values)
 
-                        if not samp.study_id[:4] == '0000':
-                            if ((int(samp.study_id[:4]) < int(existing.study_id[:4]) or
-                                 existing.study_id[:4] == '0000') and
-                                (samp.study_id[:4] != '1089')):
+                        if not samp.study_name[:4] == '0000':
+                            if ((int(samp.study_name[:4]) < int(existing.study_name[:4]) or
+                                 existing.study_name[:4] == '0000') and
+                                (samp.study_name[:4] != '1089')):
                                 self.set_additional_event(es_api_instance,
-                                                          existing.sampling_event_id, existing.study_id)
-                                existing.study_id = samp.study_id
+                                                          existing.sampling_event_id,
+                                                          existing.study_name)
+                                existing.study_name = samp.study_name
                                 new_ident_value = True
                             else:
-                                if not (samp.study_id[:4] == '0000' or samp.study_id[:4] == '1089'):
+                                if not (samp.study_name[:4] == '0000' or samp.study_name[:4] == '1089'):
                                     self.set_additional_event(es_api_instance,
-                                                          existing.sampling_event_id, samp.study_id)
+                                                          existing.sampling_event_id,
+                                                              samp.study_name)
             else:
-                existing.study_id = samp.study_id
+                existing.study_name = samp.study_name
                 new_ident_value = True
         else:
-            if existing.study_id:
-#                    print("Adding loc ident {} {}".format(location_name, existing.study_id))
+            if existing.study_name:
+#                    print("Adding loc ident {} {}".format(location_name, existing.study_name))
                 try:
-                    self.add_location_identifier(location, existing.study_id, location_name)
+                    self.add_location_identifier(location, existing.study_name, location_name)
                 except Exception as err:
                     #Almost certainly a duplicate
                     self.report(err, values)
                 try:
-                    self.add_location_identifier(proxy_location, existing.study_id,
+                    self.add_location_identifier(proxy_location, existing.study_name,
                                              proxy_location_name)
                 except Exception as err:
                     #Almost certainly a duplicate

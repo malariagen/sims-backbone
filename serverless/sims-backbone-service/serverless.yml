@@ -308,8 +308,8 @@ functions:
               paths:
                 sampling_event_id: true
 
-  download_sampling_event_by_identifier:
-    handler: sampling_event/handler.download_sampling_event_by_identifier
+  download_sampling_events_by_identifier:
+    handler: sampling_event/handler.download_sampling_events_by_identifier
     events:
       - http:
           path: sims-backbone-service/v1/samplingEvents/identifier/{prop_name}/{prop_value}
@@ -326,6 +326,8 @@ functions:
               paths:
                 prop_name: true
                 prop_value: true
+              query:
+                study_name: false
 
   download_sampling_events_by_location:
     handler: sampling_event/handler.download_sampling_events_by_location
