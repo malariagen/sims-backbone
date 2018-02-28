@@ -637,3 +637,26 @@ class TestSample(TestBase):
         except ApiException as error:
             self.fail("test_partner_lookup: Exception when calling SamplingEventApi->create_sampling_event: %s\n" % error)
 
+    """
+    """
+    def test_get_identifiers(self):
+
+        metadata_api_instance = swagger_client.MetadataApi(self._api_client)
+        api_instance = swagger_client.SamplingEventApi(self._api_client)
+
+        try:
+            samp = swagger_client.SamplingEvent(None, '1023-MD-UP', date(2017, 10, 16))
+            samp.identifiers = [
+                swagger_client.Identifier (identifier_type='oxford', identifier_value='12345678',
+                                           identifier_source='upd')
+            ]
+            created = api_instance.create_sampling_event(samp)
+            idents = metadata_api_instance.get_identifier_types()
+
+            self.assertIn('oxford', idents)
+
+            api_instance.delete_sampling_event(created.sampling_event_id)
+
+        except ApiException as error:
+            self.fail("test_update: Exception when calling SamplingEventApi->create_sampling_event: %s\n" % error)
+

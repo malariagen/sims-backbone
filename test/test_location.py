@@ -394,3 +394,27 @@ class TestLocation(TestBase):
         except ApiException as error:
             self.fail("test_update_missing: Exception when calling LocationApi->create_location: %s\n" % error)
 
+    """
+    """
+    def test_get_location_identifiers(self):
+
+        metadata_api_instance = swagger_client.MetadataApi(self._api_client)
+        api_instance = swagger_client.LocationApi(self._api_client)
+
+        try:
+            loc = swagger_client.Location(None, 27.46362, 90.49542, 'country',
+                                          'Trongsa, Trongsa, Bhutan', 'pv_3_locations.txt', 'BTN')
+            loc.identifiers = [
+                swagger_client.Identifier(identifier_type='partner_name', identifier_value='bhutan', study_name='1234-PV')
+            ]
+            created = api_instance.create_location(loc)
+            
+            idents = metadata_api_instance.get_location_identifier_types()
+
+            self.assertIn('partner_name', idents)
+
+            api_instance.delete_location(created.location_id)
+
+        except ApiException as error:
+            self.fail("test_update: Exception when calling SamplingEventApi->create_sampling_event: %s\n" % error)
+

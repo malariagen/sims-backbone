@@ -1,22 +1,20 @@
 import connexion
-from swagger_server.models.country import Country
-from swagger_server.models.taxonomies import Taxonomies
-from swagger_server.models.taxonomy import Taxonomy
-from datetime import date, datetime
-from typing import List, Dict
-from six import iteritems
-from ..util import deserialize_date, deserialize_datetime
+import six
+
+from swagger_server.models.country import Country  # noqa: E501
+from swagger_server.models.taxonomies import Taxonomies  # noqa: E501
+from swagger_server.models.taxonomy import Taxonomy  # noqa: E501
+from swagger_server import util
 
 from backbone_server.controllers.metadata_controller import MetadataController
-
 import logging
 
 metadata_controller = MetadataController()
 
 def create_taxonomy(taxonomy):
-    """
-    create_taxonomy
-    Create a Taxonomy
+    """create_taxonomy
+
+    Create a Taxonomy # noqa: E501
     :param taxonomy: 
     :type taxonomy: dict | bytes
 
@@ -38,11 +36,32 @@ def get_country_metadata(countryId):
 
     return metadata_controller.get_country_metadata(countryId)
 
+def get_identifier_types():  # noqa: E501
+    """fetches all the identifier types
 
-def get_taxonomy_metadata():
+    returns all identifier types in use # noqa: E501
+
+
+    :rtype: List[str]
     """
-    fetches all the registered taxa
-    guesses the search criteria
+    return metadata_controller.get_identifier_types()
+
+
+def get_location_identifier_types():  # noqa: E501
+    """fetches all the location identifier types
+
+    returns all location identifier types in use # noqa: E501
+
+
+    :rtype: List[str]
+    """
+    return metadata_controller.get_location_identifier_types()
+
+def get_taxonomy_metadata():  # noqa: E501
+    """fetches all the registered taxa
+
+    returns all taxa # noqa: E501
+
 
     :rtype: Taxonomies
     """

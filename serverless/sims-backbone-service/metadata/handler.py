@@ -58,6 +58,24 @@ def get_country_metadata(event, context):
 
     return create_response(retcode, value)
 
+def get_identifier_types(event, context):
+
+    user = event['requestContext']['authorizer']['principalId']
+
+    value, retcode = metadata_controller.get_identifier_types(user,
+                                                               metadata_controller.authorizer(event['requestContext']['authorizer']))
+
+    return create_response(retcode, value)
+
+def get_location_identifier_types(event, context):
+
+    user = event['requestContext']['authorizer']['principalId']
+
+    value, retcode = metadata_controller.get_location_identifier_types(user,
+                                                               metadata_controller.authorizer(event['requestContext']['authorizer']))
+
+    return create_response(retcode, value)
+
 def get_taxonomy_metadata(event, context):
 
     user = event['requestContext']['authorizer']['principalId']

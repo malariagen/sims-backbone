@@ -419,6 +419,32 @@ functions:
               paths:
                 country_id: true
 
+  get_identifier_types:
+    handler: metadata/handler.get_identifier_types
+    events:
+      - http:
+          path: sims-backbone-service/v1/metadata/identifier_types
+          method: get
+          cors: true
+          timeout: 20
+          authorizer:
+            name: authFunc
+            type: request
+            identitySource: method.request.header.Authorization
+
+  get_location_identifier_types:
+    handler: metadata/handler.get_location_identifier_types
+    events:
+      - http:
+          path: sims-backbone-service/v1/metadata/location_identifier_types
+          method: get
+          cors: true
+          timeout: 20
+          authorizer:
+            name: authFunc
+            type: request
+            identitySource: method.request.header.Authorization
+
   get_taxonomy_metadata:
     handler: metadata/handler.get_taxonomy_metadata
     events:
@@ -872,6 +898,14 @@ resources:
       Properties:
         RetentionInDays: "30"
     GetUnderscorecountryUnderscoremetadataLogGroup:
+      Type: AWS::Logs::LogGroup
+      Properties:
+        RetentionInDays: "30"
+    GetUnderscoreidentifierUnderscoretypesLogGroup:
+      Type: AWS::Logs::LogGroup
+      Properties:
+        RetentionInDays: "30"
+    GetUnderscoreidentifierUnderscorelocationUnderscoretypesLogGroup:
       Type: AWS::Logs::LogGroup
       Properties:
         RetentionInDays: "30"

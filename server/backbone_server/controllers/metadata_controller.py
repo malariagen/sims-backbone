@@ -4,6 +4,7 @@ from swagger_server.models.taxonomy import Taxonomy
 
 from backbone_server.metadata.country import CountryGet
 from backbone_server.metadata.taxonomies import TaxonomiesGet
+from backbone_server.metadata.identifier_types import IdentifierTypesGet
 
 from backbone_server.controllers.base_controller  import BaseController
 
@@ -63,6 +64,52 @@ class MetadataController(BaseController):
         self.log_action(user, 'get_country_metadata', countryId, None, country, retcode)
 
         return country, retcode
+
+    def get_identifier_types(self, user=None, auths=None):  # noqa: E501
+        """fetches all the identifier types
+
+        returns all identifier types in use # noqa: E501
+
+
+        :rtype: List[str]
+        """
+        try:
+            self.check_permissions(None, auths)
+        except PermissionException as pe:
+            self.log_action(user, 'get_identifier_types', None, None, None, 403)
+            return pe.message, 403
+
+        get = IdentifierTypesGet(self.get_connection())
+
+        ident_types = get.get('identifiers')
+
+        self.log_action(user, 'get_identifier_types', None, None, ident_types, 200)
+
+        return ident_types, 200
+
+
+    def get_location_identifier_types(self, user=None, auths=None):  # noqa: E501
+        """fetches all the location identifier types
+
+        returns all location identifier types in use # noqa: E501
+
+
+        :rtype: List[str]
+        """
+        try:
+            self.check_permissions(None, auths)
+        except PermissionException as pe:
+            self.log_action(user, 'get_location_identifier_types', None, None, None, 403)
+            return pe.message, 403
+
+        get = IdentifierTypesGet(self.get_connection())
+
+        ident_types = get.get('location_identifiers')
+
+        self.log_action(user, 'get_location_identifier_types', None, None, ident_types, 200)
+
+        return ident_types, 200
+
 
     def get_taxonomy_metadata(self, user=None, auths = None):
         """
