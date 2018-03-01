@@ -4,9 +4,10 @@ e.g. to create backbone_test
 
 sudo -u postgres psql
 CREATE database backbone_test
-alter schema public owner to iwright;
 \c backbone_test
+alter schema public owner to iwright;
 create extension postgis;
+\q
 
 psql backbone_test
 \i backbone_service.psql
