@@ -113,7 +113,7 @@ export class EventListComponent implements AfterViewInit {
     let event = {};
     event['doc'] = sample.doc;
     event['partner_species'] = sample.partner_species;
-    event['study_id'] = sample.study_id;
+    event['study_id'] = sample.study_name;
     sample.identifiers.forEach(ident => {
       if (ident.identifier_type in event) {
         let ids: Array<String> = event[ident.identifier_type].split(';');
