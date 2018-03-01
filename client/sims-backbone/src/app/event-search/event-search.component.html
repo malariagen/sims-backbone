@@ -2,9 +2,7 @@
   <span>
     <mat-input-container>
       <mat-select [(value)]="identifier_type">
-        <mat-option value="oxford_id">oxford_id</mat-option>
-        <mat-option value="roma_id">roma_id</mat-option>
-        <mat-option value="partner_id">partner_id</mat-option>
+        <mat-option *ngFor="let option of options" [value]="option">{{option}}</mat-option>
       </mat-select>
     </mat-input-container>
   
