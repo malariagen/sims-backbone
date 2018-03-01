@@ -64,3 +64,21 @@ class TestTaxa(TestBase):
 
         except ApiException as error:
             self.fail("test_update: Exception when calling SamplingEventApi->create_sampling_event: %s\n" % error)
+
+    """
+    """
+    def test_post_taxonomies(self):
+
+        api_instance = swagger_client.MetadataApi(self._api_client)
+
+        try:
+            taxa = swagger_client.Taxonomy(taxonomy_id=7227, name='Drosophila melanogaster',
+                                           rank='species')
+            created_taxa = api_instance.create_taxonomy(taxa)
+
+            taxas = api_instance.get_taxonomy_metadata()
+
+            self.assertIn(taxa, taxas.taxonomies)
+
+        except ApiException as error:
+            self.fail("test_update: Exception when calling MetadataApi->post_taxonomy: %s\n" % error)

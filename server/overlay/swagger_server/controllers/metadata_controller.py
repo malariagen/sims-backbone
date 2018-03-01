@@ -22,7 +22,8 @@ def create_taxonomy(taxonomy):
     """
     if connexion.request.is_json:
         taxonomy = Taxonomy.from_dict(connexion.request.get_json())
-    return 'do some magic!', 501
+
+    return metadata_controller.create_taxonomy(taxonomy)
 
 def get_country_metadata(countryId):
     """

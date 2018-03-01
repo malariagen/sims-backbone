@@ -4,6 +4,7 @@ from swagger_server.models.taxonomy import Taxonomy
 
 from backbone_server.metadata.country import CountryGet
 from backbone_server.metadata.taxonomies import TaxonomiesGet
+from backbone_server.metadata.taxonomy_post import TaxonomyPost
 from backbone_server.metadata.identifier_types import IdentifierTypesGet
 
 from backbone_server.controllers.base_controller  import BaseController
@@ -31,7 +32,11 @@ class MetadataController(BaseController):
             self.log_action(user, 'create_taxonomy', None, taxonomy, None, 403)
             return pe.message, 403
 
-        return 'do some magic!'
+        post = TaxonomyPost(self.get_connection())
+
+        taxa = post.post(taxonomy)
+
+        return taxa
 
 
     def get_country_metadata(self, countryId, user=None, auths = None):
