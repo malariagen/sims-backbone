@@ -1,0 +1,37 @@
+{
+    "values":
+    {
+        "sample_oxford_id": {
+            "column": 10,
+            "type": "string"
+        },
+        "sample_roma_id": {
+            "column": 11,
+            "type": "string"
+        },
+        "sample_partner_id_1": {
+            "column": 12,
+            "type": "string"
+        },
+        "sample_partner_id": {
+            "column": 6,
+            "type": "string"
+        },
+        "country": {
+            "column": 4,
+            "type": "string",
+            "replace": [
+                [ "Brazil", "BRA" ],
+                [ "Peru" , "PER" ]
+            ]
+        },
+        "proxy_location_name": {
+            "column": 5,
+            "type": "string"
+        },
+        "doc": {
+            "column": 9,
+            "type": "datetime"
+        }
+    }
+}

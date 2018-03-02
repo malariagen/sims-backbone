@@ -8,6 +8,7 @@ do
     ./run_roma.sh $i
 done
 ./run.sh sanger_lims_dump_11JAN2018.csv sanger_lims.json
+./run.sh vivax1128.csv vivax1128.json
 ./run.sh ag1000g.samples.meta.txt ag1000g.json
 ./run.sh manage_sites.denormalized.txt denorm_manage_sites.json
 ./run_load_country_oxford.sh oxford_11JAN2018.csv 2017_06_07_report_sample_status.xls
