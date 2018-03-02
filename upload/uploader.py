@@ -102,10 +102,10 @@ class Uploader():
         return self.load_data(data_def, input_stream, True, False)
 
 
-    def parse_date(self, defn, data_value):
+    def parse_date(self, defn, date_value):
 
         accuracy = None
-        data_value = data_value.split(' ')[0]
+        data_value = date_value.split(' ')[0]
         try:
             if 'date_format' in defn:
                 date_format = defn['date_format']
@@ -125,9 +125,13 @@ class Uploader():
                         date_format = '%d/%m/%y'
                         data_value = datetime.datetime(*(time.strptime(data_value, date_format))[:6]).date()
                     except ValueError as dpe:
-                        date_format = '%Y'
-                        data_value = datetime.datetime(*(time.strptime(data_value[:4], date_format))[:6]).date()
-                        accuracy = 'year'
+                        try:
+                            date_format = '%d %b %Y'
+                            data_value = datetime.datetime(*(time.strptime(date_value, date_format))[:6]).date()
+                        except ValueError as dpe:
+                            date_format = '%Y'
+                            data_value = datetime.datetime(*(time.strptime(data_value[:4], date_format))[:6]).date()
+                            accuracy = 'year'
 #          else:
             #To make sure that the default conversion works
   #              data.typed_data_value
@@ -344,29 +348,29 @@ class Uploader():
             #print("No {}location name: {}".format(prefix, values))
             return None, None
 
-        if not values[prefix + 'location_name']:
+        partner_name = values[prefix + 'location_name']
+
+        if not partner_name:
             self.report("No location name: ",values)
             return None, None
 
-        if prefix + 'latitude' not in values:
-            return None, None
-
-        if not values[prefix + 'latitude']:
-            return None, None
-
-        study_id = None
+        #Will have been set to 0000 if not present
         if 'study_id' in values:
             study_id = values['study_id'][:4]
 
-        curated_name = None
-        curation_method = None
-        latitude = None
-        longitude = None
-        resolution = None
-        country = None
+        loc = swagger_client.Location(None)
+
+        loc.identifiers = [
+            swagger_client.Identifier(identifier_type='partner_name',
+                                      identifier_value=partner_name,
+                                      identifier_source=self._event_set, study_name=study_id)
+        ]
+
         try:
-            latitude = round(float(Decimal(values[prefix + 'latitude'])),7)
-            longitude = round(float(Decimal(values[prefix + 'longitude'])),7)
+            if prefix + 'latitude' in values and values[prefix + 'latitude']:
+                loc.latitude = round(float(Decimal(values[prefix + 'latitude'])),7)
+            if prefix + 'longitude' in values and value[prefix + 'longitude']:
+                loc.longitude = round(float(Decimal(values[prefix + 'longitude'])),7)
         except:
             pass
 
@@ -375,19 +379,6 @@ class Uploader():
 
         if prefix + 'country' in values:
             country = values[prefix + 'country']
-
-        partner_name = values[prefix + 'location_name']
-
-        loc = swagger_client.Location(None, latitude,
-                                      longitude,
-                                      resolution, curated_name, curation_method,
-                                      country)
-        if study_id and partner_name:
-            loc.identifiers = [
-                swagger_client.Identifier(identifier_type='partner_name',
-                                          identifier_value=partner_name,
-                                          identifier_source=self._event_set, study_name=study_id)
-            ]
 
 
         if 'description' in values:
@@ -398,7 +389,7 @@ class Uploader():
 
         return partner_name, loc
 
-    def lookup_location(self, api_instance, loc):
+    def lookup_location(self, api_instance, loc, study_id, partner_name):
 
         looked_up = None
 
@@ -409,6 +400,22 @@ class Uploader():
             #print(repr(err))
             #print("Failed to find location {}".format(loc))
             pass
+
+        if not looked_up:
+            try:
+                named_locations = api_instance.download_partner_location(partner_name)
+                for named_loc in named_locations.locations:
+                    for ident in named_loc.identifiers:
+                        if ident.study_name[:4] == study_id[:4]:
+                            if loc.latitude and loc.longitude:
+                                self.report("Location name conflict\t{}\t{}\t{}\t{}\t{}".
+                                  format(study_id,partner_name,named_loc,
+                                        loc.latitude, loc.longitude), values)
+                            else:
+                                looked_up = named_loc
+            except ApiException as err:
+                #Can't be found by name either
+                pass
 
         return looked_up
 
@@ -443,7 +450,7 @@ class Uploader():
 
         api_instance = swagger_client.LocationApi(swagger_client.ApiClient(configuration))
 
-        looked_up = self.lookup_location(api_instance, loc)
+        looked_up = self.lookup_location(api_instance, loc, study_id, partner_name)
 
         ret = None
 
@@ -474,18 +481,13 @@ class Uploader():
             #    print("Created location {}".format(created))
             except ApiException as err:
                 if err.status == 422:
-                    named_locations = api_instance.download_partner_location(partner_name)
-                    for named_loc in named_locations.locations:
-                        for ident in named_loc.identifiers:
-                            if ident.study_name[:4] == study_id[:4]:
-                                self.report("Location name conflict\t{}\t{}\t{}\t{}\t{}".
-                                      format(study_id,partner_name,named_loc,
-                                            loc.latitude, loc.longitude), values)
+                    self.report("Location name conflict\t{}\t{}\t{}\t{}\t{}".
+                      format(study_id,partner_name,named_loc,
+                            loc.latitude, loc.longitude), values)
                 else:
                     self.report("Error creating location {} {}".format(loc, err), values)
                 return None, None
 
-        #print("Returing location {}".format(ret))
         return partner_name, ret
 
     def create_sampling_event_from_values(self, values):
@@ -525,6 +527,9 @@ class Uploader():
                                                      self._event_set))
         if 'sample_partner_id' in values and values['sample_partner_id']:
             idents.append(swagger_client.Identifier ('partner_id', values['sample_partner_id'],
+                                                     self._event_set))
+        if 'sample_partner_id_1' in values and values['sample_partner_id_1']:
+            idents.append(swagger_client.Identifier ('partner_id', values['sample_partner_id_1'],
                                                      self._event_set))
         if 'sample_oxford_id' in values and values['sample_oxford_id']:
             idents.append(swagger_client.Identifier ('oxford_id', values['sample_oxford_id'],
