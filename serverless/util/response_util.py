@@ -8,6 +8,8 @@ import logging
 
 from swagger_server.encoder import JSONEncoder
 
+from swagger_server.models.base_model_ import Model
+
 def gzip_b64encode(data):
     compressed = BytesIO()
     with gzip.GzipFile(fileobj=compressed, mode='w') as f:
@@ -19,7 +21,10 @@ def create_response(event, retcode, value):
 
     response_dict = {}
     if value:
-        response_dict = value.to_dict()
+        if isinstance(value, Model):
+            response_dict = value.to_dict()
+        else:
+            response_dict = value
 
     gzip = False
     if 'headers' in event and event['headers'] is not None:
