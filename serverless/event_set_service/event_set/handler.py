@@ -21,17 +21,9 @@ import logging
 
 from backbone_server.controllers.event_set_controller import EventSetController
 
+from util.response_util import create_response
+
 event_set_controller = EventSetController()
-
-def create_response(retcode, value):
-
-    return {
-        "statusCode": retcode,
-        "headers": {
-            "Access-Control-Allow-Origin" : "*"
-        },
-        "body": ujson.dumps(value.to_dict())
-    }
 
 def create_event_set(event, context):
     """
@@ -53,7 +45,7 @@ def create_event_set(event, context):
     value, retcode = event_set_controller.create_event_set(event_set_id, user,
                                                  event_set_controller.authorizer(event['requestContext']['authorizer']))
 
-    return create_response(retcode, value)
+    return create_response(event, retcode, value)
 
 
 def create_event_set_item(event, context):
@@ -77,7 +69,7 @@ def create_event_set_item(event, context):
     (value, retcode) = event_set_controller.create_event_set_item(event_set_id, sampling_event_id, user,
                                                   event_set_controller.authorizer(event['requestContext']['authorizer']))
 
-    return create_response(retcode, value)
+    return create_response(event, retcode, value)
 
 
 def create_event_set_note(event, context):
@@ -105,7 +97,7 @@ def create_event_set_note(event, context):
     value, retcode = event_set_controller.create_event_set_note(event_set_id, note_id, note, user,
                                                   event_set_controller.authorizer(event['requestContext']['authorizer']))
 
-    return create_response(retcode, value)
+    return create_response(event, retcode, value)
 
 def delete_event_set(event, context):
     """
@@ -125,7 +117,7 @@ def delete_event_set(event, context):
     value, retcode = event_set_controller.delete_event_set(event_set_id, user,
                                                            event_set_controller.authorizer(event['requestContext']['authorizer']))
 
-    return create_response(retcode, value)
+    return create_response(event, retcode, value)
 
 def delete_event_set_item(event, context):
     """
@@ -148,7 +140,7 @@ def delete_event_set_item(event, context):
     value, retcode = event_set_controller.delete_event_set_item(event_set_id, sampling_event_id, user,
                                                   event_set_controller.authorizer(event['requestContext']['authorizer']))
 
-    return create_response(retcode, value)
+    return create_response(event, retcode, value)
 
 def delete_event_set_note(event, context):
     """
@@ -171,7 +163,7 @@ def delete_event_set_note(event, context):
     value, retcode = event_set_controller.delete_event_set_note(event_set_id, note_id, user,
                                                   event_set_controller.authorizer(event['requestContext']['authorizer']))
 
-    return create_response(retcode, value)
+    return create_response(event, retcode, value)
 
 def download_event_set(event, context):
     """
@@ -200,7 +192,7 @@ def download_event_set(event, context):
     value, retcode = event_set_controller.download_event_set(event_set_id, start, count, user,
                                                   event_set_controller.authorizer(event['requestContext']['authorizer']))
 
-    return create_response(retcode, value)
+    return create_response(event, retcode, value)
 
 def download_event_sets(event, context):
     """
@@ -215,7 +207,7 @@ def download_event_sets(event, context):
     value, retcode = event_set_controller.download_event_sets(user,
                                                   event_set_controller.authorizer(event['requestContext']['authorizer']))
 
-    return create_response(retcode, value)
+    return create_response(event, retcode, value)
 
 def update_event_set(event, context):
     """
@@ -239,7 +231,7 @@ def update_event_set(event, context):
     value, retcode = event_set_controller.update_event_set(event_set_id, event_set, user,
                                                   event_set_controller.authorizer(event['requestContext']['authorizer']))
 
-    return create_response(retcode, value)
+    return create_response(event, retcode, value)
 
 def update_event_set_note(event, context):
     """
@@ -266,4 +258,4 @@ def update_event_set_note(event, context):
     value, retcode = event_set_controller.update_event_set_note(event_set_id, note_id, note, user,
                                                   event_set_controller.authorizer(event['requestContext']['authorizer']))
 
-    return create_response(retcode, value)
+    return create_response(event, retcode, value)
