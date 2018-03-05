@@ -6,10 +6,12 @@ import ujson
 
 import logging
 
+from swagger_server.encoder import JSONEncoder
+
 def gzip_b64encode(data):
     compressed = BytesIO()
     with gzip.GzipFile(fileobj=compressed, mode='w') as f:
-        json_response = ujson.dumps(data, ensure_ascii=False)
+        json_response = json.dumps(data, ensure_ascii=False, cls=JSONEncoder)
         f.write(json_response.encode('utf-8'))
     return base64.b64encode(compressed.getvalue()).decode('ascii')
 
@@ -49,6 +51,6 @@ def create_response(event, retcode, value):
                 "Access-Control-Allow-Origin" : "*",
                 'Content-Type': 'application/json'
             },
-            "body": ujson.dumps(response_dict, ensure_ascii=False)
+            "body": json.dumps(response_dict, ensure_ascii=False, cls=JSONEncoder)
         }
 
