@@ -22,17 +22,9 @@ from decimal import *
 
 from backbone_server.controllers.location_controller import LocationController
 
+from util.response_util import create_response
+
 location_controller = LocationController()
-
-def create_response(retcode, value):
-
-    return {
-        "statusCode": retcode,
-        "headers": {
-            "Access-Control-Allow-Origin" : "*"
-        },
-        "body": json.dumps(value.to_dict())
-    }
 
 def create_location(event, context):
 
@@ -45,7 +37,7 @@ def create_location(event, context):
 
     value.location_id = str(value.location_id)
 
-    return create_response(retcode, value)
+    return create_response(event, retcode, value)
 
 def delete_location(event, context):
 
@@ -59,7 +51,7 @@ def delete_location(event, context):
     value, retcode = location_controller.delete_location(location_id, user,
                                                          location_controller.authorizer(event['requestContext']['authorizer']))
 
-    return create_response(retcode, value)
+    return create_response(event, retcode, value)
 
 def download_location(event, context):
 
@@ -73,7 +65,7 @@ def download_location(event, context):
 
     value.location_id = str(value.location_id)
 
-    return create_response(retcode, value)
+    return create_response(event, retcode, value)
 
 def download_locations(event, context):
 
@@ -101,7 +93,7 @@ def download_locations(event, context):
     for loc in value.locations:
         loc.location_id = str(loc.location_id)
 
-    return create_response(retcode, value)
+    return create_response(event, retcode, value)
 
 def download_partner_location(event, context):
 
@@ -115,7 +107,7 @@ def download_partner_location(event, context):
 
     value.location_id = str(value.location_id)
 
-    return create_response(retcode, value)
+    return create_response(event, retcode, value)
 
 def update_location(event, context):
 
@@ -131,7 +123,7 @@ def update_location(event, context):
 
     value.location_id = str(value.location_id)
 
-    return create_response(retcode, value)
+    return create_response(event, retcode, value)
 
 def download_gps_location(event, context):
 
@@ -149,4 +141,4 @@ def download_gps_location(event, context):
 
     value.location_id = str(value.location_id)
 
-    return create_response(retcode, value)
+    return create_response(event, retcode, value)
