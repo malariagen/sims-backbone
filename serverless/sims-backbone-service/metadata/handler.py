@@ -22,17 +22,9 @@ from decimal import *
 
 from backbone_server.controllers.metadata_controller import MetadataController
 
+from util.response_util import create_response
+
 metadata_controller = MetadataController()
-
-def create_response(retcode, value):
-
-    return {
-        "statusCode": retcode,
-        "headers": {
-            "Access-Control-Allow-Origin" : "*"
-        },
-        "body": json.dumps(value.to_dict())
-    }
 
 def create_taxonomy(event, context):
 
@@ -43,7 +35,7 @@ def create_taxonomy(event, context):
     value, retcode = metadata_controller.create_taxonomy(taxa, user,
                                                          metadata_controller.authorizer(event['requestContext']['authorizer']))
 
-    return create_response(retcode, value)
+    return create_response(event, retcode, value)
 
 
 def get_country_metadata(event, context):
@@ -56,7 +48,7 @@ def get_country_metadata(event, context):
     value, retcode = metadata_controller.get_country_metadata(country_id, user,
                                                               metadata_controller.authorizer(event['requestContext']['authorizer']))
 
-    return create_response(retcode, value)
+    return create_response(event, retcode, value)
 
 def get_identifier_types(event, context):
 
@@ -65,7 +57,7 @@ def get_identifier_types(event, context):
     value, retcode = metadata_controller.get_identifier_types(user,
                                                                metadata_controller.authorizer(event['requestContext']['authorizer']))
 
-    return create_response(retcode, value)
+    return create_response(event, retcode, value)
 
 def get_location_identifier_types(event, context):
 
@@ -74,7 +66,7 @@ def get_location_identifier_types(event, context):
     value, retcode = metadata_controller.get_location_identifier_types(user,
                                                                metadata_controller.authorizer(event['requestContext']['authorizer']))
 
-    return create_response(retcode, value)
+    return create_response(event, retcode, value)
 
 def get_taxonomy_metadata(event, context):
 
@@ -83,5 +75,5 @@ def get_taxonomy_metadata(event, context):
     value, retcode = metadata_controller.get_taxonomy_metadata(user,
                                                                metadata_controller.authorizer(event['requestContext']['authorizer']))
 
-    return create_response(retcode, value)
+    return create_response(event, retcode, value)
 
