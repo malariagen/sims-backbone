@@ -143,7 +143,9 @@ export class EventListComponent implements AfterViewInit {
         });
       }
       event['location_curated_name'] = sample.location.curated_name;
-      event['location'] = '<a href="location/' + sample.location.latitude + '/' + sample.location.longitude + '">' + sample.location.latitude + ', ' + sample.location.longitude + '</a>';
+      if (sample.location.latitude) {
+        event['location'] = '<a href="location/' + sample.location.latitude + '/' + sample.location.longitude + '">' + sample.location.latitude + ', ' + sample.location.longitude + '</a>';
+      }
     }
     if (sample.partner_taxonomies) {
       let taxas = [];
