@@ -1,6 +1,6 @@
 <button mat-raised-button color="accent" (click)="downloadJSON()">Download JSON</button>
 
-<app-csv-downloader [data]="dataSource" [fileName]="downloadFileName"></app-csv-downloader>
+<app-csv-downloader [data]="dataSource" [fileName]="downloadFileName" [headers]="displayedColumns"></app-csv-downloader>
 {{count}}
 
 <div>

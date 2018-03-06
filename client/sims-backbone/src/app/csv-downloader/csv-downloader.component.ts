@@ -22,7 +22,7 @@ export class CsvDownloaderComponent implements CollectionViewer {
   @Input()
   set fileName(fn: string) {
     this._fileName = fn;
-  } 
+  }
   @Output() onError = new EventEmitter<Error>();
 
   constructor(private renderer: Renderer) {
@@ -31,11 +31,11 @@ export class CsvDownloaderComponent implements CollectionViewer {
 
   build() {
 
-    
+
     let csvString = this.construct();
-    
+
     this.buildDownloader(csvString);
-    
+
   }
 
   private getDocumentBody(): any {
@@ -45,7 +45,7 @@ export class CsvDownloaderComponent implements CollectionViewer {
   private construct(): string {
     let tabText = '';
     let keys = null;
-
+    
     this.data.connect(this).forEach(d => {
 
       d.forEach(k => {
@@ -63,16 +63,18 @@ export class CsvDownloaderComponent implements CollectionViewer {
             tabText += '\r\n';
           }
         }
-        keys.forEach(key => {
-          if (k.hasOwnProperty(key) && k[key] != null) {
-            let text: string = k[key];
+        this.headers.forEach(field => {
+          if (k.hasOwnProperty(field) && k[field] != null) {
+            let text: string = k[field];
             if (text.startsWith('<a href="location/')) {
-                let res = text.match(/(>)([0-9,.-\s]*)(<)/);
-                if (res) {
-                  if (res.length > 2) {
-                    text = res[2];
-                  }
+              let res = text.match(/(>)([0-9,.-\s]*)(<)/);
+              if (res) {
+                if (res.length > 2) {
+                  text = res[2];
                 }
+              } else {
+                text = "";
+              }
             }
             tabText += '"' + text + '"' + this.separator;
           } else {
@@ -85,21 +87,30 @@ export class CsvDownloaderComponent implements CollectionViewer {
 
 
     });
-
     return tabText;
   }
 
   private buildDownloader(data) {
-    let anchor = this.renderer.createElement(this.getDocumentBody(), 'a');
-    this.renderer.setElementStyle(anchor, 'visibility', 'hidden');
-    this.renderer.setElementAttribute(anchor, 'href', 'data:text/csv;charset=utf-8,' + encodeURIComponent(data));
-    this.renderer.setElementAttribute(anchor, 'target', '_blank');
-    this.renderer.setElementAttribute(anchor, 'download', this._fileName);
 
-    setTimeout(() => {
-      this.renderer.invokeElementMethod(anchor, 'click');
-      this.renderer.invokeElementMethod(anchor, 'remove');
-    }, 5);
+    var blob = new Blob([data], { type: 'text/csv;charset=utf-8' });
+    var filename = this._fileName;
+    
+    if (window.navigator.msSaveOrOpenBlob) {
+      window.navigator.msSaveBlob(blob, filename);
+    } else {
+
+      let anchor = this.renderer.createElement(this.getDocumentBody(), 'a');
+      this.renderer.setElementStyle(anchor, 'visibility', 'hidden');
+      this.renderer.setElementAttribute(anchor, 'href', URL.createObjectURL(blob));
+      //'data:text/csv;charset=utf-8,' + encodeURIComponent(data));
+      this.renderer.setElementAttribute(anchor, 'target', '_blank');
+      this.renderer.setElementAttribute(anchor, 'download', this._fileName);
+
+      setTimeout(() => {
+        this.renderer.invokeElementMethod(anchor, 'click');
+        this.renderer.invokeElementMethod(anchor, 'remove');
+      }, 5);
+    }
 
   }
 
