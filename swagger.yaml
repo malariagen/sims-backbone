@@ -872,6 +872,55 @@ paths:
           description: successful operation
           schema:
             $ref: '#/definitions/EventSets'
+  '/missingTaxon':
+    get:
+      tags:
+        - report
+      summary: fetches studies with uncurated taxon
+      description: ''
+      operationId: missingTaxon
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/Studies'
+  '/missingLocations':
+    get:
+      tags:
+        - report
+      summary: fetches studies with sampling events with missing locations
+      description: ''
+      operationId: missingLocations
+      produces:
+        - application/json
+      parameters:
+        - name: include_country
+          in: query
+          description: include studies where only a country level location is set
+          required: false
+          default: false
+          type: boolean
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/Studies'
+  '/uncuratedLocations':
+    get:
+      tags:
+        - report
+      summary: fetches studies with uncurated locations
+      description: ''
+      operationId: uncuratedLocations
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/Studies'
 definitions:
   SamplingEvents:
     type: object
