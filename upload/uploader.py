@@ -15,6 +15,7 @@ import urllib.parse
 from copy import deepcopy
 
 from pprint import pprint
+from pprint import pformat
 
 import os
 import requests
@@ -369,16 +370,17 @@ class Uploader():
         try:
             if prefix + 'latitude' in values and values[prefix + 'latitude']:
                 loc.latitude = round(float(Decimal(values[prefix + 'latitude'])),7)
-            if prefix + 'longitude' in values and value[prefix + 'longitude']:
+            if prefix + 'longitude' in values and values[prefix + 'longitude']:
                 loc.longitude = round(float(Decimal(values[prefix + 'longitude'])),7)
-        except:
+        except Exception as excp:
+            print(excp)
             pass
 
         if prefix + 'resolution' in values:
-            resolution = values[prefix + 'resolution']
+            loc.accuracy = values[prefix + 'resolution']
 
         if prefix + 'country' in values:
-            country = values[prefix + 'country']
+            loc.country = values[prefix + 'country']
 
 
         if 'description' in values:
@@ -386,10 +388,12 @@ class Uploader():
         else:
             loc.notes = self._data_file
 
+        #print(values)
+        #print(loc)
 
         return partner_name, loc
 
-    def lookup_location(self, api_instance, loc, study_id, partner_name):
+    def lookup_location(self, api_instance, loc, study_id, partner_name, values):
 
         looked_up = None
 
@@ -408,8 +412,9 @@ class Uploader():
                     for ident in named_loc.identifiers:
                         if ident.study_name[:4] == study_id[:4]:
                             if loc.latitude and loc.longitude:
-                                self.report("Location name conflict\t{}\t{}\t{}\t{}\t{}".
-                                  format(study_id,partner_name,named_loc,
+                                nloc = pformat(named_loc.to_dict(), width=1000, compact=True)
+                                self.report("Location name conflict1\t{}\t{}\t{}\t{}\t{}".
+                                  format(study_id,partner_name,nloc,
                                         loc.latitude, loc.longitude), values)
                             else:
                                 looked_up = named_loc
@@ -450,7 +455,7 @@ class Uploader():
 
         api_instance = swagger_client.LocationApi(swagger_client.ApiClient(configuration))
 
-        looked_up = self.lookup_location(api_instance, loc, study_id, partner_name)
+        looked_up = self.lookup_location(api_instance, loc, study_id, partner_name, values)
 
         ret = None
 
@@ -481,9 +486,10 @@ class Uploader():
             #    print("Created location {}".format(created))
             except ApiException as err:
                 if err.status == 422:
-                    self.report("Location name conflict\t{}\t{}\t{}\t{}\t{}".
-                      format(study_id,partner_name,named_loc,
-                            loc.latitude, loc.longitude), values)
+                    idents = '\t'.join(pformat(x.to_dict(), width=1000, compact=True) for x in
+                              loc.identifiers)
+                    self.report("Location name conflict2\t{}\t{}\t{}\t{}\t{}".
+                      format(study_id,partner_name,idents, loc.latitude, loc.longitude), values)
                 else:
                     self.report("Error creating location {} {}".format(loc, err), values)
                 return None, None
@@ -635,6 +641,7 @@ class Uploader():
                                 else:
                                     continue
 
+
                         #Only here if found - otherwise 404 exception
                         if existing and existing.sampling_event_id != found.sampling_event_id:
                             #self.report("Merging into {} using {}"
@@ -765,7 +772,7 @@ class Uploader():
             if existing.location:
                 if samp.location.location_id != existing.location_id:
                     location = samp.location
-                    self.report("Conflicting location value {}\t{}\t{}\t{}\t{}\t{}".format(
+                    self.report("Conflicting location value updated {}\t{}\t{}\t{}\t{}\t{}".format(
                                                                        samp.location.identifiers[0].identifier_value,
                                                                                          samp.location.latitude,
                                                                                          samp.location.longitude,
@@ -783,7 +790,9 @@ class Uploader():
             if existing.proxy_location:
                 if samp.proxy_location.location_id != existing.proxy_location_id:
                     proxy_location = samp.proxy_location
-                    self.report("Conflicting proxy location value {}\n{}".format(proxy_location, existing.proxy_location),
+                    self.report("Conflicting proxy location value updated {}\t{}"
+                                .format(pformat(proxy_location.to_dict(), width=1000, compact=True),
+                                               pformat(existing.proxy_location.to_dict(), width=1000, compact=True)),
                                values)
                     existing.proxy_location_id = proxy_location.location_id
                     new_ident_value = True
