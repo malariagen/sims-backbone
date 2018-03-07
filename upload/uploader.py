@@ -649,7 +649,8 @@ class Uploader():
                             #                                   ident.identifier_type), values)
                             found = self.merge_events(api_instance, existing, found, values)
                         existing = found
-                        break
+                        if samp.study_name[:4] == '0000':
+                            samp.study_name = existing.study_name
                         #print ("found: {} {}".format(samp, found))
                 except ApiException as err:
                     #self._logger.debug("Error looking for {}".format(ident))
