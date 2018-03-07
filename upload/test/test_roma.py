@@ -110,16 +110,16 @@ class TestROMA(TestBase):
         try:
             looked_up = api_instance.download_sampling_events_by_identifier('roma_id', 'TST00001')
             looked_up = looked_up.sampling_events[0]
-            self.assertEquals(looked_up.location.latitude, 12.5)
-            self.assertEquals(looked_up.location.longitude, 103.9)
-            self.assertEquals(looked_up.location.country, 'KHM')
-            self.assertEquals(looked_up.location.identifiers[0].identifier_value,
-                              'Cambodia(Country)')
-            self.assertEquals(looked_up.location.identifiers[0].identifier_source,
-                              'roma_dump')
-            self.assertEquals(looked_up.location.identifiers[0].study_name,
-                              '9030')
-            self.assertEquals(looked_up.location.notes, 'roma_dump.20180116103346.json')
+            self.assertEqual(looked_up.location.latitude, 12.5)
+            self.assertEqual(looked_up.location.longitude, 103.9)
+            self.assertEqual(looked_up.location.country, 'KHM')
+            self.assertEqual(looked_up.location.identifiers[0].identifier_value,
+                             'Cambodia(Country)')
+            self.assertEqual(looked_up.location.identifiers[0].identifier_source,
+                             'roma_dump')
+            self.assertEqual(looked_up.location.identifiers[0].study_name,
+                             '9030')
+            self.assertEqual(looked_up.location.notes, 'roma_dump.20180116103346.json')
             if looked_up.location.location_id not in self._locations:
                 self._locations.append(looked_up.location.location_id)
         except ApiException as error:
