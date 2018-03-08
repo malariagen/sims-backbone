@@ -6,6 +6,7 @@ import time
 import datetime
 import logging
 import sys
+
 import swagger_client
 from swagger_client.rest import ApiException
 
@@ -768,9 +769,9 @@ class Uploader():
                                                                                          existing.location.latitude,
                                                                                          existing.location.longitude)
                                     ,values)
-                    #existing.location_id = location.location_id
-                    #new_ident_value = True
-                    #change_reasons.append('Updated location')
+                    existing.location_id = location.location_id
+                    new_ident_value = True
+                    change_reasons.append('Updated location')
             else:
                 existing.location_id = samp.location.location_id
                 new_ident_value = True
