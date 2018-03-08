@@ -156,7 +156,7 @@ class SamplingEventController(BaseController):
 
         return samp, retcode
 
-    def download_sampling_events_by_identifier(self, propName, propValue, studyName, user = None, auths = None):
+    def download_sampling_events_by_identifier(self, propName, propValue, study_name=None, user=None, auths=None):
         """
         fetches a samplingEvent by property value
         
@@ -182,7 +182,7 @@ class SamplingEventController(BaseController):
 
         try:
             propValue = urllib.parse.unquote_plus(propValue)
-            samp = get.get(propName, propValue, studyName)
+            samp = get.get(propName, propValue, study_name)
         except MissingKeyException as dme:
             logging.getLogger(__name__).error("download_samplingEvent: {}".format(repr(dme)))
             retcode = 404
