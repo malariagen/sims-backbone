@@ -57,6 +57,12 @@ import { EventSearchComponent } from './event-search/event-search.component';
 import { EventDetailComponent } from './event-detail/event-detail.component';
 import { IdentifierTableComponent } from './identifier-table/identifier-table.component';
 import { LocationViewComponent } from './location-view/location-view.component';
+import { AllStudiesListComponent } from './all-studies-list/all-studies-list.component';
+import { ReportsComponent } from './reports/reports.component';
+import { ReportMissingLocationsComponent } from './report-missing-locations/report-missing-locations.component';
+import { ReportMissingDetailedLocationsComponent } from './report-missing-detailed-locations/report-missing-detailed-locations.component';
+import { ReportUncuratedLocationsComponent } from './report-uncurated-locations/report-uncurated-locations.component';
+import { ReportMissingTaxaComponent } from './report-missing-taxa/report-missing-taxa.component';
 
 export function getConfiguration(authService: AuthService) {
   return authService.getConfiguration();
@@ -86,7 +92,13 @@ export function getConfiguration(authService: AuthService) {
     EventSearchComponent,
     EventDetailComponent,
     IdentifierTableComponent,
-    LocationViewComponent
+    LocationViewComponent,
+    AllStudiesListComponent,
+    ReportsComponent,
+    ReportMissingLocationsComponent,
+    ReportMissingDetailedLocationsComponent,
+    ReportUncuratedLocationsComponent,
+    ReportMissingTaxaComponent
   ],
   imports: [
     BrowserModule,

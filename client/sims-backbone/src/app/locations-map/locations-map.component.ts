@@ -70,7 +70,7 @@ export class LocationsMapComponent {
 
   @Input()
   set zoom(zoom: number) {
-    console.log("Setting zoom:" + zoom);
+    //console.log("Setting zoom:" + zoom);
     this.leaflet_zoom = zoom
     this.centerMap();
   }

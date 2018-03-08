@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 import { OAuthService } from 'angular-oauth2-oidc';
 
@@ -12,31 +12,10 @@ import { StudyService } from '../typescript-angular-client/api/study.service';
   templateUrl: './studies-list.component.html',
   styleUrls: ['./studies-list.component.css']
 })
-export class StudiesListComponent implements OnInit {
+export class StudiesListComponent {
 
+  @Input()
   studies: Studies;
-
-  constructor(private studyService: StudyService, private oauthService: OAuthService) { }
-
-  ngOnInit() {
-
-    this.studyService.downloadStudies().subscribe(
-      (studies) => {
-        this.studies = studies;
-        console.log(this.studies);
-      },
-      (err) => {
-
-        if (err.status == 401) {
-          this.oauthService.logOut();
-          this.oauthService.initImplicitFlow();
-        } else {
-          console.error(err);
-        }
-
-      },
-      () => { console.log("Downloaded studies") }
-    )
-  }
+  
 
 }
