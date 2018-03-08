@@ -37,9 +37,6 @@ class SetCountry(upload_ssr.Upload_SSR):
 
         input_stream = open(self._countries_file)
 
-        configuration = swagger_client.Configuration()
-        configuration.access_token = self._auth_token
-
         with input_stream as csvfile:
             data_reader = csv.reader(csvfile, delimiter='\t')
 
@@ -62,11 +59,6 @@ class SetCountry(upload_ssr.Upload_SSR):
 
         input_stream = open(filename)
 
-        configuration = swagger_client.Configuration()
-        configuration.access_token = self._auth_token
-
-        api_instance = swagger_client.SamplingEventApi(swagger_client.ApiClient(configuration))
-
         with input_stream as csvfile:
             data_reader = csv.reader(csvfile, delimiter='\t')
 
@@ -79,7 +71,7 @@ class SetCountry(upload_ssr.Upload_SSR):
                 country_value = row[country_column]
 
                 try:
-                    found_events = api_instance.download_sampling_events_by_identifier(id_type,
+                    found_events = self._dao.download_sampling_events_by_identifier(id_type,
                                                                urllib.parse.quote_plus(id_value))
                     if found_events:
                         found = found_events.sampling_events[0]
@@ -97,13 +89,8 @@ class SetCountry(upload_ssr.Upload_SSR):
         elif country_value in self._country_study_location_cache[study[:4]]:
             return self._country_study_location_cache[study[:4]][country_value]
 
-        configuration = swagger_client.Configuration()
-        configuration.access_token = self._auth_token
-
-        location_api_instance = swagger_client.LocationApi(swagger_client.ApiClient(configuration))
-
         try:
-            named_locations = location_api_instance.download_partner_location(self._country_cache[country_value].english)
+            named_locations = self._dao.download_partner_location(self._country_cache[country_value].english)
 
             #print('Locations for {}'.format(self._country_cache[country_value].english))
             #print(named_locations)
@@ -127,7 +114,7 @@ class SetCountry(upload_ssr.Upload_SSR):
                 location = cached_country['location']
             else:
                 try:
-                    location = location_api_instance.download_gps_location(cached_country['latitude'],
+                    location = self._dao.download_gps_location(cached_country['latitude'],
                                                                            cached_country['longitude'])
                 except ApiException as exp:
                     lat = round(float(Decimal(cached_country['latitude'])), 7)
@@ -139,7 +126,7 @@ class SetCountry(upload_ssr.Upload_SSR):
                     loc.identifiers = [
                         country_ident
                     ]
-                    location = location_api_instance.create_location(loc)
+                    location = self._dao.create_location(loc)
                 cached_country['location'] = location
                 self._country_location_cache[country_value]['location'] = location
 
@@ -155,16 +142,9 @@ class SetCountry(upload_ssr.Upload_SSR):
 
         orig = deepcopy(found)
 
-        configuration = swagger_client.Configuration()
-        configuration.access_token = self._auth_token
-
-        api_instance = swagger_client.SamplingEventApi(swagger_client.ApiClient(configuration))
-        location_api_instance = swagger_client.LocationApi(swagger_client.ApiClient(configuration))
-
         if country_value not in self._country_cache:
             try:
-                metadata_api_instance = swagger_client.MetadataApi(swagger_client.ApiClient(configuration))
-                metadata = metadata_api_instance.get_country_metadata(country_value)
+                metadata = self._dao.get_country_metadata(country_value)
                 self._country_cache[country_value] = metadata
             except ApiException as e:
                 if country_value != 'nan':
@@ -209,7 +189,7 @@ class SetCountry(upload_ssr.Upload_SSR):
 
                     found.location_id = location.location_id
                     found.location = location
-                    found = api_instance.update_sampling_event(found.sampling_event_id, found)
+                    found = self._dao.update_sampling_event(found.sampling_event_id, found)
 
                 except Exception as excp:
                     #print(str(excp), None)
@@ -230,7 +210,7 @@ class SetCountry(upload_ssr.Upload_SSR):
                 #print("adding study ident for {}".format(found))
                 found.location.identifiers.append(ident)
                 try:
-                    location_api_instance.update_location(found.location_id, found.location)
+                    self._dao.update_location(found.location_id, found.location)
                 except Exception as excp:
                     #print(str(excp), None)
                     #The location is more specific than the country but does not have a name for
@@ -254,18 +234,9 @@ class SetCountry(upload_ssr.Upload_SSR):
 
     def process_item(self, values):
 
-        # Configure OAuth2 access token for authorization: OauthSecurity
-        configuration = swagger_client.Configuration()
-        configuration.access_token = self._auth_token
-
-        location_api_instance = swagger_client.LocationApi(swagger_client.ApiClient(configuration))
-
-        # create an instance of the API class
-        api_instance = swagger_client.SamplingEventApi(swagger_client.ApiClient(configuration))
-
         samp = self.create_sampling_event_from_values(values)
 
-        item = self.lookup_sampling_event(api_instance, samp, values)
+        item = self.lookup_sampling_event(samp, values)
 
         if item:
             item = self.set_country(item, values['iso2'], self._data_file, values)

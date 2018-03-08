@@ -22,9 +22,6 @@ class Upload_SSR(uploader.Uploader):
 
         sheet_study_map = {}
 
-        configuration = swagger_client.Configuration()
-        configuration.access_token = self._auth_token
-
         if sheets:
             #You will want Report as well if it's not a numbered study sheet
             sheet_names = sheets.split(',')
@@ -34,14 +31,9 @@ class Upload_SSR(uploader.Uploader):
         for sheet in sheet_names:
 
             if not sheet[0].isdigit():
-                event_set_api_instance = swagger_client.EventSetApi(swagger_client.ApiClient(configuration))
                 event_set_id = self._event_set # str | ID of eventSet to create
-                try:
-                    # creates an eventSet
-                    api_response = event_set_api_instance.create_event_set(sheet)
-                except ApiException as e:
-                    if e.status != 422: #Already existis
-                        print("Exception when calling EventSetApi->create_event_set: %s\n" % e)
+
+                self._dao.create_event_set(sheet)
 
             df1 = xls.parse(sheet)
             start = False
@@ -98,11 +90,7 @@ class Upload_SSR(uploader.Uploader):
                 item = self.process_item(values)
 
                 if not sheet[0].isdigit() and item:
-                    try:
-                        event_set_api_instance.create_event_set_item(sheet, item.sampling_event_id)
-                    except ApiException as err:
-                        #Probably because it already exists
-                        self._logger.debug("Error adding sample {} to event set {} {}".format(item.sampling_event_id, sheet, err))
+                    self._dao.create_event_set_item(sheet, item.sampling_event_id)
 
 #                print(values)
 #                print(item)
