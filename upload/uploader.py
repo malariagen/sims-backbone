@@ -20,6 +20,7 @@ import os
 import requests
 
 from remote_backbone_dao import RemoteBackboneDAO
+from local_backbone_dao import LocalBackboneDAO
 
 class Uploader():
 
@@ -35,10 +36,24 @@ class Uploader():
     _dao = None
 
     def __init__(self, config_file):
-        super().__init__()
         self._logger = logging.getLogger(__name__)
 
         self._dao = RemoteBackboneDAO()
+        with open(config_file) as json_file:
+            args = json.load(json_file)
+            if 'dao_type' in args:
+                if args['dao_type'] == 'local':
+                    if 'database' in args:
+                        os.environ['DATABASE'] = args['database']
+                    print('Using database {}'.format(os.getenv('DATABASE','backbone_service')))
+                    self._dao = LocalBackboneDAO()
+            if 'debug' in args:
+                if args['debug']:
+                    log_time = datetime.datetime.now().strftime("%Y_%m_%d_%H_%M")
+                    log_file = 'uploader_{}.log'.format(log_time)
+                    print("Debugging to {}".format(log_file))
+                    logging.basicConfig(level=logging.DEBUG, filename=log_file)
+
         self._dao.setup(config_file)
 
         self._use_message_buffer = False
@@ -78,13 +93,33 @@ class Uploader():
         else:
             print(msg)
 
+
     def load_data_file(self, data_def, filename):
 
         self.setup(filename)
 
         input_stream = open(filename)
 
-        return self.load_data(data_def, input_stream, True, False)
+        if self._logger.isEnabledFor(logging.DEBUG):
+            import cProfile
+            profile = cProfile.Profile()
+            profile.enable()
+
+        ret = self.load_data(data_def, input_stream, True, False)
+
+        if self._logger.isEnabledFor(logging.DEBUG):
+            profile.disable()
+            #profile.print_stats()
+            import io,pstats
+            s = io.StringIO()
+            sortby = 'cumulative'
+            ps = pstats.Stats(profile, stream=s).sort_stats(sortby)
+            ps.print_stats(.1,'uploader')
+            self._logger.debug(s.getvalue())
+            profile.dump_stats('upload_source_stats.cprof')
+
+
+        return ret
 
 
     def parse_date(self, defn, date_value):
@@ -630,14 +665,21 @@ class Uploader():
         orig = deepcopy(existing)
         new_ident_value = False
 
+        change_reasons = []
+
         for new_ident in samp.identifiers:
             found = False
             for existing_ident in existing.identifiers:
-                if existing_ident == new_ident:
+                #Depending on the DAO used the identifier can have a different type
+                #so can't use ==
+                if existing_ident.identifier_source == new_ident.identifier_source and \
+                   existing_ident.identifier_type == new_ident.identifier_type and \
+                   existing_ident.identifier_value == new_ident.identifier_value and \
+                   existing_ident.study_name == new_ident.study_name:
                     found = True
             if not found:
                 new_ident_value = True
-                #print("Adding {} to {}".format(new_ident, existing))
+                change_reasons.append("Adding ident {}".format(new_ident))
                 existing.identifiers.append(new_ident)
 
 #        print("existing {} {}".format(existing, study_id))
@@ -660,6 +702,7 @@ class Uploader():
                                                           existing.study_name)
                                 existing.study_name = samp.study_name
                                 new_ident_value = True
+                                change_reasons.append('Updated study')
                             else:
                                 if not (samp.study_name[:4] == '0000' or samp.study_name[:4] == '1089'):
                                     self.set_additional_event(existing.sampling_event_id,
@@ -667,6 +710,7 @@ class Uploader():
             else:
                 existing.study_name = samp.study_name
                 new_ident_value = True
+                change_reasons.append('Set study')
         else:
             if existing.study_name:
 #                    print("Adding loc ident {} {}".format(location_name, existing.study_name))
@@ -703,12 +747,14 @@ class Uploader():
                                 existing.doc_accuracy = 'day'
 
                         new_ident_value = True
+                        change_reasons.append('Updated date')
                     else:
                         self.report("Conflicting doc value not updated {} {}"
                                         .format(samp.doc, existing.doc), values)
             else:
                 existing.doc = samp.doc
                 new_ident_value = True
+                change_reasons.append('Set date')
 
         if samp.location:
             if existing.location:
@@ -724,9 +770,11 @@ class Uploader():
                                     ,values)
                     #existing.location_id = location.location_id
                     #new_ident_value = True
+                    #change_reasons.append('Updated location')
             else:
                 existing.location_id = samp.location.location_id
                 new_ident_value = True
+                change_reasons.append('Set location')
 
         if samp.proxy_location:
             if existing.proxy_location:
@@ -738,9 +786,11 @@ class Uploader():
                                values)
                     existing.proxy_location_id = proxy_location.location_id
                     new_ident_value = True
+                    change_reasons.append('updated proxy location')
             else:
                 existing.proxy_location_id = samp.proxy_location.location_id
                 new_ident_value = True
+                change_reasons.append('Set proxy location')
 
         if samp.partner_species:
             if existing.partner_species:
@@ -765,6 +815,9 @@ class Uploader():
             else:
                 existing.partner_species = samp.partner_species
                 new_ident_value = True
+                change_reasons.append('Set species')
+
+        #print('\n'.join(change_reasons))
 
         return existing, new_ident_value
 
