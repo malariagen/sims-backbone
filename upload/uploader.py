@@ -6,12 +6,12 @@ import time
 import datetime
 import logging
 import sys
+
 import swagger_client
 from swagger_client.rest import ApiException
 
 from decimal import *
 
-import urllib.parse
 from copy import deepcopy
 
 from pprint import pprint
@@ -20,12 +20,13 @@ from pprint import pformat
 import os
 import requests
 
+from remote_backbone_dao import RemoteBackboneDAO
+from local_backbone_dao import LocalBackboneDAO
+
 class Uploader():
 
     _location_cache = {}
     _sample_cache = {}
-
-    _auth_token = None
 
     _data_file = None
 
@@ -33,11 +34,28 @@ class Uploader():
 
     _message_buffer = []
 
+    _dao = None
+
     def __init__(self, config_file):
-        super().__init__()
         self._logger = logging.getLogger(__name__)
-        # Configure OAuth2 access token for authorization: OauthSecurity
-        self._auth_token = self.get_access_token(config_file)
+
+        self._dao = RemoteBackboneDAO()
+        with open(config_file) as json_file:
+            args = json.load(json_file)
+            if 'dao_type' in args:
+                if args['dao_type'] == 'local':
+                    if 'database' in args:
+                        os.environ['DATABASE'] = args['database']
+                    print('Using database {}'.format(os.getenv('DATABASE','backbone_service')))
+                    self._dao = LocalBackboneDAO()
+            if 'debug' in args:
+                if args['debug']:
+                    log_time = datetime.datetime.now().strftime("%Y_%m_%d_%H_%M")
+                    log_file = 'uploader_{}.log'.format(log_time)
+                    print("Debugging to {}".format(log_file))
+                    logging.basicConfig(level=logging.DEBUG, filename=log_file)
+
+        self._dao.setup(config_file)
 
         self._use_message_buffer = False
 
@@ -53,15 +71,6 @@ class Uploader():
     def use_message_buffer(self, use_buffer):
         self._use_message_buffer = use_buffer
 
-    
-    def get_access_token(self, config_file):
-
-        with open(config_file) as json_file:
-            args = json.load(json_file)
-            r = requests.get(os.getenv('TOKEN_URL'), args, headers = { 'service': 'http://localhost/full-map' })
-            at = r.text.split('=')
-            token = at[1].split('&')[0]
-            return(token)
 
     def setup(self, filename):
 
@@ -69,18 +78,9 @@ class Uploader():
 
         self._event_set = os.path.basename(filename).split('.')[0]
 
-        configuration = swagger_client.Configuration()
-        configuration.access_token = self._auth_token
-
-        api_instance = swagger_client.EventSetApi(swagger_client.ApiClient(configuration))
         event_set_id = self._event_set # str | ID of eventSet to create
 
-        try:
-            # creates an eventSet
-            api_response = api_instance.create_event_set(event_set_id)
-        except ApiException as e:
-            if e.status != 422: #Already exists
-                print("Exception when calling EventSetApi->create_event_set: %s\n" % e)
+        api_response = self._dao.create_event_set(event_set_id)
 
     def report(self, message, values):
 
@@ -94,13 +94,33 @@ class Uploader():
         else:
             print(msg)
 
+
     def load_data_file(self, data_def, filename):
 
         self.setup(filename)
 
         input_stream = open(filename)
 
-        return self.load_data(data_def, input_stream, True, False)
+        if self._logger.isEnabledFor(logging.DEBUG):
+            import cProfile
+            profile = cProfile.Profile()
+            profile.enable()
+
+        ret = self.load_data(data_def, input_stream, True, False)
+
+        if self._logger.isEnabledFor(logging.DEBUG):
+            profile.disable()
+            #profile.print_stats()
+            import io,pstats
+            s = io.StringIO()
+            sortby = 'cumulative'
+            ps = pstats.Stats(profile, stream=s).sort_stats(sortby)
+            ps.print_stats(.1,'uploader')
+            self._logger.debug(s.getvalue())
+            profile.dump_stats('upload_source_stats.cprof')
+
+
+        return ret
 
 
     def parse_date(self, defn, date_value):
@@ -242,18 +262,12 @@ class Uploader():
         if 'study_id' not in values:
             values['study_id'] = '0000-Unknown'
 
-        # Configure OAuth2 access token for authorization: OauthSecurity
-        configuration = swagger_client.Configuration()
-        configuration.access_token = self._auth_token
-
-        # create an instance of the API class
-        api_instance = swagger_client.SamplingEventApi(swagger_client.ApiClient(configuration))
 
         samp = self.create_sampling_event_from_values(values)
 
         #print(samp)
 
-        existing = self.lookup_sampling_event(api_instance, samp, values)
+        existing = self.lookup_sampling_event(samp, values)
 
         self.add_locations_from_values(existing, samp, values)
 
@@ -279,11 +293,6 @@ class Uploader():
                 looked_up.identifiers = []
             #print("values: {} {}".format(study_id, partner_name))
             if study_id and partner_name:
-                # Configure OAuth2 access token for authorization: OauthSecurity
-                configuration = swagger_client.Configuration()
-                configuration.access_token = self._auth_token
-
-                api_instance = swagger_client.LocationApi(swagger_client.ApiClient(configuration))
 #                print("adding identifier {}".format(looked_up.identifiers))
                 new_ident = swagger_client.Identifier( identifier_type = 'partner_name', 
                                                       identifier_value = partner_name,
@@ -293,23 +302,23 @@ class Uploader():
                 looked_up.identifiers.append(new_ident)
                 #print("adding identifier3 {}".format(looked_up))
                 try:
-                    updated = api_instance.update_location(looked_up.location_id, looked_up)
+                    updated = self._dao.update_location(looked_up.location_id, looked_up)
                 except ApiException as err:
                     #print("Error adding location identifier {} {}".format(looked_up, err))
                     message = 'duplicate location\t' + study_id + '\t' + partner_name + '\t' + \
                                 str(looked_up.latitude) + '\t' + str(looked_up.longitude)
                     try:
-                        conflict = api_instance.download_partner_location(partner_name)
+                        conflict = self._dao.download_partner_location(partner_name)
                         if conflict and conflict.locations:
-                            conflict_loc = api_instance.download_location(conflict.locations[0].location_id)
-                            conflict_loc = api_instance.download_gps_location(str(looked_up.latitude),
-                                                                              str(looked_up.longitude))
+                            conflict_loc = self._dao.download_location(conflict.locations[0].location_id)
+                            conflict_loc = self._dao.download_gps_location(looked_up.latitude,
+                                                                              looked_up.longitude)
                             message = message + '\t' + str(conflict_loc.latitude) + '\t' + str(conflict_loc.longitude)
                             message = message + "\nProbable conflict with {}".format(conflict_loc)
                     except ApiException as err:
                         try:
-                            conflict_loc = api_instance.download_gps_location(str(looked_up.latitude),
-                                                                              str(looked_up.longitude))
+                            conflict_loc = self._dao.download_gps_location(looked_up.latitude,
+                                                                              looked_up.longitude)
                             for cname in conflict_loc.identifiers:
                                 if cname.study_name[:4] == study_id[:4]:
                                     message = message + '\t' + cname.identifier_value
@@ -334,11 +343,7 @@ class Uploader():
                 looked_up.country = country
                 update_country = True
             if update_country:
-                configuration = swagger_client.Configuration()
-                configuration.access_token = self._auth_token
-
-                api_instance = swagger_client.LocationApi(swagger_client.ApiClient(configuration))
-                updated = api_instance.update_location(looked_up.location_id, looked_up)
+                updated = self._dao.update_location(looked_up.location_id, looked_up)
                 ret = updated
 
         return ret
@@ -393,13 +398,13 @@ class Uploader():
 
         return partner_name, loc
 
-    def lookup_location(self, api_instance, loc, study_id, partner_name, values):
+    def lookup_location(self, loc, study_id, partner_name, values):
 
         looked_up = None
 
         try:
-            looked_up = api_instance.download_gps_location(str(loc.latitude), str(loc.longitude))
-            looked_up = api_instance.download_location(looked_up.location_id)
+            looked_up = self._dao.download_gps_location(str(loc.latitude), str(loc.longitude))
+            looked_up = self._dao.download_location(looked_up.location_id)
         except Exception as err:
             #print(repr(err))
             #print("Failed to find location {}".format(loc))
@@ -407,7 +412,7 @@ class Uploader():
 
         if not looked_up:
             try:
-                named_locations = api_instance.download_partner_location(partner_name)
+                named_locations = self._dao.download_partner_location(partner_name)
                 for named_loc in named_locations.locations:
                     for ident in named_loc.identifiers:
                         if ident.study_name[:4] == study_id[:4]:
@@ -449,13 +454,7 @@ class Uploader():
             if orig == loc:
                 return partner_name, existing_location
 
-        # Configure OAuth2 access token for authorization: OauthSecurity
-        configuration = swagger_client.Configuration()
-        configuration.access_token = self._auth_token
-
-        api_instance = swagger_client.LocationApi(swagger_client.ApiClient(configuration))
-
-        looked_up = self.lookup_location(api_instance, loc, study_id, partner_name, values)
+        looked_up = self.lookup_location(loc, study_id, partner_name, values)
 
         ret = None
 
@@ -481,7 +480,7 @@ class Uploader():
         else:
 
             try:
-                created = api_instance.create_location(loc)
+                created = self._dao.create_location(loc)
                 ret = created
             #    print("Created location {}".format(created))
             except ApiException as err:
@@ -566,45 +565,34 @@ class Uploader():
         #print(samp)
         return samp
 
-    def merge_events(self, api_instance, existing, found, values):
+    def merge_events(self, existing, found, values):
 
-        es_api_instance = None
-
-        configuration = swagger_client.Configuration()
-        configuration.access_token = self._auth_token
-
-        es_api_instance = swagger_client.EventSetApi(swagger_client.ApiClient(configuration))
-
-        existing, changed = self.merge_sampling_event_objects(es_api_instance, existing, found,
+        existing, changed = self.merge_sampling_event_objects(existing, found,
                                                               values)
         ret = existing
 
         if changed:
 
             for event_set in found.event_sets:
-                try:
-                    es_api_instance.create_event_set_item(event_set, existing.sampling_event_id)
-                except ApiException as err:
-                    #Probably because it already exists
-                    self._logger.debug("Error adding sample {} to event set {} {}".format(existing.sampling_event_id, self._event_set, err))
+                self._dao.create_event_set_item(event_set, existing.sampling_event_id)
 
-            api_instance.delete_sampling_event(found.sampling_event_id)
+            self._dao.delete_sampling_event(found.sampling_event_id)
 
             #print("Updating {} to {}".format(orig, existing))
-            existing = api_instance.update_sampling_event(existing.sampling_event_id, existing)
+            existing = self._dao.update_sampling_event(existing.sampling_event_id, existing)
         else:
             self.report("Merge didn't change anything {} {}".format(existing, found), None)
 
         return existing
 
-    def lookup_sampling_event(self, api_instance, samp, values):
+    def lookup_sampling_event(self, samp, values):
 
         existing = None
 
         if 'unique_id' in values:
             if values['unique_id'] in self._sample_cache:
                 existing_sample_id = self._sample_cache[values['unique_id']]
-                existing = api_instance.download_sampling_event(existing_sample_id)
+                existing = self._dao.download_sampling_event(existing_sample_id)
                 return existing
 
         #print ("not in cache: {}".format(samp))
@@ -614,8 +602,8 @@ class Uploader():
                 try:
                     #print("Looking for {} {}".format(ident.identifier_type, ident.identifier_value))
 
-                    found_events = api_instance.download_sampling_events_by_identifier(ident.identifier_type,
-                                                           urllib.parse.quote_plus(ident.identifier_value))
+                    found_events = self._dao.download_sampling_events_by_identifier(ident.identifier_type,
+                                                                                       ident.identifier_value)
 
                     for found in found_events.sampling_events:
                         if ident.identifier_type == 'partner_id':
@@ -647,7 +635,7 @@ class Uploader():
                             #self.report("Merging into {} using {}"
                             #                .format(existing.sampling_event_id,
                             #                                   ident.identifier_type), values)
-                            found = self.merge_events(api_instance, existing, found, values)
+                            found = self.merge_events(existing, found, values)
                         existing = found
                         if samp.study_name[:4] == '0000':
                             samp.study_name = existing.study_name
@@ -661,40 +649,38 @@ class Uploader():
         #    print('Not found {}'.format(samp))
         return existing
 
-    def set_additional_event(self, es_api_instance, sampling_event_id, study_id):
+    def set_additional_event(self, sampling_event_id, study_id):
 
         if study_id[:4] == '0000' or study_id[:4] == '1089':
             return
 
         event_set_id = 'Additional events: {}'.format(study_id)
 
-        try:
-            # creates an eventSet
-            api_response = es_api_instance.create_event_set(event_set_id)
-        except ApiException as e:
-            if e.status != 422: #Already exists
-                print("Exception when calling EventSetApi->create_event_set: %s\n" % e)
+        api_response = self._dao.create_event_set(event_set_id)
 
-        try:
-            es_api_instance.create_event_set_item(event_set_id, sampling_event_id)
-        except ApiException as err:
-            #Probably because it already exists
-            self._logger.debug("Error adding sample {} to event set {} {}".format(sampling_event_id, event_set_id, err))
+        self._dao.create_event_set_item(event_set_id, sampling_event_id)
 
 
-    def merge_sampling_event_objects(self, es_api_instance, existing, samp, values):
+    def merge_sampling_event_objects(self, existing, samp, values):
 
         orig = deepcopy(existing)
         new_ident_value = False
 
+        change_reasons = []
+
         for new_ident in samp.identifiers:
             found = False
             for existing_ident in existing.identifiers:
-                if existing_ident == new_ident:
+                #Depending on the DAO used the identifier can have a different type
+                #so can't use ==
+                if existing_ident.identifier_source == new_ident.identifier_source and \
+                   existing_ident.identifier_type == new_ident.identifier_type and \
+                   existing_ident.identifier_value == new_ident.identifier_value and \
+                   existing_ident.study_name == new_ident.study_name:
                     found = True
             if not found:
                 new_ident_value = True
-                #print("Adding {} to {}".format(new_ident, existing))
+                change_reasons.append("Adding ident {}".format(new_ident))
                 existing.identifiers.append(new_ident)
 
 #        print("existing {} {}".format(existing, study_id))
@@ -713,19 +699,19 @@ class Uploader():
                             if ((int(samp.study_name[:4]) < int(existing.study_name[:4]) or
                                  existing.study_name[:4] == '0000') and
                                 (samp.study_name[:4] != '1089')):
-                                self.set_additional_event(es_api_instance,
-                                                          existing.sampling_event_id,
+                                self.set_additional_event(existing.sampling_event_id,
                                                           existing.study_name)
                                 existing.study_name = samp.study_name
                                 new_ident_value = True
+                                change_reasons.append('Updated study')
                             else:
                                 if not (samp.study_name[:4] == '0000' or samp.study_name[:4] == '1089'):
-                                    self.set_additional_event(es_api_instance,
-                                                          existing.sampling_event_id,
+                                    self.set_additional_event(existing.sampling_event_id,
                                                               samp.study_name)
             else:
                 existing.study_name = samp.study_name
                 new_ident_value = True
+                change_reasons.append('Set study')
         else:
             if existing.study_name:
 #                    print("Adding loc ident {} {}".format(location_name, existing.study_name))
@@ -762,12 +748,14 @@ class Uploader():
                                 existing.doc_accuracy = 'day'
 
                         new_ident_value = True
+                        change_reasons.append('Updated date')
                     else:
                         self.report("Conflicting doc value not updated {} {}"
                                         .format(samp.doc, existing.doc), values)
             else:
                 existing.doc = samp.doc
                 new_ident_value = True
+                change_reasons.append('Set date')
 
         if samp.location:
             if existing.location:
@@ -781,11 +769,13 @@ class Uploader():
                                                                                          existing.location.latitude,
                                                                                          existing.location.longitude)
                                     ,values)
-                    #existing.location_id = location.location_id
-                    #new_ident_value = True
+                    existing.location_id = location.location_id
+                    new_ident_value = True
+                    change_reasons.append('Updated location')
             else:
                 existing.location_id = samp.location.location_id
                 new_ident_value = True
+                change_reasons.append('Set location')
 
         if samp.proxy_location:
             if existing.proxy_location:
@@ -797,9 +787,11 @@ class Uploader():
                                values)
                     existing.proxy_location_id = proxy_location.location_id
                     new_ident_value = True
+                    change_reasons.append('updated proxy location')
             else:
                 existing.proxy_location_id = samp.proxy_location.location_id
                 new_ident_value = True
+                change_reasons.append('Set proxy location')
 
         if samp.partner_species:
             if existing.partner_species:
@@ -824,21 +816,15 @@ class Uploader():
             else:
                 existing.partner_species = samp.partner_species
                 new_ident_value = True
+                change_reasons.append('Set species')
+
+        #print('\n'.join(change_reasons))
 
         return existing, new_ident_value
 
     def process_sampling_event(self, values, samp, existing):
 
         #print('process_sampling event {} {} {} {} {}'.format(values, location_name, location, proxy_location_name, proxy_location))
-
-        # Configure OAuth2 access token for authorization: OauthSecurity
-        configuration = swagger_client.Configuration()
-        configuration.access_token = self._auth_token
-
-        # create an instance of the API class
-        api_instance = swagger_client.SamplingEventApi(swagger_client.ApiClient(configuration))
-
-        es_api_instance = swagger_client.EventSetApi(swagger_client.ApiClient(configuration))
 
         if 'sample_lims_id' in values and values['sample_lims_id']:
             if not existing:
@@ -849,7 +835,7 @@ class Uploader():
 
             #print("existing pre merge")
             #print(existing)
-            existing, changed = self.merge_sampling_event_objects(es_api_instance, existing, samp,
+            existing, changed = self.merge_sampling_event_objects(existing, samp,
                                                                  values)
             #print("existing post merge")
             #print(existing)
@@ -857,13 +843,9 @@ class Uploader():
 
             if changed:
                 #print("Updating {} to {}".format(orig, existing))
-                ret = api_instance.update_sampling_event(existing.sampling_event_id, existing)
+                ret = self._dao.update_sampling_event(existing.sampling_event_id, existing)
 
-            try:
-                es_api_instance.create_event_set_item(self._event_set, existing.sampling_event_id)
-            except ApiException as err:
-                #Probably because it already exists
-                self._logger.debug("Error adding sample {} to event set {} {}".format(existing.sampling_event_id, self._event_set, err))
+            self._dao.create_event_set_item(self._event_set, existing.sampling_event_id)
 
         else:
             #print("Creating {}".format(samp))
@@ -871,15 +853,11 @@ class Uploader():
                 return None
 
             try:
-                created = api_instance.create_sampling_event(samp)
+                created = self._dao.create_sampling_event(samp)
 
                 ret = created
 
-                try:
-                    es_api_instance.create_event_set_item(self._event_set, created.sampling_event_id)
-                except ApiException as err:
-                    #Probably because it already exists
-                    self._logger.debug("Error adding sample {} to event set {} {}".format(created.sampling_event_id, self._event_set, err))
+                self._dao.create_event_set_item(self._event_set, created.sampling_event_id)
 
             except ApiException as err:
                 print("Error adding sample {} {}".format(samp, err))
