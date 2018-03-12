@@ -250,13 +250,14 @@ class TestCountry(TestBase):
             self.assertEqual(looked_up.proxy_location.longitude, 47.0)
             self.assertEqual(looked_up.proxy_location.identifiers[0].identifier_value, 'Madagascar')
 
-            msg = "Country conflict not updated IN vs MDG in {'identifier_source': 'oxford_country', 'identifier_type': 'alt_oxford_id', 'identifier_value': '905094', 'study_name': None}\t{'identifier_source': 'countries', 'identifier_type': 'oxford_id', 'identifier_value': 'CT0004-C', 'study_name': None}\t{'identifier_source': 'oxford_country', 'identifier_type': 'oxford_id', 'identifier_value': 'CT0004-C', 'study_name': None}\t{'identifier_source': 'countries', 'identifier_type': 'partner_id', 'identifier_value': 'MDG/TST_0004', 'study_name': None}\t{'identifier_source': 'oxford_country', 'identifier_type': 'partner_id', 'identifier_value': 'MDG/TST_0004', 'study_name': None} for oxford_country.tsv"
+            msgs = [
+                "Conflicting Country value\tnot updated {{'accuracy': None, 'country': 'MDG', 'curated_name': None, 'curation_method': None, 'identifiers': [{{'identifier_source': 'countries', 'identifier_type': 'partner_name', 'identifier_value': 'Maevatanana', 'study_name': '0000 Upload test study'}}, {{'identifier_source': 'countries', 'identifier_type': 'partner_name', 'identifier_value': 'Maevatanana', 'study_name': '9050-MD-UP'}}], 'latitude': -16.94223, 'location_id': '{location_id}', 'longitude': 46.83144, 'notes': 'countries.tsv'}}\t{event_id}\t9052\tMDG\tIN\t[('id_value', 'CT0004-C')]".format(location_id=looked_up.location_id, event_id=looked_up.sampling_event_id),
+                "Conflicting Country value\tproxy not updated {{'accuracy': None, 'country': 'MDG', 'curated_name': None, 'curation_method': None, 'identifiers': [{{'identifier_source': 'countries', 'identifier_type': 'partner_name', 'identifier_value': 'Madagascar', 'study_name': '0000 Upload test study'}}, {{'identifier_source': 'countries', 'identifier_type': 'partner_name', 'identifier_value': 'Madagascar', 'study_name': '9050-MD-UP'}}], 'latitude': -19.0, 'location_id': '{location_id}', 'longitude': 47.0, 'notes': 'countries.tsv'}}\t{event_id}\t9052\tMDG\tIN\t[('id_value', 'CT0004-C')]".format(location_id=looked_up.proxy_location_id, event_id=looked_up.sampling_event_id)
+            ]
 
-            self.assertIn(msg, self._messages)
+            for msg in msgs:
+                self.assertIn(msg, self._messages)
 
-            msg = "Country conflict not updated in proxy IN vs MDG in {'identifier_source': 'oxford_country', 'identifier_type': 'alt_oxford_id', 'identifier_value': '905094', 'study_name': None}\t{'identifier_source': 'countries', 'identifier_type': 'oxford_id', 'identifier_value': 'CT0004-C', 'study_name': None}\t{'identifier_source': 'oxford_country', 'identifier_type': 'oxford_id', 'identifier_value': 'CT0004-C', 'study_name': None}\t{'identifier_source': 'countries', 'identifier_type': 'partner_id', 'identifier_value': 'MDG/TST_0004', 'study_name': None}\t{'identifier_source': 'oxford_country', 'identifier_type': 'partner_id', 'identifier_value': 'MDG/TST_0004', 'study_name': None} for oxford_country.tsv"
-
-            self.assertIn(msg, self._messages)
             self.assertEqual(looked_up.location.country, 'MDG')
             self.assertEqual(looked_up.location.latitude, -16.94223)
             self.assertEqual(looked_up.location.longitude, 46.83144)

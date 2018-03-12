@@ -70,6 +70,9 @@ class SetCountry(upload_ssr.Upload_SSR):
                 id_value = row[id_column]
                 country_value = row[country_column]
 
+                values = {
+                    'id_value': id_value
+                }
                 try:
                     found_events = self._dao.download_sampling_events_by_identifier(id_type,
                                                                urllib.parse.quote_plus(id_value))
@@ -80,7 +83,7 @@ class SetCountry(upload_ssr.Upload_SSR):
                     print("Exception when looking for event {} {} \n".format(id_column, e))
                     continue
 
-                self.set_country(found, country_value, filename, None)
+                self.set_country(found, country_value, filename, values)
 
     def find_country_for_study(self, country_value, study, country_ident):
 
@@ -157,28 +160,26 @@ class SetCountry(upload_ssr.Upload_SSR):
                                           identifier_source='set_country {}'.format(filename),
                                           study_name=found.study_name)
 
-        idents = '\t'.join(pformat(x.to_dict(), width=1000, compact=True) for x in found.identifiers)
 
+        error = False
         if found.location:
             try:
                 found.location = self.update_country(self._country_cache[country_value].alpha3, found.location)
             except Exception as cue:
-                msg = "Country conflict not updated {} vs {} in {} for {}".format(country_value,
-                                                                      found.location.country, idents,
-                                                                      filename)
-                #print(orig)
-                #print(found)
-                self.report(msg, values)
+                self.report_conflict(found, 'Country', found.location.country,
+                                     country_value, 'not updated', values)
+                error = True
 
         if found.proxy_location:
             try:
                 found.proxy_location = self.update_country(self._country_cache[country_value].alpha3, found.proxy_location)
             except Exception as cue:
-                msg = "Country conflict not updated in proxy {} vs {} in {} for {}".format(country_value,
-                                                                               found.proxy_location.country,
-                                                                               idents,
-                                                                               filename)
-                self.report(msg, values)
+                self.report_conflict(found, 'Country', found.proxy_location.country,
+                                     country_value, 'proxy not updated', values)
+                error = True
+
+        if error:
+            return found
 
         if not found.location:
 
@@ -208,27 +209,30 @@ class SetCountry(upload_ssr.Upload_SSR):
         if not study_ident:
             if found.location:
                 #print("adding study ident for {}".format(found))
-                found.location.identifiers.append(ident)
+                if not error:
+                    found.location.identifiers.append(ident)
                 try:
                     self._dao.update_location(found.location_id, found.location)
                 except Exception as excp:
                     #print(str(excp), None)
                     #The location is more specific than the country but does not have a name for
                     #that study - probably because it was unknown when added
-                    self.report('Unable to add country location identifier name for study ', { 'identifier_source': ident.identifier_source,
-                                            'identifer_value' : ident.identifier_value,
-                                            'identifier_type': ident.identifier_type,
-                                            'study_id': found.study_name,
-                                            'latitude': found.location.latitude,
-                                            'longitude': found.location.longitude,
-                                            'sampling_event_id': found.sampling_event_id
-                                                                                      })
+                    self.report('Unable to add country location identifier name for study ',
+                                {'identifier_source': ident.identifier_source,
+                                 'identifer_value' : ident.identifier_value,
+                                 'identifier_type': ident.identifier_type,
+                                 'study_id': found.study_name,
+                                 'latitude': found.location.latitude,
+                                 'longitude': found.location.longitude,
+                                 'sampling_event_id': found.sampling_event_id
+                                })
 
         if found.location and found.proxy_location:
             if found.location.country != found.proxy_location.country:
-                self.report('Country {} != proxy country {} for {}'.format(found.location.country,
-                                                                           found.proxy_location.country,
-                                                                           idents), None)
+                self.report_conflict(found, 'Country', found.location.country,
+                                     found.proxy_location.country,
+                                     'locations country mismatch',
+                                     values)
         return found
 
 

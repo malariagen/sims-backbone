@@ -109,6 +109,16 @@ class Uploader():
             if new_val:
                 new_value = pformat(new_val.to_dict(), width=1000, compact=True)
 
+        if report_type == "Country":
+            loc = None
+            if sampling_event:
+                if 'proxy' in message:
+                    loc = sampling_event.proxy_location
+                else:
+                    loc = sampling_event.location
+            if loc:
+                message = message + ' ' + pformat(loc.to_dict(), width=1000, compact=True)
+
         event_id = ''
         study_name = ''
 
