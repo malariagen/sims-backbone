@@ -94,6 +94,33 @@ class Uploader():
         else:
             print(msg)
 
+    def report_conflict(self, sampling_event, report_type, old_val, new_val, message, values):
+
+        old_value = old_val
+        new_value = new_val
+
+        if report_type == "Location":
+            old_value = pformat(old_val.to_dict(), width=1000, compact=True)
+            new_value = pformat(new_val.to_dict(), width=1000, compact=True)
+
+        if report_type == "Location name":
+            if old_val:
+                old_value = pformat(old_val.to_dict(), width=1000, compact=True)
+            if new_val:
+                new_value = pformat(new_val.to_dict(), width=1000, compact=True)
+
+        event_id = ''
+        study_name = ''
+
+        if sampling_event:
+            event_id = sampling_event.sampling_event_id
+            study_name = sampling_event.study_name
+
+        msg = "Conflicting {} value\t{}\t{}\t{}\t{}\t{}".format(report_type, message,
+                                                                event_id, study_name,
+                                                                old_value, new_value)
+        self.report(msg, values)
+
 
     def load_data_file(self, data_def, filename):
 
@@ -273,7 +300,7 @@ class Uploader():
 
         return self.process_sampling_event(values, samp, existing)
 
-    def add_location_identifier(self, looked_up, study_id, partner_name):
+    def add_location_identifier(self, sampling_event, study_id, looked_up, ident_type, partner_name, values):
 
         if not looked_up:
             return
@@ -305,16 +332,15 @@ class Uploader():
                     updated = self._dao.update_location(looked_up.location_id, looked_up)
                 except ApiException as err:
                     #print("Error adding location identifier {} {}".format(looked_up, err))
-                    message = 'duplicate location\t' + study_id + '\t' + partner_name + '\t' + \
-                                str(looked_up.latitude) + '\t' + str(looked_up.longitude)
+                    message = 'duplicate location\t{}\t{}'.format(ident_type,partner_name)
                     try:
                         conflict = self._dao.download_partner_location(partner_name)
                         if conflict and conflict.locations:
                             conflict_loc = self._dao.download_location(conflict.locations[0].location_id)
                             conflict_loc = self._dao.download_gps_location(looked_up.latitude,
                                                                               looked_up.longitude)
-                            message = message + '\t' + str(conflict_loc.latitude) + '\t' + str(conflict_loc.longitude)
-                            message = message + "\nProbable conflict with {}".format(conflict_loc)
+                            self.report_conflict(sampling_event, "Location name", looked_up,
+                                                 conflict_loc, message, values)
                     except ApiException as err:
                         try:
                             conflict_loc = self._dao.download_gps_location(looked_up.latitude,
@@ -322,9 +348,10 @@ class Uploader():
                             for cname in conflict_loc.identifiers:
                                 if cname.study_name[:4] == study_id[:4]:
                                     message = message + '\t' + cname.identifier_value
+                            self.report_conflict(sampling_event, "Location name", looked_up,
+                                                 conflict_loc, message, values)
                         except ApiException as err:
                             print(err)
-                    raise Exception(message)
         #else:
         #    print("identifier exists")
 
@@ -398,9 +425,10 @@ class Uploader():
 
         return partner_name, loc
 
-    def lookup_location(self, loc, study_id, partner_name, values):
+    def lookup_location(self, existing_event, study_id, loc, partner_name, values):
 
         looked_up = None
+        conflict = False
 
         try:
             looked_up = self._dao.download_gps_location(str(loc.latitude), str(loc.longitude))
@@ -417,17 +445,16 @@ class Uploader():
                     for ident in named_loc.identifiers:
                         if ident.study_name[:4] == study_id[:4]:
                             if loc.latitude and loc.longitude:
-                                nloc = pformat(named_loc.to_dict(), width=1000, compact=True)
-                                self.report("Location name conflict1\t{}\t{}\t{}\t{}\t{}".
-                                  format(study_id,partner_name,nloc,
-                                        loc.latitude, loc.longitude), values)
+                                self.report_conflict(existing_event, "Location name", loc,
+                                                     named_loc, partner_name, values)
+                                conflict = True
                             else:
                                 looked_up = named_loc
             except ApiException as err:
                 #Can't be found by name either
                 pass
 
-        return looked_up
+        return looked_up, conflict
 
     def process_location(self, values, prefix, existing_event):
 
@@ -437,8 +464,12 @@ class Uploader():
             return None, None
 
         study_id = None
-        if 'study_id' in values:
-            study_id = values['study_id'][:4]
+
+        if existing_event:
+            study_id = existing_event.study_name
+        else:
+            if 'study_id' in values:
+                study_id = values['study_id'][:4]
 
         existing_location = None
         if prefix == 'proxy_':
@@ -454,7 +485,7 @@ class Uploader():
             if orig == loc:
                 return partner_name, existing_location
 
-        looked_up = self.lookup_location(loc, study_id, partner_name, values)
+        looked_up, conflict = self.lookup_location(existing_event, study_id, loc, partner_name, values)
 
         ret = None
 
@@ -462,8 +493,9 @@ class Uploader():
             try:
                 #print("Found location {}".format(looked_up))
                 loc.location_id = looked_up.location_id
+                self.add_location_identifier(existing_event, study_id, looked_up, prefix, partner_name, values)
+
                 try:
-                    self.add_location_identifier(looked_up, study_id, partner_name)
 
                     loc.location_id = None
                     try:
@@ -477,7 +509,7 @@ class Uploader():
             except Exception as err:
                 print(repr(err))
                 #print("Failed to find location {}".format(loc))
-        else:
+        elif not conflict:
 
             try:
                 created = self._dao.create_location(loc)
@@ -485,10 +517,8 @@ class Uploader():
             #    print("Created location {}".format(created))
             except ApiException as err:
                 if err.status == 422:
-                    idents = '\t'.join(pformat(x.to_dict(), width=1000, compact=True) for x in
-                              loc.identifiers)
-                    self.report("Location name conflict2\t{}\t{}\t{}\t{}\t{}".
-                      format(study_id,partner_name,idents, loc.latitude, loc.longitude), values)
+                    self.report_conflict(existing_event, "Location name", None,
+                                         loc, '', values)
                 else:
                     self.report("Error creating location {} {}".format(loc, err), values)
                 return None, None
@@ -692,8 +722,9 @@ class Uploader():
                         pass
                     else:
                         if not (existing.study_name[:4] == '0000' or samp.study_name[:4] == '0000'):
-                            self.report("Conflicting study_id value {} {}"
-                                            .format(samp.study_name, existing.study_name), values)
+                            self.report_conflict(existing,"Study",
+                                                 existing.study_name, samp.study_name,
+                                                 "", values)
 
                         if not samp.study_name[:4] == '0000':
                             if ((int(samp.study_name[:4]) < int(existing.study_name[:4]) or
@@ -715,17 +746,10 @@ class Uploader():
         else:
             if existing.study_name:
 #                    print("Adding loc ident {} {}".format(location_name, existing.study_name))
-                try:
-                    self.add_location_identifier(location, existing.study_name, location_name)
-                except Exception as err:
-                    #Almost certainly a duplicate
-                    self.report(err, values)
-                try:
-                    self.add_location_identifier(proxy_location, existing.study_name,
-                                             proxy_location_name)
-                except Exception as err:
-                    #Almost certainly a duplicate
-                    self.report(err, values)
+                self.add_location_identifier(existing, existing.study_name, location, '', location_name,
+                                             values)
+                self.add_location_identifier(existing, existing.study_name, proxy_location, 'proxy_',
+                                         proxy_location_name, values)
 
         if samp.doc:
             if existing.doc:
@@ -738,20 +762,27 @@ class Uploader():
                             update_doc = False
 
                     if update_doc:
-                        self.report("Conflicting doc value updated {} {}"
-                                        .format(samp.doc, existing.doc), values)
-                        existing.doc = samp.doc
+                        msg = ""
                         if samp.doc_accuracy:
                             existing.doc_accuracy = samp.doc_accuracy
+                            msg = "Accuracy updated"
                         else:
                             if existing.doc_accuracy:
-                                existing.doc_accuracy = 'day'
+                                existing._doc_accuracy = None
+                                msg = "Accuracy cleared"
+
+                        self.report_conflict(existing, "DOC",
+                                             existing.doc, samp.doc,
+                                             msg, values)
+                        existing.doc = samp.doc
 
                         new_ident_value = True
                         change_reasons.append('Updated date')
                     else:
-                        self.report("Conflicting doc value not updated {} {}"
-                                        .format(samp.doc, existing.doc), values)
+                        msg = "Not updated"
+                        self.report_conflict(existing, "DOC",
+                                             existing.doc, samp.doc,
+                                             msg, values)
             else:
                 existing.doc = samp.doc
                 new_ident_value = True
@@ -761,16 +792,12 @@ class Uploader():
             if existing.location:
                 if samp.location.location_id != existing.location_id:
                     location = samp.location
-                    self.report("Conflicting location value updated {}\t{}\t{}\t{}\t{}\t{}".format(
-                                                                       samp.location.identifiers[0].identifier_value,
-                                                                                         samp.location.latitude,
-                                                                                         samp.location.longitude,
-                                                                       existing.location.identifiers[0].identifier_value,
-                                                                                         existing.location.latitude,
-                                                                                         existing.location.longitude)
-                                    ,values)
-                    existing.location_id = location.location_id
-                    new_ident_value = True
+                    msg = 'Location'
+                    self.report_conflict(existing, "Location",
+                                         existing.location, samp.location,
+                                         msg, values)
+                    #existing.location_id = location.location_id
+                    #new_ident_value = True
                     change_reasons.append('Updated location')
             else:
                 existing.location_id = samp.location.location_id
@@ -781,10 +808,10 @@ class Uploader():
             if existing.proxy_location:
                 if samp.proxy_location.location_id != existing.proxy_location_id:
                     proxy_location = samp.proxy_location
-                    self.report("Conflicting proxy location value updated {}\t{}"
-                                .format(pformat(proxy_location.to_dict(), width=1000, compact=True),
-                                               pformat(existing.proxy_location.to_dict(), width=1000, compact=True)),
-                               values)
+                    msg = 'Proxy Location'
+                    self.report_conflict(existing, "Location",
+                                         existing.proxy_location, samp.proxy_location,
+                                         msg, values)
                     existing.proxy_location_id = proxy_location.location_id
                     new_ident_value = True
                     change_reasons.append('updated proxy location')
@@ -808,10 +835,10 @@ class Uploader():
                             fuzzyMatch = True
 
                     if not fuzzyMatch:
-                        self.report("Conflicting partner_species value not updated record {}\t{}".format(
-                                                                           samp.partner_species,
-                                                                           existing.partner_species),
-                                        values)
+                        msg = "Not updated"
+                        self.report_conflict(existing, "Species",
+                                             existing.partner_species, samp.partner_species,
+                                             msg, values)
 
             else:
                 existing.partner_species = samp.partner_species

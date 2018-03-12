@@ -178,7 +178,9 @@ class TestCountry(TestBase):
             self.assertEqual(looked_up.location.country, 'MDG')
             self.assertEqual(looked_up.location.latitude, -16.94223)
             self.assertEqual(looked_up.location.longitude, 46.83144)
-            self.assertEqual(looked_up.location.identifiers[0].identifier_value, 'Maevatanana')
+            for ident in looked_up.location.identifiers:
+                if ident.study_name[:4] == looked_up.study_name[:4]:
+                    self.assertEqual(ident.identifier_value, 'Maevatanana')
             self.assertEqual(looked_up.study_name[:4], '9050')
 
             if looked_up.location_id not in self._locations:
@@ -201,9 +203,9 @@ class TestCountry(TestBase):
 
             looked_up = looked_up.sampling_events[0]
 #            print(looked_up)
-            self.assertEqual(looked_up.location.country, 'MDG')
-            self.assertEqual(looked_up.location.latitude, -18.766947)
-            self.assertEqual(looked_up.location.longitude, 46.869107)
+            self.assertEqual(looked_up.location.country, 'BEN')
+            self.assertEqual(looked_up.location.latitude, 9.30769)
+            self.assertEqual(looked_up.location.longitude, 2.315834)
             self.assertEqual(looked_up.study_name[:4], '0000')
             if looked_up.location_id not in self._locations:
                 self._locations.append(looked_up.location_id)
@@ -253,12 +255,14 @@ class TestCountry(TestBase):
             self.assertIn(msg, self._messages)
 
             msg = "Country conflict not updated in proxy IN vs MDG in {'identifier_source': 'oxford_country', 'identifier_type': 'alt_oxford_id', 'identifier_value': '905094', 'study_name': None}\t{'identifier_source': 'countries', 'identifier_type': 'oxford_id', 'identifier_value': 'CT0004-C', 'study_name': None}\t{'identifier_source': 'oxford_country', 'identifier_type': 'oxford_id', 'identifier_value': 'CT0004-C', 'study_name': None}\t{'identifier_source': 'countries', 'identifier_type': 'partner_id', 'identifier_value': 'MDG/TST_0004', 'study_name': None}\t{'identifier_source': 'oxford_country', 'identifier_type': 'partner_id', 'identifier_value': 'MDG/TST_0004', 'study_name': None} for oxford_country.tsv"
-            
+
             self.assertIn(msg, self._messages)
             self.assertEqual(looked_up.location.country, 'MDG')
             self.assertEqual(looked_up.location.latitude, -16.94223)
             self.assertEqual(looked_up.location.longitude, 46.83144)
-            self.assertEqual(looked_up.location.identifiers[0].identifier_value, 'Maevatanana')
+            for ident in looked_up.location.identifiers:
+                if ident.study_name[:4] == looked_up.study_name[:4]:
+                    self.assertNotEqual(ident.identifier_value, 'India')
             self.assertEqual(looked_up.study_name[:4], '9052')
             if looked_up.location_id not in self._locations:
                 self._locations.append(looked_up.location_id)

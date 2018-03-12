@@ -81,18 +81,11 @@ class TestSampling_Event(TestBase):
 
             self.assertEqual(context.exception.status, 404)
 
-        self.assertIn("Conflicting study_id value 9010 " +
-                      "Upload test study 2 9011 Upload test study\t" +
-                      "[('sample_oxford_id', '123456'), " +
-                      "('study_id', '9010 Upload test study 2')]", self._messages)
-
-        self.assertIn("Conflicting study_id value 9012 " +
-                      "Upload test study 3 9010 Upload test study 2\t" +
-                      "[('sample_oxford_id', '123456'), " +
-                      "('study_id', '9012 Upload test study 3')]", self._messages)
-
-        self.assertIn("Conflicting study_id value 1089 " +
-                      "R&D special study 9010 Upload test study 2\t" +
-                      "[('sample_oxford_id', '123456'), " +
-                      "('study_id', '1089 R&D special study')]",
-                      self._messages)
+        messages = [ 
+            "Conflicting Study value\t\t{}\t9011 Upload test study\t9011 Upload test study\t9010 Upload test study 2\t[('sample_oxford_id', '123456'), ('study_id', '9010 Upload test study 2')]",
+            "Conflicting Study value\t\t{}\t9010 Upload test study 2\t9010 Upload test study 2\t9012 Upload test study 3\t[('sample_oxford_id', '123456'), ('study_id', '9012 Upload test study 3')]",
+            "Conflicting Study value\t\t{}\t9010 Upload test study 2\t9010 Upload test study 2\t1089 R&D special study\t[('sample_oxford_id', '123456'), ('study_id', '1089 R&D special study')]"
+            ]
+        for msg in messages:
+            msg = msg.format(looked_up.sampling_event_id)
+            self.assertIn(msg, self._messages)

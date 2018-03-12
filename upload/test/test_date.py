@@ -161,9 +161,8 @@ class TestDate(TestBase):
             looked_up = looked_up.sampling_events[0]
             self.assertEqual(looked_up.doc, datetime.date(2017, 2, 7))
 
-            self.assertIn("Conflicting doc value updated 2017-02-07 2017-03-12\t" +
-                          "[('doc', datetime.date(2017, 2, 7)), ('doc_accuracy', None), " +
-                          "('sample_oxford_id', '12353'), ('study_id', '9020 Upload test study 2')]", self._messages)
+            msg = "Conflicting DOC value\t\t{}\t9020 Upload test study 2\t2017-03-12\t2017-02-07\t[('doc', datetime.date(2017, 2, 7)), ('doc_accuracy', None), ('sample_oxford_id', '12353'), ('study_id', '9020 Upload test study 2')]".format(looked_up.sampling_event_id)
+            self.assertIn(msg, self._messages)
         except ApiException as error:
             self.fail("test_year_accuracy: Exception when calling download_sampling_event_by_identifier {}"
                         .format(error))
@@ -179,21 +178,17 @@ class TestDate(TestBase):
         try:
             looked_up = api_instance.download_sampling_events_by_identifier('oxford_id', '12352')
             looked_up = looked_up.sampling_events[0]
-            self.assertEqual(looked_up.doc_accuracy, 'day')
+            self.assertIsNone(looked_up.doc_accuracy)
             self.assertEqual(looked_up.doc, datetime.date(2017, 2, 7))
-            self.assertIn("Conflicting doc value updated 2017-02-07 2017-01-01\t" +
-                          "[('doc', datetime.date(2017, 2, 7)), ('doc_accuracy', None), " +
-                          "('sample_oxford_id', '12352'), " +
-                          "('study_id', '9020 Upload test study 2')]", self._messages)
+            msg = "Conflicting DOC value\tAccuracy cleared\t{}\t9020 Upload test study 2\t2017-01-01\t2017-02-07\t[('doc', datetime.date(2017, 2, 7)), ('doc_accuracy', None), ('sample_oxford_id', '12352'), ('study_id', '9020 Upload test study 2')]".format(looked_up.sampling_event_id)
+            self.assertIn(msg, self._messages)
 
             looked_up = api_instance.download_sampling_events_by_identifier('oxford_id', '12351')
             looked_up = looked_up.sampling_events[0]
             self.assertIsNone(looked_up.doc_accuracy)
             self.assertEqual(looked_up.doc, datetime.date(2017, 2, 7))
-            self.assertIn("Conflicting doc value not updated 2017-01-01 2017-02-07\t" +
-                          "[('doc', datetime.date(2017, 1, 1)), ('doc_accuracy', 'year'), " +
-                          "('sample_oxford_id', '12351'), " +
-                          "('study_id', '9020 Upload test study 2')]", self._messages)
+            msg = "Conflicting DOC value\tNot updated\t{}\t9020 Upload test study 2\t2017-02-07\t2017-01-01\t[('doc', datetime.date(2017, 1, 1)), ('doc_accuracy', 'year'), ('sample_oxford_id', '12351'), ('study_id', '9020 Upload test study 2')]".format(looked_up.sampling_event_id)
+            self.assertIn(msg, self._messages)
 
         except ApiException as error:
             self.fail("test_year_accuracy: Exception when calling download_sampling_event_by_identifier {}"

@@ -132,19 +132,15 @@ class TestLocation(TestBase):
         try:
             looked_up = api_instance.download_sampling_events_by_identifier('oxford_id', '22345')
             looked_up = looked_up.sampling_events[0]
-            errmsg = "Location name conflict1\t9040\tRatanakiri\t" +\
-                "{'accuracy': None, 'country': 'KHM', 'curated_name': None, 'curation_method': None, " +\
-                "'identifiers': [" +\
-                "{'identifier_source': 'locations', 'identifier_type': 'partner_name', 'identifier_value': 'Ratanakiri', 'study_name': '9040'}]" +\
-                ", 'latitude': 13.86208, " +\
-                "'location_id': '{}'".format(looked_up.location_id) +\
-                ", 'longitude': 107.097015, 'notes': 'locations.tsv'}" +\
-                "\t13.9\t107.1\t[('country', 'KHM'), ('latitude', '13.86208'), ('location_name', 'Ratanakiri'), ('longitude', '107.097015'), ('proxy_latitude', '13.9'), ('proxy_location_name', 'Ratanakiri'), ('proxy_longitude', '107.1'), ('sample_oxford_id', '22345'), ('study_id', '9040 Upload location test study')]"
+
+            errmsg = "Conflicting Location name value\tRatanakiri\t\t\t{'accuracy': None, 'country': None, 'curated_name': None, 'curation_method': None, 'identifiers': [{'identifier_source': 'locations', 'identifier_type': 'partner_name', 'identifier_value': 'Ratanakiri', 'study_name': '9040'}], 'latitude': 13.9, 'location_id': None, 'longitude': 107.1, 'notes': 'locations.tsv'}\t{'accuracy': None, 'country': 'KHM', 'curated_name': None, 'curation_method': None, 'identifiers': [{'identifier_source': 'locations', 'identifier_type': 'partner_name', 'identifier_value': 'Ratanakiri', 'study_name': '9040'}], 'latitude': 13.86208, " +\
+                     "'location_id': '{}',".format(looked_up.location_id) +\
+                     " 'longitude': 107.097015, 'notes': 'locations.tsv'}\t[('country', 'KHM'), ('latitude', '13.86208'), ('location_name', 'Ratanakiri'), ('longitude', '107.097015'), ('proxy_latitude', '13.9'), ('proxy_location_name', 'Ratanakiri'), ('proxy_longitude', '107.1'), ('sample_oxford_id', '22345'), ('study_id', '9040 Upload location test study')]"
 
             #Used for diagnosis
-            for msg in self._messages:
-                if msg.startswith(errmsg[:25]):
-                    print('\n'.join(difflib.context_diff(errmsg.split('\n'), msg.split('\n'))))
+            #for msg in self._messages:
+            #    if msg.startswith(errmsg[:25]):
+            #        print('\n'.join(difflib.context_diff(errmsg.split('\n'), msg.split('\n'))))
             self.assertIn(errmsg, self._messages)
             self.assertIsNone(looked_up.proxy_location_id)
             self.assertIsNone(looked_up.proxy_location)
@@ -184,11 +180,24 @@ class TestLocation(TestBase):
             self.fail("test_location_duplicate_name_ok: Exception when calling download_sampling_event_by_identifier {}"
                         .format(error))
 
-
     """
     """
     def test_location_duplicate_gps_simple(self):
-        errmsg = '''duplicate location\t9040\tDuplicate GPS Ratanakiri\t13.86208\t107.097015\tRatanakiri\t[('country', 'KHM'), ('latitude', '13.86208'), ('location_name', 'Duplicate GPS Ratanakiri'), ('longitude', '107.097015'), ('proxy_latitude', ''), ('proxy_longitude', ''), ('sample_oxford_id', '22350'), ('study_id', '9040 Upload location test study')]'''
+
+        api_instance = swagger_client.LocationApi(self._api_client)
+
+        loc = api_instance.download_gps_location(str(13.86208),str(107.097015))
+
+        errmsg = "Conflicting Location name value\tduplicate location\t\tDuplicate GPS Ratanakiri\tRatanakiri\t\t\t{'accuracy': None, 'country': 'KHM', 'curated_name': None, 'curation_method': None, 'identifiers': [{'identifier_source': 'locations', 'identifier_type': 'partner_name', 'identifier_value': 'Not Ratanakiri', 'study_name': '9042'}, {'identifier_source': 'locations', 'identifier_type': 'partner_name', 'identifier_value': 'Ratanakiri', 'study_name': '9040'}, {'identifier_source': 'locations', 'identifier_type': 'partner_name', 'identifier_value': 'Duplicate GPS Ratanakiri', 'study_name': '9040'}], 'latitude': 13.86208, " +\
+                 "'location_id': '{}',".format(loc.location_id) +\
+                 " 'longitude': 107.097015, 'notes': 'locations.tsv'}\t{'accuracy': None, 'country': 'KHM', 'curated_name': None, 'curation_method': None, 'identifiers': [{'identifier_source': 'locations', 'identifier_type': 'partner_name', 'identifier_value': 'Not Ratanakiri', 'study_name': '9042'}, {'identifier_source': 'locations', 'identifier_type': 'partner_name', 'identifier_value': 'Ratanakiri', 'study_name': '9040'}], 'latitude': 13.86208, " +\
+                 "'location_id': '{}',".format(loc.location_id) +\
+                 " 'longitude': 107.097015, 'notes': 'locations.tsv'}\t[('country', 'KHM'), ('latitude', '13.86208'), ('location_name', 'Duplicate GPS Ratanakiri'), ('longitude', '107.097015'), ('proxy_latitude', ''), ('proxy_longitude', ''), ('sample_oxford_id', '22350'), ('study_id', '9040 Upload location test study')]"
+            #Used for diagnosis
+        for msg in self._messages:
+            if msg.startswith(errmsg[:71]):
+                print('\n'.join(difflib.context_diff(errmsg.split('[\n\t\{]'), msg.split('[\n\t\{]'))))
+
         self.assertIn(errmsg, self._messages)
 
 
