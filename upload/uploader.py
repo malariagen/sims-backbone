@@ -819,8 +819,8 @@ class Uploader():
                     self.report_conflict(existing, "Location",
                                          existing.location, samp.location,
                                          msg, values)
-                    #existing.location_id = location.location_id
-                    #new_ident_value = True
+                    existing.location_id = location.location_id
+                    new_ident_value = True
                     change_reasons.append('Updated location')
             else:
                 existing.location_id = samp.location.location_id
