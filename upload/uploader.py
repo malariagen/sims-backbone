@@ -459,7 +459,7 @@ class Uploader():
             #print("Failed to find location {}".format(loc))
             pass
 
-        if not looked_up:
+        if not looked_up and not partner_name == "##Unknown":
             try:
                 named_locations = self._dao.download_partner_location(partner_name)
                 for named_loc in named_locations.locations:
