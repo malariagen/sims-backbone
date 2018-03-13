@@ -310,10 +310,15 @@ class Uploader():
 
         return self.process_sampling_event(values, samp, existing)
 
+    """
+        returns true if the identifier is already in, or successfully added to, the location
+    """
     def add_location_identifier(self, sampling_event, study_id, looked_up, ident_type, partner_name, values):
 
         if not looked_up:
-            return
+            return False
+
+        ret = False
 
         found = False
         if looked_up.identifiers and study_id:
@@ -325,6 +330,7 @@ class Uploader():
                     found = True
 
         if not found:
+            existing_location = deepcopy(looked_up)
             #print("adding identifier1 {}".format(looked_up))
             if not looked_up.identifiers:
                 looked_up.identifiers = []
@@ -340,30 +346,35 @@ class Uploader():
                 #print("adding identifier3 {}".format(looked_up))
                 try:
                     updated = self._dao.update_location(looked_up.location_id, looked_up)
+                    ret = True
                 except ApiException as err:
                     #print("Error adding location identifier {} {}".format(looked_up, err))
-                    message = 'duplicate location\t{}\t{}'.format(ident_type,partner_name)
+                    message = 'duplicate location:{}:{}'.format(ident_type,partner_name)
                     try:
                         conflict = self._dao.download_partner_location(partner_name)
                         if conflict and conflict.locations:
                             conflict_loc = self._dao.download_location(conflict.locations[0].location_id)
                             conflict_loc = self._dao.download_gps_location(looked_up.latitude,
                                                                               looked_up.longitude)
-                            self.report_conflict(sampling_event, "Location name", looked_up,
+                            self.report_conflict(sampling_event, "Location name", existing_location,
                                                  conflict_loc, message, values)
+                        else:
+                            self.report('No conflict on error: {}'.format(partner_name), values)
                     except ApiException as err:
                         try:
                             conflict_loc = self._dao.download_gps_location(looked_up.latitude,
                                                                               looked_up.longitude)
                             for cname in conflict_loc.identifiers:
                                 if cname.study_name[:4] == study_id[:4]:
-                                    message = message + '\t' + cname.identifier_value
+                                    message = message + ':' + cname.identifier_value
                             self.report_conflict(sampling_event, "Location name", looked_up,
                                                  conflict_loc, message, values)
                         except ApiException as err:
                             print(err)
-        #else:
-        #    print("identifier exists")
+        else:
+            ret = True
+
+        return ret
 
     def update_country(self, country, looked_up):
 
@@ -503,18 +514,20 @@ class Uploader():
             try:
                 #print("Found location {}".format(looked_up))
                 loc.location_id = looked_up.location_id
-                self.add_location_identifier(existing_event, study_id, looked_up, prefix, partner_name, values)
+                added_id = self.add_location_identifier(existing_event, study_id, looked_up, prefix, partner_name, values)
 
-                try:
-
-                    loc.location_id = None
+                if added_id:
                     try:
-                        ret = self.update_country(loc.country, looked_up)
-                    except ApiException as err:
-                        print(err)
-                except Exception as err:
-                    #Either a duplicate or country conflict
-                    self.report(err, values)
+
+                        loc.location_id = None
+                        try:
+                            ret = self.update_country(loc.country, looked_up)
+                        except Exception as err:
+                            self.report_conflict(existing_event, 'Country', looked_up.country,
+                                                     loc.country, 'not updated', values)
+                    except Exception as err:
+                        #Either a duplicate or country conflict
+                        self.report(err, values)
 
             except Exception as err:
                 print(repr(err))
