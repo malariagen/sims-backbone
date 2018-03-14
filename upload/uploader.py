@@ -301,6 +301,11 @@ class Uploader():
 
     def process_item(self, values):
 
+        #Reset connections for each item
+        #Have had problems with pool.join blocking in ApiClient for
+        #larger input files
+        self._dao.setup(self._config_file)
+
         if 'study_id' not in values:
             values['study_id'] = '0000-Unknown'
 

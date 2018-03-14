@@ -13,15 +13,17 @@ from swagger_client.rest import ApiException
 
 class RemoteBackboneDAO(AbstractBackboneDAO):
 
+    _auth_token = None
+
     def __init__(self):
         self._logger = logging.getLogger(__name__)
 
     def setup(self, config_file):
         # Configure OAuth2 access token for authorization: OauthSecurity
-        self._auth_token = self.get_access_token(config_file)
+        auth_token = self.get_access_token(config_file)
 
         configuration = swagger_client.Configuration()
-        configuration.access_token = self._auth_token
+        configuration.access_token = auth_token
 
         self.es_api_instance = swagger_client.EventSetApi(swagger_client.ApiClient(configuration))
         self.location_api_instance = swagger_client.LocationApi(swagger_client.ApiClient(configuration))
@@ -30,12 +32,15 @@ class RemoteBackboneDAO(AbstractBackboneDAO):
 
     def get_access_token(self, config_file):
 
-        with open(config_file) as json_file:
-            args = json.load(json_file)
-            r = requests.get(os.getenv('TOKEN_URL'), args, headers = { 'service': 'http://localhost/full-map' })
-            at = r.text.split('=')
-            token = at[1].split('&')[0]
-            return(token)
+        if not self._auth_token:
+            with open(config_file) as json_file:
+                args = json.load(json_file)
+                r = requests.get(os.getenv('TOKEN_URL'), args, headers = { 'service': 'http://localhost/full-map' })
+                at = r.text.split('=')
+                token = at[1].split('&')[0]
+                self._auth_token = token
+
+        return self._auth_token
 
     def create_event_set(self, event_set_id):
 
