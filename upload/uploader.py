@@ -36,10 +36,15 @@ class Uploader():
 
     _dao = None
 
+    _config_file = None
+
     def __init__(self, config_file):
         self._logger = logging.getLogger(__name__)
 
         self._dao = RemoteBackboneDAO()
+
+        self._config_file = config_file
+
         with open(config_file) as json_file:
             args = json.load(json_file)
             if 'dao_type' in args:
