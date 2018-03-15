@@ -81,7 +81,7 @@ class ReportController(BaseController):
             self.log_action(user, 'uncurated_locations', None, None, None, 403)
             return pe.message, 403
 
-        get = MissingTaxon(self.get_connection())
+        get = UncuratedLocations(self.get_connection())
 
         retcode = 200
         country = None
