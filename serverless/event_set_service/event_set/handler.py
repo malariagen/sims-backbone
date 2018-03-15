@@ -1,27 +1,17 @@
 import json
-import ujson
 import os, sys, inspect
-# realpath() will make your script run, even if you symlink it :)
-cmd_folder = os.path.realpath(os.path.abspath(os.path.split(inspect.getfile( inspect.currentframe() ))[0]))
-if cmd_folder not in sys.path:
-     sys.path.insert(0, cmd_folder)
+currentframe = os.path.split(inspect.getfile(inspect.currentframe()))[0]
+paths = os.getenv('PYTHON_PATH').split(':')
 
-# Use this if you want to include modules from a subfolder
-cmd_subfolder = os.path.realpath(os.path.abspath(os.path.join(os.path.split(inspect.getfile(inspect.currentframe()))[0],"../server")))
-if cmd_subfolder not in sys.path:
-     sys.path.insert(0, cmd_subfolder)
-
-cmd_subfolder = os.path.realpath(os.path.abspath(os.path.join(os.path.split(inspect.getfile(inspect.currentframe()))[0],"../server/bb_server")))
-if cmd_subfolder not in sys.path:
-     sys.path.insert(0, cmd_subfolder)
-from swagger_server.models.event_set import EventSet
-from swagger_server.models.event_set_note import EventSetNote
-
-import logging
-
-from backbone_server.controllers.event_set_controller import EventSetController
+for include_path in paths:
+    cmd_subfolder = os.path.realpath(os.path.abspath(os.path.join(currentframe,include_path)))
+    if cmd_subfolder not in sys.path:
+         sys.path.insert(0, cmd_subfolder)
 
 from util.response_util import create_response
+from util.request_util import get_body,get_user,get_auths
+
+from backbone_server.controllers.event_set_controller import EventSetController
 
 event_set_controller = EventSetController()
 
@@ -36,14 +26,17 @@ def create_event_set(event, context):
 
     :rtype: EventSet
     """
+    user = get_user(event)
 
-    user = event['requestContext']['authorizer']['principalId']
+    if user is None:
+        return create_response(event, 401, {})
+
+    auths = get_auths(event_set_controller, event)
 
     if 'pathParameters' in event:
         event_set_id = event["pathParameters"]["event_set_id"]
 
-    value, retcode = event_set_controller.create_event_set(event_set_id, user,
-                                                 event_set_controller.authorizer(event['requestContext']['authorizer']))
+    value, retcode = event_set_controller.create_event_set(event_set_id, user, auths)
 
     return create_response(event, retcode, value)
 
@@ -60,14 +53,19 @@ def create_event_set_item(event, context):
     :rtype: EventSet
     """
 
-    user = event['requestContext']['authorizer']['principalId']
+    user = get_user(event)
+
+    if user is None:
+        return create_response(event, 401, {})
+
+    auths = get_auths(event_set_controller, event)
 
     if 'pathParameters' in event:
         event_set_id = event["pathParameters"]["event_set_id"]
         sampling_event_id = event["pathParameters"]["sampling_event_id"]
 
-    (value, retcode) = event_set_controller.create_event_set_item(event_set_id, sampling_event_id, user,
-                                                  event_set_controller.authorizer(event['requestContext']['authorizer']))
+    (value, retcode) = event_set_controller.create_event_set_item(event_set_id, sampling_event_id,
+                                                                  user, auths)
 
     return create_response(event, retcode, value)
 
@@ -86,7 +84,12 @@ def create_event_set_note(event, context):
     :rtype: None
     """
 
-    user = event['requestContext']['authorizer']['principalId']
+    user = get_user(event)
+
+    if user is None:
+        return create_response(event, 401, {})
+
+    auths = get_auths(event_set_controller, event)
 
     if 'pathParameters' in event:
         event_set_id = event["pathParameters"]["event_set_id"]
@@ -95,7 +98,7 @@ def create_event_set_note(event, context):
     note = EventSetNote.from_dict(json.loads(event["body"]))
 
     value, retcode = event_set_controller.create_event_set_note(event_set_id, note_id, note, user,
-                                                  event_set_controller.authorizer(event['requestContext']['authorizer']))
+                                                                auths)
 
     return create_response(event, retcode, value)
 
@@ -109,13 +112,17 @@ def delete_event_set(event, context):
     :rtype: None
     """
 
-    user = event['requestContext']['authorizer']['principalId']
+    user = get_user(event)
+
+    if user is None:
+        return create_response(event, 401, {})
+
+    auths = get_auths(event_set_controller, event)
 
     if 'pathParameters' in event:
         event_set_id = event["pathParameters"]["event_set_id"]
 
-    value, retcode = event_set_controller.delete_event_set(event_set_id, user,
-                                                           event_set_controller.authorizer(event['requestContext']['authorizer']))
+    value, retcode = event_set_controller.delete_event_set(event_set_id, user, auths)
 
     return create_response(event, retcode, value)
 
@@ -131,14 +138,19 @@ def delete_event_set_item(event, context):
     :rtype: None
     """
 
-    user = event['requestContext']['authorizer']['principalId']
+    user = get_user(event)
+
+    if user is None:
+        return create_response(event, 401, {})
+
+    auths = get_auths(event_set_controller, event)
 
     if 'pathParameters' in event:
         event_set_id = event["pathParameters"]["event_set_id"]
         sampling_event_id = event["pathParameters"]["sampling_event_id"]
 
-    value, retcode = event_set_controller.delete_event_set_item(event_set_id, sampling_event_id, user,
-                                                  event_set_controller.authorizer(event['requestContext']['authorizer']))
+    value, retcode = event_set_controller.delete_event_set_item(event_set_id, sampling_event_id,
+                                                                user, auths)
 
     return create_response(event, retcode, value)
 
@@ -154,14 +166,18 @@ def delete_event_set_note(event, context):
     :rtype: None
     """
 
-    user = event['requestContext']['authorizer']['principalId']
+    user = get_user(event)
+
+    if user is None:
+        return create_response(event, 401, {})
+
+    auths = get_auths(event_set_controller, event)
 
     if 'pathParameters' in event:
         event_set_id = event["pathParameters"]["event_set_id"]
         note_id = event["pathParameters"]["note_id"]
 
-    value, retcode = event_set_controller.delete_event_set_note(event_set_id, note_id, user,
-                                                  event_set_controller.authorizer(event['requestContext']['authorizer']))
+    value, retcode = event_set_controller.delete_event_set_note(event_set_id, note_id, user, auths)
 
     return create_response(event, retcode, value)
 
@@ -175,7 +191,12 @@ def download_event_set(event, context):
     :rtype: EventSet
     """
 
-    user = event['requestContext']['authorizer']['principalId']
+    user = get_user(event)
+
+    if user is None:
+        return create_response(event, 401, {})
+
+    auths = get_auths(event_set_controller, event)
 
     start =  None
     count =  None
@@ -190,7 +211,7 @@ def download_event_set(event, context):
         event_set_id = event["pathParameters"]["event_set_id"]
 
     value, retcode = event_set_controller.download_event_set(event_set_id, start, count, user,
-                                                  event_set_controller.authorizer(event['requestContext']['authorizer']))
+                                                             auths)
 
     return create_response(event, retcode, value)
 
@@ -202,10 +223,14 @@ def download_event_sets(event, context):
     :rtype: EventSets
     """
 
-    user = event['requestContext']['authorizer']['principalId']
+    user = get_user(event)
 
-    value, retcode = event_set_controller.download_event_sets(user,
-                                                  event_set_controller.authorizer(event['requestContext']['authorizer']))
+    if user is None:
+        return create_response(event, 401, {})
+
+    auths = get_auths(event_set_controller, event)
+
+    value, retcode = event_set_controller.download_event_sets(user, auths)
 
     return create_response(event, retcode, value)
 
@@ -221,15 +246,19 @@ def update_event_set(event, context):
     :rtype: EventSet
     """
 
-    user = event['requestContext']['authorizer']['principalId']
+    user = get_user(event)
+
+    if user is None:
+        return create_response(event, 401, {})
+
+    auths = get_auths(event_set_controller, event)
 
     if 'pathParameters' in event:
         event_set_id = event["pathParameters"]["event_set_id"]
 
     event_set = EventSet.from_dict(json.loads(event["body"]))
 
-    value, retcode = event_set_controller.update_event_set(event_set_id, event_set, user,
-                                                  event_set_controller.authorizer(event['requestContext']['authorizer']))
+    value, retcode = event_set_controller.update_event_set(event_set_id, event_set, user, auths)
 
     return create_response(event, retcode, value)
 
@@ -247,7 +276,12 @@ def update_event_set_note(event, context):
     :rtype: None
     """
 
-    user = event['requestContext']['authorizer']['principalId']
+    user = get_user(event)
+
+    if user is None:
+        return create_response(event, 401, {})
+
+    auths = get_auths(event_set_controller, event)
 
     if 'pathParameters' in event:
         event_set_id = event["pathParameters"]["event_set_id"]
@@ -256,6 +290,6 @@ def update_event_set_note(event, context):
     note = EventSetNote.from_dict(json.loads(event["body"]))
 
     value, retcode = event_set_controller.update_event_set_note(event_set_id, note_id, note, user,
-                                                  event_set_controller.authorizer(event['requestContext']['authorizer']))
+                                                                auths)
 
     return create_response(event, retcode, value)
