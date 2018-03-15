@@ -28,7 +28,6 @@ export class AllLocationsMapComponent implements OnInit {
     this.locationService.downloadLocations().subscribe(
       (locations) => {
         this.locations = locations;
-        console.log(this.locations);
       },
       (err) => {
         console.log(err);
@@ -39,7 +38,7 @@ export class AllLocationsMapComponent implements OnInit {
           console.error(err);
         }
       },
-      () => { console.log("Downloaded locations") }
+      () => { }
     )
   }
 
