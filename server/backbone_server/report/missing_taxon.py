@@ -19,16 +19,16 @@ class MissingTaxon():
         with self._connection:
             with self._connection.cursor() as cursor:
 
-                stmt = '''select distinct study_name,partner_species from partner_species_identifiers 
+                stmt = '''select distinct study_name from partner_species_identifiers 
                 LEFT JOIN taxonomy_identifiers ON taxonomy_identifiers.partner_species_id = partner_species_identifiers.id 
                 JOIN studies ON studies.id=study_id 
-                WHERE taxonomy_id IS NULL'''
+                WHERE taxonomy_id IS NULL ORDER BY study_name'''
 
                 cursor.execute(stmt)
 
                 studies = []
 
-                for (study_name, partner_species) in cursor:
+                for (study_name,) in cursor:
                     studies.append(study_name)
 
                 for study_id in studies:
