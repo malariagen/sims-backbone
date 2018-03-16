@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 
 import { ErrorDialogComponent } from '../error-dialog/error-dialog.component';
@@ -16,15 +16,14 @@ import { OAuthService } from 'angular-oauth2-oidc';
   templateUrl: './event-set-edit-dialog.component.html',
   styleUrls: ['./event-set-edit-dialog.component.scss']
 })
-export class EventSetEditDialogComponent implements OnInit {
+export class EventSetEditDialogComponent {
 
 
   eventSets: EventSet[];
 
-  ngOnInit() {
-  }
-
-  constructor(private eventSetService: EventSetService, private oauthService: OAuthService, public dialog: MatDialog,
+  constructor(private eventSetService: EventSetService,
+    private oauthService: OAuthService,
+    public dialog: MatDialog,
     public dialogRef: MatDialogRef<EventSetEditDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any) {
 

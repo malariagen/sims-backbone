@@ -23,7 +23,6 @@ export class EventDetailComponent implements OnInit {
   set samplingEvents(samplingEvents) {
     if (samplingEvents) {
       this._samplingEvents = samplingEvents;
-      console.log(samplingEvents);
     }
   }
 }

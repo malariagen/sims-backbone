@@ -94,8 +94,10 @@ export class LocationEditComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.latitude = this.route.snapshot.params['latitude'];
-    this.longitude = this.route.snapshot.params['longitude'];
+    this.route.paramMap.subscribe(pmap => {
+      this.latitude = pmap.get('latitude');
+      this.longitude = pmap.get('longitude');
+    });
 
     this.locationService.downloadGPSLocation(this.latitude, this.longitude).subscribe(
       (location) => {

@@ -24,7 +24,9 @@ export class StudyEventListComponent implements OnInit {
   constructor(private route: ActivatedRoute, private sampleService: SamplingEventService) { }
 
   ngOnInit() {
-    this.studyName = this.route.snapshot.params['studyName'];
+    this.route.paramMap.subscribe(pmap => {
+      this.studyName = pmap.get('studyName');
+    });
   }
 
   pageNumber(pageNum: number) {

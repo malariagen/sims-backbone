@@ -1,8 +1,8 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import {
-  asyncData
-} from '../../testing';
+  asyncData, createAuthServiceSpy
+} from '../../testing/index.spec';
 
 import { AllLocationsMapComponent } from './all-locations-map.component';
 import { of } from 'rxjs/observable/of';
@@ -27,11 +27,7 @@ describe('AllLocationsMapComponent', () => {
 
   beforeEach(async(() => {
 
-    // Create a fake AuthService object 
-    const authService = jasmine.createSpyObj('OAuthService', ['getAccessToken', 'getConfiguration']);
-    // Make the spy return a synchronous Observable with the test data
-    let getAccessToken = authService.getAccessToken.and.returnValue(of(undefined));
-    let getConfiguration = authService.getConfiguration.and.returnValue(of(undefined));
+    let authService = createAuthServiceSpy();
 
     httpClientSpy = jasmine.createSpyObj('HttpClient', ['get']);
     locationService = new LocationService(<any>httpClientSpy, '', authService.getConfiguration());

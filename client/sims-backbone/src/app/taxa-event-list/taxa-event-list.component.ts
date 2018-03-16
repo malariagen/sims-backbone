@@ -24,7 +24,9 @@ export class TaxaEventListComponent implements OnInit {
   constructor(private route: ActivatedRoute, private sampleService: SamplingEventService) { }
 
   ngOnInit() {
-    this.taxaId = this.route.snapshot.params['taxaId'];
+    this.route.paramMap.subscribe(pmap => {
+      this.taxaId = pmap.get('taxaId');
+    });
   }
 
   pageNumber(pageNum: number) {

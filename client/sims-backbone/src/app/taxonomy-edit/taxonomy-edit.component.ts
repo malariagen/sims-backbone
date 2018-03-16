@@ -5,11 +5,9 @@ import { FormGroup, FormArray, FormControl, FormBuilder, Validators } from '@ang
 import { StudyEditComponent } from '../study-edit/study-edit.component';
 import { Taxonomy } from '../typescript-angular-client/model/taxonomy';
 import { Taxonomies } from '../typescript-angular-client/model/taxonomies';
-import { MetadataService } from '../typescript-angular-client/api/metadata.service';
 
 @Component({
   selector: 'app-taxonomy-edit',
-  providers: [MetadataService],
   templateUrl: './taxonomy-edit.component.html',
   styleUrls: ['./taxonomy-edit.component.css']
 })
@@ -19,7 +17,7 @@ export class TaxonomyEditComponent implements OnInit {
 
   @Input('taxonomies') taxonomies: Taxonomy[];
 
-  constructor(private fb: FormBuilder, private metadataService: MetadataService) { }
+  constructor(private fb: FormBuilder) { }
 
   ngOnInit(): void {
 

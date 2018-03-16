@@ -1,6 +1,9 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { TaxonomyEditComponent } from './taxonomy-edit.component';
+import { ReactiveFormsModule, FormGroup, FormControl, Validators, FormBuilder, FormArray } from '@angular/forms';
+import { MatSelect, MatSelectModule, MatInputModule, MatAutocompleteTrigger, MatAutocomplete } from '@angular/material';
+import { Taxonomies, Taxonomy } from '../typescript-angular-client';
 
 describe('TaxonomyEditComponent', () => {
   let component: TaxonomyEditComponent;
@@ -8,14 +11,37 @@ describe('TaxonomyEditComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ TaxonomyEditComponent ]
+      imports: [
+        ReactiveFormsModule,
+        MatSelectModule,
+        MatInputModule
+      ],
+      declarations: [
+        TaxonomyEditComponent,
+        MatAutocomplete,
+        MatAutocompleteTrigger
+      ],
+      providers: [
+        FormBuilder
+      ]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(TaxonomyEditComponent);
     component = fixture.componentInstance;
+
+    component.taxaGroup = new FormGroup({
+      partner_species: new FormControl('test partner species', Validators.required),
+      taxa: new FormArray([])
+    });
+
+    component.taxonomies = [ <Taxonomy>{
+      taxonomy_id: 1234,
+      rank: 'species',
+      name: 'Made up'
+    }];
     fixture.detectChanges();
   });
 

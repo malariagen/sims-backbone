@@ -1,6 +1,11 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ReportsComponent } from './reports.component';
+import { MatToolbarModule } from '@angular/material';
+import { Component } from '@angular/core';
+
+@Component({ selector: 'router-outlet', template: '' })
+class RouterOutletStubComponent { }
 
 describe('ReportsComponent', () => {
   let component: ReportsComponent;
@@ -8,9 +13,16 @@ describe('ReportsComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ReportsComponent ]
+      imports: [
+        MatToolbarModule
+
+      ],
+      declarations: [
+        ReportsComponent,
+        RouterOutletStubComponent
+      ]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {

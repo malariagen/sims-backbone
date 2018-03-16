@@ -1,6 +1,18 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { EventDetailComponent } from './event-detail.component';
+import { FlexLayoutModule } from '@angular/flex-layout';
+import { Component, Input } from '@angular/core';
+
+@Component({ selector: 'app-identifier-table', template: '' })
+class IdentifiersTableStubComponent {
+  @Input() identifiers;
+}
+
+@Component({ selector: 'app-location-view', template: '' })
+class LocationViewStubComponent {
+  @Input() location;
+}
 
 describe('EventDetailComponent', () => {
   let component: EventDetailComponent;
@@ -8,7 +20,8 @@ describe('EventDetailComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ EventDetailComponent ]
+      imports: [FlexLayoutModule],
+      declarations: [ EventDetailComponent, IdentifiersTableStubComponent, LocationViewStubComponent ]
     })
     .compileComponents();
   }));

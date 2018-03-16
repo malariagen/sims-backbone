@@ -25,13 +25,19 @@ export class LocationEventListComponent implements OnInit {
 
   _pageSize: number;
 
+  latitude: string;
+  longitude: string;
+
   constructor(private route: ActivatedRoute, private sampleService: SamplingEventService, private locationService: LocationService) { }
 
   ngOnInit() {
-    let latitude = this.route.snapshot.params['latitude'];
-    let longitude = this.route.snapshot.params['longitude'];
+    
+    this.route.paramMap.subscribe(pmap => {
+      this.latitude = pmap.get('latitude');
+      this.longitude = pmap.get('longitude');
+    });
 
-    this.locationService.downloadGPSLocation(latitude, longitude).subscribe(
+    this.locationService.downloadGPSLocation(this.latitude, this.longitude).subscribe(
       (location) => {
         //console.log("Downloaded location via GPS");
 

@@ -30,7 +30,7 @@ export class EventSetEditComponent implements OnInit {
 
   ngOnInit() {
 
-    this.eventSetId = this.route.snapshot.params['eventSetId'];
+    this.route.paramMap.subscribe(pmap => this.eventSetId = pmap.get('eventSetId'));
 
     this.eventSetService.downloadEventSet(this.eventSetId,0,0).subscribe(
       (eventSet: EventSet) => {

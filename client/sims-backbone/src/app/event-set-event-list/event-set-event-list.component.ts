@@ -23,8 +23,7 @@ export class EventSetEventListComponent implements OnInit {
   constructor(private route: ActivatedRoute, private sampleService: SamplingEventService) { }
 
   ngOnInit() {
-    this.eventSetId = this.route.snapshot.params['eventSetId'];
-    
+    this.route.paramMap.subscribe(pmap => this.eventSetId = pmap.get('eventSetId'));
   }
 
   pageNumber(pageNum: number) {
