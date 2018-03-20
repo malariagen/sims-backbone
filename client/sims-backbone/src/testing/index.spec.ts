@@ -1,6 +1,7 @@
 import { DebugElement } from '@angular/core';
 import { tick, ComponentFixture } from '@angular/core/testing';
 import { of } from 'rxjs/observable/of';
+import { Configuration } from '../app/typescript-angular-client';
 
 export * from './async-observable-helpers';
 export * from './activated-route-stub';
@@ -20,7 +21,11 @@ export function createAuthServiceSpy() {
     const authService = jasmine.createSpyObj('AuthService', ['getAccessToken', 'getConfiguration']);
     // Make the spy return a synchronous Observable with the test data
     let getAccessToken = authService.getAccessToken.and.returnValue(of(undefined));
-    let getConfiguration = authService.getConfiguration.and.returnValue(of(undefined));
+    let getConfiguration = new Configuration({
+        accessToken: '',
+        basePath: '',
+        withCredentials: false
+      });
 
     return authService;
 }
