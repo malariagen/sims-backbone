@@ -101,8 +101,8 @@ export class LocationEditComponent implements OnInit {
 
     this.locationService.downloadGPSLocation(this.latitude, this.longitude).subscribe(
       (location) => {
-        //console.log("Downloaded location via GPS");
-        let locs = {
+        console.log("Downloaded location via GPS");
+        let locs = <Locations>{
           count: 0,
           locations: []
         };
