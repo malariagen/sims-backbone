@@ -101,7 +101,7 @@ export class LocationEditComponent implements OnInit {
 
     this.locationService.downloadGPSLocation(this.latitude, this.longitude).subscribe(
       (location) => {
-        console.log("Downloaded location via GPS");
+        //console.log("Downloaded location via GPS");
         let locs = <Locations>{
           count: 0,
           locations: []
@@ -131,6 +131,7 @@ export class LocationEditComponent implements OnInit {
         if (this.location.identifiers) {
           this.location.identifiers.forEach(ident => {
             let identControl = new FormGroup({
+              identifier_source: new FormControl(ident.identifier_source, Validators.required),
               identifier_type: new FormControl(ident.identifier_type, Validators.required),
               identifier_value: new FormControl(ident.identifier_value, Validators.required),
               study_name: new FormControl(ident.study_name, Validators.required),
@@ -144,14 +145,16 @@ export class LocationEditComponent implements OnInit {
 
       },
       (err) => console.error(err),
-      () => { console.log("Downloaded locations") }
+      () => { 
+        //console.log("Downloaded locations") 
+      }
     );
 
   }
 
   public onSubmit({ value, valid }: { value: Location, valid: boolean }): void {
 
-    console.log("Submitting:" + JSON.stringify(value));
+    //console.log("Submitting:" + JSON.stringify(value));
     //Should be solved by the nullable property but isn't
     if (!value.notes) {
       value.notes = '';
