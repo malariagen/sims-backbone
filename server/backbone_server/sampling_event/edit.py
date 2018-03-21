@@ -1,9 +1,26 @@
 from backbone_server.errors.duplicate_key_exception import DuplicateKeyException
+from backbone_server.errors.nested_edit_exception import NestedEditException
 
+from backbone_server.location.fetch import LocationFetch
 import uuid
 
 class SamplingEventEdit():
 
+
+    @staticmethod
+    def check_location_details(cursor, location_id, location):
+
+        if location_id:
+            current_location = LocationFetch.fetch(cursor, location_id)
+
+            cli = current_location.identifiers
+
+            #It's OK if the location id is set but the location object not filled in
+            if location:
+                idents = location.identifiers
+
+                if location != current_location:
+                    raise NestedEditException("Implied location edit not allowed for {}".format(location_id))
 
     @staticmethod
     def fetch_study_id(cursor, study_name, create):

@@ -21,6 +21,7 @@ from backbone_server.controllers.base_controller  import BaseController
 from backbone_server.errors.duplicate_key_exception import DuplicateKeyException
 from backbone_server.errors.missing_key_exception import MissingKeyException
 from backbone_server.errors.permission_exception import PermissionException
+from backbone_server.errors.nested_edit_exception import NestedEditException
 
 class SamplingEventController(BaseController):
 
@@ -51,6 +52,9 @@ class SamplingEventController(BaseController):
             samp = post.post(samplingEvent)
         except DuplicateKeyException as dke:
             logging.getLogger(__name__).error("create_samplingEvent: {}".format(repr(dke)))
+            retcode = 422
+        except NestedEditException as nee:
+            logging.getLogger(__name__).error("create_samplingEvent: {}".format(repr(nee)))
             retcode = 422
 
         self.log_action(user, 'create_sampling_event', None, samplingEvent, samp, retcode)
@@ -323,6 +327,9 @@ class SamplingEventController(BaseController):
         except MissingKeyException as dme:
             logging.getLogger(__name__).error("update_samplingEvent: {}".format(repr(dme)))
             retcode = 404
+        except NestedEditException as nee:
+            logging.getLogger(__name__).error("create_samplingEvent: {}".format(repr(nee)))
+            retcode = 422
 
         self.log_action(user, 'update_sampling_event', samplingEventId, samplingEvent, samp, retcode)
 

@@ -24,6 +24,12 @@ class SamplingEventPost():
         with self._connection:
             with self._connection.cursor() as cursor:
 
+                SamplingEventEdit.check_location_details(cursor, sampling_event.location_id,
+                                                         sampling_event.location)
+                SamplingEventEdit.check_location_details(cursor, sampling_event.proxy_location_id,
+                                                         sampling_event.proxy_location)
+
+
                 uuid_val = uuid.uuid4()
 
                 study_id = SamplingEventEdit.fetch_study_id(cursor, sampling_event.study_name, True)
