@@ -88,7 +88,7 @@ class EventSetFetch():
 
         cursor.execute(stmt, args)
 
-        sampling_events.sampling_events = SamplingEventFetch.load_sampling_events(cursor, True)
+        sampling_events.sampling_events, sampling_events.locations = SamplingEventFetch.load_sampling_events(cursor, True)
 
         if not (start is None and count is None):
             cursor.execute(count_query, count_args)

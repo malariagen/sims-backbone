@@ -18,6 +18,8 @@ class SamplingEventGetByIdentifier():
         with self._connection:
             with self._connection.cursor() as cursor:
 
+                locations = {}
+
                 stmt = '''SELECT DISTINCT sampling_event_id FROM identifiers
                 WHERE identifier_type = %s AND identifier_value = %s'''
                 args = (identifier_type, identifier_value)
@@ -31,16 +33,18 @@ class SamplingEventGetByIdentifier():
 
                 cursor.execute(stmt, args)
 
-                sampling_events = SamplingEvents([], 0)
+                sampling_events = SamplingEvents(sampling_events=[], count=0)
                 event_ids = []
 
                 for sampling_event_id in cursor:
                     event_ids.append(sampling_event_id)
 
                 for sampling_event_id in event_ids:
-                    sampling_event = SamplingEventFetch.fetch(cursor, sampling_event_id)
+                    sampling_event = SamplingEventFetch.fetch(cursor, sampling_event_id, locations)
                     sampling_events.sampling_events.append(sampling_event)
                     sampling_events.count = sampling_events.count + 1
+
+        sampling_events.locations = locations
 
         #partner_name has a unique key
         if sampling_events.count == 0:

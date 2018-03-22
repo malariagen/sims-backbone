@@ -78,7 +78,7 @@ class SamplingEventFetch():
         return partner_taxonomies
 
     @staticmethod
-    def fetch(cursor, sampling_event_id):
+    def fetch(cursor, sampling_event_id, locations=None):
 
         if not sampling_event_id:
             return None
@@ -127,6 +127,8 @@ class SamplingEventFetch():
     def load_sampling_events(cursor, all_identifiers=True):
 
         sampling_events = []
+        location_list = []
+
         for (sampling_event_id, study_id, doc, doc_accuracy, partner_species, partner_species_id,
              location_id, latitude, longitude, accuracy,
              curated_name, curation_method, country, notes,
@@ -137,35 +139,15 @@ class SamplingEventFetch():
                                    doc=doc, doc_accuracy=doc_accuracy,
                                    partner_species=partner_species)
             if location_id:
-                location = Location(str(location_id),
-                                    latitude, longitude, accuracy,
-                                    curated_name, curation_method, country, notes)
-                #This will only return the identifier for the event study
-                if partner_name:
-                    ident = Identifier(identifier_type='partner_name',
-                                       identifier_value=partner_name,
-                                       study_name=study_id)
-                    location.identifiers = [ident]
-                sampling_event.location = location
                 sampling_event.location_id = str(location_id)
                 sampling_event.public_location_id = str(location_id)
-                sampling_event.public_location = location
+                if not str(location_id) in location_list:
+                    location_list.append(str(location_id))
             if proxy_location_id:
-                location = Location(str(proxy_location_id),
-                                    proxy_latitude, proxy_longitude,
-                                    proxy_accuracy,
-                                    proxy_curated_name, proxy_curation_method, proxy_country,
-                                    proxy_notes)
-                #This will only return the identifier for the event study
-                if proxy_partner_name:
-                    ident = Identifier(identifier_type='partner_name',
-                                       identifier_value=proxy_partner_name,
-                                       study_name=study_id)
-                    location.identifiers = [ident]
-                sampling_event.proxy_location = location
                 sampling_event.proxy_location_id = str(proxy_location_id)
                 sampling_event.public_location_id = str(proxy_location_id)
-                sampling_event.public_location =location
+                if not str(proxy_location_id) in location_list:
+                    location_list.append(str(proxy_location_id))
 
             sampling_events.append(sampling_event)
 
@@ -176,4 +158,10 @@ class SamplingEventFetch():
                                                                                     sampling_event.study_name,
                                                                         sampling_event.partner_species)
 
-        return sampling_events
+        locations = {}
+
+        for location_id in location_list:
+                location = LocationFetch.fetch(cursor, location_id)
+                locations[location_id] = location
+
+        return sampling_events, locations

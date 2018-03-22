@@ -51,13 +51,13 @@ class SamplingEventsGetByTaxa():
                     query_body = query_body + ' LIMIT %s OFFSET %s'
                     args = args + (count, start)
 
-                sampling_events = SamplingEvents([], 0)
+                sampling_events = SamplingEvents(sampling_events=[], count=0)
 
                 stmt = fields + query_body
 
                 cursor.execute(stmt, args)
 
-                sampling_events.sampling_events = SamplingEventFetch.load_sampling_events(cursor, True)
+                sampling_events.sampling_events, sampling_events.locations = SamplingEventFetch.load_sampling_events(cursor, True)
 
                 if not (start is None and count is None):
                     cursor.execute(count_query, count_args)

@@ -109,7 +109,7 @@ export class EventListComponent implements AfterViewInit {
     this.changeDetector.markForCheck();
   }
 
-  mapSamplingEventToRow(sample) {
+  mapSamplingEventToRow(sample, locations) {
     let event = {};
     event['doc'] = sample.doc;
     event['partner_species'] = sample.partner_species;
@@ -127,10 +127,11 @@ export class EventListComponent implements AfterViewInit {
       }
 
     });
-    if (sample.location) {
+    if (sample.location_id) {
+      let location = locations[sample.location_id];
       event['partner_location_name'] = '';
-      if (sample.location.identifiers) {
-        sample.location.identifiers.forEach(ident => {
+      if (location.identifiers) {
+        location.identifiers.forEach(ident => {
           let ident_value = ident.identifier_value;
           if (this._studyName || event['study_id']) {
             if ((this._studyName && (ident.study_name == this._studyName)) ||
@@ -142,9 +143,9 @@ export class EventListComponent implements AfterViewInit {
           }
         });
       }
-      event['location_curated_name'] = sample.location.curated_name;
-      if (sample.location.latitude) {
-        event['location'] = '<a href="location/' + sample.location.latitude + '/' + sample.location.longitude + '">' + sample.location.latitude + ', ' + sample.location.longitude + '</a>';
+      event['location_curated_name'] = location.curated_name;
+      if (location.latitude) {
+        event['location'] = '<a href="location/' + location.latitude + '/' + location.longitude + '">' + location.latitude + ', ' + location.longitude + '</a>';
       }
     }
     if (sample.partner_taxonomies) {
@@ -168,7 +169,7 @@ export class EventListComponent implements AfterViewInit {
     this.defineColumnHeaders(samples.sampling_events);
 
     samples.sampling_events.forEach((sample: SamplingEvent) => {
-      let event = this.mapSamplingEventToRow(sample);
+      let event = this.mapSamplingEventToRow(sample, samples.locations);
       eventDatabase.addEvent(event);
     });
 
