@@ -24,13 +24,29 @@ class SetTaxa():
 
 
     _taxa_map = {}
-    _auth_token = {}
+    _auth_token = ''
     _api_client = None
 
-    def __init__(self, config):
+    def __init__(self, config_file):
+        # Configure OAuth2 access token for authorization: OauthSecurity
+        auth_token = self.get_access_token(config_file)
+
         configuration = swagger_client.Configuration()
-        configuration.access_token = self._auth_token
+        configuration.access_token = auth_token
+
         self._api_client = swagger_client.ApiClient(configuration)
+
+    def get_access_token(self, config_file):
+
+        if not self._auth_token:
+            with open(config_file) as json_file:
+                args = json.load(json_file)
+                r = requests.get(os.getenv('TOKEN_URL'), args, headers = { 'service': 'http://localhost/full-map' })
+                at = r.text.split('=')
+                token = at[1].split('&')[0]
+                self._auth_token = token
+
+        return self._auth_token
 
     def load_taxa_map(self):
 
