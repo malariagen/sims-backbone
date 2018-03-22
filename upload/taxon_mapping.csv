@@ -25,6 +25,7 @@ An. jamesii,1,mosquito,Anopheles jamesii,species,Anopheles jamesii,308710
 An. maculatus,792,mosquito,Anopheles maculatus,species,Anopheles maculatus,74869
 An. maculatus A,10,mosquito,Anopheles maculatus,species,Anopheles maculatus,74869
 An. maculatus gr. (morph IDl),1,mosquito,Anopheles maculatus s.l,complex,Anopheles maculatus,74869
+Anopheles merus,3,mosquito,Anopheles merus,species,Anopheles merus,30066
 An. minimus A,3,mosquito,Anopheles minimus,species,Anopheles minimus,112268
 An. minimus,3,mosquito,Anopheles minimus,species,Anopheles minimus,112268
 An. nivipes,4,mosquito,Anopheles nivipes,species,Anopheles nivipes,74871
@@ -43,6 +44,10 @@ P. falciparum,382,Parasite,Plasmodium falciparum,species,Plasmodium falciparum,5
 P. Falciparum,382,Parasite,Plasmodium falciparum,species,Plasmodium falciparum,5833
 P.falciparum,382,Parasite,Plasmodium falciparum,species,Plasmodium falciparum,5833
 Plasmodium falciparum,38468,Parasite,Plasmodium falciparum,species,Plasmodium falciparum,5833
+Plasmodium falciparum (7G8),38468,Parasite,Plasmodium falciparum,species,Plasmodium falciparum,5833
+Plasmodium falciparum (DD2),38468,Parasite,Plasmodium falciparum,species,Plasmodium falciparum,5833
+Plasmodium falciparum (lab strain cross),38468,Parasite,Plasmodium falciparum,species,Plasmodium falciparum,5833
+Plasmodium falciparum (unspecified lab strain),38468,Parasite,Plasmodium falciparum,species,Plasmodium falciparum,5833
 Plasmodium knowlesi,18,Parasite,Plasmodium knowlesi,species,Plasmodium knowlesi,5850
 Plasmodium malariae,26,Parasite,Plasmodium malariae,species,Plasmodium malariae,5858
 Plasmodium ovale,20,Parasite,Plasmodium ovale,species,Plasmodium ovale,36330
