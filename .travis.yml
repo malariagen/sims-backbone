@@ -1,0 +1,28 @@
+language: python
+
+python:
+  - "3.5"
+
+cache: pip
+
+install:
+    - pip install -r python_client/requirements.txt
+    - pip install -r upload/requirements.txt
+
+script:
+  - (cd test;python3 -m pytest)
+
+services:
+    - postgresql
+
+before_script:
+    - ./generate.sh
+    - psql -c 'create database backbone_service;' -U postgres
+    - psql -U postgres -c "create extension postgis"
+    - export DB_USER="postgres"
+    - psql -c "\i database\backbone_service.psql;" -U ${DB_USER} backbone_service
+    - (cd server;./run.sh build)
+    - export PYTHONPATH=$(pwd)/python_client
+
+addons:
+    postgresql: "9.6"
