@@ -7,13 +7,20 @@ fi
 export PYTHONPATH=$(pwd)/..:$(pwd)/../../python_client:$(pwd)/../../server:$(pwd)/../../server/bb_server
 if [ ! -d client-env ]
 then
-    virtualenv client-env -p /usr/bin/python3.5
-    source client-env/bin/activate
+    #Already in a virtualenv
+    if [ "${TRAVIS}" != "true" ]
+    then
+        virtualenv client-env -p /usr/bin/python
+        source client-env/bin/activate
+    fi
     pip3 install -r ../requirements.txt
     pip3 install -r ../../python_client/requirements.txt
     pip3 install -r $(pwd)/../../server/backbone_server/REQUIREMENTS
 fi
-source client-env/bin/activate
+if [ "${TRAVIS}" != "true" ]
+then
+    source client-env/bin/activate
+fi
 if [ "$1" = "one" ]
 then
     python3 -m unittest test_sampling_event.TestSampling_Event.test_multiple_study
