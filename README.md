@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/malariagen/sims-backbone.svg?branch=master)](https://travis-ci.org/malariagen/sims-backbone)
+
 # sims-backbone
 
 This project is heavily based around the OpenAPI (swagger.io) definition of the API.
