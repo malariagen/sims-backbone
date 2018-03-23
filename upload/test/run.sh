@@ -7,7 +7,7 @@ fi
 export PYTHONPATH=$(pwd)/..:$(pwd)/../../python_client:$(pwd)/../../server:$(pwd)/../../server/bb_server
 if [ ! -d client-env ]
 then
-    virtualenv client-env -p /usr/bin/python3
+    virtualenv client-env -p /usr/bin/python3.5
     source client-env/bin/activate
     pip3 install -r ../requirements.txt
     pip3 install -r ../../python_client/requirements.txt
