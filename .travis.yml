@@ -23,7 +23,8 @@ before_script:
     - psql -U postgres -c "create extension postgis"
     - export DB_USER="postgres"
     - psql -c "\i database/backbone_service.psql;" -U ${DB_USER} backbone_service
-    - (cd server;./run.sh build &)
+    - (cd server;./run.sh build)
+    - (cd server;./run.sh &)
     - export PYTHONPATH=$(pwd)/python_client
 
 addons:
