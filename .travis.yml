@@ -11,8 +11,8 @@ install:
     - pip install -r python_client/requirements.txt
     - pip install -r upload/requirements.txt
     - nvm install 8
-    - npm install -g angular-cli
-    - (cd client/sims-backbone;npm install)
+    - npm install -g @angular/cli
+    - (cd client/sims-backbone;pwd;npm install)
 
 script:
   - (cd test;python3 -m pytest)
