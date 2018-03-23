@@ -20,11 +20,12 @@ before_install:
 
 before_script:
     - psql -c 'create database backbone_service;' -U postgres
-    - psql -c 'ALTER DATABASE backbone_service SET search_path=public, backbone_service, contrib;' -U postgres
     - psql -U postgres -c "create extension postgis" backbone_service
     - export DB_USER="postgres"
     - psql -c "\i database/backbone_service.psql;" -U ${DB_USER} backbone_service
+    - psql -c 'ALTER DATABASE backbone_service SET search_path=public, backbone_service, contrib;' -U postgres
     - psql -c "SELECT postgis_full_version();" -U ${DB_USER} backbone_service
+    - psql -c "\d" -U ${DB_USER} backbone_service
     - (cd server;./run.sh build)
     - export BBDEBUG=1
     - (cd server;./run.sh &)
