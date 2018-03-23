@@ -902,6 +902,9 @@ class Uploader():
             ret = existing
 
             if changed:
+                #Make sure no implied edit - location should have been updated before here
+                existing.location = None
+                existing.proxy_location = None
                 #print("Updating {} to {}".format(orig, existing))
                 ret = self._dao.update_sampling_event(existing.sampling_event_id, existing)
 
@@ -911,6 +914,10 @@ class Uploader():
             #print("Creating {}".format(samp))
             if len(samp.identifiers) == 0:
                 return None
+
+            #Make sure no implied edit - location should have been updated before here
+            samp.location = None
+            samp.proxy_location = None
 
             try:
                 created = self._dao.create_sampling_event(samp)
