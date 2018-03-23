@@ -15,8 +15,10 @@ script:
 services:
     - postgresql
 
-before_script:
+before_install:
     - ./generate.sh
+
+before_script:
     - psql -c 'create database backbone_service;' -U postgres
     - psql -U postgres -c "create extension postgis"
     - export DB_USER="postgres"
