@@ -35,12 +35,16 @@ class RemoteBackboneDAO(AbstractBackboneDAO):
 
         if not self._auth_token:
             if os.getenv('TOKEN_URL'):
-                with open(config_file) as json_file:
-                    args = json.load(json_file)
-                    r = requests.get(os.getenv('TOKEN_URL'), args, headers = { 'service': 'http://localhost/full-map' })
-                    at = r.text.split('=')
-                    token = at[1].split('&')[0]
-                    self._auth_token = token
+                try:
+                    with open(config_file) as json_file:
+                        args = json.load(json_file)
+                        r = requests.get(os.getenv('TOKEN_URL'), args, headers = { 'service': 'http://localhost/full-map' })
+                        at = r.text.split('=')
+                        token = at[1].split('&')[0]
+                        self._auth_token = token
+                except FileNotFoundError as fnfe:
+                    #Should already be reported in uploader
+                    pass
 
         return self._auth_token
 

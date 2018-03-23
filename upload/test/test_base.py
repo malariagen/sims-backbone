@@ -26,13 +26,17 @@ class TestBase(unittest.TestCase):
         self._configuration = swagger_client.Configuration()
 
         if os.getenv('TOKEN_URL'):
-            with open(self._config_file) as json_file:
-                args = json.load(json_file)
-                r = requests.get(os.getenv('TOKEN_URL'), args, headers = { 'service': 'http://localhost/' })
-                at = r.text.split('=')
-                token = at[1].split('&')[0]
-                self._auth_token = token
-            self._configuration.access_token = self._auth_token
+            try:
+                with open(self._config_file) as json_file:
+                    args = json.load(json_file)
+                    r = requests.get(os.getenv('TOKEN_URL'), args, headers = { 'service': 'http://localhost/' })
+                    at = r.text.split('=')
+                    token = at[1].split('&')[0]
+                    self._auth_token = token
+                self._configuration.access_token = self._auth_token
+            except FileNotFoundError as fnfe:
+                print('No config file found: {}'.format(self._config_file))
+                pass
 
         self._api_client = swagger_client.ApiClient(self._configuration)
 
