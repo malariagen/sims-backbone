@@ -24,7 +24,8 @@ before_script:
     - export DB_USER="postgres"
     - psql -c "\i database/backbone_service.psql;" -U ${DB_USER} backbone_service
     - (cd server;./run.sh build)
-    - (cd server;./run.sh &;sleep 3)
+    - (cd server;./run.sh &)
+    - sleep 3
     - export PYTHONPATH=$(pwd)/python_client
 
 addons:
