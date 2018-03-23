@@ -32,19 +32,21 @@ class SetTaxa():
         auth_token = self.get_access_token(config_file)
 
         configuration = swagger_client.Configuration()
-        configuration.access_token = auth_token
+        if auth_token:
+            configuration.access_token = auth_token
 
         self._api_client = swagger_client.ApiClient(configuration)
 
     def get_access_token(self, config_file):
 
         if not self._auth_token:
-            with open(config_file) as json_file:
-                args = json.load(json_file)
-                r = requests.get(os.getenv('TOKEN_URL'), args, headers = { 'service': 'http://localhost/full-map' })
-                at = r.text.split('=')
-                token = at[1].split('&')[0]
-                self._auth_token = token
+            if os.getenv('TOKEN_URL'):
+                with open(config_file) as json_file:
+                    args = json.load(json_file)
+                    r = requests.get(os.getenv('TOKEN_URL'), args, headers = { 'service': 'http://localhost/full-map' })
+                    at = r.text.split('=')
+                    token = at[1].split('&')[0]
+                    self._auth_token = token
 
         return self._auth_token
 
