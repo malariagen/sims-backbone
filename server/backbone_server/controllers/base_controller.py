@@ -8,7 +8,8 @@ class BaseController():
     _logger = None
 
     def __init__ (self):
-#        logging.basicConfig(level=logging.DEBUG)
+        if os.getenv('BBDEBUG'):
+            logging.basicConfig(level=logging.DEBUG)
         self._logger = logging.getLogger(__name__)
         self._connection = self._init_connection()
 
