@@ -11,6 +11,7 @@ install:
 
 script:
   - (cd test;python3 -m pytest)
+  - (cd upload/test;./run.sh)
 
 services:
     - postgresql
