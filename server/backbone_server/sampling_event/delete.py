@@ -2,6 +2,8 @@ from swagger_server.models.sampling_event import SamplingEvent
 
 from backbone_server.errors.missing_key_exception import MissingKeyException
 
+from backbone_server.sampling_event.edit import SamplingEventEdit
+
 import logging
 
 class SamplingEventDelete():
@@ -29,6 +31,8 @@ class SamplingEventDelete():
                 cursor.execute( stmt, (sampling_event_id,))
 
                 rc = cursor.rowcount
+
+                SamplingEventEdit.clean_up_taxonomies(cursor)
 
 
         if rc != 1:

@@ -94,3 +94,12 @@ class SamplingEventEdit():
 
 
 
+    @staticmethod
+    def clean_up_taxonomies(cursor):
+
+		unused_species = '(select partner_species_identifiers.id from partner_species_identifiers LEFT JOIN studies ON studies.id = study_id LEFT JOIN sampling_events ON sampling_events.study_id = studies.id WHERE sampling_events.id IS NULL)'
+		unused_idents = 'DELETE FROM taxonomy_identifiers WHERE partner_species_id IN ' + unused_species
+		unused_species_idents = 'DELETE FROM partner_species_identifiers WHERE id IN ' + unused_species
+
+		cursor.execute(unused_idents)
+		cursor.execute(unused_species_idents)

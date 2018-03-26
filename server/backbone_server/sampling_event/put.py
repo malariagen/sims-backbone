@@ -70,6 +70,8 @@ class SamplingEventPut():
                     raise err
 
 
+                SamplingEventEdit.clean_up_taxonomies(cursor)
+
                 sampling_event = SamplingEventFetch.fetch(cursor, sampling_event_id)
 
         if rc != 1:
