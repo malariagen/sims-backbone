@@ -26,6 +26,9 @@ class RemoteBackboneDAO(AbstractBackboneDAO):
         if auth_token:
             configuration.access_token = auth_token
 
+        if os.getenv('REMOTE_HOST_URL'):
+          configuration.host = "http://localhost:8080/v1"
+
         self.es_api_instance = swagger_client.EventSetApi(swagger_client.ApiClient(configuration))
         self.location_api_instance = swagger_client.LocationApi(swagger_client.ApiClient(configuration))
         self.se_api_instance = swagger_client.SamplingEventApi(swagger_client.ApiClient(configuration))

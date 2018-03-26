@@ -38,7 +38,8 @@ class TestBase(unittest.TestCase):
                 print('No config file found: {}'.format(self._config_file))
                 pass
 
-        self._configuration.host = "http://localhost:8080/v1"
+        if os.getenv('REMOTE_HOST_URL'):
+          configuration.host = "http://localhost:8080/v1"
 
         self._api_client = swagger_client.ApiClient(self._configuration)
 
