@@ -17,6 +17,7 @@ install:
 
 script:
   - (cd test;python3 -m pytest)
+  - psql -c "DELETE FROM studies;" -U ${DB_USER} backbone_service
   - (cd upload/test;./run.sh)
   - (cd client/sims-backbone;xvfb-run -a ng test --single-run --no-progress --browser=ChromeNoSandbox)
     #  - (cd client/sims-backbone;xvfb-run -a ng e2e --no-progress --config=protractor-ci.conf.js)
@@ -34,7 +35,6 @@ before_script:
     - psql -c "\i database/backbone_service.psql;" -U ${DB_USER} backbone_service
     - psql -c 'ALTER DATABASE backbone_service SET search_path=public, backbone_service, contrib;' -U postgres
     - psql -c "SELECT postgis_full_version();" -U ${DB_USER} backbone_service
-    - psql -c "\d" -U ${DB_USER} backbone_service
     - psql -c "\copy countries (English, French, alpha2, alpha3, numeric_code) FROM './database/country_codes.tsv' DELIMITER E'\t'  HEADER CSV; " -U ${DB_USER} backbone_service
     - psql -c "\copy taxonomies (id, rank, name) FROM './database/taxa.tsv' DELIMITER E'\t'  HEADER CSV;" -U ${DB_USER} backbone_service
     - (cd server;./run.sh build)
