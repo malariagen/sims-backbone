@@ -12,7 +12,8 @@ install:
     - pip install -r upload/requirements.txt
     - nvm install 8
     - npm install -g @angular/cli
-    - (cd client/sims-backbone;pwd;npm install)
+    - (cd client/sims-backbone;npm install)
+    - (cd client/sims-backbone;sed -i -e "s/url(\([-a-zA-Z0-9\.]*\))/url('\1')/" ./node_modules/material-design-icons/iconfont/material-icons.css)
 
 script:
   - (cd test;python3 -m pytest)
