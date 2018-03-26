@@ -12,18 +12,16 @@ from swagger_client.rest import ApiException
 class TestBase(unittest.TestCase):
 
 
-    _auth_token = None
-    _configuration = None
     _api_client = None
 
     _config_file = '../config_dev.json'
 
     _locations = []
 
-    """
-    """
-    def setUp(self):
-        self._configuration = swagger_client.Configuration()
+    @classmethod
+    def getApiClient(self):
+        auth_token = None
+        configuration = swagger_client.Configuration()
 
         if os.getenv('TOKEN_URL'):
             try:
@@ -32,17 +30,24 @@ class TestBase(unittest.TestCase):
                     r = requests.get(os.getenv('TOKEN_URL'), args, headers = { 'service': 'http://localhost/' })
                     at = r.text.split('=')
                     token = at[1].split('&')[0]
-                    self._auth_token = token
-                self._configuration.access_token = self._auth_token
+                    auth_token = token
+                configuration.access_token = auth_token
             except FileNotFoundError as fnfe:
-                print('No config file found: {}'.format(self._config_file))
+                print('No config file found: {}'.format(TestBase._config_file))
                 pass
 
         if os.getenv('REMOTE_HOST_URL'):
-          self._configuration.host = "http://localhost:8080/v1"
+          configuration.host = "http://localhost:8080/v1"
 
-        self._api_client = swagger_client.ApiClient(self._configuration)
+        api_client = swagger_client.ApiClient(configuration)
 
+        return api_client
+
+    """
+    """
+    def setUp(self):
+
+        self._api_client = TestBase.getApiClient()
 
     """
     """
@@ -55,63 +60,64 @@ class TestBase(unittest.TestCase):
     @classmethod
     def setUpSSR(self):
 
-        el = Upload_SSR(self._config_file)
+        el = Upload_SSR(TestBase._config_file)
         sheets = None
         el.load_data_file('TestSSR.xls', sheets)
 
     """
     """
     @classmethod
-    def deleteSamplingEvent(self, event):
-        event_api_instance = swagger_client.SamplingEventApi(self._api_client)
-        if event.location_id and event.location_id not in self._locations:
-            self._locations.append(event.location_id)
+    def deleteSamplingEvent(self, event, locations):
+        event_api_instance = swagger_client.SamplingEventApi(TestBase.getApiClient())
+        if event.location_id and event.location_id not in locations:
+            locations.append(event.location_id)
         event_api_instance.delete_sampling_event(event.sampling_event_id)
 
     """
     """
     @classmethod
-    def deleteEventSets(self, event_sets):
+    def deleteEventSets(self, event_sets, locations):
 
-        api_instance = swagger_client.EventSetApi(self._api_client)
-        event_api_instance = swagger_client.SamplingEventApi(self._api_client)
+        api_instance = swagger_client.EventSetApi(TestBase.getApiClient())
+        event_api_instance = swagger_client.SamplingEventApi(TestBase.getApiClient())
 
         for event_set in event_sets:
             test_events = event_api_instance.download_sampling_events_by_event_set(event_set)
 
             for event in test_events.sampling_events:
-                self.deleteSamplingEvent(event)
+                TestBase.deleteSamplingEvent(event, locations)
 
             api_instance.delete_event_set(event_set)
 
     """
     """
     @classmethod
-    def deleteStudies(self, studies):
+    def deleteStudies(self, studies, locations):
 
-        event_api_instance = swagger_client.SamplingEventApi(self._api_client)
+        event_api_instance = swagger_client.SamplingEventApi(TestBase.getApiClient())
 
         for study in studies:
             test_events = event_api_instance.download_sampling_events_by_study(study)
 
             for event in test_events.sampling_events:
-               self.deleteSamplingEvent(event)
+               TestBase.deleteSamplingEvent(event, locations)
     """
     """
     @classmethod
-    def tearDownSSR(self):
+    def tearDownSSR(self, locations):
 
-        self.deleteStudies(['9050', '9051'])
+        TestBase.deleteStudies(['9050', '9051'], locations)
 
-        self.deleteEventSets(['TestSSR', 'Report', 'Sequencescape', 'PV4', 'PF27', 'Ag'])
+        TestBase.deleteEventSets(['TestSSR', 'Report', 'Sequencescape', 'PV4', 'PF27', 'Ag'],
+                                 locations)
 
     """
     """
     @classmethod
-    def tearDownLocations(self):
-        location_api_instance = swagger_client.LocationApi(self._api_client)
+    def tearDownLocations(self, locations):
+        location_api_instance = swagger_client.LocationApi(TestBase.getApiClient())
 
-        for loc in self._locations:
-            self._locations.remove(loc)
+        for loc in locations:
+            locations.remove(loc)
             location_api_instance.delete_location(loc)
 

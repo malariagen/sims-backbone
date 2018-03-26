@@ -15,6 +15,8 @@ from swagger_client.rest import ApiException
 
 class TestCountry(TestBase):
 
+    _locations = []
+
     """
     """
     @classmethod
@@ -152,11 +154,13 @@ class TestCountry(TestBase):
     @classmethod
     def tearDownClass(self):
 
-        self.deleteStudies(['9052', '0000', '9060'])
-        self.deleteEventSets(['countries', 'oxford_country'])
+        locations = TestCountry._locations
 
-        self.tearDownSSR()
-        self.tearDownLocations()
+        self.deleteStudies(['9052', '0000', '9060'], locations)
+        self.deleteEventSets(['countries', 'oxford_country'], locations)
+
+        self.tearDownSSR(locations)
+        self.tearDownLocations(locations)
 
 
     """
@@ -183,10 +187,10 @@ class TestCountry(TestBase):
                     self.assertEqual(ident.identifier_value, 'Maevatanana')
             self.assertEqual(looked_up.study_name[:4], '9050')
 
-            if looked_up.location_id not in self._locations:
-                self._locations.append(looked_up.location_id)
-            if looked_up.proxy_location_id not in self._locations:
-                self._locations.append(looked_up.proxy_location_id)
+            if looked_up.location_id not in TestCountry._locations:
+                TestCountry._locations.append(looked_up.location_id)
+            if looked_up.proxy_location_id not in TestCountry._locations:
+                TestCountry._locations.append(looked_up.proxy_location_id)
 
         except ApiException as error:
             self.fail("test_location_duplicate_name: Exception when calling download_sampling_events_by_identifier {}"
@@ -207,8 +211,8 @@ class TestCountry(TestBase):
             self.assertEqual(looked_up.location.latitude, 9.30769)
             self.assertEqual(looked_up.location.longitude, 2.315834)
             self.assertEqual(looked_up.study_name[:4], '0000')
-            if looked_up.location_id not in self._locations:
-                self._locations.append(looked_up.location_id)
+            if looked_up.location_id not in TestCountry._locations:
+                TestCountry._locations.append(looked_up.location_id)
         except ApiException as error:
             self.fail("test_location_duplicate_name: Exception when calling download_sampling_events_by_identifier {}"
                         .format(error))
@@ -228,8 +232,8 @@ class TestCountry(TestBase):
             self.assertEqual(looked_up.location.latitude, -18.766947)
             self.assertEqual(looked_up.location.longitude, 46.869107)
             self.assertEqual(looked_up.study_name[:4], '9051')
-            if looked_up.location_id not in self._locations:
-                self._locations.append(looked_up.location_id)
+            if looked_up.location_id not in TestCountry._locations:
+                TestCountry._locations.append(looked_up.location_id)
         except ApiException as error:
             self.fail("test_country_from_ssr: Exception when calling download_sampling_event_by_identifier {}"
                         .format(error))
@@ -265,8 +269,8 @@ class TestCountry(TestBase):
                 if ident.study_name[:4] == looked_up.study_name[:4]:
                     self.assertNotEqual(ident.identifier_value, 'India')
             self.assertEqual(looked_up.study_name[:4], '9052')
-            if looked_up.location_id not in self._locations:
-                self._locations.append(looked_up.location_id)
+            if looked_up.location_id not in TestCountry._locations:
+                TestCountry._locations.append(looked_up.location_id)
         except ApiException as error:
             self.fail("test_country_mismatch: Exception when calling download_sampling_event_by_identifier {}"
                         .format(error))

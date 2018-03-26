@@ -11,6 +11,7 @@ from swagger_client.rest import ApiException
 
 class TestMerge(TestBase):
 
+    _locations = []
 
     _oxford_config = '''{
     "values": {
@@ -240,7 +241,9 @@ class TestMerge(TestBase):
     @classmethod
     def tearDownClass(self):
 
-        event_api_instance = swagger_client.SamplingEventApi(self._api_client)
+        locations = TestMerge._locations
+
+        event_api_instance = swagger_client.SamplingEventApi(TestBase.getApiClient())
 
         for oxid in ['EXTST000002', 'OF0093-C', 'OV0050-C', 'CT0001-C', 'CT0002-C']:
             try:
@@ -248,18 +251,18 @@ class TestMerge(TestBase):
                                                                                  oxid)
                 looked_up = looked_up.sampling_events[0]
 
-                self.deleteSamplingEvent(looked_up)
+                self.deleteSamplingEvent(looked_up, locations)
 
             except ApiException:
                 pass
 
-        self.deleteStudies(['9030','9031'])
+        self.deleteStudies(['9030','9031'], locations)
 
         self.deleteEventSets(['merge_oxford', 'merge_pf_6', 'merge_pv_3', 'roma_dump',
-                          'merge_sanger_lims'])
+                          'merge_sanger_lims'], locations)
 
-        self.tearDownSSR()
-        self.tearDownLocations()
+        self.tearDownSSR(locations)
+        self.tearDownLocations(locations)
 
     """
     """

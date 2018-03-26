@@ -12,6 +12,7 @@ from swagger_client.rest import ApiException
 
 class TestLocation(TestBase):
 
+    _locations = []
 
     _ag_json = '''
 {
@@ -113,14 +114,16 @@ class TestLocation(TestBase):
     @classmethod
     def tearDownClass(self):
 
+        locations = TestLocation._locations
+
         event_api_instance = swagger_client.SamplingEventApi(self._api_client)
 
-        self.deleteStudies(['9040', '9041', '9042'])
+        self.deleteStudies(['9040', '9041', '9042'], locations)
 
-        self.deleteEventSets(['locations', 'loc_no_study'])
+        self.deleteEventSets(['locations', 'loc_no_study'], locations)
 
-        self.tearDownSSR()
-        self.tearDownLocations()
+        self.tearDownSSR(locations)
+        self.tearDownLocations(locations)
 
 
     """
@@ -145,8 +148,8 @@ class TestLocation(TestBase):
             self.assertIsNone(looked_up.proxy_location_id)
             self.assertIsNone(looked_up.proxy_location)
 
-            if looked_up.location_id not in self._locations:
-                self._locations.append(looked_up.location_id)
+            if looked_up.location_id not in TestLocation._locations:
+                TestLocation._locations.append(looked_up.location_id)
 
         except ApiException as error:
             self.fail("test_location_duplicate_name: Exception when calling download_sampling_event_by_identifier {}"
@@ -165,16 +168,16 @@ class TestLocation(TestBase):
 
             self.assertIsNotNone(looked_up.location_id)
 
-            if looked_up.location_id not in self._locations:
-                self._locations.append(looked_up.location_id)
+            if looked_up.location_id not in TestLocation._locations:
+                TestLocation._locations.append(looked_up.location_id)
 
             looked_up = api_instance.download_sampling_events_by_identifier('oxford_id', '22347')
             looked_up = looked_up.sampling_events[0]
 
             self.assertIsNotNone(looked_up.location_id)
 
-            if looked_up.location_id not in self._locations:
-                self._locations.append(looked_up.location_id)
+            if looked_up.location_id not in TestLocation._locations:
+                TestLocation._locations.append(looked_up.location_id)
 
         except ApiException as error:
             self.fail("test_location_duplicate_name_ok: Exception when calling download_sampling_event_by_identifier {}"
@@ -214,8 +217,8 @@ class TestLocation(TestBase):
 
             self.assertEqual(looked_up.location.identifiers[0].study_name[:4], looked_up.study_name[:4])
 
-            if looked_up.location_id not in self._locations:
-                self._locations.append(looked_up.location_id)
+            if looked_up.location_id not in TestLocation._locations:
+                TestLocation._locations.append(looked_up.location_id)
 
         except ApiException as error:
             self.fail("test_location_name_study: Exception when calling download_sampling_events_by_identifier {}"

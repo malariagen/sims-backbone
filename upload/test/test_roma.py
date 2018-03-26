@@ -11,6 +11,8 @@ from swagger_client.rest import ApiException
 class TestROMA(TestBase):
 
 
+    _locations = []
+
     """
     """
     @classmethod
@@ -28,9 +30,9 @@ class TestROMA(TestBase):
     @classmethod
     def tearDownClass(self):
 
-        self.deleteStudies(['9030'])
+        self.deleteStudies(['9030'], TestROMA._locations)
 
-        self.tearDownLocations()
+        self.tearDownLocations(TestROMA._locations)
 
 
     """
@@ -44,8 +46,8 @@ class TestROMA(TestBase):
             looked_up = looked_up.sampling_events[0]
             self.assertEquals(looked_up.location.identifiers[0].identifier_value,
                               'Test name with spaces')
-            if looked_up.location.location_id not in self._locations:
-                self._locations.append(looked_up.location.location_id)
+            if looked_up.location.location_id not in TestROMA._locations:
+                TestROMA._locations.append(looked_up.location.location_id)
         except ApiException as error:
             self.fail("test_year_accuracy: Exception when calling download_sampling_event_by_identifier {}"
                         .format(error))
@@ -120,8 +122,8 @@ class TestROMA(TestBase):
             self.assertEqual(looked_up.location.identifiers[0].study_name,
                              '9030')
             self.assertEqual(looked_up.location.notes, 'roma_dump.20180116103346.json')
-            if looked_up.location.location_id not in self._locations:
-                self._locations.append(looked_up.location.location_id)
+            if looked_up.location.location_id not in TestROMA._locations:
+                TestROMA._locations.append(looked_up.location.location_id)
         except ApiException as error:
             self.fail("test_year_accuracy: Exception when calling download_sampling_event_by_identifier {}"
                         .format(error))
