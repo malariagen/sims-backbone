@@ -25,5 +25,10 @@ if [ "$1" = "one" ]
 then
     python3 -m unittest test_sampling_event.TestSampling_Event.test_multiple_study
 else
-    python3 -m pytest
+    if [ "${TRAVIS}" != "true" ]
+    then
+        python3 all_tests.py
+    else
+        python3 -m pytest
+    fi
 fi
