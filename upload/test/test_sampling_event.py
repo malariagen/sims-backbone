@@ -10,7 +10,7 @@ from swagger_client.rest import ApiException
 
 class TestSampling_Event(TestBase):
 
-
+    _locations = []
 
     """
     """
@@ -42,14 +42,14 @@ class TestSampling_Event(TestBase):
     @classmethod
     def tearDownClass(self):
 
-        event_api_instance = swagger_client.SamplingEventApi(self._api_client)
+        event_api_instance = swagger_client.SamplingEventApi(TestBase.getApiClient())
 
         looked_up = event_api_instance.download_sampling_events_by_identifier('oxford_id', '123456')
         looked_up = looked_up.sampling_events[0]
 
         event_api_instance.delete_sampling_event(looked_up.sampling_event_id)
 
-        self.deleteEventSets(['multiple_study'])
+        self.deleteEventSets(['multiple_study'], TestSampling_Event._locations)
 
     """
     """

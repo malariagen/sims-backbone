@@ -11,6 +11,8 @@ from swagger_client.rest import ApiException
 class TestDate(TestBase):
 
 
+    _locations = []
+
     """
     """
     @classmethod
@@ -51,9 +53,9 @@ class TestDate(TestBase):
 
         event_api_instance = swagger_client.SamplingEventApi(self._api_client)
 
-        self.deleteStudies(['9020'])
+        self.deleteStudies(['9020'], TestDate._locations)
 
-        self.deleteEventSets(['dates'])
+        self.deleteEventSets(['dates'], TestDate._locations)
 
 
     """
