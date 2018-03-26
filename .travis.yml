@@ -41,6 +41,7 @@ before_script:
     - (cd server;./run.sh &)
     - sleep 5
     - export PYTHONPATH=$(pwd)/python_client
+    - export REMOTE_HOST_URL=http://localhost:8080/v1
 
 addons:
     postgresql: "9.6"
