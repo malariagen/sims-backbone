@@ -29,3 +29,7 @@ To get more help on the Angular CLI use `ng help` or go check out the [Angular C
 
 buildspec.yml contains the commands to build and deploy to an S3 bucket - see
 [Code Build](http://docs.aws.amazon.com/codebuild/latest/userguide/create-project.html#create-project-cli)
+
+## Updated
+
+Run `npm outdated` followed by `npm update` or `npm install package@latest`

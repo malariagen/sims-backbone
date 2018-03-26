@@ -34,6 +34,11 @@ module.exports = function (config) {
         flags: ['--no-sandbox']
       }
     },
-    singleRun: false
+    singleRun: false,
+    /** * maximum number of tries a browser will attempt in the case of a disconnection */
+    browserDisconnectTolerance: 2,
+    /** * How long will Karma wait for a message from a browser before disconnecting from it (in
+     * ms). */
+    browserNoActivityTimeout: 50000,
   });
 };
