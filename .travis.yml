@@ -19,7 +19,7 @@ script:
   - (cd test;python3 -m pytest)
   - (cd upload/test;./run.sh)
   - (cd client/sims-backbone;xvfb-run -a ng test --single-run --no-progress --browser=ChromeNoSandbox)
-  - (cd client/sims-backbone;xvfb-run -a ng e2e --no-progress --config=protractor-ci.conf.js)
+    #  - (cd client/sims-backbone;xvfb-run -a ng e2e --no-progress --config=protractor-ci.conf.js)
 
 services:
     - postgresql
