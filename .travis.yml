@@ -9,6 +9,8 @@ cache: pip
 
 install:
     - pip install -r python_client/requirements.txt
+    - pip install -r test/requirements.txt
+    - pip install -r server/backbone_server/REQUIREMENTS
     - pip install -r upload/requirements.txt
     - nvm install 8
     - npm install -g @angular/cli
@@ -16,8 +18,9 @@ install:
     - (cd client/sims-backbone;sed -i -e "s/url(\([-a-zA-Z0-9\.]*\))/url('\1')/" ./node_modules/material-design-icons/iconfont/material-icons.css)
 
 script:
-  - (cd test;python3 -m pytest)
+  - (export LOCAL_TEST=1;pytest --cov=backbone_server test/)
   - psql -c "DELETE FROM studies;" -U ${DB_USER} backbone_service
+  - psql -c "DELETE FROM taxonomies WHERE id=7227;" -U ${DB_USER} backbone_service
   - (cd upload/test;./run.sh)
   - (cd client/sims-backbone;xvfb-run -a ng test --single-run --no-progress --browser=ChromeNoSandbox)
     #  - (cd client/sims-backbone;xvfb-run -a ng e2e --no-progress --config=protractor-ci.conf.js)
@@ -40,12 +43,16 @@ before_script:
     - (cd server;./run.sh build)
     - (cd server;./run.sh &)
     - sleep 5
-    - export PYTHONPATH=$(pwd)/python_client
+    - export PYTHONPATH=$(pwd)/python_client:$(pwd)/server:$(pwd)/server/bb_server
     - export REMOTE_HOST_URL=http://localhost:8080/v1
+
+after_success:
+  - codecov
 
 addons:
     postgresql: "9.6"
     apt:
       packages:
         - postgresql-9.6-postgis-2.3
+        - python-coverage
     chrome: stable
