@@ -5,8 +5,6 @@ from swagger_server.models.identifier import Identifier
 
 from backbone_server.sampling_event.edit import SamplingEventEdit
 
-import mysql.connector
-from mysql.connector import errorcode
 import psycopg2
 
 import logging
@@ -33,11 +31,6 @@ class LocationEdit():
                     cursor.execute(stmt, (uuid_val, study_id, ident.identifier_type,
                                           ident.identifier_value, ident.identifier_source))
 
-        except mysql.connector.Error as err:
-            if err.errno == errorcode.ER_DUP_ENTRY:
-                raise DuplicateKeyException("Error inserting location {}".format(location)) from err
-            else:
-                self._logger.fatal(repr(error))
         except psycopg2.IntegrityError as err:
             print(err.pgcode)
             print(err.pgerror)

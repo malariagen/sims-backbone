@@ -8,8 +8,6 @@ import uuid
 from swagger_server.models.study import Study
 from swagger_server.models.partner_species import PartnerSpecies
 
-import mysql.connector
-from mysql.connector import errorcode
 import psycopg2
 
 import logging
@@ -79,8 +77,6 @@ class StudyPut():
                             cursor.execute('''INSERT INTO taxonomy_identifiers (taxonomy_id,
                                            partner_species_id) VALUES (%s, %s)''', (taxa.taxonomy_id, psid))
 
-                except mysql.connector.Error as err:
-                    raise IntegrityException("Error updating study {}".format(study)) from err
                 except psycopg2.IntegrityError as err:
                     raise IntegrityException("Error updating study {}".format(study)) from err
 

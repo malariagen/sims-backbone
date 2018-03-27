@@ -4,8 +4,6 @@ from backbone_server.errors.missing_key_exception import MissingKeyException
 from backbone_server.event_set.edit import EventSetEdit
 from backbone_server.event_set.fetch import EventSetFetch
 
-import mysql.connector
-from mysql.connector import errorcode
 import psycopg2
 
 import logging
@@ -29,11 +27,6 @@ class EventSetPostNote():
 
                     EventSetEdit.add_note(cursor, event_set_id, note)
 
-                except mysql.connector.Error as err:
-                    if err.errno == errorcode.ER_DUP_ENTRY:
-                        raise DuplicateKeyException("Error inserting event set note {} {}".format(event_set_id, note)) from err
-                    else:
-                        self._logger.fatal(repr(error))
                 except psycopg2.IntegrityError as err:
                     if err.pgcode == 23503:
                         raise MissingKeyException("Error inserting event set note {} {}".format(event_set_id, note)) from err

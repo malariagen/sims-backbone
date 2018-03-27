@@ -5,8 +5,6 @@ from backbone_server.sampling_event.fetch import SamplingEventFetch
 
 from swagger_server.models.sampling_event import SamplingEvent
 
-import mysql.connector
-from mysql.connector import errorcode
 import psycopg2
 
 import logging
@@ -47,11 +45,6 @@ class SamplingEventPost():
 
                     SamplingEventEdit.add_identifiers(cursor, uuid_val, sampling_event)
 
-                except mysql.connector.Error as err:
-                    if err.errno == errorcode.ER_DUP_ENTRY:
-                        raise DuplicateKeyException("Error inserting sampling_event {}".format(sampling_event)) from err
-                    else:
-                        self._logger.fatal(repr(error))
                 except psycopg2.IntegrityError as err:
                     print(err.pgcode)
                     print(err.pgerror)

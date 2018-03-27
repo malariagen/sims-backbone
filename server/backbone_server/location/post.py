@@ -6,8 +6,6 @@ from backbone_server.location.fetch import LocationFetch
 from swagger_server.models.location import Location
 from swagger_server.models.identifier import Identifier
 
-import mysql.connector
-from mysql.connector import errorcode
 import psycopg2
 
 import logging
@@ -53,11 +51,6 @@ class LocationPost(LocationEdit):
 
                     LocationEdit.add_identifiers(cursor, uuid_val, location)
 
-                except mysql.connector.Error as err:
-                    if err.errno == errorcode.ER_DUP_ENTRY:
-                        raise DuplicateKeyException("Error inserting location {}".format(location)) from err
-                    else:
-                        self._logger.fatal(repr(error))
                 except psycopg2.IntegrityError as err:
                     self._logger.error(repr(err))
                     raise DuplicateKeyException("Error inserting location {}".format(location)) from err

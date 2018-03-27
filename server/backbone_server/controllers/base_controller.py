@@ -43,23 +43,6 @@ class BaseController():
     #        cur = conn.cursor()
     #        cur.execute("SET search_path TO " + 'backbone,public,contrib')
     #        cur.close()
-        else:
-            import mysql.connector
-            from mysql.connector import errorcode
-            config = {
-                'user': 'iwright',
-                'database': 'backbone_service'
-            }
-
-            try:
-                conn = mysql.connector.connect(**config)
-            except mysql.connector.Error as err:
-                if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
-                    self._logger.critical("Something is wrong with your user name or password")
-                elif err.errno == errorcode.ER_BAD_DB_ERROR:
-                    self._logger.critical("Database does not exist")
-                else:
-                    self._logger.critical(err)
         return conn
 
     """
