@@ -18,6 +18,8 @@ class EventSetPutNote():
 
     def put(self, event_set_name, note):
 
+        ret = None
+
         with self._connection:
             with self._connection.cursor() as cursor:
 
@@ -26,7 +28,7 @@ class EventSetPutNote():
                 try:
                     stmt = '''UPDATE event_set_notes SET note_text = %s WHERE event_set_id = %s AND note_name = %s'''
 
-                    cursor.execute(stmt, (note.note_value, event_set_id, note.note_name))
+                    cursor.execute(stmt, (note.note_text, event_set_id, note.note_name))
 
                 except mysql.connector.Error as err:
                     if err.errno == errorcode.ER_DUP_ENTRY:
@@ -39,5 +41,7 @@ class EventSetPutNote():
                     raise err
 
 
-        return EventSetFetch.fetch(event_set_id)
+                ret = EventSetFetch.fetch(cursor, event_set_id, 0, 0)
+
+        return ret
 

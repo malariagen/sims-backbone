@@ -1,10 +1,15 @@
 
+from backbone_server.errors.missing_key_exception import MissingKeyException
+
 class EventSetEdit():
 
 
     @staticmethod
     def add_sampling_event(cursor, event_set_id, sampling_event):
         if sampling_event:
+            if event_set_id is None or sampling_event.sampling_event_id is None:
+                raise MissingKeyException("Invalid add_sampling_event {} {}".format(event_set_id,
+                                                                                    sampling_event))
             stmt = '''INSERT INTO event_set_members (event_set_id, sampling_event_id) VALUES (%s, %s)'''
             cursor.execute(stmt, (event_set_id, sampling_event.sampling_event_id))
 

@@ -13,6 +13,7 @@ from backbone_server.errors.missing_key_exception import MissingKeyException
 from backbone_server.errors.permission_exception import PermissionException
 
 import logging
+import urllib
 
 class MetadataController(BaseController):
 
@@ -61,6 +62,8 @@ class MetadataController(BaseController):
 
         retcode = 200
         country = None
+
+        countryId = urllib.parse.unquote_plus(countryId)
 
         try:
             country = get.get(countryId)

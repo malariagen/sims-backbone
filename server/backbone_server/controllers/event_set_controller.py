@@ -1,4 +1,5 @@
 from swagger_server.models.event_set import EventSet
+from swagger_server.models.event_set_note import EventSetNote
 
 import logging
 
@@ -230,11 +231,11 @@ class EventSetController(BaseController):
             delete = EventSetDeleteNote(self.get_connection())
 
             evntSt = delete.delete(eventSetId, noteId)
-        except DuplicateKeyException as dke:
+        except MissingKeyException as dke:
             logging.getLogger(__name__).error("delete_event_set_note: {}".format(repr(dke)))
-            retcode = 422
+            retcode = 404
 
-        self.log_action(user, 'delete_event_set_note', eventSetId, samplingEventId, evntSt, retcode)
+        self.log_action(user, 'delete_event_set_note', eventSetId, noteId, evntSt, retcode)
 
         return evntSt, retcode
 
@@ -357,15 +358,15 @@ class EventSetController(BaseController):
             return pe.message, 403
 
         retcode = 200
-        evntSt = None
+        evnt_set = None
 
         try:
-            post = EventSetPutNote(self.get_connection())
-            evntSt = put.put(eventSetId, nodeId, note)
+            put = EventSetPutNote(self.get_connection())
+            evnt_set = put.put(eventSetId, evntNote)
         except DuplicateKeyException as dke:
             logging.getLogger(__name__).error("update_event_set_note: {}".format(repr(dke)))
             retcode = 422
 
-        self.log_action(user, 'update_event_set_note', eventSetId, evntNote, evntSt, retcode)
+        self.log_action(user, 'update_event_set_note', eventSetId, evntNote, evnt_set, retcode)
 
-        return evntSt, retcode
+        return evnt_set, retcode

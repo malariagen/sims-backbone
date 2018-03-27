@@ -42,7 +42,7 @@ class EventSetDeleteSamplingEvent():
                     raise err
 
 
-                resp = EventSetFetch.fetch(cursor, event_set_id)
+                resp = EventSetFetch.fetch(cursor, event_set_id, 0, 0)
 
         return resp
 

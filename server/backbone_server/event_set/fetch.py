@@ -42,6 +42,9 @@ class EventSetFetch():
 
         res = cursor.fetchone()
 
+        if not res:
+            raise MissingKeyException("No such event set {}".format(event_set_id))
+
         event_set = EventSet(res[0])
 
 
@@ -79,8 +82,9 @@ class EventSetFetch():
         query_body = query_body + ''' ORDER BY doc, study_id, id'''
 
         if not (start is None and count is None):
-            query_body = query_body + ' LIMIT %s OFFSET %s'
-            args = args + (count, start)
+            if count and count > 0:
+                query_body = query_body + ' LIMIT %s OFFSET %s'
+                args = args + (count, start)
 
         sampling_events = SamplingEvents([], 0)
 

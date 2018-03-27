@@ -364,7 +364,17 @@ class TestSample(TestBase):
             self.assertEqual(samp.location_id, fetched.location_id, "upload location != download response")
             self.assertEqual(samp.proxy_location_id, fetched.proxy_location_id, "upload proxy_location != download response")
             self.assertEqual(samp.proxy_location_id, fetched.public_location_id, "upload public_location != proxy download response")
+
+            looked_up = api_instance.download_sampling_events_by_location(loc.location_id)
+
+            self.assertEqual(looked_up.count, 1)
+
+            looked_up = api_instance.download_sampling_events_by_location(proxy_loc.location_id)
+
+            self.assertEqual(looked_up.count, 1)
+
             api_instance.delete_sampling_event(created.sampling_event_id)
+
             location_api_instance.delete_location(loc.location_id)
             location_api_instance.delete_location(proxy_loc.location_id)
 
