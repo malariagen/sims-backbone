@@ -80,7 +80,7 @@ class LocationPut(LocationEdit):
                 except psycopg2.IntegrityError as err:
                     raise DuplicateKeyException("Error updating location {}".format(location)) from err
 
-                location = LocationFetch.fetch(cursor, uuid_val)
+                location = LocationFetch.fetch(cursor, location_id)
 
 
         if rc != 1:

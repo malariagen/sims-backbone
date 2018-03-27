@@ -696,7 +696,7 @@ class TestSample(TestBase):
     def test_create_with_proxy_location_integrity_failure(self):
 
         api_instance = ApiFactory.SamplingEventApi(self._api_client)
-        location_api_instance = swagger_client.LocationApi(self._api_client)
+        location_api_instance = ApiFactory.LocationApi(self._api_client)
 
         try:
 

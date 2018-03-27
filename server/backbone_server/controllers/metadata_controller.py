@@ -32,11 +32,13 @@ class MetadataController(BaseController):
             self.log_action(user, 'create_taxonomy', None, taxonomy, None, 403)
             return pe.message, 403
 
+        retcode = 201
+
         post = TaxonomyPost(self.get_connection())
 
         taxa = post.post(taxonomy)
 
-        return taxa
+        return taxa, retcode
 
 
     def get_country_metadata(self, countryId, user=None, auths = None):

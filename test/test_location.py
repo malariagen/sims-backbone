@@ -39,6 +39,10 @@ class TestLocation(TestBase):
 
             created = api_instance.create_location(loc)
             fetched = api_instance.download_location(created.location_id)
+            print(type(created))
+            print(created)
+            print(type(fetched))
+            print(fetched)
             self.assertEqual(created, fetched, "create response != download response")
             fetched.location_id = None
             self.assertEqual(loc, fetched, "upload != download response")
