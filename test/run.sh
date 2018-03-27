@@ -13,5 +13,6 @@ if [ "$1" = "one" ]
 then
     python3 -m unittest test_sample.TestSample.test_update_duplicate
 else
-    python3 all_tests.py
+    python3 -m pytest
 fi
+psql -c "DELETE FROM taxonomies WHERE id=7227;" backbone_test
