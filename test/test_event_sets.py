@@ -2,7 +2,7 @@ import swagger_client
 from swagger_client.rest import ApiException
 from test_base import TestBase
 from datetime import date
-
+from api_factory import ApiFactory
 
 class TestEventSets(TestBase):
 
@@ -11,7 +11,7 @@ class TestEventSets(TestBase):
     """
     def test_create_event_set_simple(self):
 
-        api_instance = swagger_client.EventSetApi(self._api_client)
+        api_instance = ApiFactory.EventSetApi(self._api_client)
 
         try:
 
@@ -28,8 +28,8 @@ class TestEventSets(TestBase):
     """
     def test_create_member(self):
 
-        api_instance = swagger_client.EventSetApi(self._api_client)
-        event_api_instance = swagger_client.SamplingEventApi(self._api_client)
+        api_instance = ApiFactory.EventSetApi(self._api_client)
+        event_api_instance = ApiFactory.SamplingEventApi(self._api_client)
 
         try:
 
@@ -118,8 +118,8 @@ class TestEventSets(TestBase):
     """
     def test_create_note(self):
 
-        api_instance = swagger_client.EventSetApi(self._api_client)
-        event_api_instance = swagger_client.SamplingEventApi(self._api_client)
+        api_instance = ApiFactory.EventSetApi(self._api_client)
+        event_api_instance = ApiFactory.SamplingEventApi(self._api_client)
 
         try:
 
@@ -143,7 +143,7 @@ class TestEventSets(TestBase):
     """
     def test_event_sets(self):
 
-        api_instance = swagger_client.EventSetApi(self._api_client)
+        api_instance = ApiFactory.EventSetApi(self._api_client)
 
         try:
 

@@ -1,5 +1,6 @@
 import swagger_client
 from swagger_client.rest import ApiException
+from api_factory import ApiFactory
 from test_base import TestBase
 from datetime import date
 import urllib
@@ -13,7 +14,7 @@ class TestSample(TestBase):
     """
     def test_create(self):
 
-        api_instance = swagger_client.SamplingEventApi(self._api_client)
+        api_instance = ApiFactory.SamplingEventApi(self._api_client)
 
         try:
 
@@ -33,7 +34,7 @@ class TestSample(TestBase):
     """
     def test_delete(self):
 
-        api_instance = swagger_client.SamplingEventApi(self._api_client)
+        api_instance = ApiFactory.SamplingEventApi(self._api_client)
 
         try:
 
@@ -52,7 +53,7 @@ class TestSample(TestBase):
     """
     def test_delete_missing(self):
 
-        api_instance = swagger_client.SamplingEventApi(self._api_client)
+        api_instance = ApiFactory.SamplingEventApi(self._api_client)
 
         try:
 
@@ -67,7 +68,7 @@ class TestSample(TestBase):
     """
     def test_duplicate_key(self):
 
-        api_instance = swagger_client.SamplingEventApi(self._api_client)
+        api_instance = ApiFactory.SamplingEventApi(self._api_client)
 
         try:
 
@@ -92,7 +93,7 @@ class TestSample(TestBase):
     """
     def test_duplicate_partner_key(self):
 
-        api_instance = swagger_client.SamplingEventApi(self._api_client)
+        api_instance = ApiFactory.SamplingEventApi(self._api_client)
 
         try:
 
@@ -118,7 +119,7 @@ class TestSample(TestBase):
     """
     def test_identifier_lookup(self):
 
-        api_instance = swagger_client.SamplingEventApi(self._api_client)
+        api_instance = ApiFactory.SamplingEventApi(self._api_client)
 
         try:
 
@@ -144,7 +145,7 @@ class TestSample(TestBase):
     """
     def test_identifier_lookup_by_study(self):
 
-        api_instance = swagger_client.SamplingEventApi(self._api_client)
+        api_instance = ApiFactory.SamplingEventApi(self._api_client)
 
         try:
 
@@ -180,7 +181,7 @@ class TestSample(TestBase):
     """
     def test_identifier_merge(self):
 
-        api_instance = swagger_client.SamplingEventApi(self._api_client)
+        api_instance = ApiFactory.SamplingEventApi(self._api_client)
 
         try:
 
@@ -222,7 +223,7 @@ class TestSample(TestBase):
     """
     def test_update(self):
 
-        api_instance = swagger_client.SamplingEventApi(self._api_client)
+        api_instance = ApiFactory.SamplingEventApi(self._api_client)
 
         try:
 
@@ -248,7 +249,7 @@ class TestSample(TestBase):
     """
     def test_update_duplicate(self):
 
-        api_instance = swagger_client.SamplingEventApi(self._api_client)
+        api_instance = ApiFactory.SamplingEventApi(self._api_client)
 
         try:
 
@@ -281,7 +282,7 @@ class TestSample(TestBase):
     """
     def test_update_missing(self):
 
-        api_instance = swagger_client.SamplingEventApi(self._api_client)
+        api_instance = ApiFactory.SamplingEventApi(self._api_client)
 
         try:
 
@@ -301,7 +302,7 @@ class TestSample(TestBase):
     """
     def test_identifier_lookup_encode(self):
 
-        api_instance = swagger_client.SamplingEventApi(self._api_client)
+        api_instance = ApiFactory.SamplingEventApi(self._api_client)
 
         try:
 
@@ -338,8 +339,8 @@ class TestSample(TestBase):
     """
     def test_create_with_locations(self):
 
-        api_instance = swagger_client.SamplingEventApi(self._api_client)
-        location_api_instance = swagger_client.LocationApi(self._api_client)
+        api_instance = ApiFactory.SamplingEventApi(self._api_client)
+        location_api_instance = ApiFactory.LocationApi(self._api_client)
 
         try:
 
@@ -375,8 +376,8 @@ class TestSample(TestBase):
     """
     def test_taxa_lookup(self):
 
-        api_instance = swagger_client.SamplingEventApi(self._api_client)
-        study_api = swagger_client.StudyApi(self._api_client)
+        api_instance = ApiFactory.SamplingEventApi(self._api_client)
+        study_api = ApiFactory.StudyApi(self._api_client)
 
         try:
             study_code = '1010-MD-UP'
@@ -410,8 +411,8 @@ class TestSample(TestBase):
     """
     def test_taxa_lookup_paged(self):
 
-        api_instance = swagger_client.SamplingEventApi(self._api_client)
-        study_api = swagger_client.StudyApi(self._api_client)
+        api_instance = ApiFactory.SamplingEventApi(self._api_client)
+        study_api = ApiFactory.StudyApi(self._api_client)
 
         try:
             study_codes = [ '1011-MD-UP', '1012-MD-UP', '1013-MD-UP', '1014-MD-UP', '1014-MD-UP']
@@ -458,8 +459,8 @@ class TestSample(TestBase):
     """
     def test_taxa_on_create(self):
 
-        api_instance = swagger_client.SamplingEventApi(self._api_client)
-        study_api = swagger_client.StudyApi(self._api_client)
+        api_instance = ApiFactory.SamplingEventApi(self._api_client)
+        study_api = ApiFactory.StudyApi(self._api_client)
 
         try:
             study_code = '1015-MD-UP'
@@ -489,7 +490,7 @@ class TestSample(TestBase):
     """
     def test_study_lookup(self):
 
-        api_instance = swagger_client.SamplingEventApi(self._api_client)
+        api_instance = ApiFactory.SamplingEventApi(self._api_client)
 
         try:
             study_code = '1020-MD-UP'
@@ -513,7 +514,7 @@ class TestSample(TestBase):
     """
     def test_study_lookup_paged(self):
 
-        api_instance = swagger_client.SamplingEventApi(self._api_client)
+        api_instance = ApiFactory.SamplingEventApi(self._api_client)
 
         try:
             study_code = '1021-MD-UP'
@@ -556,9 +557,9 @@ class TestSample(TestBase):
     """
     def test_event_set_lookup(self):
 
-        api_instance = swagger_client.SamplingEventApi(self._api_client)
+        api_instance = ApiFactory.SamplingEventApi(self._api_client)
 
-        es_api_instance = swagger_client.EventSetApi(self._api_client)
+        es_api_instance = ApiFactory.EventSetApi(self._api_client)
 
         es_name = 'test_event_set_lookup'
 
@@ -591,10 +592,10 @@ class TestSample(TestBase):
 
         study_code = '1021-MD-UP'
 
-        api_instance = swagger_client.SamplingEventApi(self._api_client)
-        study_api = swagger_client.StudyApi(self._api_client)
+        api_instance = ApiFactory.SamplingEventApi(self._api_client)
+        study_api = ApiFactory.StudyApi(self._api_client)
 
-        es_api_instance = swagger_client.EventSetApi(self._api_client)
+        es_api_instance = ApiFactory.EventSetApi(self._api_client)
 
         es_name = 'test_event_set_lookup_paged'
 
@@ -641,8 +642,8 @@ class TestSample(TestBase):
     """
     def test_get_identifiers(self):
 
-        metadata_api_instance = swagger_client.MetadataApi(self._api_client)
-        api_instance = swagger_client.SamplingEventApi(self._api_client)
+        metadata_api_instance = ApiFactory.MetadataApi(self._api_client)
+        api_instance = ApiFactory.SamplingEventApi(self._api_client)
 
         try:
             samp = swagger_client.SamplingEvent(None, '1023-MD-UP', date(2017, 10, 16))
@@ -665,8 +666,8 @@ class TestSample(TestBase):
     """
     def test_create_with_location_integrity_failure(self):
 
-        api_instance = swagger_client.SamplingEventApi(self._api_client)
-        location_api_instance = swagger_client.LocationApi(self._api_client)
+        api_instance = ApiFactory.SamplingEventApi(self._api_client)
+        location_api_instance = ApiFactory.LocationApi(self._api_client)
 
         try:
 
@@ -694,7 +695,7 @@ class TestSample(TestBase):
     """
     def test_create_with_proxy_location_integrity_failure(self):
 
-        api_instance = swagger_client.SamplingEventApi(self._api_client)
+        api_instance = ApiFactory.SamplingEventApi(self._api_client)
         location_api_instance = swagger_client.LocationApi(self._api_client)
 
         try:

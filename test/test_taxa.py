@@ -1,5 +1,6 @@
 import swagger_client
 from swagger_client.rest import ApiException
+from api_factory import ApiFactory
 from test_base import TestBase
 from datetime import date
 
@@ -12,7 +13,7 @@ class TestTaxa(TestBase):
     """
     def test_create_partner_species(self):
 
-        api_instance = swagger_client.SamplingEventApi(self._api_client)
+        api_instance = ApiFactory.SamplingEventApi(self._api_client)
 
         try:
 
@@ -34,7 +35,7 @@ class TestTaxa(TestBase):
     """
     def test_update_partner_species(self):
 
-        api_instance = swagger_client.SamplingEventApi(self._api_client)
+        api_instance = ApiFactory.SamplingEventApi(self._api_client)
 
         try:
 
@@ -57,7 +58,7 @@ class TestTaxa(TestBase):
     """
     def test_get_taxonomies(self):
 
-        api_instance = swagger_client.MetadataApi(self._api_client)
+        api_instance = ApiFactory.MetadataApi(self._api_client)
 
         try:
             taxas = api_instance.get_taxonomy_metadata()
@@ -69,7 +70,7 @@ class TestTaxa(TestBase):
     """
     def test_post_taxonomies(self):
 
-        api_instance = swagger_client.MetadataApi(self._api_client)
+        api_instance = ApiFactory.MetadataApi(self._api_client)
 
         try:
             taxa = swagger_client.Taxonomy(taxonomy_id=7227, name='Drosophila melanogaster',

@@ -1,5 +1,6 @@
 import swagger_client
 from swagger_client.rest import ApiException
+from api_factory import ApiFactory
 from test_base import TestBase
 from datetime import date
 
@@ -12,8 +13,8 @@ class TestStudies(TestBase):
     """
     def test_download_studies(self):
 
-        api_instance = swagger_client.SamplingEventApi(self._api_client)
-        study_api = swagger_client.StudyApi(self._api_client)
+        api_instance = ApiFactory.SamplingEventApi(self._api_client)
+        study_api = ApiFactory.StudyApi(self._api_client)
 
         try:
 
@@ -41,8 +42,8 @@ class TestStudies(TestBase):
     """
     def test_location_study(self):
 
-        api_instance = swagger_client.LocationApi(self._api_client)
-        study_api = swagger_client.StudyApi(self._api_client)
+        api_instance = ApiFactory.LocationApi(self._api_client)
+        study_api = ApiFactory.StudyApi(self._api_client)
 
         try:
 
@@ -71,8 +72,8 @@ class TestStudies(TestBase):
     """
     def test_download_study(self):
 
-        api_instance = swagger_client.SamplingEventApi(self._api_client)
-        study_api = swagger_client.StudyApi(self._api_client)
+        api_instance = ApiFactory.SamplingEventApi(self._api_client)
+        study_api = ApiFactory.StudyApi(self._api_client)
 
         try:
 
@@ -96,7 +97,7 @@ class TestStudies(TestBase):
     """
     def test_download_study_fail(self):
 
-        study_api = swagger_client.StudyApi(self._api_client)
+        study_api = ApiFactory.StudyApi(self._api_client)
 
         try:
 
@@ -111,8 +112,8 @@ class TestStudies(TestBase):
     """
     def test_update_study(self):
 
-        api_instance = swagger_client.SamplingEventApi(self._api_client)
-        study_api = swagger_client.StudyApi(self._api_client)
+        api_instance = ApiFactory.SamplingEventApi(self._api_client)
+        study_api = ApiFactory.StudyApi(self._api_client)
 
         try:
 
@@ -143,8 +144,8 @@ class TestStudies(TestBase):
     """
     def test_update_study_bad_taxa(self):
 
-        api_instance = swagger_client.SamplingEventApi(self._api_client)
-        study_api = swagger_client.StudyApi(self._api_client)
+        api_instance = ApiFactory.SamplingEventApi(self._api_client)
+        study_api = ApiFactory.StudyApi(self._api_client)
 
         try:
 
@@ -175,8 +176,8 @@ class TestStudies(TestBase):
     """
     def test_download_samples_by_study(self):
 
-        api_instance = swagger_client.SamplingEventApi(self._api_client)
-        study_api = swagger_client.StudyApi(self._api_client)
+        api_instance = ApiFactory.SamplingEventApi(self._api_client)
+        study_api = ApiFactory.StudyApi(self._api_client)
 
         try:
 
@@ -200,8 +201,8 @@ class TestStudies(TestBase):
     """
     def test_download_samples_by_study_fail(self):
 
-        api_instance = swagger_client.SamplingEventApi(self._api_client)
-        study_api = swagger_client.StudyApi(self._api_client)
+        api_instance = ApiFactory.SamplingEventApi(self._api_client)
+        study_api = ApiFactory.StudyApi(self._api_client)
 
         try:
 
