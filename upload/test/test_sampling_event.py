@@ -74,7 +74,7 @@ class TestSampling_Event(TestBase):
 
         self.assertEqual(looked_up.study_name, '9010 Upload test study 2', 'Not lowest study code')
 
-        for study in ["0000 Upload test study", "1089 R&D special study"]:
+        for study in ["0000-Unknown", "1089 R&D special study"]:
             eset = "Additional events: {}".format(study)
             with self.assertRaises(Exception) as context:
                 event_set_api_instance.delete_event_set(eset)
