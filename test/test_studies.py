@@ -142,6 +142,21 @@ class TestStudies(TestBase):
 
     """
     """
+    def test_update_missing_study(self):
+
+        study_api = ApiFactory.StudyApi(self._api_client)
+
+        try:
+            study = swagger_client.Study('404')
+            with self.assertRaises(Exception) as context:
+                study2 = study_api.update_study('404', study)
+            self.assertEqual(context.exception.status, 404)
+
+        except ApiException as error:
+            self.fail("test_update_missing_study: Exception when calling StudyApi->update_study: %s\n" % error)
+
+    """
+    """
     def test_update_study_bad_taxa(self):
 
         api_instance = ApiFactory.SamplingEventApi(self._api_client)

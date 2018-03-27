@@ -142,6 +142,11 @@ class TestEventSets(TestBase):
 
             self.assertEqual(fetched_set.notes[0].note_name, evsn.note_name)
             
+            with self.assertRaises(Exception) as context:
+                created_set = api_instance.create_event_set_note(event_set, evsn.note_name, evsn)
+
+            self.assertEqual(context.exception.status, 422)
+
             api_instance.delete_event_set(event_set)
 
         except ApiException as error:

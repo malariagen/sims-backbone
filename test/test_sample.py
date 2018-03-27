@@ -419,6 +419,20 @@ class TestSample(TestBase):
 
     """
     """
+    def test_missing_taxa(self):
+
+        api_instance = ApiFactory.SamplingEventApi(self._api_client)
+        try:
+            with self.assertRaises(Exception) as context:
+                fetched = api_instance.download_sampling_events_by_taxa(404)
+
+            self.assertEqual(context.exception.status, 404)
+
+        except ApiException as error:
+            self.fail("test_missing_taxa: Exception when calling SamplingEventApi->download_sampling_events_by_taxa: %s\n" % error)
+
+    """
+    """
     def test_taxa_lookup_paged(self):
 
         api_instance = ApiFactory.SamplingEventApi(self._api_client)
