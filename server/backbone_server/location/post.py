@@ -1,6 +1,7 @@
 from backbone_server.errors.duplicate_key_exception import DuplicateKeyException
 
 from backbone_server.location.edit import LocationEdit
+from backbone_server.location.fetch import LocationFetch
 
 from swagger_server.models.location import Location
 from swagger_server.models.identifier import Identifier
@@ -61,6 +62,7 @@ class LocationPost(LocationEdit):
                     self._logger.error(repr(err))
                     raise DuplicateKeyException("Error inserting location {}".format(location)) from err
 
-        location.location_id = uuid_val
+                location = LocationFetch.fetch(cursor, uuid_val)
+
         return location
 

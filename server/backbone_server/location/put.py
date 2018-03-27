@@ -2,6 +2,7 @@ from backbone_server.errors.duplicate_key_exception import DuplicateKeyException
 from backbone_server.errors.missing_key_exception import MissingKeyException
 
 from backbone_server.location.edit import LocationEdit
+from backbone_server.location.fetch import LocationFetch
 
 from swagger_server.models.location import Location
 from swagger_server.models.identifier import Identifier
@@ -79,10 +80,10 @@ class LocationPut(LocationEdit):
                 except psycopg2.IntegrityError as err:
                     raise DuplicateKeyException("Error updating location {}".format(location)) from err
 
+                location = LocationFetch.fetch(cursor, uuid_val)
+
 
         if rc != 1:
             raise MissingKeyException("Error updating location {}".format(location_id))
-
-        location.location_id = location_id
 
         return location
