@@ -183,11 +183,7 @@ class LocationController(BaseController):
         retcode = 200
         loc = None
 
-        try:
-            loc = get.get(studyName, start, count, orderby)
-        except MissingKeyException as dme:
-            logging.getLogger(__name__).error("download_location: {}".format(repr(dme)))
-            retcode = 404
+        loc = get.get(studyName, start, count, orderby)
 
         self.log_action(user, 'download_locations', None, None, loc, retcode)
 

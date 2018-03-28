@@ -33,13 +33,17 @@ class LocationsGet():
                 count_args = args
                 count_query = 'SELECT COUNT(DISTINCT l.id) ' + query_body
 
-                query_body = query_body + " ORDER BY " + orderby + ", l.id"
+                if orderby:
+                    query_body = query_body + " ORDER BY " + orderby + ", l.id"
 
                 if not (start is None and count is None):
                     query_body = query_body + ' LIMIT %s OFFSET %s'
                     args = args + (count, start)
 
-                cursor.execute('SELECT DISTINCT l.id, ' + orderby + query_body, args)
+                if orderby:
+                    cursor.execute('SELECT DISTINCT l.id, ' + orderby + query_body, args)
+                else:
+                    cursor.execute('SELECT DISTINCT l.id, l.curated_name ' + query_body, args)
 
                 locations = []
                 for (location_id, ignored) in cursor:

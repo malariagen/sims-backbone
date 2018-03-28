@@ -382,6 +382,21 @@ class TestSample(TestBase):
         except ApiException as error:
             self.fail("test_create: Exception when calling SamplingEventApi->create_sampling_event: %s\n" % error)
 
+
+    """
+    """
+    def test_missing_location(self):
+
+        api_instance = ApiFactory.SamplingEventApi(self._api_client)
+        try:
+            with self.assertRaises(Exception) as context:
+                fetched = api_instance.download_sampling_events_by_location(str(uuid.uuid4()))
+
+            self.assertEqual(context.exception.status, 404)
+
+        except ApiException as error:
+            self.fail("test_missing_location: Exception when calling SamplingEventApi->download_sampling_events_by_location: %s\n" % error)
+
     """
     """
     def test_taxa_lookup(self):
@@ -577,6 +592,7 @@ class TestSample(TestBase):
             self.fail("test_partner_lookup: Exception when calling SamplingEventApi->create_sampling_event: %s\n" % error)
 
 
+
     """
     """
     def test_event_set_lookup(self):
@@ -607,7 +623,27 @@ class TestSample(TestBase):
 
             es_api_instance.delete_event_set(es_name)
         except ApiException as error:
-            self.fail("test_partner_lookup: Exception when calling SamplingEventApi->create_sampling_event: %s\n" % error)
+            self.fail("test_event_set_lookup: Exception when calling SamplingEventApi->create_sampling_event: %s\n" % error)
+
+    """
+    """
+    def test_event_set_lookup_missing(self):
+
+        api_instance = ApiFactory.SamplingEventApi(self._api_client)
+
+        es_api_instance = ApiFactory.EventSetApi(self._api_client)
+
+        es_name = '404 test_event_set_lookup'
+
+        try:
+
+            with self.assertRaises(Exception) as context:
+                fetched = api_instance.download_sampling_events_by_event_set(es_name)
+
+            self.assertEqual(context.exception.status, 404)
+
+        except ApiException as error:
+            self.fail("test_event_set_lookup_missing: Exception when calling SamplingEventApi->download_sampling_events_by_event_set: %s\n" % error)
 
 
     """
@@ -743,4 +779,72 @@ class TestSample(TestBase):
 
         except ApiException as error:
             self.fail("test_create_with_proxy_location_integrity_failure: Exception when calling SamplingEventApi->create_sampling_event: %s\n" % error)
+
+
+    """
+    """
+    def test_update_with_location_integrity_failure(self):
+
+        api_instance = ApiFactory.SamplingEventApi(self._api_client)
+        location_api_instance = ApiFactory.LocationApi(self._api_client)
+
+        try:
+
+            samp = swagger_client.SamplingEvent(None, '1009-MD-UP', date(2017, 10, 10),
+                                                doc_accuracy='month')
+            loc = swagger_client.Location(None, 27.463, 90.495, 'city',
+                                          'Trongsa, Trongsa, Bhutan', 'test_create_with_locations', 'BTN')
+            loc = location_api_instance.create_location(loc)
+
+            samp.location_id = loc.location_id
+            print('1')
+            created = api_instance.create_sampling_event(samp)
+
+            print('2')
+            created.location.accuracy = 'region'
+            with self.assertRaises(Exception) as context:
+                created1 = api_instance.update_sampling_event(created.sampling_event_id, created)
+
+            print('3')
+            self.assertEqual(context.exception.status, 422)
+
+            api_instance.delete_sampling_event(created.sampling_event_id)
+            location_api_instance.delete_location(loc.location_id)
+
+
+        except ApiException as error:
+            self.fail("test_update_with_location_integrity_failure: Exception when calling SamplingEventApi->create_sampling_event: %s\n" % error)
+
+    """
+    """
+    def test_update_with_proxy_location_integrity_failure(self):
+
+        api_instance = ApiFactory.SamplingEventApi(self._api_client)
+        location_api_instance = ApiFactory.LocationApi(self._api_client)
+
+        try:
+
+            samp = swagger_client.SamplingEvent(None, '1009-MD-UP', date(2017, 10, 10),
+                                                doc_accuracy='month')
+            loc = swagger_client.Location(None, 27.463, 90.495, 'city',
+                                          'Trongsa, Trongsa, Bhutan', 'test_create_with_locations', 'BTN')
+            loc = location_api_instance.create_location(loc)
+
+            samp.proxy_location_id = loc.location_id
+            
+            created = api_instance.create_sampling_event(samp)
+
+            created.proxy_location.accuracy = 'region'
+
+            with self.assertRaises(Exception) as context:
+                created1 = api_instance.update_sampling_event(created.sampling_event_id, created)
+
+            self.assertEqual(context.exception.status, 422)
+
+            api_instance.delete_sampling_event(created.sampling_event_id)
+            location_api_instance.delete_location(loc.location_id)
+
+
+        except ApiException as error:
+            self.fail("test_update_with_proxy_location_integrity_failure: Exception when calling SamplingEventApi->create_sampling_event: %s\n" % error)
 

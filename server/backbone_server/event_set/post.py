@@ -1,4 +1,5 @@
 from backbone_server.errors.duplicate_key_exception import DuplicateKeyException
+from backbone_server.errors.missing_key_exception import MissingKeyException
 
 from backbone_server.event_set.edit import EventSetEdit
 from backbone_server.event_set.fetch import EventSetFetch
@@ -23,19 +24,22 @@ class EventSetPost():
         with self._connection:
             with self._connection.cursor() as cursor:
 
+                event_set_id = None
                 try:
-                    stmt = '''INSERT INTO event_sets (event_set_name) VALUES (%s)'''
-
-                    args = (event_set_name,)
-
-                    cursor.execute(stmt, args)
-
                     event_set_id = EventSetFetch.fetch_event_set_id(cursor,event_set_name)
+                except MissingKeyException as err:
+                    pass
 
-                except psycopg2.IntegrityError as err:
-                    raise DuplicateKeyException("Error inserting event set {}".format(event_set_name)) from err
-                except DuplicateKeyException as err:
-                    raise err
+                if event_set_id:
+                    raise DuplicateKeyException("Error inserting event set already exists {}".format(event_set_name))
+
+                stmt = '''INSERT INTO event_sets (event_set_name) VALUES (%s)'''
+
+                args = (event_set_name,)
+
+                cursor.execute(stmt, args)
+
+                event_set_id = EventSetFetch.fetch_event_set_id(cursor,event_set_name)
 
                 resp = EventSetFetch.fetch(cursor, event_set_id, 0, 0)
 

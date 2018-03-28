@@ -12,10 +12,6 @@ import uuid
 
 class LocationEdit():
 
-    def __init__(self, conn):
-        self._logger = logging.getLogger(__name__)
-        self._connection = conn
-
     @staticmethod
     def add_identifiers(cursor, uuid_val, location):
 

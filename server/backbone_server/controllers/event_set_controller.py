@@ -158,9 +158,6 @@ class EventSetController(BaseController):
             delete = EventSetDelete(self.get_connection())
 
             evntSt = delete.delete(eventSetId)
-        except DuplicateKeyException as dke:
-            logging.getLogger(__name__).error("delete_event_set: {}".format(repr(dke)))
-            retcode = 422
         except MissingKeyException as mke:
             logging.getLogger(__name__).error("delete_event_set: {}".format(repr(mke)))
             retcode = 404
@@ -196,9 +193,9 @@ class EventSetController(BaseController):
             delete = EventSetDeleteSamplingEvent(self.get_connection())
 
             evntSt = delete.delete(eventSetId, samplingEventId)
-        except DuplicateKeyException as dke:
+        except MissingKeyException as dke:
             logging.getLogger(__name__).error("delete_event_set_item: {}".format(repr(dke)))
-            retcode = 422
+            retcode = 404
 
         self.log_action(user, 'delete_event_set_item', eventSetId, samplingEventId, evntSt, retcode)
 
@@ -263,9 +260,9 @@ class EventSetController(BaseController):
         try:
             get = EventSetGetById(self.get_connection())
             evntSt = get.get(eventSetId, start, count)
-        except DuplicateKeyException as dke:
+        except MissingKeyException as dke:
             logging.getLogger(__name__).error("download_event_set: {}".format(repr(dke)))
-            retcode = 422
+            retcode = 404
 
         self.log_action(user, 'download_event_set', eventSetId, None, evntSt, retcode)
 
@@ -289,12 +286,8 @@ class EventSetController(BaseController):
         retcode = 200
         evntSts = None
 
-        try:
-            get = EventSetsGet(self.get_connection())
-            evntSts = get.get()
-        except DuplicateKeyException as dke:
-            logging.getLogger(__name__).error("download_event_sets: {}".format(repr(dke)))
-            retcode = 422
+        get = EventSetsGet(self.get_connection())
+        evntSts = get.get()
 
         self.log_action(user, 'download_event_sets', None, None, evntSts, retcode)
 
@@ -326,9 +319,9 @@ class EventSetController(BaseController):
         try:
             put = EventSetPut(self.get_connection())
             evntSt = put.put(eventSetId, eventSet)
-        except DuplicateKeyException as dke:
+        except MissingKeyException as dke:
             logging.getLogger(__name__).error("update_event_set: {}".format(repr(dke)))
-            retcode = 422
+            retcode = 404
 
         self.log_action(user, 'update_event_set', eventSetId, eventSet, evntSt, retcode)
 
@@ -348,7 +341,6 @@ class EventSetController(BaseController):
 
         :rtype: None
         """
-        evntNote = EventSetNote(noteId, note)
         try:
             study_id = None;
 
@@ -362,11 +354,14 @@ class EventSetController(BaseController):
 
         try:
             put = EventSetPutNote(self.get_connection())
-            evnt_set = put.put(eventSetId, evntNote)
+            evnt_set = put.put(eventSetId, noteId, note)
+        except MissingKeyException as dke:
+            logging.getLogger(__name__).error("update_event_set_note: {}".format(repr(dke)))
+            retcode = 404
         except DuplicateKeyException as dke:
             logging.getLogger(__name__).error("update_event_set_note: {}".format(repr(dke)))
             retcode = 422
 
-        self.log_action(user, 'update_event_set_note', eventSetId, evntNote, evnt_set, retcode)
+        self.log_action(user, 'update_event_set_note', eventSetId, note, evnt_set, retcode)
 
         return evnt_set, retcode

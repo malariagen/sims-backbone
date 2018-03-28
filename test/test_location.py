@@ -24,9 +24,6 @@ class TestLocation(TestBase):
 
         return loc
 
-
-
-
     """
     """
     def test_create(self):
@@ -39,14 +36,32 @@ class TestLocation(TestBase):
 
             created = api_instance.create_location(loc)
             fetched = api_instance.download_location(created.location_id)
-            print(type(created))
-            print(created)
-            print(type(fetched))
-            print(fetched)
             self.assertEqual(created, fetched, "create response != download response")
             fetched.location_id = None
             self.assertEqual(loc, fetched, "upload != download response")
             api_instance.delete_location(created.location_id)
+
+        except ApiException as error:
+            self.fail("test_create: Exception when calling LocationApi->create_location: %s\n" % error)
+
+    """
+    """
+    def test_create_duplicate_ident(self):
+
+        api_instance = ApiFactory.LocationApi(self._api_client)
+
+        try:
+
+            loc = self.get_next_location()
+            ident = swagger_client.Identifier(identifier_type='partner_name', identifier_value='Kobeni', study_name='5002-PF-MR-ANON')
+            loc.identifiers = [
+                ident,
+                ident
+            ]
+
+            with self.assertRaises(Exception) as context:
+                created1 = api_instance.create_location(loc)
+            self.assertEqual(context.exception.status, 422)
 
         except ApiException as error:
             self.fail("test_create: Exception when calling LocationApi->create_location: %s\n" % error)
@@ -105,6 +120,34 @@ class TestLocation(TestBase):
 
         except ApiException as error:
             self.fail("test_duplicate_key: Exception when calling LocationApi->create_location: %s\n" % error)
+
+
+    """
+    """
+    def test_create_duplicate_ident(self):
+
+        api_instance = ApiFactory.LocationApi(self._api_client)
+
+        try:
+
+            loc = self.get_next_location()
+            ident = swagger_client.Identifier(identifier_type='partner_name', identifier_value='Kobeni', study_name='5003-PF-MR-ANON')
+            loc.identifiers = [
+                ident,
+                ident
+            ]
+
+            with self.assertRaises(Exception) as context:
+                created1 = api_instance.create_location(loc)
+            self.assertEqual(context.exception.status, 422)
+
+            with self.assertRaises(Exception) as context:
+                looked_up = api_instance.download_gps_location(loc.latitude, loc.longitude)
+
+            self.assertEqual(context.exception.status, 404)
+
+        except ApiException as error:
+            self.fail("test_create_duplicate_ident: Exception when calling LocationApi->create_location: %s\n" % error)
 
     """
     """
@@ -265,6 +308,58 @@ class TestLocation(TestBase):
 
         except ApiException as error:
             self.fail("test_partner_lookup: Exception when calling LocationApi->create_location: %s\n" % error)
+
+    """
+    """
+    def test_partner_lookup_missing(self):
+
+        api_instance = ApiFactory.LocationApi(self._api_client)
+
+        try:
+
+            with self.assertRaises(Exception) as context:
+                looked_up_locs = api_instance.download_partner_location('404')
+
+            self.assertEqual(context.exception.status, 404)
+
+        except ApiException as error:
+            self.fail("test_partner_lookup: Exception when calling LocationApi->create_location: %s\n" % error)
+
+    """
+    """
+    def test_download_locations(self):
+
+        api_instance = ApiFactory.LocationApi(self._api_client)
+
+        try:
+
+            loc = self.get_next_location()
+            loc.identifiers = [
+                swagger_client.Identifier(identifier_type='partner_name', identifier_value='bhutan', study_name='5000-PV')
+            ]
+            created = api_instance.create_location(loc)
+            loc1 = self.get_next_location()
+            loc1.identifiers = [
+                swagger_client.Identifier(identifier_type='partner_name', identifier_value='bhutan', study_name='5001-PV')
+            ]
+            created1 = api_instance.create_location(loc1)
+            looked_up_locs = api_instance.download_locations()
+            self.assertEqual(looked_up_locs.count, 2, 'Wrong number of locations')
+            looked_up = looked_up_locs.locations[0]
+
+            looked_up_locs = api_instance.download_locations(start=0, count=1)
+            self.assertEqual(looked_up_locs.count, 2, 'Wrong number of locations')
+            self.assertEqual(len(looked_up_locs.locations), 1, 'Wrong number of locations')
+
+            looked_up_locs = api_instance.download_locations(start=10, count=2)
+            self.assertEqual(looked_up_locs.count, 2, 'Wrong number of locations')
+            self.assertEqual(len(looked_up_locs.locations), 0, 'Wrong number of locations')
+
+            api_instance.delete_location(created.location_id)
+            api_instance.delete_location(created1.location_id)
+
+        except ApiException as error:
+            self.fail("test_download_locations: Exception when calling LocationApi->create_location: %s\n" % error)
 
     """
     """

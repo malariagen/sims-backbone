@@ -28,12 +28,7 @@ class EventSetPostNote():
                     EventSetEdit.add_note(cursor, event_set_id, note)
 
                 except psycopg2.IntegrityError as err:
-                    if err.pgcode == 23503:
-                        raise MissingKeyException("Error inserting event set note {} {}".format(event_set_id, note)) from err
-                    else:
-                        raise DuplicateKeyException("Error inserting event set note {} {}".format(event_set_id, note)) from err
-                except DuplicateKeyException as err:
-                    raise err
+                    raise DuplicateKeyException("Error inserting event set note {} {}".format(event_set_id, note)) from err
 
         return ret
 

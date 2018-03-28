@@ -175,16 +175,37 @@ class TestEventSets(TestBase):
             self.assertEqual(note.note_name, evsn.note_name)
             self.assertEqual(note.note_text, evsn.note_text)
 
+            self.assertEqual(len(fetched_set.notes), 1)
+
             new_text = 'updated_note'
 
-            api_instance.update_event_set_note(event_set, note.note_name, new_text)
+            note.note_text = new_text
+
+            api_instance.update_event_set_note(event_set, note.note_name, note)
 
             fetched_set = api_instance.download_event_set(event_set)
+
+            self.assertEqual(len(fetched_set.notes), 1)
 
             note = fetched_set.notes[0]
 
             self.assertEqual(note.note_name, evsn.note_name)
             self.assertEqual(note.note_text, new_text)
+
+            with self.assertRaises(Exception) as context:
+                api_instance.update_event_set_note(event_set, '404', note)
+
+            self.assertEqual(context.exception.status, 404)
+
+            #Can't change the name of a note to be the same as another note
+            evsna = swagger_client.EventSetNote('note4a', 'note4atext')
+            created_set = api_instance.create_event_set_note(event_set, evsna.note_name, evsna)
+
+            with self.assertRaises(Exception) as context:
+                api_instance.update_event_set_note(event_set, evsn.note_name, evsna)
+
+            self.assertEqual(context.exception.status, 422)
+
             api_instance.delete_event_set(event_set)
 
         except ApiException as error:
@@ -289,9 +310,7 @@ class TestEventSets(TestBase):
 
             api_instance.update_event_set(event_set, fetched_set1)
 
-            print(fetched_set1)
             fetched_set2 = api_instance.download_event_set(event_set)
-            print(fetched_set1)
 
             self.assertEqual(fetched_set2.members.count, 2)
             self.assertEqual(len(fetched_set2.notes), 1)
@@ -319,3 +338,181 @@ class TestEventSets(TestBase):
 
         except ApiException as error:
             self.fail("test_create: Exception when calling EventSetsApi->create_event_set: %s\n" % error)
+
+    """
+    """
+    def test_create_duplicate(self):
+
+        api_instance = ApiFactory.EventSetApi(self._api_client)
+        event_api_instance = ApiFactory.SamplingEventApi(self._api_client)
+
+        try:
+
+            event_set = 'EventSet9'
+            evs = swagger_client.EventSet()
+
+            created = api_instance.create_event_set(event_set)
+
+            with self.assertRaises(Exception) as context:
+                created = api_instance.create_event_set(event_set)
+
+            self.assertEqual(context.exception.status, 422)
+
+            api_instance.delete_event_set(event_set)
+
+        except ApiException as error:
+            self.fail("test_create_duplicate: Exception when calling EventSetsApi->create_event_set: %s\n" % error)
+
+    """
+    """
+    def test_create_note_duplicate(self):
+
+        api_instance = ApiFactory.EventSetApi(self._api_client)
+        event_api_instance = ApiFactory.SamplingEventApi(self._api_client)
+
+        try:
+
+            event_set = 'EventSet10'
+            evsn = swagger_client.EventSetNote('note10', 'note10text')
+            evs = swagger_client.EventSet()
+            created = api_instance.create_event_set(event_set)
+
+            created_set = api_instance.create_event_set_note(event_set, evsn.note_name, evsn)
+            with self.assertRaises(Exception) as context:
+                created_set = api_instance.create_event_set_note(event_set, evsn.note_name, evsn)
+
+            self.assertEqual(context.exception.status, 422)
+
+            api_instance.delete_event_set(event_set)
+
+        except ApiException as error:
+            self.fail("test_create_note_duplicate: Exception when calling EventSetsApi->create_event_set: %s\n" % error)
+
+    """
+    """
+    def test_create_member_duplicate(self):
+
+        api_instance = ApiFactory.EventSetApi(self._api_client)
+        event_api_instance = ApiFactory.SamplingEventApi(self._api_client)
+
+        try:
+
+            event_set = 'EventSet11'
+            created = api_instance.create_event_set(event_set)
+
+            samp = swagger_client.SamplingEvent(None, '4000-MD-UP', date(2017, 10, 10))
+            created = event_api_instance.create_sampling_event(samp)
+
+            created_set = api_instance.create_event_set_item(event_set, created.sampling_event_id)
+
+            with self.assertRaises(Exception) as context:
+                created_set = api_instance.create_event_set_item(event_set, created.sampling_event_id)
+
+            self.assertEqual(context.exception.status, 422)
+
+            api_instance.delete_event_set_item(event_set, created.sampling_event_id)
+
+            api_instance.delete_event_set(event_set)
+            event_api_instance.delete_sampling_event(created.sampling_event_id)
+
+        except ApiException as error:
+            self.fail("test_create_member_duplicate: Exception when calling EventSetsApi->create_event_set: %s\n" % error)
+
+    """
+    """
+    def test_delete_missing_member(self):
+
+        api_instance = ApiFactory.EventSetApi(self._api_client)
+        event_api_instance = ApiFactory.SamplingEventApi(self._api_client)
+
+        try:
+
+            event_set = 'EventSet12'
+            created = api_instance.create_event_set(event_set)
+
+            samp = swagger_client.SamplingEvent(None, '4000-MD-UP', date(2017, 10, 10))
+            created = event_api_instance.create_sampling_event(samp)
+
+            created_set = api_instance.create_event_set_item(event_set, created.sampling_event_id)
+
+            api_instance.delete_event_set_item(event_set, created.sampling_event_id)
+            with self.assertRaises(Exception) as context:
+                api_instance.delete_event_set_item(event_set, created.sampling_event_id)
+
+            self.assertEqual(context.exception.status, 404)
+
+            api_instance.delete_event_set(event_set)
+            event_api_instance.delete_sampling_event(created.sampling_event_id)
+
+        except ApiException as error:
+            self.fail("test_delete_missing_member: Exception when calling EventSetsApi->create_event_set: %s\n" % error)
+
+    """
+    """
+    def test_create_note_missing_event_set(self):
+
+        api_instance = ApiFactory.EventSetApi(self._api_client)
+        event_api_instance = ApiFactory.SamplingEventApi(self._api_client)
+
+        try:
+
+            evsn = swagger_client.EventSetNote('note404', 'note404text')
+            with self.assertRaises(Exception) as context:
+                created_set = api_instance.create_event_set_note('404', evsn.note_name, evsn)
+
+            self.assertEqual(context.exception.status, 404)
+
+        except ApiException as error:
+            self.fail("test_create_note_missing_event_set: Exception when calling EventSetsApi->create_event_set: %s\n" % error)
+
+
+    """
+    """
+    def test_download_missing(self):
+
+        api_instance = ApiFactory.EventSetApi(self._api_client)
+
+        try:
+
+            with self.assertRaises(Exception) as context:
+                api_instance.download_event_set('404')
+
+            self.assertEqual(context.exception.status, 404)
+
+        except ApiException as error:
+            self.fail("test_delete_missing: Exception when calling EventSetsApi->create_event_set: %s\n" % error)
+
+    """
+    """
+    def test_update_missing(self):
+
+        api_instance = ApiFactory.EventSetApi(self._api_client)
+
+        try:
+
+            event_set = swagger_client.EventSet('404')
+            with self.assertRaises(Exception) as context:
+                api_instance.update_event_set('404',event_set)
+
+            self.assertEqual(context.exception.status, 404)
+
+        except ApiException as error:
+            self.fail("test_update_missing: Exception when calling EventSetsApi->create_event_set: %s\n" % error)
+
+
+    """
+    """
+    def test_delete_missing(self):
+
+        api_instance = ApiFactory.EventSetApi(self._api_client)
+
+        try:
+
+            with self.assertRaises(Exception) as context:
+                api_instance.delete_event_set('404')
+
+            self.assertEqual(context.exception.status, 404)
+
+        except ApiException as error:
+            self.fail("test_delete_missing: Exception when calling EventSetsApi->create_event_set: %s\n" % error)
+

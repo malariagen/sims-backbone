@@ -26,25 +26,19 @@ class EventSetPut():
 
                 args = (event_set_id,)
 
-                try:
-
-                    #Allows the possibility of editing the metadata without the events
-                    if event_set.members and len(event_set.members.sampling_events) > 0:
-                        stmt = '''DELETE FROM event_set_members WHERE event_set_id = %s'''
-                        cursor.execute(stmt, args)
-
-                        EventSetEdit.add_sampling_events(cursor, event_set_id,
-                                                         event_set.members.sampling_events)
-
-                    stmt = '''DELETE FROM event_set_notes WHERE event_set_id = %s'''
+                #Allows the possibility of editing the metadata without the events
+                if event_set.members and len(event_set.members.sampling_events) > 0:
+                    stmt = '''DELETE FROM event_set_members WHERE event_set_id = %s'''
                     cursor.execute(stmt, args)
 
-                    EventSetEdit.add_notes(cursor, event_set_id, event_set.notes)
+                    EventSetEdit.add_sampling_events(cursor, event_set_id,
+                                                     event_set.members.sampling_events)
 
-                except psycopg2.IntegrityError as err:
-                    raise DuplicateKeyException("Error updating event set {} {}".format(event_set_id, event_set)) from err
-                except DuplicateKeyException as err:
-                    raise err
+                stmt = '''DELETE FROM event_set_notes WHERE event_set_id = %s'''
+                cursor.execute(stmt, args)
+
+                EventSetEdit.add_notes(cursor, event_set_id, event_set.notes)
+
 
                 ret = EventSetFetch.fetch(cursor, event_set_id, None, None)
 

@@ -10,3 +10,7 @@ typescript-angular2-client/
 typescript-angular-client/
 *.tgz
 *.gz
+**/.coverage
+**/htmlcov
+*.cprof
+**/.pytest_cache

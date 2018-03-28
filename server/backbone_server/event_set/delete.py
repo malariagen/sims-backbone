@@ -25,20 +25,15 @@ class EventSetDelete():
 
                 args = (event_set_id,)
 
-                try:
-                    stmt = '''DELETE FROM event_set_members WHERE event_set_id = %s'''
-                    cursor.execute(stmt, args)
+                stmt = '''DELETE FROM event_set_members WHERE event_set_id = %s'''
+                cursor.execute(stmt, args)
 
-                    stmt = '''DELETE FROM event_set_notes WHERE event_set_id = %s'''
-                    cursor.execute(stmt, args)
+                stmt = '''DELETE FROM event_set_notes WHERE event_set_id = %s'''
+                cursor.execute(stmt, args)
 
-                    stmt = '''DELETE FROM event_sets WHERE id = %s'''
-                    cursor.execute(stmt, args)
+                stmt = '''DELETE FROM event_sets WHERE id = %s'''
+                cursor.execute(stmt, args)
 
-                except psycopg2.IntegrityError as err:
-                    raise DuplicateKeyException("Error deleting event set {}".format(event_set_id)) from err
-                except DuplicateKeyException as err:
-                    raise err
 
 
         return None

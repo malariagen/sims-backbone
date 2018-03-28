@@ -46,8 +46,4 @@ class SamplingEventsGetByLocation():
 
         sampling_events.locations = locations
 
-        if sampling_events.count == 0:
-            raise MissingKeyException("No sampling_events for {}".format(location))
-
-
         return sampling_events

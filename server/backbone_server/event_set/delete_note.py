@@ -33,15 +33,9 @@ class EventSetDeleteNote():
                     raise MissingKeyException("No such event set note {} {}".format(event_set_name,
                                                                                    note_name))
 
-                try:
 
-                    stmt = '''DELETE FROM event_set_notes WHERE event_set_id = %s AND note_name = %s'''
-                    cursor.execute(stmt, (event_set_id, note_name))
-
-                except psycopg2.IntegrityError as err:
-                    raise MissingKeyException("Error deleting event set note {} {}".format(event_set_id, note_name)) from err
-                except MissingKeyException as err:
-                    raise err
+                stmt = '''DELETE FROM event_set_notes WHERE event_set_id = %s AND note_name = %s'''
+                cursor.execute(stmt, (event_set_id, note_name))
 
                 ret = EventSetFetch.fetch(cursor, event_set_id, 0, 0)
 

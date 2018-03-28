@@ -46,14 +46,10 @@ class LocationPost(LocationEdit):
                 args = (uuid_val, location.latitude, location.longitude,
                         location.accuracy, location.curated_name, location.curation_method,
                         location.country, location.notes)
-                try:
-                    cursor.execute(stmt, args)
 
-                    LocationEdit.add_identifiers(cursor, uuid_val, location)
+                cursor.execute(stmt, args)
 
-                except psycopg2.IntegrityError as err:
-                    self._logger.error(repr(err))
-                    raise DuplicateKeyException("Error inserting location {}".format(location)) from err
+                LocationEdit.add_identifiers(cursor, uuid_val, location)
 
                 location = LocationFetch.fetch(cursor, uuid_val)
 
