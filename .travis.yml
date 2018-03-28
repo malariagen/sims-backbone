@@ -23,7 +23,7 @@ script:
   - psql -c "DELETE FROM studies;" -U ${DB_USER} backbone_service
   - psql -c "DELETE FROM taxonomies WHERE id=7227;" -U ${DB_USER} backbone_service
   - (cd upload/test;./run.sh)
-  - (cd client/sims-backbone;xvfb-run -a ng test --single-run --no-progress --browser=ChromeNoSandbox)
+  - (cd client/sims-backbone;xvfb-run -a ng test --single-run --no-progress --browser=ChromeNoSandbox --code-coverage)
     #  - (cd client/sims-backbone;xvfb-run -a ng e2e --no-progress --config=protractor-ci.conf.js)
 
 services:
