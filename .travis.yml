@@ -12,13 +12,14 @@ install:
     - pip install -r test/requirements.txt
     - pip install -r server/backbone_server/REQUIREMENTS
     - pip install -r upload/requirements.txt
+    - pip install python-coveralls
     - nvm install 8
     - npm install -g @angular/cli
     - (cd client/sims-backbone;npm install)
     - (cd client/sims-backbone;sed -i -e "s/url(\([-a-zA-Z0-9\.]*\))/url('\1')/" ./node_modules/material-design-icons/iconfont/material-icons.css)
 
 script:
-  - (export LOCAL_TEST=1;pytest --cov=backbone_server test/)
+  - (export LOCAL_TEST=1;pytest --cov=backbone_server --cov-report term-missing -v test/)
   - psql -c "DELETE FROM studies;" -U ${DB_USER} backbone_service
   - psql -c "DELETE FROM taxonomies WHERE id=7227;" -U ${DB_USER} backbone_service
   - (cd upload/test;./run.sh)
@@ -47,12 +48,11 @@ before_script:
     - export REMOTE_HOST_URL=http://localhost:8080/v1
 
 after_success:
-  - codecov
+  - coveralls
 
 addons:
     postgresql: "9.6"
     apt:
       packages:
         - postgresql-9.6-postgis-2.3
-        - python-coverage
     chrome: stable
