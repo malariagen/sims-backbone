@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/malariagen/sims-backbone.svg?branch=master)](https://travis-ci.org/malariagen/sims-backbone)
+[![Coverage Status](https://coveralls.io/repos/github/malariagen/sims-backbone/badge.svg?branch=master)](https://coveralls.io/github/malariagen/sims-backbone?branch=master)
 
 # sims-backbone
 
