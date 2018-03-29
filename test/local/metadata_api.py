@@ -12,13 +12,13 @@ from local.base_local_api import BaseLocalApi
 
 class LocalMetadataApi(BaseLocalApi):
 
-    def __init__(self, api_client=None):
+    def __init__(self, api_client, user, auths, method):
 
-        super().__init__(api_client)
+        super().__init__(api_client, user, auths, method)
 
         self.metadata_controller = MetadataController()
 
-    def create_taxonomy(self, taxonomy, user = None, token_info = None):
+    def create_taxonomy(self, taxonomy):
         """create_taxonomy
 
         Create a Taxonomy # noqa: E501
@@ -28,13 +28,11 @@ class LocalMetadataApi(BaseLocalApi):
         :rtype: Taxonomy
         """
 
-        (ret, retcode) = self.metadata_controller.create_taxonomy(taxonomy)
+        (ret, retcode) = self.metadata_controller.create_taxonomy(taxonomy, self._user, self.auth_tokens())
 
-        print(type(ret))
-        print(ret)
         return self.create_response(ret, retcode, 'Taxonomy')
 
-    def get_country_metadata(self, countryId, user = None, token_info = None):
+    def get_country_metadata(self, countryId):
         """
         fetches all the names for a country
         guesses the search criteria
@@ -44,11 +42,12 @@ class LocalMetadataApi(BaseLocalApi):
         :rtype: Country
         """
 
-        (ret, retcode) = self.metadata_controller.get_country_metadata(countryId)
+        (ret, retcode) = self.metadata_controller.get_country_metadata(countryId, self._user,
+                                                                       self.auth_tokens())
 
         return self.create_response(ret, retcode, 'Country')
 
-    def get_identifier_types(self, user = None, token_info = None):  # noqa: E501
+    def get_identifier_types(self):  # noqa: E501
         """fetches all the identifier types
 
         returns all identifier types in use # noqa: E501
@@ -56,12 +55,13 @@ class LocalMetadataApi(BaseLocalApi):
 
         :rtype: List[str]
         """
-        (ret, retcode) = self.metadata_controller.get_identifier_types()
+        (ret, retcode) = self.metadata_controller.get_identifier_types(self._user,
+                                                                       self.auth_tokens())
 
         return self.create_response(ret, retcode)
 
 
-    def get_location_identifier_types(self, user = None, token_info = None):  # noqa: E501
+    def get_location_identifier_types(self):  # noqa: E501
         """fetches all the location identifier types
 
         returns all location identifier types in use # noqa: E501
@@ -69,11 +69,12 @@ class LocalMetadataApi(BaseLocalApi):
 
         :rtype: List[str]
         """
-        (ret, retcode) = self.metadata_controller.get_location_identifier_types()
+        (ret, retcode) = self.metadata_controller.get_location_identifier_types(self._user,
+                                                                                self.auth_tokens())
 
         return self.create_response(ret, retcode)
 
-    def get_taxonomy_metadata(self, user = None, token_info = None):  # noqa: E501
+    def get_taxonomy_metadata(self):  # noqa: E501
         """fetches all the registered taxa
 
         returns all taxa # noqa: E501
@@ -81,7 +82,8 @@ class LocalMetadataApi(BaseLocalApi):
 
         :rtype: Taxonomies
         """
-        (ret, retcode) = self.metadata_controller.get_taxonomy_metadata()
-        
+        (ret, retcode) = self.metadata_controller.get_taxonomy_metadata(self._user,
+                                                                        self.auth_tokens())
+
         return self.create_response(ret, retcode, 'Taxonomies')
 

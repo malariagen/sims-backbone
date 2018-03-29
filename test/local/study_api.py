@@ -10,13 +10,13 @@ from local.base_local_api import BaseLocalApi
 
 class LocalStudyApi(BaseLocalApi):
 
-    def __init__(self, api_client=None):
+    def __init__(self, api_client, user, auths, method):
 
-        super().__init__(api_client)
+        super().__init__(api_client, user, auths, method)
 
         self.study_controller = StudyController()
 
-    def download_studies(self, start=None, count=None, user=None, token_info = None):  # noqa: E501
+    def download_studies(self, start=None, count=None):  # noqa: E501
         """fetches studies
 
          # noqa: E501
@@ -28,12 +28,12 @@ class LocalStudyApi(BaseLocalApi):
 
         :rtype: Studies
         """
-        (ret, retcode) = self.study_controller.download_studies(start, count, user, token_info)
+        (ret, retcode) = self.study_controller.download_studies(start, count, self._user, self.auth_tokens())
 
         return self.create_response(ret, retcode, 'Studies')
 
 
-    def download_study(self, studyName, user=None, token_info = None):  # noqa: E501
+    def download_study(self, studyName):  # noqa: E501
         """fetches a study
 
          # noqa: E501
@@ -43,12 +43,12 @@ class LocalStudyApi(BaseLocalApi):
 
         :rtype: Study
         """
-        (ret, retcode) = self.study_controller.download_study(studyName, user, token_info)
+        (ret, retcode) = self.study_controller.download_study(studyName, self._user, self.auth_tokens())
 
         return self.create_response(ret, retcode, 'Study')
 
 
-    def update_study(self, studyName, study, user=None, token_info = None):
+    def update_study(self, studyName, study):
         """updates a study
 
          # noqa: E501
@@ -60,7 +60,7 @@ class LocalStudyApi(BaseLocalApi):
 
         :rtype: Study
         """
-        (ret, retcode) = self.study_controller.update_study(studyName, study, user,
-                                             self.study_controller.token_info(token_info))
+        (ret, retcode) = self.study_controller.update_study(studyName, study, self._user,
+                                             self.auth_tokens())
         return self.create_response(ret, retcode, 'Study')
 

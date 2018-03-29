@@ -1,6 +1,7 @@
 import logging
 import os
-import json
+
+from backbone_server.errors.permission_exception import PermissionException 
 
 class BaseController():
 
@@ -55,7 +56,7 @@ class BaseController():
             for auth_grp in tok_info['memberOf']:
                 dns = auth_grp.split(',')
                 cn = dns[0].split('=')[1]
-                resp.append(cn)
+                resp.append(auth_grp)
 
         return resp
 
@@ -68,10 +69,16 @@ class BaseController():
 
     """
     Throw an exception if no permission
+    Calling class should log
     """
     def check_permissions(self, study_id, perms):
 
-        pass
+        if not perms:
+            pass
+        elif not 'cn=editor,ou=sims,ou=projects,ou=groups,dc=malariagen,dc=net' in perms:
+            message = 'No permission {} {}'.format(study_id, perms)
+
+            raise PermissionException(message)
 
 
     def log_action(self, user, action, entity_id, content, result, retcode):

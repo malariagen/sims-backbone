@@ -1,10 +1,12 @@
 import swagger_client
 from swagger_client.rest import ApiException
-from api_factory import ApiFactory
+
 from test_base import TestBase
 
 import copy
 import uuid
+
+import pytest
 
 class TestLocation(TestBase):
 
@@ -26,107 +28,89 @@ class TestLocation(TestBase):
 
     """
     """
-    def test_create(self):
+    def test_create(self, api_factory):
 
-        api_instance = ApiFactory.LocationApi(self._api_client)
+        api_instance = api_factory.LocationApi()
 
         try:
 
             loc = self.get_next_location()
 
             created = api_instance.create_location(loc)
+            if not api_factory.is_authorized(None):
+                pytest.fail('Unauthorized call to create_location succeeded')
+
             fetched = api_instance.download_location(created.location_id)
-            self.assertEqual(created, fetched, "create response != download response")
+            assert created == fetched, "create response != download response"
             fetched.location_id = None
-            self.assertEqual(loc, fetched, "upload != download response")
+            assert loc == fetched, "upload != download response"
             api_instance.delete_location(created.location_id)
 
         except ApiException as error:
-            self.fail("test_create: Exception when calling LocationApi->create_location: %s\n" % error)
+            self.check_api_exception(api_factory, "LocationApi->create_location", error)
+
 
     """
     """
-    def test_create_duplicate_ident(self):
+    def test_delete(self, api_factory):
 
-        api_instance = ApiFactory.LocationApi(self._api_client)
-
-        try:
-
-            loc = self.get_next_location()
-            ident = swagger_client.Identifier(identifier_type='partner_name', identifier_value='Kobeni', study_name='5002-PF-MR-ANON')
-            loc.identifiers = [
-                ident,
-                ident
-            ]
-
-            with self.assertRaises(Exception) as context:
-                created1 = api_instance.create_location(loc)
-            self.assertEqual(context.exception.status, 422)
-
-        except ApiException as error:
-            self.fail("test_create: Exception when calling LocationApi->create_location: %s\n" % error)
-
-    """
-    """
-    def test_delete(self):
-
-        api_instance = ApiFactory.LocationApi(self._api_client)
+        api_instance = api_factory.LocationApi()
 
         try:
 
             loc = self.get_next_location()
             created = api_instance.create_location(loc)
             api_instance.delete_location(created.location_id)
-            with self.assertRaises(Exception) as context:
+            with pytest.raises(ApiException, status=404):
                 fetched = api_instance.download_location(created.location_id)
-            self.assertEqual(context.exception.status, 404)
 
         except ApiException as error:
-            self.fail("test_delete: Exception when calling LocationApi->create_location: %s\n" % error)
+            self.check_api_exception(api_factory, "LocationApi->create_location", error)
 
 
     """
     """
-    def test_delete_missing(self):
+    def test_delete_missing(self, api_factory):
 
-        api_instance = ApiFactory.LocationApi(self._api_client)
+        api_instance = api_factory.LocationApi()
 
         try:
 
-            with self.assertRaises(Exception) as context:
-                api_instance.delete_location(str(uuid.uuid4()))
-            self.assertEqual(context.exception.status, 404)
+            if api_factory.is_authorized(None):
+                with pytest.raises(ApiException, status=404):
+                    api_instance.delete_location(str(uuid.uuid4()))
+            else:
+                with pytest.raises(ApiException, status=403):
+                    api_instance.delete_location(str(uuid.uuid4()))
 
         except ApiException as error:
-            self.fail("test_delete_missing: Exception when calling LocationApi->delete_location: %s\n" % error)
+            self.check_api_exception(api_factory, "LocationApi->delete_location", error)
 
     """
     """
-    def test_duplicate_key(self):
+    def test_duplicate_key(self, api_factory):
 
-        api_instance = ApiFactory.LocationApi(self._api_client)
+        api_instance = api_factory.LocationApi()
 
         try:
 
             loc = self.get_next_location()
             created = api_instance.create_location(loc)
 
-            with self.assertRaises(Exception) as context:
+            with pytest.raises(ApiException, status=422):
                 created = api_instance.create_location(loc)
 
-            self.assertEqual(context.exception.status, 422)
-
             api_instance.delete_location(created.location_id)
 
         except ApiException as error:
-            self.fail("test_duplicate_key: Exception when calling LocationApi->create_location: %s\n" % error)
+            self.check_api_exception(api_factory, "LocationApi->create_location", error)
 
 
     """
     """
-    def test_create_duplicate_ident(self):
+    def test_create_duplicate_ident(self, api_factory):
 
-        api_instance = ApiFactory.LocationApi(self._api_client)
+        api_instance = api_factory.LocationApi()
 
         try:
 
@@ -137,23 +121,20 @@ class TestLocation(TestBase):
                 ident
             ]
 
-            with self.assertRaises(Exception) as context:
+            with pytest.raises(ApiException, status=422):
                 created1 = api_instance.create_location(loc)
-            self.assertEqual(context.exception.status, 422)
 
-            with self.assertRaises(Exception) as context:
+            with pytest.raises(ApiException, status=404):
                 looked_up = api_instance.download_gps_location(loc.latitude, loc.longitude)
 
-            self.assertEqual(context.exception.status, 404)
-
         except ApiException as error:
-            self.fail("test_create_duplicate_ident: Exception when calling LocationApi->create_location: %s\n" % error)
+            self.check_api_exception(api_factory, "LocationApi->create_location", error)
 
     """
     """
-    def test_duplicate_partner_name(self):
+    def test_duplicate_partner_name(self, api_factory):
 
-        api_instance = ApiFactory.LocationApi(self._api_client)
+        api_instance = api_factory.LocationApi()
 
         try:
 
@@ -170,22 +151,21 @@ class TestLocation(TestBase):
 
             created = api_instance.create_location(loc)
 
-            with self.assertRaises(Exception) as context:
+            with pytest.raises(ApiException, status=422):
                 created1 = api_instance.create_location(loc1)
                 api_instance.delete_location(created1.location_id)
 
-            self.assertEqual(context.exception.status, 422)
             api_instance.delete_location(created.location_id)
 
         except ApiException as error:
-            self.fail("test_duplicate_key: Exception when calling LocationApi->create_location: %s\n" % error)
+            self.check_api_exception(api_factory, "LocationApi->create_location", error)
 
 
     """
     """
-    def test_duplicate_study_name(self):
+    def test_duplicate_study_name(self, api_factory):
 
-        api_instance = ApiFactory.LocationApi(self._api_client)
+        api_instance = api_factory.LocationApi()
 
         try:
 
@@ -195,20 +175,18 @@ class TestLocation(TestBase):
                 swagger_client.Identifier(identifier_type='partner_name', identifier_value='location name', study_name='5002')
             ]
 
-            with self.assertRaises(Exception) as context:
+            with pytest.raises(ApiException, status=422):
                 created = api_instance.create_location(loc)
 
-            self.assertEqual(context.exception.status, 422)
-
         except ApiException as error:
-            self.fail("test_duplicate_key: Exception when calling LocationApi->create_location: %s\n" % error)
+            self.check_api_exception(api_factory, "LocationApi->create_location", error)
 
 
     """
     """
-    def test_gps_lookup_negative(self):
+    def test_gps_lookup_negative(self, api_factory):
 
-        api_instance = ApiFactory.LocationApi(self._api_client)
+        api_instance = api_factory.LocationApi()
 
         try:
 
@@ -220,19 +198,19 @@ class TestLocation(TestBase):
             looked_up = api_instance.download_gps_location(15.82083, -9.4145)
 
             fetched = api_instance.download_location(looked_up.location_id)
-            self.assertEqual(created, fetched, "create response != download response")
+            assert created == fetched, "create response != download response"
             fetched.location_id = None
-            self.assertEqual(loc, fetched, "upload != download response")
+            assert loc == fetched, "upload != download response"
             api_instance.delete_location(created.location_id)
 
         except ApiException as error:
-            self.fail("test_partner_lookup: Exception when calling LocationApi->create_location: %s\n" % error)
+            self.check_api_exception(api_factory, "LocationApi->create_location", error)
 
     """
     """
-    def test_gps_lookup(self):
+    def test_gps_lookup(self, api_factory):
 
-        api_instance = ApiFactory.LocationApi(self._api_client)
+        api_instance = api_factory.LocationApi()
 
         try:
 
@@ -244,51 +222,52 @@ class TestLocation(TestBase):
             looked_up = api_instance.download_gps_location(loc.latitude, loc.longitude)
 
             fetched = api_instance.download_location(looked_up.location_id)
-            self.assertEqual(created, fetched, "create response != download response")
+            assert created == fetched, "create response != download response"
             fetched.location_id = None
-            self.assertEqual(loc, fetched, "upload != download response")
+            assert loc == fetched, "upload != download response"
             api_instance.delete_location(created.location_id)
 
         except ApiException as error:
-            self.fail("test_partner_lookup: Exception when calling LocationApi->create_location: %s\n" % error)
+            self.check_api_exception(api_factory, "LocationApi->create_location", error)
 
     """
     """
-    def test_gps_lookup_not_found(self):
+    def test_gps_lookup_not_found(self, api_factory):
 
-        api_instance = ApiFactory.LocationApi(self._api_client)
+        api_instance = api_factory.LocationApi()
 
         try:
 
-            with self.assertRaises(Exception) as context:
-                looked_up = api_instance.download_gps_location(27.46362, 90.49542)
 
-            self.assertEqual(context.exception.status, 404)
+            if api_factory.is_authorized(None):
+                with pytest.raises(ApiException, status=404):
+                    looked_up = api_instance.download_gps_location(27.46362, 90.49542)
+            else:
+                with pytest.raises(ApiException, status=403):
+                    looked_up = api_instance.download_gps_location(27.46362, 90.49542)
 
         except ApiException as error:
-            self.fail("test_partner_lookup: Exception when calling LocationApi->create_location: %s\n" % error)
+            self.check_api_exception(api_factory, "LocationApi->download_gps_location", error)
 
     """
     """
-    def test_gps_lookup_invalid(self):
+    def test_gps_lookup_invalid(self, api_factory):
 
-        api_instance = ApiFactory.LocationApi(self._api_client)
+        api_instance = api_factory.LocationApi()
 
         try:
 
-            with self.assertRaises(Exception) as context:
+            with pytest.raises(ApiException, status=422):
                 looked_up = api_instance.download_gps_location('27.46362', 'y90.49542')
 
-            self.assertEqual(context.exception.status, 422)
-
         except ApiException as error:
-            self.fail("test_partner_lookup: Exception when calling LocationApi->create_location: %s\n" % error)
+            self.check_api_exception(api_factory, "LocationApi->download_gps_location", error)
 
     """
     """
-    def test_partner_lookup(self):
+    def test_partner_lookup(self, api_factory):
 
-        api_instance = ApiFactory.LocationApi(self._api_client)
+        api_instance = api_factory.LocationApi()
 
         try:
 
@@ -301,35 +280,37 @@ class TestLocation(TestBase):
             looked_up = looked_up_locs.locations[0]
 
             fetched = api_instance.download_location(looked_up.location_id)
-            self.assertEqual(created, fetched, "create response != download response")
+            assert created == fetched, "create response != download response"
             fetched.location_id = None
-            self.assertEqual(loc, fetched, "upload != download response")
+            assert loc == fetched, "upload != download response"
             api_instance.delete_location(created.location_id)
 
         except ApiException as error:
-            self.fail("test_partner_lookup: Exception when calling LocationApi->create_location: %s\n" % error)
+            self.check_api_exception(api_factory, "LocationApi->create_location", error)
 
     """
     """
-    def test_partner_lookup_missing(self):
+    def test_partner_lookup_missing(self, api_factory):
 
-        api_instance = ApiFactory.LocationApi(self._api_client)
+        api_instance = api_factory.LocationApi()
 
         try:
 
-            with self.assertRaises(Exception) as context:
-                looked_up_locs = api_instance.download_partner_location('404')
-
-            self.assertEqual(context.exception.status, 404)
+            if api_factory.is_authorized(None):
+                with pytest.raises(ApiException, status=404):
+                    looked_up_locs = api_instance.download_partner_location('404')
+            else:
+                with pytest.raises(ApiException, status=403):
+                    looked_up_locs = api_instance.download_partner_location('404')
 
         except ApiException as error:
-            self.fail("test_partner_lookup: Exception when calling LocationApi->create_location: %s\n" % error)
+            self.check_api_exception(api_factory, "LocationApi->download_partner_location", error)
 
     """
     """
-    def test_download_locations(self):
+    def test_download_locations(self, api_factory):
 
-        api_instance = ApiFactory.LocationApi(self._api_client)
+        api_instance = api_factory.LocationApi()
 
         try:
 
@@ -344,28 +325,28 @@ class TestLocation(TestBase):
             ]
             created1 = api_instance.create_location(loc1)
             looked_up_locs = api_instance.download_locations()
-            self.assertEqual(looked_up_locs.count, 2, 'Wrong number of locations')
+            assert looked_up_locs.count == 2, 'Wrong number of locations'
             looked_up = looked_up_locs.locations[0]
 
             looked_up_locs = api_instance.download_locations(start=0, count=1)
-            self.assertEqual(looked_up_locs.count, 2, 'Wrong number of locations')
-            self.assertEqual(len(looked_up_locs.locations), 1, 'Wrong number of locations')
+            assert looked_up_locs.count == 2, 'Wrong number of locations'
+            assert len(looked_up_locs.locations) == 1, 'Wrong number of locations'
 
             looked_up_locs = api_instance.download_locations(start=10, count=2)
-            self.assertEqual(looked_up_locs.count, 2, 'Wrong number of locations')
-            self.assertEqual(len(looked_up_locs.locations), 0, 'Wrong number of locations')
+            assert looked_up_locs.count == 2, 'Wrong number of locations'
+            assert len(looked_up_locs.locations) == 0, 'Wrong number of locations'
 
             api_instance.delete_location(created.location_id)
             api_instance.delete_location(created1.location_id)
 
         except ApiException as error:
-            self.fail("test_download_locations: Exception when calling LocationApi->create_location: %s\n" % error)
+            self.check_api_exception(api_factory, "LocationApi->create_location", error)
 
     """
     """
-    def test_partner_lookup_multiple(self):
+    def test_partner_lookup_multiple(self, api_factory):
 
-        api_instance = ApiFactory.LocationApi(self._api_client)
+        api_instance = api_factory.LocationApi()
 
         try:
 
@@ -380,20 +361,20 @@ class TestLocation(TestBase):
             ]
             created1 = api_instance.create_location(loc1)
             looked_up_locs = api_instance.download_partner_location(loc.identifiers[0].identifier_value)
-            self.assertEqual(looked_up_locs.count, 2, 'Wrong number of locations')
+            assert looked_up_locs.count == 2, 'Wrong number of locations'
             looked_up = looked_up_locs.locations[0]
 
             api_instance.delete_location(created.location_id)
             api_instance.delete_location(created1.location_id)
 
         except ApiException as error:
-            self.fail("test_partner_lookup: Exception when calling LocationApi->create_location: %s\n" % error)
+            self.check_api_exception(api_factory, "LocationApi->create_location", error)
 
     """
     """
-    def test_update(self):
+    def test_update(self, api_factory):
 
-        api_instance = ApiFactory.LocationApi(self._api_client)
+        api_instance = api_factory.LocationApi()
 
         try:
 
@@ -412,19 +393,19 @@ class TestLocation(TestBase):
             ]
             updated = api_instance.update_location(looked_up.location_id, newloc)
             fetched = api_instance.download_location(looked_up.location_id)
-            self.assertEqual(updated, fetched, "update response != download response")
+            assert updated == fetched, "update response != download response"
             fetched.location_id = None
-            self.assertEqual(newloc, fetched, "update != download response")
+            assert newloc == fetched, "update != download response"
             api_instance.delete_location(looked_up.location_id)
 
         except ApiException as error:
-            self.fail("test_update: Exception when calling LocationApi->create_location: %s\n" % error)
+            self.check_api_exception(api_factory, "LocationApi->create_location", error)
 
     """
     """
-    def test_update_identifiers(self):
+    def test_update_identifiers(self, api_factory):
 
-        api_instance = ApiFactory.LocationApi(self._api_client)
+        api_instance = api_factory.LocationApi()
 
         try:
 
@@ -441,19 +422,19 @@ class TestLocation(TestBase):
             ]
             updated = api_instance.update_location(looked_up.location_id, newloc)
             fetched = api_instance.download_location(looked_up.location_id)
-            self.assertEqual(updated, fetched, "update response != download response")
+            assert updated == fetched, "update response != download response"
             fetched.location_id = None
-            self.assertEqual(newloc, fetched, "update != download response")
+            assert newloc == fetched, "update != download response"
             api_instance.delete_location(looked_up.location_id)
 
         except ApiException as error:
-            self.fail("test_update: Exception when calling LocationApi->create_location: %s\n" % error)
+            self.check_api_exception(api_factory, "LocationApi->create_location", error)
 
     """
     """
-    def test_update_duplicate(self):
+    def test_update_duplicate(self, api_factory):
 
-        api_instance = ApiFactory.LocationApi(self._api_client)
+        api_instance = api_factory.LocationApi()
 
         try:
 
@@ -469,26 +450,25 @@ class TestLocation(TestBase):
             newloc = swagger_client.Location(None, 28.46362, 91.49542, 'location',
                                         'new_Trongsa, Trongsa, Bhutan', 'new_pv_3_locations.txt', 'IND')
             new_created = api_instance.create_location(newloc)
-            with self.assertRaises(Exception) as context:
+            with pytest.raises(ApiException, status=422):
                 new_created.identifiers = [
                     swagger_client.Identifier(identifier_type='partner_name',
                                               identifier_value='bhutan', study_name='1234-PV')
                 ]
                 updated = api_instance.update_location(new_created.location_id, new_created)
 
-            self.assertEqual(context.exception.status, 422)
 
             api_instance.delete_location(looked_up.location_id)
             api_instance.delete_location(new_created.location_id)
 
         except ApiException as error:
-            self.fail("test_update_duplicate: Exception when calling LocationApi->create_location: %s\n" % error)
+            self.check_api_exception(api_factory, "LocationApi->create_location", error)
 
     """
     """
-    def test_update_missing(self):
+    def test_update_missing(self, api_factory):
 
-        api_instance = ApiFactory.LocationApi(self._api_client)
+        api_instance = api_factory.LocationApi()
 
         try:
 
@@ -497,21 +477,23 @@ class TestLocation(TestBase):
                                         'new_Trongsa, Trongsa, Bhutan', 'new_pv_3_locations.txt', 'IND')
             fake_id = uuid.uuid4()
             newloc.location_id = str(fake_id)
-            with self.assertRaises(Exception) as context:
-                updated = api_instance.update_location(newloc.location_id, newloc)
 
-            self.assertEqual(context.exception.status, 404)
-
+            if api_factory.is_authorized(None):
+                with pytest.raises(ApiException, status=404):
+                    updated = api_instance.update_location(newloc.location_id, newloc)
+            else:
+                with pytest.raises(ApiException, status=403):
+                    updated = api_instance.update_location(newloc.location_id, newloc)
 
         except ApiException as error:
-            self.fail("test_update_missing: Exception when calling LocationApi->create_location: %s\n" % error)
+            self.check_api_exception(api_factory, "LocationApi->update_location", error)
 
     """
     """
-    def test_get_location_identifiers(self):
+    def test_get_location_identifiers(self, api_factory):
 
-        metadata_api_instance = ApiFactory.MetadataApi(self._api_client)
-        api_instance = ApiFactory.LocationApi(self._api_client)
+        metadata_api_instance = api_factory.MetadataApi()
+        api_instance = api_factory.LocationApi()
 
         try:
             loc = self.get_next_location()
@@ -521,13 +503,28 @@ class TestLocation(TestBase):
                 swagger_client.Identifier(identifier_type='partner_name', identifier_value='bhutan', study_name='1234-PV')
             ]
             created = api_instance.create_location(loc)
-            
+
             idents = metadata_api_instance.get_location_identifier_types()
 
-            self.assertIn('partner_name', idents)
+            assert 'partner_name' in idents
 
             api_instance.delete_location(created.location_id)
 
         except ApiException as error:
-            self.fail("test_update: Exception when calling SamplingEventApi->create_sampling_event: %s\n" % error)
+            self.check_api_exception(api_factory, "LocationApi->create_location", error)
+
+
+    """
+    Used to check permissions
+    """
+    def test_get_location_identifier_types(self, api_factory):
+
+        metadata_api_instance = api_factory.MetadataApi()
+
+        try:
+
+            idents = metadata_api_instance.get_location_identifier_types()
+
+        except ApiException as error:
+            self.check_api_exception(api_factory, "LocationApi->create_location", error)
 

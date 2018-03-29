@@ -74,7 +74,7 @@ class EventSetController(BaseController):
 
             self.check_permissions(study_id, auths)
         except PermissionException as pe:
-            self.log_action(user, 'create_event_set_item', eventSetId, eventSet, None, 403)
+            self.log_action(user, 'create_event_set_item', eventSetId, samplingEventId, None, 403)
             return pe.message, 403
 
         retcode = 201
@@ -87,6 +87,9 @@ class EventSetController(BaseController):
         except DuplicateKeyException as dke:
             logging.getLogger(__name__).error("create_event_set_item: {}".format(repr(dke)))
             retcode = 422
+        except MissingKeyException as dke:
+            logging.getLogger(__name__).error("create_event_set_item: {}".format(repr(dke)))
+            retcode = 404
 
         self.log_action(user, 'create_event_set_item', eventSetId, samplingEventId, evntSt, retcode)
 
@@ -111,7 +114,7 @@ class EventSetController(BaseController):
 
             self.check_permissions(study_id, auths)
         except PermissionException as pe:
-            self.log_action(user, 'create_event_set_note', eventSetId, eventSet, None, 403)
+            self.log_action(user, 'create_event_set_note', eventSetId, noteId, None, 403)
             return pe.message, 403
 
         retcode = 201

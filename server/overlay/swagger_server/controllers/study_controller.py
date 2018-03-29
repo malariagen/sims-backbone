@@ -21,7 +21,8 @@ def download_studies(start=None, count=None, user=None, token_info = None):  # n
 
     :rtype: Studies
     """
-    return study_controller.download_studies(start, count, user, token_info)
+    return study_controller.download_studies(start, count, user,
+                                             study_controller.token_info(token_info))
 
 
 def download_study(studyName, user=None, token_info = None):  # noqa: E501
@@ -34,7 +35,8 @@ def download_study(studyName, user=None, token_info = None):  # noqa: E501
 
     :rtype: Study
     """
-    return study_controller.download_study(studyName, user, token_info)
+    return study_controller.download_study(studyName, user,
+                                           study_controller.token_info(token_info))
 
 
 def update_study(studyName, study, user=None, token_info = None):

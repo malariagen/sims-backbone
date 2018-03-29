@@ -18,10 +18,17 @@ class MockResponse:
 
 class BaseLocalApi():
 
-    def __init__(self, api_client=None):
+    def __init__(self, api_client, user, auths, method):
         if api_client is None:
             api_client = ApiClient()
         self.api_client = api_client
+
+        self._user = user
+        self._auths = auths
+        self._method = method
+
+    def auth_tokens(self):
+        return self._auths
 
     def create_response(self, ret, retcode, response_type=None):
 

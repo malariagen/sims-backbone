@@ -12,13 +12,13 @@ from local.base_local_api import BaseLocalApi
 
 class LocalEventSetApi(BaseLocalApi):
 
-    def __init__(self, api_client=None):
+    def __init__(self, api_client, user, auths, method):
 
-        super().__init__(api_client)
+        super().__init__(api_client, user, auths, method)
 
         self.event_set_controller = EventSetController()
 
-    def create_event_set(self, eventSetId, user = None, token_info = None):
+    def create_event_set(self, eventSetId):
         """
         creates an eventSet
         
@@ -31,12 +31,12 @@ class LocalEventSetApi(BaseLocalApi):
         """
         logging.basicConfig(level=logging.DEBUG)
 
-        (ret, retcode) = self.event_set_controller.create_event_set(eventSetId, user,
-                                                     self.event_set_controller.token_info(token_info))
+        (ret, retcode) = self.event_set_controller.create_event_set(eventSetId, self._user,
+                                                     self.auth_tokens())
 
         return self.create_response(ret, retcode, 'EventSet')
 
-    def create_event_set_item(self, eventSetId, samplingEventId, user = None, token_info = None):
+    def create_event_set_item(self, eventSetId, samplingEventId):
         """
         Adds a samplingEvent to an eventSet
         
@@ -47,12 +47,12 @@ class LocalEventSetApi(BaseLocalApi):
 
         :rtype: EventSet
         """
-        (ret, retcode) = self.event_set_controller.create_event_set_item(eventSetId, samplingEventId, user,
-                                                      self.event_set_controller.token_info(token_info))
+        (ret, retcode) = self.event_set_controller.create_event_set_item(eventSetId, samplingEventId, self._user,
+                                                      self.auth_tokens())
         return self.create_response(ret, retcode, 'EventSet')
 
 
-    def create_event_set_note(self, eventSetId, noteId, note, user = None, token_info = None):
+    def create_event_set_note(self, eventSetId, noteId, note):
         """
         Adds a note to an eventSet
         
@@ -65,12 +65,12 @@ class LocalEventSetApi(BaseLocalApi):
 
         :rtype: None
         """
-        (ret, retcode) = self.event_set_controller.create_event_set_note(eventSetId, noteId, note, user,
-                                                      self.event_set_controller.token_info(token_info))
+        (ret, retcode) = self.event_set_controller.create_event_set_note(eventSetId, noteId, note, self._user,
+                                                      self.auth_tokens())
 
         return self.create_response(ret, retcode)
 
-    def delete_event_set(self, eventSetId, user = None, token_info = None):
+    def delete_event_set(self, eventSetId):
         """
         deletes an eventSet
         
@@ -79,11 +79,11 @@ class LocalEventSetApi(BaseLocalApi):
 
         :rtype: None
         """
-        (ret, retcode) = self.event_set_controller.delete_event_set(eventSetId, user, self.event_set_controller.token_info(token_info))
+        (ret, retcode) = self.event_set_controller.delete_event_set(eventSetId, self._user, self.auth_tokens())
 
         return self.create_response(ret, retcode)
 
-    def delete_event_set_item(self, eventSetId, samplingEventId, user = None, token_info = None):
+    def delete_event_set_item(self, eventSetId, samplingEventId):
         """
         deletes a samplingEvent from an eventSet
         
@@ -94,12 +94,12 @@ class LocalEventSetApi(BaseLocalApi):
 
         :rtype: None
         """
-        (ret, retcode) = self.event_set_controller.delete_event_set_item(eventSetId, samplingEventId, user,
-                                                      self.event_set_controller.token_info(token_info))
+        (ret, retcode) = self.event_set_controller.delete_event_set_item(eventSetId, samplingEventId, self._user,
+                                                      self.auth_tokens())
         return self.create_response(ret, retcode)
 
 
-    def delete_event_set_note(self, eventSetId, noteId, user = None, token_info = None):
+    def delete_event_set_note(self, eventSetId, noteId):
         """
         deletes an eventSet note
         
@@ -110,12 +110,12 @@ class LocalEventSetApi(BaseLocalApi):
 
         :rtype: None
         """
-        (ret, retcode) = self.event_set_controller.delete_event_set_note(eventSetId, noteId, user,
-                                                      self.event_set_controller.token_info(token_info))
+        (ret, retcode) = self.event_set_controller.delete_event_set_note(eventSetId, noteId, self._user,
+                                                      self.auth_tokens())
 
         return self.create_response(ret, retcode)
 
-    def download_event_set(self, eventSetId, start=None, count=None, user = None, token_info = None):
+    def download_event_set(self, eventSetId, start=None, count=None):
         """
         fetches an eventSet
         
@@ -124,23 +124,23 @@ class LocalEventSetApi(BaseLocalApi):
 
         :rtype: EventSet
         """
-        (ret, retcode) = self.event_set_controller.download_event_set(eventSetId, start, count, user,
-                                                      self.event_set_controller.token_info(token_info))
+        (ret, retcode) = self.event_set_controller.download_event_set(eventSetId, start, count, self._user,
+                                                      self.auth_tokens())
 
         return self.create_response(ret, retcode, 'EventSet')
 
-    def download_event_sets(self, user = None, token_info = None):
+    def download_event_sets(self):
         """
         fetches eventSets
         
 
         :rtype: EventSets
         """
-        (ret, retcode) = self.event_set_controller.download_event_sets(user,
-                                                      self.event_set_controller.token_info(token_info))
+        (ret, retcode) = self.event_set_controller.download_event_sets(self._user,
+                                                      self.auth_tokens())
         return self.create_response(ret, retcode, 'EventSets')
 
-    def update_event_set(self, eventSetId, eventSet, user = None, token_info = None):
+    def update_event_set(self, eventSetId, eventSet):
         """
         updates an eventSet
         
@@ -151,12 +151,12 @@ class LocalEventSetApi(BaseLocalApi):
 
         :rtype: EventSet
         """
-        (ret, retcode) = self.event_set_controller.update_event_set(eventSetId, eventSet, user,
-                                                      self.event_set_controller.token_info(token_info))
+        (ret, retcode) = self.event_set_controller.update_event_set(eventSetId, eventSet, self._user,
+                                                      self.auth_tokens())
         return self.create_response(ret, retcode, 'EventSet')
 
 
-    def update_event_set_note(self, eventSetId, noteId, note, user = None, token_info = None):
+    def update_event_set_note(self, eventSetId, noteId, note):
         """
         Adds a note to an eventSet
         
@@ -170,6 +170,6 @@ class LocalEventSetApi(BaseLocalApi):
         :rtype: None
         """
 
-        (ret, retcode) = self.event_set_controller.update_event_set_note(eventSetId, noteId, note, user,
-                                                      self.event_set_controller.token_info(token_info))
+        (ret, retcode) = self.event_set_controller.update_event_set_note(eventSetId, noteId, note, self._user,
+                                                      self.auth_tokens())
         return self.create_response(ret, retcode)

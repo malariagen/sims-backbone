@@ -1,55 +1,58 @@
 import swagger_client
 from swagger_client.rest import ApiException
-from api_factory import ApiFactory
+
 from test_base import TestBase
 from datetime import date
 
 import urllib
+import pytest
+
 
 class TestMetadata(TestBase):
 
 
     """
     """
-    def test_get_country_metadata(self):
+    def test_get_country_metadata(self, api_factory):
 
-        api_instance = ApiFactory.MetadataApi(self._api_client)
+        api_instance = api_factory.MetadataApi()
 
         try:
             country = api_instance.get_country_metadata('CI')
 
-            self.assertEqual(country.english,"Côte d'Ivoire")
-            self.assertEqual(country.alpha2,'CI')
-            self.assertEqual(country.alpha3,'CIV')
+            if not api_factory.is_authorized(None):
+                pytest.fail('Unauthorized call to get_country_metadata succeeded')
+
+            assert country.english =="Côte d'Ivoire"
+            assert country.alpha2 =='CI'
+            assert country.alpha3 =='CIV'
 
             country = api_instance.get_country_metadata('CIV')
-            
-            self.assertEqual(country.english,"Côte d'Ivoire")
-            self.assertEqual(country.alpha2,'CI')
-            self.assertEqual(country.alpha3,'CIV')
+
+            assert country.english =="Côte d'Ivoire"
+            assert country.alpha2 =='CI'
+            assert country.alpha3 =='CIV'
 
             country = api_instance.get_country_metadata(urllib.parse.quote_plus("Côte d'Ivoire"))
 
-            self.assertEqual(country.english,"Côte d'Ivoire")
-            self.assertEqual(country.alpha2,'CI')
-            self.assertEqual(country.alpha3,'CIV')
+            assert country.english =="Côte d'Ivoire"
+            assert country.alpha2 =='CI'
+            assert country.alpha3 =='CIV'
 
         except ApiException as error:
-            self.fail("test_get_country_metadata: Exception when calling MetadataApi->get_country_metadata: %s\n" % error)
+            self.check_api_exception(api_factory, "MetadataApi->get_country_metadata", error)
 
     """
     """
-    def test_missing_country_metadata(self):
+    def test_missing_country_metadata(self, api_factory):
 
-        api_instance = ApiFactory.MetadataApi(self._api_client)
+        api_instance = api_factory.MetadataApi()
 
         try:
 
-            with self.assertRaises(Exception) as context:
+            with pytest.raises(ApiException, status=404):
                 country = api_instance.get_country_metadata('INDOCHINA')
-            self.assertEqual(context.exception.status, 404)
-
 
         except ApiException as error:
-            self.fail("test_get_country_metadata: Exception when calling MetadataApi->get_country_metadata: %s\n" % error)
+            self.check_api_exception(api_factory, "MetadataApi->get_country_metadata", error)
 

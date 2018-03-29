@@ -1,19 +1,20 @@
 import swagger_client
 from swagger_client.rest import ApiException
-from api_factory import ApiFactory
 from test_base import TestBase
 from datetime import date
 
 import uuid
+import pytest
 
 class TestTaxa(TestBase):
 
+    _taxa_post_count = 0
 
     """
     """
-    def test_create_partner_species(self):
+    def test_create_partner_species(self, api_factory):
 
-        api_instance = ApiFactory.SamplingEventApi(self._api_client)
+        api_instance = api_factory.SamplingEventApi()
 
         try:
 
@@ -22,20 +23,20 @@ class TestTaxa(TestBase):
                                                 partner_species = 'P. falciparum')
             created = api_instance.create_sampling_event(samp)
             fetched = api_instance.download_sampling_event(created.sampling_event_id)
-            self.assertEqual(created, fetched, "create response != download response")
+            assert created == fetched, "create response != download response"
             fetched.sampling_event_id = None
-            self.assertEqual(samp, fetched, "upload != download response")
+            assert samp == fetched, "upload != download response"
             api_instance.delete_sampling_event(created.sampling_event_id)
 
         except ApiException as error:
-            self.fail("test_create: Exception when calling SamplingEventApi->create_sampling_event: %s\n" % error)
+            self.check_api_exception(api_factory, "SamplingEventApi->create_sampling_event", error)
 
 
     """
     """
-    def test_update_partner_species(self):
+    def test_update_partner_species(self, api_factory):
 
-        api_instance = ApiFactory.SamplingEventApi(self._api_client)
+        api_instance = api_factory.SamplingEventApi()
 
         try:
 
@@ -46,40 +47,68 @@ class TestTaxa(TestBase):
                                                 partner_species = 'P. vivax')
             updated = api_instance.update_sampling_event(created.sampling_event_id, new_samp)
             fetched = api_instance.download_sampling_event(created.sampling_event_id)
-            self.assertEqual(updated, fetched, "update response != download response")
+            assert updated == fetched, "update response != download response"
             fetched.sampling_event_id = None
-            self.assertEqual(new_samp, fetched, "update != download response")
+            assert new_samp == fetched, "update != download response"
             api_instance.delete_sampling_event(created.sampling_event_id)
 
         except ApiException as error:
-            self.fail("test_update: Exception when calling SamplingEventApi->create_sampling_event: %s\n" % error)
+            self.check_api_exception(api_factory, "SamplingEventApi->create_sampling_event", error)
 
     """
     """
-    def test_get_taxonomies(self):
+    def test_get_taxonomies(self, api_factory):
 
-        api_instance = ApiFactory.MetadataApi(self._api_client)
+        api_instance = api_factory.MetadataApi()
 
         try:
-            taxas = api_instance.get_taxonomy_metadata()
+            if api_factory.is_authorized(None):
+                taxas = api_instance.get_taxonomy_metadata()
+            else:
+                with pytest.raises(ApiException, status=403):
+                    taxas = api_instance.get_taxonomy_metadata()
 
         except ApiException as error:
-            self.fail("test_update: Exception when calling SamplingEventApi->create_sampling_event: %s\n" % error)
+            self.check_api_exception(api_factory, "MetadataApi->get_taxonomy_metadata", error)
 
     """
     """
-    def test_post_taxonomies(self):
+    def test_post_taxonomies(self, api_factory):
 
-        api_instance = ApiFactory.MetadataApi(self._api_client)
+        api_instance = api_factory.MetadataApi()
 
         try:
             taxa = swagger_client.Taxonomy(taxonomy_id=7227, name='Drosophila melanogaster',
                                            rank='species')
-            created_taxa = api_instance.create_taxonomy(taxa)
+            if api_factory.is_authorized(None):
 
-            taxas = api_instance.get_taxonomy_metadata()
+#No API to delete taxonomies so need to be a bit creative about testing creation
+                if not api_factory.isLocal():
+                    if TestTaxa._taxa_post_count == 0:
+                        created_taxa = api_instance.create_taxonomy(taxa)
+                    else:
+                        with pytest.raises(ApiException, status=422):
+                            created_taxa = api_instance.create_taxonomy(taxa)
+                    TestTaxa._taxa_post_count = TestTaxa._taxa_post_count + 1
+                else:
+                    created_taxa = api_instance.create_taxonomy(taxa)
 
-            self.assertIn(taxa, taxas.taxonomies)
+                taxas = api_instance.get_taxonomy_metadata()
+
+                assert taxa in taxas.taxonomies
+
+                if api_factory.isLocal():
+                    conn = api_factory.base_controller.get_connection()
+                    with conn:
+                        with conn.cursor() as cursor:
+
+                            stmt = "DELETE FROM taxonomies WHERE id=%s;"
+
+                            cursor.execute(stmt, (taxa.taxonomy_id,))
+
+            else:
+                with pytest.raises(ApiException, status=403):
+                    created_taxa = api_instance.create_taxonomy(taxa)
 
         except ApiException as error:
-            self.fail("test_update: Exception when calling MetadataApi->post_taxonomy: %s\n" % error)
+            self.check_api_exception(api_factory, "MetadataApi->create_taxonomy", error)

@@ -1,74 +1,80 @@
 import swagger_client
 from swagger_client.rest import ApiException
-from api_factory import ApiFactory
+
 from test_base import TestBase
 from datetime import date
 import urllib
 
 import uuid
+import pytest
 
 class TestSample(TestBase):
 
 
     """
     """
-    def test_create(self):
+    def test_create(self, api_factory):
 
-        api_instance = ApiFactory.SamplingEventApi(self._api_client)
+        api_instance = api_factory.SamplingEventApi()
 
         try:
 
             samp = swagger_client.SamplingEvent(None, '1000-MD-UP', date(2017, 10, 10),
-                                                doc_accuracy = 'month')
+                                                doc_accuracy='month')
             created = api_instance.create_sampling_event(samp)
+            if not api_factory.is_authorized(None):
+                pytest.fail('Unauthorized call to create_sampling_event succeeded')
+
             fetched = api_instance.download_sampling_event(created.sampling_event_id)
-            self.assertEqual(created, fetched, "create response != download response")
+            assert created == fetched, "create response != download response"
             fetched.sampling_event_id = None
-            self.assertEqual(samp, fetched, "upload != download response")
+            assert samp == fetched, "upload != download response"
             api_instance.delete_sampling_event(created.sampling_event_id)
 
         except ApiException as error:
-            self.fail("test_create: Exception when calling SamplingEventApi->create_sampling_event: %s\n" % error)
+            self.check_api_exception(api_factory, "SamplingEventApi->create_sampling_event", error)
 
     """
     """
-    def test_delete(self):
+    def test_delete(self, api_factory):
 
-        api_instance = ApiFactory.SamplingEventApi(self._api_client)
+        api_instance = api_factory.SamplingEventApi()
 
         try:
 
             samp = swagger_client.SamplingEvent(None, '1001-MD-UP', date(2017, 10, 11))
             created = api_instance.create_sampling_event(samp)
             api_instance.delete_sampling_event(created.sampling_event_id)
-            with self.assertRaises(Exception) as context:
+            with pytest.raises(ApiException, status=404):
                 fetched = api_instance.download_sampling_event(created.sampling_event_id)
-            self.assertEqual(context.exception.status, 404)
 
         except ApiException as error:
-            self.fail("test_delete: Exception when calling SamplingEventApi->create_sampling_event: %s\n" % error)
+            self.check_api_exception(api_factory, "SamplingEventApi->create_sampling_event", error)
 
 
     """
     """
-    def test_delete_missing(self):
+    def test_delete_missing(self, api_factory):
 
-        api_instance = ApiFactory.SamplingEventApi(self._api_client)
+        api_instance = api_factory.SamplingEventApi()
 
         try:
 
-            with self.assertRaises(Exception) as context:
-                api_instance.delete_sampling_event(str(uuid.uuid4()))
-            self.assertEqual(context.exception.status, 404)
+            if api_factory.is_authorized(None):
+                with pytest.raises(ApiException, status=404):
+                    api_instance.delete_sampling_event(str(uuid.uuid4()))
+            else:
+                with pytest.raises(ApiException, status=403):
+                    api_instance.delete_sampling_event(str(uuid.uuid4()))
 
         except ApiException as error:
-            self.fail("test_delete_missing: Exception when calling SamplingEventApi->delete_sampling_event: %s\n" % error)
+            self.check_api_exception(api_factory, "SamplingEventApi->delete_sampling_event", error)
 
     """
     """
-    def test_duplicate_key(self):
+    def test_duplicate_key(self, api_factory):
 
-        api_instance = ApiFactory.SamplingEventApi(self._api_client)
+        api_instance = api_factory.SamplingEventApi()
 
         try:
 
@@ -79,21 +85,19 @@ class TestSample(TestBase):
             ]
             created = api_instance.create_sampling_event(samp)
 
-            with self.assertRaises(Exception) as context:
+            with pytest.raises(ApiException, status=422):
                 created = api_instance.create_sampling_event(samp)
-
-            self.assertEqual(context.exception.status, 422)
 
             api_instance.delete_sampling_event(created.sampling_event_id)
 
         except ApiException as error:
-            self.fail("test_duplicate_key: Exception when calling SamplingEventApi->create_sampling_event: %s\n" % error)
+            self.check_api_exception(api_factory, "SamplingEventApi->create_sampling_event", error)
 
     """
     """
-    def test_duplicate_partner_key(self):
+    def test_duplicate_partner_key(self, api_factory):
 
-        api_instance = ApiFactory.SamplingEventApi(self._api_client)
+        api_instance = api_factory.SamplingEventApi()
 
         try:
 
@@ -109,17 +113,17 @@ class TestSample(TestBase):
             api_instance.delete_sampling_event(created.sampling_event_id)
             api_instance.delete_sampling_event(created1.sampling_event_id)
 
-            self.assertNotEqual(created.sampling_event_id, created1.sampling_event_id)
+            assert created.sampling_event_id != created1.sampling_event_id
 
         except ApiException as error:
-            self.fail("test_duplicate_key: Exception when calling SamplingEventApi->create_sampling_event: %s\n" % error)
+            self.check_api_exception(api_factory, "SamplingEventApi->create_sampling_event", error)
 
 
     """
     """
-    def test_identifier_lookup(self):
+    def test_identifier_lookup(self, api_factory):
 
-        api_instance = ApiFactory.SamplingEventApi(self._api_client)
+        api_instance = api_factory.SamplingEventApi()
 
         try:
 
@@ -133,19 +137,19 @@ class TestSample(TestBase):
 
             fetched = api_instance.download_sampling_event(looked_up.sampling_event_id)
 
-            self.assertEqual(created, fetched, "create response != download response")
+            assert created == fetched, "create response != download response"
             fetched.sampling_event_id = None
-            self.assertEqual(samp, fetched, "upload != download response")
+            assert samp == fetched, "upload != download response"
             api_instance.delete_sampling_event(created.sampling_event_id)
 
         except ApiException as error:
-            self.fail("test_identifier_lookup: Exception when calling SamplingEventApi->create_sampling_event: %s\n" % error)
+            self.check_api_exception(api_factory, "SamplingEventApi->create_sampling_event", error)
 
     """
     """
-    def test_identifier_lookup_by_study(self):
+    def test_identifier_lookup_by_study(self, api_factory):
 
-        api_instance = ApiFactory.SamplingEventApi(self._api_client)
+        api_instance = api_factory.SamplingEventApi()
 
         try:
 
@@ -156,32 +160,30 @@ class TestSample(TestBase):
             created = api_instance.create_sampling_event(samp)
             looked_up = api_instance.download_sampling_events_by_identifier('partner_id', '123456',
                                                                             study_name='1022')
-            self.assertEquals(looked_up.count, 1)
+            assert looked_up.count == 1
 
 
-            with self.assertRaises(Exception) as context:
+            with pytest.raises(ApiException, status=404):
                 looked_up = api_instance.download_sampling_events_by_identifier('oxford', '123456',
                                                                             study_name='9999')
-            self.assertEqual(context.exception.status, 404)
 
             created1 = api_instance.create_sampling_event(samp)
 
             looked_up = api_instance.download_sampling_events_by_identifier('partner_id', '123456',
                                                                             study_name='1022')
-            self.assertEquals(looked_up.count, 2)
-
+            assert looked_up.count == 2
 
             api_instance.delete_sampling_event(created.sampling_event_id)
             api_instance.delete_sampling_event(created1.sampling_event_id)
 
         except ApiException as error:
-            self.fail("test_identifier_lookup: Exception when calling SamplingEventApi->create_sampling_event: %s\n" % error)
+            self.check_api_exception(api_factory, "SamplingEventApi->create_sampling_event", error)
 
     """
     """
-    def test_identifier_merge(self):
+    def test_identifier_merge(self, api_factory):
 
-        api_instance = ApiFactory.SamplingEventApi(self._api_client)
+        api_instance = api_factory.SamplingEventApi()
 
         try:
 
@@ -207,23 +209,21 @@ class TestSample(TestBase):
                 ident2,
                 ident3
             ]
-            with self.assertRaises(Exception) as context:
+            with pytest.raises(ApiException, status=422):
                 created3 = api_instance.create_sampling_event(samp3)
-
-            self.assertEqual(context.exception.status, 422)
 
             api_instance.delete_sampling_event(created1.sampling_event_id)
             api_instance.delete_sampling_event(created2.sampling_event_id)
 
 
         except ApiException as error:
-            self.fail("test_identifier_merge: Exception when calling SamplingEventApi->create_sampling_event: %s\n" % error)
+            self.check_api_exception(api_factory, "SamplingEventApi->create_sampling_event", error)
 
     """
     """
-    def test_update(self):
+    def test_update(self, api_factory):
 
-        api_instance = ApiFactory.SamplingEventApi(self._api_client)
+        api_instance = api_factory.SamplingEventApi()
 
         try:
 
@@ -237,19 +237,19 @@ class TestSample(TestBase):
             new_samp = swagger_client.SamplingEvent(None, '0001-MD-UP', date(2018, 11, 11))
             updated = api_instance.update_sampling_event(looked_up.sampling_event_id, new_samp)
             fetched = api_instance.download_sampling_event(looked_up.sampling_event_id)
-            self.assertEqual(updated, fetched, "update response != download response")
+            assert updated == fetched, "update response != download response"
             fetched.sampling_event_id = None
-            self.assertEqual(new_samp, fetched, "update != download response")
+            assert new_samp == fetched, "update != download response"
             api_instance.delete_sampling_event(looked_up.sampling_event_id)
 
         except ApiException as error:
-            self.fail("test_update: Exception when calling SamplingEventApi->create_sampling_event: %s\n" % error)
+            self.check_api_exception(api_factory, "SamplingEventApi->create_sampling_event", error)
 
     """
     """
-    def test_update_duplicate(self):
+    def test_update_duplicate(self, api_factory):
 
-        api_instance = ApiFactory.SamplingEventApi(self._api_client)
+        api_instance = api_factory.SamplingEventApi()
 
         try:
 
@@ -267,42 +267,43 @@ class TestSample(TestBase):
                                           identifier_source='upd')
             ]
             new_created = api_instance.create_sampling_event(new_samp)
-            with self.assertRaises(Exception) as context:
+            with pytest.raises(ApiException, status=422):
                 updated = api_instance.update_sampling_event(looked_up.sampling_event_id, new_samp)
-
-            self.assertEqual(context.exception.status, 422)
 
             api_instance.delete_sampling_event(looked_up.sampling_event_id)
             api_instance.delete_sampling_event(new_created.sampling_event_id)
 
         except ApiException as error:
-            self.fail("test_update_duplicate: Exception when calling SamplingEventApi->create_sampling_event: %s\n" % error)
+            self.check_api_exception(api_factory, "SamplingEventApi->create_sampling_event", error)
 
     """
     """
-    def test_update_missing(self):
+    def test_update_missing(self, api_factory):
 
-        api_instance = ApiFactory.SamplingEventApi(self._api_client)
+        api_instance = api_factory.SamplingEventApi()
 
         try:
 
             new_samp = swagger_client.SamplingEvent(None, '1007-MD-UP', date(2018, 11, 17))
             fake_id = uuid.uuid4()
             new_samp.sampling_event_id = str(fake_id)
-            with self.assertRaises(Exception) as context:
-                updated = api_instance.update_sampling_event(new_samp.sampling_event_id, new_samp)
 
-            self.assertEqual(context.exception.status, 404)
 
+            if api_factory.is_authorized(None):
+                with pytest.raises(ApiException, status=404):
+                    updated = api_instance.update_sampling_event(new_samp.sampling_event_id, new_samp)
+            else:
+                with pytest.raises(ApiException, status=403):
+                    updated = api_instance.update_sampling_event(new_samp.sampling_event_id, new_samp)
 
         except ApiException as error:
-            self.fail("test_update_missing: Exception when calling SamplingEventApi->create_sampling_event: %s\n" % error)
+            self.check_api_exception(api_factory, "SamplingEventApi->update_sampling_event", error)
 
     """
     """
-    def test_identifier_lookup_encode(self):
+    def test_identifier_lookup_encode(self, api_factory):
 
-        api_instance = ApiFactory.SamplingEventApi(self._api_client)
+        api_instance = api_factory.SamplingEventApi()
 
         try:
 
@@ -316,31 +317,31 @@ class TestSample(TestBase):
 
             fetched = api_instance.download_sampling_event(created.sampling_event_id)
 
-            self.assertEqual(created, fetched, "create response != download response")
+            assert created == fetched, "create response != download response"
             fetched.sampling_event_id = None
-            self.assertEqual(samp, fetched, "upload != download response")
+            assert samp == fetched, "upload != download response"
 
             looked_up = api_instance.download_sampling_events_by_identifier('partner_id',
                                                                            urllib.parse.quote_plus(test_id))
             looked_up = looked_up.sampling_events[0]
             fetched = api_instance.download_sampling_event(looked_up.sampling_event_id)
 
-            self.assertEqual(created, fetched, "create response != download response")
+            assert created == fetched, "create response != download response"
             fetched.sampling_event_id = None
-            self.assertEqual(samp, fetched, "upload != download response")
+            assert samp == fetched, "upload != download response"
 
 
             api_instance.delete_sampling_event(created.sampling_event_id)
 
         except ApiException as error:
-            self.fail("test_partner_lookup_encode: Exception when calling SamplingEventApi->create_sampling_event: %s\n" % error)
+            self.check_api_exception(api_factory, "SamplingEventApi->create_sampling_event", error)
 
     """
     """
-    def test_create_with_locations(self):
+    def test_create_with_locations(self, api_factory):
 
-        api_instance = ApiFactory.SamplingEventApi(self._api_client)
-        location_api_instance = ApiFactory.LocationApi(self._api_client)
+        api_instance = api_factory.SamplingEventApi()
+        location_api_instance = api_factory.LocationApi()
 
         try:
 
@@ -353,25 +354,25 @@ class TestSample(TestBase):
             samp.location_id = loc.location_id
             created = api_instance.create_sampling_event(samp)
             fetched = api_instance.download_sampling_event(created.sampling_event_id)
-            self.assertEqual(samp.location_id, fetched.location_id, "upload location != download response")
-            self.assertEqual(samp.location_id, fetched.public_location_id, "upload public_location != proxy download response")
+            assert samp.location_id == fetched.location_id, "upload location != download response"
+            assert samp.location_id == fetched.public_location_id, "upload public_location != proxy download response"
 
             proxy_loc = swagger_client.Location(None, 27.4, 90.4, 'region',
                                           'Trongsa, Bhutan', 'test_create_with_locations', 'BTN')
             proxy_loc = location_api_instance.create_location(proxy_loc)
             samp.proxy_location_id = proxy_loc.location_id
             fetched = api_instance.update_sampling_event(fetched.sampling_event_id, samp)
-            self.assertEqual(samp.location_id, fetched.location_id, "upload location != download response")
-            self.assertEqual(samp.proxy_location_id, fetched.proxy_location_id, "upload proxy_location != download response")
-            self.assertEqual(samp.proxy_location_id, fetched.public_location_id, "upload public_location != proxy download response")
+            assert samp.location_id == fetched.location_id, "upload location != download response"
+            assert samp.proxy_location_id == fetched.proxy_location_id, "upload proxy_location != download response"
+            assert samp.proxy_location_id == fetched.public_location_id, "upload public_location != proxy download response"
 
             looked_up = api_instance.download_sampling_events_by_location(loc.location_id)
 
-            self.assertEqual(looked_up.count, 1)
+            assert looked_up.count == 1
 
             looked_up = api_instance.download_sampling_events_by_location(proxy_loc.location_id)
 
-            self.assertEqual(looked_up.count, 1)
+            assert looked_up.count == 1
 
             api_instance.delete_sampling_event(created.sampling_event_id)
 
@@ -380,29 +381,33 @@ class TestSample(TestBase):
 
 
         except ApiException as error:
-            self.fail("test_create: Exception when calling SamplingEventApi->create_sampling_event: %s\n" % error)
+            self.check_api_exception(api_factory, "LocationApi->create_location", error)
 
 
     """
     """
-    def test_missing_location(self):
+    def test_missing_location(self, api_factory):
 
-        api_instance = ApiFactory.SamplingEventApi(self._api_client)
+        api_instance = api_factory.SamplingEventApi()
         try:
-            with self.assertRaises(Exception) as context:
-                fetched = api_instance.download_sampling_events_by_location(str(uuid.uuid4()))
 
-            self.assertEqual(context.exception.status, 404)
+            if api_factory.is_authorized(None):
+                with pytest.raises(ApiException, status=404):
+                    fetched = api_instance.download_sampling_events_by_location(str(uuid.uuid4()))
+            else:
+                with pytest.raises(ApiException, status=403):
+                    fetched = api_instance.download_sampling_events_by_location(str(uuid.uuid4()))
 
         except ApiException as error:
-            self.fail("test_missing_location: Exception when calling SamplingEventApi->download_sampling_events_by_location: %s\n" % error)
+            self.check_api_exception(api_factory,
+                                     "SamplingEventApi->download_sampling_events_by_location", error)
 
     """
     """
-    def test_taxa_lookup(self):
+    def test_taxa_lookup(self, api_factory):
 
-        api_instance = ApiFactory.SamplingEventApi(self._api_client)
-        study_api = ApiFactory.StudyApi(self._api_client)
+        api_instance = api_factory.SamplingEventApi()
+        study_api = api_factory.StudyApi()
 
         try:
             study_code = '1010-MD-UP'
@@ -416,42 +421,44 @@ class TestSample(TestBase):
 
             fetched = api_instance.download_sampling_events_by_taxa(5833)
 
-            self.assertEqual(fetched.count,1, "Taxa not found")
+            assert fetched.count ==1, "Taxa not found"
 
-            self.assertIsNotNone(fetched.sampling_events[0].partner_taxonomies,
-                                 'Taxonomies missing')
-            self.assertEqual(int(fetched.sampling_events[0].partner_taxonomies[0].taxonomy_id), 5833,
-                              'Wrong Taxonomy')
+            assert not fetched.sampling_events[0].partner_taxonomies is None, 'Taxonomies missing'
+            assert int(fetched.sampling_events[0].partner_taxonomies[0].taxonomy_id) == 5833, 'Wrong Taxonomy'
             #As the taxonomy wasn't set when created was created it won't be in the response
             #separate test for this
             fetched.sampling_events[0].partner_taxonomies = None
-            self.assertEqual(created, fetched.sampling_events[0], "create response != download response")
+            assert created == fetched.sampling_events[0], "create response != download response"
             api_instance.delete_sampling_event(created.sampling_event_id)
 
         except ApiException as error:
-            self.fail("test_partner_lookup: Exception when calling SamplingEventApi->create_sampling_event: %s\n" % error)
+            self.check_api_exception(api_factory, "SamplingEventApi->create_sampling_event", error)
 
 
     """
     """
-    def test_missing_taxa(self):
+    def test_missing_taxa(self, api_factory):
 
-        api_instance = ApiFactory.SamplingEventApi(self._api_client)
+        api_instance = api_factory.SamplingEventApi()
         try:
-            with self.assertRaises(Exception) as context:
-                fetched = api_instance.download_sampling_events_by_taxa(404)
 
-            self.assertEqual(context.exception.status, 404)
+            if api_factory.is_authorized(None):
+                with pytest.raises(ApiException, status=404):
+                    fetched = api_instance.download_sampling_events_by_taxa(404)
+            else:
+                with pytest.raises(ApiException, status=403):
+                    fetched = api_instance.download_sampling_events_by_taxa(404)
 
         except ApiException as error:
-            self.fail("test_missing_taxa: Exception when calling SamplingEventApi->download_sampling_events_by_taxa: %s\n" % error)
+            self.check_api_exception(api_factory,
+                                     "SamplingEventApi->download_sampling_events_by_taxa", error)
 
     """
     """
-    def test_taxa_lookup_paged(self):
+    def test_taxa_lookup_paged(self, api_factory):
 
-        api_instance = ApiFactory.SamplingEventApi(self._api_client)
-        study_api = ApiFactory.StudyApi(self._api_client)
+        api_instance = api_factory.SamplingEventApi()
+        study_api = api_factory.StudyApi()
 
         try:
             study_codes = [ '1011-MD-UP', '1012-MD-UP', '1013-MD-UP', '1014-MD-UP', '1014-MD-UP']
@@ -468,18 +475,18 @@ class TestSample(TestBase):
 
             fetched1 = api_instance.download_sampling_events_by_taxa(5833, start=0, count=2)
 
-            self.assertEqual(len(fetched1.sampling_events),2, "Wrong number of sampling_events returned")
-            self.assertEqual(fetched1.count, len(study_codes), "Wrong total of sampling_events returned")
+            assert len(fetched1.sampling_events) ==2, "Wrong number of sampling_events returned"
+            assert fetched1.count == len(study_codes), "Wrong total of sampling_events returned"
 
             fetched2 = api_instance.download_sampling_events_by_taxa(5833, start=2, count=5)
 
             #Gets second tranche and also attempts to retrieve more than exist
-            self.assertEqual(len(fetched2.sampling_events),3, "Wrong number of sampling_events returned")
-            self.assertEqual(fetched2.count, len(study_codes), "Wrong total of sampling_events returned")
+            assert len(fetched2.sampling_events) ==3, "Wrong number of sampling_events returned"
+            assert fetched2.count == len(study_codes), "Wrong total of sampling_events returned"
 
             ids = []
             for sampling_event in fetched1.sampling_events + fetched2.sampling_events:
-                self.assertNotIn(sampling_event.sampling_event_id, ids, "SamplingEvent returned twice")
+                assert not sampling_event.sampling_event_id in ids, "SamplingEvent returned twice"
                 ids.append(sampling_event.sampling_event_id)
 
             #Check that it's the correct number of *unique* events
@@ -491,15 +498,15 @@ class TestSample(TestBase):
                 api_instance.delete_sampling_event(sampling_event.sampling_event_id)
 
         except ApiException as error:
-            self.fail("test_partner_lookup: Exception when calling SamplingEventApi->create_sampling_event: %s\n" % error)
+            self.check_api_exception(api_factory, "SamplingEventApi->create_sampling_event", error)
 
 
     """
     """
-    def test_taxa_on_create(self):
+    def test_taxa_on_create(self, api_factory):
 
-        api_instance = ApiFactory.SamplingEventApi(self._api_client)
-        study_api = ApiFactory.StudyApi(self._api_client)
+        api_instance = api_factory.SamplingEventApi()
+        study_api = api_factory.StudyApi()
 
         try:
             study_code = '1015-MD-UP'
@@ -514,22 +521,20 @@ class TestSample(TestBase):
 
             created2 = api_instance.create_sampling_event(samp)
 
-            self.assertIsNotNone(created2.partner_taxonomies,
-                                 'Taxonomies missing')
-            self.assertEqual(int(created2.partner_taxonomies[0].taxonomy_id), 5833,
-                              'Wrong Taxonomy')
+            assert not created2.partner_taxonomies is None, 'Taxonomies missing'
+            assert int(created2.partner_taxonomies[0].taxonomy_id) == 5833, 'Wrong Taxonomy'
             api_instance.delete_sampling_event(created.sampling_event_id)
             api_instance.delete_sampling_event(created2.sampling_event_id)
 
         except ApiException as error:
-            self.fail("test_partner_lookup: Exception when calling SamplingEventApi->create_sampling_event: %s\n" % error)
+            self.check_api_exception(api_factory, "SamplingEventApi->create_sampling_event", error)
 
 
     """
     """
-    def test_study_lookup(self):
+    def test_study_lookup(self, api_factory):
 
-        api_instance = ApiFactory.SamplingEventApi(self._api_client)
+        api_instance = api_factory.SamplingEventApi()
 
         try:
             study_code = '1020-MD-UP'
@@ -540,20 +545,20 @@ class TestSample(TestBase):
 
             fetched = api_instance.download_sampling_events_by_study(study_code)
 
-            self.assertEqual(fetched.count,1, "Study not found")
+            assert fetched.count ==1, "Study not found"
 
-            self.assertEqual(created, fetched.sampling_events[0], "create response != download response")
+            assert created == fetched.sampling_events[0], "create response != download response"
             api_instance.delete_sampling_event(created.sampling_event_id)
 
         except ApiException as error:
-            self.fail("test_partner_lookup: Exception when calling SamplingEventApi->create_sampling_event: %s\n" % error)
+            self.check_api_exception(api_factory, "SamplingEventApi->create_sampling_event", error)
 
 
     """
     """
-    def test_study_lookup_paged(self):
+    def test_study_lookup_paged(self, api_factory):
 
-        api_instance = ApiFactory.SamplingEventApi(self._api_client)
+        api_instance = api_factory.SamplingEventApi()
 
         try:
             study_code = '1021-MD-UP'
@@ -566,18 +571,18 @@ class TestSample(TestBase):
 
             fetched1 = api_instance.download_sampling_events_by_study(study_code, start=0, count=2)
 
-            self.assertEqual(len(fetched1.sampling_events),2, "Wrong number of sampling_events returned")
-            self.assertEqual(fetched1.count, 5, "Wrong total of sampling_events returned")
+            assert len(fetched1.sampling_events) ==2, "Wrong number of sampling_events returned"
+            assert fetched1.count == 5, "Wrong total of sampling_events returned"
 
             fetched2 = api_instance.download_sampling_events_by_study(study_code, start=2, count=5)
 
             #Gets second tranche and also attempts to retrieve more than exist
-            self.assertEqual(len(fetched2.sampling_events),3, "Wrong number of sampling_events returned")
-            self.assertEqual(fetched2.count, 5, "Wrong total of sampling_events returned")
+            assert len(fetched2.sampling_events) ==3, "Wrong number of sampling_events returned"
+            assert fetched2.count == 5, "Wrong total of sampling_events returned"
 
             ids = []
             for sampling_event in fetched1.sampling_events + fetched2.sampling_events:
-                self.assertNotIn(sampling_event.sampling_event_id, ids, "SamplingEvent returned twice")
+                assert not sampling_event.sampling_event_id in ids, "SamplingEvent returned twice"
                 ids.append(sampling_event.sampling_event_id)
 
             #Check that it's the correct number of *unique* events
@@ -589,17 +594,17 @@ class TestSample(TestBase):
                 api_instance.delete_sampling_event(sampling_event.sampling_event_id)
 
         except ApiException as error:
-            self.fail("test_partner_lookup: Exception when calling SamplingEventApi->create_sampling_event: %s\n" % error)
+            self.check_api_exception(api_factory, "SamplingEventApi->create_sampling_event", error)
 
 
 
     """
     """
-    def test_event_set_lookup(self):
+    def test_event_set_lookup(self, api_factory):
 
-        api_instance = ApiFactory.SamplingEventApi(self._api_client)
+        api_instance = api_factory.SamplingEventApi()
 
-        es_api_instance = ApiFactory.EventSetApi(self._api_client)
+        es_api_instance = api_factory.EventSetApi()
 
         es_name = 'test_event_set_lookup'
 
@@ -616,46 +621,49 @@ class TestSample(TestBase):
 
             fetched = api_instance.download_sampling_events_by_event_set(es_name)
 
-            self.assertEqual(fetched.count,1, "event_set not found")
+            assert fetched.count ==1, "event_set not found"
 
-            self.assertEqual(created, fetched.sampling_events[0], "create response != download response")
+            assert created == fetched.sampling_events[0], "create response != download response"
             api_instance.delete_sampling_event(created.sampling_event_id)
 
             es_api_instance.delete_event_set(es_name)
         except ApiException as error:
-            self.fail("test_event_set_lookup: Exception when calling SamplingEventApi->create_sampling_event: %s\n" % error)
+            self.check_api_exception(api_factory, "EventSetApi->create_event_set", error)
 
     """
     """
-    def test_event_set_lookup_missing(self):
+    def test_event_set_lookup_missing(self, api_factory):
 
-        api_instance = ApiFactory.SamplingEventApi(self._api_client)
+        api_instance = api_factory.SamplingEventApi()
 
-        es_api_instance = ApiFactory.EventSetApi(self._api_client)
+        es_api_instance = api_factory.EventSetApi()
 
         es_name = '404 test_event_set_lookup'
 
         try:
 
-            with self.assertRaises(Exception) as context:
-                fetched = api_instance.download_sampling_events_by_event_set(es_name)
-
-            self.assertEqual(context.exception.status, 404)
+            if api_factory.is_authorized(None):
+                with pytest.raises(ApiException, status=404):
+                    fetched = api_instance.download_sampling_events_by_event_set(es_name)
+            else:
+                with pytest.raises(ApiException, status=403):
+                    fetched = api_instance.download_sampling_events_by_event_set(es_name)
 
         except ApiException as error:
-            self.fail("test_event_set_lookup_missing: Exception when calling SamplingEventApi->download_sampling_events_by_event_set: %s\n" % error)
+            self.check_api_exception(api_factory,
+                                     "SamplingEventApi->download_sampling_events_by_event_set", error)
 
 
     """
     """
-    def test_event_set_lookup_paged(self):
+    def test_event_set_lookup_paged(self, api_factory):
 
         study_code = '1021-MD-UP'
 
-        api_instance = ApiFactory.SamplingEventApi(self._api_client)
-        study_api = ApiFactory.StudyApi(self._api_client)
+        api_instance = api_factory.SamplingEventApi()
+        study_api = api_factory.StudyApi()
 
-        es_api_instance = ApiFactory.EventSetApi(self._api_client)
+        es_api_instance = api_factory.EventSetApi()
 
         es_name = 'test_event_set_lookup_paged'
 
@@ -671,18 +679,18 @@ class TestSample(TestBase):
 
             fetched1 = api_instance.download_sampling_events_by_event_set(es_name, start=0, count=2)
 
-            self.assertEqual(len(fetched1.sampling_events),2, "Wrong number of sampling_events returned")
-            self.assertEqual(fetched1.count, 5, "Wrong total of sampling_events returned")
+            assert len(fetched1.sampling_events) ==2, "Wrong number of sampling_events returned"
+            assert fetched1.count == 5, "Wrong total of sampling_events returned"
 
             fetched2 = api_instance.download_sampling_events_by_event_set(es_name, start=2, count=5)
 
             #Gets second tranche and also attempts to retrieve more than exist
-            self.assertEqual(len(fetched2.sampling_events),3, "Wrong number of sampling_events returned")
-            self.assertEqual(fetched2.count, 5, "Wrong total of sampling_events returned")
+            assert len(fetched2.sampling_events) ==3, "Wrong number of sampling_events returned"
+            assert fetched2.count == 5, "Wrong total of sampling_events returned"
 
             ids = []
             for sampling_event in fetched1.sampling_events + fetched2.sampling_events:
-                self.assertNotIn(sampling_event.sampling_event_id, ids, "SamplingEvent returned twice")
+                assert not sampling_event.sampling_event_id in ids, "SamplingEvent returned twice"
                 ids.append(sampling_event.sampling_event_id)
 
             #Check that it's the correct number of *unique* events
@@ -696,14 +704,14 @@ class TestSample(TestBase):
             es_api_instance.delete_event_set(es_name)
 
         except ApiException as error:
-            self.fail("test_partner_lookup: Exception when calling SamplingEventApi->create_sampling_event: %s\n" % error)
+            self.check_api_exception(api_factory, "EventSetApi->create_event_set", error)
 
     """
     """
-    def test_get_identifiers(self):
+    def test_get_identifiers(self, api_factory):
 
-        metadata_api_instance = ApiFactory.MetadataApi(self._api_client)
-        api_instance = ApiFactory.SamplingEventApi(self._api_client)
+        metadata_api_instance = api_factory.MetadataApi()
+        api_instance = api_factory.SamplingEventApi()
 
         try:
             samp = swagger_client.SamplingEvent(None, '1023-MD-UP', date(2017, 10, 16))
@@ -714,20 +722,34 @@ class TestSample(TestBase):
             created = api_instance.create_sampling_event(samp)
             idents = metadata_api_instance.get_identifier_types()
 
-            self.assertIn('oxford', idents)
+            assert 'oxford' in idents
 
             api_instance.delete_sampling_event(created.sampling_event_id)
 
         except ApiException as error:
-            self.fail("test_update: Exception when calling SamplingEventApi->create_sampling_event: %s\n" % error)
+            self.check_api_exception(api_factory, "SamplingEventApi->create_sampling_event", error)
+
+    """
+    Used to test permissions on get_identifier_types
+    """
+    def test_get_identifier_types(self, api_factory):
+
+        metadata_api_instance = api_factory.MetadataApi()
+
+        try:
+            idents = metadata_api_instance.get_identifier_types()
+
+        except ApiException as error:
+            self.check_api_exception(api_factory, "SamplingEventApi->create_sampling_event", error)
+
 
 
     """
     """
-    def test_create_with_location_integrity_failure(self):
+    def test_create_with_location_integrity_failure(self, api_factory):
 
-        api_instance = ApiFactory.SamplingEventApi(self._api_client)
-        location_api_instance = ApiFactory.LocationApi(self._api_client)
+        api_instance = api_factory.SamplingEventApi()
+        location_api_instance = api_factory.LocationApi()
 
         try:
 
@@ -740,23 +762,22 @@ class TestSample(TestBase):
             samp.location_id = loc.location_id
             samp.location = loc
             samp.location.accuracy = 'region'
-            with self.assertRaises(Exception) as context:
-                created = api_instance.create_sampling_event(samp)
 
-            self.assertEqual(context.exception.status, 422)
+            with pytest.raises(ApiException, status=422):
+                created = api_instance.create_sampling_event(samp)
 
             location_api_instance.delete_location(loc.location_id)
 
 
         except ApiException as error:
-            self.fail("test_create_with_location_integrity_failure: Exception when calling SamplingEventApi->create_sampling_event: %s\n" % error)
+            self.check_api_exception(api_factory, "SamplingEventApi->create_sampling_event", error)
 
     """
     """
-    def test_create_with_proxy_location_integrity_failure(self):
+    def test_create_with_proxy_location_integrity_failure(self, api_factory):
 
-        api_instance = ApiFactory.SamplingEventApi(self._api_client)
-        location_api_instance = ApiFactory.LocationApi(self._api_client)
+        api_instance = api_factory.SamplingEventApi()
+        location_api_instance = api_factory.LocationApi()
 
         try:
 
@@ -769,24 +790,23 @@ class TestSample(TestBase):
             samp.proxy_location_id = loc.location_id
             samp.proxy_location = loc
             samp.proxy_location.accuracy = 'region'
-            with self.assertRaises(Exception) as context:
-                created = api_instance.create_sampling_event(samp)
 
-            self.assertEqual(context.exception.status, 422)
+            with pytest.raises(ApiException, status=422):
+                created = api_instance.create_sampling_event(samp)
 
             location_api_instance.delete_location(loc.location_id)
 
 
         except ApiException as error:
-            self.fail("test_create_with_proxy_location_integrity_failure: Exception when calling SamplingEventApi->create_sampling_event: %s\n" % error)
+            self.check_api_exception(api_factory, "SamplingEventApi->create_sampling_event", error)
 
 
     """
     """
-    def test_update_with_location_integrity_failure(self):
+    def test_update_with_location_integrity_failure(self, api_factory):
 
-        api_instance = ApiFactory.SamplingEventApi(self._api_client)
-        location_api_instance = ApiFactory.LocationApi(self._api_client)
+        api_instance = api_factory.SamplingEventApi()
+        location_api_instance = api_factory.LocationApi()
 
         try:
 
@@ -797,30 +817,27 @@ class TestSample(TestBase):
             loc = location_api_instance.create_location(loc)
 
             samp.location_id = loc.location_id
-            print('1')
+
             created = api_instance.create_sampling_event(samp)
 
-            print('2')
             created.location.accuracy = 'region'
-            with self.assertRaises(Exception) as context:
-                created1 = api_instance.update_sampling_event(created.sampling_event_id, created)
 
-            print('3')
-            self.assertEqual(context.exception.status, 422)
+            with pytest.raises(ApiException, status=422):
+                created1 = api_instance.update_sampling_event(created.sampling_event_id, created)
 
             api_instance.delete_sampling_event(created.sampling_event_id)
             location_api_instance.delete_location(loc.location_id)
 
 
         except ApiException as error:
-            self.fail("test_update_with_location_integrity_failure: Exception when calling SamplingEventApi->create_sampling_event: %s\n" % error)
+            self.check_api_exception(api_factory, "LocationApi->create_location", error)
 
     """
     """
-    def test_update_with_proxy_location_integrity_failure(self):
+    def test_update_with_proxy_location_integrity_failure(self, api_factory):
 
-        api_instance = ApiFactory.SamplingEventApi(self._api_client)
-        location_api_instance = ApiFactory.LocationApi(self._api_client)
+        api_instance = api_factory.SamplingEventApi()
+        location_api_instance = api_factory.LocationApi()
 
         try:
 
@@ -831,20 +848,18 @@ class TestSample(TestBase):
             loc = location_api_instance.create_location(loc)
 
             samp.proxy_location_id = loc.location_id
-            
+
             created = api_instance.create_sampling_event(samp)
 
             created.proxy_location.accuracy = 'region'
 
-            with self.assertRaises(Exception) as context:
+            with pytest.raises(ApiException, status=422):
                 created1 = api_instance.update_sampling_event(created.sampling_event_id, created)
-
-            self.assertEqual(context.exception.status, 422)
 
             api_instance.delete_sampling_event(created.sampling_event_id)
             location_api_instance.delete_location(loc.location_id)
 
 
         except ApiException as error:
-            self.fail("test_update_with_proxy_location_integrity_failure: Exception when calling SamplingEventApi->create_sampling_event: %s\n" % error)
+            self.check_api_exception(api_factory, "LocationApi->create_location", error)
 

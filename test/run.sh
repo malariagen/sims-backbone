@@ -14,7 +14,8 @@ source client-env/bin/activate
 export DATABASE=backbone_test
 if [ "$1" = "one" ]
 then
-    python3 -m unittest test_sample.TestSample.test_update_duplicate
+    python3 -m pytest -x
+    #Or -k to run a specific test instead of just failing fast
 else
     python3 -m pytest
 fi
