@@ -186,7 +186,7 @@ class EventSetController(BaseController):
 
             self.check_permissions(study_id, auths)
         except PermissionException as pe:
-            self.log_action(user, 'delete_event_set_item', eventSetId, eventSet, None, 403)
+            self.log_action(user, 'delete_event_set_item', eventSetId, samplingEventId, None, 403)
             return pe.message, 403
 
         retcode = 200
@@ -221,7 +221,7 @@ class EventSetController(BaseController):
 
             self.check_permissions(study_id, auths)
         except PermissionException as pe:
-            self.log_action(user, 'delete_event_set_note', eventSetId, eventSet, None, 403)
+            self.log_action(user, 'delete_event_set_note', eventSetId, noteId, None, 403)
             return pe.message, 403
 
         retcode = 200
@@ -349,7 +349,7 @@ class EventSetController(BaseController):
 
             self.check_permissions(study_id, auths)
         except PermissionException as pe:
-            self.log_action(user, 'update_event_set_note', eventSetId, evntNote, None, 403)
+            self.log_action(user, 'update_event_set_note', eventSetId, note, None, 403)
             return pe.message, 403
 
         retcode = 200

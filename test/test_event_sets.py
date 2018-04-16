@@ -568,3 +568,67 @@ class TestEventSets(TestBase):
         except ApiException as error:
             self.check_api_exception(api_factory, "EventSetsApi->delete_event_set", error)
 
+    """
+    """
+    def test_delete_item_permission(self, api_factory):
+
+        api_instance = api_factory.EventSetApi()
+
+        try:
+
+
+            if not api_factory.is_authorized(None):
+                with pytest.raises(ApiException, status=403):
+                    api_instance.delete_event_set_item('404', str(uuid.uuid4()))
+
+        except ApiException as error:
+            self.check_api_exception(api_factory, "EventSetsApi->delete_event_set_item", error)
+
+    """
+    """
+    def test_delete_note_permission(self, api_factory):
+
+        api_instance = api_factory.EventSetApi()
+
+        try:
+
+
+            if not api_factory.is_authorized(None):
+                with pytest.raises(ApiException, status=403):
+                    api_instance.delete_event_set_note('404', '404 note')
+
+        except ApiException as error:
+            self.check_api_exception(api_factory, "EventSetsApi->delete_event_set_note", error)
+
+
+    """
+    """
+    def test_update_note_permission(self, api_factory):
+
+        api_instance = api_factory.EventSetApi()
+
+        try:
+
+
+            if not api_factory.is_authorized(None):
+                with pytest.raises(ApiException, status=403):
+                    api_instance.update_event_set_note('404', '404 note', {})
+
+        except ApiException as error:
+            self.check_api_exception(api_factory, "EventSetsApi->update_event_set_note", error)
+
+    """
+    """
+    def test_download_permission(self, api_factory):
+
+        api_instance = api_factory.EventSetApi()
+
+        try:
+
+
+            if not api_factory.is_authorized(None):
+                with pytest.raises(ApiException, status=403):
+                    api_instance.download_event_sets()
+
+        except ApiException as error:
+            self.check_api_exception(api_factory, "EventSetsApi->download_event_sets", error)

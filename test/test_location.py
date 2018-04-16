@@ -344,6 +344,36 @@ class TestLocation(TestBase):
 
     """
     """
+    def test_download_location_permission(self, api_factory):
+
+        api_instance = api_factory.LocationApi()
+
+        try:
+
+            if not api_factory.is_authorized(None):
+                with pytest.raises(ApiException, status=403):
+                    looked_up_locs = api_instance.download_location(str(uuid.uuid4()))
+
+        except ApiException as error:
+            self.check_api_exception(api_factory, "LocationApi->download_location", error)
+
+    """
+    """
+    def test_download_locations_permission(self, api_factory):
+
+        api_instance = api_factory.LocationApi()
+
+        try:
+
+            if not api_factory.is_authorized(None):
+                with pytest.raises(ApiException, status=403):
+                    looked_up_locs = api_instance.download_locations()
+
+        except ApiException as error:
+            self.check_api_exception(api_factory, "LocationApi->download_location", error)
+
+    """
+    """
     def test_partner_lookup_multiple(self, api_factory):
 
         api_instance = api_factory.LocationApi()

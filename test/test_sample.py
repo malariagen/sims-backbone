@@ -863,3 +863,29 @@ class TestSample(TestBase):
         except ApiException as error:
             self.check_api_exception(api_factory, "LocationApi->create_location", error)
 
+    """
+    """
+    def test_download_sampling_event_permission(self, api_factory):
+
+        api_instance = api_factory.SamplingEventApi()
+
+        try:
+            if not api_factory.is_authorized(None):
+                with pytest.raises(ApiException, status=403):
+                    api_instance.download_sampling_event(str(uuid.uuid4()))
+        except ApiException as error:
+            self.check_api_exception(api_factory, "SamplingEventApi->download_sampling_event", error)
+
+    """
+    """
+    def test_download_sampling_event_by_identifier_permission(self, api_factory):
+
+        api_instance = api_factory.SamplingEventApi()
+
+        try:
+            if not api_factory.is_authorized(None):
+                with pytest.raises(ApiException, status=403):
+                    api_instance.download_sampling_events_by_identifier('partner_id','404')
+        except ApiException as error:
+            self.check_api_exception(api_factory, "SamplingEventApi->download_sampling_events_by_identifier", error)
+

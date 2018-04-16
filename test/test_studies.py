@@ -43,6 +43,21 @@ class TestStudies(TestBase):
 
     """
     """
+    def test_download_studies_permission(self, api_factory):
+
+        study_api = api_factory.StudyApi()
+
+        try:
+
+            if not api_factory.is_authorized(None):
+                with pytest.raises(ApiException, status=403):
+                    studies = study_api.download_studies()
+
+        except ApiException as error:
+            self.check_api_exception(api_factory, "StudyApi->download_studies", error)
+
+    """
+    """
     def test_location_study(self, api_factory):
 
         api_instance = api_factory.LocationApi()
