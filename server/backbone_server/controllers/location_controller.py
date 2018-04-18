@@ -16,7 +16,9 @@ from backbone_server.errors.duplicate_key_exception import DuplicateKeyException
 from backbone_server.errors.missing_key_exception import MissingKeyException
 from backbone_server.errors.permission_exception import PermissionException
 
+from backbone_server.controllers.decorators  import apply_decorators
 
+@apply_decorators
 class LocationController(BaseController):
 
     def create_location(self, location, user = None, auths = None):
@@ -29,12 +31,6 @@ class LocationController(BaseController):
         :rtype: Location
         """
 
-        try:
-            self.check_permissions(None, auths)
-        except PermissionException as pe:
-            self.log_action(user, 'create_location', None, location, None, 403)
-            return pe.message, 403
-
         retcode = 200
         loc = None
 
@@ -45,8 +41,6 @@ class LocationController(BaseController):
         except DuplicateKeyException as dke:
             logging.getLogger(__name__).error("create_location: {}".format(repr(dke)))
             retcode = 422
-
-        self.log_action(user, 'create_location', None, location, loc, retcode)
 
         return loc, retcode
 
@@ -61,13 +55,6 @@ class LocationController(BaseController):
         :rtype: None
         """
 
-        try:
-            self.check_permissions(None, auths)
-        except PermissionException as pe:
-            self.log_action(user, 'delete_location', locationId, None, None, 403)
-
-            return pe.message, 403
-
         delete = LocationDelete(self.get_connection())
 
         retcode = 200
@@ -78,8 +65,6 @@ class LocationController(BaseController):
         except MissingKeyException as dme:
             logging.getLogger(__name__).error("delete_location: {}".format(repr(dme)))
             retcode = 404
-
-        self.log_action(user, 'delete_location', locationId, None, None, retcode)
 
         return None, retcode
 
@@ -95,13 +80,6 @@ class LocationController(BaseController):
 
         :rtype: Location
         """
-
-        try:
-            self.check_permissions(None, auths)
-        except PermissionException as pe:
-            self.log_action(user, 'download_gps_location', None, None, None, 403)
-
-            return pe.message, 403
 
         get = LocationGetByGPS(self.get_connection())
 
@@ -119,8 +97,6 @@ class LocationController(BaseController):
             logging.getLogger(__name__).error("download_partner_location: {}".format(repr(nfe)))
             retcode = 422
 
-        self.log_action(user, 'download_gps_location', None, None, loc, retcode)
-
         return loc, retcode
 
     def download_location(self, locationId, user = None, auths = None):
@@ -133,12 +109,6 @@ class LocationController(BaseController):
         :rtype: Location
         """
 
-        try:
-            self.check_permissions(None, auths)
-        except PermissionException as pe:
-            self.log_action(user, 'download_location', locationId, None, None, 403)
-            return pe.message, 403
-
         get = LocationGetById(self.get_connection())
 
         retcode = 200
@@ -149,8 +119,6 @@ class LocationController(BaseController):
         except MissingKeyException as dme:
             logging.getLogger(__name__).error("download_location: {}".format(repr(dme)))
             retcode = 404
-
-        self.log_action(user, 'download_location', locationId, None, loc, retcode)
 
         return loc, retcode
 
@@ -172,20 +140,12 @@ class LocationController(BaseController):
         :rtype: Locations
         """
 
-        try:
-            self.check_permissions(None, auths)
-        except PermissionException as pe:
-            self.log_action(user, 'download_locations', None, None, None, 403)
-            return pe.message, 403
-
         get = LocationsGet(self.get_connection())
 
         retcode = 200
         loc = None
 
         loc = get.get(studyName, start, count, orderby)
-
-        self.log_action(user, 'download_locations', None, None, loc, retcode)
 
         return loc, retcode
 
@@ -200,12 +160,6 @@ class LocationController(BaseController):
         :rtype: Locations
         """
 
-        try:
-            self.check_permissions(None, auths)
-        except PermissionException as pe:
-            self.log_action(user, 'download_partner_location', partnerId, None, None, 403)
-            return pe.message, 403
-
         get = LocationGetByPartnerName(self.get_connection())
 
         retcode = 200
@@ -216,8 +170,6 @@ class LocationController(BaseController):
         except MissingKeyException as dme:
             logging.getLogger(__name__).error("download_partner_location: {}".format(repr(dme)))
             retcode = 404
-
-        self.log_action(user, 'download_partner_location', partnerId, None, loc, retcode)
 
         return loc, retcode
 
@@ -234,13 +186,6 @@ class LocationController(BaseController):
         :rtype: Location
         """
 
-        try:
-            self.check_permissions(None, auths)
-        except PermissionException as pe:
-            self.log_action(user, 'update_location', locationId, location, None, 403)
-            return pe.message, 403
-
-
         retcode = 200
         loc = None
 
@@ -254,7 +199,5 @@ class LocationController(BaseController):
         except MissingKeyException as dme:
             logging.getLogger(__name__).error("update_location: {}".format(repr(dme)))
             retcode = 404
-
-        self.log_action(user, 'update_location', locationId, location, loc, retcode)
 
         return loc, retcode

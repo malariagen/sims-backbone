@@ -15,6 +15,9 @@ from backbone_server.errors.permission_exception import PermissionException
 import logging
 import urllib
 
+from backbone_server.controllers.decorators  import apply_decorators
+
+@apply_decorators
 class MetadataController(BaseController):
 
     def create_taxonomy(self, taxonomy, user=None, auths = None):
@@ -26,12 +29,6 @@ class MetadataController(BaseController):
 
         :rtype: Taxonomy
         """
-
-        try:
-            self.check_permissions(None, auths)
-        except PermissionException as pe:
-            self.log_action(user, 'create_taxonomy', None, taxonomy, None, 403)
-            return pe.message, 403
 
         retcode = 201
 
@@ -52,12 +49,6 @@ class MetadataController(BaseController):
         :rtype: Country
         """
 
-        try:
-            self.check_permissions(None, auths)
-        except PermissionException as pe:
-            self.log_action(user, 'get_country_metadata', countryId, None, None, 403)
-            return pe.message, 403
-
         get = CountryGet(self.get_connection())
 
         retcode = 200
@@ -71,8 +62,6 @@ class MetadataController(BaseController):
             logging.getLogger(__name__).error("get_country_metadata: {}".format(repr(dme)))
             retcode = 404
 
-        self.log_action(user, 'get_country_metadata', countryId, None, country, retcode)
-
         return country, retcode
 
     def get_identifier_types(self, user=None, auths=None):  # noqa: E501
@@ -83,17 +72,9 @@ class MetadataController(BaseController):
 
         :rtype: List[str]
         """
-        try:
-            self.check_permissions(None, auths)
-        except PermissionException as pe:
-            self.log_action(user, 'get_identifier_types', None, None, None, 403)
-            return pe.message, 403
-
         get = IdentifierTypesGet(self.get_connection())
 
         ident_types = get.get('identifiers')
-
-        self.log_action(user, 'get_identifier_types', None, None, ident_types, 200)
 
         return ident_types, 200
 
@@ -106,17 +87,10 @@ class MetadataController(BaseController):
 
         :rtype: List[str]
         """
-        try:
-            self.check_permissions(None, auths)
-        except PermissionException as pe:
-            self.log_action(user, 'get_location_identifier_types', None, None, None, 403)
-            return pe.message, 403
 
         get = IdentifierTypesGet(self.get_connection())
 
         ident_types = get.get('location_identifiers')
-
-        self.log_action(user, 'get_location_identifier_types', None, None, ident_types, 200)
 
         return ident_types, 200
 
@@ -129,16 +103,8 @@ class MetadataController(BaseController):
         :rtype: Taxonomies
         """
 
-        try:
-            self.check_permissions(None, auths)
-        except PermissionException as pe:
-            self.log_action(user, 'get_taxonomy_metadata', None, None, None, 403)
-            return pe.message, 403
-
         get = TaxonomiesGet(self.get_connection())
 
         taxas = get.get()
-
-        self.log_action(user, 'get_taxonomy_metadata', None, None, taxas, 200)
 
         return taxas, 200

@@ -20,6 +20,9 @@ from backbone_server.errors.duplicate_key_exception import DuplicateKeyException
 from backbone_server.errors.missing_key_exception import MissingKeyException
 from backbone_server.errors.permission_exception import PermissionException
 
+from backbone_server.controllers.decorators  import apply_decorators
+
+@apply_decorators
 class EventSetController(BaseController):
 
     def create_event_set(self, eventSetId, user = None, auths = None):
@@ -34,14 +37,6 @@ class EventSetController(BaseController):
         :rtype: EventSet
         """
 
-        try:
-            study_id = None;
-
-            self.check_permissions(study_id, auths)
-        except PermissionException as pe:
-            self.log_action(user, 'create_event_set', eventSetId, None, None, 403)
-            return pe.message, 403
-
         retcode = 201
         evntSt = None
 
@@ -52,8 +47,6 @@ class EventSetController(BaseController):
         except DuplicateKeyException as dke:
             logging.getLogger(__name__).error("create_event_set: {}".format(repr(dke)))
             retcode = 422
-
-        self.log_action(user, 'create_event_set', eventSetId, None, evntSt, retcode)
 
         return evntSt, retcode
 
@@ -69,13 +62,6 @@ class EventSetController(BaseController):
 
         :rtype: None
         """
-        try:
-            study_id = None;
-
-            self.check_permissions(study_id, auths)
-        except PermissionException as pe:
-            self.log_action(user, 'create_event_set_item', eventSetId, samplingEventId, None, 403)
-            return pe.message, 403
 
         retcode = 201
         evntSt = None
@@ -90,8 +76,6 @@ class EventSetController(BaseController):
         except MissingKeyException as dke:
             logging.getLogger(__name__).error("create_event_set_item: {}".format(repr(dke)))
             retcode = 404
-
-        self.log_action(user, 'create_event_set_item', eventSetId, samplingEventId, evntSt, retcode)
 
         return evntSt, retcode
 
@@ -109,13 +93,6 @@ class EventSetController(BaseController):
 
         :rtype: None
         """
-        try:
-            study_id = None;
-
-            self.check_permissions(study_id, auths)
-        except PermissionException as pe:
-            self.log_action(user, 'create_event_set_note', eventSetId, noteId, None, 403)
-            return pe.message, 403
 
         retcode = 201
         evntSt = None
@@ -131,9 +108,6 @@ class EventSetController(BaseController):
             logging.getLogger(__name__).error("create_event_set_note: {}".format(repr(dke)))
             retcode = 404
 
-
-        self.log_action(user, 'create_event_set_note', eventSetId, note, evntSt, retcode)
-
         return evntSt, retcode
 
 
@@ -146,13 +120,6 @@ class EventSetController(BaseController):
 
         :rtype: None
         """
-        try:
-            study_id = None;
-
-            self.check_permissions(study_id, auths)
-        except PermissionException as pe:
-            self.log_action(user, 'delete_event_set', eventSetId, None, None, 403)
-            return pe.message, 403
 
         retcode = 200
         evntSt = None
@@ -164,8 +131,6 @@ class EventSetController(BaseController):
         except MissingKeyException as mke:
             logging.getLogger(__name__).error("delete_event_set: {}".format(repr(mke)))
             retcode = 404
-
-        self.log_action(user, 'delete_event_set', eventSetId, None, evntSt, retcode)
 
         return evntSt, retcode
 
@@ -181,13 +146,6 @@ class EventSetController(BaseController):
 
         :rtype: None
         """
-        try:
-            study_id = None;
-
-            self.check_permissions(study_id, auths)
-        except PermissionException as pe:
-            self.log_action(user, 'delete_event_set_item', eventSetId, samplingEventId, None, 403)
-            return pe.message, 403
 
         retcode = 200
         evntSt = None
@@ -199,8 +157,6 @@ class EventSetController(BaseController):
         except MissingKeyException as dke:
             logging.getLogger(__name__).error("delete_event_set_item: {}".format(repr(dke)))
             retcode = 404
-
-        self.log_action(user, 'delete_event_set_item', eventSetId, samplingEventId, evntSt, retcode)
 
         return evntSt, retcode
 
@@ -216,13 +172,6 @@ class EventSetController(BaseController):
 
         :rtype: None
         """
-        try:
-            study_id = None;
-
-            self.check_permissions(study_id, auths)
-        except PermissionException as pe:
-            self.log_action(user, 'delete_event_set_note', eventSetId, noteId, None, 403)
-            return pe.message, 403
 
         retcode = 200
         evntSt = None
@@ -234,8 +183,6 @@ class EventSetController(BaseController):
         except MissingKeyException as dke:
             logging.getLogger(__name__).error("delete_event_set_note: {}".format(repr(dke)))
             retcode = 404
-
-        self.log_action(user, 'delete_event_set_note', eventSetId, noteId, evntSt, retcode)
 
         return evntSt, retcode
 
@@ -249,13 +196,6 @@ class EventSetController(BaseController):
 
         :rtype: EventSet
         """
-        try:
-            study_id = None
-
-            self.check_permissions(study_id, auths)
-        except PermissionException as pe:
-            self.log_action(user, 'download_event_sets', eventSetId, None, None, 403)
-            return pe.message, 403
 
         retcode = 200
         evntSt = None
@@ -267,8 +207,6 @@ class EventSetController(BaseController):
             logging.getLogger(__name__).error("download_event_set: {}".format(repr(dke)))
             retcode = 404
 
-        self.log_action(user, 'download_event_set', eventSetId, None, evntSt, retcode)
-
         return evntSt, retcode
 
 
@@ -278,21 +216,12 @@ class EventSetController(BaseController):
         
         :rtype: EventSets
         """
-        try:
-            study_id = None;
-
-            self.check_permissions(study_id, auths)
-        except PermissionException as pe:
-            self.log_action(user, 'download_event_sets', None, None, None, 403)
-            return pe.message, 403
 
         retcode = 200
         evntSts = None
 
         get = EventSetsGet(self.get_connection())
         evntSts = get.get()
-
-        self.log_action(user, 'download_event_sets', None, None, evntSts, retcode)
 
         return evntSts, retcode
 
@@ -308,13 +237,6 @@ class EventSetController(BaseController):
 
         :rtype: EventSet
         """
-        try:
-            study_id = None;
-
-            self.check_permissions(study_id, auths)
-        except PermissionException as pe:
-            self.log_action(user, 'update_event_set', eventSetId, eventSet, None, 403)
-            return pe.message, 403
 
         retcode = 200
         evntSt = None
@@ -325,8 +247,6 @@ class EventSetController(BaseController):
         except MissingKeyException as dke:
             logging.getLogger(__name__).error("update_event_set: {}".format(repr(dke)))
             retcode = 404
-
-        self.log_action(user, 'update_event_set', eventSetId, eventSet, evntSt, retcode)
 
         return evntSt, retcode
 
@@ -344,13 +264,6 @@ class EventSetController(BaseController):
 
         :rtype: None
         """
-        try:
-            study_id = None;
-
-            self.check_permissions(study_id, auths)
-        except PermissionException as pe:
-            self.log_action(user, 'update_event_set_note', eventSetId, note, None, 403)
-            return pe.message, 403
 
         retcode = 200
         evnt_set = None
@@ -364,7 +277,5 @@ class EventSetController(BaseController):
         except DuplicateKeyException as dke:
             logging.getLogger(__name__).error("update_event_set_note: {}".format(repr(dke)))
             retcode = 422
-
-        self.log_action(user, 'update_event_set_note', eventSetId, note, evnt_set, retcode)
 
         return evnt_set, retcode

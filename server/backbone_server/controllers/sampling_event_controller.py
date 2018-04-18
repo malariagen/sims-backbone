@@ -23,6 +23,9 @@ from backbone_server.errors.missing_key_exception import MissingKeyException
 from backbone_server.errors.permission_exception import PermissionException
 from backbone_server.errors.nested_edit_exception import NestedEditException
 
+from backbone_server.controllers.decorators  import apply_decorators
+
+@apply_decorators
 class SamplingEventController(BaseController):
 
     def create_sampling_event(self, samplingEvent, user = None, auths = None):
@@ -34,14 +37,6 @@ class SamplingEventController(BaseController):
 
         :rtype: SamplingEvent
         """
-
-        try:
-            study_id = samplingEvent.study_name
-
-            self.check_permissions(study_id, auths)
-        except PermissionException as pe:
-            self.log_action(user, 'create_sampling_event', None, samplingEvent, None, 403)
-            return pe.message, 403
 
         retcode = 201
         samp = None
@@ -57,8 +52,6 @@ class SamplingEventController(BaseController):
             logging.getLogger(__name__).error("create_samplingEvent: {}".format(repr(nee)))
             retcode = 422
 
-        self.log_action(user, 'create_sampling_event', None, samplingEvent, samp, retcode)
-
         return samp, retcode
 
 
@@ -72,12 +65,6 @@ class SamplingEventController(BaseController):
         :rtype: None
         """
 
-        try:
-            self.check_permissions(None, auths)
-        except PermissionException as pe:
-            self.log_action(user, 'delete_sampling_event', samplingEventId, None, None, 403)
-            return pe.message, 403
-
         delete = SamplingEventDelete(self.get_connection())
 
         retcode = 200
@@ -88,8 +75,6 @@ class SamplingEventController(BaseController):
         except MissingKeyException as dme:
             logging.getLogger(__name__).error("delete_samplingEvent: {}".format(repr(dme)))
             retcode = 404
-
-        self.log_action(user, 'delete_sampling_event', samplingEventId, None, None, retcode)
 
         return None, retcode
 
@@ -104,12 +89,6 @@ class SamplingEventController(BaseController):
         :rtype: SamplingEvent
         """
 
-        try:
-            self.check_permissions(None, auths)
-        except PermissionException as pe:
-            self.log_action(user, 'download_sampling_event', samplingEventId, None, None, 403)
-            return pe.message, 403
-
         get = SamplingEventGetById(self.get_connection())
 
         retcode = 200
@@ -120,8 +99,6 @@ class SamplingEventController(BaseController):
         except MissingKeyException as dme:
             logging.getLogger(__name__).error("download_samplingEvent: {}".format(repr(dme)))
             retcode = 404
-
-        self.log_action(user, 'download_sampling_event', samplingEventId, None, samp, retcode)
 
         return samp, retcode
 
@@ -135,14 +112,6 @@ class SamplingEventController(BaseController):
         :rtype: SamplingEvents
         """
 
-        try:
-            study_id = None;
-
-            self.check_permissions(study_id, auths)
-        except PermissionException as pe:
-            self.log_action(user, 'download_sampling_events_by_event_set', event_set_id, None, None, 403)
-            return pe.message, 403
-
         retcode = 200
         samp = None
 
@@ -155,8 +124,6 @@ class SamplingEventController(BaseController):
         except MissingKeyException as dme:
             logging.getLogger(__name__).error("download_sampling_events_by_event_set: {}".format(repr(dme)))
             retcode = 404
-
-        self.log_action(user, 'download_sampling_events_by_event_set', event_set_id, None, samp, retcode)
 
         return samp, retcode
 
@@ -172,13 +139,6 @@ class SamplingEventController(BaseController):
         :rtype: SamplingEvent
         """
 
-        try:
-            self.check_permissions(None, auths)
-        except PermissionException as pe:
-            self.log_action(user, 'download_sampling_events_by_identifier', propName + '/' +
-                            propValue, None, None, 403)
-            return pe.message, 403
-
         get = SamplingEventGetByIdentifier(self.get_connection())
 
         retcode = 200
@@ -190,9 +150,6 @@ class SamplingEventController(BaseController):
         except MissingKeyException as dme:
             logging.getLogger(__name__).error("download_samplingEvent: {}".format(repr(dme)))
             retcode = 404
-
-        self.log_action(user, 'download_sampling_events_by_identifier', propName + '/' +
-                        propValue, None, samp, retcode)
 
         return samp, retcode
 
@@ -206,12 +163,6 @@ class SamplingEventController(BaseController):
         :rtype: SamplingEvents
         """
 
-        try:
-            self.check_permissions(None, auths)
-        except PermissionException as pe:
-            self.log_action(user, 'download_sampling_events_by_location', locationId, None, None, 403)
-            return pe.message, 403
-
         get = SamplingEventsGetByLocation(self.get_connection())
 
         retcode = 200
@@ -222,9 +173,6 @@ class SamplingEventController(BaseController):
         except MissingKeyException as dme:
             logging.getLogger(__name__).error("download_samplingEvent: {}".format(repr(dme)))
             retcode = 404
-
-        self.log_action(user, 'download_sampling_events_by_location', locationId, None, samp,
-                        retcode)
 
         return samp, retcode
 
@@ -238,14 +186,6 @@ class SamplingEventController(BaseController):
         :rtype: SamplingEvents
         """
 
-        try:
-            study_id = studyName;
-
-            self.check_permissions(study_id, auths)
-        except PermissionException as pe:
-            self.log_action(user, 'download_sampling_events_by_study', studyName, None, None, 403)
-            return pe.message, 403
-
         get = SamplingEventsGetByStudy(self.get_connection())
 
         retcode = 200
@@ -256,8 +196,6 @@ class SamplingEventController(BaseController):
         except MissingKeyException as dme:
             logging.getLogger(__name__).error("download_samplingEvent: {}".format(repr(dme)))
             retcode = 404
-
-        self.log_action(user, 'download_sampling_events_by_study', studyName, None, samp, retcode)
 
         return samp, retcode
 
@@ -271,14 +209,6 @@ class SamplingEventController(BaseController):
         :rtype: SamplingEvents
         """
 
-        try:
-            study_id = None;
-
-            self.check_permissions(study_id, auths)
-        except PermissionException as pe:
-            self.log_action(user, 'download_sampling_events_by_taxa', taxaId, None, None, 403)
-            return pe.message, 403
-
         get = SamplingEventsGetByTaxa(self.get_connection())
 
         retcode = 200
@@ -289,8 +219,6 @@ class SamplingEventController(BaseController):
         except MissingKeyException as dme:
             logging.getLogger(__name__).error("download_sampling_events_by_taxa: {}".format(repr(dme)))
             retcode = 404
-
-        self.log_action(user, 'download_sampling_events_by_taxa', taxaId, None, samp, retcode)
 
         return samp, retcode
 
@@ -305,14 +233,6 @@ class SamplingEventController(BaseController):
 
         :rtype: SamplingEvent
         """
-
-        try:
-            study_id = samplingEvent.study_name
-
-            self.check_permissions(study_id, auths)
-        except PermissionException as pe:
-            self.log_action(user, 'update_sampling_event', samplingEventId, samplingEvent, None, 403)
-            return pe.message, 403
 
         retcode = 200
         samp = None
@@ -330,8 +250,6 @@ class SamplingEventController(BaseController):
         except NestedEditException as nee:
             logging.getLogger(__name__).error("create_samplingEvent: {}".format(repr(nee)))
             retcode = 422
-
-        self.log_action(user, 'update_sampling_event', samplingEventId, samplingEvent, samp, retcode)
 
         return samp, retcode
 

@@ -1,3 +1,5 @@
+import logging
+
 from swagger_server.models.studies import Studies
 
 from backbone_server.errors.missing_key_exception import MissingKeyException
@@ -10,8 +12,9 @@ from backbone_server.controllers.base_controller  import BaseController
 
 from backbone_server.errors.permission_exception import PermissionException
 
-import logging
+from backbone_server.controllers.decorators  import apply_decorators
 
+@apply_decorators
 class StudyController(BaseController):
 
     def download_studies(self, start=None, count=None, user=None, auths = None):
@@ -26,17 +29,9 @@ class StudyController(BaseController):
         :rtype: Studies
         """
 
-        try:
-            self.check_permissions(None, auths)
-        except PermissionException as pe:
-            self.log_action(user, 'download_studies', None, None, None, 403)
-            return pe.message, 403
-
         get = StudiesGet(self.get_connection())
 
         studies = get.get()
-
-        self.log_action(user, 'download_studies', None, None, studies, 403)
 
         return studies, 200
 
@@ -50,12 +45,6 @@ class StudyController(BaseController):
         :rtype: Study
         """
 
-        try:
-            self.check_permissions(None, auths)
-        except PermissionException as pe:
-            self.log_action(user, 'download_study', studyName, None, None, 403)
-            return pe.message, 403
-
         get = StudyGet(self.get_connection())
 
         study = None
@@ -65,8 +54,6 @@ class StudyController(BaseController):
         except MissingKeyException as dme:
             logging.getLogger(__name__).error("update_study: {}".format(repr(dme)))
             retcode = 404
-
-        self.log_action(user, 'download_study', studyName, None, study, retcode)
 
         return study, retcode
 
@@ -83,17 +70,6 @@ class StudyController(BaseController):
         :rtype: Study
         """
 
-        try:
-            study_id = None;
-            if studyName:
-                study_id = studyName[:4]
-
-            self.check_permissions(study_id, auths)
-        except PermissionException as pe:
-            self.log_action(user, 'update_study', studyName, study, None, 403)
-            return pe.message, 403
-
-
         retcode = 200
         updated_study = None
 
@@ -107,7 +83,5 @@ class StudyController(BaseController):
         except MissingKeyException as dme:
             logging.getLogger(__name__).error("update_study: {}".format(repr(dme)))
             retcode = 404
-
-        self.log_action(user, 'update_study', studyName, study, updated_study, retcode)
 
         return updated_study, retcode

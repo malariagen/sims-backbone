@@ -1,7 +1,7 @@
 import logging
 import os
 
-from backbone_server.errors.permission_exception import PermissionException 
+from backbone_server.errors.permission_exception import PermissionException
 
 class BaseController():
 
