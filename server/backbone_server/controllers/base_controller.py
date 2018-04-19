@@ -9,7 +9,7 @@ class BaseController():
     _logger = None
 
     def __init__ (self):
-        if os.getenv('BBDEBUG'):
+        if os.getenv('BB_DEBUG'):
             logging.basicConfig(level=logging.DEBUG)
         self._logger = logging.getLogger(__name__)
         self._connection = self._init_connection()
@@ -66,19 +66,6 @@ class BaseController():
     def authorizer(self, authorizer):
         resp = []
         return resp
-
-    """
-    Throw an exception if no permission
-    Calling class should log
-    """
-    def check_permissions(self, study_id, perms):
-
-        if not perms:
-            pass
-        elif not 'cn=editor,ou=sims,ou=projects,ou=groups,dc=malariagen,dc=net' in perms:
-            message = 'No permission {} {}'.format(study_id, perms)
-
-            raise PermissionException(message)
 
 
     def log_action(self, user, action, entity_id, content, result, retcode):

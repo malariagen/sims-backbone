@@ -25,7 +25,7 @@ from backbone_server.controllers.decorators  import apply_decorators
 @apply_decorators
 class EventSetController(BaseController):
 
-    def create_event_set(self, eventSetId, user = None, auths = None):
+    def create_event_set(self, eventSetId, user=None, auths=None):
         """
         creates an eventSet
         

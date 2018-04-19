@@ -1,17 +1,37 @@
 import sys
+import inspect
+import os
+
+def get_class_that_defined_method(meth):
+    if inspect.ismethod(meth):
+        for cls in inspect.getmro(meth.__self__.__class__):
+           if cls.__dict__.get(meth.__name__) is meth:
+                return cls
+        meth = meth.__func__  # fallback to __qualname__ parsing
+    if inspect.isfunction(meth):
+        cls = getattr(inspect.getmodule(meth),
+                      meth.__qualname__.split('.<locals>', 1)[0].rsplit('.', 1)[0])
+        if isinstance(cls, type):
+            return cls
+    return getattr(meth, '__objclass__', None)  # handle special descriptor objects
 
 def log_this(controller, original_function):
     def new_function(*args,**kwargs):
-        user = args[-2]
+        log_args = args
+        user = None
+        if not os.getenv('BB_NOAUTH'):
+            if 'user' in kwargs:
+                user = kwargs['user']
+            else:
+                user = args[-2]
+                log_args = args[:-2]
         func_name = sys._getframe(1).f_code.co_name
-        if kwargs is not None:
-            for key, value in kwargs.items():
-                print("%s == %s"%(key,value))
-        import datetime
-        before = datetime.datetime.now()
+        #if kwargs is not None:
+        #    for key, value in kwargs.items():
+        #        print("%s == %s"%(key,value))
         x = original_function(*args,**kwargs)
 
-        controller.log_action(user, func_name, None, args[:-2], x[0], x[1])
+        controller.log_action(user, func_name, None, log_args, x[0], x[1])
 
         return x
     return new_function
@@ -19,15 +39,24 @@ def log_this(controller, original_function):
 #Not actually a decorator as don't want to call original function multiple times
 def authorize_this(original_function):
     def new_function(*args,**kwargs):
-        user = args[-2]
-        auths = args[-1]
-        func_name = original_function.__name__
+        user = None
+        auths = None
+        if not os.getenv('BB_NOAUTH'):
+            if 'user' in kwargs:
+                user = kwargs['user']
+            else:
+                user = args[-2]
+            if 'auths' in kwargs:
+                auths = kwargs['auths']
+            else:
+                auths = args[-1]
+            func_name = original_function.__name__
 
-        if not auths:
-            pass
-        elif not 'cn=editor,ou=sims,ou=projects,ou=groups,dc=malariagen,dc=net' in auths:
-            message = 'No permission {} {} {}'.format(func_name, user, auths)
-            return message, 403
+            if not auths:
+                pass
+            elif not 'cn=editor,ou=sims,ou=projects,ou=groups,dc=malariagen,dc=net' in auths:
+                message = 'No permission {} {} {}'.format(func_name, user, auths)
+                return message, 403
 
         x = original_function(*args,**kwargs)
         return x
@@ -51,7 +80,15 @@ def apply_decorators(Cls):
             else:
                 return x
             x = self.oInstance.__getattribute__(s)
+            protected = False
             if type(x) == type(self.__init__): # it is an instance method
+                protected = True
+                #Don't want any methods from BaseController protected as they don't have
+                #the correct args
+                if get_class_that_defined_method(x).__name__ == "BaseController":
+                    protected = False
+
+            if protected:
                 return log_this(self.oInstance, authorize_this(x))
             else:
                 return x

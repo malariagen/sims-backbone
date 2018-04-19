@@ -33,12 +33,12 @@ class ApiFactory():
     def is_authorized(self, study_id):
 
         if self.isLocal():
-            try:
-                self.base_controller.check_permissions(study_id, self._auths)
-            except Exception as excp:
-                return False
 
-            return True
+            if self._auths:
+                return 'cn=editor,ou=sims,ou=projects,ou=groups,dc=malariagen,dc=net' in self._auths
+            else:
+                return True
+
         else:
             #Assumes if authenticated then authorized
             #Local test does this better

@@ -17,6 +17,11 @@ then
     cp -pr overlay/* bb_server
     export PYTHONPATH=$(pwd):$(pwd)/bb_server:${PYTHONPATH}
     cd bb_server
+    grep security: ./swagger_server/swagger/swagger.yaml
+    if [ $? -eq 1 ]
+    then
+        export BB_NOAUTH=1
+    fi
     echo "http://localhost:8080/v1/ui/"
     if [ "$1" = "test" ]
     then
