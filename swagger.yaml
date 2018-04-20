@@ -15,8 +15,8 @@ basePath: /v1
 #basePath: "/dev/sims-backbone-service/v1"
 schemes:
   - http
-#security:
-#  - OauthSecurity: []
+security:
+  - OauthSecurity: []
 tags:
   - name: source
     description: Everything about your sources

@@ -30,7 +30,7 @@ services:
     - postgresql
 
 before_install:
-    - ./generate.sh
+    - ./generate.sh noauth
 
 before_script:
     - psql -c 'create database backbone_service;' -U postgres
