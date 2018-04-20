@@ -18,14 +18,14 @@ case $i in
     ;;
 esac
 done
-if [ -n "$SERVER_ONLY" ]
+if [ -n "$SERVER_ONLY" -o -z "$CLIENT_ONLY" ]
 then
     rm -rf python-flask-server
     java -jar swagger-codegen-cli.jar generate -i swagger.yaml -l python-flask -o python-flask-server
     rm -rf server/bb_server
     cp -pr python-flask-server server/bb_server
 fi
-if [ -n "$CLIENT_ONLY" ]
+if [ -n "$CLIENT_ONLY" -o -z "$SERVER_ONLY" ]
 then
     rm -rf typescript-angular-client
     java -jar swagger-codegen-cli.jar generate -i swagger.yaml -l typescript-angular -o client/sims-backbone/src/app/typescript-angular-client -c client.config.json
