@@ -73,11 +73,11 @@ def auth(event, context):
     # new! -- add additional key-value pairs associated with the authenticated principal
     # these are made available by APIGW like so: $context.authorizer.<key>
     # additional context is cached
+    cas_response = json.loads(r.text)
     context = {
-        'key': 'value', # $context.authorizer.key -> value
-        'number' : 1,
-        'bool' : True
     }
+    for group in cas_response['memberOf']:
+        context[group] = True
     # context['arr'] = ['foo'] <- this is invalid, APIGW will not accept it
     # context['obj'] = {'foo':'bar'} <- also invalid
  

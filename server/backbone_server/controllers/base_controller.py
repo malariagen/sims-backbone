@@ -65,6 +65,7 @@ class BaseController():
     """
     def authorizer(self, authorizer):
         resp = []
+        resp = list(authorizer.keys())
         return resp
 
 
