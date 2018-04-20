@@ -76,8 +76,9 @@ def auth(event, context):
     cas_response = json.loads(r.text)
     context = {
     }
-    for group in cas_response['memberOf']:
-        context[group] = True
+    if 'memberOf' in cas_response:
+        for group in cas_response['memberOf']:
+            context[group] = True
     # context['arr'] = ['foo'] <- this is invalid, APIGW will not accept it
     # context['obj'] = {'foo':'bar'} <- also invalid
  
