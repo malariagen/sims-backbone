@@ -189,7 +189,7 @@ class SetCountry(upload_ssr.Upload_SSR):
                 try:
 
                     found.location_id = location.location_id
-                    found.location = location
+                    found.location = None
                     found = self._dao.update_sampling_event(found.sampling_event_id, found)
 
                 except Exception as excp:
