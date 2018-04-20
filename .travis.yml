@@ -41,7 +41,7 @@ before_script:
     - psql -c "SELECT postgis_full_version();" -U ${DB_USER} backbone_service
     - psql -c "\copy countries (English, French, alpha2, alpha3, numeric_code) FROM './database/country_codes.tsv' DELIMITER E'\t'  HEADER CSV; " -U ${DB_USER} backbone_service
     - psql -c "\copy taxonomies (id, rank, name) FROM './database/taxa.tsv' DELIMITER E'\t'  HEADER CSV;" -U ${DB_USER} backbone_service
-    - (cd server;./run.sh build)
+    - (cd server;./run.sh build noauth)
     - (cd server;./run.sh &)
     - sleep 5
     - export PYTHONPATH=$(pwd)/python_client:$(pwd)/server:$(pwd)/server/bb_server

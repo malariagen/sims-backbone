@@ -3,7 +3,7 @@ VIRTUAL_ENV_HOME=.
 if [ "$1" = "build" ]
 then
     virtualenv server-env -p /usr/bin/python3
-    (cd ..;./generate.sh server)
+    (cd ..;./generate.sh server $2)
 fi
 if [ -f ${VIRTUAL_ENV_HOME}/server-env/bin/activate ]
 then
