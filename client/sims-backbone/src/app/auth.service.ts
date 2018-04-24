@@ -38,7 +38,7 @@ export class AuthService {
     this.accessToken = this.oauthService.getAccessToken();
     if (!this.accessToken) {
       console.log("Path:" + this.location.path());
-     // this.oauthService.initImplicitFlow(this.location.path());     
+      this.oauthService.initImplicitFlow(this.location.path());
     }
     console.log("AuthService getAuthToken:" + this.accessToken);
     return this.accessToken;
