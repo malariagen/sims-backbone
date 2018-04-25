@@ -346,6 +346,9 @@ functions:
             parameters:
               paths:
                 location_id: true
+              query:
+                start: false
+                count: false
 
   download_sampling_events_by_study:
     handler: sampling_event/handler.download_sampling_events_by_study
@@ -364,6 +367,9 @@ functions:
             parameters:
               paths:
                 study_name: true
+              query:
+                start: false
+                count: false
 
   download_sampling_events_by_taxa:
     handler: sampling_event/handler.download_sampling_events_by_taxa
@@ -382,6 +388,9 @@ functions:
             parameters:
               paths:
                 taxa_id: true
+              query:
+                start: false
+                count: false
 
   download_sampling_events_by_event_set:
     handler: sampling_event/handler.download_sampling_events_by_event_set
@@ -400,6 +409,9 @@ functions:
             parameters:
               paths:
                 event_set_id: true
+              query:
+                start: false
+                count: false
 
   get_country_metadata:
     handler: metadata/handler.get_country_metadata

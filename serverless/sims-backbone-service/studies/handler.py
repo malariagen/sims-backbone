@@ -35,9 +35,9 @@ def download_studies(event, context):
 
     if 'queryStringParameters' in event and event["queryStringParameters"]:
         if 'start' in event["queryStringParameters"]:
-            start = event["queryStringParameters"]["start"]
+            start = int(event["queryStringParameters"]["start"])
         if 'count' in event["queryStringParameters"]:
-            count = event["queryStringParameters"]["count"]
+            count = int(event["queryStringParameters"]["count"])
 
     value, retcode = study_controller.download_studies(start, count, user, auths)
 

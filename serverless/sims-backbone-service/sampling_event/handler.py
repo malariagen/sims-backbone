@@ -94,9 +94,9 @@ def download_sampling_events_by_location(event, context):
 
     if 'queryStringParameters' in event and event["queryStringParameters"]:
         if 'start' in event["queryStringParameters"]:
-            start = event["queryStringParameters"]["start"]
+            start = int(event["queryStringParameters"]["start"])
         if 'count' in event["queryStringParameters"]:
-            count = event["queryStringParameters"]["count"]
+            count = int(event["queryStringParameters"]["count"])
 
     if 'pathParameters' in event:
         location_id = event["pathParameters"]["location_id"]
@@ -118,9 +118,9 @@ def download_sampling_events_by_study(event, context):
 
     if 'queryStringParameters' in event and event["queryStringParameters"]:
         if 'start' in event["queryStringParameters"]:
-            start = event["queryStringParameters"]["start"]
+            start = int(event["queryStringParameters"]["start"])
         if 'count' in event["queryStringParameters"]:
-            count = event["queryStringParameters"]["count"]
+            count = int(event["queryStringParameters"]["count"])
 
     if 'pathParameters' in event:
         study_name = event["pathParameters"]["study_name"]
@@ -140,9 +140,9 @@ def download_sampling_events_by_taxa(event, context):
 
     if 'queryStringParameters' in event and event["queryStringParameters"]:
         if 'start' in event["queryStringParameters"]:
-            start = event["queryStringParameters"]["start"]
+            start = int(event["queryStringParameters"]["start"])
         if 'count' in event["queryStringParameters"]:
-            count = event["queryStringParameters"]["count"]
+            count = int(event["queryStringParameters"]["count"])
 
     if 'pathParameters' in event:
         taxa_id = event["pathParameters"]["taxa_id"]
@@ -162,9 +162,9 @@ def download_sampling_events_by_event_set(event, context):
 
     if 'queryStringParameters' in event and event["queryStringParameters"]:
         if 'start' in event["queryStringParameters"]:
-            start = event["queryStringParameters"]["start"]
+            start = int(event["queryStringParameters"]["start"])
         if 'count' in event["queryStringParameters"]:
-            count = event["queryStringParameters"]["count"]
+            count = int(event["queryStringParameters"]["count"])
 
     if 'pathParameters' in event:
         event_set_id = event["pathParameters"]["event_set_id"]

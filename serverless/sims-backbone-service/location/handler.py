@@ -80,9 +80,9 @@ def download_locations(event, context):
         if 'study_name' in event["queryStringParameters"]:
             study_name = event["queryStringParameters"]["study_name"]
         if 'start' in event["queryStringParameters"]:
-            start = event["queryStringParameters"]["start"]
+            start = int(event["queryStringParameters"]["start"])
         if 'count' in event["queryStringParameters"]:
-            count = event["queryStringParameters"]["count"]
+            count = int(event["queryStringParameters"]["count"])
         if 'orderby' in event["queryStringParameters"]:
             orderby = event["queryStringParameters"]["orderby"]
 
