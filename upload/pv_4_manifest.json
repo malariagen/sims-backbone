@@ -1,0 +1,122 @@
+{
+    "values":
+    {
+        "sample_oxford_id": {
+            "column": 2,
+            "type": "string",
+            "id": true
+        },
+        "study_id": {
+            "column": 1,
+            "type": "string"
+        },
+        "sample_partner_id": {
+            "column": 30,
+            "type": "string"
+        },
+        "species": {
+            "column": 40,
+            "type": "string",
+            "replace": [
+                "5855", "Plasmodium vivax"
+            ]
+        },
+        "doc": {
+            "column": 35,
+            "type": "datetime"
+        },
+        "doc_accuracy": {
+            "column": 36,
+            "type": "string"
+        },
+        "location_name": {
+            "column": 37,
+            "type": "string"
+        },
+        "latitude": {
+            "column": 38,
+            "type": "float"
+        },
+        "longitude": {
+            "column": 39,
+            "type": "float"
+        },
+        "country": {
+            "column": 40,
+            "type": "string",
+            "replace": [
+                        [ "the Bolivarian Republic of Venezuela", "VEN" ],
+                        [ "the Democratic Republic of the Congo", "COD" ],
+                        [ "the Federal Democratic Republic of Ethiopia", "ETH" ],
+                        [ "the Federative Republic of Brazil", "BRA" ],
+                        [ "the Kingdom of Cambodia", "KHM" ],
+                        [ "the Kingdom of Thailand", "THA" ],
+                        [ "the United Kingdom of Great Britain and Northern Ireland", "GBR" ],
+                        [ "the Lao People's Democratic Republic", "LAO" ],
+                        [ "the Republic of Benin", "BEN" ],
+                        [ "the People's Republic of Bangladesh", "BGD" ],
+                        [ "the Republic of Cameroon", "CMR" ],
+                        [ "the Republic of Colombia", "COL" ],
+                        [ "the Republic of Ghana", "GHA" ],
+                        [ "the Republic of Guinea", "GIN" ],
+                        [ "the Republic of Indonesia", "IDN" ],
+                        [ "the Republic of Kenya", "KEN" ],
+                        [ "the Republic of Mali", "MLI" ],
+                        [ "the Republic of Peru", "PER" ],
+                        [ "the Republic of the Gambia", "GMB" ],
+                        [ "the Republic of the Philippines", "PHL" ],
+                        [ "the Republic of Senegal", "SEN" ],
+                        [ "the Republic of the Sudan", "SDN" ],
+                        [ "the Republic of the Union of Myanmar", "MMR" ],
+                        [ "the Socialist Republic of Viet Nam", "VNM" ],
+                        [ "the United Republic of Tanzania", "TZA" ],
+                        [ "Afghanistan", "AFG" ],
+                        [ "Bangladesh", "BGD" ],
+                        [ "Bhutan", "BTN" ],
+                        [ "Brazil", "BRA" ],
+                        [ "Cambodia", "KHM" ],
+                        [ "China", "CHN" ],
+                        [ "Colombia", "COL" ],
+                        [ "El Salvador", "SLV" ],
+                        [ "Ethiopia", "ETH" ],
+                        [ "India", "IND" ],
+                        [ "Indonesia", "IDN" ],
+                        [ "Iran", "IRN" ],
+                        [ "Laos", "LAO" ],
+                        [ "Madagascar", "MDG" ],
+                        [ "Malaysia", "MYS" ],
+                        [ "Mauritania", "MRT" ],
+                        [ "Mexico", "MEX" ],
+                        [ "Myanmar", "MMR" ],
+                        [ "Nicaragua", "NIC" ],
+                        [ "North Korea", "PRK" ],
+                        [ "Panama", "PAN" ],
+                        [ "Papua New Guinea", "PNG" ],
+                        [ "Peru", "PER" ],
+                        [ "Philippines", "PHL" ],
+                        [ "South Korea", "KOR" ],
+                        [ "Sri Lanka", "LKA" ],
+                        [ "Sudan", "SDN" ],
+                        [ "Thailand", "THA" ],
+                        [ "Vietnam", "VNM" ]
+                    ]
+
+        },
+        "proxy_location_name": {
+            "column": 41,
+            "type": "string"
+        },
+        "proxy_latitude": {
+            "column": 42,
+            "type": "float"
+        },
+        "proxy_longitude": {
+            "column": 43,
+            "type": "float"
+        },
+        "unique_id": {
+            "column": 29,
+            "type": "string"
+        }
+    }
+}
