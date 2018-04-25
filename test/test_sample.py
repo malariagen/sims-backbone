@@ -597,7 +597,6 @@ class TestSample(TestBase):
             self.check_api_exception(api_factory, "SamplingEventApi->create_sampling_event", error)
 
 
-
     """
     """
     def test_event_set_lookup(self, api_factory):
@@ -611,7 +610,40 @@ class TestSample(TestBase):
         try:
             es_api_instance.create_event_set(es_name)
 
-            study_code = '1020-MD-UP'
+            study_code = '1022-MD-UP'
+
+            samp = swagger_client.SamplingEvent(None, study_code, date(2017, 10, 14),
+                                                partner_species='PF')
+            created = api_instance.create_sampling_event(samp)
+
+            es_api_instance.create_event_set_item(es_name, created.sampling_event_id)
+
+            fetched = api_instance.download_sampling_events_by_event_set(es_name)
+
+            assert fetched.count ==1, "event_set not found"
+
+            assert created == fetched.sampling_events[0], "create response != download response"
+            api_instance.delete_sampling_event(created.sampling_event_id)
+
+            es_api_instance.delete_event_set(es_name)
+        except ApiException as error:
+            self.check_api_exception(api_factory, "EventSetApi->create_event_set", error)
+
+
+    """
+    """
+    def test_event_set_lookup_complex_name(self, api_factory):
+
+        api_instance = api_factory.SamplingEventApi()
+
+        es_api_instance = api_factory.EventSetApi()
+
+        es_name = 'test event set lookup'
+
+        try:
+            es_api_instance.create_event_set(es_name)
+
+            study_code = '1023-MD-UP'
 
             samp = swagger_client.SamplingEvent(None, study_code, date(2017, 10, 14),
                                                 partner_species='PF')
@@ -658,7 +690,7 @@ class TestSample(TestBase):
     """
     def test_event_set_lookup_paged(self, api_factory):
 
-        study_code = '1021-MD-UP'
+        study_code = '1024-MD-UP'
 
         api_instance = api_factory.SamplingEventApi()
         study_api = api_factory.StudyApi()
