@@ -3,6 +3,8 @@ from swagger_server.models.event_set_note import EventSetNote
 
 import logging
 
+import urllib
+
 from backbone_server.event_set.post import EventSetPost
 from backbone_server.event_set.post_sampling_event import EventSetPostSamplingEvent
 from backbone_server.event_set.post_note import EventSetPostNote
@@ -42,6 +44,7 @@ class EventSetController(BaseController):
 
         try:
             post = EventSetPost(self.get_connection())
+            eventSetId = urllib.parse.unquote_plus(eventSetId)
 
             evntSt = post.post(eventSetId)
         except DuplicateKeyException as dke:
@@ -68,6 +71,7 @@ class EventSetController(BaseController):
 
         try:
             post = EventSetPostSamplingEvent(self.get_connection())
+            eventSetId = urllib.parse.unquote_plus(eventSetId)
 
             evntSt = post.post(eventSetId, samplingEventId)
         except DuplicateKeyException as dke:
@@ -99,6 +103,8 @@ class EventSetController(BaseController):
 
         try:
             post = EventSetPostNote(self.get_connection())
+            eventSetId = urllib.parse.unquote_plus(eventSetId)
+            noteId = urllib.parse.unquote_plus(noteId)
 
             evntSt = post.post(eventSetId, noteId, note)
         except DuplicateKeyException as dke:
@@ -126,6 +132,7 @@ class EventSetController(BaseController):
 
         try:
             delete = EventSetDelete(self.get_connection())
+            eventSetId = urllib.parse.unquote_plus(eventSetId)
 
             evntSt = delete.delete(eventSetId)
         except MissingKeyException as mke:
@@ -152,6 +159,7 @@ class EventSetController(BaseController):
 
         try:
             delete = EventSetDeleteSamplingEvent(self.get_connection())
+            eventSetId = urllib.parse.unquote_plus(eventSetId)
 
             evntSt = delete.delete(eventSetId, samplingEventId)
         except MissingKeyException as dke:
@@ -178,6 +186,8 @@ class EventSetController(BaseController):
 
         try:
             delete = EventSetDeleteNote(self.get_connection())
+            eventSetId = urllib.parse.unquote_plus(eventSetId)
+            noteId = urllib.parse.unquote_plus(noteId)
 
             evntSt = delete.delete(eventSetId, noteId)
         except MissingKeyException as dke:
@@ -202,6 +212,7 @@ class EventSetController(BaseController):
 
         try:
             get = EventSetGetById(self.get_connection())
+            eventSetId = urllib.parse.unquote_plus(eventSetId)
             evntSt = get.get(eventSetId, start, count)
         except MissingKeyException as dke:
             logging.getLogger(__name__).error("download_event_set: {}".format(repr(dke)))
@@ -243,6 +254,7 @@ class EventSetController(BaseController):
 
         try:
             put = EventSetPut(self.get_connection())
+            eventSetId = urllib.parse.unquote_plus(eventSetId)
             evntSt = put.put(eventSetId, eventSet)
         except MissingKeyException as dke:
             logging.getLogger(__name__).error("update_event_set: {}".format(repr(dke)))
@@ -270,6 +282,8 @@ class EventSetController(BaseController):
 
         try:
             put = EventSetPutNote(self.get_connection())
+            eventSetId = urllib.parse.unquote_plus(eventSetId)
+            noteId = urllib.parse.unquote_plus(noteId)
             evnt_set = put.put(eventSetId, noteId, note)
         except MissingKeyException as dke:
             logging.getLogger(__name__).error("update_event_set_note: {}".format(repr(dke)))

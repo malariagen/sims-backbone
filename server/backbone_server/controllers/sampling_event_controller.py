@@ -117,6 +117,7 @@ class SamplingEventController(BaseController):
 
         try:
             get = EventSetGetById(self.get_connection())
+            event_set_id = urllib.parse.unquote_plus(event_set_id)
             evntSt = get.get(event_set_id, start, count)
 
             samp = evntSt.members
