@@ -11,6 +11,9 @@ for include_path in paths:
 from util.response_util import create_response
 from util.request_util import get_body,get_user,get_auths
 
+from swagger_server.models.event_set import EventSet
+from swagger_server.models.event_set_note import EventSetNote
+
 from backbone_server.controllers.event_set_controller import EventSetController
 
 event_set_controller = EventSetController()
@@ -203,9 +206,9 @@ def download_event_set(event, context):
 
     if 'queryStringParameters' in event and event["queryStringParameters"]:
         if 'start' in event["queryStringParameters"]:
-            start = event["queryStringParameters"]["start"]
+            start = int(event["queryStringParameters"]["start"])
         if 'count' in event["queryStringParameters"]:
-            count = event["queryStringParameters"]["count"]
+            count = int(event["queryStringParameters"]["count"])
 
     if 'pathParameters' in event:
         event_set_id = event["pathParameters"]["event_set_id"]
