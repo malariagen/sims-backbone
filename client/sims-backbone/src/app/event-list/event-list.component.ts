@@ -82,6 +82,7 @@ export class EventListComponent implements AfterViewInit {
       this._events = events;
     } else {
       this._events.sampling_events = this._events.sampling_events.concat(events.sampling_events);
+      this._events.locations = { ...this._events.locations, ...events.locations };
     }
     let numLoaded = Math.min((this._pageNumber + 1) * this._pageSize, events.count);
 
@@ -130,22 +131,27 @@ export class EventListComponent implements AfterViewInit {
     if (sample.location_id) {
       let location = locations[sample.location_id];
       event['partner_location_name'] = '';
-      if (location.identifiers) {
-        location.identifiers.forEach(ident => {
-          let ident_value = ident.identifier_value;
-          if (this._studyName || event['study_id']) {
-            if ((this._studyName && (ident.study_name == this._studyName)) ||
-              event['study_id'] && (ident.study_name == event['study_id'])) {
-              event['partner_location_name'] = ident_value;
+      if (location) {
+        if (location.identifiers) {
+          location.identifiers.forEach(ident => {
+            let ident_value = ident.identifier_value;
+            if (this._studyName || event['study_id']) {
+              if ((this._studyName && (ident.study_name == this._studyName)) ||
+                event['study_id'] && (ident.study_name == event['study_id'])) {
+                event['partner_location_name'] = ident_value;
+              }
+            } else {
+              event['partner_location_name'] = event['partner_location_name'] + ident_value + '(' + ident.study_name + ');';
             }
-          } else {
-            event['partner_location_name'] = event['partner_location_name'] + ident_value + '(' + ident.study_name + ');';
-          }
-        });
-      }
-      event['location_curated_name'] = location.curated_name;
-      if (location.latitude) {
-        event['location'] = '<a href="location/' + location.latitude + '/' + location.longitude + '">' + location.latitude + ', ' + location.longitude + '</a>';
+          });
+        }
+        event['location_curated_name'] = location.curated_name;
+        if (location.latitude) {
+          event['location'] = '<a href="location/' + location.latitude + '/' + location.longitude + '">' + location.latitude + ', ' + location.longitude + '</a>';
+        }
+      } else {
+        console.error('Missing location:' + sample.location_id);
+        console.error(locations);
       }
     }
     if (sample.partner_taxonomies) {
