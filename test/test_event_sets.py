@@ -632,3 +632,37 @@ class TestEventSets(TestBase):
 
         except ApiException as error:
             self.check_api_exception(api_factory, "EventSetsApi->download_event_sets", error)
+
+    """
+    """
+    def test_download_event_set_detail_no_members(self, api_factory):
+
+        api_instance = api_factory.EventSetApi()
+        event_api_instance = api_factory.SamplingEventApi()
+
+        try:
+
+            event_set = 'EventSet13'
+            created = api_instance.create_event_set(event_set)
+
+            samp = swagger_client.SamplingEvent(None, '4000-MD-UP', date(2017, 10, 10))
+            created = event_api_instance.create_sampling_event(samp)
+
+            created_set = api_instance.create_event_set_item(event_set, created.sampling_event_id)
+            fetched_set = api_instance.download_event_set(event_set, start=0, count=0)
+
+            assert fetched_set.members is None
+
+            api_instance.delete_event_set_item(event_set, created.sampling_event_id)
+
+            fetched_set = api_instance.download_event_set(event_set)
+
+            assert fetched_set.members.count == 0
+
+
+            api_instance.delete_event_set(event_set)
+            event_api_instance.delete_sampling_event(created.sampling_event_id)
+
+        except ApiException as error:
+            self.check_api_exception(api_factory, "EventSetsApi->create_event_set", error)
+

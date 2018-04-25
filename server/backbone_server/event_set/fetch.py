@@ -60,7 +60,7 @@ class EventSetFetch():
         if len(event_set.notes) == 0:
             event_set.notes = None
 
-        if count and count == 0:
+        if count is not None and count == 0:
             return event_set
 
         fields = '''SELECT id, study_id, doc, doc_accuracy,
