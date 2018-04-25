@@ -14,7 +14,7 @@ source client-env/bin/activate
 export DATABASE=backbone_test
 if [ "$1" = "one" ]
 then
-    python3 -m pytest -x
+    python3 -m pytest -x -k $2
     #Or -k to run a specific test instead of just failing fast
 else
     python3 -m pytest
