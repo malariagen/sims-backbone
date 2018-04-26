@@ -7,4 +7,5 @@
 .??*
 archive/
 config_dev.json
+cmis_config.json
 upload-env/
