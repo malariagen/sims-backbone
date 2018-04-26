@@ -5,7 +5,7 @@
 
 This project is heavily based around the OpenAPI (swagger.io) definition of the API.
 
-swagger.yaml defines the API and includes documentation - you can create an interactive API browser from this as well
+swagger.yaml defines the API and includes documentation - you can create an interactive API browser from this as well (see below)
 
 Usage
 =====
@@ -16,13 +16,27 @@ To get the endpoint info, if you have aws credentials, go to serverless/sims-bac
 
 If you don't have credentials then ask somebody who does.
 
-The trickiest part is configuring the OAuth authentication - see [test/test_base.py](test/test_base.py) for an example on how to for the python client - this uses [upload/config_dev.json](upload/config_dev.json) as the credential store - this is based on [upload/config_template.json](upload/config_template.json)
+The generated client README.md has instructions on how to call the endpoints
 
-The generate client README.md has instructions on how to call the endpoints
+The example directory contains a simple example of how to call the API
+
+The trickiest part is configuring the OAuth authentication - see [example/example.py](example/example.py) for an example on how to for the python client - this uses [example/config.json](example/config.json) as the credential store - this is based on [example/config_template.json](example/config_template.json)
+
+You also need to set the environment variables in run_example.sh to point to the correct endpoints.
 
 The test directory contains examples of how to call all the API endpoints.
 
-For uploading new records see the upload directory and all_load.sh for examples
+For uploading new records see the upload directory and all_load.sh for examples - the programs here
+do a lot of work connected to setting up locations and identifiers
+
+Interactive API browser
+=======================
+
+If you use the generated server, in python-flask-server, directly then you can visit the
+[http://localhost:8080/v1/ui/](interactive browser)
+
+While this can be configured for authentication and access to the remote service it's probably best
+used to get a view of the methods available as part of the API.
 
 Testing
 =======
@@ -30,6 +44,9 @@ Testing
 The web client can be tested in the usual way (`ng test`) for an Angular CLI application
 
 The python client and server are (can be) tested together depending on the configuration.
+
+If you want a local instance without authentication then you can use the noauth arg to the
+generate.sh script when generating the client/server code.
 
 You will need to configure a local postgres database - see [database/README](database/README) - once this is done then start the server via:
 
