@@ -116,5 +116,6 @@ class TestSampling_Event(TestBase):
         if looked_up.sampling_events[0].location_id not in TestSampling_Event._locations:
             TestSampling_Event._locations.append(looked_up.sampling_events[0].location_id)
 
+        assert len(looked_up.sampling_events[0].location.identifiers) == 1, 'Too many location identifiers {}'.format(looked_up)
         assert looked_up.sampling_events[0].location.identifiers[0].study_name == '9010 Upload test study 2', 'Study name in location not updated'
 
