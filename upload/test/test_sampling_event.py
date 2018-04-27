@@ -30,6 +30,18 @@ class TestSampling_Event(TestBase):
                 "study_id": {
                     "column": 1,
                     "type": "string"
+                },
+                "latitude": {
+                    "column": 2,
+                    "type": "string"
+                },
+                "longitude": {
+                    "column": 3,
+                    "type": "string"
+                },
+                "location_name": {
+                    "column": 4,
+                    "type": "string"
                 }
             }
         }''')
@@ -50,6 +62,8 @@ class TestSampling_Event(TestBase):
         event_api_instance.delete_sampling_event(looked_up.sampling_event_id)
 
         self.deleteEventSets(['multiple_study'], TestSampling_Event._locations)
+
+        self.tearDownLocations(TestSampling_Event._locations)
 
     """
     """
@@ -89,3 +103,18 @@ class TestSampling_Event(TestBase):
         for msg in messages:
             msg = msg.format(looked_up.sampling_event_id)
             self.assertIn(msg, self._messages)
+
+    """
+    """
+    def test_location_name_changed_study(self):
+
+        event_api_instance = swagger_client.SamplingEventApi(self._api_client)
+        event_set_api_instance = swagger_client.EventSetApi(self._api_client)
+
+        looked_up = event_api_instance.download_sampling_events_by_identifier('oxford_id', '123456')
+
+        if looked_up.sampling_events[0].location_id not in TestSampling_Event._locations:
+            TestSampling_Event._locations.append(looked_up.sampling_events[0].location_id)
+
+        assert looked_up.sampling_events[0].location.identifiers[0].study_name == '9010 Upload test study 2', 'Study name in location not updated'
+
