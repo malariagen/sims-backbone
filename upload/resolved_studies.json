@@ -1,0 +1,24 @@
+{
+    "values": {
+        "sample_source_id": {
+            "column": 4,
+            "type": "string"
+        },
+        "sample_source_type": {
+            "column": 3,
+            "type": "string"
+        },
+        "sample_source_id1": {
+            "column": 5,
+            "type": "string"
+        },
+        "sample_source_type1": {
+            "column": 3,
+            "type": "string"
+        },
+        "study_id": {
+            "column": 11,
+            "type": "string"
+        }
+    }
+}
