@@ -23,7 +23,7 @@ then
 fi
 if [ "$1" = "one" ]
 then
-    python3 -m unittest test_sampling_event.TestSampling_Event.test_multiple_study
+    python3 -m pytest -s -x -k $2
 else
     if [ "${TRAVIS}" != "true" ]
     then
