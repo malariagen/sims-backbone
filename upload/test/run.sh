@@ -25,10 +25,5 @@ if [ "$1" = "one" ]
 then
     python3 -m pytest -s -x -k $2
 else
-    if [ "${TRAVIS}" != "true" ]
-    then
-        python3 all_tests.py
-    else
-        python3 -m pytest
-    fi
+    python3 -m pytest -s -x
 fi

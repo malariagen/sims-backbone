@@ -12,11 +12,17 @@ then
 fi
 source client-env/bin/activate
 export DATABASE=backbone_test
+grep security: ../server/bb_server/swagger_server/swagger/swagger.yaml
+if [ $? -eq 1 ]
+then
+    export LOCAL_TEST=1
+    echo "Server security not enabled therefore forcing local test"
+fi
 if [ "$1" = "one" ]
 then
-    python3 -m pytest -x -k $2
+    python3 -m pytest -s -x -k $2
     #Or -k to run a specific test instead of just failing fast
 else
-    python3 -m pytest
+    python3 -m pytest -s -x
 fi
 psql -c "DELETE FROM taxonomies WHERE id=7227;" backbone_test
