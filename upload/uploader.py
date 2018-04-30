@@ -912,7 +912,8 @@ class Uploader():
                 #print("Updating {} to {}".format(orig, existing))
                 ret = self._dao.update_sampling_event(existing.sampling_event_id, existing)
 
-            self._dao.create_event_set_item(self._event_set, existing.sampling_event_id)
+            if not existing.event_sets or self._event_set not in existing.event_sets:
+                self._dao.create_event_set_item(self._event_set, existing.sampling_event_id)
 
         else:
             #print("Creating {}".format(samp))
