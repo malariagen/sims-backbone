@@ -3,6 +3,7 @@ from backbone_server.errors.missing_key_exception import MissingKeyException
 
 from backbone_server.sampling_event.edit import SamplingEventEdit
 from backbone_server.sampling_event.fetch import SamplingEventFetch
+from backbone_server.location.edit import LocationEdit
 
 from swagger_server.models.sampling_event import SamplingEvent
 
@@ -22,23 +23,30 @@ class SamplingEventPut():
         with self._connection:
             with self._connection.cursor() as cursor:
 
-                stmt = '''SELECT id FROM sampling_events WHERE  id = %s'''
+                stmt = '''SELECT id, study_id FROM sampling_events WHERE  id = %s'''
                 cursor.execute( stmt, (sampling_event_id,))
 
                 existing_sampling_event = None
 
-                for (sampling_event_id, ) in cursor:
+                for (sampling_event_id, original_study_id) in cursor:
                     existing_sampling_event = SamplingEvent(sampling_event_id)
 
                 if not existing_sampling_event:
                     raise MissingKeyException("Could not find sampling_event to update {}".format(sampling_event_id))
+
+                study_id = SamplingEventEdit.fetch_study_id(cursor, sampling_event.study_name, True)
+
+                if study_id != original_study_id:
+                    LocationEdit.update_identifier_study(cursor, sampling_event.location_id,
+                                                         original_study_id, study_id)
+                    LocationEdit.update_identifier_study(cursor, sampling_event.proxy_location_id,
+                                                         original_study_id, study_id)
 
                 SamplingEventEdit.check_location_details(cursor, sampling_event.location_id,
                                                          sampling_event.location)
                 SamplingEventEdit.check_location_details(cursor, sampling_event.proxy_location_id,
                                                          sampling_event.proxy_location)
 
-                study_id = SamplingEventEdit.fetch_study_id(cursor, sampling_event.study_name, True)
                 partner_species = SamplingEventEdit.fetch_partner_species(cursor, sampling_event, study_id)
                 stmt = '''UPDATE sampling_events 
                             SET study_id = %s, doc = %s, doc_accuracy = %s,
@@ -62,8 +70,10 @@ class SamplingEventPut():
                 except DuplicateKeyException as err:
                     raise err
 
-
                 SamplingEventEdit.clean_up_taxonomies(cursor)
+
+                LocationEdit.clean_up_identifiers(cursor, sampling_event.location_id, original_study_id)
+                LocationEdit.clean_up_identifiers(cursor, sampling_event.proxy_location_id, original_study_id)
 
                 sampling_event = SamplingEventFetch.fetch(cursor, sampling_event_id)
 

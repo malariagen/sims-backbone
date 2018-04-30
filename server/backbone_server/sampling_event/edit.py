@@ -10,6 +10,8 @@ class SamplingEventEdit():
     @staticmethod
     def check_location_details(cursor, location_id, location):
 
+        current_location = None
+
         if location_id:
             current_location = LocationFetch.fetch(cursor, location_id)
 
@@ -21,6 +23,8 @@ class SamplingEventEdit():
 
                 if location != current_location:
                     raise NestedEditException("Implied location edit not allowed for {}".format(location_id))
+
+        return current_location
 
     @staticmethod
     def fetch_study_id(cursor, study_name, create):
