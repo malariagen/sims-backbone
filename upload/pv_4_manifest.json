@@ -21,6 +21,10 @@
                 "5855", "Plasmodium vivax"
             ]
         },
+        "sample_individual_id": {
+            "column": 33,
+            "type": "string"
+        },
         "doc": {
             "column": 35,
             "type": "datetime"

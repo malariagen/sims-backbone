@@ -118,6 +118,31 @@ class TestSample(TestBase):
         except ApiException as error:
             self.check_api_exception(api_factory, "SamplingEventApi->create_sampling_event", error)
 
+    """
+    """
+    def test_duplicate_individual_id(self, api_factory):
+
+        api_instance = api_factory.SamplingEventApi()
+
+        try:
+
+            samp = swagger_client.SamplingEvent(None, '1025-MD-UP', date(2017, 10, 13))
+            samp.identifiers = [
+                swagger_client.Identifier (identifier_type='individual_id', identifier_value='12345')
+            ]
+            created = api_instance.create_sampling_event(samp)
+
+            created1 = api_instance.create_sampling_event(samp)
+
+
+            api_instance.delete_sampling_event(created.sampling_event_id)
+            api_instance.delete_sampling_event(created1.sampling_event_id)
+
+            assert created.sampling_event_id != created1.sampling_event_id
+
+        except ApiException as error:
+            self.check_api_exception(api_factory, "SamplingEventApi->create_sampling_event", error)
+
 
     """
     """

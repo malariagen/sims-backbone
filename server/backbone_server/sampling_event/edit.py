@@ -71,7 +71,8 @@ class SamplingEventEdit():
     def add_identifiers(cursor, uuid_val, sampling_event):
         if sampling_event.identifiers:
             for ident in sampling_event.identifiers:
-                if ident.identifier_type != 'partner_id':
+                if not (ident.identifier_type == 'partner_id' or \
+                        ident.identifier_type == 'individual_id'):
                     cursor.execute('''SELECT * FROM identifiers
                                    WHERE identifier_type = %s AND identifier_value = %s AND
                                    identifier_source = %s''',

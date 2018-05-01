@@ -625,6 +625,9 @@ class Uploader():
             idents.append(swagger_client.Identifier (values['sample_source_type2'],
                                                      values['sample_source_id2'],
                                                      self._event_set))
+        if 'sample_individual_id' in values:
+            idents.append(swagger_client.Identifier ('individual_id', values['sample_individual_id'],
+                                                     self._event_set))
 
         samp.identifiers = idents
 
@@ -673,6 +676,10 @@ class Uploader():
                                                                                        ident.identifier_value)
 
                     for found in found_events.sampling_events:
+                        if ident.identifier_type == 'individual_id':
+                            #individual_id is used to group sampling events
+                            # and is not a unique ident
+                            continue
                         if ident.identifier_type == 'partner_id':
                             #Partner ids within 1087 are not unique
                             if samp.study_name[:4] == '1087':
