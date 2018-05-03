@@ -15,10 +15,10 @@
             "type": "string"
         },
         "species": {
-            "column": 40,
+            "column": 9,
             "type": "string",
             "replace": [
-                "5855", "Plasmodium vivax"
+                [ "5855", "Plasmodium vivax" ]
             ]
         },
         "sample_individual_id": {
