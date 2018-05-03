@@ -22,9 +22,12 @@ class LocationGetByGPS():
                 locations = Locations()
                 locations.locations = []
                 locations.count = 0
+                ids = []
 
-                #GPS should be unique
                 for (location_id,) in cursor:
+                    ids.append(str(location_id))
+
+                for location_id in ids:
                     location = LocationFetch.fetch(cursor, location_id)
                     locations.locations.append(location)
                     locations.count = locations.count + 1
@@ -33,4 +36,4 @@ class LocationGetByGPS():
         if len(locations.locations) == 0:
             raise MissingKeyException("GPS location not found {}, {}".format(latitude, longitude))
 
-        return locations.locations[0]
+        return locations

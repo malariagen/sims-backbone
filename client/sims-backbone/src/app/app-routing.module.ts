@@ -23,9 +23,9 @@ import { ReportUncuratedLocationsComponent } from './report-uncurated-locations/
 const routes: Routes = [
   { path: '', redirectTo: '/studies', pathMatch: 'full' },
   { path: 'full-map', component: AllLocationsMapComponent },
-  { path: 'location/:latitude/:longitude', component: LocationEditComponent },
+  { path: 'location/:locationId', component: LocationEditComponent },
   { path: 'study/events/:studyName', component: StudyEventListComponent },
-  { path: 'location/events/:latitude/:longitude', component: LocationEventListComponent },
+  { path: 'location/events/:locationId', component: LocationEventListComponent },
   { path: 'studies', component: AllStudiesListComponent },
   { path: 'study/:studyCode', component: StudyEditComponent },
   { path: 'taxa', component: TaxaListComponent },

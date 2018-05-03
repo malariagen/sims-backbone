@@ -38,20 +38,7 @@ class LocationPut(LocationEdit):
                 if not existing_location:
                     raise MissingKeyException("Error updating location {}".format(location_id))
 
-                stmt = '''SELECT id, ST_X(location) as latitude, ST_Y(location) as longitude,
-                accuracy, curated_name, curation_method, country
-                               FROM locations WHERE  location = ST_SetSRID(ST_MakePoint(%s, %s), 4326)'''
-                cursor.execute( stmt, (location.latitude, location.longitude,))
-
-                existing_location = None
-
-                for (location_id, latitude, longitude, accuracy, curated_name,
-                     curation_method, country) in cursor:
-                    existing_location = Location(location_id, latitude, longitude, accuracy,
-                                        curated_name, curation_method, country)
-
-                if existing_location and existing_location.location_id != location_id:
-                    raise DuplicateKeyException("Error updating location - duplicate GPS {}".format(existing_location))
+                LocationEdit.check_for_duplicate(cursor, location, location_id)
 
                 stmt = '''UPDATE locations 
                             SET location = ST_SetSRID(ST_MakePoint(%s, %s), 4326),
@@ -78,5 +65,5 @@ class LocationPut(LocationEdit):
 
         if rc != 1:
             raise MissingKeyException("Error updating location {}".format(location_id))
-
+#
         return location

@@ -7,7 +7,7 @@
 
       <div class="location-edit-form">
         <form *ngIf="locationForm" [formGroup]="locationForm" (ngSubmit)="onSubmit(locationForm)">
-          <a mat-raised-button color="accent" [routerLink]="[locationEvents,latitude,longitude]">Sampling Events</a>
+          <a mat-raised-button color="accent" [routerLink]="[locationEvents,locationId]">Sampling Events</a>
           <p>
             <mat-form-field class="curated_name">
               <input matInput placeholder="Curated Name:" type="text" formControlName="curated_name">

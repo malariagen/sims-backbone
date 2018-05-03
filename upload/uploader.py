@@ -462,12 +462,12 @@ class Uploader():
 
     def lookup_location(self, existing_event, study_id, loc, partner_name, values):
 
-        looked_up = None
+        looked_up_location = None
         conflict = False
+        looked_up = None
 
         try:
             looked_up = self._dao.download_gps_location(str(loc.latitude), str(loc.longitude))
-            looked_up = self._dao.download_location(looked_up.location_id)
         except Exception as err:
             #print(repr(err))
             #print("Failed to find location {}".format(loc))
@@ -484,12 +484,24 @@ class Uploader():
                                                      named_loc, partner_name, values)
                                 conflict = True
                             else:
-                                looked_up = named_loc
+                                looked_up_location = named_loc
             except ApiException as err:
                 #Can't be found by name either
                 pass
+        else:
+            name_match = False
+            for loc in looked_up.locations:
+                for ident in loc.identifiers:
+                    if ident.identifier_type == 'partner_name' and \
+                       ident.identifier_value == partner_name and \
+                       ident.study_name[:4] == study_id[:4]:
+                        name_match = True
+                        looked_up_location = loc
+            if not name_match:
+                looked_up = None
 
-        return looked_up, conflict
+
+        return looked_up_location, conflict
 
     def process_location(self, values, prefix, existing_event):
 
@@ -546,7 +558,8 @@ class Uploader():
             except Exception as err:
                 print(repr(err))
                 #print("Failed to find location {}".format(loc))
-        elif not conflict:
+#        elif not conflict:
+        else:
 
             try:
                 created = self._dao.create_location(loc)

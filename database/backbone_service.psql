@@ -455,17 +455,6 @@ ALTER TABLE ONLY event_sets
 -- Name: location_identifiers uniq_loc_ident; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY location_identifiers
-    ADD CONSTRAINT uniq_loc_ident UNIQUE (location_id, study_id, identifier_type);
-
-
---
--- Name: location_identifiers uniq_loc_name_ident; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY location_identifiers
-    ADD CONSTRAINT uniq_loc_name_ident UNIQUE (study_id, identifier_type, identifier_value);
-
 
 --
 -- Name: studies uniq_study_code; Type: CONSTRAINT; Schema: public; Owner: -

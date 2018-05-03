@@ -97,10 +97,12 @@ class TestLocation(TestBase):
             loc = self.get_next_location()
             created = api_instance.create_location(loc)
 
-            with pytest.raises(ApiException, status=422):
-                created = api_instance.create_location(loc)
+            created1 = api_instance.create_location(loc)
+
+            assert created.location_id != created1.location_id
 
             api_instance.delete_location(created.location_id)
+            api_instance.delete_location(created1.location_id)
 
         except ApiException as error:
             self.check_api_exception(api_factory, "LocationApi->create_location", error)
@@ -151,11 +153,12 @@ class TestLocation(TestBase):
 
             created = api_instance.create_location(loc)
 
-            with pytest.raises(ApiException, status=422):
-                created1 = api_instance.create_location(loc1)
-                api_instance.delete_location(created1.location_id)
+            created1 = api_instance.create_location(loc1)
+
+            assert created.location_id != created1.location_id
 
             api_instance.delete_location(created.location_id)
+            api_instance.delete_location(created1.location_id)
 
         except ApiException as error:
             self.check_api_exception(api_factory, "LocationApi->create_location", error)
@@ -195,9 +198,11 @@ class TestLocation(TestBase):
                 swagger_client.Identifier(identifier_type='partner_name', identifier_value='Kobeni', study_name='5002-PF-MR-ANON')
             ]
             created = api_instance.create_location(loc)
+
             looked_up = api_instance.download_gps_location(15.82083, -9.4145)
 
-            fetched = api_instance.download_location(looked_up.location_id)
+            fetched = looked_up.locations[0]
+
             assert created == fetched, "create response != download response"
             fetched.location_id = None
             assert loc == fetched, "upload != download response"
@@ -221,7 +226,8 @@ class TestLocation(TestBase):
             created = api_instance.create_location(loc)
             looked_up = api_instance.download_gps_location(loc.latitude, loc.longitude)
 
-            fetched = api_instance.download_location(looked_up.location_id)
+            fetched = looked_up.locations[0]
+
             assert created == fetched, "create response != download response"
             fetched.location_id = None
             assert loc == fetched, "upload != download response"
@@ -481,11 +487,8 @@ class TestLocation(TestBase):
                                         'new_Trongsa, Trongsa, Bhutan', 'new_pv_3_locations.txt', 'IND')
             new_created = api_instance.create_location(newloc)
             with pytest.raises(ApiException, status=422):
-                new_created.identifiers = [
-                    swagger_client.Identifier(identifier_type='partner_name',
-                                              identifier_value='bhutan', study_name='1234-PV')
-                ]
-                updated = api_instance.update_location(new_created.location_id, new_created)
+                created.location_id = new_created.location_id
+                updated = api_instance.update_location(new_created.location_id, created)
 
 
             api_instance.delete_location(looked_up.location_id)

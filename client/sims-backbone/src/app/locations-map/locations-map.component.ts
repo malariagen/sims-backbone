@@ -129,12 +129,12 @@ export class LocationsMapComponent {
             loc = location.country + " " + ident.study_name + ' ' + ident.identifier_value;
 
             if (location.latitude && location.longitude) {
-              this.addMarker(ident.study_name, location.latitude, location.longitude, loc);
+              this.addMarker(location.location_id, ident.study_name, location.latitude, location.longitude, loc);
             }
           });
         } else {
           if (location.latitude && location.longitude) {
-            this.addMarker(location.country, location.latitude, location.longitude, layer_name);
+            this.addMarker(location.location_id, location.country, location.latitude, location.longitude, layer_name);
           }
         }
       });
@@ -159,7 +159,7 @@ export class LocationsMapComponent {
     this.showLocations();
   }
 
-  addMarker(country, lat, lng, marker_title) {
+  addMarker(location_id, country, lat, lng, marker_title) {
     let marker = L.marker(
       [lat, lng],
       {
@@ -171,7 +171,7 @@ export class LocationsMapComponent {
           shadowUrl: 'assets/marker-shadow.png'
         })
       }
-    ).bindPopup('<a href="location/' + lat + '/' + lng + '">' + marker_title + '</a>');
+    ).bindPopup('<a href="location/' + location_id + '">' + marker_title + '</a>');
 
     if (!this.markers.has(country)) {
       this.markers.set(country, []);

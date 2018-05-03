@@ -40,7 +40,7 @@
           <div fxLayout="row">
             <span fxFlex="40%">
               <span *ngFor="let ident of s.identifiers">
-                <a mat-raised-button color="accent" [routerLink]="['/location',s.latitude,s.longitude]">
+                <a mat-raised-button color="accent" [routerLink]="['/location',s.location_id]">
                   <span *ngIf="ident.study_name.startsWith(studyCode)">
                     {{ ident.identifier_value}}
                   </span>

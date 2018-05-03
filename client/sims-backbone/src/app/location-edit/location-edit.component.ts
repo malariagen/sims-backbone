@@ -22,6 +22,7 @@ import { LatLngLiteral } from '@agm/core';
 })
 export class LocationEditComponent implements OnInit {
 
+  locationId: string;
   calc2Cols = '2 2 calc(10em + 10px);';
   /** 10px is the missing margin of the missing box */
   calc3Cols = '3 3 calc(15em + 20px)';
@@ -95,11 +96,10 @@ export class LocationEditComponent implements OnInit {
 
   ngOnInit() {
     this.route.paramMap.subscribe(pmap => {
-      this.latitude = pmap.get('latitude');
-      this.longitude = pmap.get('longitude');
+      this.locationId = pmap.get('locationId');
     });
 
-    this.locationService.downloadGPSLocation(this.latitude, this.longitude).subscribe(
+    this.locationService.downloadLocation(this.locationId).subscribe(
       (location) => {
         //console.log("Downloaded location via GPS");
         let locs = <Locations>{

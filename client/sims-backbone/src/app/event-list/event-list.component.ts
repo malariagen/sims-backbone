@@ -147,7 +147,7 @@ export class EventListComponent implements AfterViewInit {
         }
         event['location_curated_name'] = location.curated_name;
         if (location.latitude) {
-          event['location'] = '<a href="location/' + location.latitude + '/' + location.longitude + '">' + location.latitude + ', ' + location.longitude + '</a>';
+          event['location'] = '<a href="location/' + location.location_id + '">' + location.latitude + ', ' + location.longitude + '</a>';
         }
       } else {
         console.error('Missing location:' + sample.location_id);

@@ -3,6 +3,7 @@ from backbone_server.errors.duplicate_key_exception import DuplicateKeyException
 from swagger_server.models.location import Location
 from swagger_server.models.identifier import Identifier
 
+from backbone_server.location.fetch import LocationFetch
 from backbone_server.sampling_event.edit import SamplingEventEdit
 
 import psycopg2
@@ -47,12 +48,18 @@ class LocationEdit():
     @staticmethod
     def add_identifiers(cursor, uuid_val, location):
 
+        studies = []
+
         try:
             if location.identifiers:
                 for ident in location.identifiers:
                     study_id = None
                     if ident.study_name:
                         study_id = SamplingEventEdit.fetch_study_id(cursor, ident.study_name, True)
+                        if study_id in studies:
+                            raise DuplicateKeyException("Error inserting location {}".format(location))
+                        studies.append(study_id)
+
                     cursor.execute(LocationEdit._insert_ident_stmt, (uuid_val, study_id, ident.identifier_type,
                                           ident.identifier_value, ident.identifier_source))
 
@@ -98,4 +105,32 @@ class LocationEdit():
                                                              old_identifiers[0].identifier_type,
                                                              old_identifiers[0].identifier_value,
                                                              old_identifiers[0].identifier_source))
+
+    @staticmethod
+    def check_for_duplicate(cursor, location, location_id):
+
+        stmt = '''SELECT id, ST_X(location) as latitude, ST_Y(location) as longitude,
+        accuracy, curated_name, curation_method, country
+                       FROM locations WHERE  location = ST_SetSRID(ST_MakePoint(%s, %s), 4326)'''
+        cursor.execute( stmt, (location.latitude, location.longitude,))
+
+        existing_locations = []
+
+        for (loc_id, latitude, longitude, accuracy, curated_name,
+             curation_method, country) in cursor:
+            if location_id is None or loc_id != location_id:
+                existing_locations.append(loc_id)
+
+
+        for existing_id in existing_locations:
+            existing_location = LocationFetch.fetch(cursor, existing_id)
+
+            if existing_location.identifiers:
+
+                for existing_ident in existing_location.identifiers:
+                    for ident in location.identifiers:
+                        if ident.identifier_type == existing_ident.identifier_type and\
+                            ident.identifier_value == existing_ident.identifier_value and\
+                            ident.study_name == existing_ident.study_name:
+                            raise DuplicateKeyException("Error updating location - duplicate with {}".format(existing_location))
 

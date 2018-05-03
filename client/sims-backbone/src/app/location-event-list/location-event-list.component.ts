@@ -33,18 +33,14 @@ export class LocationEventListComponent implements OnInit {
   ngOnInit() {
     
     this.route.paramMap.subscribe(pmap => {
-      this.latitude = pmap.get('latitude');
-      this.longitude = pmap.get('longitude');
+      this.locationId = pmap.get('locationId');
     });
 
-    this.locationService.downloadGPSLocation(this.latitude, this.longitude).subscribe(
+    this.locationService.downloadLocation(this.locationId).subscribe(
       (location) => {
         //console.log("Downloaded location via GPS");
 
-        if (location) {
           this.locationId = location.location_id;
-
-        }
 
       });
   }

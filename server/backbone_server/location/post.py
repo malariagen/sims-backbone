@@ -23,20 +23,7 @@ class LocationPost(LocationEdit):
         with self._connection:
             with self._connection.cursor() as cursor:
 
-                stmt = '''SELECT id, ST_X(location) as latitude, ST_Y(location) as longitude,
-                accuracy, curated_name, curation_method, country
-                               FROM locations WHERE  location = ST_SetSRID(ST_MakePoint(%s, %s), 4326)'''
-                cursor.execute( stmt, (location.latitude, location.longitude,))
-
-                existing_location = None
-
-                for (location_id, latitude, longitude, accuracy, curated_name,
-                     curation_method, country) in cursor:
-                    existing_location = Location(location_id, latitude, longitude, accuracy,
-                                        curated_name, curation_method, country)
-
-                if existing_location:
-                    raise DuplicateKeyException("Error inserting location {}".format(existing_location))
+                LocationEdit.check_for_duplicate(cursor, location, None)
 
                 uuid_val = uuid.uuid4()
 

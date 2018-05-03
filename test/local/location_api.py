@@ -61,7 +61,7 @@ class LocalLocationApi(BaseLocalApi):
         """
         (ret, retcode) = self.location_controller.download_gps_location(latitude, longitude, self._user,
                                                          self.auth_tokens())
-        return self.create_response(ret, retcode, 'Location')
+        return self.create_response(ret, retcode, 'Locations')
 
     def download_location(self, locationId):
         """
