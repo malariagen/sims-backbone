@@ -71,6 +71,7 @@ paths:
           description: ID of location to fetch
           required: true
           type: string
+          format: uuid
       responses:
         '200':
           description: successful operation
@@ -120,6 +121,7 @@ paths:
           description: ID of location to fetch
           required: true
           type: string
+          format: uuid
       responses:
         '200':
           description: successful operation
@@ -263,6 +265,7 @@ paths:
           description: ID of samplingEvent to fetch
           required: true
           type: string
+          format: uuid
       responses:
         '200':
           description: successful operation
@@ -284,6 +287,7 @@ paths:
           description: ID of samplingEvent to update
           required: true
           type: string
+          format: uuid
         - in: body
           name: samplingEvent
           required: true
@@ -312,6 +316,7 @@ paths:
           description: ID of samplingEvent to fetch
           required: true
           type: string
+          format: uuid
       responses:
         '200':
           description: successful operation
@@ -362,6 +367,7 @@ paths:
           description: location
           required: true
           type: string
+          format: uuid
         - name: start
           in: query
           description: for pagination start the result set at a record x
@@ -746,6 +752,7 @@ paths:
           description: ID of samplingEvent to add to the set
           required: true
           type: string
+          format: uuid
       responses:
         '201':
           description: successful operation
@@ -770,6 +777,7 @@ paths:
           description: ID of samplingEvent to remove from the set
           required: true
           type: string
+          format: uuid
       responses:
         '200':
           description: successful operation
@@ -939,6 +947,7 @@ definitions:
     properties:
       sampling_event_id:
         type: string
+        format: uuid
       study_name:
         type: string
       doc:
@@ -953,10 +962,12 @@ definitions:
             - year
       location_id:
         type: string
+        format: uuid
       location:
         $ref: '#/definitions/Location'
       proxy_location_id:
         type: string
+        format: uuid
       proxy_location:
         $ref: '#/definitions/Location'
       public_location_id:
@@ -994,6 +1005,7 @@ definitions:
     properties:
       location_id:
         type: string
+        format: uuid
       latitude:
         type: number
       longitude:
@@ -1026,6 +1038,7 @@ definitions:
       properties:
         location_id:
           type: string
+          format: uuid
         location:
           $ref: '#/definitions/Location'
   Taxonomies:
