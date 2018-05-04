@@ -378,11 +378,12 @@ class Uploader():
                         try:
                             conflict_loc = self._dao.download_gps_location(looked_up.latitude,
                                                                               looked_up.longitude)
-                            for cname in conflict_loc.identifiers:
-                                if cname.study_name[:4] == study_id[:4]:
-                                    message = message + ':' + cname.identifier_value
-                            self.report_conflict(sampling_event, "Location name", looked_up,
-                                                 conflict_loc, message, values)
+                            for loc in conflict_loc.locations:
+                                for cname in loc.identifiers:
+                                    if cname.study_name[:4] == study_id[:4]:
+                                        message = message + ':' + cname.identifier_value
+                                self.report_conflict(sampling_event, "Location name", looked_up,
+                                                     loc, message, values)
                         except ApiException as err:
                             print(err)
         else:
@@ -488,7 +489,7 @@ class Uploader():
             except ApiException as err:
                 #Can't be found by name either
                 pass
-        else:
+        elif looked_up.count > 0:
             name_match = False
             for loc in looked_up.locations:
                 for ident in loc.identifiers:
