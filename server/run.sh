@@ -16,6 +16,15 @@ then
     fi
     cp -pr overlay/* bb_server
     export PYTHONPATH=$(pwd):$(pwd)/bb_server:${PYTHONPATH}
+    if [ "$1" = "test" ]
+    then
+        DATABASE=backbone_test
+        export DATABASE
+        if [ "$2" = "rebuild" ]
+        then
+            (cd ../database;./rebuild.sh test)
+        fi
+    fi
     cd bb_server
     grep security: ./swagger_server/swagger/swagger.yaml
     if [ $? -eq 1 ]
@@ -23,10 +32,5 @@ then
         export BB_NOAUTH=1
     fi
     echo "http://localhost:8080/v1/ui/"
-    if [ "$1" = "test" ]
-    then
-        DATABASE=backbone_test
-        export DATABASE
-    fi
     python3 -m swagger_server
 fi
