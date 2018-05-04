@@ -66,8 +66,7 @@ describe('LocationEditComponent', () => {
     activatedRoute = new ActivatedRouteStub();
 
     activatedRoute.setParamMap({
-      latitude: 0,
-      longitude: 0
+      locationId: 0
     });
 
     authService = createAuthServiceSpy();
@@ -117,7 +116,7 @@ describe('LocationEditComponent', () => {
     (http: HttpClient, backend: HttpTestingController) => {
 
       let req = backend.expectOne({
-        url: 'http://localhost/v1/location/gps/0/0',
+        url: 'http://localhost/v1/location/0',
         method: 'GET'
       });
 
@@ -141,7 +140,7 @@ describe('LocationEditComponent', () => {
     (http: HttpClient, backend: HttpTestingController) => {
 
       let req = backend.expectOne({
-        url: 'http://localhost/v1/location/gps/0/0',
+        url: 'http://localhost/v1/location/0',
         method: 'GET'
       });
 
@@ -196,7 +195,7 @@ describe('LocationEditComponent', () => {
     (http: HttpClient, backend: HttpTestingController) => {
 
       let req = backend.expectOne({
-        url: 'http://localhost/v1/location/gps/0/0',
+        url: 'http://localhost/v1/location/0',
         method: 'GET'
       });
 
@@ -278,7 +277,7 @@ describe('LocationEditComponent', () => {
     (http: HttpClient, backend: HttpTestingController) => {
 
       let req = backend.expectOne({
-        url: 'http://localhost/v1/location/gps/0/0',
+        url: 'http://localhost/v1/location/0',
         method: 'GET'
       });
 
@@ -305,7 +304,7 @@ describe('LocationEditComponent', () => {
     (http: HttpClient, backend: HttpTestingController) => {
 
       let req = backend.expectOne({
-        url: 'http://localhost/v1/location/gps/0/0',
+        url: 'http://localhost/v1/location/0',
         method: 'GET'
       });
 
@@ -332,7 +331,7 @@ describe('LocationEditComponent', () => {
     (http: HttpClient, backend: HttpTestingController) => {
 
       let req = backend.expectOne({
-        url: 'http://localhost/v1/location/gps/0/0',
+        url: 'http://localhost/v1/location/0',
         method: 'GET'
       });
 
@@ -359,7 +358,7 @@ describe('LocationEditComponent', () => {
     (http: HttpClient, backend: HttpTestingController) => {
 
       let req = backend.expectOne({
-        url: 'http://localhost/v1/location/gps/0/0',
+        url: 'http://localhost/v1/location/0',
         method: 'GET'
       });
 

@@ -2,7 +2,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { LocationEventListComponent } from './location-event-list.component';
 import { HttpClient } from '@angular/common/http';
-import { SamplingEventService, SamplingEvents } from '../typescript-angular-client';
+import { SamplingEventService, SamplingEvents, Locations } from '../typescript-angular-client';
 import { ActivatedRoute } from '@angular/router';
 import { createAuthServiceSpy, ActivatedRouteStub, asyncData } from '../../testing/index.spec';
 import { Input, Component, Output, EventEmitter } from '@angular/core';
@@ -35,13 +35,12 @@ describe('LocationEventListComponent', () => {
     activatedRoute = new ActivatedRouteStub();
 
     activatedRoute.setParamMap({ 
-      latitude: '0',
-      longitude: '0'
+      locationId: '0'
      });
 
     httpClientSpy = jasmine.createSpyObj('HttpClient', ['get']);
 
-    httpClientSpy.get.and.returnValue(asyncData({ count: 0, locations: [] }));
+    httpClientSpy.get.and.returnValue(asyncData(<Locations>{ count: 0, locations: [] }));
     
     samplingEventService = new SamplingEventService(<any>httpClientSpy,
       '',
