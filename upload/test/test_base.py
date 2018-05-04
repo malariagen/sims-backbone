@@ -9,6 +9,17 @@ from upload_ssr import Upload_SSR
 import swagger_client
 from swagger_client.rest import ApiException
 
+from swagger_client.rest import RESTResponse
+
+from swagger_client.api_client import ApiClient
+
+
+class MockResponse:
+    def __init__(self, json_data, status_code):
+        self.data = json_data
+        self.status = status_code
+        self.reason = ''
+
 class TestBase(unittest.TestCase):
 
 
@@ -55,6 +66,31 @@ class TestBase(unittest.TestCase):
         pass
 
 
+    def deserialize(self, resp_dict, response_type):
+
+        resp_data = json.dumps(resp_dict, ensure_ascii=False)
+
+        mr = MockResponse(resp_data, 200)
+        response = RESTResponse(mr)
+        ret = self._api_client.deserialize(response, response_type)
+
+        return ret
+
+    """
+        The location map is not properly deserialized so can either access as a dict 
+        or deserialize ourselves
+    """
+    def get_location(self, locations, location_id):
+
+        loc = None
+
+        if location_id in locations:
+            #The location map is not properly deserialized so can either access as a dict 
+            #or deserialize ourselves
+            loc = self.deserialize(locations[location_id], 'Location')
+
+        return loc
+
     """
     """
     @classmethod
@@ -71,6 +107,8 @@ class TestBase(unittest.TestCase):
         event_api_instance = swagger_client.SamplingEventApi(TestBase.getApiClient())
         if event.location_id and event.location_id not in locations:
             locations.append(event.location_id)
+        if event.proxy_location_id and event.proxy_location_id not in locations:
+            locations.append(event.proxy_location_id)
         event_api_instance.delete_sampling_event(event.sampling_event_id)
 
     """
@@ -100,7 +138,9 @@ class TestBase(unittest.TestCase):
             test_events = event_api_instance.download_sampling_events_by_study(study)
 
             for event in test_events.sampling_events:
-               TestBase.deleteSamplingEvent(event, locations)
+                print(event)
+                TestBase.deleteSamplingEvent(event, locations)
+                print(locations)
     """
     """
     @classmethod
@@ -118,6 +158,6 @@ class TestBase(unittest.TestCase):
         location_api_instance = swagger_client.LocationApi(TestBase.getApiClient())
 
         for loc in locations:
-            locations.remove(loc)
-            location_api_instance.delete_location(loc)
+            if loc:
+                location_api_instance.delete_location(loc)
 
