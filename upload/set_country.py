@@ -119,6 +119,7 @@ class SetCountry(upload_ssr.Upload_SSR):
                 try:
                     location = self._dao.download_gps_location(cached_country['latitude'],
                                                                            cached_country['longitude'])
+                    location = location.locations[0]
                 except ApiException as exp:
                     lat = round(float(Decimal(cached_country['latitude'])), 7)
                     lng = round(float(Decimal(cached_country['longitude'])), 7)
