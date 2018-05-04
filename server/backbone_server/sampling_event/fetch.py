@@ -98,21 +98,14 @@ class SamplingEventFetch():
                                    doc = doc, doc_accuracy = doc_accuracy,
                                    partner_species = partner_species)
             if location_id:
-                location = LocationFetch.fetch(cursor, location_id)
-                sampling_event.location = location
                 sampling_event.location_id = str(location_id)
                 sampling_event.public_location_id = str(location_id)
-                sampling_event.public_location = location
             if proxy_location_id:
-                proxy_location = LocationFetch.fetch(cursor, proxy_location_id)
-                sampling_event.proxy_location = proxy_location
                 sampling_event.proxy_location_id = str(proxy_location_id)
                 sampling_event.public_location_id = str(proxy_location_id)
-                sampling_event.public_location = proxy_location
 
         if not sampling_event:
             return sampling_event
-
 
         sampling_event.identifiers = SamplingEventFetch.fetch_identifiers(cursor, sampling_event_id)
 
@@ -120,6 +113,21 @@ class SamplingEventFetch():
                                                                         partner_species)
 
         sampling_event.event_sets = SamplingEventFetch.fetch_event_sets(cursor, sampling_event_id)
+
+        if sampling_event.location_id:
+            location = LocationFetch.fetch(cursor, sampling_event.location_id)
+            if locations is not None:
+                if sampling_event.location_id not in locations:
+                    locations[sampling_event.location_id] = location
+            else:
+                sampling_event.location = location
+        if sampling_event.proxy_location_id:
+            proxy_location = LocationFetch.fetch(cursor, sampling_event.proxy_location_id)
+            if locations is not None:
+                if sampling_event.proxy_location_id not in locations:
+                    locations[sampling_event.proxy_location_id] = proxy_location
+            else:
+                sampling_event.proxy_location = proxy_location
 
         return sampling_event
 

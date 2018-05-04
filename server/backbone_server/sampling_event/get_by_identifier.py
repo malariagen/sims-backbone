@@ -44,7 +44,8 @@ class SamplingEventGetByIdentifier():
                     sampling_events.sampling_events.append(sampling_event)
                     sampling_events.count = sampling_events.count + 1
 
-        sampling_events.locations = locations
+                sampling_events.locations = locations
+
 
         #partner_name has a unique key
         if sampling_events.count == 0:
