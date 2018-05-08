@@ -66,31 +66,6 @@ class TestBase(unittest.TestCase):
         pass
 
 
-    def deserialize(self, resp_dict, response_type):
-
-        resp_data = json.dumps(resp_dict, ensure_ascii=False)
-
-        mr = MockResponse(resp_data, 200)
-        response = RESTResponse(mr)
-        ret = self._api_client.deserialize(response, response_type)
-
-        return ret
-
-    """
-        The location map is not properly deserialized so can either access as a dict 
-        or deserialize ourselves
-    """
-    def get_location(self, locations, location_id):
-
-        loc = None
-
-        if location_id in locations:
-            #The location map is not properly deserialized so can either access as a dict 
-            #or deserialize ourselves
-            loc = self.deserialize(locations[location_id], 'Location')
-
-        return loc
-
     """
     """
     @classmethod

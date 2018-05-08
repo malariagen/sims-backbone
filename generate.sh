@@ -31,6 +31,7 @@ then
     java -jar swagger-codegen-cli.jar generate -i swagger.yaml -l typescript-angular -o client/sims-backbone/src/app/typescript-angular-client -c client.config.json
     rm -rf python_client
     java -jar swagger-codegen-cli.jar generate -i swagger.yaml -l python -o python_client -c client.config.json
+    sed -i -e "/discriminator = None/a\\\n    def get_real_child_model(self, data):\n      return 'dict(str, Location)'\n\n" python_client/swagger_client/models/location_map.py
 fi
 rm -rf apache2
 java -jar swagger-codegen-cli.jar generate -i swagger.yaml -l apache2 -o apache2
