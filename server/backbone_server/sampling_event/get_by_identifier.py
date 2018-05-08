@@ -41,6 +41,12 @@ class SamplingEventGetByIdentifier():
 
                 for sampling_event_id in event_ids:
                     sampling_event = SamplingEventFetch.fetch(cursor, sampling_event_id, locations)
+                    #Because the client doesn't support types in maps
+                    #and the result set should be small
+                    if sampling_event.location_id:
+                        sampling_event.location = locations[sampling_event.location_id]
+                    if sampling_event.proxy_location_id:
+                        sampling_event.proxy_location = locations[sampling_event.proxy_location_id]
                     sampling_events.sampling_events.append(sampling_event)
                     sampling_events.count = sampling_events.count + 1
 
