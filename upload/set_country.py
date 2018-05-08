@@ -232,7 +232,7 @@ class SetCountry(upload_ssr.Upload_SSR):
             if found.location.country != found.proxy_location.country:
                 self.report_conflict(found, 'Country', found.location.country,
                                      found.proxy_location.country,
-                                     'locations country mismatch',
+                                     'location and proxy location country mismatch',
                                      values)
         return found
 
