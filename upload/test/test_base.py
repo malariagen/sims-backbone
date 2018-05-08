@@ -138,9 +138,7 @@ class TestBase(unittest.TestCase):
             test_events = event_api_instance.download_sampling_events_by_study(study)
 
             for event in test_events.sampling_events:
-                print(event)
                 TestBase.deleteSamplingEvent(event, locations)
-                print(locations)
     """
     """
     @classmethod
