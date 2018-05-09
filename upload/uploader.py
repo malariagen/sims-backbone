@@ -53,7 +53,7 @@ class Uploader():
                         if 'database' in args:
                             os.environ['DATABASE'] = args['database']
                         print('Using database {}'.format(os.getenv('DATABASE','backbone_service')))
-                        self._dao = LocalBackboneDAO()
+                        self._dao = LocalBackboneDAO(args['username'], args['auths'])
                 if 'debug' in args:
                     if args['debug']:
                         log_time = datetime.datetime.now().strftime("%Y_%m_%d_%H_%M")

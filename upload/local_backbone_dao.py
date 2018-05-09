@@ -19,8 +19,10 @@ from swagger_client.rest import ApiException
 
 class LocalBackboneDAO(AbstractBackboneDAO):
 
-    def __init__(self):
+    def __init__(self, user, auths):
         self._logger = logging.getLogger(__name__)
+        self._user = user
+        self._auths = auths
 
     def setup(self, config_file):
 
@@ -31,7 +33,7 @@ class LocalBackboneDAO(AbstractBackboneDAO):
 
     def create_event_set(self, event_set_id):
 
-        api_response, retcode = self.es_api_instance.create_event_set(event_set_id)
+        api_response, retcode = self.es_api_instance.create_event_set(event_set_id, user=self._user, auths=self._auths)
 
         if retcode >= 400:
             if retcode != 422: #Already exists
@@ -42,7 +44,7 @@ class LocalBackboneDAO(AbstractBackboneDAO):
 
     def create_event_set_item(self, event_set_id, sampling_event_id):
 
-        ret, retcode = self.es_api_instance.create_event_set_item(event_set_id, sampling_event_id)
+        ret, retcode = self.es_api_instance.create_event_set_item(event_set_id, sampling_event_id, user=self._user, auths=self._auths)
 
         if retcode >= 400:
             #Probably because it already exists
@@ -52,7 +54,7 @@ class LocalBackboneDAO(AbstractBackboneDAO):
 
     def create_location(self, location):
 
-        created, retcode = self.location_api_instance.create_location(location)
+        created, retcode = self.location_api_instance.create_location(location, user=self._user, auths=self._auths)
 
         if retcode >= 400:
             raise ApiException(status=retcode, reason='')
@@ -61,7 +63,7 @@ class LocalBackboneDAO(AbstractBackboneDAO):
 
     def create_sampling_event(self, sampling_event):
 
-        created, retcode = self.se_api_instance.create_sampling_event(sampling_event)
+        created, retcode = self.se_api_instance.create_sampling_event(sampling_event, user=self._user, auths=self._auths)
 
         if retcode >= 400:
             raise ApiException(status=retcode, reason='')
@@ -70,7 +72,7 @@ class LocalBackboneDAO(AbstractBackboneDAO):
 
     def delete_sampling_event(self, sampling_event_id):
 
-        ret, retcode = self.se_api_instance.delete_sampling_event(sampling_event_id)
+        ret, retcode = self.se_api_instance.delete_sampling_event(sampling_event_id, user=self._user, auths=self._auths)
 
         if retcode >= 400:
             raise ApiException(status=retcode, reason='')
@@ -81,7 +83,7 @@ class LocalBackboneDAO(AbstractBackboneDAO):
 
     def download_gps_location(self, latitude, longitude):
 
-        ret, retcode = self.location_api_instance.download_gps_location(latitude, longitude)
+        ret, retcode = self.location_api_instance.download_gps_location(latitude, longitude, user=self._user, auths=self._auths)
 
         self._logger.debug("GET /v1/location/gps/{}/{} {}".format(latitude,
                                                      longitude, retcode))
@@ -92,7 +94,7 @@ class LocalBackboneDAO(AbstractBackboneDAO):
 
     def download_location(self, location_id):
 
-        ret, retcode = self.location_api_instance.download_location(location_id)
+        ret, retcode = self.location_api_instance.download_location(location_id, user=self._user, auths=self._auths)
 
         self._logger.debug("GET /v1/location/{} {}".format(location_id,
                                               retcode))
@@ -103,7 +105,7 @@ class LocalBackboneDAO(AbstractBackboneDAO):
 
     def download_partner_location(self, partner_name):
 
-        ret, retcode = self.location_api_instance.download_partner_location(partner_name)
+        ret, retcode = self.location_api_instance.download_partner_location(partner_name, user=self._user, auths=self._auths)
 
         if retcode >= 400:
             raise ApiException(status=retcode, reason='')
@@ -112,7 +114,7 @@ class LocalBackboneDAO(AbstractBackboneDAO):
 
     def download_sampling_event(self, sampling_event_id):
 
-        existing, retcode = self.se_api_instance.download_sampling_event(sampling_event_id)
+        existing, retcode = self.se_api_instance.download_sampling_event(sampling_event_id, user=self._user, auths=self._auths)
 
         if retcode >= 400:
             raise ApiException(status=retcode, reason='')
@@ -133,7 +135,7 @@ class LocalBackboneDAO(AbstractBackboneDAO):
 
     def update_location(self, location_id, location):
 
-        updated, retcode = self.location_api_instance.update_location(location_id, location)
+        updated, retcode = self.location_api_instance.update_location(location_id, location, user=self._user, auths=self._auths)
 
         if retcode >= 400:
             raise ApiException(status=retcode, reason='')
@@ -141,7 +143,7 @@ class LocalBackboneDAO(AbstractBackboneDAO):
         return updated
 
     def update_sampling_event(self, sampling_event_id, sampling_event):
-        ret, retcode = self.se_api_instance.update_sampling_event(sampling_event_id, sampling_event)
+        ret, retcode = self.se_api_instance.update_sampling_event(sampling_event_id, sampling_event, user=self._user, auths=self._auths)
 
         self._logger.debug("POST /v1/samplingEvent/{} {}".format(sampling_event_id,
                                                     retcode))
@@ -151,7 +153,7 @@ class LocalBackboneDAO(AbstractBackboneDAO):
         return ret
 
     def get_country_metadata(self, country_value):
-        metadata, retcode = self.metadata_api_instance.get_country_metadata(country_value)
+        metadata, retcode = self.metadata_api_instance.get_country_metadata(country_value, user=self._user, auths=self._auths)
 
         if retcode >= 400:
             raise ApiException(status=retcode, reason='')
