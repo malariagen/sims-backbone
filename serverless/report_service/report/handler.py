@@ -49,6 +49,33 @@ def missing_taxon(event, context):
 
     return create_response(event, retcode, value)
 
+
+def multiple_location_gps(event, context):
+
+    user = get_user(event)
+
+    if user is None:
+        return create_response(event, 401, {})
+
+    auths = get_auths(report_controller, event)
+
+    value, retcode = report_controller.multiple_location_gps(user, auths)
+
+    return create_response(event, retcode, value)
+
+def multiple_location_names(event, context):
+
+    user = get_user(event)
+
+    if user is None:
+        return create_response(event, 401, {})
+
+    auths = get_auths(report_controller, event)
+
+    value, retcode = report_controller.multiple_location_names(user, auths)
+
+    return create_response(event, retcode, value)
+
 def uncurated_locations(event, context):
 
     user = get_user(event)

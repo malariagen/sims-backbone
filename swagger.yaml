@@ -929,6 +929,34 @@ paths:
           description: successful operation
           schema:
             $ref: '#/definitions/Studies'
+  '/multipleLocationNames':
+    get:
+      tags:
+        - report
+      summary: fetches studies with multiple locations with the same name
+      description: ''
+      operationId: multipleLocationNames
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/Studies'
+  '/multipleLocationGPS':
+    get:
+      tags:
+        - report
+      summary: fetches studies with multiple locations with the same GPS
+      description: ''
+      operationId: multipleLocationGPS
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/Studies'
 definitions:
   SamplingEvents:
     type: object

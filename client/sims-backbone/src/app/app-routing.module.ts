@@ -19,6 +19,8 @@ import { ReportMissingDetailedLocationsComponent } from './report-missing-detail
 import { ReportMissingLocationsComponent } from './report-missing-locations/report-missing-locations.component';
 import { ReportMissingTaxaComponent } from './report-missing-taxa/report-missing-taxa.component';
 import { ReportUncuratedLocationsComponent } from './report-uncurated-locations/report-uncurated-locations.component';
+import { ReportMultipleLocationGpsComponent } from './report-multiple-location-gps/report-multiple-location-gps.component';
+import { ReportMultipleLocationNamesComponent } from './report-multiple-location-names/report-multiple-location-names.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/studies', pathMatch: 'full' },
@@ -40,7 +42,9 @@ const routes: Routes = [
       { path: 'missingDetailedLocations', component: ReportMissingDetailedLocationsComponent },
       { path: 'missingLocations', component: ReportMissingLocationsComponent },
       { path: 'missingTaxa', component: ReportMissingTaxaComponent },
-      { path: 'uncuratedLocations', component: ReportUncuratedLocationsComponent }
+      { path: 'uncuratedLocations', component: ReportUncuratedLocationsComponent },
+      { path: 'multipleLocationGPS', component: ReportMultipleLocationGpsComponent },
+      { path: 'multipleLocationNames', component: ReportMultipleLocationNamesComponent }
     ]
   }
 ];

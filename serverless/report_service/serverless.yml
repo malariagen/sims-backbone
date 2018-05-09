@@ -104,6 +104,34 @@ functions:
             type: request
             identitySource: method.request.header.Authorization
             identityValidationExpression: .*
+  multiple_location_gps:
+    handler: report/handler.multiple_location_gps
+    events:
+      - http:
+          path: multipleLocationGPS
+          method: get
+          cors: true
+          timeout: 20
+          authorizer:
+            name: repAuthFunc
+            arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
+            type: request
+            identitySource: method.request.header.Authorization
+            identityValidationExpression: .*
+  multiple_location_names:
+    handler: report/handler.multiple_location_names
+    events:
+      - http:
+          path: multipleLocationNames
+          method: get
+          cors: true
+          timeout: 20
+          authorizer:
+            name: repAuthFunc
+            arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
+            type: request
+            identitySource: method.request.header.Authorization
+            identityValidationExpression: .*
   uncurated_locations:
     handler: report/handler.uncurated_locations
     events:

@@ -63,6 +63,8 @@ import { ReportMissingLocationsComponent } from './report-missing-locations/repo
 import { ReportMissingDetailedLocationsComponent } from './report-missing-detailed-locations/report-missing-detailed-locations.component';
 import { ReportUncuratedLocationsComponent } from './report-uncurated-locations/report-uncurated-locations.component';
 import { ReportMissingTaxaComponent } from './report-missing-taxa/report-missing-taxa.component';
+import { ReportMultipleLocationGpsComponent } from './report-multiple-location-gps/report-multiple-location-gps.component';
+import { ReportMultipleLocationNamesComponent } from './report-multiple-location-names/report-multiple-location-names.component';
 
 export function getConfiguration(authService: AuthService) {
   return authService.getConfiguration();
@@ -98,7 +100,9 @@ export function getConfiguration(authService: AuthService) {
     ReportMissingLocationsComponent,
     ReportMissingDetailedLocationsComponent,
     ReportUncuratedLocationsComponent,
-    ReportMissingTaxaComponent
+    ReportMissingTaxaComponent,
+    ReportMultipleLocationGpsComponent,
+    ReportMultipleLocationNamesComponent
   ],
   imports: [
     BrowserModule,
