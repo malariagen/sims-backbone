@@ -124,7 +124,8 @@ class LocalBackboneDAO(AbstractBackboneDAO):
     def download_sampling_events_by_identifier(self, identifier_type, identifier_value):
 
         found_events, retcode = self.se_api_instance.download_sampling_events_by_identifier(identifier_type,
-                                                                                   identifier_value, user=self._user, auths=self._auths)
+                                                                                            urllib.parse.quote_plus(identifier_value),
+                                                                                            user=self._user, auths=self._auths)
 
         self._logger.debug("GET /v1/samplingEvents/identifier/{}/{} {}".format(identifier_type,
                                                                   identifier_value, retcode))
