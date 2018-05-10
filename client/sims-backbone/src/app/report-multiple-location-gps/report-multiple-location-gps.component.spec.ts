@@ -31,7 +31,7 @@ describe('ReportMultipleLocationGpsComponent', () => {
 
     TestBed.configureTestingModule({
       declarations: [
-        ReportMissingTaxaComponent,
+        ReportMultipleLocationGpsComponent,
         StudiesListStubComponent
       ],
       providers: [
