@@ -9,7 +9,7 @@ import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 
 import { EventSetEditDialogComponent } from '../event-set-edit-dialog/event-set-edit-dialog.component';
 
-import { Identifier } from '../typescript-angular-client/model/identifier';
+import { Attr } from '../typescript-angular-client/model/attr';
 import { SamplingEvents } from '../typescript-angular-client/model/samplingEvents';
 import { SamplingEvent } from '../typescript-angular-client/model/samplingEvent';
 import { Taxonomy } from '../typescript-angular-client/model/taxonomy';
@@ -100,9 +100,9 @@ export class EventListComponent implements AfterViewInit {
   defineColumnHeaders(sampling_events) {
     this.displayedColumns = ['study_id'];
     sampling_events.forEach(sample => {
-      sample.identifiers.forEach(ident => {
-        if (this.displayedColumns.indexOf(ident.identifier_type) < 0) {
-          this.displayedColumns.push(ident.identifier_type);
+      sample.attrs.forEach(ident => {
+        if (this.displayedColumns.indexOf(ident.attr_type) < 0) {
+          this.displayedColumns.push(ident.attr_type);
         }
       });
     });
@@ -115,16 +115,16 @@ export class EventListComponent implements AfterViewInit {
     event['doc'] = sample.doc;
     event['partner_species'] = sample.partner_species;
     event['study_id'] = sample.study_name;
-    sample.identifiers.forEach(ident => {
-      if (ident.identifier_type in event) {
-        let ids: Array<String> = event[ident.identifier_type].split(';');
+    sample.attrs.forEach(ident => {
+      if (ident.attr_type in event) {
+        let ids: Array<String> = event[ident.attr_type].split(';');
         //Avoid duplicates from different sources
-        if (!ids.includes(ident.identifier_value)) {
-          event[ident.identifier_type] = [event[ident.identifier_type], ident.identifier_value].join(';');
+        if (!ids.includes(ident.attr_value)) {
+          event[ident.attr_type] = [event[ident.attr_type], ident.attr_value].join(';');
         }
 
       } else {
-        event[ident.identifier_type] = ident.identifier_value;
+        event[ident.attr_type] = ident.attr_value;
       }
 
     });
@@ -132,9 +132,9 @@ export class EventListComponent implements AfterViewInit {
       let location = locations[sample.location_id];
       event['partner_location_name'] = '';
       if (location) {
-        if (location.identifiers) {
-          location.identifiers.forEach(ident => {
-            let ident_value = ident.identifier_value;
+        if (location.attrs) {
+          location.attrs.forEach(ident => {
+            let ident_value = ident.attr_value;
             if (this._studyName || event['study_id']) {
               if ((this._studyName && (ident.study_name == this._studyName)) ||
                 event['study_id'] && (ident.study_name == event['study_id'])) {

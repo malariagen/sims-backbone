@@ -37,9 +37,9 @@ class SamplingEventPut():
                 study_id = SamplingEventEdit.fetch_study_id(cursor, sampling_event.study_name, True)
 
                 if study_id != original_study_id:
-                    LocationEdit.update_identifier_study(cursor, sampling_event.location_id,
+                    LocationEdit.update_attr_study(cursor, sampling_event.location_id,
                                                          original_study_id, study_id)
-                    LocationEdit.update_identifier_study(cursor, sampling_event.proxy_location_id,
+                    LocationEdit.update_attr_study(cursor, sampling_event.proxy_location_id,
                                                          original_study_id, study_id)
 
                 SamplingEventEdit.check_location_details(cursor, sampling_event.location_id,
@@ -60,10 +60,10 @@ class SamplingEventPut():
                     cursor.execute(stmt, args)
                     rc = cursor.rowcount
 
-                    cursor.execute('DELETE FROM identifiers WHERE sampling_event_id = %s',
+                    cursor.execute('DELETE FROM attrs WHERE sampling_event_id = %s',
                                    (sampling_event_id,))
 
-                    SamplingEventEdit.add_identifiers(cursor, sampling_event_id, sampling_event)
+                    SamplingEventEdit.add_attrs(cursor, sampling_event_id, sampling_event)
 
                 except psycopg2.IntegrityError as err:
                     raise DuplicateKeyException("Error updating sampling_event {}".format(sampling_event)) from err
@@ -72,8 +72,8 @@ class SamplingEventPut():
 
                 SamplingEventEdit.clean_up_taxonomies(cursor)
 
-                LocationEdit.clean_up_identifiers(cursor, sampling_event.location_id, original_study_id)
-                LocationEdit.clean_up_identifiers(cursor, sampling_event.proxy_location_id, original_study_id)
+                LocationEdit.clean_up_attrs(cursor, sampling_event.location_id, original_study_id)
+                LocationEdit.clean_up_attrs(cursor, sampling_event.proxy_location_id, original_study_id)
 
                 sampling_event = SamplingEventFetch.fetch(cursor, sampling_event_id)
 

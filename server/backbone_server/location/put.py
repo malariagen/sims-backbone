@@ -5,7 +5,7 @@ from backbone_server.location.edit import LocationEdit
 from backbone_server.location.fetch import LocationFetch
 
 from swagger_server.models.location import Location
-from swagger_server.models.identifier import Identifier
+from swagger_server.models.attr import Attr
 
 import psycopg2
 
@@ -52,10 +52,10 @@ class LocationPut(LocationEdit):
                     cursor.execute(stmt, args)
                     rc = cursor.rowcount
 
-                    cursor.execute('''DELETE FROM location_identifiers WHERE location_id = %s''',
+                    cursor.execute('''DELETE FROM location_attrs WHERE location_id = %s''',
                                    (location_id,))
 
-                    LocationEdit.add_identifiers(cursor, location_id, location)
+                    LocationEdit.add_attrs(cursor, location_id, location)
 
                 except psycopg2.IntegrityError as err:
                     raise DuplicateKeyException("Error updating location {}".format(location)) from err

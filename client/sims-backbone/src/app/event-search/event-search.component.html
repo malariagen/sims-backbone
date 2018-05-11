@@ -1,13 +1,13 @@
 <div>
   <span>
     <mat-input-container>
-      <mat-select [(value)]="identifier_type">
+      <mat-select [(value)]="attr_type">
         <mat-option *ngFor="let option of options" [value]="option">{{option}}</mat-option>
       </mat-select>
     </mat-input-container>
   
     <mat-input-container>
-      <input matInput placeholder="Value e.g. QS0167-C" hintLabel="e.g. QS0167-C" [(ngModel)]="identifier_value" />
+      <input matInput placeholder="Value e.g. QS0167-C" hintLabel="e.g. QS0167-C" [(ngModel)]="attr_value" />
       <mat-label>Value</mat-label>
     </mat-input-container>
   </span>

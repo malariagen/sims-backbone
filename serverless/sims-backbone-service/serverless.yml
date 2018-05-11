@@ -308,11 +308,11 @@ functions:
               paths:
                 sampling_event_id: true
 
-  download_sampling_events_by_identifier:
-    handler: sampling_event/handler.download_sampling_events_by_identifier
+  download_sampling_events_by_attr:
+    handler: sampling_event/handler.download_sampling_events_by_attr
     events:
       - http:
-          path: sims-backbone-service/v1/samplingEvents/identifier/{prop_name}/{prop_value}
+          path: sims-backbone-service/v1/samplingEvents/attr/{prop_name}/{prop_value}
           method: get
           cors: true
           timeout: 20
@@ -431,11 +431,11 @@ functions:
               paths:
                 country_id: true
 
-  get_identifier_types:
-    handler: metadata/handler.get_identifier_types
+  get_attr_types:
+    handler: metadata/handler.get_attr_types
     events:
       - http:
-          path: sims-backbone-service/v1/metadata/identifier_types
+          path: sims-backbone-service/v1/metadata/attr_types
           method: get
           cors: true
           timeout: 20
@@ -444,11 +444,11 @@ functions:
             type: request
             identitySource: method.request.header.Authorization
 
-  get_location_identifier_types:
-    handler: metadata/handler.get_location_identifier_types
+  get_location_attr_types:
+    handler: metadata/handler.get_location_attr_types
     events:
       - http:
-          path: sims-backbone-service/v1/metadata/location_identifier_types
+          path: sims-backbone-service/v1/metadata/location_attr_types
           method: get
           cors: true
           timeout: 20
@@ -889,7 +889,7 @@ resources:
       Type: AWS::Logs::LogGroup
       Properties:
         RetentionInDays: "30"
-    DownloadUnderscoresamplingUnderscoreeventUnderscorebyUnderscoreidentifierLogGroup:
+    DownloadUnderscoresamplingUnderscoreeventUnderscorebyUnderscoreattrLogGroup:
       Type: AWS::Logs::LogGroup
       Properties:
         RetentionInDays: "30"
@@ -913,11 +913,11 @@ resources:
       Type: AWS::Logs::LogGroup
       Properties:
         RetentionInDays: "30"
-    GetUnderscoreidentifierUnderscoretypesLogGroup:
+    GetUnderscoreattrUnderscoretypesLogGroup:
       Type: AWS::Logs::LogGroup
       Properties:
         RetentionInDays: "30"
-    GetUnderscoreidentifierUnderscorelocationUnderscoretypesLogGroup:
+    GetUnderscoreattrUnderscorelocationUnderscoretypesLogGroup:
       Type: AWS::Logs::LogGroup
       Properties:
         RetentionInDays: "30"

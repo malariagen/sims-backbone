@@ -63,7 +63,7 @@ def download_sampling_event(event, context):
 
     return create_response(event, retcode, value)
 
-def download_sampling_events_by_identifier(event, context):
+def download_sampling_events_by_attr(event, context):
 
     user = event['requestContext']['authorizer']['principalId']
 
@@ -76,7 +76,7 @@ def download_sampling_events_by_identifier(event, context):
         if 'study_name' in event["queryStringParameters"]:
             study_name = event["queryStringParameters"]["study_name"]
 
-    value, retcode = sampling_event_controller.download_sampling_events_by_identifier(prop_name,
+    value, retcode = sampling_event_controller.download_sampling_events_by_attr(prop_name,
                                                                                      prop_value,
                                                                                      study_name,
                                                                                      user,

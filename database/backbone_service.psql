@@ -17,14 +17,14 @@ SET row_security = off;
 SET search_path = public, pg_catalog;
 
 ALTER TABLE ONLY public.taxonomy_identifiers DROP CONSTRAINT fk_taxa;
-ALTER TABLE ONLY public.location_identifiers DROP CONSTRAINT fk_study_loc;
+ALTER TABLE ONLY public.location_attrs DROP CONSTRAINT fk_study_loc;
 ALTER TABLE ONLY public.sampling_events DROP CONSTRAINT fk_study;
 ALTER TABLE ONLY public.sampling_events DROP CONSTRAINT fk_species;
-ALTER TABLE ONLY public.identifiers DROP CONSTRAINT fk_sampling_event;
+ALTER TABLE ONLY public.attrs DROP CONSTRAINT fk_sampling_event;
 ALTER TABLE ONLY public.sampling_events DROP CONSTRAINT fk_proxy_location;
 ALTER TABLE ONLY public.partner_species_identifiers DROP CONSTRAINT fk_partner_sp_study;
 ALTER TABLE ONLY public.taxonomy_identifiers DROP CONSTRAINT fk_partner_sp;
-ALTER TABLE ONLY public.location_identifiers DROP CONSTRAINT fk_location;
+ALTER TABLE ONLY public.location_attrs DROP CONSTRAINT fk_location;
 ALTER TABLE ONLY public.sampling_events DROP CONSTRAINT fk_location;
 ALTER TABLE ONLY public.event_set_notes DROP CONSTRAINT fk_esn_es;
 ALTER TABLE ONLY public.event_set_members DROP CONSTRAINT fk_esm_se;
@@ -42,8 +42,8 @@ DROP INDEX public.fki_fk_esn_es;
 DROP INDEX public.fki_fk_esm_se;
 DROP INDEX public.fki_fk_esm_es;
 ALTER TABLE ONLY public.studies DROP CONSTRAINT uniq_study_code;
-ALTER TABLE ONLY public.location_identifiers DROP CONSTRAINT uniq_loc_name_ident;
-ALTER TABLE ONLY public.location_identifiers DROP CONSTRAINT uniq_loc_ident;
+ALTER TABLE ONLY public.location_attrs DROP CONSTRAINT uniq_loc_name_ident;
+ALTER TABLE ONLY public.location_attrs DROP CONSTRAINT uniq_loc_ident;
 ALTER TABLE ONLY public.event_sets DROP CONSTRAINT uniq_event_sets;
 ALTER TABLE ONLY public.event_set_members DROP CONSTRAINT uniq_event_set_members;
 ALTER TABLE ONLY public.taxonomies DROP CONSTRAINT taxonomy_id;
@@ -63,8 +63,8 @@ DROP TABLE public.studies;
 DROP TABLE public.sampling_events;
 DROP TABLE public.partner_species_identifiers;
 DROP TABLE public.locations;
-DROP TABLE public.location_identifiers;
-DROP TABLE public.identifiers;
+DROP TABLE public.location_attrs;
+DROP TABLE public.attrs;
 DROP SEQUENCE public.event_sets_id_seq;
 DROP TABLE public.event_sets;
 DROP TABLE public.event_set_notes;
@@ -222,27 +222,27 @@ ALTER SEQUENCE event_sets_id_seq OWNED BY event_sets.id;
 
 
 --
--- Name: identifiers; Type: TABLE; Schema: public; Owner: -
+-- Name: attrs; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE identifiers (
+CREATE TABLE attrs (
     sampling_event_id uuid,
-    identifier_type character varying(20),
-    identifier_value character varying(256),
-    identifier_source character varying(256)
+    attr_type character varying(20),
+    attr_value character varying(256),
+    attr_source character varying(256)
 );
 
 
 --
--- Name: location_identifiers; Type: TABLE; Schema: public; Owner: -
+-- Name: location_attrs; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE location_identifiers (
+CREATE TABLE location_attrs (
     location_id uuid,
     study_id uuid,
-    identifier_type character varying(20),
-    identifier_value character varying(256),
-    identifier_source character varying(256)
+    attr_type character varying(20),
+    attr_value character varying(256),
+    attr_source character varying(256)
 );
 
 
@@ -338,7 +338,7 @@ CREATE VIEW v_sampling_events AS
     loc.curation_method,
     loc.country,
     loc.notes,
-    li.identifier_value AS partner_name,
+    li.attr_value AS partner_name,
     sampling_events.proxy_location_id,
     st_x(proxy_loc.location) AS proxy_latitude,
     st_y(proxy_loc.location) AS proxy_longitude,
@@ -347,14 +347,14 @@ CREATE VIEW v_sampling_events AS
     proxy_loc.curation_method AS proxy_curation_method,
     proxy_loc.country AS proxy_country,
     proxy_loc.notes AS proxy_notes,
-    pli.identifier_value AS proxy_partner_name
+    pli.attr_value AS proxy_partner_name
    FROM ((((((sampling_events
      LEFT JOIN studies ON ((studies.id = sampling_events.study_id)))
      LEFT JOIN partner_species_identifiers ON ((partner_species_identifiers.id = sampling_events.partner_species_id)))
      LEFT JOIN locations loc ON ((loc.id = sampling_events.location_id)))
-     LEFT JOIN location_identifiers li ON (((li.study_id = sampling_events.study_id) AND (li.location_id = loc.id) AND ((li.identifier_type)::text = 'partner_name'::text))))
+     LEFT JOIN location_attrs li ON (((li.study_id = sampling_events.study_id) AND (li.location_id = loc.id) AND ((li.attr_type)::text = 'partner_name'::text))))
      LEFT JOIN locations proxy_loc ON ((proxy_loc.id = sampling_events.proxy_location_id)))
-     LEFT JOIN location_identifiers pli ON (((pli.study_id = sampling_events.study_id) AND (pli.location_id = loc.id) AND ((pli.identifier_type)::text = 'partner_name'::text))));
+     LEFT JOIN location_attrs pli ON (((pli.study_id = sampling_events.study_id) AND (pli.location_id = loc.id) AND ((pli.attr_type)::text = 'partner_name'::text))));
 
 
 --
@@ -452,7 +452,7 @@ ALTER TABLE ONLY event_sets
 
 
 --
--- Name: location_identifiers uniq_loc_ident; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: location_attrs uniq_loc_ident; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 
@@ -496,7 +496,7 @@ CREATE INDEX fki_location ON sampling_events USING btree (location_id);
 -- Name: fki_location_id; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX fki_location_id ON location_identifiers USING btree (location_id);
+CREATE INDEX fki_location_id ON location_attrs USING btree (location_id);
 
 
 --
@@ -510,21 +510,21 @@ CREATE INDEX fki_proxy_location ON sampling_events USING btree (proxy_location_i
 -- Name: fki_sampling_event_id; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX fki_sampling_event_id ON identifiers USING btree (sampling_event_id);
+CREATE INDEX fki_sampling_event_id ON attrs USING btree (sampling_event_id);
 
 
 --
 -- Name: idx_ident_type; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX idx_ident_type ON location_identifiers USING btree (identifier_type);
+CREATE INDEX idx_ident_type ON location_attrs USING btree (attr_type);
 
 
 --
 -- Name: idx_ident_value; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX idx_ident_value ON location_identifiers USING btree (identifier_value);
+CREATE INDEX idx_ident_value ON location_attrs USING btree (attr_value);
 
 
 --
@@ -582,10 +582,10 @@ ALTER TABLE ONLY sampling_events
 
 
 --
--- Name: location_identifiers fk_location; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: location_attrs fk_location; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY location_identifiers
+ALTER TABLE ONLY location_attrs
     ADD CONSTRAINT fk_location FOREIGN KEY (location_id) REFERENCES locations(id);
 
 
@@ -614,10 +614,10 @@ ALTER TABLE ONLY sampling_events
 
 
 --
--- Name: identifiers fk_sampling_event; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: attrs fk_sampling_event; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY identifiers
+ALTER TABLE ONLY attrs
     ADD CONSTRAINT fk_sampling_event FOREIGN KEY (sampling_event_id) REFERENCES sampling_events(id);
 
 
@@ -638,10 +638,10 @@ ALTER TABLE ONLY sampling_events
 
 
 --
--- Name: location_identifiers fk_study_loc; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: location_attrs fk_study_loc; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY location_identifiers
+ALTER TABLE ONLY location_attrs
     ADD CONSTRAINT fk_study_loc FOREIGN KEY (study_id) REFERENCES studies(id);
 
 

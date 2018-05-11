@@ -124,9 +124,9 @@ export class LocationsMapComponent {
         if (location.country) {
           layer_name = location.country;
         }
-        if (location.identifiers) {
-          location.identifiers.forEach(ident => {
-            loc = location.country + " " + ident.study_name + ' ' + ident.identifier_value;
+        if (location.attrs) {
+          location.attrs.forEach(ident => {
+            loc = location.country + " " + ident.study_name + ' ' + ident.attr_value;
 
             if (location.latitude && location.longitude) {
               this.addMarker(location.location_id, ident.study_name, location.latitude, location.longitude, loc);

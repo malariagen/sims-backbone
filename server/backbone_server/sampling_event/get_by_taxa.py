@@ -1,7 +1,7 @@
 from swagger_server.models.sampling_event import SamplingEvent
 from swagger_server.models.sampling_events import SamplingEvents
 from swagger_server.models.location import Location
-from swagger_server.models.identifier import Identifier
+from swagger_server.models.attr import Attr
 from backbone_server.errors.missing_key_exception import MissingKeyException
 
 from backbone_server.location.fetch import LocationFetch

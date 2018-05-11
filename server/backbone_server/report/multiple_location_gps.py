@@ -21,10 +21,10 @@ class MultipleLocationGPS():
 
                 #, curated_name, accuracy, country, partner_name
                 # ST_X(location) as latitude, ST_Y(location) as longitude
-                stmt = '''select study_code from location_identifiers li
+                stmt = '''select study_code from location_attrs li
                 JOIN studies s ON li.study_id = s.id
-                GROUP BY identifier_type, identifier_value, study_code
-                having count(identifier_value) > 1'''
+                GROUP BY attr_type, attr_value, study_code
+                having count(attr_value) > 1'''
 
                 cursor.execute(stmt)
 

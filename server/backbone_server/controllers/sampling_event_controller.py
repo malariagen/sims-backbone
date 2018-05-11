@@ -7,7 +7,7 @@ from backbone_server.sampling_event.post import SamplingEventPost
 from backbone_server.sampling_event.put import SamplingEventPut
 from backbone_server.sampling_event.get import SamplingEventGetById
 from backbone_server.sampling_event.delete import SamplingEventDelete
-from backbone_server.sampling_event.get_by_identifier import SamplingEventGetByIdentifier
+from backbone_server.sampling_event.get_by_attr import SamplingEventGetByAttr
 from backbone_server.sampling_event.get_by_location import SamplingEventsGetByLocation
 from backbone_server.sampling_event.get_by_study import SamplingEventsGetByStudy
 from backbone_server.sampling_event.get_by_taxa import SamplingEventsGetByTaxa
@@ -128,7 +128,7 @@ class SamplingEventController(BaseController):
 
         return samp, retcode
 
-    def download_sampling_events_by_identifier(self, propName, propValue, study_name=None, user=None, auths=None):
+    def download_sampling_events_by_attr(self, propName, propValue, study_name=None, user=None, auths=None):
         """
         fetches a samplingEvent by property value
         
@@ -140,7 +140,7 @@ class SamplingEventController(BaseController):
         :rtype: SamplingEvent
         """
 
-        get = SamplingEventGetByIdentifier(self.get_connection())
+        get = SamplingEventGetByAttr(self.get_connection())
 
         retcode = 200
         samp = None

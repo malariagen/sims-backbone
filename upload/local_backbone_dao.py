@@ -121,14 +121,14 @@ class LocalBackboneDAO(AbstractBackboneDAO):
 
         return existing
 
-    def download_sampling_events_by_identifier(self, identifier_type, identifier_value):
+    def download_sampling_events_by_attr(self, attr_type, attr_value):
 
-        found_events, retcode = self.se_api_instance.download_sampling_events_by_identifier(identifier_type,
-                                                                                            urllib.parse.quote_plus(identifier_value),
+        found_events, retcode = self.se_api_instance.download_sampling_events_by_attr(attr_type,
+                                                                                            urllib.parse.quote_plus(attr_value),
                                                                                             user=self._user, auths=self._auths)
 
-        self._logger.debug("GET /v1/samplingEvents/identifier/{}/{} {}".format(identifier_type,
-                                                                  identifier_value, retcode))
+        self._logger.debug("GET /v1/samplingEvents/attr/{}/{} {}".format(attr_type,
+                                                                  attr_value, retcode))
         if retcode >= 400:
             raise ApiException(status=retcode, reason='')
 

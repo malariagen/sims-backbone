@@ -14,8 +14,8 @@ export class EventSearchComponent implements OnInit {
 
   samplingEvents: SamplingEvents;
 
-  identifier_type: string;
-  identifier_value: string;
+  attr_type: string;
+  attr_value: string;
 
   options: string[];
 
@@ -23,18 +23,18 @@ export class EventSearchComponent implements OnInit {
 
   ngOnInit() {
 
-    this.metadataService.getIdentifierTypes().subscribe(identifier_types => {
-      this.options = identifier_types;
+    this.metadataService.getAttrTypes().subscribe(attr_types => {
+      this.options = attr_types;
     });
     
-    this.identifier_type = 'oxford_id';
-    //this.identifier_value = 'QS0167-C';
+    this.attr_type = 'oxford_id';
+    //this.attr_value = 'QS0167-C';
     this.search();
   }
 
   search() {
-    if (this.identifier_type && this.identifier_value) {
-      this.sampleService.downloadSamplingEventsByIdentifier(this.identifier_type, this.identifier_value).subscribe(samplingEvents => {
+    if (this.attr_type && this.attr_value) {
+      this.sampleService.downloadSamplingEventsByAttr(this.attr_type, this.attr_value).subscribe(samplingEvents => {
         
           this.samplingEvents = samplingEvents;
         

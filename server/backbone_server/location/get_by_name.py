@@ -17,8 +17,8 @@ class LocationGetByPartnerName():
         with self._connection:
             with self._connection.cursor() as cursor:
 
-                cursor.execute('''SELECT DISTINCT location_id FROM location_identifiers 
-                               WHERE identifier_type = %s AND identifier_value = %s''', ('partner_name', partner_id,))
+                cursor.execute('''SELECT DISTINCT location_id FROM location_attrs 
+                               WHERE attr_type = %s AND attr_value = %s''', ('partner_name', partner_id,))
 
                 locations = Locations()
                 locations.locations = []

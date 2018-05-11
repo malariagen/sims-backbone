@@ -322,13 +322,13 @@ paths:
           description: successful operation
         '404':
           description: SamplingEvent not found
-  '/samplingEvents/identifier/{propName}/{propValue}':
+  '/samplingEvents/attr/{propName}/{propValue}':
     get:
       tags:
         - samplingEvent
       summary: fetches one or more samplingEvents by property value
       description: ''
-      operationId: downloadSamplingEventsByIdentifier
+      operationId: downloadSamplingEventsByAttr
       produces:
         - application/json
       parameters:
@@ -527,13 +527,13 @@ paths:
           description: successful operation
           schema:
             $ref: '#/definitions/Taxonomy'
-  '/metadata/identifier_types':
+  '/metadata/attr_types':
     get:
       tags:
         - metadata
-      summary: fetches all the identifier types
-      description: 'returns all identifier types in use'
-      operationId: getIdentifierTypes
+      summary: fetches all the attr types
+      description: 'returns all attr types in use'
+      operationId: getAttrTypes
       produces:
         - application/json
       responses:
@@ -543,13 +543,13 @@ paths:
             type: array
             items:
               type: string
-  '/metadata/location_identifier_types':
+  '/metadata/location_attr_types':
     get:
       tags:
         - metadata
-      summary: fetches all the location identifier types
-      description: 'returns all location identifier types in use'
-      operationId: getLocationIdentifierTypes
+      summary: fetches all the location attr types
+      description: 'returns all location attr types in use'
+      operationId: getLocationAttrTypes
       produces:
         - application/json
       responses:
@@ -1010,10 +1010,10 @@ definitions:
         type: array
         items:
             $ref: '#/definitions/Taxonomy'
-      identifiers:
+      attrs:
         type: array
         items:
-            $ref: '#/definitions/Identifier'
+            $ref: '#/definitions/Attr'
       event_sets:
         type: array
         items:
@@ -1055,10 +1055,10 @@ definitions:
       notes:
         type: string
         nullable: true
-      identifiers:
+      attrs:
         type: array
         items:
-            $ref: '#/definitions/Identifier'
+            $ref: '#/definitions/Attr'
   LocationMap:
     type: object
     additionalProperties:
@@ -1088,14 +1088,14 @@ definitions:
         type: string
       rank:
         type: string
-  Identifier:
+  Attr:
     type: object
     properties:
-      identifier_type:
+      attr_type:
         type: string
-      identifier_value:
+      attr_value:
         type: string
-      identifier_source:
+      attr_source:
         type: string
       study_name:
         type: string

@@ -2,7 +2,7 @@ import { async, ComponentFixture, TestBed, inject } from '@angular/core/testing'
 
 import { LocationEditComponent } from './location-edit.component';
 import { Component, Input } from '@angular/core';
-import { Location, Locations, LocationService, Identifier } from '../typescript-angular-client';
+import { Location, Locations, LocationService, Attr } from '../typescript-angular-client';
 import { FormsModule, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { createAuthServiceSpy, asyncData, createOAuthServiceSpy, ActivatedRouteStub } from '../../testing/index.spec';
 import { RouterModule, ActivatedRoute } from '@angular/router';
@@ -22,9 +22,9 @@ class LocationsMapStubComponent {
   @Input() zoom: number;
 }
 
-@Component({ selector: 'app-identifier-table', template: '' })
-class IdentifiersTableStubComponent {
-  @Input() identifiers;
+@Component({ selector: 'app-attr-table', template: '' })
+class AttrsTableStubComponent {
+  @Input() attrs;
 }
 
 @Component({ selector: 'agm-map', template: '' })
@@ -83,7 +83,7 @@ describe('LocationEditComponent', () => {
       declarations: [
         LocationEditComponent,
         LocationsMapStubComponent,
-        IdentifiersTableStubComponent,
+        AttrsTableStubComponent,
         AgmMapStubComponent,
         AgmMarkerStubComponent,
         AgmPolygonStubComponent,
@@ -153,15 +153,15 @@ describe('LocationEditComponent', () => {
         accuracy: 'region',
         latitude: 1,
         longitude: 2,
-        identifiers: [<Identifier>{
-          identifier_source: 'test_src',
-          identifier_type: 'partner_name',
-          identifier_value: 'test_val',
+        attrs: [<Attr>{
+          attr_source: 'test_src',
+          attr_type: 'partner_name',
+          attr_value: 'test_val',
           study_name: '9999'
-        }, <Identifier>{
-          identifier_source: 'test_src',
-          identifier_type: 'partner_name',
-          identifier_value: 'test_val',
+        }, <Attr>{
+          attr_source: 'test_src',
+          attr_type: 'partner_name',
+          attr_value: 'test_val',
           study_name: '9998'
         }]
       };
@@ -178,15 +178,15 @@ describe('LocationEditComponent', () => {
       expect(component.locationForm.controls['accuracy'].value).toBe(testData.accuracy);
       expect(component.locationForm.controls['latitude'].value).toBe(testData.latitude);
       expect(component.locationForm.controls['longitude'].value).toBe(testData.longitude);
-      const arrayControls = component.locationForm.controls['identifiers'].value;
-      expect(arrayControls[0].identifier_source).toBe(testData.identifiers[0].identifier_source);
-      expect(arrayControls[0].identifier_type).toBe(testData.identifiers[0].identifier_type);
-      expect(arrayControls[0].identifier_value).toBe(testData.identifiers[0].identifier_value);
-      expect(arrayControls[0].study_name).toBe(testData.identifiers[0].study_name);
-      expect(arrayControls[1].identifier_source).toBe(testData.identifiers[1].identifier_source);
-      expect(arrayControls[1].identifier_type).toBe(testData.identifiers[1].identifier_type);
-      expect(arrayControls[1].identifier_value).toBe(testData.identifiers[1].identifier_value);
-      expect(arrayControls[1].study_name).toBe(testData.identifiers[1].study_name);
+      const arrayControls = component.locationForm.controls['attrs'].value;
+      expect(arrayControls[0].attr_source).toBe(testData.attrs[0].attr_source);
+      expect(arrayControls[0].attr_type).toBe(testData.attrs[0].attr_type);
+      expect(arrayControls[0].attr_value).toBe(testData.attrs[0].attr_value);
+      expect(arrayControls[0].study_name).toBe(testData.attrs[0].study_name);
+      expect(arrayControls[1].attr_source).toBe(testData.attrs[1].attr_source);
+      expect(arrayControls[1].attr_type).toBe(testData.attrs[1].attr_type);
+      expect(arrayControls[1].attr_value).toBe(testData.attrs[1].attr_value);
+      expect(arrayControls[1].study_name).toBe(testData.attrs[1].study_name);
     })
   )
   );
@@ -208,15 +208,15 @@ describe('LocationEditComponent', () => {
         accuracy: 'region',
         latitude: 1,
         longitude: 2,
-        identifiers: [<Identifier>{
-          identifier_source: 'test_src',
-          identifier_type: 'partner_name',
-          identifier_value: 'test_val',
+        attrs: [<Attr>{
+          attr_source: 'test_src',
+          attr_type: 'partner_name',
+          attr_value: 'test_val',
           study_name: '9999'
-        }, <Identifier>{
-          identifier_source: 'test_src',
-          identifier_type: 'partner_name',
-          identifier_value: 'test_val',
+        }, <Attr>{
+          attr_source: 'test_src',
+          attr_type: 'partner_name',
+          attr_value: 'test_val',
           study_name: '9998'
         }]
       };
@@ -258,15 +258,15 @@ describe('LocationEditComponent', () => {
       expect(put.request.body.accuracy).toBe(testData.accuracy);
       expect(put.request.body.latitude).toBe(testData.latitude);
       expect(put.request.body.longitude).toBe(testData.longitude);
-      const arrayControls = put.request.body.identifiers;
-      expect(arrayControls[0].identifier_source).toBe(testData.identifiers[0].identifier_source);
-      expect(arrayControls[0].identifier_type).toBe(testData.identifiers[0].identifier_type);
-      expect(arrayControls[0].identifier_value).toBe(testData.identifiers[0].identifier_value);
-      expect(arrayControls[0].study_name).toBe(testData.identifiers[0].study_name);
-      expect(arrayControls[1].identifier_source).toBe(testData.identifiers[1].identifier_source);
-      expect(arrayControls[1].identifier_type).toBe(testData.identifiers[1].identifier_type);
-      expect(arrayControls[1].identifier_value).toBe(testData.identifiers[1].identifier_value);
-      expect(arrayControls[1].study_name).toBe(testData.identifiers[1].study_name);
+      const arrayControls = put.request.body.attrs;
+      expect(arrayControls[0].attr_source).toBe(testData.attrs[0].attr_source);
+      expect(arrayControls[0].attr_type).toBe(testData.attrs[0].attr_type);
+      expect(arrayControls[0].attr_value).toBe(testData.attrs[0].attr_value);
+      expect(arrayControls[0].study_name).toBe(testData.attrs[0].study_name);
+      expect(arrayControls[1].attr_source).toBe(testData.attrs[1].attr_source);
+      expect(arrayControls[1].attr_type).toBe(testData.attrs[1].attr_type);
+      expect(arrayControls[1].attr_value).toBe(testData.attrs[1].attr_value);
+      expect(arrayControls[1].study_name).toBe(testData.attrs[1].study_name);
 
       backend.verify();
     })

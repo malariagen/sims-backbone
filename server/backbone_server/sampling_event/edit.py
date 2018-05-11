@@ -15,11 +15,11 @@ class SamplingEventEdit():
         if location_id:
             current_location = LocationFetch.fetch(cursor, location_id)
 
-            cli = current_location.identifiers
+            cli = current_location.attrs
 
             #It's OK if the location id is set but the location object not filled in
             if location:
-                idents = location.identifiers
+                idents = location.attrs
 
                 if location != current_location:
                     raise NestedEditException("Implied location edit not allowed for {}".format(location_id))
@@ -68,34 +68,34 @@ class SamplingEventEdit():
         return partner_species
 
     @staticmethod
-    def add_identifiers(cursor, uuid_val, sampling_event):
-        if sampling_event.identifiers:
-            for ident in sampling_event.identifiers:
-                if not (ident.identifier_type == 'partner_id' or \
-                        ident.identifier_type == 'individual_id'):
-                    cursor.execute('''SELECT * FROM identifiers
-                                   WHERE identifier_type = %s AND identifier_value = %s AND
-                                   identifier_source = %s''',
-                                   (ident.identifier_type, ident.identifier_value,
-                                    ident.identifier_source))
+    def add_attrs(cursor, uuid_val, sampling_event):
+        if sampling_event.attrs:
+            for ident in sampling_event.attrs:
+                if not (ident.attr_type == 'partner_id' or \
+                        ident.attr_type == 'individual_id'):
+                    cursor.execute('''SELECT * FROM attrs
+                                   WHERE attr_type = %s AND attr_value = %s AND
+                                   attr_source = %s''',
+                                   (ident.attr_type, ident.attr_value,
+                                    ident.attr_source))
                     if cursor.fetchone():
-                        raise DuplicateKeyException("Error inserting sampling_event identifier {} {}"
-                                                    .format(ident.identifier_type, sampling_event))
+                        raise DuplicateKeyException("Error inserting sampling_event attr {} {}"
+                                                    .format(ident.attr_type, sampling_event))
 
-                    cursor.execute('''SELECT * FROM identifiers
-                                   WHERE identifier_type = %s AND identifier_value = %s AND
+                    cursor.execute('''SELECT * FROM attrs
+                                   WHERE attr_type = %s AND attr_value = %s AND
                                    sampling_event_id != %s''',
-                                   (ident.identifier_type, ident.identifier_value,
+                                   (ident.attr_type, ident.attr_value,
                                     uuid_val))
                     if cursor.fetchone():
-                        raise DuplicateKeyException("Error inserting sampling_event identifier {} {}"
-                                                    .format(ident.identifier_type, sampling_event))
+                        raise DuplicateKeyException("Error inserting sampling_event attr {} {}"
+                                                    .format(ident.attr_type, sampling_event))
 
-                stmt = '''INSERT INTO identifiers 
-                    (sampling_event_id, identifier_type, identifier_value, identifier_source)
+                stmt = '''INSERT INTO attrs 
+                    (sampling_event_id, attr_type, attr_value, attr_source)
                     VALUES (%s, %s, %s, %s)'''
-                cursor.execute(stmt, (uuid_val, ident.identifier_type, ident.identifier_value,
-                                      ident.identifier_source))
+                cursor.execute(stmt, (uuid_val, ident.attr_type, ident.attr_value,
+                                      ident.attr_source))
 
 
 

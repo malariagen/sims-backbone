@@ -1,5 +1,5 @@
 from swagger_server.models.location import Location
-from swagger_server.models.identifier import Identifier
+from swagger_server.models.attr import Attr
 from swagger_server.models.taxonomy import Taxonomy
 from swagger_server.models.sampling_event import SamplingEvent
 from backbone_server.errors.missing_key_exception import MissingKeyException
@@ -12,23 +12,23 @@ class SamplingEventFetch():
 
 
     @staticmethod
-    def fetch_identifiers(cursor, sampling_event_id):
+    def fetch_attrs(cursor, sampling_event_id):
 
-        stmt = '''SELECT identifier_type, identifier_value, identifier_source FROM identifiers
+        stmt = '''SELECT attr_type, attr_value, attr_source FROM attrs
         WHERE sampling_event_id = %s
-                ORDER BY identifier_type, identifier_value, identifier_source'''
+                ORDER BY attr_type, attr_value, attr_source'''
 
         cursor.execute(stmt, (sampling_event_id,))
 
-        identifiers = []
+        attrs = []
         for (name, value, source) in cursor:
-            ident = Identifier(name, value, source)
-            identifiers.append(ident)
+            ident = Attr(name, value, source)
+            attrs.append(ident)
 
-        if len(identifiers) == 0:
-            identifiers = None
+        if len(attrs) == 0:
+            attrs = None
 
-        return identifiers
+        return attrs
 
     @staticmethod
     def fetch_event_sets(cursor, sampling_event_id):
@@ -39,14 +39,14 @@ class SamplingEventFetch():
 
         cursor.execute(stmt, (sampling_event_id,))
 
-        identifiers = []
+        attrs = []
         for (name,) in cursor:
-            identifiers.append(name)
+            attrs.append(name)
 
-        if len(identifiers) == 0:
-            identifiers = None
+        if len(attrs) == 0:
+            attrs = None
 
-        return identifiers
+        return attrs
 
 
     @staticmethod
@@ -107,7 +107,7 @@ class SamplingEventFetch():
         if not sampling_event:
             return sampling_event
 
-        sampling_event.identifiers = SamplingEventFetch.fetch_identifiers(cursor, sampling_event_id)
+        sampling_event.attrs = SamplingEventFetch.fetch_attrs(cursor, sampling_event_id)
 
         sampling_event.partner_taxonomies = SamplingEventFetch.fetch_taxonomies(cursor, study_id,
                                                                         partner_species)
@@ -132,7 +132,7 @@ class SamplingEventFetch():
         return sampling_event
 
     @staticmethod
-    def load_sampling_events(cursor, all_identifiers=True):
+    def load_sampling_events(cursor, all_attrs=True):
 
         sampling_events = []
         location_list = []
@@ -160,7 +160,7 @@ class SamplingEventFetch():
             sampling_events.append(sampling_event)
 
         for sampling_event in sampling_events:
-            sampling_event.identifiers = SamplingEventFetch.fetch_identifiers(cursor,
+            sampling_event.attrs = SamplingEventFetch.fetch_attrs(cursor,
                                                                               sampling_event.sampling_event_id)
             sampling_event.partner_taxonomies = SamplingEventFetch.fetch_taxonomies(cursor,
                                                                                     sampling_event.study_name,

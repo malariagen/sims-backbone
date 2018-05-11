@@ -44,7 +44,7 @@
               </textarea>
             </mat-form-field>
           </p>
-          <app-identifier-table [identifiers]="location.identifiers" studies="true"></app-identifier-table>
+          <app-attr-table [attrs]="location.attrs" studies="true"></app-attr-table>
 
           <p>
             <button mat-raised-button type="submit" [disabled]="!locationForm.valid">Submit</button>

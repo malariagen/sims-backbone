@@ -79,9 +79,9 @@ class TestSample(TestBase):
         try:
 
             samp = swagger_client.SamplingEvent(None, '1002-MD-UP', date(2017, 10, 12))
-            samp.identifiers = [
-                swagger_client.Identifier (identifier_type='oxford', identifier_value='1234',
-                                           identifier_source='same')
+            samp.attrs = [
+                swagger_client.Attr (attr_type='oxford', attr_value='1234',
+                                           attr_source='same')
             ]
             created = api_instance.create_sampling_event(samp)
 
@@ -102,8 +102,8 @@ class TestSample(TestBase):
         try:
 
             samp = swagger_client.SamplingEvent(None, '1003-MD-UP', date(2017, 10, 13))
-            samp.identifiers = [
-                swagger_client.Identifier (identifier_type='partner_id', identifier_value='12345')
+            samp.attrs = [
+                swagger_client.Attr (attr_type='partner_id', attr_value='12345')
             ]
             created = api_instance.create_sampling_event(samp)
 
@@ -127,8 +127,8 @@ class TestSample(TestBase):
         try:
 
             samp = swagger_client.SamplingEvent(None, '1025-MD-UP', date(2017, 10, 13))
-            samp.identifiers = [
-                swagger_client.Identifier (identifier_type='individual_id', identifier_value='12345')
+            samp.attrs = [
+                swagger_client.Attr (attr_type='individual_id', attr_value='12345')
             ]
             created = api_instance.create_sampling_event(samp)
 
@@ -146,18 +146,18 @@ class TestSample(TestBase):
 
     """
     """
-    def test_identifier_lookup(self, api_factory):
+    def test_attr_lookup(self, api_factory):
 
         api_instance = api_factory.SamplingEventApi()
 
         try:
 
             samp = swagger_client.SamplingEvent(None, '1004-MD-UP', date(2017, 10, 14))
-            samp.identifiers = [
-                swagger_client.Identifier (identifier_type='oxford', identifier_value='123456')
+            samp.attrs = [
+                swagger_client.Attr (attr_type='oxford', attr_value='123456')
             ]
             created = api_instance.create_sampling_event(samp)
-            looked_up = api_instance.download_sampling_events_by_identifier('oxford', '123456')
+            looked_up = api_instance.download_sampling_events_by_attr('oxford', '123456')
             looked_up = looked_up.sampling_events[0]
 
             fetched = api_instance.download_sampling_event(looked_up.sampling_event_id)
@@ -172,29 +172,29 @@ class TestSample(TestBase):
 
     """
     """
-    def test_identifier_lookup_by_study(self, api_factory):
+    def test_attr_lookup_by_study(self, api_factory):
 
         api_instance = api_factory.SamplingEventApi()
 
         try:
 
             samp = swagger_client.SamplingEvent(None, '1022-MD-UP', date(2017, 10, 14))
-            samp.identifiers = [
-                swagger_client.Identifier (identifier_type='partner_id', identifier_value='123456')
+            samp.attrs = [
+                swagger_client.Attr (attr_type='partner_id', attr_value='123456')
             ]
             created = api_instance.create_sampling_event(samp)
-            looked_up = api_instance.download_sampling_events_by_identifier('partner_id', '123456',
+            looked_up = api_instance.download_sampling_events_by_attr('partner_id', '123456',
                                                                             study_name='1022')
             assert looked_up.count == 1
 
 
             with pytest.raises(ApiException, status=404):
-                looked_up = api_instance.download_sampling_events_by_identifier('oxford', '123456',
+                looked_up = api_instance.download_sampling_events_by_attr('oxford', '123456',
                                                                             study_name='9999')
 
             created1 = api_instance.create_sampling_event(samp)
 
-            looked_up = api_instance.download_sampling_events_by_identifier('partner_id', '123456',
+            looked_up = api_instance.download_sampling_events_by_attr('partner_id', '123456',
                                                                             study_name='1022')
             assert looked_up.count == 2
 
@@ -206,30 +206,30 @@ class TestSample(TestBase):
 
     """
     """
-    def test_identifier_merge(self, api_factory):
+    def test_attr_merge(self, api_factory):
 
         api_instance = api_factory.SamplingEventApi()
 
         try:
 
-            ident1 = swagger_client.Identifier (identifier_type='oxford_id', identifier_value='1234')
-            ident2 = swagger_client.Identifier (identifier_type='roma_id', identifier_value='12345')
-            ident3 = swagger_client.Identifier (identifier_type='lims_id', identifier_value='123456')
+            ident1 = swagger_client.Attr (attr_type='oxford_id', attr_value='1234')
+            ident2 = swagger_client.Attr (attr_type='roma_id', attr_value='12345')
+            ident3 = swagger_client.Attr (attr_type='lims_id', attr_value='123456')
             samp1 = swagger_client.SamplingEvent(None, '1022-MD-UP', date(2017, 10, 14))
-            samp1.identifiers = [
+            samp1.attrs = [
                 ident1
             ]
             created1 = api_instance.create_sampling_event(samp1)
 
             samp2 = swagger_client.SamplingEvent(None, '1022-MD-UP', date(2017, 10, 14))
-            samp2.identifiers = [
+            samp2.attrs = [
                 ident2
             ]
             created2 = api_instance.create_sampling_event(samp2)
 
 
             samp3 = swagger_client.SamplingEvent(None, '1022-MD-UP', date(2017, 10, 14))
-            samp3.identifiers = [
+            samp3.attrs = [
                 ident1,
                 ident2,
                 ident3
@@ -253,11 +253,11 @@ class TestSample(TestBase):
         try:
 
             samp = swagger_client.SamplingEvent(None, '1005-MD-UP', date(2017, 10, 15))
-            samp.identifiers = [
-                swagger_client.Identifier (identifier_type='oxford', identifier_value='1234567')
+            samp.attrs = [
+                swagger_client.Attr (attr_type='oxford', attr_value='1234567')
             ]
             created = api_instance.create_sampling_event(samp)
-            looked_up = api_instance.download_sampling_events_by_identifier('oxford', '1234567')
+            looked_up = api_instance.download_sampling_events_by_attr('oxford', '1234567')
             looked_up = looked_up.sampling_events[0]
             new_samp = swagger_client.SamplingEvent(None, '0001-MD-UP', date(2018, 11, 11))
             updated = api_instance.update_sampling_event(looked_up.sampling_event_id, new_samp)
@@ -279,17 +279,17 @@ class TestSample(TestBase):
         try:
 
             samp = swagger_client.SamplingEvent(None, '1006-MD-UP', date(2017, 10, 16))
-            samp.identifiers = [
-                swagger_client.Identifier (identifier_type='oxford', identifier_value='12345678',
-                                           identifier_source='upd')
+            samp.attrs = [
+                swagger_client.Attr (attr_type='oxford', attr_value='12345678',
+                                           attr_source='upd')
             ]
             created = api_instance.create_sampling_event(samp)
-            looked_up = api_instance.download_sampling_events_by_identifier('oxford', '12345678')
+            looked_up = api_instance.download_sampling_events_by_attr('oxford', '12345678')
             looked_up = looked_up.sampling_events[0]
             new_samp = swagger_client.SamplingEvent(None, '0001-MD-UP', date(2018, 10, 10))
-            new_samp.identifiers = [
-                swagger_client.Identifier (identifier_type='oxford', identifier_value='123456789',
-                                          identifier_source='upd')
+            new_samp.attrs = [
+                swagger_client.Attr (attr_type='oxford', attr_value='123456789',
+                                          attr_source='upd')
             ]
             new_created = api_instance.create_sampling_event(new_samp)
             with pytest.raises(ApiException, status=422):
@@ -326,7 +326,7 @@ class TestSample(TestBase):
 
     """
     """
-    def test_identifier_lookup_encode(self, api_factory):
+    def test_attr_lookup_encode(self, api_factory):
 
         api_instance = api_factory.SamplingEventApi()
 
@@ -334,9 +334,9 @@ class TestSample(TestBase):
 
             test_id = 'MDG/DK_0005'
             samp = swagger_client.SamplingEvent(None, '1008-MD-UP', date(2017, 10, 14))
-            samp.identifiers = [
-                swagger_client.Identifier (identifier_type='partner_id', identifier_value=test_id,
-                                          identifier_source='encode')
+            samp.attrs = [
+                swagger_client.Attr (attr_type='partner_id', attr_value=test_id,
+                                          attr_source='encode')
             ]
             created = api_instance.create_sampling_event(samp)
 
@@ -346,7 +346,7 @@ class TestSample(TestBase):
             fetched.sampling_event_id = None
             assert samp == fetched, "upload != download response"
 
-            looked_up = api_instance.download_sampling_events_by_identifier('partner_id',
+            looked_up = api_instance.download_sampling_events_by_attr('partner_id',
                                                                            urllib.parse.quote_plus(test_id))
             looked_up = looked_up.sampling_events[0]
             fetched = api_instance.download_sampling_event(looked_up.sampling_event_id)
@@ -765,19 +765,19 @@ class TestSample(TestBase):
 
     """
     """
-    def test_get_identifiers(self, api_factory):
+    def test_get_attrs(self, api_factory):
 
         metadata_api_instance = api_factory.MetadataApi()
         api_instance = api_factory.SamplingEventApi()
 
         try:
             samp = swagger_client.SamplingEvent(None, '1023-MD-UP', date(2017, 10, 16))
-            samp.identifiers = [
-                swagger_client.Identifier (identifier_type='oxford', identifier_value='12345678',
-                                           identifier_source='upd')
+            samp.attrs = [
+                swagger_client.Attr (attr_type='oxford', attr_value='12345678',
+                                           attr_source='upd')
             ]
             created = api_instance.create_sampling_event(samp)
-            idents = metadata_api_instance.get_identifier_types()
+            idents = metadata_api_instance.get_attr_types()
 
             assert 'oxford' in idents
 
@@ -787,14 +787,14 @@ class TestSample(TestBase):
             self.check_api_exception(api_factory, "SamplingEventApi->create_sampling_event", error)
 
     """
-    Used to test permissions on get_identifier_types
+    Used to test permissions on get_attr_types
     """
-    def test_get_identifier_types(self, api_factory):
+    def test_get_attr_types(self, api_factory):
 
         metadata_api_instance = api_factory.MetadataApi()
 
         try:
-            idents = metadata_api_instance.get_identifier_types()
+            idents = metadata_api_instance.get_attr_types()
 
         except ApiException as error:
             self.check_api_exception(api_factory, "SamplingEventApi->create_sampling_event", error)
@@ -935,14 +935,14 @@ class TestSample(TestBase):
 
     """
     """
-    def test_download_sampling_event_by_identifier_permission(self, api_factory):
+    def test_download_sampling_event_by_attr_permission(self, api_factory):
 
         api_instance = api_factory.SamplingEventApi()
 
         try:
             if not api_factory.is_authorized(None):
                 with pytest.raises(ApiException, status=403):
-                    api_instance.download_sampling_events_by_identifier('partner_id','404')
+                    api_instance.download_sampling_events_by_attr('partner_id','404')
         except ApiException as error:
-            self.check_api_exception(api_factory, "SamplingEventApi->download_sampling_events_by_identifier", error)
+            self.check_api_exception(api_factory, "SamplingEventApi->download_sampling_events_by_attr", error)
 

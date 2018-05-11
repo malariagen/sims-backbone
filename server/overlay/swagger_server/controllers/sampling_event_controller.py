@@ -69,7 +69,7 @@ def download_sampling_events_by_event_set(eventSetId, start=None, count=None, us
                                                                            count, user,
                                                                        sampling_event_controller.token_info(token_info))
 
-def download_sampling_events_by_identifier(propName, propValue, studyName=None, user = None, token_info = None):
+def download_sampling_events_by_attr(propName, propValue, studyName=None, user = None, token_info = None):
     """
     fetches a samplingEvent by property value
     
@@ -80,7 +80,7 @@ def download_sampling_events_by_identifier(propName, propValue, studyName=None, 
 
     :rtype: SamplingEvent
     """
-    return sampling_event_controller.download_sampling_events_by_identifier(propName, propValue,
+    return sampling_event_controller.download_sampling_events_by_attr(propName, propValue,
                                                                            studyName,
                                                                            user,
                                                                            sampling_event_controller.token_info(token_info))

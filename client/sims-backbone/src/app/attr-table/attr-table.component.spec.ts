@@ -1,6 +1,6 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { IdentifierTableComponent } from './identifier-table.component';
+import { AttrTableComponent } from './attr-table.component';
 import { MatTableModule } from '@angular/material';
 import { RouterModule } from '@angular/router';
 import { Component, Input } from '@angular/core';
@@ -13,9 +13,9 @@ class LocationsMapStubComponent {
   @Input() zoom: number;
 }
 
-describe('IdentifierTableComponent', () => {
-  let component: IdentifierTableComponent;
-  let fixture: ComponentFixture<IdentifierTableComponent>;
+describe('AttrTableComponent', () => {
+  let component: AttrTableComponent;
+  let fixture: ComponentFixture<AttrTableComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -24,7 +24,7 @@ describe('IdentifierTableComponent', () => {
         RouterModule
       ],
       declarations: [ 
-        IdentifierTableComponent,
+        AttrTableComponent,
         LocationsMapStubComponent
         
        ]
@@ -33,7 +33,7 @@ describe('IdentifierTableComponent', () => {
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(IdentifierTableComponent);
+    fixture = TestBed.createComponent(AttrTableComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

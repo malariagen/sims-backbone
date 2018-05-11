@@ -43,7 +43,7 @@ class SamplingEventPost():
                 try:
                     cursor.execute(stmt, args)
 
-                    SamplingEventEdit.add_identifiers(cursor, uuid_val, sampling_event)
+                    SamplingEventEdit.add_attrs(cursor, uuid_val, sampling_event)
 
                 except psycopg2.IntegrityError as err:
                     print(err.pgcode)

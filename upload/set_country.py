@@ -74,7 +74,7 @@ class SetCountry(upload_ssr.Upload_SSR):
                     'id_value': id_value
                 }
                 try:
-                    found_events = self._dao.download_sampling_events_by_identifier(id_type,
+                    found_events = self._dao.download_sampling_events_by_attr(id_type,
                                                                urllib.parse.quote_plus(id_value))
                     if found_events:
                         found = found_events.sampling_events[0]
@@ -99,7 +99,7 @@ class SetCountry(upload_ssr.Upload_SSR):
             #print(named_locations)
 
             for named_loc in named_locations.locations:
-                for ident in named_loc.identifiers:
+                for ident in named_loc.attrs:
                     if ident.study_name[:4] == study[:4]:
                         self._country_study_location_cache[study[:4]][country_value] = named_loc
                         #print('Found location')
@@ -127,7 +127,7 @@ class SetCountry(upload_ssr.Upload_SSR):
                                                   lng,
                                                   accuracy='country',
                                                   country=self._country_cache[country_value].alpha3)
-                    loc.identifiers = [
+                    loc.attrs = [
                         country_ident
                     ]
                     location = self._dao.create_location(loc)
@@ -156,9 +156,9 @@ class SetCountry(upload_ssr.Upload_SSR):
                                                                                  found), None)
                 return found
 
-        ident = swagger_client.Identifier('partner_name',
-                                          identifier_value=self._country_cache[country_value].english,
-                                          identifier_source='set_country {}'.format(filename),
+        ident = swagger_client.Attr('partner_name',
+                                          attr_value=self._country_cache[country_value].english,
+                                          attr_source='set_country {}'.format(filename),
                                           study_name=found.study_name)
 
 
@@ -202,26 +202,26 @@ class SetCountry(upload_ssr.Upload_SSR):
         study_ident = False
 
         if found.location:
-            if found.location.identifiers:
-                for identifier in found.location.identifiers:
-                    if identifier.study_name[:4] == found.study_name[:4]:
+            if found.location.attrs:
+                for attr in found.location.attrs:
+                    if attr.study_name[:4] == found.study_name[:4]:
                         study_ident = True
 
         if not study_ident:
             if found.location:
                 #print("adding study ident for {}".format(found))
                 if not error:
-                    found.location.identifiers.append(ident)
+                    found.location.attrs.append(ident)
                 try:
                     self._dao.update_location(found.location_id, found.location)
                 except Exception as excp:
                     #print(str(excp), None)
                     #The location is more specific than the country but does not have a name for
                     #that study - probably because it was unknown when added
-                    self.report('Unable to add country location identifier name for study ',
-                                {'identifier_source': ident.identifier_source,
-                                 'identifer_value' : ident.identifier_value,
-                                 'identifier_type': ident.identifier_type,
+                    self.report('Unable to add country location attr name for study ',
+                                {'attr_source': ident.attr_source,
+                                 'identifer_value' : ident.attr_value,
+                                 'attr_type': ident.attr_type,
                                  'study_id': found.study_name,
                                  'latitude': found.location.latitude,
                                  'longitude': found.location.longitude,

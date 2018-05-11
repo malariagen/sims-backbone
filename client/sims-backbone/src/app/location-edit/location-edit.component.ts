@@ -123,17 +123,17 @@ export class LocationEditComponent implements OnInit {
             notes: [this.location.notes, []],
             country: [this.location.country, [Validators.required, Validators.minLength(3)]],
             accuracy: [this.location.accuracy, [Validators.required]],
-            identifiers: this._fb.array([]),
+            attrs: this._fb.array([]),
           }
         );
-        const formIdents = <FormArray>this.locationForm.controls['identifiers'];
+        const formIdents = <FormArray>this.locationForm.controls['attrs'];
 
-        if (this.location.identifiers) {
-          this.location.identifiers.forEach(ident => {
+        if (this.location.attrs) {
+          this.location.attrs.forEach(ident => {
             let identControl = new FormGroup({
-              identifier_source: new FormControl(ident.identifier_source, Validators.required),
-              identifier_type: new FormControl(ident.identifier_type, Validators.required),
-              identifier_value: new FormControl(ident.identifier_value, Validators.required),
+              attr_source: new FormControl(ident.attr_source, Validators.required),
+              attr_type: new FormControl(ident.attr_type, Validators.required),
+              attr_value: new FormControl(ident.attr_value, Validators.required),
               study_name: new FormControl(ident.study_name, Validators.required),
             });
             formIdents.push(identControl);

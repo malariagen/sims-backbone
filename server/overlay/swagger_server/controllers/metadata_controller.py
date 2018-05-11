@@ -39,27 +39,27 @@ def get_country_metadata(countryId, user=None, token_info=None):
     return metadata_controller.get_country_metadata(countryId, user,
                                                     metadata_controller.token_info(token_info))
 
-def get_identifier_types(user=None, token_info=None):  # noqa: E501
-    """fetches all the identifier types
+def get_attr_types(user=None, token_info=None):  # noqa: E501
+    """fetches all the attr types
 
-    returns all identifier types in use # noqa: E501
+    returns all attr types in use # noqa: E501
 
 
     :rtype: List[str]
     """
-    return metadata_controller.get_identifier_types(user,
+    return metadata_controller.get_attr_types(user,
                                                     metadata_controller.token_info(token_info))
 
 
-def get_location_identifier_types(user=None, token_info=None):  # noqa: E501
-    """fetches all the location identifier types
+def get_location_attr_types(user=None, token_info=None):  # noqa: E501
+    """fetches all the location attr types
 
-    returns all location identifier types in use # noqa: E501
+    returns all location attr types in use # noqa: E501
 
 
     :rtype: List[str]
     """
-    return metadata_controller.get_location_identifier_types(user,
+    return metadata_controller.get_location_attr_types(user,
                                                              metadata_controller.token_info(token_info))
 
 def get_taxonomy_metadata(user=None, token_info=None):  # noqa: E501

@@ -39,10 +39,10 @@
         <div *ngFor="let s of study.locations.locations">
           <div fxLayout="row">
             <span fxFlex="40%">
-              <span *ngFor="let ident of s.identifiers">
+              <span *ngFor="let ident of s.attrs">
                 <a mat-raised-button color="accent" [routerLink]="['/location',s.location_id]">
                   <span *ngIf="ident.study_name.startsWith(studyCode)">
-                    {{ ident.identifier_value}}
+                    {{ ident.attr_value}}
                   </span>
                 </a>
                 {{s.latitude}},{{s.longitude}}

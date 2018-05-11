@@ -56,7 +56,7 @@ class TestSampling_Event(TestBase):
 
         event_api_instance = swagger_client.SamplingEventApi(TestBase.getApiClient())
 
-        looked_up = event_api_instance.download_sampling_events_by_identifier('oxford_id', '123456')
+        looked_up = event_api_instance.download_sampling_events_by_attr('oxford_id', '123456')
         looked_up = looked_up.sampling_events[0]
 
         event_api_instance.delete_sampling_event(looked_up.sampling_event_id)
@@ -73,7 +73,7 @@ class TestSampling_Event(TestBase):
         event_api_instance = swagger_client.SamplingEventApi(self._api_client)
         event_set_api_instance = swagger_client.EventSetApi(self._api_client)
 
-        looked_up = event_api_instance.download_sampling_events_by_identifier('oxford_id', '123456')
+        looked_up = event_api_instance.download_sampling_events_by_attr('oxford_id', '123456')
         looked_up = looked_up.sampling_events[0]
 
         for study in ["9011 Upload test study", "9012 Upload test study 3"]:
@@ -111,11 +111,11 @@ class TestSampling_Event(TestBase):
         event_api_instance = swagger_client.SamplingEventApi(self._api_client)
         event_set_api_instance = swagger_client.EventSetApi(self._api_client)
 
-        looked_up = event_api_instance.download_sampling_events_by_identifier('oxford_id', '123456')
+        looked_up = event_api_instance.download_sampling_events_by_attr('oxford_id', '123456')
 
         if looked_up.sampling_events[0].location_id not in TestSampling_Event._locations:
             TestSampling_Event._locations.append(looked_up.sampling_events[0].location_id)
 
-        assert len(looked_up.sampling_events[0].location.identifiers) == 1, 'Too many location identifiers {}'.format(looked_up)
-        assert looked_up.sampling_events[0].location.identifiers[0].study_name == '9010 Upload test study 2', 'Study name in location not updated'
+        assert len(looked_up.sampling_events[0].location.attrs) == 1, 'Too many location attrs {}'.format(looked_up)
+        assert looked_up.sampling_events[0].location.attrs[0].study_name == '9010 Upload test study 2', 'Study name in location not updated'
 

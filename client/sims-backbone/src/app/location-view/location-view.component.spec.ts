@@ -16,9 +16,9 @@ class LocationsMapStubComponent {
   @Input() zoom: number;
 }
 
-@Component({ selector: 'app-identifier-table', template: '' })
-class IdentifiersTableStubComponent {
-  @Input() identifiers;
+@Component({ selector: 'app-attr-table', template: '' })
+class AttrsTableStubComponent {
+  @Input() attrs;
 }
 
 describe('LocationViewComponent', () => {
@@ -34,7 +34,7 @@ describe('LocationViewComponent', () => {
       declarations: [ 
         LocationViewComponent,
         LocationsMapStubComponent,
-        IdentifiersTableStubComponent
+        AttrsTableStubComponent
       ],
       providers: [
       ]

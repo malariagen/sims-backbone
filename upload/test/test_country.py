@@ -169,7 +169,7 @@ class TestCountry(TestBase):
         api_instance = swagger_client.SamplingEventApi(self._api_client)
 
         try:
-            looked_up = api_instance.download_sampling_events_by_identifier('partner_id',
+            looked_up = api_instance.download_sampling_events_by_attr('partner_id',
                                                                            urllib.parse.quote_plus('MDG/TST_0001'))
 
             looked_up = looked_up.sampling_events[0]
@@ -178,13 +178,13 @@ class TestCountry(TestBase):
             self.assertEqual(looked_up.proxy_location.country, 'MDG')
             self.assertEqual(looked_up.proxy_location.latitude, -19.0)
             self.assertEqual(looked_up.proxy_location.longitude, 47.0)
-            self.assertEqual(looked_up.proxy_location.identifiers[0].identifier_value, 'Madagascar')
+            self.assertEqual(looked_up.proxy_location.attrs[0].attr_value, 'Madagascar')
             self.assertEqual(looked_up.location.country, 'MDG')
             self.assertEqual(looked_up.location.latitude, -16.94223)
             self.assertEqual(looked_up.location.longitude, 46.83144)
-            for ident in looked_up.location.identifiers:
+            for ident in looked_up.location.attrs:
                 if ident.study_name[:4] == looked_up.study_name[:4]:
-                    self.assertEqual(ident.identifier_value, 'Maevatanana')
+                    self.assertEqual(ident.attr_value, 'Maevatanana')
             self.assertEqual(looked_up.study_name[:4], '9050')
 
             if looked_up.location_id not in TestCountry._locations:
@@ -193,7 +193,7 @@ class TestCountry(TestBase):
                 TestCountry._locations.append(looked_up.proxy_location_id)
 
         except ApiException as error:
-            self.fail("test_location_duplicate_name: Exception when calling download_sampling_events_by_identifier {}"
+            self.fail("test_location_duplicate_name: Exception when calling download_sampling_events_by_attr {}"
                         .format(error))
 
     """
@@ -202,7 +202,7 @@ class TestCountry(TestBase):
         api_instance = swagger_client.SamplingEventApi(self._api_client)
 
         try:
-            looked_up = api_instance.download_sampling_events_by_identifier('oxford_id',
+            looked_up = api_instance.download_sampling_events_by_attr('oxford_id',
                                                                            urllib.parse.quote_plus('CT0003-C'))
 
             looked_up = looked_up.sampling_events[0]
@@ -214,7 +214,7 @@ class TestCountry(TestBase):
             if looked_up.location_id not in TestCountry._locations:
                 TestCountry._locations.append(looked_up.location_id)
         except ApiException as error:
-            self.fail("test_location_duplicate_name: Exception when calling download_sampling_events_by_identifier {}"
+            self.fail("test_location_duplicate_name: Exception when calling download_sampling_events_by_attr {}"
                         .format(error))
 
     """
@@ -223,7 +223,7 @@ class TestCountry(TestBase):
         api_instance = swagger_client.SamplingEventApi(self._api_client)
 
         try:
-            looked_up = api_instance.download_sampling_events_by_identifier('oxford_id',
+            looked_up = api_instance.download_sampling_events_by_attr('oxford_id',
                                                                            urllib.parse.quote_plus('CT0002-C'))
 
             looked_up = looked_up.sampling_events[0]
@@ -235,7 +235,7 @@ class TestCountry(TestBase):
             if looked_up.location_id not in TestCountry._locations:
                 TestCountry._locations.append(looked_up.location_id)
         except ApiException as error:
-            self.fail("test_country_from_ssr: Exception when calling download_sampling_event_by_identifier {}"
+            self.fail("test_country_from_ssr: Exception when calling download_sampling_event_by_attr {}"
                         .format(error))
 
     """
@@ -245,18 +245,18 @@ class TestCountry(TestBase):
 
         try:
 
-            looked_up = api_instance.download_sampling_events_by_identifier('partner_id',
+            looked_up = api_instance.download_sampling_events_by_attr('partner_id',
                                                                            urllib.parse.quote_plus('MDG/TST_0004'))
 
             looked_up = looked_up.sampling_events[0]
             self.assertEqual(looked_up.proxy_location.country, 'MDG')
             self.assertEqual(looked_up.proxy_location.latitude, -19.0)
             self.assertEqual(looked_up.proxy_location.longitude, 47.0)
-            self.assertEqual(looked_up.proxy_location.identifiers[0].identifier_value, 'Madagascar')
+            self.assertEqual(looked_up.proxy_location.attrs[0].attr_value, 'Madagascar')
 
             msgs = [
-                "Conflicting Country value\tnot updated {{'accuracy': None, 'country': 'MDG', 'curated_name': None, 'curation_method': None, 'identifiers': [{{'identifier_source': 'countries', 'identifier_type': 'partner_name', 'identifier_value': 'Maevatanana', 'study_name': '9052'}}], 'latitude': -16.94223, 'location_id': '{location_id}', 'longitude': 46.83144, 'notes': 'countries.tsv'}}\t{event_id}\t9052\tMDG\tIN\t[('id_value', 'CT0004-C')]".format(location_id=looked_up.location_id, event_id=looked_up.sampling_event_id),
-                "Conflicting Country value\tproxy not updated {{'accuracy': None, 'country': 'MDG', 'curated_name': None, 'curation_method': None, 'identifiers': [{{'identifier_source': 'countries', 'identifier_type': 'partner_name', 'identifier_value': 'Madagascar', 'study_name': '9052'}}], 'latitude': -19.0, 'location_id': '{location_id}', 'longitude': 47.0, 'notes': 'countries.tsv'}}\t{event_id}\t9052\tMDG\tIN\t[('id_value', 'CT0004-C')]".format(location_id=looked_up.proxy_location_id, event_id=looked_up.sampling_event_id)
+                "Conflicting Country value\tnot updated {{'accuracy': None, 'attrs': [{{'attr_source': 'countries', 'attr_type': 'partner_name', 'attr_value': 'Maevatanana', 'study_name': '9052'}}], 'country': 'MDG', 'curated_name': None, 'curation_method': None, 'latitude': -16.94223, 'location_id': '{location_id}', 'longitude': 46.83144, 'notes': 'countries.tsv'}}\t{event_id}\t9052\tMDG\tIN\t[('id_value', 'CT0004-C')]".format(location_id=looked_up.location_id, event_id=looked_up.sampling_event_id),
+                "Conflicting Country value\tproxy not updated {{'accuracy': None, 'attrs': [{{'attr_source': 'countries', 'attr_type': 'partner_name', 'attr_value': 'Madagascar', 'study_name': '9052'}}], 'country': 'MDG', 'curated_name': None, 'curation_method': None, 'latitude': -19.0, 'location_id': '{location_id}', 'longitude': 47.0, 'notes': 'countries.tsv'}}\t{event_id}\t9052\tMDG\tIN\t[('id_value', 'CT0004-C')]".format(location_id=looked_up.proxy_location_id, event_id=looked_up.sampling_event_id)
             ]
 
             for msg in msgs:
@@ -265,13 +265,13 @@ class TestCountry(TestBase):
             self.assertEqual(looked_up.location.country, 'MDG')
             self.assertEqual(looked_up.location.latitude, -16.94223)
             self.assertEqual(looked_up.location.longitude, 46.83144)
-            for ident in looked_up.location.identifiers:
+            for ident in looked_up.location.attrs:
                 if ident.study_name[:4] == looked_up.study_name[:4]:
-                    self.assertNotEqual(ident.identifier_value, 'India')
+                    self.assertNotEqual(ident.attr_value, 'India')
             self.assertEqual(looked_up.study_name[:4], '9052')
             if looked_up.location_id not in TestCountry._locations:
                 TestCountry._locations.append(looked_up.location_id)
         except ApiException as error:
-            self.fail("test_country_mismatch: Exception when calling download_sampling_event_by_identifier {}"
+            self.fail("test_country_mismatch: Exception when calling download_sampling_event_by_attr {}"
                         .format(error))
 

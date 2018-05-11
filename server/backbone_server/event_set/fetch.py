@@ -4,7 +4,7 @@ from swagger_server.models.event_set_note import EventSetNote
 from swagger_server.models.event_set import EventSet
 
 from swagger_server.models.location import Location
-from swagger_server.models.identifier import Identifier
+from swagger_server.models.attr import Attr
 
 from backbone_server.sampling_event.fetch import SamplingEventFetch
 

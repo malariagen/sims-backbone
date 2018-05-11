@@ -28,11 +28,11 @@ describe('EventListComponent', () => {
     "locations": {
       "ba58650c-f365-41bd-a73d-d8517e9a01e5": {
         "country": "KHM",
-        "identifiers": [
+        "attrs": [
           {
-            "identifier_source": "test",
-            "identifier_type": "partner_name",
-            "identifier_value": "Cambodia",
+            "attr_source": "test",
+            "attr_type": "partner_name",
+            "attr_value": "Cambodia",
             "study_name": "9999"
           }
         ],
@@ -45,16 +45,16 @@ describe('EventListComponent', () => {
     "sampling_events": [
       {
         "doc": "2003-06-01",
-        "identifiers": [
+        "attrs": [
           {
-            "identifier_source": "vobs_dump",
-            "identifier_type": "partner_id",
-            "identifier_value": "9999_1"
+            "attr_source": "vobs_dump",
+            "attr_type": "partner_id",
+            "attr_value": "9999_1"
           },
           {
-            "identifier_source": "vobs_dump",
-            "identifier_type": "roma_id",
-            "identifier_value": "9999_1R"
+            "attr_source": "vobs_dump",
+            "attr_type": "roma_id",
+            "attr_value": "9999_1R"
           }
         ],
         "location_id": "ba58650c-f365-41bd-a73d-d8517e9a01e5",
@@ -70,16 +70,16 @@ describe('EventListComponent', () => {
       },
       {
         "doc": "2003-06-01",
-        "identifiers": [
+        "attrs": [
           {
-            "identifier_source": "vobs_dump",
-            "identifier_type": "partner_id",
-            "identifier_value": "9999_2"
+            "attr_source": "vobs_dump",
+            "attr_type": "partner_id",
+            "attr_value": "9999_2"
           },
           {
-            "identifier_source": "vobs_dump",
-            "identifier_type": "roma_id",
-            "identifier_value": "9999_2R"
+            "attr_source": "vobs_dump",
+            "attr_type": "roma_id",
+            "attr_value": "9999_2R"
           }
         ],
         "location_id": "ba58650c-f365-41bd-a73d-d8517e9a01e5",
@@ -136,12 +136,12 @@ describe('EventListComponent', () => {
         let sampling_event = test_entries.sampling_events[i];
         
         expect(row.study_id).toBe(sampling_event.study_name);
-        sampling_event.identifiers.forEach(ident => {
-          if(ident.identifier_type == 'partner_id') {
-            expect(row.partner_id).toBe(ident.identifier_value);    
+        sampling_event.attrs.forEach(ident => {
+          if(ident.attr_type == 'partner_id') {
+            expect(row.partner_id).toBe(ident.attr_value);    
           }
-          if(ident.identifier_type == 'roma_id') {
-            expect(row.roma_id).toBe(ident.identifier_value);    
+          if(ident.attr_type == 'roma_id') {
+            expect(row.roma_id).toBe(ident.attr_value);    
           }
         });
         expect(row.doc).toBe(sampling_event.doc);
@@ -149,9 +149,9 @@ describe('EventListComponent', () => {
         expect(row.taxa).toBe((sampling_event.partner_taxonomies[0].taxonomy_id).toString());
         let location = test_entries.locations[test_entries.sampling_events[i].location_id];
         let partner_name : string;
-        location.identifiers.forEach(ident => {
-          if (ident.study_name == sampling_event.study_name && ident.identifier_type == 'partner_name') {
-            partner_name = ident.identifier_value;
+        location.attrs.forEach(ident => {
+          if (ident.study_name == sampling_event.study_name && ident.attr_type == 'partner_name') {
+            partner_name = ident.attr_value;
           }
         });
         expect(row.partner_location_name).toBe(partner_name);

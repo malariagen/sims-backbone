@@ -1,6 +1,6 @@
 from swagger_server.models.location import Location
 from swagger_server.models.locations import Locations
-from swagger_server.models.identifier import Identifier
+from swagger_server.models.attr import Attr
 from backbone_server.errors.missing_key_exception import MissingKeyException
 
 from backbone_server.location.fetch import LocationFetch
@@ -24,7 +24,7 @@ class LocationsGet():
                 query_body = ' FROM locations l'
                 args = ()
                 if study_code or orderby == 'study_name':
-                    query_body = query_body + ''' LEFT JOIN location_identifiers li ON li.location_id = l.id
+                    query_body = query_body + ''' LEFT JOIN location_attrs li ON li.location_id = l.id
                     LEFT JOIN studies s ON s.id = li.study_id'''
                     if study_code:
                         query_body = query_body + " WHERE study_code = %s"

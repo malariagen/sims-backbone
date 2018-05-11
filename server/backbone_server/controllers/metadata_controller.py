@@ -5,7 +5,7 @@ from swagger_server.models.taxonomy import Taxonomy
 from backbone_server.metadata.country import CountryGet
 from backbone_server.metadata.taxonomies import TaxonomiesGet
 from backbone_server.metadata.taxonomy_post import TaxonomyPost
-from backbone_server.metadata.identifier_types import IdentifierTypesGet
+from backbone_server.metadata.attr_types import AttrTypesGet
 
 from backbone_server.controllers.base_controller  import BaseController
 
@@ -64,33 +64,33 @@ class MetadataController(BaseController):
 
         return country, retcode
 
-    def get_identifier_types(self, user=None, auths=None):  # noqa: E501
-        """fetches all the identifier types
+    def get_attr_types(self, user=None, auths=None):  # noqa: E501
+        """fetches all the attr types
 
-        returns all identifier types in use # noqa: E501
+        returns all attr types in use # noqa: E501
 
 
         :rtype: List[str]
         """
-        get = IdentifierTypesGet(self.get_connection())
+        get = AttrTypesGet(self.get_connection())
 
-        ident_types = get.get('identifiers')
+        ident_types = get.get('attrs')
 
         return ident_types, 200
 
 
-    def get_location_identifier_types(self, user=None, auths=None):  # noqa: E501
-        """fetches all the location identifier types
+    def get_location_attr_types(self, user=None, auths=None):  # noqa: E501
+        """fetches all the location attr types
 
-        returns all location identifier types in use # noqa: E501
+        returns all location attr types in use # noqa: E501
 
 
         :rtype: List[str]
         """
 
-        get = IdentifierTypesGet(self.get_connection())
+        get = AttrTypesGet(self.get_connection())
 
-        ident_types = get.get('location_identifiers')
+        ident_types = get.get('location_attrs')
 
         return ident_types, 200
 

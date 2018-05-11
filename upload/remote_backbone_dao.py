@@ -76,10 +76,10 @@ class RemoteBackboneDAO(AbstractBackboneDAO):
 
         return ret
 
-    def download_sampling_events_by_identifier(self, identifier_type, identifier_value):
+    def download_sampling_events_by_attr(self, attr_type, attr_value):
 
-        value = urllib.parse.quote_plus(identifier_value)
-        found_events = super(RemoteBackboneDAO, self).download_sampling_events_by_identifier(identifier_type,
+        value = urllib.parse.quote_plus(attr_value)
+        found_events = super(RemoteBackboneDAO, self).download_sampling_events_by_attr(attr_type,
                                                                                    value)
 
         return found_events

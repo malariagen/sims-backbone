@@ -325,9 +325,9 @@ class Uploader():
         return self.process_sampling_event(values, samp, existing)
 
     """
-        returns true if the identifier is already in, or successfully added to, the location
+        returns true if the attr is already in, or successfully added to, the location
     """
-    def add_location_identifier(self, sampling_event, study_id, looked_up, ident_type, partner_name, values):
+    def add_location_attr(self, sampling_event, study_id, looked_up, ident_type, partner_name, values):
 
         if not looked_up:
             return False
@@ -335,34 +335,34 @@ class Uploader():
         ret = False
 
         found = False
-        if looked_up.identifiers and study_id:
-            for ident in looked_up.identifiers:
+        if looked_up.attrs and study_id:
+            for ident in looked_up.attrs:
 #                print(ident)
 #                print(study_id)
                 if ident.study_name[:4] == study_id[:4] and \
-                    ident.identifier_value == partner_name:
+                    ident.attr_value == partner_name:
                     found = True
 
         if not found:
             existing_location = deepcopy(looked_up)
-            #print("adding identifier1 {}".format(looked_up))
-            if not looked_up.identifiers:
-                looked_up.identifiers = []
+            #print("adding attr1 {}".format(looked_up))
+            if not looked_up.attrs:
+                looked_up.attrs = []
             #print("values: {} {}".format(study_id, partner_name))
             if study_id and partner_name:
-#                print("adding identifier {}".format(looked_up.identifiers))
-                new_ident = swagger_client.Identifier( identifier_type = 'partner_name', 
-                                                      identifier_value = partner_name,
-                                                      identifier_source = self._event_set, 
+#                print("adding attr {}".format(looked_up.attrs))
+                new_ident = swagger_client.Attr( attr_type = 'partner_name', 
+                                                      attr_value = partner_name,
+                                                      attr_source = self._event_set, 
                                                       study_name = study_id)
-                #print("adding identifier2 {}".format(new_ident))
-                looked_up.identifiers.append(new_ident)
-                #print("adding identifier3 {}".format(looked_up))
+                #print("adding attr2 {}".format(new_ident))
+                looked_up.attrs.append(new_ident)
+                #print("adding attr3 {}".format(looked_up))
                 try:
                     updated = self._dao.update_location(looked_up.location_id, looked_up)
                     ret = True
                 except ApiException as err:
-                    #print("Error adding location identifier {} {}".format(looked_up, err))
+                    #print("Error adding location attr {} {}".format(looked_up, err))
                     message = 'duplicate location:{}:{}'.format(ident_type,partner_name)
                     try:
                         conflict = self._dao.download_partner_location(partner_name)
@@ -379,9 +379,9 @@ class Uploader():
                             conflict_loc = self._dao.download_gps_location(looked_up.latitude,
                                                                               looked_up.longitude)
                             for loc in conflict_loc.locations:
-                                for cname in loc.identifiers:
+                                for cname in loc.attrs:
                                     if cname.study_name[:4] == study_id[:4]:
-                                        message = message + ':' + cname.identifier_value
+                                        message = message + ':' + cname.attr_value
                                 self.report_conflict(sampling_event, "Location name", looked_up,
                                                      loc, message, values)
                         except ApiException as err:
@@ -429,10 +429,10 @@ class Uploader():
 
         loc = swagger_client.Location(None)
 
-        loc.identifiers = [
-            swagger_client.Identifier(identifier_type='partner_name',
-                                      identifier_value=partner_name,
-                                      identifier_source=self._event_set, study_name=study_id)
+        loc.attrs = [
+            swagger_client.Attr(attr_type='partner_name',
+                                      attr_value=partner_name,
+                                      attr_source=self._event_set, study_name=study_id)
         ]
 
         try:
@@ -478,7 +478,7 @@ class Uploader():
             try:
                 named_locations = self._dao.download_partner_location(partner_name)
                 for named_loc in named_locations.locations:
-                    for ident in named_loc.identifiers:
+                    for ident in named_loc.attrs:
                         if ident.study_name[:4] == study_id[:4]:
                             if loc.latitude and loc.longitude:
                                 self.report_conflict(existing_event, "Location name", loc,
@@ -492,9 +492,9 @@ class Uploader():
         elif looked_up.count > 0:
             name_match = False
             for loc in looked_up.locations:
-                for ident in loc.identifiers:
-                    if ident.identifier_type == 'partner_name' and \
-                       ident.identifier_value == partner_name and \
+                for ident in loc.attrs:
+                    if ident.attr_type == 'partner_name' and \
+                       ident.attr_value == partner_name and \
                        ident.study_name[:4] == study_id[:4]:
                         name_match = True
                         looked_up_location = loc
@@ -541,7 +541,7 @@ class Uploader():
             try:
                 #print("Found location {}".format(looked_up))
                 loc.location_id = looked_up.location_id
-                added_id = self.add_location_identifier(existing_event, study_id, looked_up, prefix, partner_name, values)
+                added_id = self.add_location_attr(existing_event, study_id, looked_up, prefix, partner_name, values)
 
                 if added_id:
                     try:
@@ -609,41 +609,41 @@ class Uploader():
 
         idents = []
         if 'sample_roma_id' in values:
-            idents.append(swagger_client.Identifier ('roma_id', values['sample_roma_id'],
+            idents.append(swagger_client.Attr ('roma_id', values['sample_roma_id'],
                                                      self._event_set))
         if 'sample_partner_id' in values and values['sample_partner_id']:
-            idents.append(swagger_client.Identifier ('partner_id', values['sample_partner_id'],
+            idents.append(swagger_client.Attr ('partner_id', values['sample_partner_id'],
                                                      self._event_set))
         if 'sample_partner_id_1' in values and values['sample_partner_id_1']:
-            idents.append(swagger_client.Identifier ('partner_id', values['sample_partner_id_1'],
+            idents.append(swagger_client.Attr ('partner_id', values['sample_partner_id_1'],
                                                      self._event_set))
         if 'sample_oxford_id' in values and values['sample_oxford_id']:
-            idents.append(swagger_client.Identifier ('oxford_id', values['sample_oxford_id'],
+            idents.append(swagger_client.Attr ('oxford_id', values['sample_oxford_id'],
                                                      self._event_set))
         if 'sample_lims_id' in values and values['sample_lims_id']:
-            idents.append(swagger_client.Identifier ('sanger_lims_id', values['sample_lims_id'],
+            idents.append(swagger_client.Attr ('sanger_lims_id', values['sample_lims_id'],
                                                      self._event_set))
         if 'sample_alternate_oxford_id' in values and len(values['sample_alternate_oxford_id']) > 0:
-            idents.append(swagger_client.Identifier ('alt_oxford_id',
+            idents.append(swagger_client.Attr ('alt_oxford_id',
                                                      values['sample_alternate_oxford_id'],
                                                      self._event_set))
         if 'sample_source_id' in values and values['sample_source_id'] and values['sample_source_type']:
-            idents.append(swagger_client.Identifier (values['sample_source_type'],
+            idents.append(swagger_client.Attr (values['sample_source_type'],
                                                      values['sample_source_id'],
                                                      self._event_set))
         if 'sample_source_id1' in values and values['sample_source_id1'] and values['sample_source_type1']:
-            idents.append(swagger_client.Identifier (values['sample_source_type1'],
+            idents.append(swagger_client.Attr (values['sample_source_type1'],
                                                      values['sample_source_id1'],
                                                      self._event_set))
         if 'sample_source_id2' in values and values['sample_source_id2'] and values['sample_source_type2']:
-            idents.append(swagger_client.Identifier (values['sample_source_type2'],
+            idents.append(swagger_client.Attr (values['sample_source_type2'],
                                                      values['sample_source_id2'],
                                                      self._event_set))
         if 'sample_individual_id' in values:
-            idents.append(swagger_client.Identifier ('individual_id', values['sample_individual_id'],
+            idents.append(swagger_client.Attr ('individual_id', values['sample_individual_id'],
                                                      self._event_set))
 
-        samp.identifiers = idents
+        samp.attrs = idents
 
         #print(values)
         #print(samp)
@@ -680,27 +680,27 @@ class Uploader():
                 return existing
 
         #print ("not in cache: {}".format(samp))
-        if len(samp.identifiers) > 0:
-            #print("Checking identifiers {}".format(samp.identifiers))
-            for ident in samp.identifiers:
+        if len(samp.attrs) > 0:
+            #print("Checking attrs {}".format(samp.attrs))
+            for ident in samp.attrs:
                 try:
-                    #print("Looking for {} {}".format(ident.identifier_type, ident.identifier_value))
+                    #print("Looking for {} {}".format(ident.attr_type, ident.attr_value))
 
-                    found_events = self._dao.download_sampling_events_by_identifier(ident.identifier_type,
-                                                                                       ident.identifier_value)
+                    found_events = self._dao.download_sampling_events_by_attr(ident.attr_type,
+                                                                                       ident.attr_value)
 
                     for found in found_events.sampling_events:
-                        if ident.identifier_type == 'individual_id':
+                        if ident.attr_type == 'individual_id':
                             #individual_id is used to group sampling events
                             # and is not a unique ident
                             continue
-                        if ident.identifier_type == 'partner_id':
+                        if ident.attr_type == 'partner_id':
                             #Partner ids within 1087 are not unique
                             if samp.study_name[:4] == '1087':
                                 continue
                             if 'sample_lims_id' in values and values['sample_lims_id']:
                                 #Partner id is not the only id
-                                if len(samp.identifiers) > 2:
+                                if len(samp.attrs) > 2:
                                     continue
                                 #Probably still not safe even though at this point it's a unique partner_id
                                 continue
@@ -722,7 +722,7 @@ class Uploader():
                         if existing and existing.sampling_event_id != found.sampling_event_id:
                             #self.report("Merging into {} using {}"
                             #                .format(existing.sampling_event_id,
-                            #                                   ident.identifier_type), values)
+                            #                                   ident.attr_type), values)
                             found = self.merge_events(existing, found, values)
                         existing = found
                         if samp.study_name[:4] == '0000':
@@ -756,20 +756,20 @@ class Uploader():
 
         change_reasons = []
 
-        for new_ident in samp.identifiers:
+        for new_ident in samp.attrs:
             found = False
-            for existing_ident in existing.identifiers:
-                #Depending on the DAO used the identifier can have a different type
+            for existing_ident in existing.attrs:
+                #Depending on the DAO used the attr can have a different type
                 #so can't use ==
-                if existing_ident.identifier_source == new_ident.identifier_source and \
-                   existing_ident.identifier_type == new_ident.identifier_type and \
-                   existing_ident.identifier_value == new_ident.identifier_value and \
+                if existing_ident.attr_source == new_ident.attr_source and \
+                   existing_ident.attr_type == new_ident.attr_type and \
+                   existing_ident.attr_value == new_ident.attr_value and \
                    existing_ident.study_name == new_ident.study_name:
                     found = True
             if not found:
                 new_ident_value = True
                 change_reasons.append("Adding ident {}".format(new_ident))
-                existing.identifiers.append(new_ident)
+                existing.attrs.append(new_ident)
 
 #        print("existing {} {}".format(existing, study_id))
         if samp.study_name:
@@ -804,9 +804,9 @@ class Uploader():
         else:
             if existing.study_name:
 #                    print("Adding loc ident {} {}".format(location_name, existing.study_name))
-                self.add_location_identifier(existing, existing.study_name, location, '', location_name,
+                self.add_location_attr(existing, existing.study_name, location, '', location_name,
                                              values)
-                self.add_location_identifier(existing, existing.study_name, proxy_location, 'proxy_',
+                self.add_location_attr(existing, existing.study_name, proxy_location, 'proxy_',
                                          proxy_location_name, values)
 
         if samp.doc:
@@ -938,7 +938,7 @@ class Uploader():
 
         else:
             #print("Creating {}".format(samp))
-            if len(samp.identifiers) == 0:
+            if len(samp.attrs) == 0:
                 return None
 
             #Make sure no implied edit - location should have been updated before here

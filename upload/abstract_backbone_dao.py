@@ -51,10 +51,10 @@ class AbstractBackboneDAO(abc.ABC):
 
         return existing
 
-    def download_sampling_events_by_identifier(self, identifier_type, identifier_value):
+    def download_sampling_events_by_attr(self, attr_type, attr_value):
 
-        found_events = self.se_api_instance.download_sampling_events_by_identifier(identifier_type,
-                                                                                   identifier_value)
+        found_events = self.se_api_instance.download_sampling_events_by_attr(attr_type,
+                                                                                   attr_value)
 
         return found_events
 

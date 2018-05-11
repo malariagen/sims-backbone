@@ -4,7 +4,7 @@ from backbone_server.location.edit import LocationEdit
 from backbone_server.location.fetch import LocationFetch
 
 from swagger_server.models.location import Location
-from swagger_server.models.identifier import Identifier
+from swagger_server.models.attr import Attr
 
 import psycopg2
 
@@ -36,7 +36,7 @@ class LocationPost(LocationEdit):
 
                 cursor.execute(stmt, args)
 
-                LocationEdit.add_identifiers(cursor, uuid_val, location)
+                LocationEdit.add_attrs(cursor, uuid_val, location)
 
                 location = LocationFetch.fetch(cursor, uuid_val)
 

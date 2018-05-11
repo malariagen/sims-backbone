@@ -50,20 +50,20 @@ def get_country_metadata(event, context):
 
     return create_response(event, retcode, value)
 
-def get_identifier_types(event, context):
+def get_attr_types(event, context):
 
     user = event['requestContext']['authorizer']['principalId']
 
-    value, retcode = metadata_controller.get_identifier_types(user,
+    value, retcode = metadata_controller.get_attr_types(user,
                                                                metadata_controller.authorizer(event['requestContext']['authorizer']))
 
     return create_response(event, retcode, value)
 
-def get_location_identifier_types(event, context):
+def get_location_attr_types(event, context):
 
     user = event['requestContext']['authorizer']['principalId']
 
-    value, retcode = metadata_controller.get_location_identifier_types(user,
+    value, retcode = metadata_controller.get_location_attr_types(user,
                                                                metadata_controller.authorizer(event['requestContext']['authorizer']))
 
     return create_response(event, retcode, value)

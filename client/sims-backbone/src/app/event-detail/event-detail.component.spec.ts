@@ -4,9 +4,9 @@ import { EventDetailComponent } from './event-detail.component';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { Component, Input } from '@angular/core';
 
-@Component({ selector: 'app-identifier-table', template: '' })
-class IdentifiersTableStubComponent {
-  @Input() identifiers;
+@Component({ selector: 'app-attr-table', template: '' })
+class AttrsTableStubComponent {
+  @Input() attrs;
 }
 
 @Component({ selector: 'app-location-view', template: '' })
@@ -21,7 +21,7 @@ describe('EventDetailComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [FlexLayoutModule],
-      declarations: [ EventDetailComponent, IdentifiersTableStubComponent, LocationViewStubComponent ]
+      declarations: [ EventDetailComponent, AttrsTableStubComponent, LocationViewStubComponent ]
     })
     .compileComponents();
   }));

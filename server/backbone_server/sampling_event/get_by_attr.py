@@ -7,28 +7,28 @@ from backbone_server.sampling_event.fetch import SamplingEventFetch
 
 import logging
 
-class SamplingEventGetByIdentifier():
+class SamplingEventGetByAttr():
 
     def __init__(self, conn):
         self._logger = logging.getLogger(__name__)
         self._connection = conn
 
-    def get(self, identifier_type, identifier_value, study_name):
+    def get(self, attr_type, attr_value, study_name):
 
         with self._connection:
             with self._connection.cursor() as cursor:
 
                 locations = {}
 
-                stmt = '''SELECT DISTINCT sampling_event_id FROM identifiers
-                WHERE identifier_type = %s AND identifier_value = %s'''
-                args = (identifier_type, identifier_value)
+                stmt = '''SELECT DISTINCT sampling_event_id FROM attrs
+                WHERE attr_type = %s AND attr_value = %s'''
+                args = (attr_type, attr_value)
 
                 if study_name:
-                    stmt = '''SELECT DISTINCT sampling_event_id FROM identifiers
-                    LEFT JOIN sampling_events ON identifiers.sampling_event_id=sampling_events.id
+                    stmt = '''SELECT DISTINCT sampling_event_id FROM attrs
+                    LEFT JOIN sampling_events ON attrs.sampling_event_id=sampling_events.id
                     LEFT JOIN studies ON sampling_events.study_id=studies.id
-                WHERE identifier_type = %s AND identifier_value = %s AND study_code = %s'''
+                WHERE attr_type = %s AND attr_value = %s AND study_code = %s'''
                     args = args + (study_name[:4],)
 
                 cursor.execute(stmt, args)
@@ -55,11 +55,11 @@ class SamplingEventGetByIdentifier():
 
         #partner_name has a unique key
         if sampling_events.count == 0:
-            raise MissingKeyException("SamplingEvent not found {} {}".format(identifier_type,
-                                                                      identifier_value))
+            raise MissingKeyException("SamplingEvent not found {} {}".format(attr_type,
+                                                                      attr_value))
 #Allow for when partner ident is used in different studies
 #        if sampling_events.count > 1:
-#            raise MissingKeyException("Too many sampling_events not found {} {}".format(identifier_type,
-#                                                                      identifier_value))
+#            raise MissingKeyException("Too many sampling_events not found {} {}".format(attr_type,
+#                                                                      attr_value))
 
         return sampling_events
