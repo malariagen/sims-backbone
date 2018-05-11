@@ -82,7 +82,7 @@ class LocalSamplingEventApi(BaseLocalApi):
 
         return self.create_response(ret, retcode, 'SamplingEvents')
 
-    def download_sampling_events_by_identifier(self, propName, propValue, study_name=None):
+    def download_sampling_events_by_attr(self, propName, propValue, study_name=None):
         """
         fetches a samplingEvent by property value
         
@@ -93,7 +93,7 @@ class LocalSamplingEventApi(BaseLocalApi):
 
         :rtype: SamplingEvents
         """
-        (ret, retcode) = self.sampling_event_controller.download_sampling_events_by_identifier(propName, propValue,
+        (ret, retcode) = self.sampling_event_controller.download_sampling_events_by_attr(propName, propValue,
                                                                                study_name,
                                                                                self._user,
                                                                                self.auth_tokens())

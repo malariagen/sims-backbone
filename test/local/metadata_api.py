@@ -47,29 +47,29 @@ class LocalMetadataApi(BaseLocalApi):
 
         return self.create_response(ret, retcode, 'Country')
 
-    def get_identifier_types(self):  # noqa: E501
-        """fetches all the identifier types
+    def get_attr_types(self):  # noqa: E501
+        """fetches all the attr types
 
-        returns all identifier types in use # noqa: E501
+        returns all attr types in use # noqa: E501
 
 
         :rtype: List[str]
         """
-        (ret, retcode) = self.metadata_controller.get_identifier_types(self._user,
+        (ret, retcode) = self.metadata_controller.get_attr_types(self._user,
                                                                        self.auth_tokens())
 
         return self.create_response(ret, retcode)
 
 
-    def get_location_identifier_types(self):  # noqa: E501
-        """fetches all the location identifier types
+    def get_location_attr_types(self):  # noqa: E501
+        """fetches all the location attr types
 
-        returns all location identifier types in use # noqa: E501
+        returns all location attr types in use # noqa: E501
 
 
         :rtype: List[str]
         """
-        (ret, retcode) = self.metadata_controller.get_location_identifier_types(self._user,
+        (ret, retcode) = self.metadata_controller.get_location_attr_types(self._user,
                                                                                 self.auth_tokens())
 
         return self.create_response(ret, retcode)
