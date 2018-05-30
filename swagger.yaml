@@ -50,12 +50,12 @@ paths:
           name: location
           required: true
           schema:
-            $ref: '#/definitions/Location'
+            $ref: './definitions/swagger.yaml#/definitions/Location'
       responses:
         '200':
           description: successful operation
           schema:
-            $ref: '#/definitions/Location'
+            $ref: './definitions/swagger.yaml#/definitions/Location'
   '/location/{locationId}':
     get:
       tags:
@@ -76,7 +76,7 @@ paths:
         '200':
           description: successful operation
           schema:
-            $ref: '#/definitions/Location'
+            $ref: './definitions/swagger.yaml#/definitions/Location'
     put:
       tags:
         - location
@@ -97,12 +97,12 @@ paths:
           name: location
           required: true
           schema:
-            $ref: '#/definitions/Location'
+            $ref: './definitions/swagger.yaml#/definitions/Location'
       responses:
         '200':
           description: successful operation
           schema:
-            $ref: '#/definitions/Location'
+            $ref: './definitions/swagger.yaml#/definitions/Location'
         '404':
           description: Location not found
           schema:
@@ -153,7 +153,7 @@ paths:
         '200':
           description: successful operation
           schema:
-            $ref: '#/definitions/Locations'
+            $ref: './definitions/swagger.yaml#/definitions/Locations'
         '404':
           description: 'location not found'
           schema:
@@ -181,7 +181,7 @@ paths:
         '200':
           description: successful operation
           schema:
-            $ref: '#/definitions/Locations'
+            $ref: './definitions/swagger.yaml#/definitions/Locations'
         '404':
           description: 'location not found'
           schema:
@@ -228,7 +228,7 @@ paths:
         '200':
           description: successful operation
           schema:
-            $ref: '#/definitions/Locations'
+            $ref: './definitions/swagger.yaml#/definitions/Locations'
   '/samplingEvent':
     post:
       tags:
@@ -244,12 +244,12 @@ paths:
           name: samplingEvent
           required: true
           schema:
-            $ref: '#/definitions/SamplingEvent'
+            $ref: './definitions/swagger.yaml#/definitions/SamplingEvent'
       responses:
         '200':
           description: successful operation
           schema:
-            $ref: '#/definitions/SamplingEvent'
+            $ref: './definitions/swagger.yaml#/definitions/SamplingEvent'
   '/samplingEvent/{samplingEventId}':
     get:
       tags:
@@ -270,7 +270,7 @@ paths:
         '200':
           description: successful operation
           schema:
-            $ref: '#/definitions/SamplingEvent'
+            $ref: './definitions/swagger.yaml#/definitions/SamplingEvent'
     put:
       tags:
         - samplingEvent
@@ -292,12 +292,12 @@ paths:
           name: samplingEvent
           required: true
           schema:
-            $ref: '#/definitions/SamplingEvent'
+            $ref: './definitions/swagger.yaml#/definitions/SamplingEvent'
       responses:
         '200':
           description: successful operation
           schema:
-            $ref: '#/definitions/SamplingEvent'
+            $ref: './definitions/swagger.yaml#/definitions/SamplingEvent'
         '404':
           description: SamplingEvent not found
           schema:
@@ -351,7 +351,7 @@ paths:
         '200':
           description: successful operation
           schema:
-            $ref: '#/definitions/SamplingEvents'
+            $ref: './definitions/swagger.yaml#/definitions/SamplingEvents'
   '/samplingEvents/location/{locationId}':
     get:
       tags:
@@ -382,7 +382,7 @@ paths:
         '200':
           description: successful operation
           schema:
-            $ref: '#/definitions/SamplingEvents'
+            $ref: './definitions/swagger.yaml#/definitions/SamplingEvents'
   '/samplingEvents/study/{studyName}':
     get:
       tags:
@@ -412,7 +412,7 @@ paths:
         '200':
           description: successful operation
           schema:
-            $ref: '#/definitions/SamplingEvents'
+            $ref: './definitions/swagger.yaml#/definitions/SamplingEvents'
   '/samplingEvents/taxa/{taxaId}':
     get:
       tags:
@@ -442,7 +442,7 @@ paths:
         '200':
           description: successful operation
           schema:
-            $ref: '#/definitions/SamplingEvents'
+            $ref: './definitions/swagger.yaml#/definitions/SamplingEvents'
   '/samplingEvents/eventSet/{eventSetId}':
     get:
       tags:
@@ -472,7 +472,7 @@ paths:
         '200':
           description: successful operation
           schema:
-            $ref: '#/definitions/SamplingEvents'
+            $ref: './definitions/swagger.yaml#/definitions/SamplingEvents'
   '/metadata/country/{countryId}':
     get:
       tags:
@@ -492,7 +492,7 @@ paths:
         '200':
           description: successful operation
           schema:
-            $ref: '#/definitions/Country'
+            $ref: './definitions/swagger.yaml#/definitions/Country'
   '/metadata/taxonomy':
     get:
       tags:
@@ -506,7 +506,7 @@ paths:
         '200':
           description: successful operation
           schema:
-            $ref: '#/definitions/Taxonomies'
+            $ref: './definitions/swagger.yaml#/definitions/Taxonomies'
     post:
       tags:
         - metadata
@@ -521,12 +521,12 @@ paths:
           name: taxonomy
           required: true
           schema:
-            $ref: '#/definitions/Taxonomy'
+            $ref: './definitions/swagger.yaml#/definitions/Taxonomy'
       responses:
         '200':
           description: successful operation
           schema:
-            $ref: '#/definitions/Taxonomy'
+            $ref: './definitions/swagger.yaml#/definitions/Taxonomy'
   '/metadata/attr_types':
     get:
       tags:
@@ -583,7 +583,7 @@ paths:
         '200':
           description: successful operation
           schema:
-            $ref: '#/definitions/Studies'
+            $ref: './definitions/swagger.yaml#/definitions/Studies'
   '/study/{studyName}':
     get:
       tags:
@@ -603,7 +603,7 @@ paths:
         '200':
           description: successful operation
           schema:
-            $ref: '#/definitions/Study'
+            $ref: './definitions/swagger.yaml#/definitions/Study'
     put:
       tags:
         - study
@@ -624,12 +624,12 @@ paths:
           name: study
           required: true
           schema:
-            $ref: '#/definitions/Study'
+            $ref: './definitions/swagger.yaml#/definitions/Study'
       responses:
         '200':
           description: successful operation
           schema:
-            $ref: '#/definitions/Study'
+            $ref: './definitions/swagger.yaml#/definitions/Study'
         '404':
           description: study not found
           schema:
@@ -653,7 +653,7 @@ paths:
         '201':
           description: successful operation
           schema:
-            $ref: '#/definitions/EventSet'
+            $ref: './definitions/swagger.yaml#/definitions/EventSet'
     get:
       tags:
         - eventSet
@@ -682,7 +682,7 @@ paths:
         '200':
           description: successful operation
           schema:
-            $ref: '#/definitions/EventSet'
+            $ref: './definitions/swagger.yaml#/definitions/EventSet'
     put:
       tags:
         - eventSet
@@ -703,12 +703,12 @@ paths:
           name: eventSet
           required: true
           schema:
-            $ref: '#/definitions/EventSet'
+            $ref: './definitions/swagger.yaml#/definitions/EventSet'
       responses:
         '200':
           description: successful operation
           schema:
-            $ref: '#/definitions/EventSet'
+            $ref: './definitions/swagger.yaml#/definitions/EventSet'
         '404':
           description: EventSet not found
           schema:
@@ -807,7 +807,7 @@ paths:
           name: note
           required: true
           schema:
-            $ref: '#/definitions/EventSetNote'
+            $ref: './definitions/swagger.yaml#/definitions/EventSetNote'
       responses:
         '201':
           description: successful operation
@@ -836,7 +836,7 @@ paths:
           name: note
           required: true
           schema:
-            $ref: '#/definitions/EventSetNote'
+            $ref: './definitions/swagger.yaml#/definitions/EventSetNote'
       responses:
         '200':
           description: successful operation
@@ -879,7 +879,7 @@ paths:
         '200':
           description: successful operation
           schema:
-            $ref: '#/definitions/EventSets'
+            $ref: './definitions/swagger.yaml#/definitions/EventSets'
   '/missingTaxon':
     get:
       tags:
@@ -893,7 +893,7 @@ paths:
         '200':
           description: successful operation
           schema:
-            $ref: '#/definitions/Studies'
+            $ref: './definitions/swagger.yaml#/definitions/Studies'
   '/missingLocations':
     get:
       tags:
@@ -914,7 +914,7 @@ paths:
         '200':
           description: successful operation
           schema:
-            $ref: '#/definitions/Studies'
+            $ref: './definitions/swagger.yaml#/definitions/Studies'
   '/uncuratedLocations':
     get:
       tags:
@@ -928,7 +928,7 @@ paths:
         '200':
           description: successful operation
           schema:
-            $ref: '#/definitions/Studies'
+            $ref: './definitions/swagger.yaml#/definitions/Studies'
   '/multipleLocationNames':
     get:
       tags:
@@ -942,7 +942,7 @@ paths:
         '200':
           description: successful operation
           schema:
-            $ref: '#/definitions/Studies'
+            $ref: './definitions/swagger.yaml#/definitions/Studies'
   '/multipleLocationGPS':
     get:
       tags:
@@ -956,217 +956,4 @@ paths:
         '200':
           description: successful operation
           schema:
-            $ref: '#/definitions/Studies'
-definitions:
-  SamplingEvents:
-    type: object
-    properties:
-      sampling_events:
-        type: array
-        items:
-          $ref: '#/definitions/SamplingEvent'
-      locations:
-        $ref: '#/definitions/LocationMap'
-      count:
-        type: integer
-        description: Used when pagination is applied to return the number of results
-  SamplingEvent:
-    type: object
-    properties:
-      sampling_event_id:
-        type: string
-        format: uuid
-      study_name:
-        type: string
-      doc:
-        type: string
-        format: date
-        description: 'Date of collection'
-      doc_accuracy:
-        type: string
-        enum:
-            - day
-            - month
-            - year
-      location_id:
-        type: string
-        format: uuid
-      location:
-        $ref: '#/definitions/Location'
-      proxy_location_id:
-        type: string
-        format: uuid
-      proxy_location:
-        $ref: '#/definitions/Location'
-      public_location_id:
-        description: 'proxy location if set otherwise location'
-        type: string
-      public_location:
-        description: 'proxy location if set otherwise location'
-        $ref: '#/definitions/Location'
-      partner_species:
-        type: string
-      partner_taxonomies:
-        type: array
-        items:
-            $ref: '#/definitions/Taxonomy'
-      attrs:
-        type: array
-        items:
-            $ref: '#/definitions/Attr'
-      event_sets:
-        type: array
-        items:
-            type: string
-  Locations:
-    type: object
-    properties:
-      locations:
-        type: array
-        items:
-          $ref: '#/definitions/Location'
-      count:
-        type: integer
-        description: Used when pagination is applied to return the number of results
-  Location:
-    type: object
-    properties:
-      location_id:
-        type: string
-        format: uuid
-      latitude:
-        type: number
-      longitude:
-        type: number
-      accuracy:
-        type: string
-        enum:
-            - location
-            - building
-            - city
-            - region
-            - country
-      curated_name:
-        type: string
-      curation_method:
-        type: string
-      country:
-        type: string
-      notes:
-        type: string
-        nullable: true
-      attrs:
-        type: array
-        items:
-            $ref: '#/definitions/Attr'
-  LocationMap:
-    type: object
-    additionalProperties:
-      type: object
-      properties:
-        location_id:
-          type: string
-          format: uuid
-        location:
-          $ref: '#/definitions/Location'
-  Taxonomies:
-    type: object
-    properties:
-      taxonomies:
-        type: array
-        items:
-          $ref: '#/definitions/Taxonomy'
-      count:
-        type: integer
-        description: Used when pagination is applied to return the number of results
-  Taxonomy:
-    type: object
-    properties:
-      taxonomy_id:
-        type: number
-      name:
-        type: string
-      rank:
-        type: string
-  Attr:
-    type: object
-    properties:
-      attr_type:
-        type: string
-      attr_value:
-        type: string
-      attr_source:
-        type: string
-      study_name:
-        type: string
-  Country:
-    type: object
-    properties:
-      english:
-        type: string
-      alpha2:
-        type: string
-      alpha3:
-        type: string
-  Studies:
-    type: object
-    properties:
-      studies:
-        type: array
-        items:
-          $ref: '#/definitions/Study'
-      count:
-        type: integer
-        description: Used when pagination is applied to return the number of results
-  PartnerSpecies:
-    type: object
-    properties:
-      taxa:
-        type: array
-        items:
-          $ref: '#/definitions/Taxonomy'
-      partner_species:
-        type: string
-        description: the description as supplied by the partner
-  Study:
-    type: object
-    required:
-        - code
-    properties:
-      code:
-        type: string
-      name:
-        type: string
-      partner_species:
-          type: array
-          items:
-              $ref: '#/definitions/PartnerSpecies'
-      locations:
-          $ref: '#/definitions/Locations'
-  EventSetNote:
-    type: object
-    required:
-        - note_name
-    properties:
-      note_name:
-        type: string
-      note_text:
-        type: string
-  EventSet:
-    type: object
-    properties:
-      event_set_name:
-        type: string
-      members:
-        $ref: '#/definitions/SamplingEvents'
-      notes:
-        type: array
-        items:
-          $ref: '#/definitions/EventSetNote'
-  EventSets:
-    type: object
-    properties:
-      event_sets:
-        type: array
-        items:
-          $ref: '#/definitions/EventSet'
+            $ref: './definitions/swagger.yaml#/definitions/Studies'
