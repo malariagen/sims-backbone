@@ -1,0 +1,29 @@
+    get:
+      tags:
+        - samplingEvent
+      summary: fetches samplingEvents for a given taxonomy classification code
+      description: ''
+      operationId: downloadSamplingEventsByTaxa
+      produces:
+        - application/json
+      parameters:
+        - name: taxaId
+          in: path
+          description: NCBI taxonomy code
+          required: true
+          type: string
+        - name: start
+          in: query
+          description: for pagination start the result set at a record x
+          required: false
+          type: integer
+        - name: count
+          in: query
+          description: for pagination the number of entries to return
+          required: false
+          type: integer
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: './swagger/definitions/swagger.yaml#/definitions/SamplingEvents'

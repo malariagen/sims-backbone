@@ -36,443 +36,29 @@ securityDefinitions:
       x-tokenInfoUrl: "https://sso-dev.cggh.org/sso/oauth2.0/profile"
 paths:
   '/location':
-    post:
-      tags:
-        - location
-      description: 'Create a location'
-      operationId: createLocation
-      produces:
-        - application/json
-      consumes:
-        - application/json
-      parameters:
-        - in: body
-          name: location
-          required: true
-          schema:
-            $ref: './definitions/swagger.yaml#/definitions/Location'
-      responses:
-        '200':
-          description: successful operation
-          schema:
-            $ref: './definitions/swagger.yaml#/definitions/Location'
+    $ref: './swagger/location/create.yaml'
   '/location/{locationId}':
-    get:
-      tags:
-        - location
-      summary: fetches an location
-      description: ''
-      operationId: downloadLocation
-      produces:
-        - application/json
-      parameters:
-        - name: locationId
-          in: path
-          description: ID of location to fetch
-          required: true
-          type: string
-          format: uuid
-      responses:
-        '200':
-          description: successful operation
-          schema:
-            $ref: './definitions/swagger.yaml#/definitions/Location'
-    put:
-      tags:
-        - location
-      summary: updates an location
-      description: ''
-      operationId: updateLocation
-      produces:
-        - application/json
-      consumes:
-        - application/json
-      parameters:
-        - name: locationId
-          in: path
-          description: ID of location to update
-          required: true
-          type: string
-        - in: body
-          name: location
-          required: true
-          schema:
-            $ref: './definitions/swagger.yaml#/definitions/Location'
-      responses:
-        '200':
-          description: successful operation
-          schema:
-            $ref: './definitions/swagger.yaml#/definitions/Location'
-        '404':
-          description: Location not found
-          schema:
-              type: string
-    delete:
-      tags:
-        - location
-      summary: deletes an location
-      description: ''
-      operationId: deleteLocation
-      produces:
-        - application/json
-      parameters:
-        - name: locationId
-          in: path
-          description: ID of location to fetch
-          required: true
-          type: string
-          format: uuid
-      responses:
-        '200':
-          description: successful operation
-        '404':
-          description: 'Location not found'
-          schema:
-              type: string
+    $ref: './swagger/location/item.yaml'
   '/location/gps/{latitude}/{longitude}':
-    get:
-      tags:
-        - location
-      summary: fetches location(s) by GPS
-      description: 'Params must be string as negative numbers not handled - https://github.com/pallets/werkzeug/issues/729 - also want to avoid using float'
-      operationId: downloadGPSLocation
-      produces:
-        - application/json
-      parameters:
-        - name: latitude
-          in: path
-          description: Latitude of location to fetch
-          required: true
-          type: string
-        - name: longitude
-          in: path
-          description: Longitude of location to fetch
-          required: true
-          type: string
-      responses:
-        '200':
-          description: successful operation
-          schema:
-            $ref: './definitions/swagger.yaml#/definitions/Locations'
-        '404':
-          description: 'location not found'
-          schema:
-              type: string
-        '422':
-          description: 'bad parameters'
-          schema:
-              type: string
+    $ref: './swagger/location/gps.yaml'
   '/location/partner/{partnerId}':
-    get:
-      tags:
-        - location
-      summary: fetches location(s) by partner name
-      description: ''
-      operationId: downloadPartnerLocation
-      produces:
-        - application/json
-      parameters:
-        - name: partnerId
-          in: path
-          description: ID of location to fetch
-          required: true
-          type: string
-      responses:
-        '200':
-          description: successful operation
-          schema:
-            $ref: './definitions/swagger.yaml#/definitions/Locations'
-        '404':
-          description: 'location not found'
-          schema:
-              type: string
-        '422':
-          description: 'invalid key in location'
-          schema:
-              type: string
+    $ref: './swagger/location/partner.yaml'
   '/locations':
-    get:
-      tags:
-        - location
-      summary: fetches locations
-      description: ''
-      operationId: downloadLocations
-      produces:
-        - application/json
-      parameters:
-        - name: studyName
-          in: query
-          description: restrict to a particular study
-          required: false
-          type: string
-        - name: start
-          in: query
-          description: for pagination start the result set at a record x
-          required: false
-          type: integer
-        - name: count
-          in: query
-          description: for pagination the number of entries to return
-          required: false
-          type: integer
-        - name: orderby
-          in: query
-          description: how to order the result set
-          required: false
-          type: string
-          default: location
-          enum:
-            - location
-            - study_name
-      responses:
-        '200':
-          description: successful operation
-          schema:
-            $ref: './definitions/swagger.yaml#/definitions/Locations'
+    $ref: './swagger/location/locations.yaml'
   '/samplingEvent':
-    post:
-      tags:
-        - samplingEvent
-      description: 'Create a samplingEvent'
-      operationId: createSamplingEvent
-      produces:
-        - application/json
-      consumes:
-        - application/json
-      parameters:
-        - in: body
-          name: samplingEvent
-          required: true
-          schema:
-            $ref: './definitions/swagger.yaml#/definitions/SamplingEvent'
-      responses:
-        '200':
-          description: successful operation
-          schema:
-            $ref: './definitions/swagger.yaml#/definitions/SamplingEvent'
+    $ref: './swagger/sampling_event/create.yaml'
   '/samplingEvent/{samplingEventId}':
-    get:
-      tags:
-        - samplingEvent
-      summary: fetches an samplingEvent
-      description: ''
-      operationId: downloadSamplingEvent
-      produces:
-        - application/json
-      parameters:
-        - name: samplingEventId
-          in: path
-          description: ID of samplingEvent to fetch
-          required: true
-          type: string
-          format: uuid
-      responses:
-        '200':
-          description: successful operation
-          schema:
-            $ref: './definitions/swagger.yaml#/definitions/SamplingEvent'
-    put:
-      tags:
-        - samplingEvent
-      summary: updates an samplingEvent
-      description: ''
-      operationId: updateSamplingEvent
-      produces:
-        - application/json
-      consumes:
-        - application/json
-      parameters:
-        - name: samplingEventId
-          in: path
-          description: ID of samplingEvent to update
-          required: true
-          type: string
-          format: uuid
-        - in: body
-          name: samplingEvent
-          required: true
-          schema:
-            $ref: './definitions/swagger.yaml#/definitions/SamplingEvent'
-      responses:
-        '200':
-          description: successful operation
-          schema:
-            $ref: './definitions/swagger.yaml#/definitions/SamplingEvent'
-        '404':
-          description: SamplingEvent not found
-          schema:
-              type: string
-    delete:
-      tags:
-        - samplingEvent
-      summary: deletes an samplingEvent
-      description: ''
-      operationId: deleteSamplingEvent
-      produces:
-        - application/json
-      parameters:
-        - name: samplingEventId
-          in: path
-          description: ID of samplingEvent to fetch
-          required: true
-          type: string
-          format: uuid
-      responses:
-        '200':
-          description: successful operation
-        '404':
-          description: SamplingEvent not found
+    $ref: './swagger/sampling_event/item.yaml'
   '/samplingEvents/attr/{propName}/{propValue}':
-    get:
-      tags:
-        - samplingEvent
-      summary: fetches one or more samplingEvents by property value
-      description: ''
-      operationId: downloadSamplingEventsByAttr
-      produces:
-        - application/json
-      parameters:
-        - name: propName
-          in: path
-          description: name of property to search
-          required: true
-          type: string
-        - name: propValue
-          in: path
-          description: matching value of property to search
-          required: true
-          type: string
-        - name: studyName
-          in: query
-          description: if you want to restrict the search to a study e.g. for partner_id
-          required: false
-          type: string
-      responses:
-        '200':
-          description: successful operation
-          schema:
-            $ref: './definitions/swagger.yaml#/definitions/SamplingEvents'
+    $ref: './swagger/sampling_event/by_attr.yaml'
   '/samplingEvents/location/{locationId}':
-    get:
-      tags:
-        - samplingEvent
-      summary: fetches samplingEvents for a location
-      description: ''
-      operationId: downloadSamplingEventsByLocation
-      produces:
-        - application/json
-      parameters:
-        - name: locationId
-          in: path
-          description: location
-          required: true
-          type: string
-          format: uuid
-        - name: start
-          in: query
-          description: for pagination start the result set at a record x
-          required: false
-          type: integer
-        - name: count
-          in: query
-          description: for pagination the number of entries to return
-          required: false
-          type: integer
-      responses:
-        '200':
-          description: successful operation
-          schema:
-            $ref: './definitions/swagger.yaml#/definitions/SamplingEvents'
+    $ref: './swagger/sampling_event/by_location.yaml'
   '/samplingEvents/study/{studyName}':
-    get:
-      tags:
-        - samplingEvent
-      summary: fetches samplingEvents for a study
-      description: ''
-      operationId: downloadSamplingEventsByStudy
-      produces:
-        - application/json
-      parameters:
-        - name: studyName
-          in: path
-          description: 4 digit study code
-          required: true
-          type: string
-        - name: start
-          in: query
-          description: for pagination start the result set at a record x
-          required: false
-          type: integer
-        - name: count
-          in: query
-          description: for pagination the number of entries to return
-          required: false
-          type: integer
-      responses:
-        '200':
-          description: successful operation
-          schema:
-            $ref: './definitions/swagger.yaml#/definitions/SamplingEvents'
+    $ref: './swagger/sampling_event/by_study.yaml'
   '/samplingEvents/taxa/{taxaId}':
-    get:
-      tags:
-        - samplingEvent
-      summary: fetches samplingEvents for a given taxonomy classification code
-      description: ''
-      operationId: downloadSamplingEventsByTaxa
-      produces:
-        - application/json
-      parameters:
-        - name: taxaId
-          in: path
-          description: NCBI taxonomy code
-          required: true
-          type: string
-        - name: start
-          in: query
-          description: for pagination start the result set at a record x
-          required: false
-          type: integer
-        - name: count
-          in: query
-          description: for pagination the number of entries to return
-          required: false
-          type: integer
-      responses:
-        '200':
-          description: successful operation
-          schema:
-            $ref: './definitions/swagger.yaml#/definitions/SamplingEvents'
+    $ref: './swagger/sampling_event/by_taxa.yaml'
   '/samplingEvents/eventSet/{eventSetId}':
-    get:
-      tags:
-        - samplingEvent
-      summary: fetches samplingEvents in a given event set
-      description: ''
-      operationId: downloadSamplingEventsByEventSet
-      produces:
-        - application/json
-      parameters:
-        - name: eventSetId
-          in: path
-          description: Event Set name
-          required: true
-          type: string
-        - name: start
-          in: query
-          description: for pagination start the result set at a record x
-          required: false
-          type: integer
-        - name: count
-          in: query
-          description: for pagination the number of entries to return
-          required: false
-          type: integer
-      responses:
-        '200':
-          description: successful operation
-          schema:
-            $ref: './definitions/swagger.yaml#/definitions/SamplingEvents'
+    $ref: './swagger/sampling_event/by_set.yaml'
   '/metadata/country/{countryId}':
     get:
       tags:
@@ -492,7 +78,7 @@ paths:
         '200':
           description: successful operation
           schema:
-            $ref: './definitions/swagger.yaml#/definitions/Country'
+            $ref: './swagger/definitions/swagger.yaml#/definitions/Country'
   '/metadata/taxonomy':
     get:
       tags:
@@ -506,7 +92,7 @@ paths:
         '200':
           description: successful operation
           schema:
-            $ref: './definitions/swagger.yaml#/definitions/Taxonomies'
+            $ref: './swagger/definitions/swagger.yaml#/definitions/Taxonomies'
     post:
       tags:
         - metadata
@@ -521,12 +107,12 @@ paths:
           name: taxonomy
           required: true
           schema:
-            $ref: './definitions/swagger.yaml#/definitions/Taxonomy'
+            $ref: './swagger/definitions/swagger.yaml#/definitions/Taxonomy'
       responses:
         '200':
           description: successful operation
           schema:
-            $ref: './definitions/swagger.yaml#/definitions/Taxonomy'
+            $ref: './swagger/definitions/swagger.yaml#/definitions/Taxonomy'
   '/metadata/attr_types':
     get:
       tags:
@@ -583,7 +169,7 @@ paths:
         '200':
           description: successful operation
           schema:
-            $ref: './definitions/swagger.yaml#/definitions/Studies'
+            $ref: './swagger/definitions/swagger.yaml#/definitions/Studies'
   '/study/{studyName}':
     get:
       tags:
@@ -603,7 +189,7 @@ paths:
         '200':
           description: successful operation
           schema:
-            $ref: './definitions/swagger.yaml#/definitions/Study'
+            $ref: './swagger/definitions/swagger.yaml#/definitions/Study'
     put:
       tags:
         - study
@@ -624,12 +210,12 @@ paths:
           name: study
           required: true
           schema:
-            $ref: './definitions/swagger.yaml#/definitions/Study'
+            $ref: './swagger/definitions/swagger.yaml#/definitions/Study'
       responses:
         '200':
           description: successful operation
           schema:
-            $ref: './definitions/swagger.yaml#/definitions/Study'
+            $ref: './swagger/definitions/swagger.yaml#/definitions/Study'
         '404':
           description: study not found
           schema:
@@ -653,7 +239,7 @@ paths:
         '201':
           description: successful operation
           schema:
-            $ref: './definitions/swagger.yaml#/definitions/EventSet'
+            $ref: './swagger/definitions/swagger.yaml#/definitions/EventSet'
     get:
       tags:
         - eventSet
@@ -682,7 +268,7 @@ paths:
         '200':
           description: successful operation
           schema:
-            $ref: './definitions/swagger.yaml#/definitions/EventSet'
+            $ref: './swagger/definitions/swagger.yaml#/definitions/EventSet'
     put:
       tags:
         - eventSet
@@ -703,12 +289,12 @@ paths:
           name: eventSet
           required: true
           schema:
-            $ref: './definitions/swagger.yaml#/definitions/EventSet'
+            $ref: './swagger/definitions/swagger.yaml#/definitions/EventSet'
       responses:
         '200':
           description: successful operation
           schema:
-            $ref: './definitions/swagger.yaml#/definitions/EventSet'
+            $ref: './swagger/definitions/swagger.yaml#/definitions/EventSet'
         '404':
           description: EventSet not found
           schema:
@@ -807,7 +393,7 @@ paths:
           name: note
           required: true
           schema:
-            $ref: './definitions/swagger.yaml#/definitions/EventSetNote'
+            $ref: './swagger/definitions/swagger.yaml#/definitions/EventSetNote'
       responses:
         '201':
           description: successful operation
@@ -836,7 +422,7 @@ paths:
           name: note
           required: true
           schema:
-            $ref: './definitions/swagger.yaml#/definitions/EventSetNote'
+            $ref: './swagger/definitions/swagger.yaml#/definitions/EventSetNote'
       responses:
         '200':
           description: successful operation
@@ -879,7 +465,7 @@ paths:
         '200':
           description: successful operation
           schema:
-            $ref: './definitions/swagger.yaml#/definitions/EventSets'
+            $ref: './swagger/definitions/swagger.yaml#/definitions/EventSets'
   '/missingTaxon':
     get:
       tags:
@@ -893,7 +479,7 @@ paths:
         '200':
           description: successful operation
           schema:
-            $ref: './definitions/swagger.yaml#/definitions/Studies'
+            $ref: './swagger/definitions/swagger.yaml#/definitions/Studies'
   '/missingLocations':
     get:
       tags:
@@ -914,7 +500,7 @@ paths:
         '200':
           description: successful operation
           schema:
-            $ref: './definitions/swagger.yaml#/definitions/Studies'
+            $ref: './swagger/definitions/swagger.yaml#/definitions/Studies'
   '/uncuratedLocations':
     get:
       tags:
@@ -928,7 +514,7 @@ paths:
         '200':
           description: successful operation
           schema:
-            $ref: './definitions/swagger.yaml#/definitions/Studies'
+            $ref: './swagger/definitions/swagger.yaml#/definitions/Studies'
   '/multipleLocationNames':
     get:
       tags:
@@ -942,7 +528,7 @@ paths:
         '200':
           description: successful operation
           schema:
-            $ref: './definitions/swagger.yaml#/definitions/Studies'
+            $ref: './swagger/definitions/swagger.yaml#/definitions/Studies'
   '/multipleLocationGPS':
     get:
       tags:
@@ -956,4 +542,4 @@ paths:
         '200':
           description: successful operation
           schema:
-            $ref: './definitions/swagger.yaml#/definitions/Studies'
+            $ref: './swagger/definitions/swagger.yaml#/definitions/Studies'
