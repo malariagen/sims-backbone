@@ -63,6 +63,29 @@ def download_sampling_event(event, context):
 
     return create_response(event, retcode, value)
 
+
+def download_sampling_events(event, context):
+
+    user = event['requestContext']['authorizer']['principalId']
+
+    start =  None
+    count =  None
+    search_filter = None
+
+    if 'queryStringParameters' in event and event["queryStringParameters"]:
+        if 'start' in event["queryStringParameters"]:
+            start = int(event["queryStringParameters"]["start"])
+        if 'count' in event["queryStringParameters"]:
+            count = int(event["queryStringParameters"]["count"])
+        if 'filter' in event['queryStringParameters']:
+            search_filter = event["queryStringParameters"]["search_filter"]
+
+    value, retcode = sampling_event_controller.download_sampling_events(search_filter, start,
+                                                                                 count, user,
+                                                                                sampling_event_controller.authorizer(event['requestContext']['authorizer']))
+
+    return create_response(event, retcode, value)
+
 def download_sampling_events_by_attr(event, context):
 
     user = event['requestContext']['authorizer']['principalId']

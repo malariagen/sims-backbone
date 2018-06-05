@@ -11,7 +11,7 @@ from backbone_server.controllers.sampling_event_controller  import SamplingEvent
 
 sampling_event_controller = SamplingEventController()
 
-def create_sampling_event(samplingEvent, user = None, token_info = None):
+def create_sampling_event(samplingEvent, user=None, token_info=None):
     """
     create_sampling_event
     Create a samplingEvent
@@ -26,7 +26,7 @@ def create_sampling_event(samplingEvent, user = None, token_info = None):
     return sampling_event_controller.create_sampling_event(samplingEvent, user,
                                                            sampling_event_controller.token_info(token_info))
 
-def delete_sampling_event(samplingEventId, user = None, token_info = None):
+def delete_sampling_event(samplingEventId, user=None, token_info=None):
     """
     deletes an samplingEvent
     
@@ -39,7 +39,7 @@ def delete_sampling_event(samplingEventId, user = None, token_info = None):
                                                            sampling_event_controller.token_info(token_info))
 
 
-def download_sampling_event(samplingEventId, user = None, token_info = None):
+def download_sampling_event(samplingEventId, user=None, token_info=None):
     """
     fetches an samplingEvent
     
@@ -52,7 +52,25 @@ def download_sampling_event(samplingEventId, user = None, token_info = None):
                                                              sampling_event_controller.token_info(token_info))
 
 
-def download_sampling_events_by_event_set(eventSetId, start=None, count=None, user = None, token_info = None):
+def download_sampling_events(filter=None, start=None, count=None, user=None, token_info=None):  # noqa: E501
+    """fetches samplingEvents
+
+     # noqa: E501
+
+    :param filter: search filter e.g. studyId:0000, attr:name:value, location:locationId, taxa:taxId, eventSet:setName
+    :type filter: str
+    :param start: for pagination start the result set at a record x
+    :type start: int
+    :param count: for pagination the number of entries to return
+    :type count: int
+
+    :rtype: SamplingEvents
+    """
+    return sampling_event_controller.download_sampling_events(filter, start,
+                                                              count, user,
+                                                              sampling_event_controller.token_info(token_info))
+
+def download_sampling_events_by_event_set(eventSetId, start=None, count=None, user=None, token_info=None):
     """
     fetches samplingEvents in a given event set
     
@@ -69,7 +87,7 @@ def download_sampling_events_by_event_set(eventSetId, start=None, count=None, us
                                                                            count, user,
                                                                        sampling_event_controller.token_info(token_info))
 
-def download_sampling_events_by_attr(propName, propValue, studyName=None, user = None, token_info = None):
+def download_sampling_events_by_attr(propName, propValue, studyName=None, user=None, token_info=None):
     """
     fetches a samplingEvent by property value
     
@@ -85,7 +103,7 @@ def download_sampling_events_by_attr(propName, propValue, studyName=None, user =
                                                                            user,
                                                                            sampling_event_controller.token_info(token_info))
 
-def download_sampling_events_by_location(locationId, start=None, count=None, user = None, token_info = None):
+def download_sampling_events_by_location(locationId, start=None, count=None, user=None, token_info=None):
     """
     fetches samplingEvents for a location
     
@@ -102,7 +120,7 @@ def download_sampling_events_by_location(locationId, start=None, count=None, use
                                                                           count, user,
                                                                           sampling_event_controller.token_info(token_info))
 
-def download_sampling_events_by_study(studyName, start=None, count=None, user = None, token_info = None):
+def download_sampling_events_by_study(studyName, start=None, count=None, user=None, token_info=None):
     """
     fetches samplingEvents for a study
     
@@ -119,7 +137,7 @@ def download_sampling_events_by_study(studyName, start=None, count=None, user = 
                                                                        count, user,
                                                                        sampling_event_controller.token_info(token_info))
 
-def download_sampling_events_by_taxa(taxaId, start=None, count=None, user = None, token_info = None):
+def download_sampling_events_by_taxa(taxaId, start=None, count=None, user=None, token_info=None):
     """
     fetches samplingEvents for a given taxonomy classification code
     
@@ -137,7 +155,7 @@ def download_sampling_events_by_taxa(taxaId, start=None, count=None, user = None
                                                                        sampling_event_controller.token_info(token_info))
 
 
-def update_sampling_event(samplingEventId, samplingEvent, user = None, token_info = None):
+def update_sampling_event(samplingEventId, samplingEvent, user=None, token_info=None):
     """
     updates an samplingEvent
     

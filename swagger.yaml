@@ -49,6 +49,8 @@ paths:
     $ref: './swagger/sampling_event/create.yaml'
   '/samplingEvent/{samplingEventId}':
     $ref: './swagger/sampling_event/item.yaml'
+  '/samplingEvents':
+    $ref: './swagger/sampling_event/items.yaml'
   '/samplingEvents/attr/{propName}/{propValue}':
     $ref: './swagger/sampling_event/by_attr.yaml'
   '/samplingEvents/location/{locationId}':

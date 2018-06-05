@@ -273,6 +273,27 @@ functions:
             parameters:
               paths:
                 sampling_event_id: true
+
+  download_sampling_events:
+    handler: sampling_event/handler.download_sampling_events
+    events:
+      - http:
+          path: sims-backbone-service/v1/samplingEvents
+          method: get
+          cors: true
+          timeout: 300
+          authorizer:
+            name: authFunc
+            type: request
+            identitySource: method.request.header.Authorization
+            identityValidationExpression: .*
+          request:
+            parameters:
+              query:
+                filter: false
+                start: false
+                count: false
+
   update_sampling_event:
     handler: sampling_event/handler.update_sampling_event
     events:

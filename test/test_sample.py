@@ -157,14 +157,20 @@ class TestSample(TestBase):
                 swagger_client.Attr (attr_type='oxford', attr_value='123456')
             ]
             created = api_instance.create_sampling_event(samp)
-            looked_up = api_instance.download_sampling_events_by_attr('oxford', '123456')
-            looked_up = looked_up.sampling_events[0]
+            results = api_instance.download_sampling_events_by_attr('oxford', '123456')
+            looked_up = results.sampling_events[0]
 
             fetched = api_instance.download_sampling_event(looked_up.sampling_event_id)
 
             assert created == fetched, "create response != download response"
+
+            ffetched = api_instance.download_sampling_events(filter='attr:oxford:123456')
+
+            assert ffetched == results
+
             fetched.sampling_event_id = None
             assert samp == fetched, "upload != download response"
+
             api_instance.delete_sampling_event(created.sampling_event_id)
 
         except ApiException as error:
@@ -198,6 +204,10 @@ class TestSample(TestBase):
                                                                             study_name='1022')
             assert looked_up.count == 2
 
+            ffetched = api_instance.download_sampling_events(filter='attr:partner_id:123456:1022')
+
+            assert ffetched == looked_up
+
             api_instance.delete_sampling_event(created.sampling_event_id)
             api_instance.delete_sampling_event(created1.sampling_event_id)
 
@@ -212,9 +222,9 @@ class TestSample(TestBase):
 
         try:
 
-            ident1 = swagger_client.Attr (attr_type='oxford_id', attr_value='1234')
-            ident2 = swagger_client.Attr (attr_type='roma_id', attr_value='12345')
-            ident3 = swagger_client.Attr (attr_type='lims_id', attr_value='123456')
+            ident1 = swagger_client.Attr(attr_type='oxford_id', attr_value='1234')
+            ident2 = swagger_client.Attr(attr_type='roma_id', attr_value='12345')
+            ident3 = swagger_client.Attr(attr_type='lims_id', attr_value='123456')
             samp1 = swagger_client.SamplingEvent(None, '1022-MD-UP', date(2017, 10, 14))
             samp1.attrs = [
                 ident1
@@ -346,15 +356,18 @@ class TestSample(TestBase):
             fetched.sampling_event_id = None
             assert samp == fetched, "upload != download response"
 
-            looked_up = api_instance.download_sampling_events_by_attr('partner_id',
-                                                                           urllib.parse.quote_plus(test_id))
-            looked_up = looked_up.sampling_events[0]
+            results = api_instance.download_sampling_events_by_attr('partner_id',
+                                                                      urllib.parse.quote_plus(test_id))
+            looked_up = results.sampling_events[0]
             fetched = api_instance.download_sampling_event(looked_up.sampling_event_id)
 
             assert created == fetched, "create response != download response"
             fetched.sampling_event_id = None
             assert samp == fetched, "upload != download response"
 
+            ffetched = api_instance.download_sampling_events(filter=urllib.parse.quote_plus('attr:partner_id:' + test_id))
+
+            assert ffetched == results
 
             api_instance.delete_sampling_event(created.sampling_event_id)
 
@@ -446,14 +459,20 @@ class TestSample(TestBase):
 
             fetched = api_instance.download_sampling_events_by_taxa(5833)
 
-            assert fetched.count ==1, "Taxa not found"
+            assert fetched.count == 1, "Taxa not found"
 
-            assert not fetched.sampling_events[0].partner_taxonomies is None, 'Taxonomies missing'
+            assert fetched.sampling_events[0].partner_taxonomies is not None, 'Taxonomies missing'
             assert int(fetched.sampling_events[0].partner_taxonomies[0].taxonomy_id) == 5833, 'Wrong Taxonomy'
+
+            ffetched = api_instance.download_sampling_events(filter='taxa:5833')
+
+            assert ffetched == fetched
+
             #As the taxonomy wasn't set when created was created it won't be in the response
             #separate test for this
             fetched.sampling_events[0].partner_taxonomies = None
             assert created == fetched.sampling_events[0], "create response != download response"
+
             api_instance.delete_sampling_event(created.sampling_event_id)
 
         except ApiException as error:
@@ -570,9 +589,16 @@ class TestSample(TestBase):
 
             fetched = api_instance.download_sampling_events_by_study(study_code)
 
-            assert fetched.count ==1, "Study not found"
+            assert fetched.count == 1, "Study not found"
 
             assert created == fetched.sampling_events[0], "create response != download response"
+
+            ffetched = api_instance.download_sampling_events(filter='studyId:' + study_code)
+
+            assert ffetched.count == 1, "Study not found"
+
+            assert ffetched == fetched
+
             api_instance.delete_sampling_event(created.sampling_event_id)
 
         except ApiException as error:
@@ -598,6 +624,11 @@ class TestSample(TestBase):
 
             assert len(fetched1.sampling_events) ==2, "Wrong number of sampling_events returned"
             assert fetched1.count == 5, "Wrong total of sampling_events returned"
+
+            ffetched = api_instance.download_sampling_events(filter='studyId:' + study_code,
+                                                             start=0, count=2)
+
+            assert ffetched == fetched1
 
             fetched2 = api_instance.download_sampling_events_by_study(study_code, start=2, count=5)
 
@@ -648,6 +679,11 @@ class TestSample(TestBase):
             assert fetched.count ==1, "event_set not found"
 
             assert created == fetched.sampling_events[0], "create response != download response"
+
+            ffetched = api_instance.download_sampling_events(filter='eventSet:' + es_name)
+
+            assert ffetched == fetched
+
             api_instance.delete_sampling_event(created.sampling_event_id)
 
             es_api_instance.delete_event_set(es_name)
@@ -738,6 +774,11 @@ class TestSample(TestBase):
 
             assert len(fetched1.sampling_events) ==2, "Wrong number of sampling_events returned"
             assert fetched1.count == 5, "Wrong total of sampling_events returned"
+
+            ffetched = api_instance.download_sampling_events(filter='eventSet:' + es_name, start=0,
+                                                            count=2)
+
+            assert ffetched == fetched1
 
             fetched2 = api_instance.download_sampling_events_by_event_set(es_name, start=2, count=5)
 
