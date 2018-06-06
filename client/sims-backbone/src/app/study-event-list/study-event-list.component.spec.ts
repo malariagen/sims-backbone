@@ -11,11 +11,8 @@ import { HttpClient } from '@angular/common/http';
   template: ''
 })
 export class EventListComponentStub {
-  @Input() events: SamplingEvents;
-  @Input() eventSetName: string;
+  @Input() filter: string;
   @Input() studyName: string;
-  @Output() pageNumber = new EventEmitter<number>(true);
-  @Output() pageSize = new EventEmitter<number>(true);
 }
 
 describe('StudyEventListComponent', () => {

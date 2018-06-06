@@ -1,45 +1,37 @@
-import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy, ChangeDetectorRef, SimpleChanges, Renderer } from '@angular/core';
+import { Component, Input, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, SimpleChanges, ViewChild } from '@angular/core';
 
-import { MatPaginator, MatSort, MatTableDataSource } from '@angular/material';
+import { MatPaginator, MatSort, MatTableDataSource, MatTable } from '@angular/material';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 
 import { DataSource } from '@angular/cdk/collections';
 import { Observable } from 'rxjs/Observable';
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 
 import { EventSetEditDialogComponent } from '../event-set-edit-dialog/event-set-edit-dialog.component';
 
-import { Attr } from '../typescript-angular-client/model/attr';
-import { SamplingEvents } from '../typescript-angular-client/model/samplingEvents';
-import { SamplingEvent } from '../typescript-angular-client/model/samplingEvent';
-import { Taxonomy } from '../typescript-angular-client/model/taxonomy';
-
-import { Angular2Csv } from 'angular2-csv/Angular2-csv';
 import { AfterViewChecked, AfterViewInit } from '@angular/core/src/metadata/lifecycle_hooks';
+import { SamplingEventsSource } from '../sampling-event.datasource';
+import { SamplingEventsService } from '../sampling-events.service';
+import { tap } from 'rxjs/operators';
+import { SamplingEventService, SamplingEvent } from '../typescript-angular-client';
 
 @Component({
   selector: 'app-event-list',
+  providers: [SamplingEventsService, SamplingEventService],
   templateUrl: './event-list.component.html',
   styleUrls: ['./event-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class EventListComponent implements AfterViewInit {
+export class EventListComponent implements OnInit, AfterViewInit {
 
-  displayedColumns = ['study_id', 'oxford_id', 'partner_id', 'roma_id', 'sanger_lims_id', 'doc', 'partner_species', 'taxa', 'partner_location_name', 'location_curated_name', 'location'];
+  _dataSource: SamplingEventsSource;
 
-  _events: SamplingEvents;
+  displayedColumns = [];
+
   _studyName: string;
   _eventSetName: string;
-  dataSource: EventDataSource | null;
-  eventDatabase: EventDatabase;
-  count: number;
-  progress: number;
 
-  _pageNumber: number;
-  _pageSize: number;
-
-  @Output() pageNumber = new EventEmitter<number>(true);
-  @Output() pageSize = new EventEmitter<number>(true);
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatTable) table;
 
   selectedEvents = new Set<string>();
 
@@ -47,14 +39,47 @@ export class EventListComponent implements AfterViewInit {
 
   jsonDownloadFileName: string = 'data.json';
 
-  constructor(private changeDetector: ChangeDetectorRef, public dialog: MatDialog, private renderer: Renderer) { }
+  constructor(private changeDetector: ChangeDetectorRef, public dialog: MatDialog, private samplingEventsService: SamplingEventsService) { }
+
+  ngOnInit(): void {
+
+    this._dataSource = new SamplingEventsSource(this.samplingEventsService);
+
+    //Recalcuate the column headers when the data changes
+    //this is not ideal because it may mean that columns are left out
+    //if the columns used change over the result set
+    //Also impacts when a csv download occurs - uses the same column definitions
+    //
+    let obs: Observable<SamplingEvent[]> = this._dataSource.connect(this.table);
+
+    obs.subscribe({
+      next: sevents => this.defineColumnHeaders(sevents),
+      error(msg) {
+        console.log(msg);
+      },
+      complete() {
+        console.log('complete');
+      }
+    });
+
+    this._dataSource.loadEvents(this.filter, 'asc', 0, 50);
+
+  }
 
   ngAfterViewInit() {
-    this._pageNumber = 0;
-    this._pageSize = 1000;
-    this.pageSize.emit(this._pageSize);
-    this.pageNumber.emit(this._pageNumber);
+
+    if (this.paginator) {
+      this.paginator.page
+        .pipe(
+          tap(() => this.loadEventsPage())
+        )
+        .subscribe();
+    }
+      
   }
+
+  @Input()
+  filter: string;
 
   @Input()
   set eventSetName(eventSetName) {
@@ -70,37 +95,23 @@ export class EventListComponent implements AfterViewInit {
     this.jsonDownloadFileName = studyName + '_sampling_events.json';
   }
 
-  @Input()
-  set events(events: SamplingEvents) {
-    if (!events) {
-      return;
-    }
-
-    this.count = events.count;
-
-    if (this._pageNumber == 0) {
-      this._events = events;
-    } else {
-      this._events.sampling_events = this._events.sampling_events.concat(events.sampling_events);
-      this._events.locations = { ...this._events.locations, ...events.locations };
-    }
-    let numLoaded = Math.min((this._pageNumber + 1) * this._pageSize, events.count);
-
-    this.progress = (numLoaded / events.count) * 100;
-
-    if (numLoaded < events.count) {
-      this._pageNumber++;
-      this.pageNumber.emit(this._pageNumber);
-    } else {
-      this.loadEvents();
-    }
-
+  loadEventsPage() {
+    this._dataSource.loadEvents(this.filter,
+      'asc',
+      this.paginator.pageIndex,
+      this.paginator.pageSize
+    );
+    
   }
 
   defineColumnHeaders(sampling_events) {
+
+    if(sampling_events == undefined) {
+      return;
+    }
     this.displayedColumns = ['study_id'];
-    sampling_events.forEach(sample => {
-      sample.attrs.forEach(ident => {
+    sampling_events.forEach(data => {
+      data.attrs.forEach(ident => {
         if (this.displayedColumns.indexOf(ident.attr_type) < 0) {
           this.displayedColumns.push(ident.attr_type);
         }
@@ -110,93 +121,22 @@ export class EventListComponent implements AfterViewInit {
     this.changeDetector.markForCheck();
   }
 
-  mapSamplingEventToRow(sample, locations) {
-    let event = {};
-    event['doc'] = sample.doc;
-    event['partner_species'] = sample.partner_species;
-    event['study_id'] = sample.study_name;
-    sample.attrs.forEach(ident => {
-      if (ident.attr_type in event) {
-        let ids: Array<String> = event[ident.attr_type].split(';');
-        //Avoid duplicates from different sources
-        if (!ids.includes(ident.attr_value)) {
-          event[ident.attr_type] = [event[ident.attr_type], ident.attr_value].join(';');
-        }
-
-      } else {
-        event[ident.attr_type] = ident.attr_value;
-      }
-
-    });
-    if (sample.location_id) {
-      let location = locations[sample.location_id];
-      event['partner_location_name'] = '';
-      if (location) {
-        if (location.attrs) {
-          location.attrs.forEach(ident => {
-            let ident_value = ident.attr_value;
-            if (this._studyName || event['study_id']) {
-              if ((this._studyName && (ident.study_name == this._studyName)) ||
-                event['study_id'] && (ident.study_name == event['study_id'])) {
-                event['partner_location_name'] = ident_value;
-              }
-            } else {
-              event['partner_location_name'] = event['partner_location_name'] + ident_value + '(' + ident.study_name + ');';
-            }
-          });
-        }
-        event['location_curated_name'] = location.curated_name;
-        if (location.latitude) {
-          event['location'] = '<a href="location/' + location.location_id + '">' + location.latitude + ', ' + location.longitude + '</a>';
-        }
-      } else {
-        console.error('Missing location:' + sample.location_id);
-        console.error(locations);
-      }
-    }
-    if (sample.partner_taxonomies) {
-      let taxas = [];
-      sample.partner_taxonomies.forEach((taxa: Taxonomy) => {
-        taxas.push(taxa.taxonomy_id);
-      })
-      event['taxa'] = taxas.join(';');
-    }
-    event['id'] = sample.sampling_event_id;
-    return event;
-  }
-
-  loadEvents() {
-    let eventDatabase = new EventDatabase();
-    let samples = this._events;
-
-    //console.log(samples);
-    this.count = samples.count;
-
-    this.defineColumnHeaders(samples.sampling_events);
-
-    samples.sampling_events.forEach((sample: SamplingEvent) => {
-      let event = this.mapSamplingEventToRow(sample, samples.locations);
-      eventDatabase.addEvent(event);
-    });
-
-    this.dataSource = new EventDataSource(eventDatabase);
-    this.eventDatabase = eventDatabase;
-  }
 
   select(row) {
-    if (this.selectedEvents.has(row.id)) {
-      this.selectedEvents.delete(row.id);
+    if (this.selectedEvents.has(row.sampling_event_id)) {
+      this.selectedEvents.delete(row.sampling_event_id);
     } else {
-      this.selectedEvents.add(row.id);
+      this.selectedEvents.add(row.sampling_event_id);
     }
   }
 
   selectAll() {
-    this.eventDatabase.data.forEach(data => {
-      if (!this.selectedEvents.has(data.id)) {
-        this.selectedEvents.add(data.id);
+
+    this.table._data.forEach(data => {
+      if (!this.selectedEvents.has(data.sampling_event_id)) {
+        this.selectedEvents.add(data.sampling_event_id);
       }
-    })
+    });
   }
 
   selectNone() {
@@ -217,44 +157,9 @@ export class EventListComponent implements AfterViewInit {
 
     dialogRef.afterClosed().subscribe(result => {
       if (action == 'Remove') {
-        this.loadEvents();
+        this.loadEventsPage();
         this.changeDetector.markForCheck();
       }
     });
   }
-
-  downloadJSON() {
-    let anchor = this.renderer.createElement(document.body, 'a');
-    this.renderer.setElementStyle(anchor, 'visibility', 'hidden');
-    this.renderer.setElementAttribute(anchor, 'href', 'data:application/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(this._events.sampling_events)));
-    this.renderer.setElementAttribute(anchor, 'target', '_blank');
-    this.renderer.setElementAttribute(anchor, 'download', this.jsonDownloadFileName);
-
-    setTimeout(() => {
-      this.renderer.invokeElementMethod(anchor, 'click');
-      this.renderer.invokeElementMethod(anchor, 'remove');
-    }, 5);
-  }
-}
-
-export class EventDatabase {
-  dataChange: BehaviorSubject<any[]> = new BehaviorSubject<any[]>([]);
-  get data(): any[] { return this.dataChange.value; }
-  constructor() {
-  }
-  addEvent(sample) {
-    const copiedData = this.data.slice();
-    copiedData.push(sample);
-    this.dataChange.next(copiedData);
-  }
-
-}
-export class EventDataSource extends DataSource<any> {
-  constructor(private _exampleDatabase: EventDatabase) {
-    super();
-  }
-  connect(): Observable<any[]> {
-    return this._exampleDatabase.dataChange;
-  }
-  disconnect() { }
 }

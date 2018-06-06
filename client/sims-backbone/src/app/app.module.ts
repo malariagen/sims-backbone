@@ -4,7 +4,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { HttpClientModule } from '@angular/common/http';
 
-import { MatFormFieldModule, MatProgressBarModule, MatSelectModule } from '@angular/material';
+import { MatFormFieldModule, MatSelectModule, MatPaginatorModule } from '@angular/material';
 import { MatInputModule } from '@angular/material';
 import { MatTableModule } from '@angular/material';
 import { MatToolbarModule } from '@angular/material';
@@ -31,7 +31,6 @@ import { LocationsMapComponent } from './locations-map/locations-map.component';
 import { LocationEditComponent } from './location-edit/location-edit.component';
 import { EventListComponent } from './event-list/event-list.component';
 import { StudyEventListComponent } from './study-event-list/study-event-list.component';
-import { CsvDownloaderComponent } from './csv-downloader/csv-downloader.component';
 import { LocationEventListComponent } from './location-event-list/location-event-list.component';
 
 import { AuthService } from './auth.service';
@@ -55,7 +54,6 @@ import { environment } from '../environments/environment';
 
 import { EventSearchComponent } from './event-search/event-search.component';
 import { EventDetailComponent } from './event-detail/event-detail.component';
-import { IdentifierTableComponent } from './identifier-table/identifier-table.component';
 import { LocationViewComponent } from './location-view/location-view.component';
 import { AllStudiesListComponent } from './all-studies-list/all-studies-list.component';
 import { ReportsComponent } from './reports/reports.component';
@@ -65,6 +63,10 @@ import { ReportUncuratedLocationsComponent } from './report-uncurated-locations/
 import { ReportMissingTaxaComponent } from './report-missing-taxa/report-missing-taxa.component';
 import { ReportMultipleLocationGpsComponent } from './report-multiple-location-gps/report-multiple-location-gps.component';
 import { ReportMultipleLocationNamesComponent } from './report-multiple-location-names/report-multiple-location-names.component';
+import { AttrTableComponent } from './attr-table/attr-table.component';
+import { SamplingEventDisplayPipe } from './sampling-event-display.pipe';
+import { DownloaderJsonComponent } from './downloader-json/downloader-json.component';
+import { DownloaderCsvComponent } from './downloader-csv/downloader-csv.component';
 
 export function getConfiguration(authService: AuthService) {
   return authService.getConfiguration();
@@ -73,12 +75,12 @@ export function getConfiguration(authService: AuthService) {
 @NgModule({
   declarations: [
     AppComponent,
+    AttrTableComponent,
     AllLocationsMapComponent,
     LocationsMapComponent,
     LocationEditComponent,
     EventListComponent,
     StudyEventListComponent,
-    CsvDownloaderComponent,
     LocationEventListComponent,
     StudiesListComponent,
     StudyEditComponent,
@@ -93,7 +95,6 @@ export function getConfiguration(authService: AuthService) {
     EventSetAddDialogComponent,
     EventSearchComponent,
     EventDetailComponent,
-    IdentifierTableComponent,
     LocationViewComponent,
     AllStudiesListComponent,
     ReportsComponent,
@@ -102,7 +103,10 @@ export function getConfiguration(authService: AuthService) {
     ReportUncuratedLocationsComponent,
     ReportMissingTaxaComponent,
     ReportMultipleLocationGpsComponent,
-    ReportMultipleLocationNamesComponent
+    ReportMultipleLocationNamesComponent,
+    SamplingEventDisplayPipe,
+    DownloaderJsonComponent,
+    DownloaderCsvComponent
   ],
   imports: [
     BrowserModule,
@@ -117,7 +121,7 @@ export function getConfiguration(authService: AuthService) {
     MatDialogModule,
     MatIconModule,
     MatMenuModule,
-    MatProgressBarModule,
+    MatPaginatorModule,
     MatSelectModule,
     FlexLayoutModule,
     HttpClientModule,

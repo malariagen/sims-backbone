@@ -1,33 +1,31 @@
-<button mat-raised-button color="accent" (click)="downloadJSON()">Download JSON</button>
 
-<app-csv-downloader [data]="dataSource" [fileName]="downloadFileName" [headers]="displayedColumns"></app-csv-downloader>
-{{count}}
-
+<app-downloader-json [fileName]="jsonDownloadFileName" [filter]="filter"></app-downloader-json>
+<app-downloader-csv [fileName]="downloadFileName" [headers]="displayedColumns" [filter]="filter"></app-downloader-csv>
+{{_dataSource.samplingEventCount}}
 <div>
-  <button mat-raised-button (click)="selectAll()">Select all</button>
+  <button mat-raised-button (click)="selectAll()">Select all visible</button>
   <button mat-raised-button (click)="selectNone()">Select none</button>
 
   <button *ngIf="_eventSetName" mat-raised-button (click)="editEventSet('Remove')">Remove from event set</button>
   <button *ngIf="!_eventSetName" mat-raised-button (click)="editEventSet('Add')">Add to event set</button>
 
-  <mat-progress-bar
-          class="example-margin"
-          [color]="primary"
-          [mode]="determinate"
-          [value]="progress">
-      </mat-progress-bar>
 </div>
 
 <div  class="example-container mat-elevation-z8">
-  <mat-table #table [dataSource]="dataSource" matSort>
+  <mat-table #table [dataSource]="_dataSource" matSort>
 
     <ng-container *ngFor="let col of displayedColumns" matColumnDef= {{col}}>
       <mat-header-cell *matHeaderCellDef md-sort-header > {{ col }} </mat-header-cell>
-      <mat-cell  *matCellDef="let row" [innerHTML]="row[col]"></mat-cell>
+      <mat-cell  *matCellDef="let row" [innerHTML]="row | samplingEventDisplay : col : _studyName : _dataSource.locations"></mat-cell>
     </ng-container>
     
     
     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-    <mat-row *matRowDef="let row; columns: displayedColumns;" (click)="select(row)" [ngClass]="{'row-highlight': selectedEvents.has(row.id) }"></mat-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;" (click)="select(row)" [ngClass]="{'row-highlight': selectedEvents.has(row.sampling_event_id) }"></mat-row>
+
   </mat-table>
+
+  <mat-paginator *ngIf="_dataSource" [length]="_dataSource.samplingEventCount" [pageSize]="this._pageSize"
+                   [pageSizeOptions]="[50, 100, 250, 1000]"></mat-paginator>
+
 </div>

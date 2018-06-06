@@ -13,11 +13,7 @@ import { Input, Component, Output, EventEmitter } from '@angular/core';
   template: ''
 })
 export class EventListComponentStub {
-  @Input() events: SamplingEvents;
-  @Input() eventSetName: string;
-  @Input() studyName: string;
-  @Output() pageNumber = new EventEmitter<number>(true);
-  @Output() pageSize = new EventEmitter<number>(true);
+  @Input() filter: string;
 }
 
 describe('LocationEventListComponent', () => {
