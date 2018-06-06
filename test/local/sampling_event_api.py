@@ -62,6 +62,21 @@ class LocalSamplingEventApi(BaseLocalApi):
 
         return self.create_response(ret, retcode, 'SamplingEvent')
 
+    def download_sampling_events(self, filter=None, start=None, count=None):
+        """
+        fetches an samplingEvent
+        
+        :param samplingEventId: ID of samplingEvent to fetch
+        :type samplingEventId: str
+
+        :rtype: SamplingEvent
+        """
+        (ret, retcode) = self.sampling_event_controller.download_sampling_events(filter, start,
+                                                                                 count, self._user,
+                                                                                 self.auth_tokens())
+
+        return self.create_response(ret, retcode, 'SamplingEvents')
+
 
     def download_sampling_events_by_event_set(self, eventSetId, start=None, count=None):
         """
