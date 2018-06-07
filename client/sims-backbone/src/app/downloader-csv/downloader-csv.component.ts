@@ -6,12 +6,12 @@ import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 
 import * as FileSaver from 'file-saver';
 import { Observable } from 'rxjs/Observable';
-import { SamplingEvent } from '../typescript-angular-client';
+import { SamplingEvent, SamplingEventService } from '../typescript-angular-client';
 import { SamplingEventsSource } from '../sampling-event.datasource';
 
 @Component({
   selector: 'app-downloader-csv',
-  providers: [SamplingEventsService, SamplingEventDisplayPipe],
+  providers: [SamplingEventsService, SamplingEventDisplayPipe, SamplingEventService],
   templateUrl: './downloader-csv.component.html',
   styleUrls: ['./downloader-csv.component.scss']
 })
@@ -36,11 +36,7 @@ export class DownloaderCsvComponent implements CollectionViewer {
   headers: string[] = [];
 
   constructor(private displayPipe: SamplingEventDisplayPipe, private samplingEventsService: SamplingEventsService) {
-  }
 
-  build() {
-
-    this.pageNumber = 0;
     this._dataSource = new SamplingEventsSource(this.samplingEventsService);
     
     let obs: Observable<SamplingEvent[]> = this._dataSource.connect(this);
@@ -55,13 +51,24 @@ export class DownloaderCsvComponent implements CollectionViewer {
         console.log('complete');
       }
     });
+
+  }
+
+  build() {
+
+    this.pageNumber = 0;
+ 
     this._dataSource.loadEvents(this.filter, 'asc', this.pageNumber, this.pageSize);
 
 
   }
 
-  extractEventsToString(d) {
+  extractEventsToString(d: Array<SamplingEvent>) {
 
+    if (d.length == 0) {
+      return;
+    }
+    
     let tabText = '';
     d.forEach(k => {
 
@@ -100,6 +107,7 @@ export class DownloaderCsvComponent implements CollectionViewer {
     });
 
     if (tabText != '') {
+
       this.csvString += tabText;
       if ((this.pageNumber + 1) * this.pageSize < this._dataSource.samplingEventCount) {
         this.pageNumber++;
