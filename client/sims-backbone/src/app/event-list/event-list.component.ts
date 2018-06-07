@@ -46,10 +46,6 @@ export class EventListComponent implements OnInit, AfterViewInit {
     this._dataSource = new SamplingEventsSource(this.samplingEventsService);
 
     //Recalcuate the column headers when the data changes
-    //this is not ideal because it may mean that columns are left out
-    //if the columns used change over the result set
-    //Also impacts when a csv download occurs - uses the same column definitions
-    //
     let obs: Observable<SamplingEvent[]> = this._dataSource.connect(this.table);
 
     obs.subscribe({
@@ -109,16 +105,16 @@ export class EventListComponent implements OnInit, AfterViewInit {
     if(sampling_events == undefined) {
       return;
     }
-    this.displayedColumns = ['study_id'];
-    sampling_events.forEach(data => {
-      data.attrs.forEach(ident => {
-        if (this.displayedColumns.indexOf(ident.attr_type) < 0) {
-          this.displayedColumns.push(ident.attr_type);
-        }
-      });
-    });
-    this.displayedColumns = this.displayedColumns.concat(['doc', 'partner_species', 'taxa', 'partner_location_name', 'location_curated_name', 'location']);
-    this.changeDetector.markForCheck();
+
+    let columnsForDisplay = ['study_id'];
+    columnsForDisplay = columnsForDisplay.concat(this._dataSource.attrTypes);
+    columnsForDisplay = columnsForDisplay.concat(['doc', 'partner_species', 'taxa', 'partner_location_name', 'location_curated_name', 'location']);
+
+    if (columnsForDisplay != this.displayedColumns) {
+      this.displayedColumns = columnsForDisplay;
+      this.changeDetector.markForCheck();
+    }
+    
   }
 
 

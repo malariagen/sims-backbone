@@ -100,5 +100,17 @@ class EventSetFetch():
         else:
             sampling_events.count = len(sampling_events.sampling_events)
 
+        sampling_events.attr_types = []
+
+        col_query = '''select distinct attr_type from sampling_events se
+                        JOIN attrs a ON a.sampling_event_id=se.id
+                        JOIN event_set_members esm ON esm.sampling_event_id = se.id
+                        WHERE esm.event_set_id = %s'''
+
+        cursor.execute(col_query, (event_set_id,))
+        for (attr_type,) in cursor:
+            sampling_events.attr_types.append(attr_type)
+
         event_set.members = sampling_events
+
         return event_set

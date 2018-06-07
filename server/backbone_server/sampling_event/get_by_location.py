@@ -63,4 +63,14 @@ class SamplingEventsGetByLocation():
                 else:
                     sampling_events.count = len(sampling_events.sampling_events)
 
+                sampling_events.attr_types = []
+
+                col_query = '''select distinct attr_type from sampling_events se
+                JOIN attrs a ON a.sampling_event_id=se.id
+                WHERE location_id = %s OR proxy_location_id = %s'''
+
+                cursor.execute(col_query, (location_id, location_id,))
+                for (attr_type,) in cursor:
+                    sampling_events.attr_types.append(attr_type)
+
         return sampling_events

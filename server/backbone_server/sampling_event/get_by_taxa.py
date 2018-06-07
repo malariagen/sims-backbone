@@ -65,4 +65,16 @@ class SamplingEventsGetByTaxa():
                 else:
                     sampling_events.count = len(sampling_events.sampling_events)
 
+                sampling_events.attr_types = []
+
+                col_query = '''select distinct attr_type from sampling_events se
+                JOIN attrs a ON a.sampling_event_id=se.id
+                        LEFT JOIN taxonomy_identifiers ti ON ti.partner_species_id = se.partner_species_id
+                        WHERE ti.taxonomy_id = %s'''
+
+                cursor.execute(col_query, (taxa_id,))
+                for (attr_type,) in cursor:
+                    sampling_events.attr_types.append(attr_type)
+
+
         return sampling_events

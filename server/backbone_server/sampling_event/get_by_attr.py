@@ -52,6 +52,7 @@ class SamplingEventGetByAttr():
 
                 sampling_events.locations = locations
 
+                sampling_events.attr_types = [attr_type]
 
         #partner_name has a unique key
         if sampling_events.count == 0:

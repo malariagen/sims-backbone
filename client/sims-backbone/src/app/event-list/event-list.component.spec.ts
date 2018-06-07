@@ -40,6 +40,10 @@ describe('EventListComponent', () => {
 
   let test_entries = <SamplingEvents>{
     "count": 2,
+    "attr_types": [
+      "partner_id",
+      "roma_id"
+    ],
     "locations": {
       "ba58650c-f365-41bd-a73d-d8517e9a01e5": {
         "country": "KHM",

@@ -12,6 +12,8 @@ export class SamplingEventsSource implements DataSource<SamplingEvent> {
 
     locations: LocationMap;
     samplingEventCount: number;
+    attrTypes: Array<string>;
+
     private samplingEventsSubject = new BehaviorSubject<SamplingEvent[]>([]);
     private loadingSubject = new BehaviorSubject<boolean>(false);
 
@@ -42,6 +44,8 @@ export class SamplingEventsSource implements DataSource<SamplingEvent> {
             .subscribe(result => {
                 let samplingEvents = <SamplingEvents>result;
                 this.samplingEventCount = samplingEvents.count;
+                this.attrTypes = samplingEvents.attr_types;
+                
                 this.locations = { ...this.locations, ...samplingEvents.locations };
 
                 this.samplingEventsSubject.next(samplingEvents.sampling_events);
