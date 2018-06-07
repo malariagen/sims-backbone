@@ -68,7 +68,7 @@ export class DownloaderCsvComponent implements CollectionViewer {
     if (d.length == 0) {
       return;
     }
-    
+
     let tabText = '';
     d.forEach(k => {
 

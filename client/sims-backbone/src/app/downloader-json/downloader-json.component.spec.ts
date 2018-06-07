@@ -64,7 +64,7 @@ describe('DownloaderJsonComponent', () => {
 
       component.filter = 'studyId:0001';
       component.pageSize = 2;
-  
+
       spyOn(component, 'build').and.callThrough();
 
       spyOn(FileSaver, 'saveAs').and.callFake(function (blob: Blob, fileName) {
@@ -106,4 +106,64 @@ describe('DownloaderJsonComponent', () => {
     })
   );
 
+  it('should return json paged', inject([HttpClient, HttpTestingController],
+    (http: HttpClient, backend: HttpTestingController) => {
+
+      component.filter = 'studyId:0001';
+      component.pageSize = 1;
+
+      spyOn(component, 'build').and.callThrough();
+
+      spyOn(FileSaver, 'saveAs').and.callFake(function (blob: Blob, fileName) {
+
+        //toHaveBeenCalledWith isn't clever enough to compare Blobs so doing
+        //in fake function
+        //Also fake function stops the actual saveAs being called and generating a download
+
+        expect(fileName).toBe(component.fileName);
+        let resultString = JSON.stringify(test_entries);
+        expect(blob.size).toBe(resultString.length);
+        expect(blob.type).toBe('application/json;charset=utf-8');
+        var reader = new FileReader();
+        reader.addEventListener("loadend", function () {
+          let resultEvents = <SamplingEvents>JSON.parse(reader.result);
+          expect(resultEvents).toEqual(test_entries);
+        });
+        reader.readAsText(blob);
+
+      });
+
+      let button = fixture.debugElement.nativeElement.querySelector('button');
+      button.click();
+      expect(component.build).toHaveBeenCalled();
+
+      fixture.detectChanges();
+
+      const result = {
+        url: 'http://localhost/v1/samplingEvents?filter=' + component.filter + '&start=' + component.pageNumber + '&count=' + component.pageSize,
+        method: 'GET'
+      };
+      let req = backend.expectOne(result);
+
+      let firstEntry = getTestSamplingEvents();
+      firstEntry.sampling_events.pop();
+      req.flush(firstEntry);
+
+      expect(component.pageNumber).toBe(1);
+
+      const result1 = {
+        url: 'http://localhost/v1/samplingEvents?filter=' + component.filter + '&start=' + component.pageNumber * component.pageSize + '&count=' + component.pageSize,
+        method: 'GET'
+      };
+      let req1 = backend.expectOne(result1);
+
+      let secondEntry = getTestSamplingEvents();
+      secondEntry.sampling_events = [secondEntry.sampling_events[1]];
+      req1.flush(secondEntry);
+
+      // Finally, assert that there are no outstanding requests.
+      backend.verify();
+
+    })
+  );
 });
