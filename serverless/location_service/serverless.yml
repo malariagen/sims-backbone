@@ -11,7 +11,7 @@
 #
 # Happy Coding!
 
-service: sims-event-set-service
+service: sims-location-service
 #service: sims-backbone-service
 
 # You can pin your service to only deploy with a specific Serverless version
@@ -69,41 +69,38 @@ package:
         - ../../server/backbone_server/connect.py
     include:
         - ../util/**
-        - event_set/handler.py
+        - location/handler.py
         - ../../server/bb_server/**
         - ../../server/backbone_server/**/**
         - ../client_secrets.${self:provider.stage}.json
 
 functions:
 
-  create_event_set:
-    handler: event_set/handler.create_event_set
+  create_location:
+    handler: location/handler.create_location
     events:
       - http:
-          path: eventSet/{event_set_id}
+          path: location
           method: post
           cors: true
           timeout: 20
           authorizer:
-            name: esAuthFunc
+            name: lsAuthFunc
             arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
             type: request
             identitySource: method.request.header.Authorization
             identityValidationExpression: .*
-          request:
-            parameters:
-              paths:
-                event_set_id: true
-  download_event_set:
-    handler: event_set/handler.download_event_set
+
+  download_location:
+    handler: location/handler.download_location
     events:
       - http:
-          path: eventSet/{event_set_id}
+          path: location/{location_id}
           method: get
           cors: true
           timeout: 20
           authorizer:
-            name: esAuthFunc
+            name: lsAuthFunc
             arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
             type: request
             identitySource: method.request.header.Authorization
@@ -111,17 +108,17 @@ functions:
           request:
             parameters:
               paths:
-                event_set_id: true
-  update_event_set:
-    handler: event_set/handler.update_event_set
+                location_id: true
+  update_location:
+    handler: location/handler.update_location
     events:
       - http:
-          path: eventSet/{event_set_id}
+          path: location/{location_id}
           method: put
           cors: true
           timeout: 20
           authorizer:
-            name: esAuthFunc
+            name: lsAuthFunc
             arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
             type: request
             identitySource: method.request.header.Authorization
@@ -129,17 +126,17 @@ functions:
           request:
             parameters:
               paths:
-                event_set_id: true
-  delete_event_set:
-    handler: event_set/handler.delete_event_set
+                location_id: true
+  delete_location:
+    handler: location/handler.delete_location
     events:
       - http:
-          path: eventSet/{event_set_id}
+          path: location/{location_id}
           method: delete
           cors: true
           timeout: 20
           authorizer:
-            name: esAuthFunc
+            name: lsAuthFunc
             arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
             type: request
             identitySource: method.request.header.Authorization
@@ -147,159 +144,96 @@ functions:
           request:
             parameters:
               paths:
-                event_set_id: true
+                location_id: true
 
-  create_event_set_item:
-    handler: event_set/handler.create_event_set_item
+  download_gps_location:
+    handler: location/handler.download_gps_location
     events:
       - http:
-          path: eventSet/{event_set_id}/{sampling_event_id}
-          method: post
-          cors: true
-          timeout: 20
-          authorizer:
-            name: esAuthFunc
-            arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
-            type: request
-            identitySource: method.request.header.Authorization
-            identityValidationExpression: .*
-          request:
-            parameters:
-              paths:
-                event_set_id: true
-                sampling_event_id: true
-  delete_event_set_item:
-    handler: event_set/handler.delete_event_set_item
-    events:
-      - http:
-          path: eventSet/{event_set_id}/{sampling_event_id}
-          method: delete
-          cors: true
-          timeout: 20
-          authorizer:
-            name: esAuthFunc
-            arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
-            type: request
-            identitySource: method.request.header.Authorization
-            identityValidationExpression: .*
-          request:
-            parameters:
-              paths:
-                event_set_id: true
-                sampling_event_id: true
-
-  create_event_set_note:
-    handler: event_set/handler.create_event_set_note
-    events:
-      - http:
-          path: eventSet/{event_set_id}/notes/{note_id}
-          method: post
-          cors: true
-          timeout: 20
-          authorizer:
-            name: esAuthFunc
-            arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
-            type: request
-            identitySource: method.request.header.Authorization
-            identityValidationExpression: .*
-          request:
-            parameters:
-              paths:
-                event_set_id: true
-                note_id: true
-  update_event_set_note:
-    handler: event_set/handler.update_event_set_note
-    events:
-      - http:
-          path: eventSet/{event_set_id}/notes/{note_id}
-          method: put
-          cors: true
-          timeout: 20
-          authorizer:
-            name: esAuthFunc
-            arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
-            type: request
-            identitySource: method.request.header.Authorization
-            identityValidationExpression: .*
-          request:
-            parameters:
-              paths:
-                event_set_id: true
-                note_id: true
-  delete_event_set_note:
-    handler: event_set/handler.delete_event_set_note
-    events:
-      - http:
-          path: eventSet/{event_set_id}/notes/{note_id}
-          method: delete
-          cors: true
-          timeout: 20
-          authorizer:
-            name: esAuthFunc
-            arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
-            type: request
-            identitySource: method.request.header.Authorization
-            identityValidationExpression: .*
-          request:
-            parameters:
-              paths:
-                event_set_id: true
-                note_id: true
-
-  download_event_sets:
-    handler: event_set/handler.download_event_sets
-    events:
-      - http:
-          path: eventSets
+          path: location/gps/{latitude}/{longitude}
           method: get
           cors: true
           timeout: 20
           authorizer:
-            name: esAuthFunc
+            name: lsAuthFunc
             arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
             type: request
             identitySource: method.request.header.Authorization
             identityValidationExpression: .*
+          request:
+            parameters:
+              paths:
+                latitude: true
+                longitude: true
+
+  download_partner_location:
+    handler: location/handler.download_partner_location
+    events:
+      - http:
+          path: location/partner/{partner_id}
+          method: get
+          cors: true
+          timeout: 20
+          authorizer:
+            name: lsAuthFunc
+            arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
+            type: request
+            identitySource: method.request.header.Authorization
+            identityValidationExpression: .*
+          request:
+            parameters:
+              paths:
+                partner_id: true
+
+  download_locations:
+    handler: location/handler.download_locations
+    events:
+      - http:
+          path: locations
+          method: get
+          cors: true
+          timeout: 20
+          authorizer:
+            name: lsAuthFunc
+            arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
+            type: request
+            identitySource: method.request.header.Authorization
+            identityValidationExpression: .*
+          request:
+            parameters:
+              query:
+                study_name: false
+                start: false
+                count: false
+                orderby: false
 
 resources:
   Resources:
-    CreateUnderscoreeventUnderscoresetLogGroup:
+    CreateUnderscorelocationLogGroup:
       Type: AWS::Logs::LogGroup
       Properties:
         RetentionInDays: "30"
-    DownloadUnderscoreeventUnderscoresetLogGroup:
+    DownloadUnderscorelocationLogGroup:
       Type: AWS::Logs::LogGroup
       Properties:
         RetentionInDays: "30"
-    UpdateUnderscoreeventUnderscoresetLogGroup:
+    UpdateUnderscorelocationLogGroup:
       Type: AWS::Logs::LogGroup
       Properties:
         RetentionInDays: "30"
-    DeleteUnderscoreeventUnderscoresetLogGroup:
+    DeleteUnderscorelocationLogGroup:
       Type: AWS::Logs::LogGroup
       Properties:
         RetentionInDays: "30"
-    CreateUnderscoreeventUnderscoresetUnderscoreitemLogGroup:
+    DownloadUnderscoregpsUnderscorelocationLogGroup:
       Type: AWS::Logs::LogGroup
       Properties:
         RetentionInDays: "30"
-    DeleteUnderscoreeventUnderscoresetUnderscoreitemLogGroup:
+    DownloadUnderscorepartnerUnderscorelocationLogGroup:
       Type: AWS::Logs::LogGroup
       Properties:
         RetentionInDays: "30"
-    CreateUnderscoreeventUnderscoresetUnderscorenoteLogGroup:
-      Type: AWS::Logs::LogGroup
-      Properties:
-        RetentionInDays: "30"
-    UpdateUnderscoreeventUnderscoresetUnderscorenoteLogGroup:
-      Type: AWS::Logs::LogGroup
-      Properties:
-        RetentionInDays: "30"
-    DeleteUnderscoreeventUnderscoresetUnderscorenoteLogGroup:
-      Type: AWS::Logs::LogGroup
-      Properties:
-        RetentionInDays: "30"
-    DownloadUnderscoreeventUnderscoresetsLogGroup:
+    DownloadUnderscorelocationsLogGroup:
       Type: AWS::Logs::LogGroup
       Properties:
         RetentionInDays: "30"

@@ -11,7 +11,7 @@
 #
 # Happy Coding!
 
-service: sims-event-set-service
+service: sims-sampling-event-service
 #service: sims-backbone-service
 
 # You can pin your service to only deploy with a specific Serverless version
@@ -69,41 +69,38 @@ package:
         - ../../server/backbone_server/connect.py
     include:
         - ../util/**
-        - event_set/handler.py
+        - sampling_event/handler.py
         - ../../server/bb_server/**
         - ../../server/backbone_server/**/**
         - ../client_secrets.${self:provider.stage}.json
 
 functions:
 
-  create_event_set:
-    handler: event_set/handler.create_event_set
+  createSampling_event:
+    handler: sampling_event/handler.create_sampling_event
     events:
       - http:
-          path: eventSet/{event_set_id}
+          path: samplingEvent
           method: post
           cors: true
           timeout: 20
           authorizer:
-            name: esAuthFunc
+            name: seAuthFunc
             arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
             type: request
             identitySource: method.request.header.Authorization
             identityValidationExpression: .*
-          request:
-            parameters:
-              paths:
-                event_set_id: true
-  download_event_set:
-    handler: event_set/handler.download_event_set
+
+  downloadSampling_event:
+    handler: sampling_event/handler.download_sampling_event
     events:
       - http:
-          path: eventSet/{event_set_id}
+          path: samplingEvent/{sampling_event_id}
           method: get
           cors: true
           timeout: 20
           authorizer:
-            name: esAuthFunc
+            name: seAuthFunc
             arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
             type: request
             identitySource: method.request.header.Authorization
@@ -111,17 +108,39 @@ functions:
           request:
             parameters:
               paths:
-                event_set_id: true
-  update_event_set:
-    handler: event_set/handler.update_event_set
+                sampling_event_id: true
+
+  downloadSampling_events:
+    handler: sampling_event/handler.download_sampling_events
     events:
       - http:
-          path: eventSet/{event_set_id}
+          path: samplingEvents
+          method: get
+          cors: true
+          timeout: 300
+          authorizer:
+            name: seAuthFunc
+            arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
+            type: request
+            identitySource: method.request.header.Authorization
+            identityValidationExpression: .*
+          request:
+            parameters:
+              query:
+                filter: false
+                start: false
+                count: false
+
+  updateSampling_event:
+    handler: sampling_event/handler.update_sampling_event
+    events:
+      - http:
+          path: samplingEvent/{sampling_event_id}
           method: put
           cors: true
           timeout: 20
           authorizer:
-            name: esAuthFunc
+            name: seAuthFunc
             arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
             type: request
             identitySource: method.request.header.Authorization
@@ -129,55 +148,17 @@ functions:
           request:
             parameters:
               paths:
-                event_set_id: true
-  delete_event_set:
-    handler: event_set/handler.delete_event_set
-    events:
-      - http:
-          path: eventSet/{event_set_id}
-          method: delete
-          cors: true
-          timeout: 20
-          authorizer:
-            name: esAuthFunc
-            arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
-            type: request
-            identitySource: method.request.header.Authorization
-            identityValidationExpression: .*
-          request:
-            parameters:
-              paths:
-                event_set_id: true
-
-  create_event_set_item:
-    handler: event_set/handler.create_event_set_item
-    events:
-      - http:
-          path: eventSet/{event_set_id}/{sampling_event_id}
-          method: post
-          cors: true
-          timeout: 20
-          authorizer:
-            name: esAuthFunc
-            arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
-            type: request
-            identitySource: method.request.header.Authorization
-            identityValidationExpression: .*
-          request:
-            parameters:
-              paths:
-                event_set_id: true
                 sampling_event_id: true
-  delete_event_set_item:
-    handler: event_set/handler.delete_event_set_item
+  deleteSampling_event:
+    handler: sampling_event/handler.delete_sampling_event
     events:
       - http:
-          path: eventSet/{event_set_id}/{sampling_event_id}
+          path: samplingEvent/{sampling_event_id}
           method: delete
           cors: true
           timeout: 20
           authorizer:
-            name: esAuthFunc
+            name: seAuthFunc
             arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
             type: request
             identitySource: method.request.header.Authorization
@@ -185,121 +166,156 @@ functions:
           request:
             parameters:
               paths:
-                event_set_id: true
                 sampling_event_id: true
 
-  create_event_set_note:
-    handler: event_set/handler.create_event_set_note
+  downloadSampling_events_by_attr:
+    handler: sampling_event/handler.download_sampling_events_by_attr
     events:
       - http:
-          path: eventSet/{event_set_id}/notes/{note_id}
-          method: post
-          cors: true
-          timeout: 20
-          authorizer:
-            name: esAuthFunc
-            arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
-            type: request
-            identitySource: method.request.header.Authorization
-            identityValidationExpression: .*
-          request:
-            parameters:
-              paths:
-                event_set_id: true
-                note_id: true
-  update_event_set_note:
-    handler: event_set/handler.update_event_set_note
-    events:
-      - http:
-          path: eventSet/{event_set_id}/notes/{note_id}
-          method: put
-          cors: true
-          timeout: 20
-          authorizer:
-            name: esAuthFunc
-            arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
-            type: request
-            identitySource: method.request.header.Authorization
-            identityValidationExpression: .*
-          request:
-            parameters:
-              paths:
-                event_set_id: true
-                note_id: true
-  delete_event_set_note:
-    handler: event_set/handler.delete_event_set_note
-    events:
-      - http:
-          path: eventSet/{event_set_id}/notes/{note_id}
-          method: delete
-          cors: true
-          timeout: 20
-          authorizer:
-            name: esAuthFunc
-            arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
-            type: request
-            identitySource: method.request.header.Authorization
-            identityValidationExpression: .*
-          request:
-            parameters:
-              paths:
-                event_set_id: true
-                note_id: true
-
-  download_event_sets:
-    handler: event_set/handler.download_event_sets
-    events:
-      - http:
-          path: eventSets
+          path: samplingEvents/attr/{prop_name}/{prop_value}
           method: get
           cors: true
           timeout: 20
           authorizer:
-            name: esAuthFunc
+            name: seAuthFunc
             arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
             type: request
             identitySource: method.request.header.Authorization
             identityValidationExpression: .*
+          request:
+            parameters:
+              paths:
+                prop_name: true
+                prop_value: true
+              query:
+                study_name: false
 
+  downloadSampling_events_by_loc:
+    handler: sampling_event/handler.download_sampling_events_by_location
+    events:
+      - http:
+          path: samplingEvents/location/{location_id}
+          method: get
+          cors: true
+          timeout: 20
+          authorizer:
+            name: seAuthFunc
+            arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
+            type: request
+            identitySource: method.request.header.Authorization
+            identityValidationExpression: .*
+          request:
+            parameters:
+              paths:
+                location_id: true
+              query:
+                start: false
+                count: false
+
+  download_events_by_study:
+    handler: sampling_event/handler.download_sampling_events_by_study
+    events:
+      - http:
+          path: samplingEvents/study/{study_name}
+          method: get
+          cors: true
+          timeout: 300
+          authorizer:
+            name: seAuthFunc
+            arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
+            type: request
+            identitySource: method.request.header.Authorization
+            identityValidationExpression: .*
+          request:
+            parameters:
+              paths:
+                study_name: true
+              query:
+                start: false
+                count: false
+
+  downloadSampling_events_by_taxa:
+    handler: sampling_event/handler.download_sampling_events_by_taxa
+    events:
+      - http:
+          path: samplingEvents/taxa/{taxa_id}
+          method: get
+          cors: true
+          timeout: 300
+          authorizer:
+            name: seAuthFunc
+            arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
+            type: request
+            identitySource: method.request.header.Authorization
+            identityValidationExpression: .*
+          request:
+            parameters:
+              paths:
+                taxa_id: true
+              query:
+                start: false
+                count: false
+
+  download_events_by_event_set:
+    handler: sampling_event/handler.download_sampling_events_by_event_set
+    events:
+      - http:
+          path: samplingEvents/eventSet/{event_set_id}
+          method: get
+          cors: true
+          timeout: 300
+          authorizer:
+            name: seAuthFunc
+            arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
+            type: request
+            identitySource: method.request.header.Authorization
+            identityValidationExpression: .*
+          request:
+            parameters:
+              paths:
+                event_set_id: true
+              query:
+                start: false
+                count: false
 resources:
   Resources:
-    CreateUnderscoreeventUnderscoresetLogGroup:
+    CreateUnderscoresamplingUnderscoreeventLogGroup:
       Type: AWS::Logs::LogGroup
       Properties:
         RetentionInDays: "30"
-    DownloadUnderscoreeventUnderscoresetLogGroup:
+    DownloadUnderscoresamplingUnderscoreeventLogGroup:
       Type: AWS::Logs::LogGroup
       Properties:
         RetentionInDays: "30"
-    UpdateUnderscoreeventUnderscoresetLogGroup:
+    DownloadUnderscoresamplingUnderscoreeventsLogGroup:
       Type: AWS::Logs::LogGroup
       Properties:
         RetentionInDays: "30"
-    DeleteUnderscoreeventUnderscoresetLogGroup:
+    UpdateUnderscoresamplingUnderscoreeventLogGroup:
       Type: AWS::Logs::LogGroup
       Properties:
         RetentionInDays: "30"
-    CreateUnderscoreeventUnderscoresetUnderscoreitemLogGroup:
+    DeleteUnderscoresamplingUnderscoreeventLogGroup:
       Type: AWS::Logs::LogGroup
       Properties:
         RetentionInDays: "30"
-    DeleteUnderscoreeventUnderscoresetUnderscoreitemLogGroup:
+    DownloadSamplingUnderscoreeventUnderscorebyUnderscoreattrLogGroup:
       Type: AWS::Logs::LogGroup
       Properties:
         RetentionInDays: "30"
-    CreateUnderscoreeventUnderscoresetUnderscorenoteLogGroup:
+    DownloadSamplingUnderscoreeventsUnderscorebyUnderscorelocLogGroup:
       Type: AWS::Logs::LogGroup
       Properties:
         RetentionInDays: "30"
-    UpdateUnderscoreeventUnderscoresetUnderscorenoteLogGroup:
+    DownloadUnderscoreeventsUnderscorebyUnderscorestudyLogGroup:
       Type: AWS::Logs::LogGroup
       Properties:
         RetentionInDays: "30"
-    DeleteUnderscoreeventUnderscoresetUnderscorenoteLogGroup:
+    DownloadSamplingUnderscoreeventsUnderscorebyUnderscoretaxaLogGroup:
       Type: AWS::Logs::LogGroup
       Properties:
         RetentionInDays: "30"
-    DownloadUnderscoreeventUnderscoresetsLogGroup:
+    DownloadUnderscoreeventsUnderscorebyUnderscoreeventUnderscoresetLogGroup:
       Type: AWS::Logs::LogGroup
       Properties:
         RetentionInDays: "30"

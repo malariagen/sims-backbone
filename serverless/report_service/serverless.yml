@@ -11,7 +11,7 @@
 #
 # Happy Coding!
 
-service: report-service
+service: sims-report-service
 #service: sims-backbone-service
 
 # You can pin your service to only deploy with a specific Serverless version

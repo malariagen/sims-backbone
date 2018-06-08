@@ -1,5 +1,5 @@
 {
-    "name": "sims-report-service",
+    "name": "sims-sampling-event-service",
     "version": "1.0.0",
     "description": "",
     "main": "index.js",
@@ -9,7 +9,7 @@
     "author": "",
     "license": "ISC",
     "devDependencies": {
-        "serverless": "^1.26.1",
+        "serverless": "^1.27.3",
         "serverless-python-requirements": "^3.3.0"
     },
     "configurations": [
