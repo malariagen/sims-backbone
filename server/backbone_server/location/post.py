@@ -4,7 +4,6 @@ from backbone_server.location.edit import LocationEdit
 from backbone_server.location.fetch import LocationFetch
 
 from swagger_server.models.location import Location
-from swagger_server.models.attr import Attr
 
 import psycopg2
 

@@ -65,11 +65,11 @@ class SamplingEventsGetByLocation():
 
                 sampling_events.attr_types = []
 
-                col_query = '''select distinct attr_type from sampling_events se
-                JOIN attrs a ON a.sampling_event_id=se.id
-                WHERE location_id = %s OR proxy_location_id = %s'''
+                col_query = '''select distinct attr_type from location_attrs se
+                JOIN attrs a ON se.location_id=a.id
+                WHERE location_id = %s'''
 
-                cursor.execute(col_query, (location_id, location_id,))
+                cursor.execute(col_query, (location_id,))
                 for (attr_type,) in cursor:
                     sampling_events.attr_types.append(attr_type)
 

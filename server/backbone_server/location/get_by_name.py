@@ -17,7 +17,8 @@ class LocationGetByPartnerName():
         with self._connection:
             with self._connection.cursor() as cursor:
 
-                cursor.execute('''SELECT DISTINCT location_id FROM location_attrs 
+                cursor.execute('''SELECT DISTINCT location_id FROM location_attrs
+                               JOIN attrs ON attrs.id = location_attrs.attr_id
                                WHERE attr_type = %s AND attr_value = %s''', ('partner_name', partner_id,))
 
                 locations = Locations()

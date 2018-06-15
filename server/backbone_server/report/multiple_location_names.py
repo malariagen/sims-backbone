@@ -23,7 +23,8 @@ class MultipleLocationNames():
                 # ST_X(location) as latitude, ST_Y(location) as longitude
                 stmt = '''select study_code from locations l
                     join location_attrs li ON li.location_id = l.id
-                    JOIN studies s ON li.study_id = s.id
+                    JOIN attrs a ON a.id = li.attr_id
+                    JOIN studies s ON a.study_id = s.id
                     group by location, study_code
                     having count(location) > 1 ORDER BY study_code;'''
 

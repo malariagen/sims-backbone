@@ -25,7 +25,8 @@ class LocationsGet():
                 args = ()
                 if study_code or orderby == 'study_name':
                     query_body = query_body + ''' LEFT JOIN location_attrs li ON li.location_id = l.id
-                    LEFT JOIN studies s ON s.id = li.study_id'''
+                    JOIN attrs a ON li.attr_id = a.id
+                    LEFT JOIN studies s ON s.id = a.study_id'''
                     if study_code:
                         query_body = query_body + " WHERE study_code = %s"
                         args = (study_code[:4], )

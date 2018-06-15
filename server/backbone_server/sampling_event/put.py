@@ -60,7 +60,7 @@ class SamplingEventPut():
                     cursor.execute(stmt, args)
                     rc = cursor.rowcount
 
-                    cursor.execute('DELETE FROM attrs WHERE sampling_event_id = %s',
+                    cursor.execute('DELETE FROM sampling_event_attrs WHERE sampling_event_id = %s',
                                    (sampling_event_id,))
 
                     SamplingEventEdit.add_attrs(cursor, sampling_event_id, sampling_event)

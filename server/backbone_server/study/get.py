@@ -1,5 +1,3 @@
-from swagger_server.models.study import Study
-from swagger_server.models.attr import Attr
 from backbone_server.errors.missing_key_exception import MissingKeyException
 
 from backbone_server.study.fetch import StudyFetch

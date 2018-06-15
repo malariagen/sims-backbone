@@ -20,13 +20,15 @@ class SamplingEventGetByAttr():
 
                 locations = {}
 
-                stmt = '''SELECT DISTINCT sampling_event_id FROM attrs
+                stmt = '''SELECT DISTINCT sampling_event_id FROM sampling_event_attrs
+                JOIN attrs ON attrs.id = sampling_event_attrs.attr_id
                 WHERE attr_type = %s AND attr_value = %s'''
                 args = (attr_type, attr_value)
 
                 if study_name:
-                    stmt = '''SELECT DISTINCT sampling_event_id FROM attrs
-                    LEFT JOIN sampling_events ON attrs.sampling_event_id=sampling_events.id
+                    stmt = '''SELECT DISTINCT sampling_event_id FROM sampling_event_attrs
+                    JOIN attrs ON attrs.id = sampling_event_attrs.attr_id
+                    LEFT JOIN sampling_events ON sampling_event_attrs.sampling_event_id=sampling_events.id
                     LEFT JOIN studies ON sampling_events.study_id=studies.id
                 WHERE attr_type = %s AND attr_value = %s AND study_code = %s'''
                     args = args + (study_name[:4],)

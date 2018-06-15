@@ -15,6 +15,7 @@ class SamplingEventFetch():
     def fetch_attrs(cursor, sampling_event_id):
 
         stmt = '''SELECT attr_type, attr_value, attr_source FROM attrs
+        JOIN sampling_event_attrs ON sampling_event_attrs.attr_id = attrs.id
         WHERE sampling_event_id = %s
                 ORDER BY attr_type, attr_value, attr_source'''
 

@@ -27,8 +27,9 @@ class LocationFetch():
 
         stmt = '''SELECT DISTINCT attr_type, attr_value, attr_source, studies.study_name
                 FROM location_attrs
-                LEFT JOIN studies ON location_attrs.study_id = studies.id
-                WHERE location_id = %s AND location_attrs.attr_type = %s'''
+                JOIN attrs a ON a.id = location_attrs.attr_id
+                LEFT JOIN studies ON a.study_id = studies.id
+                WHERE location_id = %s AND attr_type = %s'''
 
         cursor.execute(stmt, (location_id, 'partner_name'))
 

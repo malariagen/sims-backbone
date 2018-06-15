@@ -74,6 +74,8 @@ class SamplingEventEdit():
                 if not (ident.attr_type == 'partner_id' or \
                         ident.attr_type == 'individual_id'):
                     cursor.execute('''SELECT * FROM attrs
+                                   JOIN sampling_event_attrs ON sampling_event_attrs.attr_id =
+                                   attrs.id
                                    WHERE attr_type = %s AND attr_value = %s AND
                                    attr_source = %s''',
                                    (ident.attr_type, ident.attr_value,
@@ -83,6 +85,8 @@ class SamplingEventEdit():
                                                     .format(ident.attr_type, sampling_event))
 
                     cursor.execute('''SELECT * FROM attrs
+                                   JOIN sampling_event_attrs ON sampling_event_attrs.attr_id =
+                                   attrs.id
                                    WHERE attr_type = %s AND attr_value = %s AND
                                    sampling_event_id != %s''',
                                    (ident.attr_type, ident.attr_value,
@@ -91,11 +95,18 @@ class SamplingEventEdit():
                         raise DuplicateKeyException("Error inserting sampling_event attr {} {}"
                                                     .format(ident.attr_type, sampling_event))
 
-                stmt = '''INSERT INTO attrs 
-                    (sampling_event_id, attr_type, attr_value, attr_source)
+                attr_id = uuid.uuid4()
+                stmt = '''INSERT INTO attrs
+                    (id, attr_type, attr_value, attr_source)
                     VALUES (%s, %s, %s, %s)'''
-                cursor.execute(stmt, (uuid_val, ident.attr_type, ident.attr_value,
+                cursor.execute(stmt, (attr_id, ident.attr_type, ident.attr_value,
                                       ident.attr_source))
+
+                stmt = '''INSERT INTO sampling_event_attrs
+                    (sampling_event_id, attr_id)
+                    VALUES (%s, %s)'''
+                cursor.execute(stmt, (uuid_val, attr_id))
+
 
 
 

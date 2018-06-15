@@ -15,7 +15,11 @@ class AttrTypesGet():
         with self._connection:
             with self._connection.cursor() as cursor:
 
-                stmt = '''SELECT DISTINCT attr_type FROM '''+ table
+                if table == 'attrs':
+                    stmt = '''SELECT DISTINCT attr_type FROM attrs a'''
+                else:
+                    stmt = '''SELECT DISTINCT attr_type FROM attrs a
+                    JOIN '''+ table + ' ON a.id = ' + table + '.attr_id'
                 cursor.execute( stmt, )
 
                 for (attr_type,) in cursor:

@@ -67,8 +67,9 @@ class SamplingEventsGetByTaxa():
 
                 sampling_events.attr_types = []
 
-                col_query = '''select distinct attr_type from sampling_events se
-                JOIN attrs a ON a.sampling_event_id=se.id
+                col_query = '''select distinct attr_type from sampling_event_attrs sea
+                        JOIN attrs a ON a.id=sea.attr_id
+                        JOIN sampling_events se ON se.id = sea.sampling_event_id
                         LEFT JOIN taxonomy_identifiers ti ON ti.partner_species_id = se.partner_species_id
                         WHERE ti.taxonomy_id = %s'''
 

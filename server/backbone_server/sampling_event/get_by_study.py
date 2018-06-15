@@ -63,8 +63,8 @@ class SamplingEventsGetByStudy():
 
                 sampling_events.attr_types = []
 
-                col_query = '''select distinct attr_type from sampling_events se
-                JOIN attrs a ON a.sampling_event_id=se.id WHERE se.study_id = %s'''
+                col_query = '''select distinct attr_type from sampling_event_attrs se
+                JOIN attrs a ON se.sampling_event_id=a.id WHERE a.study_id = %s'''
 
                 cursor.execute(col_query, (study_id,))
                 for (attr_type,) in cursor:

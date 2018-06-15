@@ -19,6 +19,39 @@ class LocationEdit():
 
 
     @staticmethod
+    def get_or_create_location_attr_id(cursor, ident):
+
+        study_id = None
+        if ident.study_name:
+            study_id = SamplingEventEdit.fetch_study_id(cursor, ident.study_name, True)
+        stmt = 'SELECT id FROM attrs WHERE attr_type=%s AND attr_value=%s AND attr_source=%s'
+        args = (ident.attr_type, ident.attr_value, ident.attr_source)
+
+        if study_id:
+            stmt += ' AND study_id = %s'
+            args = args + (study_id,)
+
+        cursor.execute(stmt, args)
+
+        res = cursor.fetchone()
+
+        if res:
+            return res[0], study_id
+
+        uuid_val = uuid.uuid4()
+
+        insert_stmt = '''INSERT INTO attrs 
+                    (id, study_id, attr_type, attr_value, attr_source)
+                    VALUES (%s, %s, %s, %s, %s)'''
+
+        cursor.execute(insert_stmt, (uuid_val, study_id, ident.attr_type, ident.attr_value, ident.attr_source))
+
+        return uuid_val,study_id
+
+
+
+
+    @staticmethod
     def clean_up_attrs(cursor, location_id, old_study_id):
 
         if not location_id:
@@ -27,23 +60,24 @@ class LocationEdit():
         if not old_study_id:
             return
 
-        stmt = '''select li.study_id, li.location_id FROM location_attrs li
+        stmt = '''select a.id, a.study_id, li.location_id FROM location_attrs li
+        JOIN attrs a ON a.id = li.attr_id
         LEFT JOIN sampling_events se ON
             (se.location_id = li.location_id OR se.proxy_location_id = li.location_id)
-                AND se.study_id = li.study_id
-        WHERE se.id IS NULL AND li.location_id = %s group by li.study_id, li.location_id;'''
+                AND se.study_id = a.study_id
+        WHERE se.id IS NULL AND li.location_id = %s group by a.study_id, li.location_id, a.id;'''
 
         cursor.execute(stmt, (location_id,))
 
         obsolete_idents = []
-        for (study_id, location_id) in cursor:
-            obsolete_idents.append(study_id)
+        for (attr_id, study_id, location_id) in cursor:
+            obsolete_idents.append({ 'study_id': study_id, 'attr_id': attr_id})
 
-        delete_stmt = 'DELETE FROM location_attrs WHERE location_id = %s AND study_id = %s'
+        delete_stmt = 'DELETE FROM location_attrs WHERE location_id = %s AND attr_id = %s'
 
         for obsolete_ident in obsolete_idents:
-            if obsolete_ident == old_study_id:
-                cursor.execute(delete_stmt, (location_id, obsolete_ident))
+            if obsolete_ident['study_id'] == old_study_id:
+                cursor.execute(delete_stmt, (location_id, obsolete_ident['attr_id']))
 
     @staticmethod
     def add_attrs(cursor, uuid_val, location):
@@ -53,15 +87,14 @@ class LocationEdit():
         try:
             if location.attrs:
                 for ident in location.attrs:
-                    study_id = None
+                    attr_id, study_id = LocationEdit.get_or_create_location_attr_id(cursor, ident)
                     if ident.study_name:
-                        study_id = SamplingEventEdit.fetch_study_id(cursor, ident.study_name, True)
                         if study_id in studies:
                             raise DuplicateKeyException("Error inserting location {}".format(location))
                         studies.append(study_id)
 
-                    cursor.execute(LocationEdit._insert_ident_stmt, (uuid_val, study_id, ident.attr_type,
-                                          ident.attr_value, ident.attr_source))
+                    cursor.execute('INSERT INTO location_attrs(location_id, attr_id) VALUES (%s, %s)',
+                                   (uuid_val, attr_id))
 
         except psycopg2.IntegrityError as err:
             print(err.pgcode)
@@ -77,8 +110,9 @@ class LocationEdit():
 
         old_attrs = []
 
-        stmt = '''SELECT attr_type, attr_value, attr_source, study_name FROM location_attrs
-                    JOIN studies s ON s.id = location_attrs.study_id
+        stmt = '''SELECT DISTINCT attr_type, attr_value, attr_source, study_name FROM location_attrs
+        JOIN attrs a ON a.id = location_attrs.attr_id
+                    JOIN studies s ON s.id = a.study_id
                     WHERE location_id = %s AND study_id = %s'''
 
         cursor.execute(stmt, (location_id, old_study_id))
@@ -101,10 +135,10 @@ class LocationEdit():
 
         if len(new_attrs) == 0:
             if len(old_attrs) == 1:
-                cursor.execute(LocationEdit._insert_ident_stmt, (location_id, new_study_id,
-                                                             old_attrs[0].attr_type,
-                                                             old_attrs[0].attr_value,
-                                                             old_attrs[0].attr_source))
+                attr_id, study_id = LocationEdit.get_or_create_location_attr_id(cursor, old_attrs[0])
+                cursor.execute('INSERT INTO location_attrs(location_id, attr_id) VALUES (%s, %s)',
+                                   (location_id, attr_id))
+                cursor.execute('UPDATE attrs SET study_id=%s WHERE id=%s',(new_study_id, attr_id))
 
     @staticmethod
     def check_for_duplicate(cursor, location, location_id):

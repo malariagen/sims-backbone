@@ -22,7 +22,8 @@ class MultipleLocationGPS():
                 #, curated_name, accuracy, country, partner_name
                 # ST_X(location) as latitude, ST_Y(location) as longitude
                 stmt = '''select study_code from location_attrs li
-                JOIN studies s ON li.study_id = s.id
+                JOIN attrs a ON a.id = li.attr_id
+                JOIN studies s ON a.study_id = s.id
                 GROUP BY attr_type, attr_value, study_code
                 having count(attr_value) > 1'''
 

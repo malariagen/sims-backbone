@@ -2,29 +2,28 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 9.6.7
--- Dumped by pg_dump version 9.6.7
+-- Dumped from database version 9.6.9
+-- Dumped by pg_dump version 9.6.9
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
 SET idle_in_transaction_session_timeout = 0;
 SET client_encoding = 'UTF8';
 SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
 SET check_function_bodies = false;
 SET client_min_messages = warning;
 SET row_security = off;
 
-SET search_path = public, pg_catalog;
-
 ALTER TABLE ONLY public.taxonomy_identifiers DROP CONSTRAINT fk_taxa;
-ALTER TABLE ONLY public.location_attrs DROP CONSTRAINT fk_study_loc;
+ALTER TABLE ONLY public.location_identifiers DROP CONSTRAINT fk_study_loc;
 ALTER TABLE ONLY public.sampling_events DROP CONSTRAINT fk_study;
 ALTER TABLE ONLY public.sampling_events DROP CONSTRAINT fk_species;
-ALTER TABLE ONLY public.attrs DROP CONSTRAINT fk_sampling_event;
+ALTER TABLE ONLY public.identifiers DROP CONSTRAINT fk_sampling_event;
 ALTER TABLE ONLY public.sampling_events DROP CONSTRAINT fk_proxy_location;
 ALTER TABLE ONLY public.partner_species_identifiers DROP CONSTRAINT fk_partner_sp_study;
 ALTER TABLE ONLY public.taxonomy_identifiers DROP CONSTRAINT fk_partner_sp;
-ALTER TABLE ONLY public.location_attrs DROP CONSTRAINT fk_location;
+ALTER TABLE ONLY public.location_identifiers DROP CONSTRAINT fk_location;
 ALTER TABLE ONLY public.sampling_events DROP CONSTRAINT fk_location;
 ALTER TABLE ONLY public.event_set_notes DROP CONSTRAINT fk_esn_es;
 ALTER TABLE ONLY public.event_set_members DROP CONSTRAINT fk_esm_se;
@@ -42,8 +41,8 @@ DROP INDEX public.fki_fk_esn_es;
 DROP INDEX public.fki_fk_esm_se;
 DROP INDEX public.fki_fk_esm_es;
 ALTER TABLE ONLY public.studies DROP CONSTRAINT uniq_study_code;
-ALTER TABLE ONLY public.location_attrs DROP CONSTRAINT uniq_loc_name_ident;
-ALTER TABLE ONLY public.location_attrs DROP CONSTRAINT uniq_loc_ident;
+ALTER TABLE ONLY public.location_identifiers DROP CONSTRAINT uniq_loc_name_ident;
+ALTER TABLE ONLY public.location_identifiers DROP CONSTRAINT uniq_loc_ident;
 ALTER TABLE ONLY public.event_sets DROP CONSTRAINT uniq_event_sets;
 ALTER TABLE ONLY public.event_set_members DROP CONSTRAINT uniq_event_set_members;
 ALTER TABLE ONLY public.taxonomies DROP CONSTRAINT taxonomy_id;
@@ -63,8 +62,8 @@ DROP TABLE public.studies;
 DROP TABLE public.sampling_events;
 DROP TABLE public.partner_species_identifiers;
 DROP TABLE public.locations;
-DROP TABLE public.location_attrs;
-DROP TABLE public.attrs;
+DROP TABLE public.location_identifiers;
+DROP TABLE public.identifiers;
 DROP SEQUENCE public.event_sets_id_seq;
 DROP TABLE public.event_sets;
 DROP TABLE public.event_set_notes;
@@ -117,8 +116,6 @@ CREATE EXTENSION IF NOT EXISTS postgis WITH SCHEMA public;
 COMMENT ON EXTENSION postgis IS 'PostGIS geometry, geography, and raster spatial types and functions';
 
 
-SET search_path = public, pg_catalog;
-
 SET default_tablespace = '';
 
 SET default_with_oids = false;
@@ -127,7 +124,7 @@ SET default_with_oids = false;
 -- Name: archive; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE archive (
+CREATE TABLE public.archive (
     id integer NOT NULL,
     submitter character varying(64),
     action_id character varying(64),
@@ -143,7 +140,7 @@ CREATE TABLE archive (
 -- Name: archive_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE archive_id_seq
+CREATE SEQUENCE public.archive_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -155,14 +152,14 @@ CREATE SEQUENCE archive_id_seq
 -- Name: archive_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
-ALTER SEQUENCE archive_id_seq OWNED BY archive.id;
+ALTER SEQUENCE public.archive_id_seq OWNED BY public.archive.id;
 
 
 --
 -- Name: countries; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE countries (
+CREATE TABLE public.countries (
     english character varying,
     french character varying,
     alpha2 character(2),
@@ -175,7 +172,7 @@ CREATE TABLE countries (
 -- Name: event_set_members; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE event_set_members (
+CREATE TABLE public.event_set_members (
     event_set_id integer,
     sampling_event_id uuid
 );
@@ -185,7 +182,7 @@ CREATE TABLE event_set_members (
 -- Name: event_set_notes; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE event_set_notes (
+CREATE TABLE public.event_set_notes (
     event_set_id integer NOT NULL,
     note_name character varying(128) NOT NULL,
     note_text text
@@ -196,7 +193,7 @@ CREATE TABLE event_set_notes (
 -- Name: event_sets; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE event_sets (
+CREATE TABLE public.event_sets (
     id integer NOT NULL,
     event_set_name character varying(128) NOT NULL
 );
@@ -206,7 +203,7 @@ CREATE TABLE event_sets (
 -- Name: event_sets_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE event_sets_id_seq
+CREATE SEQUENCE public.event_sets_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -218,31 +215,31 @@ CREATE SEQUENCE event_sets_id_seq
 -- Name: event_sets_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
-ALTER SEQUENCE event_sets_id_seq OWNED BY event_sets.id;
+ALTER SEQUENCE public.event_sets_id_seq OWNED BY public.event_sets.id;
 
 
 --
--- Name: attrs; Type: TABLE; Schema: public; Owner: -
+-- Name: identifiers; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE attrs (
+CREATE TABLE public.identifiers (
     sampling_event_id uuid,
-    attr_type character varying(20),
-    attr_value character varying(256),
-    attr_source character varying(256)
+    identifier_type character varying(20),
+    identifier_value character varying(256),
+    identifier_source character varying(256)
 );
 
 
 --
--- Name: location_attrs; Type: TABLE; Schema: public; Owner: -
+-- Name: location_identifiers; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE location_attrs (
+CREATE TABLE public.location_identifiers (
     location_id uuid,
     study_id uuid,
-    attr_type character varying(20),
-    attr_value character varying(256),
-    attr_source character varying(256)
+    identifier_type character varying(20),
+    identifier_value character varying(256),
+    identifier_source character varying(256)
 );
 
 
@@ -250,9 +247,9 @@ CREATE TABLE location_attrs (
 -- Name: locations; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE locations (
+CREATE TABLE public.locations (
     id uuid NOT NULL,
-    location geometry(Point),
+    location public.geometry(Point),
     country character(3),
     accuracy character varying,
     curated_name character varying,
@@ -265,7 +262,7 @@ CREATE TABLE locations (
 -- Name: partner_species_identifiers; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE partner_species_identifiers (
+CREATE TABLE public.partner_species_identifiers (
     id uuid NOT NULL,
     study_id uuid,
     partner_species character varying(128)
@@ -276,7 +273,7 @@ CREATE TABLE partner_species_identifiers (
 -- Name: sampling_events; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE sampling_events (
+CREATE TABLE public.sampling_events (
     id uuid NOT NULL,
     study_id uuid,
     doc date,
@@ -291,7 +288,7 @@ CREATE TABLE sampling_events (
 -- Name: studies; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE studies (
+CREATE TABLE public.studies (
     id uuid NOT NULL,
     study_name character varying(64),
     study_code character varying(4)
@@ -302,7 +299,7 @@ CREATE TABLE studies (
 -- Name: taxonomies; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE taxonomies (
+CREATE TABLE public.taxonomies (
     id bigint NOT NULL,
     rank character varying(32),
     name character varying(128)
@@ -313,7 +310,7 @@ CREATE TABLE taxonomies (
 -- Name: taxonomy_identifiers; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE taxonomy_identifiers (
+CREATE TABLE public.taxonomy_identifiers (
     taxonomy_id bigint,
     partner_species_id uuid
 );
@@ -323,7 +320,7 @@ CREATE TABLE taxonomy_identifiers (
 -- Name: v_sampling_events; Type: VIEW; Schema: public; Owner: -
 --
 
-CREATE VIEW v_sampling_events AS
+CREATE VIEW public.v_sampling_events AS
  SELECT sampling_events.id,
     studies.study_name AS study_id,
     sampling_events.doc,
@@ -331,51 +328,51 @@ CREATE VIEW v_sampling_events AS
     partner_species_identifiers.partner_species,
     sampling_events.partner_species_id,
     sampling_events.location_id,
-    st_x(loc.location) AS latitude,
-    st_y(loc.location) AS longitude,
+    public.st_x(loc.location) AS latitude,
+    public.st_y(loc.location) AS longitude,
     loc.accuracy,
     loc.curated_name,
     loc.curation_method,
     loc.country,
     loc.notes,
-    li.attr_value AS partner_name,
+    li.identifier_value AS partner_name,
     sampling_events.proxy_location_id,
-    st_x(proxy_loc.location) AS proxy_latitude,
-    st_y(proxy_loc.location) AS proxy_longitude,
+    public.st_x(proxy_loc.location) AS proxy_latitude,
+    public.st_y(proxy_loc.location) AS proxy_longitude,
     proxy_loc.accuracy AS proxy_accuracy,
     proxy_loc.curated_name AS proxy_curated_name,
     proxy_loc.curation_method AS proxy_curation_method,
     proxy_loc.country AS proxy_country,
     proxy_loc.notes AS proxy_notes,
-    pli.attr_value AS proxy_partner_name
-   FROM ((((((sampling_events
-     LEFT JOIN studies ON ((studies.id = sampling_events.study_id)))
-     LEFT JOIN partner_species_identifiers ON ((partner_species_identifiers.id = sampling_events.partner_species_id)))
-     LEFT JOIN locations loc ON ((loc.id = sampling_events.location_id)))
-     LEFT JOIN location_attrs li ON (((li.study_id = sampling_events.study_id) AND (li.location_id = loc.id) AND ((li.attr_type)::text = 'partner_name'::text))))
-     LEFT JOIN locations proxy_loc ON ((proxy_loc.id = sampling_events.proxy_location_id)))
-     LEFT JOIN location_attrs pli ON (((pli.study_id = sampling_events.study_id) AND (pli.location_id = loc.id) AND ((pli.attr_type)::text = 'partner_name'::text))));
+    pli.identifier_value AS proxy_partner_name
+   FROM ((((((public.sampling_events
+     LEFT JOIN public.studies ON ((studies.id = sampling_events.study_id)))
+     LEFT JOIN public.partner_species_identifiers ON ((partner_species_identifiers.id = sampling_events.partner_species_id)))
+     LEFT JOIN public.locations loc ON ((loc.id = sampling_events.location_id)))
+     LEFT JOIN public.location_identifiers li ON (((li.study_id = sampling_events.study_id) AND (li.location_id = loc.id) AND ((li.identifier_type)::text = 'partner_name'::text))))
+     LEFT JOIN public.locations proxy_loc ON ((proxy_loc.id = sampling_events.proxy_location_id)))
+     LEFT JOIN public.location_identifiers pli ON (((pli.study_id = sampling_events.study_id) AND (pli.location_id = loc.id) AND ((pli.identifier_type)::text = 'partner_name'::text))));
 
 
 --
 -- Name: archive id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY archive ALTER COLUMN id SET DEFAULT nextval('archive_id_seq'::regclass);
+ALTER TABLE ONLY public.archive ALTER COLUMN id SET DEFAULT nextval('public.archive_id_seq'::regclass);
 
 
 --
 -- Name: event_sets id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY event_sets ALTER COLUMN id SET DEFAULT nextval('event_sets_id_seq'::regclass);
+ALTER TABLE ONLY public.event_sets ALTER COLUMN id SET DEFAULT nextval('public.event_sets_id_seq'::regclass);
 
 
 --
 -- Name: countries countries_id; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY countries
+ALTER TABLE ONLY public.countries
     ADD CONSTRAINT countries_id PRIMARY KEY (alpha3);
 
 
@@ -383,7 +380,7 @@ ALTER TABLE ONLY countries
 -- Name: locations location_id; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY locations
+ALTER TABLE ONLY public.locations
     ADD CONSTRAINT location_id PRIMARY KEY (id);
 
 
@@ -391,7 +388,7 @@ ALTER TABLE ONLY locations
 -- Name: partner_species_identifiers partner_species_identifiers_id; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY partner_species_identifiers
+ALTER TABLE ONLY public.partner_species_identifiers
     ADD CONSTRAINT partner_species_identifiers_id PRIMARY KEY (id);
 
 
@@ -399,7 +396,7 @@ ALTER TABLE ONLY partner_species_identifiers
 -- Name: event_sets pk_es; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY event_sets
+ALTER TABLE ONLY public.event_sets
     ADD CONSTRAINT pk_es PRIMARY KEY (id);
 
 
@@ -407,7 +404,7 @@ ALTER TABLE ONLY event_sets
 -- Name: event_set_notes pk_esn; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY event_set_notes
+ALTER TABLE ONLY public.event_set_notes
     ADD CONSTRAINT pk_esn PRIMARY KEY (event_set_id, note_name);
 
 
@@ -415,7 +412,7 @@ ALTER TABLE ONLY event_set_notes
 -- Name: sampling_events sampling_event_id; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY sampling_events
+ALTER TABLE ONLY public.sampling_events
     ADD CONSTRAINT sampling_event_id PRIMARY KEY (id);
 
 
@@ -423,7 +420,7 @@ ALTER TABLE ONLY sampling_events
 -- Name: studies studies_id; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY studies
+ALTER TABLE ONLY public.studies
     ADD CONSTRAINT studies_id PRIMARY KEY (id);
 
 
@@ -431,7 +428,7 @@ ALTER TABLE ONLY studies
 -- Name: taxonomies taxonomy_id; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY taxonomies
+ALTER TABLE ONLY public.taxonomies
     ADD CONSTRAINT taxonomy_id PRIMARY KEY (id);
 
 
@@ -439,7 +436,7 @@ ALTER TABLE ONLY taxonomies
 -- Name: event_set_members uniq_event_set_members; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY event_set_members
+ALTER TABLE ONLY public.event_set_members
     ADD CONSTRAINT uniq_event_set_members UNIQUE (event_set_id, sampling_event_id);
 
 
@@ -447,20 +444,31 @@ ALTER TABLE ONLY event_set_members
 -- Name: event_sets uniq_event_sets; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY event_sets
+ALTER TABLE ONLY public.event_sets
     ADD CONSTRAINT uniq_event_sets UNIQUE (event_set_name);
 
 
 --
--- Name: location_attrs uniq_loc_ident; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: location_identifiers uniq_loc_ident; Type: CONSTRAINT; Schema: public; Owner: -
 --
+
+ALTER TABLE ONLY public.location_identifiers
+    ADD CONSTRAINT uniq_loc_ident UNIQUE (location_id, study_id, identifier_type);
+
+
+--
+-- Name: location_identifiers uniq_loc_name_ident; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.location_identifiers
+    ADD CONSTRAINT uniq_loc_name_ident UNIQUE (study_id, identifier_type, identifier_value);
 
 
 --
 -- Name: studies uniq_study_code; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY studies
+ALTER TABLE ONLY public.studies
     ADD CONSTRAINT uniq_study_code UNIQUE (study_code);
 
 
@@ -468,196 +476,198 @@ ALTER TABLE ONLY studies
 -- Name: fki_fk_esm_es; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX fki_fk_esm_es ON event_set_members USING btree (event_set_id);
+CREATE INDEX fki_fk_esm_es ON public.event_set_members USING btree (event_set_id);
 
 
 --
 -- Name: fki_fk_esm_se; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX fki_fk_esm_se ON event_set_members USING btree (sampling_event_id);
+CREATE INDEX fki_fk_esm_se ON public.event_set_members USING btree (sampling_event_id);
 
 
 --
 -- Name: fki_fk_esn_es; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX fki_fk_esn_es ON event_set_notes USING btree (event_set_id);
+CREATE INDEX fki_fk_esn_es ON public.event_set_notes USING btree (event_set_id);
 
 
 --
 -- Name: fki_location; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX fki_location ON sampling_events USING btree (location_id);
+CREATE INDEX fki_location ON public.sampling_events USING btree (location_id);
 
 
 --
 -- Name: fki_location_id; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX fki_location_id ON location_attrs USING btree (location_id);
+CREATE INDEX fki_location_id ON public.location_identifiers USING btree (location_id);
 
 
 --
 -- Name: fki_proxy_location; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX fki_proxy_location ON sampling_events USING btree (proxy_location_id);
+CREATE INDEX fki_proxy_location ON public.sampling_events USING btree (proxy_location_id);
 
 
 --
 -- Name: fki_sampling_event_id; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX fki_sampling_event_id ON attrs USING btree (sampling_event_id);
+CREATE INDEX fki_sampling_event_id ON public.identifiers USING btree (sampling_event_id);
 
 
 --
 -- Name: idx_ident_type; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX idx_ident_type ON location_attrs USING btree (attr_type);
+CREATE INDEX idx_ident_type ON public.location_identifiers USING btree (identifier_type);
 
 
 --
 -- Name: idx_ident_value; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX idx_ident_value ON location_attrs USING btree (attr_value);
+CREATE INDEX idx_ident_value ON public.location_identifiers USING btree (identifier_value);
 
 
 --
 -- Name: idx_partner_species; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX idx_partner_species ON partner_species_identifiers USING btree (partner_species);
+CREATE INDEX idx_partner_species ON public.partner_species_identifiers USING btree (partner_species);
 
 
 --
 -- Name: idx_study_name; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX idx_study_name ON studies USING btree (study_name);
+CREATE INDEX idx_study_name ON public.studies USING btree (study_name);
 
 
 --
 -- Name: locations fk_country; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY locations
-    ADD CONSTRAINT fk_country FOREIGN KEY (country) REFERENCES countries(alpha3);
+ALTER TABLE ONLY public.locations
+    ADD CONSTRAINT fk_country FOREIGN KEY (country) REFERENCES public.countries(alpha3);
 
 
 --
 -- Name: event_set_members fk_esm_es; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY event_set_members
-    ADD CONSTRAINT fk_esm_es FOREIGN KEY (event_set_id) REFERENCES event_sets(id);
+ALTER TABLE ONLY public.event_set_members
+    ADD CONSTRAINT fk_esm_es FOREIGN KEY (event_set_id) REFERENCES public.event_sets(id);
 
 
 --
 -- Name: event_set_members fk_esm_se; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY event_set_members
-    ADD CONSTRAINT fk_esm_se FOREIGN KEY (sampling_event_id) REFERENCES sampling_events(id);
+ALTER TABLE ONLY public.event_set_members
+    ADD CONSTRAINT fk_esm_se FOREIGN KEY (sampling_event_id) REFERENCES public.sampling_events(id);
 
 
 --
 -- Name: event_set_notes fk_esn_es; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY event_set_notes
-    ADD CONSTRAINT fk_esn_es FOREIGN KEY (event_set_id) REFERENCES event_sets(id);
+ALTER TABLE ONLY public.event_set_notes
+    ADD CONSTRAINT fk_esn_es FOREIGN KEY (event_set_id) REFERENCES public.event_sets(id);
 
 
 --
 -- Name: sampling_events fk_location; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY sampling_events
-    ADD CONSTRAINT fk_location FOREIGN KEY (location_id) REFERENCES locations(id);
+ALTER TABLE ONLY public.sampling_events
+    ADD CONSTRAINT fk_location FOREIGN KEY (location_id) REFERENCES public.locations(id);
 
 
 --
--- Name: location_attrs fk_location; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: location_identifiers fk_location; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY location_attrs
-    ADD CONSTRAINT fk_location FOREIGN KEY (location_id) REFERENCES locations(id);
+ALTER TABLE ONLY public.location_identifiers
+    ADD CONSTRAINT fk_location FOREIGN KEY (location_id) REFERENCES public.locations(id);
 
 
 --
 -- Name: taxonomy_identifiers fk_partner_sp; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY taxonomy_identifiers
-    ADD CONSTRAINT fk_partner_sp FOREIGN KEY (partner_species_id) REFERENCES partner_species_identifiers(id);
+ALTER TABLE ONLY public.taxonomy_identifiers
+    ADD CONSTRAINT fk_partner_sp FOREIGN KEY (partner_species_id) REFERENCES public.partner_species_identifiers(id);
 
 
 --
 -- Name: partner_species_identifiers fk_partner_sp_study; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY partner_species_identifiers
-    ADD CONSTRAINT fk_partner_sp_study FOREIGN KEY (study_id) REFERENCES studies(id);
+ALTER TABLE ONLY public.partner_species_identifiers
+    ADD CONSTRAINT fk_partner_sp_study FOREIGN KEY (study_id) REFERENCES public.studies(id);
 
 
 --
 -- Name: sampling_events fk_proxy_location; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY sampling_events
-    ADD CONSTRAINT fk_proxy_location FOREIGN KEY (proxy_location_id) REFERENCES locations(id);
+ALTER TABLE ONLY public.sampling_events
+    ADD CONSTRAINT fk_proxy_location FOREIGN KEY (proxy_location_id) REFERENCES public.locations(id);
 
 
 --
--- Name: attrs fk_sampling_event; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: identifiers fk_sampling_event; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY attrs
-    ADD CONSTRAINT fk_sampling_event FOREIGN KEY (sampling_event_id) REFERENCES sampling_events(id);
+ALTER TABLE ONLY public.identifiers
+    ADD CONSTRAINT fk_sampling_event FOREIGN KEY (sampling_event_id) REFERENCES public.sampling_events(id);
 
 
 --
 -- Name: sampling_events fk_species; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY sampling_events
-    ADD CONSTRAINT fk_species FOREIGN KEY (partner_species_id) REFERENCES partner_species_identifiers(id);
+ALTER TABLE ONLY public.sampling_events
+    ADD CONSTRAINT fk_species FOREIGN KEY (partner_species_id) REFERENCES public.partner_species_identifiers(id);
 
 
 --
 -- Name: sampling_events fk_study; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY sampling_events
-    ADD CONSTRAINT fk_study FOREIGN KEY (study_id) REFERENCES studies(id);
+ALTER TABLE ONLY public.sampling_events
+    ADD CONSTRAINT fk_study FOREIGN KEY (study_id) REFERENCES public.studies(id);
 
 
 --
--- Name: location_attrs fk_study_loc; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: location_identifiers fk_study_loc; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY location_attrs
-    ADD CONSTRAINT fk_study_loc FOREIGN KEY (study_id) REFERENCES studies(id);
+ALTER TABLE ONLY public.location_identifiers
+    ADD CONSTRAINT fk_study_loc FOREIGN KEY (study_id) REFERENCES public.studies(id);
 
 
 --
 -- Name: taxonomy_identifiers fk_taxa; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY taxonomy_identifiers
-    ADD CONSTRAINT fk_taxa FOREIGN KEY (taxonomy_id) REFERENCES taxonomies(id);
+ALTER TABLE ONLY public.taxonomy_identifiers
+    ADD CONSTRAINT fk_taxa FOREIGN KEY (taxonomy_id) REFERENCES public.taxonomies(id);
 
 
 --
 -- Name: SCHEMA public; Type: ACL; Schema: -; Owner: -
 --
 
+REVOKE ALL ON SCHEMA public FROM postgres;
 GRANT ALL ON SCHEMA public TO PUBLIC;
+GRANT ALL ON SCHEMA public TO iwright;
 
 
 --
