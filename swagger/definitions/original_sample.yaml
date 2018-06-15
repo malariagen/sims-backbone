@@ -1,0 +1,43 @@
+
+definitions:
+  OriginalSamples:
+    type: object
+    properties:
+      original_samples:
+        type: array
+        items:
+          $ref: '#/definitions/OriginalSample'
+      sampling_events:
+        $ref: '#/definitions/SamplingEventMap'
+      count:
+        type: integer
+        description: Used when pagination is applied to return the number of results
+  OriginalSample:
+    type: object
+    properties:
+      original_sample_id:
+        type: string
+        format: uuid
+      sampling_event_id:
+        type: string
+        format: uuid
+      study_name:
+        type: string
+      attrs:
+        type: array
+        items:
+            $ref: './swagger/definitions/swagger.yaml#/definitions/Attr'
+      derivative_samples:
+        type: object
+        properties:
+          $ref: './swagger/definitions/derivative_sample.yaml#/definitions/DerivativeSamples'
+  SamplingEventMap:
+    type: object
+    additionalProperties:
+      type: object
+      properties:
+        sampling_event_id:
+          type: string
+          format: uuid
+        sampling_event:
+          $ref: './swagger/definitions/swagger.yaml#/definitions/SamplingEvent'

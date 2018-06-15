@@ -1,0 +1,39 @@
+
+definitions:
+  AssayData:
+    type: object
+    properties:
+      assay_data:
+        type: array
+        items:
+          $ref: '#/definitions/AssayDatum'
+      derivative_samples:
+        $ref: '#/definitions/DerivativeSampleMap'
+      count:
+        type: integer
+        description: Used when pagination is applied to return the number of results
+  AssayDatum:
+    type: object
+    properties:
+      assay_data_id:
+        type: string
+        format: uuid
+      derivative_sample_id:
+        type: string
+        format: uuid
+      ebi_run_acc:
+        type: string
+      attrs:
+        type: array
+        items:
+            $ref: './swagger/definitions/swagger.yaml#/definitions/Attr'
+  DerivativeSampleMap:
+    type: object
+    additionalProperties:
+      type: object
+      properties:
+        derivative_sample_id:
+          type: string
+          format: uuid
+        Derivative_sample:
+          $ref: './swagger/definitions/derivative_sample.yaml#/definitions/DerivativeSample'
