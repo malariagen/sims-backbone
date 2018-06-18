@@ -21,7 +21,7 @@ definitions:
     properties:
       sampling_event_id:
         type: string
-        format: uuid
+#        format: uuid
       study_name:
         type: string
       doc:
@@ -36,12 +36,12 @@ definitions:
             - year
       location_id:
         type: string
-        format: uuid
+#        format: uuid
       location:
         $ref: '#/definitions/Location'
       proxy_location_id:
         type: string
-        format: uuid
+#        format: uuid
       proxy_location:
         $ref: '#/definitions/Location'
       public_location_id:
@@ -79,7 +79,7 @@ definitions:
     properties:
       location_id:
         type: string
-        format: uuid
+#        format: uuid
       latitude:
         type: number
       longitude:
@@ -107,13 +107,17 @@ definitions:
             $ref: '#/definitions/Attr'
   LocationMap:
     type: object
+    description: 'A dictionary of location id and values'
     additionalProperties:
       type: object
       properties:
         location_id:
           type: string
-          format: uuid
+          description: 'A location id in uuid format'
+#          format: uuid
         location:
+          description: 'Location properties'
+          type: object
           $ref: '#/definitions/Location'
   Taxonomies:
     type: object

@@ -12,7 +12,7 @@
           description: location
           required: true
           type: string
-          format: uuid
+#          format: uuid
         - name: start
           in: query
           description: for pagination start the result set at a record x

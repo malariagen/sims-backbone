@@ -61,6 +61,22 @@ paths:
     $ref: './swagger/sampling_event/by_taxa.yaml'
   '/samplingEvents/eventSet/{eventSetId}':
     $ref: './swagger/sampling_event/by_set.yaml'
+  '/originalSample':
+    $ref: './swagger/original_sample/create.yaml'
+  '/originalSample/{originalSampleId}':
+    $ref: './swagger/original_sample/item.yaml'
+  '/originalSamples':
+    $ref: './swagger/original_sample/items.yaml'
+  '/originalSample/attr/{propName}/{propValue}':
+    $ref: './swagger/original_sample/by_attr.yaml'
+  '/originalSample/location/{locationId}':
+    $ref: './swagger/original_sample/by_location.yaml'
+  '/originalSample/study/{studyName}':
+    $ref: './swagger/original_sample/by_study.yaml'
+  '/originalSample/taxa/{taxaId}':
+    $ref: './swagger/original_sample/by_taxa.yaml'
+  '/originalSample/eventSet/{eventSetId}':
+    $ref: './swagger/original_sample/by_set.yaml'
   '/metadata/country/{countryId}':
     get:
       tags:
