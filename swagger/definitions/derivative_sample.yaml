@@ -40,4 +40,4 @@ definitions:
           type: string
 #          format: uuid
         original_sample:
-          $ref: './original_sample.yaml#/definitions/OriginalSample'
+          $ref: '#/definitions/OriginalSample'

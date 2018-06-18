@@ -20,9 +20,9 @@ definitions:
       derivative_sample_id:
         type: string
 #        format: uuid
-      derivative_sample:
-        type: object
-        $ref: './derivative_sample.yaml#/definitions/DerivativeSample'
+#      derivative_sample:
+#        type: object
+#        $ref: './derivative_sample.yaml#/definitions/DerivativeSample'
       ebi_run_acc:
         type: string
       attrs:
