@@ -96,6 +96,18 @@ class ApiFactory():
 
         return ret
 
+    def OriginalSampleApi(self):
+
+        ret = None
+
+        if self.isLocal():
+            ret = LocalOriginalSampleApi(self._api_client, self._user, self._auths, self._method)
+        else:
+            ret = swagger_client.OriginalSampleApi(self._api_client)
+
+        return ret
+
+
 
 
     def StudyApi(self):

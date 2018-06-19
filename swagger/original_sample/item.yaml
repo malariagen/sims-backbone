@@ -36,7 +36,7 @@
           type: string
 #          format: uuid
         - in: body
-          name: OriginalSample
+          name: originalSample
           required: true
           schema:
             $ref: './swagger/definitions/original_sample.yaml#/definitions/OriginalSample'

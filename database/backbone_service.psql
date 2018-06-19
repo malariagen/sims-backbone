@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 9.6.9
--- Dumped by pg_dump version 9.6.9
+-- Dumped from database version 9.6.8
+-- Dumped by pg_dump version 9.6.8
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -24,6 +24,9 @@ ALTER TABLE ONLY public.sampling_event_attrs DROP CONSTRAINT fk_sampling_event;
 ALTER TABLE ONLY public.sampling_events DROP CONSTRAINT fk_proxy_location;
 ALTER TABLE ONLY public.partner_species_identifiers DROP CONSTRAINT fk_partner_sp_study;
 ALTER TABLE ONLY public.taxonomy_identifiers DROP CONSTRAINT fk_partner_sp;
+ALTER TABLE ONLY public.original_samples DROP CONSTRAINT fk_os_study;
+ALTER TABLE ONLY public.original_samples DROP CONSTRAINT fk_os_se;
+ALTER TABLE ONLY public.original_sample_attrs DROP CONSTRAINT fk_original_sample;
 ALTER TABLE ONLY public.location_attrs DROP CONSTRAINT fk_location_attr;
 ALTER TABLE ONLY public.location_attrs DROP CONSTRAINT fk_location;
 ALTER TABLE ONLY public.sampling_events DROP CONSTRAINT fk_location;
@@ -53,6 +56,7 @@ ALTER TABLE ONLY public.sampling_events DROP CONSTRAINT sampling_event_id;
 ALTER TABLE ONLY public.event_set_notes DROP CONSTRAINT pk_esn;
 ALTER TABLE ONLY public.event_sets DROP CONSTRAINT pk_es;
 ALTER TABLE ONLY public.partner_species_identifiers DROP CONSTRAINT partner_species_identifiers_id;
+ALTER TABLE ONLY public.original_samples DROP CONSTRAINT original_sample_id;
 ALTER TABLE ONLY public.locations DROP CONSTRAINT location_id;
 ALTER TABLE ONLY public.countries DROP CONSTRAINT countries_id;
 ALTER TABLE ONLY public.attrs DROP CONSTRAINT attr_id;
@@ -65,6 +69,8 @@ DROP TABLE public.studies;
 DROP TABLE public.sampling_events;
 DROP TABLE public.sampling_event_attrs;
 DROP TABLE public.partner_species_identifiers;
+DROP TABLE public.original_samples;
+DROP TABLE public.original_sample_attrs;
 DROP TABLE public.locations;
 DROP TABLE public.location_attrs;
 DROP SEQUENCE public.event_sets_id_seq;
@@ -261,6 +267,28 @@ CREATE TABLE public.locations (
 
 
 --
+-- Name: original_sample_attrs; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.original_sample_attrs (
+    original_sample_id uuid,
+    attr_id uuid
+);
+
+
+--
+-- Name: original_samples; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.original_samples (
+    id uuid NOT NULL,
+    study_id uuid,
+    sampling_event_id uuid,
+    days_in_culture integer
+);
+
+
+--
 -- Name: partner_species_identifiers; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -404,6 +432,14 @@ ALTER TABLE ONLY public.countries
 
 ALTER TABLE ONLY public.locations
     ADD CONSTRAINT location_id PRIMARY KEY (id);
+
+
+--
+-- Name: original_samples original_sample_id; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.original_samples
+    ADD CONSTRAINT original_sample_id PRIMARY KEY (id);
 
 
 --
@@ -623,6 +659,30 @@ ALTER TABLE ONLY public.location_attrs
 
 ALTER TABLE ONLY public.location_attrs
     ADD CONSTRAINT fk_location_attr FOREIGN KEY (attr_id) REFERENCES public.attrs(id);
+
+
+--
+-- Name: original_sample_attrs fk_original_sample; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.original_sample_attrs
+    ADD CONSTRAINT fk_original_sample FOREIGN KEY (original_sample_id) REFERENCES public.original_samples(id);
+
+
+--
+-- Name: original_samples fk_os_se; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.original_samples
+    ADD CONSTRAINT fk_os_se FOREIGN KEY (sampling_event_id) REFERENCES public.sampling_events(id);
+
+
+--
+-- Name: original_samples fk_os_study; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.original_samples
+    ADD CONSTRAINT fk_os_study FOREIGN KEY (study_id) REFERENCES public.studies(id);
 
 
 --
