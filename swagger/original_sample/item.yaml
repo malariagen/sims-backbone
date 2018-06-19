@@ -1,0 +1,71 @@
+    get:
+      tags:
+        - OriginalSample
+      summary: fetches an OriginalSample
+      description: ''
+      operationId: downloadOriginalSample
+      produces:
+        - application/json
+      parameters:
+        - name: originalSampleId
+          in: path
+          description: ID of OriginalSample to fetch
+          required: true
+          type: string
+#          format: uuid
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: './swagger/definitions/original_sample.yaml#/definitions/OriginalSample'
+    put:
+      tags:
+        - OriginalSample
+      summary: updates an OriginalSample
+      description: ''
+      operationId: updateOriginalSample
+      produces:
+        - application/json
+      consumes:
+        - application/json
+      parameters:
+        - name: originalSampleId
+          in: path
+          description: ID of OriginalSample to update
+          required: true
+          type: string
+#          format: uuid
+        - in: body
+          name: OriginalSample
+          required: true
+          schema:
+            $ref: './swagger/definitions/original_sample.yaml#/definitions/OriginalSample'
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: './swagger/definitions/original_sample.yaml#/definitions/OriginalSample'
+        '404':
+          description: OriginalSample not found
+          schema:
+              type: string
+    delete:
+      tags:
+        - OriginalSample
+      summary: deletes an OriginalSample
+      description: ''
+      operationId: deleteOriginalSample
+      produces:
+        - application/json
+      parameters:
+        - name: originalSampleId
+          in: path
+          description: ID of OriginalSample to fetch
+          required: true
+          type: string
+#          format: uuid
+      responses:
+        '200':
+          description: successful operation
+        '404':
+          description: OriginalSample not found
