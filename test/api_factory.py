@@ -7,6 +7,7 @@ from local.location_api import LocalLocationApi
 from local.metadata_api import LocalMetadataApi
 from local.sampling_event_api import LocalSamplingEventApi
 from local.study_api import LocalStudyApi
+from local.original_sample_api import LocalOriginalSampleApi
 
 from backbone_server.controllers.base_controller  import BaseController
 
