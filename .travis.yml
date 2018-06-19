@@ -20,6 +20,7 @@ install:
 
 script:
   - (export LOCAL_TEST=1;pytest --cov=backbone_server --cov-report term-missing -v test/)
+  - psql -c "DELETE FROM attrs;" -U ${DB_USER} backbone_service
   - psql -c "DELETE FROM studies;" -U ${DB_USER} backbone_service
   - psql -c "DELETE FROM taxonomies WHERE id=7227;" -U ${DB_USER} backbone_service
   - (cd upload/test;./run.sh)
