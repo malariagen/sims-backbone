@@ -1,15 +1,15 @@
 <div>
   <span>
-    <mat-input-container>
+    <mat-form-field>
       <mat-select [(value)]="attr_type">
         <mat-option *ngFor="let option of options" [value]="option">{{option}}</mat-option>
       </mat-select>
-    </mat-input-container>
+    </mat-form-field>
   
-    <mat-input-container>
+    <mat-form-field>
       <input matInput placeholder="Value e.g. QS0167-C" hintLabel="e.g. QS0167-C" [(ngModel)]="attr_value" />
       <mat-label>Value</mat-label>
-    </mat-input-container>
+    </mat-form-field>
   </span>
   <button mat-button color="accent" (click)="search()">Search</button>
 </div>
