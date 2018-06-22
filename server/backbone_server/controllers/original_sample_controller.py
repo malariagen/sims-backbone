@@ -5,6 +5,7 @@ import urllib
 
 from backbone_server.original_sample.post import OriginalSamplePost
 from backbone_server.original_sample.put import OriginalSamplePut
+from backbone_server.original_sample.merge import OriginalSampleMerge
 from backbone_server.original_sample.get import OriginalSampleGetById
 from backbone_server.original_sample.delete import OriginalSampleDelete
 from backbone_server.original_sample.get_by_attr import OriginalSampleGetByAttr
@@ -22,6 +23,7 @@ from backbone_server.errors.duplicate_key_exception import DuplicateKeyException
 from backbone_server.errors.missing_key_exception import MissingKeyException
 from backbone_server.errors.permission_exception import PermissionException
 from backbone_server.errors.nested_edit_exception import NestedEditException
+from backbone_server.errors.incompatible_exception import IncompatibleException
 
 from backbone_server.controllers.decorators  import apply_decorators
 
@@ -267,6 +269,38 @@ class OriginalSampleController(BaseController):
         except MissingKeyException as dme:
             logging.getLogger(__name__).error("download_original_samples_by_taxa: {}".format(repr(dme)))
             retcode = 404
+
+        return samp, retcode
+
+    def merge_original_samples(self, into, merged, user=None, token_info=None):  # noqa: E501
+        """merges two OriginalSamples
+
+        merges original samples with compatible properties updating references and merging sampling events # noqa: E501
+
+        :param into: name of property to search
+        :type into: str
+        :param merged: matching value of property to search
+        :type merged: str
+
+        :rtype: OriginalSample
+        """
+
+        retcode = 200
+        samp = None
+
+        try:
+            merge = OriginalSampleMerge(self.get_connection())
+
+            samp = merge.merge(into, merged)
+        except IncompatibleException as dke:
+            logging.getLogger(__name__).error("merge_originalSample: {}".format(repr(dke)))
+            retcode = 422
+        except MissingKeyException as dme:
+            logging.getLogger(__name__).error("merge_originalSample: {}".format(repr(dme)))
+            retcode = 404
+        except NestedEditException as nee:
+            logging.getLogger(__name__).error("merge_originalSample: {}".format(repr(nee)))
+            retcode = 422
 
         return samp, retcode
 

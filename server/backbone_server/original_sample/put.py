@@ -39,10 +39,12 @@ class OriginalSamplePut():
                 if study_id != original_study_id:
                     pass
                 stmt = '''UPDATE original_samples 
-                            SET study_id = %s, sampling_event_id = %s
+                            SET study_id = %s, sampling_event_id = %s,
+                            days_in_culture = %s
                             WHERE id = %s'''
-                args = (study_id, original_sample.sampling_event_id
-                        , original_sample_id)
+                args = (study_id, original_sample.sampling_event_id,
+                        original_sample.days_in_culture,
+                        original_sample_id)
 
                 try:
                     cursor.execute(stmt, args)

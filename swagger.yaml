@@ -51,8 +51,12 @@ paths:
     $ref: './swagger/sampling_event/item.yaml'
   '/samplingEvents':
     $ref: './swagger/sampling_event/items.yaml'
+  '/samplingEvents/merge/{into}/{merged}':
+    $ref: './swagger/sampling_event/merge.yaml'
   '/samplingEvents/attr/{propName}/{propValue}':
     $ref: './swagger/sampling_event/by_attr.yaml'
+  '/samplingEvents/os/attr/{propName}/{propValue}':
+    $ref: './swagger/sampling_event/by_os_attr.yaml'
   '/samplingEvents/location/{locationId}':
     $ref: './swagger/sampling_event/by_location.yaml'
   '/samplingEvents/study/{studyName}':
@@ -67,6 +71,8 @@ paths:
     $ref: './swagger/original_sample/item.yaml'
   '/originalSamples':
     $ref: './swagger/original_sample/items.yaml'
+  '/originalSamples/merge/{into}/{merged}':
+    $ref: './swagger/original_sample/merge.yaml'
   '/originalSample/attr/{propName}/{propValue}':
     $ref: './swagger/original_sample/by_attr.yaml'
   '/originalSample/location/{locationId}':

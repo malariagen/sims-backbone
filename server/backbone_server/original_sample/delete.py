@@ -28,8 +28,6 @@ class OriginalSampleDelete():
 
                 rc = cursor.rowcount
 
-                OriginalSampleEdit.clean_up_taxonomies(cursor)
-
 
         if rc != 1:
             raise MissingKeyException("Error deleting original_sample {}".format(original_sample_id))

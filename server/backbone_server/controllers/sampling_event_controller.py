@@ -5,9 +5,11 @@ import urllib
 
 from backbone_server.sampling_event.post import SamplingEventPost
 from backbone_server.sampling_event.put import SamplingEventPut
+from backbone_server.sampling_event.merge import SamplingEventMerge
 from backbone_server.sampling_event.get import SamplingEventGetById
 from backbone_server.sampling_event.delete import SamplingEventDelete
 from backbone_server.sampling_event.get_by_attr import SamplingEventGetByAttr
+from backbone_server.sampling_event.get_by_os_attr import SamplingEventGetByOsAttr
 from backbone_server.sampling_event.get_by_location import SamplingEventsGetByLocation
 from backbone_server.sampling_event.get_by_study import SamplingEventsGetByStudy
 from backbone_server.sampling_event.get_by_taxa import SamplingEventsGetByTaxa
@@ -22,6 +24,7 @@ from backbone_server.errors.duplicate_key_exception import DuplicateKeyException
 from backbone_server.errors.missing_key_exception import MissingKeyException
 from backbone_server.errors.permission_exception import PermissionException
 from backbone_server.errors.nested_edit_exception import NestedEditException
+from backbone_server.errors.incompatible_exception import IncompatibleException
 
 from backbone_server.controllers.decorators  import apply_decorators
 
@@ -140,6 +143,15 @@ class SamplingEventController(BaseController):
                                                              study_name,
                                                              user,
                                                              auths)
+            elif options[0] == 'os_attr':
+                study_name = None
+                if len(options) > 3 and options[3]:
+                    study_name = options[3]
+                return self.download_sampling_events_by_os_attr(options[1],
+                                                             options[2],
+                                                             study_name,
+                                                             user,
+                                                             auths)
             else:
                 samp = 'Invalid filter option'
                 retcode = 422
@@ -197,6 +209,32 @@ class SamplingEventController(BaseController):
             samp = get.get(propName, propValue, study_name)
         except MissingKeyException as dme:
             logging.getLogger(__name__).error("download_samplingEvent: {}".format(repr(dme)))
+            retcode = 404
+
+        return samp, retcode
+
+    def download_sampling_events_by_os_attr(self, propName, propValue, study_name=None, user=None, auths=None):
+        """
+        fetches a samplingEvent by property value of associated original sample
+        
+        :param propName: name of property to search
+        :type propName: str
+        :param propValue: matching value of property to search
+        :type propValue: str
+
+        :rtype: SamplingEvent
+        """
+
+        get = SamplingEventGetByOsAttr(self.get_connection())
+
+        retcode = 200
+        samp = None
+
+        try:
+            propValue = urllib.parse.unquote_plus(propValue)
+            samp = get.get(propName, propValue, study_name)
+        except MissingKeyException as dme:
+            logging.getLogger(__name__).error("download_samplingEvents_by_os_attr: {}".format(repr(dme)))
             retcode = 404
 
         return samp, retcode
@@ -270,6 +308,37 @@ class SamplingEventController(BaseController):
 
         return samp, retcode
 
+    def merge_sampling_events(self, into, merged, user=None, token_info=None):  # noqa: E501
+        """merges two samplingEvents
+
+        merges sampling events with compatible properties updating references # noqa: E501
+
+        :param into: name of property to search
+        :type into: str
+        :param merged: matching value of property to search
+        :type merged: str
+
+        :rtype: SamplingEvent
+        """
+        retcode = 200
+        samp = None
+
+        try:
+            merge = SamplingEventMerge(self.get_connection())
+
+            samp = merge.merge(into, merged)
+        except IncompatibleException as dke:
+            logging.getLogger(__name__).error("merge_samplingEvent: {}".format(repr(dke)))
+            retcode = 422
+        except MissingKeyException as dme:
+            logging.getLogger(__name__).error("merge_samplingEvent: {}".format(repr(dme)))
+            retcode = 404
+        except NestedEditException as nee:
+            logging.getLogger(__name__).error("merge_samplingEvent: {}".format(repr(nee)))
+            retcode = 422
+
+        return samp, retcode
+
     def update_sampling_event(self, samplingEventId, samplingEvent, user = None, auths = None):
         """
         updates an samplingEvent
@@ -296,7 +365,7 @@ class SamplingEventController(BaseController):
             logging.getLogger(__name__).error("update_samplingEvent: {}".format(repr(dme)))
             retcode = 404
         except NestedEditException as nee:
-            logging.getLogger(__name__).error("create_samplingEvent: {}".format(repr(nee)))
+            logging.getLogger(__name__).error("update_samplingEvent: {}".format(repr(nee)))
             retcode = 422
 
         return samp, retcode

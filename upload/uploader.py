@@ -314,15 +314,30 @@ class Uploader():
             values['study_id'] = '0000-Unknown'
 
 
+        o_sample = self.create_original_sample_from_values(values)
+
+        o_existing = self.lookup_original_sample(o_sample, values)
+
         samp = self.create_sampling_event_from_values(values)
 
+        existing = self.lookup_sampling_event(o_existing, samp, values)
         #print(samp)
-
-        existing = self.lookup_sampling_event(samp, values)
-
         self.add_locations_from_values(existing, samp, values)
 
-        return self.process_sampling_event(values, samp, existing)
+        sampling_event = self.process_sampling_event(values, samp, existing)
+
+        o_sample.sampling_event_id = sampling_event.sampling_event_id
+
+        original_sample = self.process_original_sample(values, o_sample, o_existing)
+
+        #print(existing)
+        #print(sampling_event)
+        #print(values)
+        #print(sampling_event)
+        #print(original_sample)
+        #print(o_sample)
+        #print(o_existing)
+        return sampling_event
 
     """
         returns true if the attr is already in, or successfully added to, the location
@@ -576,36 +591,12 @@ class Uploader():
 
         return partner_name, ret
 
-    def create_sampling_event_from_values(self, values):
-
-        doc = None
-        doc_accuracy = None
+    def create_original_sample_from_values(self, values):
         study_id = None
-        ret = None
-
-        if 'doc' in values:
-            if isinstance(values['doc'], datetime.date):
-                doc = values['doc']
-        else:
-            if 'year' in values:
-                if isinstance(values['year'], datetime.date):
-                    doc = values['year']
-                    values['doc_accuracy'] = 'year'
-
-        if 'doc_accuracy' in values:
-            doc_accuracy = values['doc_accuracy']
-
         if 'study_id' in values:
             study_id = values['study_id']
 
-        samp = swagger_client.SamplingEvent(None, study_name = study_id, doc = doc)
-
-
-        if 'species' in values and values['species'] and len(values['species']) > 0:
-            samp.partner_species = values['species']
-
-        if doc_accuracy:
-            samp.doc_accuracy = doc_accuracy
+        o_sample = swagger_client.OriginalSample(None, study_name=study_id)
 
         idents = []
         if 'sample_roma_id' in values:
@@ -643,33 +634,124 @@ class Uploader():
             idents.append(swagger_client.Attr ('individual_id', values['sample_individual_id'],
                                                      self._event_set))
 
-        samp.attrs = idents
+        o_sample.attrs = idents
+
+        return o_sample
+
+
+    def create_sampling_event_from_values(self, values):
+
+        doc = None
+        doc_accuracy = None
+        study_id = None
+        ret = None
+
+        if 'doc' in values:
+            if isinstance(values['doc'], datetime.date):
+                doc = values['doc']
+        else:
+            if 'year' in values:
+                if isinstance(values['year'], datetime.date):
+                    doc = values['year']
+                    values['doc_accuracy'] = 'year'
+
+        if 'doc_accuracy' in values:
+            doc_accuracy = values['doc_accuracy']
+
+        if 'study_id' in values:
+            study_id = values['study_id']
+
+        samp = swagger_client.SamplingEvent(None, study_name = study_id, doc = doc)
+
+
+        if 'species' in values and values['species'] and len(values['species']) > 0:
+            samp.partner_species = values['species']
+
+        if doc_accuracy:
+            samp.doc_accuracy = doc_accuracy
 
         #print(values)
         #print(samp)
         return samp
 
-    def merge_events(self, existing, found, values):
+    def merge_original_samples(self, existing, parsed, values):
 
-        existing, changed = self.merge_sampling_event_objects(existing, found,
+        if not parsed:
+            return existing
+
+        if parsed.original_sample_id:
+            #print('Merging via service {} {}'.format(existing, parsed))
+            try:
+
+                ret = self._dao.merge_original_samples(existing.original_sample_id,
+                                                   parsed.original_sample_id)
+
+            except ApiException as err:
+                msg = "Error updating merged original sample {} {} {} {}".format(values, parsed, existing, err)
+                print(msg)
+                self._logger.error(msg)
+                sys.exit(1)
+
+            return ret
+
+        existing, changed = self.merge_original_sample_objects(existing, parsed,
                                                               values)
         ret = existing
 
         if changed:
 
-            for event_set in found.event_sets:
-                self._dao.create_event_set_item(event_set, existing.sampling_event_id)
+            #print("Updating {} to {}".format(parsed, existing))
+            try:
+                existing = self._dao.update_original_sample(existing.original_sample_id, existing)
+            except ApiException as err:
+                msg = "Error updating merged original sample {} {} {} {}".format(values, parsed, existing, err)
+                print(msg)
+                self._logger.error(msg)
+                sys.exit(1)
 
-            self._dao.delete_sampling_event(found.sampling_event_id)
-
-            #print("Updating {} to {}".format(orig, existing))
-            existing = self._dao.update_sampling_event(existing.sampling_event_id, existing)
         else:
-            self.report("Merge didn't change anything {} {}".format(existing, found), None)
+            #self.report("Merge os didn't change anything {} {}".format(existing, parsed), None)
+            pass
 
         return existing
 
-    def lookup_sampling_event(self, samp, values):
+    def merge_events(self, existing, found, values):
+
+        if not found:
+            return existing
+
+        try:
+
+            ret = self._dao.merge_sampling_events(existing.original_sample_id,
+                                               found.original_sample_id)
+        except ApiException as err:
+            msg = "Error updating merged original sample {} {} {} {}".format(values, found, existing, err)
+            print(msg)
+            self._logger.error(msg)
+            sys.exit(1)
+
+        return ret
+
+#        existing, changed = self.merge_sampling_event_objects(existing, found,
+#                                                              values)
+#        ret = existing
+#
+#        if changed:
+#
+#            for event_set in found.event_sets:
+#                self._dao.create_event_set_item(event_set, existing.sampling_event_id)
+#
+#            self._dao.delete_sampling_event(found.sampling_event_id)
+#
+#            #print("Updating {} to {}".format(orig, existing))
+#            existing = self._dao.update_sampling_event(existing.sampling_event_id, existing)
+#        else:
+#            pass
+#            #self.report("Merge didn't change anything {} {}".format(existing, found), None)
+#
+#        return existing
+#
+    def lookup_sampling_event(self, original_sample, samp, values):
 
         existing = None
 
@@ -679,6 +761,54 @@ class Uploader():
                 existing = self._dao.download_sampling_event(existing_sample_id)
                 return existing
 
+        if original_sample and\
+                original_sample.sampling_event_id and\
+                original_sample.sampling_event_id != 'None':
+            existing = self._dao.download_sampling_event(original_sample.sampling_event_id)
+            return existing
+
+        if not samp.location_id:
+            return existing
+
+        try:
+            found_events = self._dao.download_sampling_events_by_location(samp.location_id)
+
+            for found in found_events.sampling_events:
+
+                if samp.doc != found.doc:
+                    continue
+                if samp.study_name[:4] != found.study_name[:4]:
+                    continue
+                if samp.location_id != found.location_id:
+                    continue
+                if samp.proxy_location_id != found.proxy_location_id:
+                    continue
+                if existing and existing.sampling_event_id != found.sampling_event_id:
+                    #self.report("Merging into {} using {}"
+                    #                .format(existing.sampling_event_id,
+                    #                                   ident.attr_type), values)
+                    found = self.merge_events(existing, found, values)
+                existing = found
+                if samp.study_name[:4] == '0000':
+                    samp.study_name = existing.study_name
+                        #print ("found: {} {}".format(samp, found))
+        except ApiException as err:
+            #self._logger.debug("Error looking for {}".format(ident))
+            #print("Not found")
+                pass
+
+        return existing
+
+    def lookup_original_sample(self, samp, values):
+
+        existing = None
+
+        if 'unique_os_id' in values:
+            if values['unique_os_id'] in self._original_sample_cache:
+                existing_sample_id = self._original_sample_cache[values['unique_os_id']]
+                existing = self._dao.download_original_sample(existing_sample_id)
+                return existing
+
         #print ("not in cache: {}".format(samp))
         if len(samp.attrs) > 0:
             #print("Checking attrs {}".format(samp.attrs))
@@ -686,10 +816,10 @@ class Uploader():
                 try:
                     #print("Looking for {} {}".format(ident.attr_type, ident.attr_value))
 
-                    found_events = self._dao.download_sampling_events_by_attr(ident.attr_type,
+                    found_events = self._dao.download_original_samples_by_attr(ident.attr_type,
                                                                                        ident.attr_value)
 
-                    for found in found_events.sampling_events:
+                    for found in found_events.original_samples:
                         if ident.attr_type == 'individual_id':
                             #individual_id is used to group sampling events
                             # and is not a unique ident
@@ -719,11 +849,12 @@ class Uploader():
 
 
                         #Only here if found - otherwise 404 exception
-                        if existing and existing.sampling_event_id != found.sampling_event_id:
-                            #self.report("Merging into {} using {}"
-                            #                .format(existing.sampling_event_id,
-                            #                                   ident.attr_type), values)
-                            found = self.merge_events(existing, found, values)
+                        if existing and existing.original_sample_id != found.original_sample_id:
+                            msg = ("Merging into {} using {}"
+                                            .format(existing.sampling_event_id,
+                                                               ident.attr_type), values)
+                            #print(msg)
+                            found = self.merge_original_samples(existing, found, values)
                         existing = found
                         if samp.study_name[:4] == '0000':
                             samp.study_name = existing.study_name
@@ -755,21 +886,6 @@ class Uploader():
         new_ident_value = False
 
         change_reasons = []
-
-        for new_ident in samp.attrs:
-            found = False
-            for existing_ident in existing.attrs:
-                #Depending on the DAO used the attr can have a different type
-                #so can't use ==
-                if existing_ident.attr_source == new_ident.attr_source and \
-                   existing_ident.attr_type == new_ident.attr_type and \
-                   existing_ident.attr_value == new_ident.attr_value and \
-                   existing_ident.study_name == new_ident.study_name:
-                    found = True
-            if not found:
-                new_ident_value = True
-                change_reasons.append("Adding ident {}".format(new_ident))
-                existing.attrs.append(new_ident)
 
 #        print("existing {} {}".format(existing, study_id))
         if samp.study_name:
@@ -907,6 +1023,84 @@ class Uploader():
 
         return existing, new_ident_value
 
+    def merge_original_sample_objects(self, existing, samp, values):
+
+        orig = deepcopy(existing)
+        new_ident_value = False
+
+        change_reasons = []
+
+        for new_ident in samp.attrs:
+            found = False
+            for existing_ident in existing.attrs:
+                #Depending on the DAO used the attr can have a different type
+                #so can't use ==
+                if existing_ident.attr_source == new_ident.attr_source and \
+                   existing_ident.attr_type == new_ident.attr_type and \
+                   existing_ident.attr_value == new_ident.attr_value and \
+                   existing_ident.study_name == new_ident.study_name:
+                    found = True
+            if not found:
+                new_ident_value = True
+                change_reasons.append("Adding ident {}".format(new_ident))
+                existing.attrs.append(new_ident)
+
+#        print("existing {} {}".format(existing, study_id))
+        if samp.study_name:
+            if existing.study_name:
+                if samp.study_name != existing.study_name:
+                    if samp.study_name[:4] == existing.study_name[:4]:
+                        #print("#Short and full study ids used {} {} {}".format(values, study_id, existing.study_name))
+                        pass
+                    else:
+                        if not (existing.study_name[:4] == '0000' or samp.study_name[:4] == '0000'):
+                            self.report_conflict(existing,"Study",
+                                                 existing.study_name, samp.study_name,
+                                                 "", values)
+
+                        if not samp.study_name[:4] == '0000':
+                            if ((int(samp.study_name[:4]) < int(existing.study_name[:4]) or
+                                 existing.study_name[:4] == '0000') and
+                                (samp.study_name[:4] != '1089')):
+                                self.set_additional_event(existing.sampling_event_id,
+                                                          existing.study_name)
+                                existing.study_name = samp.study_name
+                                new_ident_value = True
+                                change_reasons.append('Updated study')
+                            else:
+                                if not (samp.study_name[:4] == '0000' or samp.study_name[:4] == '1089'):
+                                    self.set_additional_event(existing.sampling_event_id,
+                                                              samp.study_name)
+            else:
+                existing.study_name = samp.study_name
+                new_ident_value = True
+                change_reasons.append('Set study')
+        else:
+            if existing.study_name:
+#                    print("Adding loc ident {} {}".format(location_name, existing.study_name))
+                self.add_location_attr(existing, existing.study_name, location, '', location_name,
+                                             values)
+                self.add_location_attr(existing, existing.study_name, proxy_location, 'proxy_',
+                                         proxy_location_name, values)
+
+        if samp.sampling_event_id != existing.sampling_event_id:
+            #print(existing)
+            #print(samp)
+            if existing.sampling_event_id:
+                se_existing = self._dao.download_sampling_event(existing.sampling_event_id)
+                if samp.sampling_event_id:
+                    se_samp = self._dao.download_sampling_event(samp.sampling_event_id)
+                    se = self.merge_events(se_samp, se_existing, values)
+                    #print(se)
+            else:
+                existing.sampling_event_id = samp.sampling_event_id
+            new_ident_value = True
+            change_reasons.append('Set SamplingEvent')
+
+        #print('\n'.join(change_reasons))
+
+        return existing, new_ident_value
+
     def process_sampling_event(self, values, samp, existing):
 
         #print('process_sampling event {} {} {} {} {}'.format(values, location_name, location, proxy_location_name, proxy_location))
@@ -938,8 +1132,6 @@ class Uploader():
 
         else:
             #print("Creating {}".format(samp))
-            if len(samp.attrs) == 0:
-                return None
 
             #Make sure no implied edit - location should have been updated before here
             samp.location = None
@@ -959,6 +1151,39 @@ class Uploader():
 
             if 'unique_id' in values:
                 self._sample_cache[values['unique_id']] = created.sampling_event_id
+
+        return ret
+
+    def process_original_sample(self, values, samp, existing):
+
+        #print('process_sampling event {} {} {} {} {}'.format(values, location_name, location, proxy_location_name, proxy_location))
+
+        if 'sample_lims_id' in values and values['sample_lims_id']:
+            if not existing:
+                self.report("Could not find not adding ", values)
+                return None
+
+        if existing:
+
+            ret = self.merge_original_samples(existing, samp, values)
+
+        else:
+            #print("Creating {}".format(samp))
+            if len(samp.attrs) == 0:
+                return None
+
+            try:
+                created = self._dao.create_original_sample(samp)
+
+                ret = created
+
+            except ApiException as err:
+                print("Error adding sample {} {}".format(samp, err))
+                self._logger.error("Error inserting {}".format(samp))
+                sys.exit(1)
+
+            if 'unique_os_id' in values:
+                self._original_sample_cache[values['unique_os_id']] = created.original_sample_id
 
         return ret
 

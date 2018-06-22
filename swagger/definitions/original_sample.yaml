@@ -27,6 +27,8 @@ definitions:
 #        format: uuid
       study_name:
         type: string
+      days_in_culture:
+        type: integer
       attrs:
         type: array
         items:

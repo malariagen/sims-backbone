@@ -161,7 +161,7 @@ class TestCountry(TestBase):
 
         self.tearDownSSR(locations)
         self.tearDownLocations(locations)
-
+        pass
 
     """
     """
@@ -169,7 +169,7 @@ class TestCountry(TestBase):
         api_instance = swagger_client.SamplingEventApi(self._api_client)
 
         try:
-            looked_up = api_instance.download_sampling_events_by_attr('partner_id',
+            looked_up = api_instance.download_sampling_events_by_os_attr('partner_id',
                                                                            urllib.parse.quote_plus('MDG/TST_0001'))
 
             looked_up = looked_up.sampling_events[0]
@@ -202,11 +202,11 @@ class TestCountry(TestBase):
         api_instance = swagger_client.SamplingEventApi(self._api_client)
 
         try:
-            looked_up = api_instance.download_sampling_events_by_attr('oxford_id',
+            looked_up = api_instance.download_sampling_events_by_os_attr('oxford_id',
                                                                            urllib.parse.quote_plus('CT0003-C'))
 
             looked_up = looked_up.sampling_events[0]
-#            print(looked_up)
+            #print(looked_up)
             self.assertEqual(looked_up.location.country, 'BEN')
             self.assertEqual(looked_up.location.latitude, 9.30769)
             self.assertEqual(looked_up.location.longitude, 2.315834)
@@ -223,7 +223,7 @@ class TestCountry(TestBase):
         api_instance = swagger_client.SamplingEventApi(self._api_client)
 
         try:
-            looked_up = api_instance.download_sampling_events_by_attr('oxford_id',
+            looked_up = api_instance.download_sampling_events_by_os_attr('oxford_id',
                                                                            urllib.parse.quote_plus('CT0002-C'))
 
             looked_up = looked_up.sampling_events[0]
@@ -245,7 +245,7 @@ class TestCountry(TestBase):
 
         try:
 
-            looked_up = api_instance.download_sampling_events_by_attr('partner_id',
+            looked_up = api_instance.download_sampling_events_by_os_attr('partner_id',
                                                                            urllib.parse.quote_plus('MDG/TST_0004'))
 
             looked_up = looked_up.sampling_events[0]

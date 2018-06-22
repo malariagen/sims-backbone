@@ -18,6 +18,10 @@ class SamplingEventDelete():
         with self._connection:
             with self._connection.cursor() as cursor:
 
+                stmt = '''UPDATE original_samples SET sampling_event_id = NULL WHERE sampling_event_id = %s'''
+
+                cursor.execute( stmt, (sampling_event_id,))
+
                 stmt = '''DELETE FROM sampling_event_attrs WHERE sampling_event_id = %s'''
 
                 cursor.execute( stmt, (sampling_event_id,))

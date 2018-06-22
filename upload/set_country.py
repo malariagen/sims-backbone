@@ -74,13 +74,15 @@ class SetCountry(upload_ssr.Upload_SSR):
                     'id_value': id_value
                 }
                 try:
-                    found_events = self._dao.download_sampling_events_by_attr(id_type,
+                    found_events = self._dao.download_sampling_events_by_os_attr(id_type,
                                                                urllib.parse.quote_plus(id_value))
                     if found_events:
                         found = found_events.sampling_events[0]
 
                 except ApiException as e:
-                    print("Exception when looking for event {} {} \n".format(id_column, e))
+                    print("Exception when looking for event {} {} {} {}\n".format(id_type,
+                                                                                  id_value,
+                                                                                  id_column, e))
                     continue
 
                 self.set_country(found, country_value, filename, values)
@@ -239,9 +241,13 @@ class SetCountry(upload_ssr.Upload_SSR):
 
     def process_item(self, values):
 
+        o_sample = self.create_original_sample_from_values(values)
+
+        o_existing = self.lookup_original_sample(o_sample, values)
+
         samp = self.create_sampling_event_from_values(values)
 
-        item = self.lookup_sampling_event(samp, values)
+        item = self.lookup_sampling_event(o_existing, samp, values)
 
         if item:
             item = self.set_country(item, values['iso2'], self._data_file, values)

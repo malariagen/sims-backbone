@@ -26,6 +26,9 @@ class AbstractBackboneDAO(abc.ABC):
 
         return created
 
+    def merge_sampling_events(self, sampling_event_id1, sampling_event_id2):
+        self.se_api_instance.merge_sampling_events(sampling_event_id1, sampling_event_id2)
+
     def delete_sampling_event(self, sampling_event_id):
         self.se_api_instance.delete_sampling_event(sampling_event_id)
 
@@ -58,6 +61,19 @@ class AbstractBackboneDAO(abc.ABC):
 
         return found_events
 
+    def download_sampling_events_by_os_attr(self, attr_type, attr_value):
+
+        found_events = self.se_api_instance.download_sampling_events_by_os_attr(attr_type,
+                                                                                   attr_value)
+
+        return found_events
+
+    def download_sampling_events_by_location(self, location_id):
+
+        found_events = self.se_api_instance.download_sampling_events_by_location(location_id)
+
+        return found_events
+
     def update_location(self, location_id, location):
 
         updated = self.location_api_instance.update_location(location_id, location)
@@ -72,3 +88,27 @@ class AbstractBackboneDAO(abc.ABC):
         metadata = self.metadata_api_instance.get_country_metadata(country_value)
 
         return metadata
+
+    def create_original_sample(self, original_sample):
+
+        return self.os_api_instance.create_original_sample(original_sample)
+
+
+    def update_original_sample(self, original_sample_id, original_sample):
+
+        return self.os_api_instance.update_original_sample(original_sample_id,
+                                                                            original_sample)
+
+    def merge_original_samples(self, original_sample_id1, original_sample_id2):
+
+        return self.os_api_instance.merge_original_samples(original_sample_id1,
+                                                                            original_sample_id2)
+
+    def delete_original_sample(self, original_sample_id ):
+
+        return self.os_api_instance.delete_original_sample(original_sample_id)
+
+    def download_original_samples_by_attr(self, attr_type, attr_value):
+
+        return self.os_api_instance.download_original_samples_by_attr(attr_type, attr_value)
+

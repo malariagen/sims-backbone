@@ -36,7 +36,8 @@ class OriginalSampleFetch():
         if not original_sample_id:
             return None
 
-        stmt = '''SELECT original_samples.id, studies.study_name AS study_id, days_in_culture
+        stmt = '''SELECT original_samples.id, studies.study_name AS study_id,
+        sampling_event_id, days_in_culture
         FROM original_samples
         LEFT JOIN studies ON studies.id = original_samples.study_id
         WHERE original_samples.id = %s'''
@@ -44,8 +45,13 @@ class OriginalSampleFetch():
 
         original_sample = None
 
-        for (original_sample_id, study_id, days_in_culture) in cursor:
-            original_sample = OriginalSample(str(original_sample_id), study_name = study_id)
+        for (original_sample_id, study_id,
+             sampling_event_id, days_in_culture) in cursor:
+            original_sample = OriginalSample(str(original_sample_id),
+                                             study_name=study_id,
+                                            days_in_culture=days_in_culture)
+            if sampling_event_id:
+                original_sample.sampling_event_id = str(sampling_event_id)
 
         if not original_sample:
             return original_sample
@@ -62,7 +68,9 @@ class OriginalSampleFetch():
         sampling_event_list = []
 
         for (original_sample_id, study_id, sampling_event_id, days_in_culture) in cursor:
-            original_sample = OriginalSample(str(original_sample_id), study_name=study_id)
+            original_sample = OriginalSample(str(original_sample_id),
+                                             study_name=study_id,
+                                             days_in_culture=days_in_culture)
             if sampling_event_id:
                 original_sample.sampling_event_id = str(sampling_event_id)
                 if not str(sampling_event_id) in sampling_event_list:

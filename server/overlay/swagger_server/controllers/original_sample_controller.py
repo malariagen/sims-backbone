@@ -154,6 +154,21 @@ def download_original_samples_by_taxa(taxaId, start=None, count=None, user=None,
                                                                       count, user,
                                                                        original_sample_controller.token_info(token_info))
 
+def merge_original_samples(into, merged, user=None, token_info=None):  # noqa: E501
+    """merges two OriginalSamples
+
+    merges original samples with compatible properties updating references and merging sampling events # noqa: E501
+
+    :param into: name of property to search
+    :type into: str
+    :param merged: matching value of property to search
+    :type merged: str
+
+    :rtype: OriginalSample
+    """
+    return original_sample_controller.merge_original_samples(into, merged,
+                                                                       original_sample_controller.token_info(token_info))
+
 
 def update_original_sample(originalSampleId, originalSample, user=None, token_info=None):
     """

@@ -55,11 +55,17 @@ class TestSampling_Event(TestBase):
     def tearDownClass(self):
 
         event_api_instance = swagger_client.SamplingEventApi(TestBase.getApiClient())
+        os_api_instance = swagger_client.OriginalSampleApi(TestBase.getApiClient())
 
-        looked_up = event_api_instance.download_sampling_events_by_attr('oxford_id', '123456')
+        looked_up = event_api_instance.download_sampling_events_by_os_attr('oxford_id', '123456')
         looked_up = looked_up.sampling_events[0]
 
         event_api_instance.delete_sampling_event(looked_up.sampling_event_id)
+
+        looked_up = os_api_instance.download_original_samples_by_attr('oxford_id', '123456')
+        looked_up = looked_up.original_samples[0]
+
+        os_api_instance.delete_original_sample(looked_up.original_sample_id)
 
         self.deleteEventSets(['multiple_study'], TestSampling_Event._locations)
 
@@ -73,7 +79,7 @@ class TestSampling_Event(TestBase):
         event_api_instance = swagger_client.SamplingEventApi(self._api_client)
         event_set_api_instance = swagger_client.EventSetApi(self._api_client)
 
-        looked_up = event_api_instance.download_sampling_events_by_attr('oxford_id', '123456')
+        looked_up = event_api_instance.download_sampling_events_by_os_attr('oxford_id', '123456')
         looked_up = looked_up.sampling_events[0]
 
         for study in ["9011 Upload test study", "9012 Upload test study 3"]:
@@ -111,7 +117,7 @@ class TestSampling_Event(TestBase):
         event_api_instance = swagger_client.SamplingEventApi(self._api_client)
         event_set_api_instance = swagger_client.EventSetApi(self._api_client)
 
-        looked_up = event_api_instance.download_sampling_events_by_attr('oxford_id', '123456')
+        looked_up = event_api_instance.download_sampling_events_by_os_attr('oxford_id', '123456')
 
         if looked_up.sampling_events[0].location_id not in TestSampling_Event._locations:
             TestSampling_Event._locations.append(looked_up.sampling_events[0].location_id)

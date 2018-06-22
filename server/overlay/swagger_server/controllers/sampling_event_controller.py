@@ -103,6 +103,22 @@ def download_sampling_events_by_attr(propName, propValue, studyName=None, user=N
                                                                            user,
                                                                            sampling_event_controller.token_info(token_info))
 
+def download_sampling_events_by_os_attr(propName, propValue, studyName=None, user=None, token_info=None):
+    """
+    fetches a samplingEvent by property value of associated original sample
+    
+    :param propName: name of property to search
+    :type propName: str
+    :param propValue: matching value of property to search
+    :type propValue: str
+
+    :rtype: SamplingEvent
+    """
+    return sampling_event_controller.download_sampling_events_by_os_attr(propName, propValue,
+                                                                           studyName,
+                                                                           user,
+                                                                           sampling_event_controller.token_info(token_info))
+
 def download_sampling_events_by_location(locationId, start=None, count=None, user=None, token_info=None):
     """
     fetches samplingEvents for a location
@@ -154,6 +170,21 @@ def download_sampling_events_by_taxa(taxaId, start=None, count=None, user=None, 
                                                                       count, user,
                                                                        sampling_event_controller.token_info(token_info))
 
+
+def merge_sampling_events(into, merged, user=None, token_info=None):  # noqa: E501
+    """merges two samplingEvents
+
+    merges sampling events with compatible properties updating references # noqa: E501
+
+    :param into: name of property to search
+    :type into: str
+    :param merged: matching value of property to search
+    :type merged: str
+
+    :rtype: SamplingEvent
+    """
+    return sampling_event_controller.merge_sampling_events(into, merged,
+                                                                       sampling_event_controller.token_info(token_info))
 
 def update_sampling_event(samplingEventId, samplingEvent, user=None, token_info=None):
     """

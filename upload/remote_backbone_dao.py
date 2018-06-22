@@ -32,6 +32,7 @@ class RemoteBackboneDAO(AbstractBackboneDAO):
         self.es_api_instance = swagger_client.EventSetApi(swagger_client.ApiClient(configuration))
         self.location_api_instance = swagger_client.LocationApi(swagger_client.ApiClient(configuration))
         self.se_api_instance = swagger_client.SamplingEventApi(swagger_client.ApiClient(configuration))
+        self.os_api_instance = swagger_client.OriginalSampleApi(swagger_client.ApiClient(configuration))
         self.metadata_api_instance = swagger_client.MetadataApi(swagger_client.ApiClient(configuration))
 
     def get_access_token(self, config_file):
@@ -83,3 +84,19 @@ class RemoteBackboneDAO(AbstractBackboneDAO):
                                                                                    value)
 
         return found_events
+
+    def download_sampling_events_by_os_attr(self, attr_type, attr_value):
+
+        value = urllib.parse.quote_plus(attr_value)
+        found_events = super(RemoteBackboneDAO, self).download_sampling_events_by_os_attr(attr_type,
+                                                                                   value)
+
+        return found_events
+
+    def download_original_samples_by_attr(self, attr_type, attr_value):
+
+        found_events = super(RemoteBackboneDAO, self).download_original_samples_by_attr(attr_type,
+                                                                                            urllib.parse.quote_plus(attr_value))
+
+        return found_events
+

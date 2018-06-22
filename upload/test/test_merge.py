@@ -244,16 +244,23 @@ class TestMerge(TestBase):
         locations = TestMerge._locations
 
         event_api_instance = swagger_client.SamplingEventApi(TestBase.getApiClient())
+        os_api_instance = swagger_client.OriginalSampleApi(TestBase.getApiClient())
 
         for oxid in ['EXTST000002', 'OF0093-C', 'OV0050-C', 'CT0001-C', 'CT0002-C']:
             try:
-                looked_up = event_api_instance.download_sampling_events_by_attr('oxford_id',
+                looked_up = event_api_instance.download_sampling_events_by_os_attr('oxford_id',
                                                                                  oxid)
                 looked_up = looked_up.sampling_events[0]
 
                 self.deleteSamplingEvent(looked_up, locations)
 
-            except ApiException:
+                looked_up = os_api_instance.download_original_samples_by_attr('oxford_id', oxid)
+                looked_up = looked_up.original_samples[0]
+
+                os_api_instance.delete_original_sample(looked_up.original_sample_id)
+
+            except ApiException as err:
+                print(err)
                 pass
 
         self.deleteStudies(['9030','9031'], locations)
@@ -269,16 +276,17 @@ class TestMerge(TestBase):
     def test_merge(self):
 
 
-        event_api_instance = swagger_client.SamplingEventApi(self._api_client)
+        os_api_instance = swagger_client.OriginalSampleApi(self._api_client)
 
-        looked_up = event_api_instance.download_sampling_events_by_attr('oxford_id',
+        looked_up = os_api_instance.download_original_samples_by_attr('oxford_id',
                                                                              'EXTST000002')
-        looked_up = looked_up.sampling_events[0]
+        looked_up = looked_up.original_samples[0]
 
 #        msg = "Merging into {} ".format(looked_up.sampling_event_id) +\
 #                "using oxford_id\t[('sample_lims_id', 'TEAM112_0000000001'), ('sample_source_id', 'TST00002'), ('sample_source_id1', 'EXTST000002'), ('sample_source_id2', 'OX0001-C'), ('sample_source_type', 'roma_id'), ('sample_source_type1', 'oxford_id'), ('sample_source_type2', 'oxford_id'), ('study_id', '0000-Unknown'), ('unique_id', '19465')]"
 #        self.assertIn(msg, self._messages)
 #
+
         self.assertEquals(looked_up.study_name, '9030')
 
         ident = swagger_client.Attr(attr_source='roma_dump',
@@ -304,37 +312,42 @@ class TestMerge(TestBase):
 
         self.assertIn(ident, looked_up.attrs)
 
+        es_api_instance = swagger_client.SamplingEventApi(self._api_client)
+
+        looked_up = es_api_instance.download_sampling_events_by_os_attr('oxford_id',
+                                                                             'EXTST000002')
+
+        looked_up = looked_up.sampling_events[0]
+
         self.assertEquals(looked_up.partner_species, 'Plasmodium falciparum')
 
         self.assertEquals(looked_up.location.latitude, 12.5)
 
-        event_api_instance = swagger_client.SamplingEventApi(self._api_client)
-
 
     def test_merge_on_partner_id(self):
 
-        event_api_instance = swagger_client.SamplingEventApi(self._api_client)
+        event_api_instance = swagger_client.OriginalSampleApi(self._api_client)
 
 
 #        with self.assertRaises(Exception) as context:
 #            looked_up = event_api_instance.download_sampling_event_by_attr('partner_id',
 #                                                                             'EXTST000003')
 
-        looked_up1 = event_api_instance.download_sampling_events_by_attr('roma_id',
+        looked_up1 = event_api_instance.download_original_samples_by_attr('roma_id',
                                                                              'TST00003')
-        looked_up1 = looked_up1.sampling_events[0]
+        looked_up1 = looked_up1.original_samples[0]
 
-        looked_up2 = event_api_instance.download_sampling_events_by_attr('oxford_id',
+        looked_up2 = event_api_instance.download_original_samples_by_attr('oxford_id',
                                                                              'OX0008-C')
-        looked_up2 = looked_up2.sampling_events[0]
+        looked_up2 = looked_up2.original_samples[0]
 
-        looked_up3 = event_api_instance.download_sampling_events_by_attr('oxford_id',
+        looked_up3 = event_api_instance.download_original_samples_by_attr('oxford_id',
                                                                              'OX0009-C')
-        looked_up3 = looked_up3.sampling_events[0]
+        looked_up3 = looked_up3.original_samples[0]
 
-        self.assertEqual(looked_up1.sampling_event_id, looked_up2.sampling_event_id)
+        self.assertEqual(looked_up1.original_sample_id, looked_up2.original_sample_id)
 
-        self.assertNotEqual(looked_up1.sampling_event_id, looked_up3.sampling_event_id)
+        self.assertNotEqual(looked_up1.original_sample_id, looked_up3.original_sample_id)
 
 
     """
@@ -343,10 +356,10 @@ class TestMerge(TestBase):
 
         event_api_instance = swagger_client.SamplingEventApi(self._api_client)
 
-        looked_up = event_api_instance.download_sampling_events_by_attr('oxford_id',
+        looked_up = event_api_instance.download_sampling_events_by_os_attr('oxford_id',
                                                                              'OF0093-C')
         looked_up = looked_up.sampling_events[0]
-        looked_up1 = event_api_instance.download_sampling_events_by_attr('oxford_id',
+        looked_up1 = event_api_instance.download_sampling_events_by_os_attr('oxford_id',
                                                                              'OV0050-C')
         looked_up1 = looked_up1.sampling_events[0]
 

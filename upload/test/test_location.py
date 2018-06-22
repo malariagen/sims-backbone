@@ -133,7 +133,7 @@ class TestLocation(TestBase):
         api_instance = swagger_client.SamplingEventApi(self._api_client)
 
         try:
-            looked_up = api_instance.download_sampling_events_by_attr('oxford_id', '22345')
+            looked_up = api_instance.download_sampling_events_by_os_attr('oxford_id', '22345')
             looked_up = looked_up.sampling_events[0]
 
             errmsg = "Conflicting Location name value\tRatanakiri\t\t\t{'accuracy': None, 'attrs': [{'attr_source': 'locations', 'attr_type': 'partner_name', 'attr_value': 'Ratanakiri', 'study_name': '9040'}], 'country': None, 'curated_name': None, 'curation_method': None, 'latitude': 13.9, 'location_id': None, 'longitude': 107.1, 'notes': 'locations.tsv'}\t{'accuracy': None, 'attrs': [{'attr_source': 'locations', 'attr_type': 'partner_name', 'attr_value': 'Ratanakiri', 'study_name': '9040'}], 'country': 'KHM', 'curated_name': None, 'curation_method': None, 'latitude': 13.86208, " +\
@@ -165,7 +165,7 @@ class TestLocation(TestBase):
         api_instance = swagger_client.SamplingEventApi(self._api_client)
 
         try:
-            looked_up = api_instance.download_sampling_events_by_attr('oxford_id', '22346')
+            looked_up = api_instance.download_sampling_events_by_os_attr('oxford_id', '22346')
             looked_up = looked_up.sampling_events[0]
 
             self.assertIsNotNone(looked_up.location_id)
@@ -173,7 +173,7 @@ class TestLocation(TestBase):
             if looked_up.location_id not in TestLocation._locations:
                 TestLocation._locations.append(looked_up.location_id)
 
-            looked_up = api_instance.download_sampling_events_by_attr('oxford_id', '22347')
+            looked_up = api_instance.download_sampling_events_by_os_attr('oxford_id', '22347')
             looked_up = looked_up.sampling_events[0]
 
             self.assertIsNotNone(looked_up.location_id)
@@ -209,7 +209,8 @@ class TestLocation(TestBase):
         api_instance = swagger_client.SamplingEventApi(self._api_client)
 
         try:
-            looked_up = api_instance.download_sampling_events_by_attr('oxford_id', 'AG0001-C')
+            looked_up = api_instance.download_sampling_events_by_os_attr('oxford_id', 'AG0001-C')
+
             looked_up = looked_up.sampling_events[0]
 
             self.assertIsNotNone(looked_up.location)
