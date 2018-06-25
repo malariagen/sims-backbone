@@ -206,7 +206,7 @@ export class LocationEditComponent implements OnInit {
 
 
     let path = 'http://nominatim.openstreetmap.org/reverse?format=json&polygon_geojson=1&lat=' + this.location.latitude + '&lon=' + this.location.longitude + '&zoom=' + this.zoom;
-    return this.httpClient.post<any>(path, null, {
+    return this.httpClient.get<any>(path, {
       headers: headers
     });
 
