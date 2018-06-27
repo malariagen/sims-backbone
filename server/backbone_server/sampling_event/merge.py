@@ -121,9 +121,6 @@ class SamplingEventMerge():
 
         delete.delete(sampling_event2.sampling_event_id)
 
-        print('merged')
-        print(sampling_event1)
-
         put = SamplingEventPut(self._connection)
 
         return put.put(sampling_event1.sampling_event_id, sampling_event1)
