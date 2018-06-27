@@ -73,15 +73,15 @@ paths:
     $ref: './swagger/original_sample/items.yaml'
   '/originalSamples/merge/{into}/{merged}':
     $ref: './swagger/original_sample/merge.yaml'
-  '/originalSample/attr/{propName}/{propValue}':
+  '/originalSamples/attr/{propName}/{propValue}':
     $ref: './swagger/original_sample/by_attr.yaml'
-  '/originalSample/location/{locationId}':
+  '/originalSamples/location/{locationId}':
     $ref: './swagger/original_sample/by_location.yaml'
-  '/originalSample/study/{studyName}':
+  '/originalSamples/study/{studyName}':
     $ref: './swagger/original_sample/by_study.yaml'
-  '/originalSample/taxa/{taxaId}':
+  '/originalSamples/taxa/{taxaId}':
     $ref: './swagger/original_sample/by_taxa.yaml'
-  '/originalSample/eventSet/{eventSetId}':
+  '/originalSamples/eventSet/{eventSetId}':
     $ref: './swagger/original_sample/by_set.yaml'
   '/metadata/country/{countryId}':
     get:
