@@ -34,7 +34,7 @@ export class EventSearchComponent implements OnInit {
 
   search() {
     if (this.attr_type && this.attr_value) {
-      this.sampleService.downloadSamplingEventsByAttr(this.attr_type, this.attr_value).subscribe(samplingEvents => {
+      this.sampleService.downloadSamplingEventsByOsAttr(this.attr_type, this.attr_value).subscribe(samplingEvents => {
         
           this.samplingEvents = samplingEvents;
         
