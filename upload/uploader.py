@@ -753,7 +753,6 @@ class Uploader():
                 return existing
 
         if original_sample and\
-        if original_sample and\
            original_sample.sampling_event_id:
             existing = self._dao.download_sampling_event(original_sample.sampling_event_id)
             if existing.location_id:
@@ -762,7 +761,7 @@ class Uploader():
 #                        print('Conflicting location existing != new')
                         existing.location_id = loc.location_id
                         existing.location = loc
-                else:
+#                else:
 #                    print('Conflicting location new not set')
             elif loc:
 #                print('Conflicting location existing not set')
@@ -774,7 +773,7 @@ class Uploader():
 #                        print('Conflicting proxy_location existing != new')
                         existing.proxy_location_id = proxy_loc.location_id
                         existing.proxy_location = proxy_loc
-                else:
+#                else:
 #                    print('Conflicting proxy_location new not set')
             elif proxy_loc:
                 print('Conflicting proxy_location existing not set')

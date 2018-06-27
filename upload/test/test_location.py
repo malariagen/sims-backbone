@@ -148,8 +148,6 @@ class TestLocation(TestBase):
                     print('\n'.join(difflib.context_diff(errmsg.split('\n'), msg.split('\n'))))
             self.assertIn(errmsg, self._messages)
 
-            print(looked_up)
-
             assert looked_up.location_id != looked_up.proxy_location_id
 
             if looked_up.location_id not in TestLocation._locations:

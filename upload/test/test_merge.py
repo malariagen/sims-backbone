@@ -377,13 +377,7 @@ class TestMerge(TestBase):
         looked_up1 = looked_up1.original_samples[0]
         looked_up2 = looked_up2.original_samples[0]
 
-        print(looked_up1)
-        print(looked_up2)
-
         se_api = swagger_client.SamplingEventApi(self._api_client)
-
-        print(se_api.download_sampling_event(looked_up1.sampling_event_id))
-        print(se_api.download_sampling_event(looked_up2.sampling_event_id))
 
         assert looked_up1.sampling_event_id == looked_up2.sampling_event_id
 
