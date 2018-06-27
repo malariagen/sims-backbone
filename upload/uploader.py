@@ -286,23 +286,6 @@ class Uploader():
                 self.process_item(values)
 
 
-    def add_locations_from_values(self, existing, sampling_event, values):
-
-        if existing and values['study_id'][:4] == '0000':
-            values['study_id'] = existing.study_name
-
-        location_name, location = self.process_location(values, '', existing)
-        proxy_location_name, proxy_location = self.process_location(values, 'proxy_', existing)
-
-        if location:
-            sampling_event.location_id = location.location_id
-        if proxy_location:
-            sampling_event.proxy_location_id = proxy_location.location_id
-
-        sampling_event.location = location
-        sampling_event.proxy_location = proxy_location
-
-
     def process_item(self, values):
 
         #Reset connections for each item
@@ -318,11 +301,22 @@ class Uploader():
 
         o_existing = self.lookup_original_sample(o_sample, values)
 
+        if o_existing and values['study_id'][:4] == '0000':
+            values['study_id'] = o_existing.study_name
+
         samp = self.create_sampling_event_from_values(values)
 
-        existing = self.lookup_sampling_event(o_existing, samp, values)
+        location_name, location = self.process_location(values, '')
+        proxy_location_name, proxy_location = self.process_location(values, 'proxy_')
         #print(samp)
-        self.add_locations_from_values(existing, samp, values)
+
+        existing = self.lookup_sampling_event(o_existing, samp, location, proxy_location, values)
+
+        if location:
+            samp.location_id = location.location_id
+
+        if proxy_location:
+            samp.proxy_location_id = proxy_location.location_id
 
         sampling_event = self.process_sampling_event(values, samp, existing)
 
@@ -342,7 +336,7 @@ class Uploader():
     """
         returns true if the attr is already in, or successfully added to, the location
     """
-    def add_location_attr(self, sampling_event, study_id, looked_up, ident_type, partner_name, values):
+    def add_location_attr(self, study_id, looked_up, ident_type, partner_name, values):
 
         if not looked_up:
             return False
@@ -385,7 +379,7 @@ class Uploader():
                             conflict_loc = self._dao.download_location(conflict.locations[0].location_id)
                             conflict_loc = self._dao.download_gps_location(looked_up.latitude,
                                                                               looked_up.longitude)
-                            self.report_conflict(sampling_event, "Location name", existing_location,
+                            self.report_conflict(None, "Location name", existing_location,
                                                  conflict_loc, message, values)
                         else:
                             self.report('No conflict on error: {}'.format(partner_name), values)
@@ -397,7 +391,7 @@ class Uploader():
                                 for cname in loc.attrs:
                                     if cname.study_name[:4] == study_id[:4]:
                                         message = message + ':' + cname.attr_value
-                                self.report_conflict(sampling_event, "Location name", looked_up,
+                                self.report_conflict(None, "Location name", looked_up,
                                                      loc, message, values)
                         except ApiException as err:
                             print(err)
@@ -476,7 +470,7 @@ class Uploader():
 
         return partner_name, loc
 
-    def lookup_location(self, existing_event, study_id, loc, partner_name, values):
+    def lookup_location(self, study_id, loc, partner_name, values):
 
         looked_up_location = None
         conflict = False
@@ -496,8 +490,9 @@ class Uploader():
                     for ident in named_loc.attrs:
                         if ident.study_name[:4] == study_id[:4]:
                             if loc.latitude and loc.longitude:
-                                self.report_conflict(existing_event, "Location name", loc,
-                                                     named_loc, partner_name, values)
+                                self.report_conflict(None, "Location name", loc,
+                                                     named_loc,
+                                                     partner_name, values)
                                 conflict = True
                             else:
                                 looked_up_location = named_loc
@@ -519,7 +514,7 @@ class Uploader():
 
         return looked_up_location, conflict
 
-    def process_location(self, values, prefix, existing_event):
+    def process_location(self, values, prefix):
 
         partner_name, loc = self.create_location_from_values(values, prefix)
 
@@ -528,35 +523,21 @@ class Uploader():
 
         study_id = None
 
-        if existing_event:
-            study_id = existing_event.study_name
-        else:
-            if 'study_id' in values:
-                study_id = values['study_id'][:4]
+        if 'study_id' in values:
+            study_id = values['study_id'][:4]
 
-        existing_location = None
-        if prefix == 'proxy_':
-            if existing_event and existing_event.proxy_location:
-                existing_location = deepcopy(existing_event.proxy_location)
-        else:
-            if existing_event and existing_event.location:
-                existing_location = deepcopy(existing_event.location)
+        looked_up, conflict = self.lookup_location(study_id, loc, partner_name, values)
 
-        if existing_location:
-            orig = deepcopy(existing_location)
-            orig.location_id = None
-            if orig == loc:
-                return partner_name, existing_location
+        return self.merge_locations(loc, looked_up, study_id, prefix, partner_name, values)
 
-        looked_up, conflict = self.lookup_location(existing_event, study_id, loc, partner_name, values)
-
+    def merge_locations(self, loc, looked_up, study_id, prefix, partner_name, values):
         ret = None
 
         if looked_up is not None:
             try:
                 #print("Found location {}".format(looked_up))
                 loc.location_id = looked_up.location_id
-                added_id = self.add_location_attr(existing_event, study_id, looked_up, prefix, partner_name, values)
+                added_id = self.add_location_attr(study_id, looked_up, prefix, partner_name, values)
 
                 if added_id:
                     try:
@@ -565,7 +546,7 @@ class Uploader():
                         try:
                             ret = self.update_country(loc.country, looked_up)
                         except Exception as err:
-                            self.report_conflict(existing_event, 'Country', looked_up.country,
+                            self.report_conflict(None, 'Country', looked_up.country,
                                                      loc.country, 'not updated', values)
                     except Exception as err:
                         #Either a duplicate or country conflict
@@ -583,8 +564,8 @@ class Uploader():
             #    print("Created location {}".format(created))
             except ApiException as err:
                 if err.status == 422:
-                    self.report_conflict(existing_event, "Location name", None,
-                                         loc, '', values)
+                    self.report_conflict(None, "Location name", None,
+                                         loc, 'Error creating location', values)
                 else:
                     self.report("Error creating location {} {}".format(loc, err), values)
                 return None, None
@@ -751,7 +732,9 @@ class Uploader():
 #
 #        return existing
 #
-    def lookup_sampling_event(self, original_sample, samp, values):
+    def lookup_sampling_event(self, original_sample, samp, loc, proxy_loc, values):
+
+        #print('Looking up sampling event {} {} {}'.format(original_sample, samp, values))
 
         existing = None
 
@@ -761,40 +744,73 @@ class Uploader():
                 existing = self._dao.download_sampling_event(existing_sample_id)
                 return existing
 
+        if 'individual_id' in values:
+            if values['individual_id'] in self._sample_cache:
+                looked_up = self._dao.download_sampling_events_by_attr('individual_id',
+                                                                       values['individual_id'])
+                if looked_up.count > 0:
+                    existing = looked_up.sampling_events[0]
+                return existing
+
         if original_sample and\
-                original_sample.sampling_event_id and\
-                original_sample.sampling_event_id != 'None':
+        if original_sample and\
+           original_sample.sampling_event_id:
             existing = self._dao.download_sampling_event(original_sample.sampling_event_id)
+            if existing.location_id:
+                if loc:
+                    if existing.location_id != loc.location_id:
+#                        print('Conflicting location existing != new')
+                        existing.location_id = loc.location_id
+                        existing.location = loc
+                else:
+#                    print('Conflicting location new not set')
+            elif loc:
+#                print('Conflicting location existing not set')
+                existing.location_id = loc.location_id
+                existing.location = loc
+            if existing.proxy_location_id:
+                if proxy_loc:
+                    if existing.location_id != proxy_loc.location_id:
+#                        print('Conflicting proxy_location existing != new')
+                        existing.proxy_location_id = proxy_loc.location_id
+                        existing.proxy_location = proxy_loc
+                else:
+#                    print('Conflicting proxy_location new not set')
+            elif proxy_loc:
+                print('Conflicting proxy_location existing not set')
+                existing.proxy_location_id = proxy_loc.location_id
+                existing.proxy_location = proxy_loc
             return existing
 
-        if not samp.location_id:
-            return existing
+        for location in (loc, proxy_loc):
+            if not location:
+                continue
+            try:
+                found_events = self._dao.download_sampling_events_by_location(location.location_id)
 
-        try:
-            found_events = self._dao.download_sampling_events_by_location(samp.location_id)
+                for found in found_events.sampling_events:
 
-            for found in found_events.sampling_events:
-
-                if samp.doc != found.doc:
-                    continue
-                if samp.study_name[:4] != found.study_name[:4]:
-                    continue
-                if samp.location_id != found.location_id:
-                    continue
-                if samp.proxy_location_id != found.proxy_location_id:
-                    continue
-                if existing and existing.sampling_event_id != found.sampling_event_id:
-                    #self.report("Merging into {} using {}"
-                    #                .format(existing.sampling_event_id,
-                    #                                   ident.attr_type), values)
-                    found = self.merge_events(existing, found, values)
-                existing = found
-                if samp.study_name[:4] == '0000':
-                    samp.study_name = existing.study_name
-                        #print ("found: {} {}".format(samp, found))
-        except ApiException as err:
-            #self._logger.debug("Error looking for {}".format(ident))
-            #print("Not found")
+                    if samp.doc != found.doc:
+                        continue
+                    if samp.study_name[:4] != found.study_name[:4]:
+                        continue
+                    if loc.location_id != found.location_id:
+                        continue
+                    if proxy_loc:
+                        if proxy_loc.location_id != found.proxy_location_id:
+                            continue
+                    if existing and existing.sampling_event_id != found.sampling_event_id:
+                        #self.report("Merging into {} using {}"
+                        #                .format(existing.sampling_event_id,
+                        #                                   ident.attr_type), values)
+                        found = self.merge_events(existing, found, values)
+                    existing = found
+                    if samp.study_name[:4] == '0000':
+                        samp.study_name = existing.study_name
+                            #print ("found: {} {}".format(samp, found))
+            except ApiException as err:
+                #self._logger.debug("Error looking for {}".format(ident))
+                #print("Not found")
                 pass
 
         return existing
@@ -815,15 +831,15 @@ class Uploader():
             for ident in samp.attrs:
                 try:
                     #print("Looking for {} {}".format(ident.attr_type, ident.attr_value))
+                    if ident.attr_type == 'individual_id':
+                        #individual_id is used for grouping
+                        # and is not a unique ident
+                        continue
 
                     found_events = self._dao.download_original_samples_by_attr(ident.attr_type,
                                                                                        ident.attr_value)
 
                     for found in found_events.original_samples:
-                        if ident.attr_type == 'individual_id':
-                            #individual_id is used to group sampling events
-                            # and is not a unique ident
-                            continue
                         if ident.attr_type == 'partner_id':
                             #Partner ids within 1087 are not unique
                             if samp.study_name[:4] == '1087':
@@ -920,9 +936,9 @@ class Uploader():
         else:
             if existing.study_name:
 #                    print("Adding loc ident {} {}".format(location_name, existing.study_name))
-                self.add_location_attr(existing, existing.study_name, location, '', location_name,
+                self.add_location_attr(existing.study_name, location, '', location_name,
                                              values)
-                self.add_location_attr(existing, existing.study_name, proxy_location, 'proxy_',
+                self.add_location_attr(existing.study_name, proxy_location, 'proxy_',
                                          proxy_location_name, values)
 
         if samp.doc:
@@ -1078,9 +1094,9 @@ class Uploader():
         else:
             if existing.study_name:
 #                    print("Adding loc ident {} {}".format(location_name, existing.study_name))
-                self.add_location_attr(existing, existing.study_name, location, '', location_name,
+                self.add_location_attr(existing.study_name, location, '', location_name,
                                              values)
-                self.add_location_attr(existing, existing.study_name, proxy_location, 'proxy_',
+                self.add_location_attr(existing.study_name, proxy_location, 'proxy_',
                                          proxy_location_name, values)
 
         if samp.sampling_event_id != existing.sampling_event_id:

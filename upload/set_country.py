@@ -245,9 +245,11 @@ class SetCountry(upload_ssr.Upload_SSR):
 
         o_existing = self.lookup_original_sample(o_sample, values)
 
-        samp = self.create_sampling_event_from_values(values)
-
-        item = self.lookup_sampling_event(o_existing, samp, values)
+        if o_existing.sampling_event_id:
+            item = self._dao.download_sampling_event(o_existing.sampling_event_id)
+        else:
+            self.report("original sample not found - probably duplicate key", values)
+            return None
 
         if item:
             item = self.set_country(item, values['iso2'], self._data_file, values)

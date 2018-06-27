@@ -364,3 +364,26 @@ class TestMerge(TestBase):
         looked_up1 = looked_up1.sampling_events[0]
 
         self.assertNotEqual(looked_up.sampling_event_id, looked_up1.sampling_event_id)
+
+    """
+    """
+    def test_not_merge_se(self):
+
+        os_api_instance = swagger_client.OriginalSampleApi(self._api_client)
+        looked_up1 = os_api_instance.download_original_samples_by_attr('oxford_id',
+                                                                             'OX0009-C')
+        looked_up2 = os_api_instance.download_original_samples_by_attr('oxford_id',
+                                                                             'OX0010-C')
+        looked_up1 = looked_up1.original_samples[0]
+        looked_up2 = looked_up2.original_samples[0]
+
+        print(looked_up1)
+        print(looked_up2)
+
+        se_api = swagger_client.SamplingEventApi(self._api_client)
+
+        print(se_api.download_sampling_event(looked_up1.sampling_event_id))
+        print(se_api.download_sampling_event(looked_up2.sampling_event_id))
+
+        assert looked_up1.sampling_event_id == looked_up2.sampling_event_id
+

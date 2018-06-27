@@ -130,21 +130,25 @@ class TestLocation(TestBase):
     """
     def test_location_duplicate_name(self):
 
+        location_api = swagger_client.LocationApi(self._api_client)
         api_instance = swagger_client.SamplingEventApi(self._api_client)
 
         try:
+            conflict_loc = location_api.download_gps_location('13.86208','107.097015')
             looked_up = api_instance.download_sampling_events_by_os_attr('oxford_id', '22345')
             looked_up = looked_up.sampling_events[0]
 
             errmsg = "Conflicting Location name value\tRatanakiri\t\t\t{'accuracy': None, 'attrs': [{'attr_source': 'locations', 'attr_type': 'partner_name', 'attr_value': 'Ratanakiri', 'study_name': '9040'}], 'country': None, 'curated_name': None, 'curation_method': None, 'latitude': 13.9, 'location_id': None, 'longitude': 107.1, 'notes': 'locations.tsv'}\t{'accuracy': None, 'attrs': [{'attr_source': 'locations', 'attr_type': 'partner_name', 'attr_value': 'Ratanakiri', 'study_name': '9040'}], 'country': 'KHM', 'curated_name': None, 'curation_method': None, 'latitude': 13.86208, " +\
-                     "'location_id': '{}',".format(looked_up.location_id) +\
+                     "'location_id': '{}',".format(conflict_loc.locations[0].location_id) +\
                      " 'longitude': 107.097015, 'notes': 'locations.tsv'}\t[('country', 'KHM'), ('latitude', '13.86208'), ('location_name', 'Ratanakiri'), ('longitude', '107.097015'), ('proxy_latitude', '13.9'), ('proxy_location_name', 'Ratanakiri'), ('proxy_longitude', '107.1'), ('sample_oxford_id', '22345'), ('study_id', '9040 Upload location test study')]"
 
             #Used for diagnosis
-            #for msg in self._messages:
-            #    if msg.startswith(errmsg[:25]):
-            #        print('\n'.join(difflib.context_diff(errmsg.split('\n'), msg.split('\n'))))
+            for msg in self._messages:
+                if msg.startswith(errmsg[:25]):
+                    print('\n'.join(difflib.context_diff(errmsg.split('\n'), msg.split('\n'))))
             self.assertIn(errmsg, self._messages)
+
+            print(looked_up)
 
             assert looked_up.location_id != looked_up.proxy_location_id
 
