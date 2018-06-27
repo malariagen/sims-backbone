@@ -108,6 +108,28 @@ def download_sampling_events_by_attr(event, context):
 
     return create_response(event, retcode, value)
 
+def download_sampling_events_by_os_attr(event, context):
+
+    user = event['requestContext']['authorizer']['principalId']
+
+    if 'pathParameters' in event:
+        prop_name = event["pathParameters"]["prop_name"]
+        prop_value = event["pathParameters"]["prop_value"]
+
+    study_name = None
+    if 'queryStringParameters' in event and event["queryStringParameters"]:
+        if 'study_name' in event["queryStringParameters"]:
+            study_name = event["queryStringParameters"]["study_name"]
+
+    value, retcode = sampling_event_controller.download_sampling_events_by_os_attr(prop_name,
+                                                                                     prop_value,
+                                                                                     study_name,
+                                                                                     user,
+                                                                                     sampling_event_controller.authorizer(event['requestContext']['authorizer']))
+
+
+    return create_response(event, retcode, value)
+
 def download_sampling_events_by_location(event, context):
 
     user = event['requestContext']['authorizer']['principalId']
@@ -211,6 +233,23 @@ def update_sampling_event(event, context):
     value, retcode = sampling_event_controller.update_location(sampling_event_id, sampling_event,
                                                                user,
                                                                sampling_event_controller.authorizer(event['requestContext']['authorizer']))
+
+    return create_response(event, retcode, value)
+
+
+def merge_sampling_events(event, context):
+
+    user = event['requestContext']['authorizer']['principalId']
+
+    if 'pathParameters' in event:
+        into = event["pathParameters"]["into"]
+        merged = event["pathParameters"]["merged"]
+
+    value, retcode = sampling_event_controller.merge_sampling_events(into,
+                                                                     merged,
+                                                                     user,
+                                                                     sampling_event_controller.authorizer(event['requestContext']['authorizer']))
+
 
     return create_response(event, retcode, value)
 

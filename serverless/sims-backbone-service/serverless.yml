@@ -211,7 +211,7 @@ functions:
     handler: studies/handler.download_study
     events:
       - http:
-          path: sims-backbone-service/v1/study/{study_id}
+          path: sims-backbone-service/v1/study/{study_name}
           method: get
           cors: true
           timeout: 20
@@ -223,12 +223,12 @@ functions:
           request:
             parameters:
               paths:
-                study_id: true
+                study_name: true
   update_study:
     handler: studies/handler.update_study
     events:
       - http:
-          path: sims-backbone-service/v1/study/{study_id}
+          path: sims-backbone-service/v1/study/{study_name}
           method: put
           cors: true
           timeout: 20
@@ -240,7 +240,7 @@ functions:
           request:
             parameters:
               paths:
-                study_id: true
+                study_name: true
 
 resources:
   Resources:

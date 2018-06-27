@@ -190,6 +190,28 @@ functions:
               query:
                 study_name: false
 
+  downloadSamplingEventsByOsAttr:
+    handler: sampling_event/handler.download_sampling_events_by_os_attr
+    events:
+      - http:
+          path: samplingEvents/os/attr/{prop_name}/{prop_value}
+          method: get
+          cors: true
+          timeout: 20
+          authorizer:
+            name: seAuthFunc
+            arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
+            type: request
+            identitySource: method.request.header.Authorization
+            identityValidationExpression: .*
+          request:
+            parameters:
+              paths:
+                prop_name: true
+                prop_value: true
+              query:
+                study_name: false
+
   downloadSampling_events_by_loc:
     handler: sampling_event/handler.download_sampling_events_by_location
     events:
@@ -277,6 +299,27 @@ functions:
               query:
                 start: false
                 count: false
+
+  mergeSamplingEvents:
+    handler: sampling_event/handler.merge_sampling_events
+    events:
+      - http:
+          path: samplingEvents/merge/{into}/{merged}
+          method: put
+          cors: true
+          timeout: 20
+          authorizer:
+            name: seAuthFunc
+            arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
+            type: request
+            identitySource: method.request.header.Authorization
+            identityValidationExpression: .*
+          request:
+            parameters:
+              paths:
+                into: true
+                merged: true
+
 resources:
   Resources:
     CreateUnderscoresamplingUnderscoreeventLogGroup:
@@ -303,6 +346,10 @@ resources:
       Type: AWS::Logs::LogGroup
       Properties:
         RetentionInDays: "30"
+    DownloadSamplingEventByOsAttrLogGroup:
+      Type: AWS::Logs::LogGroup
+      Properties:
+        RetentionInDays: "30"
     DownloadSamplingUnderscoreeventsUnderscorebyUnderscorelocLogGroup:
       Type: AWS::Logs::LogGroup
       Properties:
@@ -316,6 +363,10 @@ resources:
       Properties:
         RetentionInDays: "30"
     DownloadUnderscoreeventsUnderscorebyUnderscoreeventUnderscoresetLogGroup:
+      Type: AWS::Logs::LogGroup
+      Properties:
+        RetentionInDays: "30"
+    MergeSamplingEventsLogGroup:
       Type: AWS::Logs::LogGroup
       Properties:
         RetentionInDays: "30"

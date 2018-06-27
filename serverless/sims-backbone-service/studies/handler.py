@@ -53,7 +53,7 @@ def download_study(event, context):
     auths = get_auths(study_controller, event)
 
     if 'pathParameters' in event:
-        study_id = event["pathParameters"]["study_id"]
+        study_id = event["pathParameters"]["study_name"]
 
     value, retcode = study_controller.download_study(study_id, user, auths)
 
@@ -70,7 +70,7 @@ def update_study(event, context):
     auths = get_auths(study_controller, event)
 
     if 'pathParameters' in event:
-        study_id = event["pathParameters"]["study_id"]
+        study_id = event["pathParameters"]["study_name"]
 
     study = Study.from_dict(json.loads(event["body"]))
 
