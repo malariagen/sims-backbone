@@ -1,0 +1,346 @@
+# Welcome to Serverless!
+#
+# This file is the main config file for your service.
+# It's very minimal at this point and uses default values.
+# You can always add more config options for more control.
+# We've included some commented out config examples here.
+# Just uncomment any of them to get that config option.
+#
+# For full config options, check the docs:
+#    docs.serverless.com
+#
+# Happy Coding!
+
+service: sims-original-sample-service
+#service: sims-backbone-service
+
+# You can pin your service to only deploy with a specific Serverless version
+# Check out our docs for more details
+# frameworkVersion: "=X.X.X"
+
+provider:
+  name: aws
+  runtime: python3.6
+  region: eu-west-1
+  stage: ${opt:stage, 'dev'}
+  versionFunctions: false
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - ec2:CreateNetworkInterface
+        - ec2:DescribeNetworkInterfaces
+        - ec2:DeleteNetworkInterface
+      Resource: "*"
+  environment:
+    DB_USER: ${file(../config.${self:provider.stage}.json):db_user}
+    DATABASE: ${file(../config.${self:provider.stage}.json):database}
+    DB_PASSWORD: ${file(../config.${self:provider.stage}.json):db_password}
+    DB_HOST: ${cf:sims-backbone-service-${self:provider.stage}.DbHostOutput}
+    AUTH_PROFILE_URL: ${file(../config.${self:provider.stage}.json):auth_profile}
+    PYTHON_PATH: '.:../server:../server/bb_server'
+  vpc:
+    securityGroupIds:
+      - ${cf:sims-backbone-service-${self:provider.stage}.ServerlessSecurityGroupOutput}
+    subnetIds:
+      - 'Fn::ImportValue': sims-backbone-service:PublicSubnetA-${self:provider.stage}
+      - 'Fn::ImportValue': sims-backbone-service:PublicSubnetB-${self:provider.stage}
+      - 'Fn::ImportValue': sims-backbone-service:PublicSubnetC-${self:provider.stage}
+  apiGateway:
+    restApiId: ${cf:sims-backbone-service-${self:provider.stage}.ApiGatewayRestApi}
+    restApiRootResourceId: ${cf:sims-backbone-service-${self:provider.stage}.ApiGatewayRestApiRootResource}
+
+plugins:
+      - serverless-python-requirements
+
+custom:
+  pythonRequirements:
+    dockerizePip: true
+
+package:
+    exclude:
+        - requirements.txt
+        - serverless.yml
+        - node_modules/**
+        - venv/**
+        - package.json
+        - package-lock.json
+        - endpoints.txt
+        - updateall.sh
+        - ../../server/backbone_server/connect.py
+    include:
+        - ../util/**
+        - original_sample/handler.py
+        - ../../server/bb_server/**
+        - ../../server/backbone_server/**/**
+        - ../client_secrets.${self:provider.stage}.json
+
+functions:
+
+  createOriginalSample:
+    handler: original_sample/handler.create_original_sample
+    events:
+      - http:
+          path: originalSample
+          method: post
+          cors: true
+          timeout: 20
+          authorizer:
+            name: osAuthFunc
+            arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
+            type: request
+            identitySource: method.request.header.Authorization
+            identityValidationExpression: .*
+
+  downloadOriginalSample:
+    handler: original_sample/handler.download_original_sample
+    events:
+      - http:
+          path: originalSample/{original_sample_id}
+          method: get
+          cors: true
+          timeout: 20
+          authorizer:
+            name: osAuthFunc
+            arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
+            type: request
+            identitySource: method.request.header.Authorization
+            identityValidationExpression: .*
+          request:
+            parameters:
+              paths:
+                original_sample_id: true
+
+  downloadOriginalSamples:
+    handler: original_sample/handler.download_original_samples
+    events:
+      - http:
+          path: originalSamples
+          method: get
+          cors: true
+          timeout: 300
+          authorizer:
+            name: osAuthFunc
+            arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
+            type: request
+            identitySource: method.request.header.Authorization
+            identityValidationExpression: .*
+          request:
+            parameters:
+              query:
+                filter: false
+                start: false
+                count: false
+
+  updateOriginalSample:
+    handler: original_sample/handler.update_original_sample
+    events:
+      - http:
+          path: originalSample/{original_sample_id}
+          method: put
+          cors: true
+          timeout: 20
+          authorizer:
+            name: osAuthFunc
+            arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
+            type: request
+            identitySource: method.request.header.Authorization
+            identityValidationExpression: .*
+          request:
+            parameters:
+              paths:
+                original_sample_id: true
+  deleteOriginalSample:
+    handler: original_sample/handler.delete_original_sample
+    events:
+      - http:
+          path: originalSample/{original_sample_id}
+          method: delete
+          cors: true
+          timeout: 20
+          authorizer:
+            name: osAuthFunc
+            arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
+            type: request
+            identitySource: method.request.header.Authorization
+            identityValidationExpression: .*
+          request:
+            parameters:
+              paths:
+                original_sample_id: true
+
+  downloadOriginalSamplesByattr:
+    handler: original_sample/handler.download_original_samples_by_attr
+    events:
+      - http:
+          path: originalSamples/attr/{prop_name}/{prop_value}
+          method: get
+          cors: true
+          timeout: 20
+          authorizer:
+            name: osAuthFunc
+            arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
+            type: request
+            identitySource: method.request.header.Authorization
+            identityValidationExpression: .*
+          request:
+            parameters:
+              paths:
+                prop_name: true
+                prop_value: true
+              query:
+                study_name: false
+
+  downloadOriginalSamplesByloc:
+    handler: original_sample/handler.download_original_samples_by_location
+    events:
+      - http:
+          path: originalSamples/location/{location_id}
+          method: get
+          cors: true
+          timeout: 20
+          authorizer:
+            name: osAuthFunc
+            arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
+            type: request
+            identitySource: method.request.header.Authorization
+            identityValidationExpression: .*
+          request:
+            parameters:
+              paths:
+                location_id: true
+              query:
+                start: false
+                count: false
+
+  downloadOriginalSamplesByStudy:
+    handler: original_sample/handler.download_original_samples_by_study
+    events:
+      - http:
+          path: originalSamples/study/{study_name}
+          method: get
+          cors: true
+          timeout: 300
+          authorizer:
+            name: osAuthFunc
+            arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
+            type: request
+            identitySource: method.request.header.Authorization
+            identityValidationExpression: .*
+          request:
+            parameters:
+              paths:
+                study_name: true
+              query:
+                start: false
+                count: false
+
+  downloadOriginalSamplesBytaxa:
+    handler: original_sample/handler.download_original_samples_by_taxa
+    events:
+      - http:
+          path: originalSamples/taxa/{taxa_id}
+          method: get
+          cors: true
+          timeout: 300
+          authorizer:
+            name: osAuthFunc
+            arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
+            type: request
+            identitySource: method.request.header.Authorization
+            identityValidationExpression: .*
+          request:
+            parameters:
+              paths:
+                taxa_id: true
+              query:
+                start: false
+                count: false
+
+  downloadOsByEventSet:
+    handler: original_sample/handler.download_original_samples_by_event_set
+    events:
+      - http:
+          path: originalSamples/eventSet/{event_set_id}
+          method: get
+          cors: true
+          timeout: 300
+          authorizer:
+            name: osAuthFunc
+            arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
+            type: request
+            identitySource: method.request.header.Authorization
+            identityValidationExpression: .*
+          request:
+            parameters:
+              paths:
+                event_set_id: true
+              query:
+                start: false
+                count: false
+
+  mergeOriginalSamples:
+    handler: original_sample/handler.merge_original_samples
+    events:
+      - http:
+          path: originalSamples/merge/{into}/{merged}
+          method: put
+          cors: true
+          timeout: 20
+          authorizer:
+            name: osAuthFunc
+            arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
+            type: request
+            identitySource: method.request.header.Authorization
+            identityValidationExpression: .*
+          request:
+            parameters:
+              paths:
+                into: true
+                merged: true
+
+resources:
+  Resources:
+    CreateOriginalSampleLogGroup:
+      Type: AWS::Logs::LogGroup
+      Properties:
+        RetentionInDays: "30"
+    DownloadOriginalSampleLogGroup:
+      Type: AWS::Logs::LogGroup
+      Properties:
+        RetentionInDays: "30"
+    DownloadOriginalSamplesLogGroup:
+      Type: AWS::Logs::LogGroup
+      Properties:
+        RetentionInDays: "30"
+    UpdateOriginalSampleLogGroup:
+      Type: AWS::Logs::LogGroup
+      Properties:
+        RetentionInDays: "30"
+    DeleteOriginalSampleLogGroup:
+      Type: AWS::Logs::LogGroup
+      Properties:
+        RetentionInDays: "30"
+    DownloadOriginalSamplesByattrLogGroup:
+      Type: AWS::Logs::LogGroup
+      Properties:
+        RetentionInDays: "30"
+    DownloadOriginalSamplesBylocLogGroup:
+      Type: AWS::Logs::LogGroup
+      Properties:
+        RetentionInDays: "30"
+    DownloadOriginalSamplesByStudyLogGroup:
+      Type: AWS::Logs::LogGroup
+      Properties:
+        RetentionInDays: "30"
+    DownloadOriginalSamplesBytaxaLogGroup:
+      Type: AWS::Logs::LogGroup
+      Properties:
+        RetentionInDays: "30"
+    DownloadOsByEventSetLogGroup:
+      Type: AWS::Logs::LogGroup
+      Properties:
+        RetentionInDays: "30"
+    MergeOriginalSamplesLogGroup:
+      Type: AWS::Logs::LogGroup
+      Properties:
+        RetentionInDays: "30"
