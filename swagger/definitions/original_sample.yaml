@@ -34,10 +34,10 @@ definitions:
         items:
             type: object
             $ref: './swagger.yaml#/definitions/Attr'
-      derivative_samples:
+      derived_samples:
         type: object
         description: 'The samples derived from this original sample'
-        $ref: './derivative_sample.yaml#/definitions/DerivativeSamples'
+        $ref: './derived_sample.yaml#/definitions/DerivedSamples'
   SamplingEventMap:
     type: object
     description: 'Map of sampling events'

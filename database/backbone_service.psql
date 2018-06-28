@@ -33,6 +33,8 @@ ALTER TABLE ONLY public.sampling_events DROP CONSTRAINT fk_location;
 ALTER TABLE ONLY public.event_set_notes DROP CONSTRAINT fk_esn_es;
 ALTER TABLE ONLY public.event_set_members DROP CONSTRAINT fk_esm_se;
 ALTER TABLE ONLY public.event_set_members DROP CONSTRAINT fk_esm_es;
+ALTER TABLE ONLY public.derived_samples DROP CONSTRAINT fk_ds_os;
+ALTER TABLE ONLY public.derived_sample_attrs DROP CONSTRAINT fk_derived_sample;
 ALTER TABLE ONLY public.locations DROP CONSTRAINT fk_country;
 DROP INDEX public.idx_study_name;
 DROP INDEX public.idx_partner_species;
@@ -58,6 +60,7 @@ ALTER TABLE ONLY public.event_sets DROP CONSTRAINT pk_es;
 ALTER TABLE ONLY public.partner_species_identifiers DROP CONSTRAINT partner_species_identifiers_id;
 ALTER TABLE ONLY public.original_samples DROP CONSTRAINT original_sample_id;
 ALTER TABLE ONLY public.locations DROP CONSTRAINT location_id;
+ALTER TABLE ONLY public.derived_samples DROP CONSTRAINT derived_sample_id;
 ALTER TABLE ONLY public.countries DROP CONSTRAINT countries_id;
 ALTER TABLE ONLY public.attrs DROP CONSTRAINT attr_id;
 ALTER TABLE public.event_sets ALTER COLUMN id DROP DEFAULT;
@@ -77,6 +80,8 @@ DROP SEQUENCE public.event_sets_id_seq;
 DROP TABLE public.event_sets;
 DROP TABLE public.event_set_notes;
 DROP TABLE public.event_set_members;
+DROP TABLE public.derived_samples;
+DROP TABLE public.derived_sample_attrs;
 DROP TABLE public.countries;
 DROP TABLE public.attrs;
 DROP SEQUENCE public.archive_id_seq;
@@ -188,6 +193,27 @@ CREATE TABLE public.countries (
     alpha2 character(2),
     alpha3 character(3) NOT NULL,
     numeric_code integer
+);
+
+
+--
+-- Name: derived_sample_attrs; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.derived_sample_attrs (
+    derived_sample_id uuid,
+    attr_id uuid
+);
+
+
+--
+-- Name: derived_samples; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.derived_samples (
+    id uuid NOT NULL,
+    original_sample_id uuid,
+    dna_prep character varying
 );
 
 
@@ -427,6 +453,14 @@ ALTER TABLE ONLY public.countries
 
 
 --
+-- Name: derived_samples derived_sample_id; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.derived_samples
+    ADD CONSTRAINT derived_sample_id PRIMARY KEY (id);
+
+
+--
 -- Name: locations location_id; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -611,6 +645,22 @@ CREATE INDEX idx_study_name ON public.studies USING btree (study_name);
 
 ALTER TABLE ONLY public.locations
     ADD CONSTRAINT fk_country FOREIGN KEY (country) REFERENCES public.countries(alpha3);
+
+
+--
+-- Name: derived_sample_attrs fk_derived_sample; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.derived_sample_attrs
+    ADD CONSTRAINT fk_derived_sample FOREIGN KEY (derived_sample_id) REFERENCES public.derived_samples(id);
+
+
+--
+-- Name: derived_samples fk_ds_os; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.derived_samples
+    ADD CONSTRAINT fk_ds_os FOREIGN KEY (original_sample_id) REFERENCES public.original_samples(id);
 
 
 --

@@ -17,12 +17,12 @@ definitions:
       assay_data_id:
         type: string
 #        format: uuid
-      derivative_sample_id:
+      derived_sample_id:
         type: string
 #        format: uuid
-#      derivative_sample:
+#      derived_sample:
 #        type: object
-#        $ref: './derivative_sample.yaml#/definitions/DerivativeSample'
+#        $ref: './derived_sample.yaml#/definitions/DerivedSample'
       ebi_run_acc:
         type: string
       attrs:

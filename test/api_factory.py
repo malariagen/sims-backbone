@@ -8,6 +8,7 @@ from local.metadata_api import LocalMetadataApi
 from local.sampling_event_api import LocalSamplingEventApi
 from local.study_api import LocalStudyApi
 from local.original_sample_api import LocalOriginalSampleApi
+from local.derived_sample_api import LocalDerivedSampleApi
 
 from backbone_server.controllers.base_controller  import BaseController
 
@@ -109,6 +110,16 @@ class ApiFactory():
         return ret
 
 
+    def DerivedSampleApi(self):
+
+        ret = None
+
+        if self.isLocal():
+            ret = LocalDerivedSampleApi(self._api_client, self._user, self._auths, self._method)
+        else:
+            ret = swagger_client.DerivedSampleApi(self._api_client)
+
+        return ret
 
 
     def StudyApi(self):

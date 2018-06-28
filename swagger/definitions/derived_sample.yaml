@@ -1,22 +1,22 @@
 
 definitions:
-  DerivativeSamples:
+  DerivedSamples:
     type: object
     properties:
-      derivative_samples:
+      derived_samples:
         type: array
         items:
-          $ref: '#/definitions/DerivativeSample'
+          $ref: '#/definitions/DerivedSample'
       original_samples:
         type: object
         $ref: '#/definitions/OriginalSampleMap'
       count:
         type: integer
         description: Used when pagination is applied to return the number of results
-  DerivativeSample:
+  DerivedSample:
     type: object
     properties:
-      derivative_sample_id:
+      derived_sample_id:
         type: string
 #        format: uuid
       original_sample_id:

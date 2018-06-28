@@ -83,6 +83,14 @@ paths:
     $ref: './swagger/original_sample/by_taxa.yaml'
   '/originalSamples/eventSet/{eventSetId}':
     $ref: './swagger/original_sample/by_set.yaml'
+  '/derivedSample':
+    $ref: './swagger/derived_sample/create.yaml'
+  '/derivedSample/{derivedSampleId}':
+    $ref: './swagger/derived_sample/item.yaml'
+  '/derivedSamples/attr/{propName}/{propValue}':
+    $ref: './swagger/derived_sample/by_attr.yaml'
+  '/derivedSamples/os/attr/{propName}/{propValue}':
+    $ref: './swagger/derived_sample/by_os_attr.yaml'
   '/metadata/country/{countryId}':
     get:
       tags:
