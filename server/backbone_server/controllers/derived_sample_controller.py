@@ -1,5 +1,3 @@
-import connexion
-import six
 
 from swagger_server.models.derived_sample import DerivedSample  # noqa: E501
 from swagger_server.models.derived_samples import DerivedSamples  # noqa: E501

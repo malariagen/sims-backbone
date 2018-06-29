@@ -1,17 +1,17 @@
 {
     "values":
     {
+        "study_id": {
+            "column": 1,
+            "type": "string"
+        },
         "sample_oxford_id": {
             "column": 2,
             "type": "string",
             "id": true
         },
-        "study_id": {
-            "column": 1,
-            "type": "string"
-        },
-        "sample_partner_id": {
-            "column": 30,
+        "derived_sample_source": {
+            "column": 7,
             "type": "string"
         },
         "species": {
@@ -20,6 +20,22 @@
             "replace": [
                 [ "5855", "Plasmodium vivax" ]
             ]
+        },
+        "original_sample_id": {
+            "column": 27,
+            "type": "string"
+        },
+        "dna_prep": {
+            "column": 28,
+            "type": "string"
+        },
+        "sample_partner_id": {
+            "column": 30,
+            "type": "string"
+        },
+        "days_in_culture": {
+            "column": 32,
+            "type": "integer"
         },
         "sample_individual_id": {
             "column": 33,

@@ -108,7 +108,30 @@ class AbstractBackboneDAO(abc.ABC):
 
         return self.os_api_instance.delete_original_sample(original_sample_id)
 
+    def download_original_sample(self, original_sample_id):
+
+        return self.os_api_instance.download_original_sample(original_sample_id)
+
     def download_original_samples_by_attr(self, attr_type, attr_value):
 
         return self.os_api_instance.download_original_samples_by_attr(attr_type, attr_value)
+
+
+    def create_derived_sample(self, derived_sample):
+
+        return self.ds_api_instance.create_derived_sample(derived_sample)
+
+
+    def update_derived_sample(self, derived_sample_id, derived_sample):
+
+        return self.ds_api_instance.update_derived_sample(derived_sample_id,
+                                                                            derived_sample)
+
+    def delete_derived_sample(self, derived_sample_id ):
+
+        return self.ds_api_instance.delete_derived_sample(derived_sample_id)
+
+    def download_derived_samples_by_attr(self, attr_type, attr_value):
+
+        return self.ds_api_instance.download_derived_samples_by_attr(attr_type, attr_value)
 

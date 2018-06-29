@@ -15,6 +15,7 @@ from backbone_server.controllers.report_controller import ReportController
 from backbone_server.controllers.sampling_event_controller  import SamplingEventController
 from backbone_server.controllers.study_controller import StudyController
 from backbone_server.controllers.original_sample_controller import OriginalSampleController
+from backbone_server.controllers.derived_sample_controller import DerivedSampleController
 
 from swagger_client.rest import ApiException
 
@@ -31,6 +32,7 @@ class LocalBackboneDAO(AbstractBackboneDAO):
         self.location_api_instance = LocationController()
         self.se_api_instance = SamplingEventController()
         self.os_api_instance = OriginalSampleController()
+        self.ds_api_instance = DerivedSampleController()
         self.metadata_api_instance = MetadataController()
 
     def create_event_set(self, event_set_id):
@@ -261,3 +263,66 @@ class LocalBackboneDAO(AbstractBackboneDAO):
             raise ApiException(status=retcode, reason='')
 
         return found_events
+
+    def create_derived_sample(self, derived_sample):
+
+        found_events, retcode = self.os_api_instance.create_derived_sample(derived_sample,
+                                                                                            user=self._user, auths=self._auths)
+
+        self._logger.debug("POST /v1/derivedSample {} {}".format(derived_sample
+                                                                  , retcode))
+        if retcode >= 400:
+            raise ApiException(status=retcode, reason='')
+
+        return found_events
+
+    def update_derived_sample(self, derived_sample_id, derived_sample):
+
+        found_events, retcode = self.os_api_instance.update_derived_sample(derived_sample_id, derived_sample,
+                                                                                            user=self._user, auths=self._auths)
+
+        self._logger.debug("PUT /v1/derivedSample/{} {} {}".format(derived_sample_id, derived_sample
+                                                                  , retcode))
+        if retcode >= 400:
+            raise ApiException(status=retcode, reason='')
+
+        return found_events
+
+#    def merge_derived_samples(self, derived_sample_id1, derived_sample_id2):
+#
+#        found_events, retcode = self.os_api_instance.merge_derived_samples(derived_sample_id1,
+#                                                                            derived_sample_id2,
+#                                                                                            user=self._user, auths=self._auths)
+#
+#        self._logger.debug("PUT /v1/derivedSample/{}/{} {} {}".format(derived_sample_id1,
+#                                                                    derived_sample_id2
+#                                                                  , retcode))
+#        if retcode >= 400:
+#            raise ApiException(status=retcode, reason='')
+#
+#        return found_events
+#
+    def delete_derived_sample(self, derived_sample_id):
+
+        found_events, retcode = self.os_api_instance.delete_derived_sample(derived_sample_id,
+                                                                                            user=self._user, auths=self._auths)
+
+        self._logger.debug("DELETE /v1/derivedSample/{}  {}".format(derived_sample_id, retcode))
+        if retcode >= 400:
+            raise ApiException(status=retcode, reason='')
+
+        return found_events
+
+    def download_derived_samples_by_attr(self, attr_type, attr_value):
+
+        found_events, retcode = self.os_api_instance.download_derived_samples_by_attr(attr_type,
+                                                                                            urllib.parse.quote_plus(attr_value),
+                                                                                            user=self._user, auths=self._auths)
+
+        self._logger.debug("GET /v1/derivedSamples/attr/{}/{} {}".format(attr_type,
+                                                                  attr_value, retcode))
+        if retcode >= 400:
+            raise ApiException(status=retcode, reason='')
+
+        return found_events
+

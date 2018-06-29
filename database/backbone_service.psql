@@ -177,7 +177,7 @@ ALTER SEQUENCE public.archive_id_seq OWNED BY public.archive.id;
 CREATE TABLE public.attrs (
     id uuid NOT NULL,
     study_id uuid,
-    attr_type character varying(20),
+    attr_type character varying(256),
     attr_value character varying(256),
     attr_source character varying(256)
 );

@@ -23,6 +23,8 @@ import requests
 from remote_backbone_dao import RemoteBackboneDAO
 from local_backbone_dao import LocalBackboneDAO
 
+from derived_sample import DerivedSample
+
 class Uploader():
 
     _location_cache = {}
@@ -279,7 +281,6 @@ class Uploader():
                             values[name] = data_value.strip()
                         #else:
                         #    print('Ignoring {} {} {}'.format(name, data_value, values))
-
                     else:
                         values[name] = data_value
 
@@ -323,6 +324,15 @@ class Uploader():
         o_sample.sampling_event_id = sampling_event.sampling_event_id
 
         original_sample = self.process_original_sample(values, o_sample, o_existing)
+
+        ds_parser = DerivedSample(self._dao, self._event_set)
+
+        d_sample = ds_parser.create_derived_sample_from_values(values)
+
+        dsamp = ds_parser.lookup_derived_sample(d_sample, values)
+
+        ds_parser.process_derived_sample(d_sample, dsamp, original_sample, values)
+
 
         #print(existing)
         #print(sampling_event)
@@ -611,9 +621,9 @@ class Uploader():
             idents.append(swagger_client.Attr (values['sample_source_type2'],
                                                      values['sample_source_id2'],
                                                      self._event_set))
-        if 'sample_individual_id' in values:
-            idents.append(swagger_client.Attr ('individual_id', values['sample_individual_id'],
-                                                     self._event_set))
+
+        if 'days_in_culture' in values:
+            o_sample.days_in_culture = int(float(values['days_in_culture']))
 
         o_sample.attrs = idents
 
@@ -626,6 +636,11 @@ class Uploader():
         doc_accuracy = None
         study_id = None
         ret = None
+
+        idents = []
+        if 'sample_individual_id' in values:
+            idents.append(swagger_client.Attr ('individual_id', values['sample_individual_id'],
+                                                     self._event_set))
 
         if 'doc' in values:
             if isinstance(values['doc'], datetime.date):
@@ -651,6 +666,7 @@ class Uploader():
         if doc_accuracy:
             samp.doc_accuracy = doc_accuracy
 
+        samp.attrs = idents
         #print(values)
         #print(samp)
         return samp
@@ -1170,6 +1186,8 @@ class Uploader():
         return ret
 
     def process_original_sample(self, values, samp, existing):
+
+        ret = None
 
         #print('process_sampling event {} {} {} {} {}'.format(values, location_name, location, proxy_location_name, proxy_location))
 
