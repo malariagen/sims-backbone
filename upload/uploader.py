@@ -24,6 +24,7 @@ from remote_backbone_dao import RemoteBackboneDAO
 from local_backbone_dao import LocalBackboneDAO
 
 from derived_sample import DerivedSample
+from assay_data import AssayData
 
 class Uploader():
 
@@ -331,8 +332,16 @@ class Uploader():
 
         dsamp = ds_parser.lookup_derived_sample(d_sample, values)
 
-        ds_parser.process_derived_sample(d_sample, dsamp, original_sample, values)
+        derived_sample = ds_parser.process_derived_sample(d_sample, dsamp, original_sample, values)
 
+
+        ad_parser = AssayData(self._dao, self._event_set)
+
+        ad_sample = ad_parser.create_assay_datum_from_values(values)
+
+        adsamp = ad_parser.lookup_assay_datum(ad_sample, values)
+
+        ad_parser.process_assay_datum(ad_sample, adsamp, derived_sample, values)
 
         #print(existing)
         #print(sampling_event)

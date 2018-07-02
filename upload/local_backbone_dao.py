@@ -16,6 +16,7 @@ from backbone_server.controllers.sampling_event_controller  import SamplingEvent
 from backbone_server.controllers.study_controller import StudyController
 from backbone_server.controllers.original_sample_controller import OriginalSampleController
 from backbone_server.controllers.derived_sample_controller import DerivedSampleController
+from backbone_server.controllers.assay_datum_controller import AssayDatumController
 
 from swagger_client.rest import ApiException
 
@@ -33,6 +34,7 @@ class LocalBackboneDAO(AbstractBackboneDAO):
         self.se_api_instance = SamplingEventController()
         self.os_api_instance = OriginalSampleController()
         self.ds_api_instance = DerivedSampleController()
+        self.ad_api_instance = AssayDatumController()
         self.metadata_api_instance = MetadataController()
 
     def create_event_set(self, event_set_id):
@@ -266,7 +268,7 @@ class LocalBackboneDAO(AbstractBackboneDAO):
 
     def create_derived_sample(self, derived_sample):
 
-        found_events, retcode = self.os_api_instance.create_derived_sample(derived_sample,
+        found_events, retcode = self.ds_api_instance.create_derived_sample(derived_sample,
                                                                                             user=self._user, auths=self._auths)
 
         self._logger.debug("POST /v1/derivedSample {} {}".format(derived_sample
@@ -278,7 +280,7 @@ class LocalBackboneDAO(AbstractBackboneDAO):
 
     def update_derived_sample(self, derived_sample_id, derived_sample):
 
-        found_events, retcode = self.os_api_instance.update_derived_sample(derived_sample_id, derived_sample,
+        found_events, retcode = self.ds_api_instance.update_derived_sample(derived_sample_id, derived_sample,
                                                                                             user=self._user, auths=self._auths)
 
         self._logger.debug("PUT /v1/derivedSample/{} {} {}".format(derived_sample_id, derived_sample
@@ -304,8 +306,8 @@ class LocalBackboneDAO(AbstractBackboneDAO):
 #
     def delete_derived_sample(self, derived_sample_id):
 
-        found_events, retcode = self.os_api_instance.delete_derived_sample(derived_sample_id,
-                                                                                            user=self._user, auths=self._auths)
+        found_events, retcode = self.ds_api_instance.delete_derived_sample(derived_sample_id,
+                                                                           user=self._user, auths=self._auths)
 
         self._logger.debug("DELETE /v1/derivedSample/{}  {}".format(derived_sample_id, retcode))
         if retcode >= 400:
@@ -313,9 +315,83 @@ class LocalBackboneDAO(AbstractBackboneDAO):
 
         return found_events
 
+    def download_derived_sample(self, derived_sample_id):
+
+        found_events, retcode = self.ds_api_instance.download_derived_sample(derived_sample_id,
+                                                                             user=self._user, auths=self._auths)
+
+        self._logger.debug("GET /v1/derivedSample/{}  {}".format(derived_sample_id, retcode))
+        if retcode >= 400:
+            raise ApiException(status=retcode, reason='')
+
+        return found_events
+
     def download_derived_samples_by_attr(self, attr_type, attr_value):
 
-        found_events, retcode = self.os_api_instance.download_derived_samples_by_attr(attr_type,
+        found_events, retcode = self.ds_api_instance.download_derived_samples_by_attr(attr_type,
+                                                                                      urllib.parse.quote_plus(attr_value),
+                                                                                      user=self._user, auths=self._auths)
+
+        self._logger.debug("GET /v1/derivedSamples/attr/{}/{} {}".format(attr_type,
+                                                                  attr_value, retcode))
+        if retcode >= 400:
+            raise ApiException(status=retcode, reason='')
+
+        return found_events
+
+
+    def create_assay_datum(self, assay_datum):
+
+        found_events, retcode = self.ad_api_instance.create_assay_datum(assay_datum,
+                                                                                            user=self._user, auths=self._auths)
+
+        self._logger.debug("POST /v1/derivedSample {} {}".format(assay_datum
+                                                                  , retcode))
+        if retcode >= 400:
+            raise ApiException(status=retcode, reason='')
+
+        return found_events
+
+    def update_assay_datum(self, assay_datum_id, assay_datum):
+
+        found_events, retcode = self.ad_api_instance.update_assay_datum(assay_datum_id, assay_datum,
+                                                                                            user=self._user, auths=self._auths)
+
+        self._logger.debug("PUT /v1/derivedSample/{} {} {}".format(assay_datum_id, assay_datum
+                                                                  , retcode))
+        if retcode >= 400:
+            raise ApiException(status=retcode, reason='')
+
+        return found_events
+
+#    def merge_assay_data(self, assay_datum_id1, assay_datum_id2):
+#
+#        found_events, retcode = self.ad_api_instance.merge_assay_data(assay_datum_id1,
+#                                                                            assay_datum_id2,
+#                                                                                            user=self._user, auths=self._auths)
+#
+#        self._logger.debug("PUT /v1/derivedSample/{}/{} {} {}".format(assay_datum_id1,
+#                                                                    assay_datum_id2
+#                                                                  , retcode))
+#        if retcode >= 400:
+#            raise ApiException(status=retcode, reason='')
+#
+#        return found_events
+#
+    def delete_assay_datum(self, assay_datum_id):
+
+        found_events, retcode = self.ad_api_instance.delete_assay_datum(assay_datum_id,
+                                                                                            user=self._user, auths=self._auths)
+
+        self._logger.debug("DELETE /v1/derivedSample/{}  {}".format(assay_datum_id, retcode))
+        if retcode >= 400:
+            raise ApiException(status=retcode, reason='')
+
+        return found_events
+
+    def download_assay_data_by_attr(self, attr_type, attr_value):
+
+        found_events, retcode = self.ad_api_instance.download_assay_data_by_attr(attr_type,
                                                                                             urllib.parse.quote_plus(attr_value),
                                                                                             user=self._user, auths=self._auths)
 

@@ -131,7 +131,29 @@ class AbstractBackboneDAO(abc.ABC):
 
         return self.ds_api_instance.delete_derived_sample(derived_sample_id)
 
+    def download_derived_sample(self, derived_sample_id):
+
+        return self.ds_api_instance.download_derived_sample(derived_sample_id)
+
     def download_derived_samples_by_attr(self, attr_type, attr_value):
 
         return self.ds_api_instance.download_derived_samples_by_attr(attr_type, attr_value)
+
+
+    def create_assay_datum(self, assay_datum):
+
+        return self.ad_api_instance.create_assay_datum(assay_datum)
+
+
+    def update_assay_datum(self, assay_datum_id, assay_datum):
+
+        return self.ad_api_instance.update_assay_datum(assay_datum_id, assay_datum)
+
+    def delete_assay_datum(self, assay_datum_id):
+
+        return self.ad_api_instance.delete_assay_datum(assay_datum_id)
+
+    def download_assay_data_by_attr(self, attr_type, attr_value):
+
+        return self.ad_api_instance.download_assay_data_by_attr(attr_type, attr_value)
 

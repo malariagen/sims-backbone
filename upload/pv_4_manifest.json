@@ -10,6 +10,10 @@
             "type": "string",
             "id": true
         },
+        "assay_datum_id": {
+            "column": 3,
+            "type": "string"
+        },
         "derived_sample_source": {
             "column": 7,
             "type": "string"
@@ -20,6 +24,10 @@
             "replace": [
                 [ "5855", "Plasmodium vivax" ]
             ]
+        },
+        "ebi_run_acc": {
+            "column": 26,
+            "type": "string"
         },
         "original_sample_id": {
             "column": 27,
