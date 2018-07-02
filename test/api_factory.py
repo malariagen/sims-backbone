@@ -9,6 +9,7 @@ from local.sampling_event_api import LocalSamplingEventApi
 from local.study_api import LocalStudyApi
 from local.original_sample_api import LocalOriginalSampleApi
 from local.derived_sample_api import LocalDerivedSampleApi
+from local.assay_data_api import LocalAssayDataApi
 
 from backbone_server.controllers.base_controller  import BaseController
 
@@ -121,6 +122,16 @@ class ApiFactory():
 
         return ret
 
+    def AssayDataApi(self):
+
+        ret = None
+
+        if self.isLocal():
+            ret = LocalAssayDataApi(self._api_client, self._user, self._auths, self._method)
+        else:
+            ret = swagger_client.AssayDataApi(self._api_client)
+
+        return ret
 
     def StudyApi(self):
 

@@ -36,6 +36,8 @@ ALTER TABLE ONLY public.event_set_members DROP CONSTRAINT fk_esm_es;
 ALTER TABLE ONLY public.derived_samples DROP CONSTRAINT fk_ds_os;
 ALTER TABLE ONLY public.derived_sample_attrs DROP CONSTRAINT fk_derived_sample;
 ALTER TABLE ONLY public.locations DROP CONSTRAINT fk_country;
+ALTER TABLE ONLY public.assay_datum_attrs DROP CONSTRAINT fk_assay_datum;
+ALTER TABLE ONLY public.assay_data DROP CONSTRAINT fk_ad_ds;
 DROP INDEX public.idx_study_name;
 DROP INDEX public.idx_partner_species;
 DROP INDEX public.idx_ident_value;
@@ -63,6 +65,7 @@ ALTER TABLE ONLY public.locations DROP CONSTRAINT location_id;
 ALTER TABLE ONLY public.derived_samples DROP CONSTRAINT derived_sample_id;
 ALTER TABLE ONLY public.countries DROP CONSTRAINT countries_id;
 ALTER TABLE ONLY public.attrs DROP CONSTRAINT attr_id;
+ALTER TABLE ONLY public.assay_data DROP CONSTRAINT assay_datum_id;
 ALTER TABLE public.event_sets ALTER COLUMN id DROP DEFAULT;
 ALTER TABLE public.archive ALTER COLUMN id DROP DEFAULT;
 DROP VIEW public.v_sampling_events;
@@ -84,6 +87,8 @@ DROP TABLE public.derived_samples;
 DROP TABLE public.derived_sample_attrs;
 DROP TABLE public.countries;
 DROP TABLE public.attrs;
+DROP TABLE public.assay_datum_attrs;
+DROP TABLE public.assay_data;
 DROP SEQUENCE public.archive_id_seq;
 DROP TABLE public.archive;
 DROP EXTENSION postgis;
@@ -168,6 +173,27 @@ CREATE SEQUENCE public.archive_id_seq
 --
 
 ALTER SEQUENCE public.archive_id_seq OWNED BY public.archive.id;
+
+
+--
+-- Name: assay_data; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.assay_data (
+    id uuid NOT NULL,
+    derived_sample_id uuid,
+    ebi_run_acc character varying
+);
+
+
+--
+-- Name: assay_datum_attrs; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.assay_datum_attrs (
+    assay_datum_id uuid,
+    attr_id uuid
+);
 
 
 --
@@ -437,6 +463,14 @@ ALTER TABLE ONLY public.event_sets ALTER COLUMN id SET DEFAULT nextval('public.e
 
 
 --
+-- Name: assay_data assay_datum_id; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.assay_data
+    ADD CONSTRAINT assay_datum_id PRIMARY KEY (id);
+
+
+--
 -- Name: attrs attr_id; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -637,6 +671,22 @@ CREATE INDEX idx_partner_species ON public.partner_species_identifiers USING btr
 --
 
 CREATE INDEX idx_study_name ON public.studies USING btree (study_name);
+
+
+--
+-- Name: assay_data fk_ad_ds; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.assay_data
+    ADD CONSTRAINT fk_ad_ds FOREIGN KEY (derived_sample_id) REFERENCES public.derived_samples(id);
+
+
+--
+-- Name: assay_datum_attrs fk_assay_datum; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.assay_datum_attrs
+    ADD CONSTRAINT fk_assay_datum FOREIGN KEY (assay_datum_id) REFERENCES public.assay_data(id);
 
 
 --

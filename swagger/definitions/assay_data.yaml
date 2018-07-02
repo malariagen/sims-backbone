@@ -14,7 +14,7 @@ definitions:
   AssayDatum:
     type: object
     properties:
-      assay_data_id:
+      assay_datum_id:
         type: string
 #        format: uuid
       derived_sample_id:

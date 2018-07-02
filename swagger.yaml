@@ -91,6 +91,14 @@ paths:
     $ref: './swagger/derived_sample/by_attr.yaml'
   '/derivedSamples/os/attr/{propName}/{propValue}':
     $ref: './swagger/derived_sample/by_os_attr.yaml'
+  '/assayDatum':
+    $ref: './swagger/assay_data/create.yaml'
+  '/assayDatum/{assayDatumId}':
+    $ref: './swagger/assay_data/item.yaml'
+  '/assayData/attr/{propName}/{propValue}':
+    $ref: './swagger/assay_data/by_attr.yaml'
+  '/assayData/os/attr/{propName}/{propValue}':
+    $ref: './swagger/assay_data/by_os_attr.yaml'
   '/metadata/country/{countryId}':
     get:
       tags:
