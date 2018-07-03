@@ -1,9 +1,9 @@
-from swagger_server.models.sampling_event import SamplingEvent
-from swagger_server.models.sampling_events import SamplingEvents
+from swagger_server.models.assay_datum import AssayDatum
+from swagger_server.models.assay_data import AssayData
 
 from backbone_server.errors.missing_key_exception import MissingKeyException
 
-from backbone_server.sampling_event.fetch import SamplingEventFetch
+from backbone_server.assay_datum.fetch import AssayDatumFetch
 
 import logging
 
@@ -20,42 +20,35 @@ class AssayDatumGetByOsAttr():
 
                 locations = {}
 
-                stmt = '''SELECT DISTINCT derivative_sample_id FROM derived_sample_attrs
-                JOIN attrs ON attrs.id = derived_sample_attrs.attr_id
-                JOIN assay_data ON assay_data.id = derived_sample_attrs.derived_sample_id
+                stmt = '''SELECT DISTINCT ad.id FROM assay_data ad
+                JOIN derived_samples ds ON ds.id = ad.derived_sample_id
+                JOIN original_sample_attrs osa ON osa.original_sample_id = ds.original_sample_id
+                JOIN attrs ON attrs.id = osa.attr_id
                 WHERE attr_type = %s AND attr_value = %s'''
                 args = (attr_type, attr_value)
 
                 cursor.execute(stmt, args)
 
-                sampling_events = SamplingEvents(sampling_events=[], count=0)
+                assay_data = AssayData(assay_data=[], count=0)
                 event_ids = []
 
-                for sampling_event_id in cursor:
-                    event_ids.append(sampling_event_id)
+                for assay_datum_id in cursor:
+                    event_ids.append(assay_datum_id)
 
-                for sampling_event_id in event_ids:
-                    sampling_event = SamplingEventFetch.fetch(cursor, sampling_event_id, locations)
-                    #Because the client doesn't support types in maps
-                    #and the result set should be small
-                    if sampling_event.location_id:
-                        sampling_event.location = locations[sampling_event.location_id]
-                    if sampling_event.proxy_location_id:
-                        sampling_event.proxy_location = locations[sampling_event.proxy_location_id]
-                    sampling_events.sampling_events.append(sampling_event)
-                    sampling_events.count = sampling_events.count + 1
+                for assay_datum_id in event_ids:
+                    assay_datum = AssayDatumFetch.fetch(cursor, assay_datum_id, locations)
+                    assay_data.assay_data.append(assay_datum)
+                    assay_data.count = assay_data.count + 1
 
-                sampling_events.locations = locations
-
-                sampling_events.attr_types = [attr_type]
+                assay_data.attr_types = [attr_type]
 
         #partner_name has a unique key
-        if sampling_events.count == 0:
-            raise MissingKeyException("SamplingEvent not found {} {}".format(attr_type,
+        if assay_data.count == 0:
+            raise MissingKeyException("AssayDatum not found {} {}".format(attr_type,
                                                                       attr_value))
 #Allow for when partner ident is used in different studies
-#        if sampling_events.count > 1:
-#            raise MissingKeyException("Too many sampling_events not found {} {}".format(attr_type,
+#        if assay_data.count > 1:
+#            raise MissingKeyException("Too many assay_data not found {} {}".format(attr_type,
 #                                                                      attr_value))
 
-        return sampling_events
+        return assay_data
