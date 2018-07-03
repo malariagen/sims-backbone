@@ -67,6 +67,7 @@ import { AttrTableComponent } from './attr-table/attr-table.component';
 import { SamplingEventDisplayPipe } from './sampling-event-display.pipe';
 import { DownloaderJsonComponent } from './downloader-json/downloader-json.component';
 import { DownloaderCsvComponent } from './downloader-csv/downloader-csv.component';
+import { SampleOverviewComponent } from './sample-overview/sample-overview.component';
 
 export function getConfiguration(authService: AuthService) {
   return authService.getConfiguration();
@@ -106,7 +107,8 @@ export function getConfiguration(authService: AuthService) {
     ReportMultipleLocationNamesComponent,
     SamplingEventDisplayPipe,
     DownloaderJsonComponent,
-    DownloaderCsvComponent
+    DownloaderCsvComponent,
+    SampleOverviewComponent
   ],
   imports: [
     BrowserModule,
