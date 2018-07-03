@@ -3,14 +3,23 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { EventSearchComponent } from './event-search.component';
 import { MatSelect, MatOption, MatInput, MatLabel, MatInputModule, MatSelectModule } from '@angular/material';
 import { Component, Input } from '@angular/core';
-import { SamplingEvents } from '../typescript-angular-client';
+import { SamplingEvents, OriginalSamples, DerivedSamples, AssayData } from '../typescript-angular-client';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { asyncData } from '../../testing/index.spec';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
-@Component({ selector: 'app-event-detail', template: '' })
-class EventDetailStubComponent {
+@Component({ selector: 'app-sample-overview', template: '' })
+class SampleOverviewStubComponent {
+  
+  @Input() redraw: number;
+  
+  @Input() assayData: AssayData;
+
+  @Input() derivedSamples: DerivedSamples;
+
+  @Input() originalSamples: OriginalSamples;
+
   @Input() samplingEvents: SamplingEvents;
 
 }
@@ -36,7 +45,7 @@ describe('EventSearchComponent', () => {
       ],
       declarations: [
         EventSearchComponent,
-        EventDetailStubComponent
+        SampleOverviewStubComponent
       ],
       providers: [
         { provide: HttpClient, useValue: httpClientSpy },

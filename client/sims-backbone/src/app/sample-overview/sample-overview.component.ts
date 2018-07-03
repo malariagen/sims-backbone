@@ -170,7 +170,7 @@ export class SampleOverviewComponent implements AfterContentInit, OnChanges {
     }
 
     var link_force = d3.forceLink(links_data)
-      .id(function (d) { return d.name; })
+      .id(function (d) { return d["name"]; })
       .strength(0.1);
 
     simulation.force("links", link_force)
