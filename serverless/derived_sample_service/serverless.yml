@@ -1,0 +1,220 @@
+# Welcome to Serverless!
+#
+# This file is the main config file for your service.
+# It's very minimal at this point and uses default values.
+# You can always add more config options for more control.
+# We've included some commented out config examples here.
+# Just uncomment any of them to get that config option.
+#
+# For full config options, check the docs:
+#    docs.serverless.com
+#
+# Happy Coding!
+
+service: sims-derived-sample-service
+#service: sims-backbone-service
+
+# You can pin your service to only deploy with a specific Serverless version
+# Check out our docs for more details
+# frameworkVersion: "=X.X.X"
+
+provider:
+  name: aws
+  runtime: python3.6
+  region: eu-west-1
+  stage: ${opt:stage, 'dev'}
+  versionFunctions: false
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - ec2:CreateNetworkInterface
+        - ec2:DescribeNetworkInterfaces
+        - ec2:DeleteNetworkInterface
+      Resource: "*"
+  environment:
+    DB_USER: ${file(../config.${self:provider.stage}.json):db_user}
+    DATABASE: ${file(../config.${self:provider.stage}.json):database}
+    DB_PASSWORD: ${file(../config.${self:provider.stage}.json):db_password}
+    DB_HOST: ${cf:sims-backbone-service-${self:provider.stage}.DbHostOutput}
+    AUTH_PROFILE_URL: ${file(../config.${self:provider.stage}.json):auth_profile}
+    PYTHON_PATH: '.:../server:../server/bb_server'
+  vpc:
+    securityGroupIds:
+      - ${cf:sims-backbone-service-${self:provider.stage}.ServerlessSecurityGroupOutput}
+    subnetIds:
+      - 'Fn::ImportValue': sims-backbone-service:PublicSubnetA-${self:provider.stage}
+      - 'Fn::ImportValue': sims-backbone-service:PublicSubnetB-${self:provider.stage}
+      - 'Fn::ImportValue': sims-backbone-service:PublicSubnetC-${self:provider.stage}
+  apiGateway:
+    restApiId: ${cf:sims-backbone-service-${self:provider.stage}.ApiGatewayRestApi}
+    restApiRootResourceId: ${cf:sims-backbone-service-${self:provider.stage}.ApiGatewayRestApiRootResource}
+
+plugins:
+      - serverless-python-requirements
+
+custom:
+  pythonRequirements:
+    dockerizePip: true
+
+package:
+    exclude:
+        - requirements.txt
+        - serverless.yml
+        - node_modules/**
+        - venv/**
+        - package.json
+        - package-lock.json
+        - endpoints.txt
+        - updateall.sh
+        - ../../server/backbone_server/connect.py
+    include:
+        - ../util/**
+        - derived_sample/handler.py
+        - ../../server/bb_server/**
+        - ../../server/backbone_server/**/**
+        - ../client_secrets.${self:provider.stage}.json
+
+functions:
+
+  createDerivedSample:
+    handler: derived_sample/handler.create_derived_sample
+    events:
+      - http:
+          path: derivedSample
+          method: post
+          cors: true
+          timeout: 20
+          authorizer:
+            name: dsAuthFunc
+            arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
+            type: request
+            identitySource: method.request.header.Authorization
+            identityValidationExpression: .*
+
+  downloadDerivedSample:
+    handler: derived_sample/handler.download_derived_sample
+    events:
+      - http:
+          path: derivedSample/{derived_sample_id}
+          method: get
+          cors: true
+          timeout: 20
+          authorizer:
+            name: dsAuthFunc
+            arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
+            type: request
+            identitySource: method.request.header.Authorization
+            identityValidationExpression: .*
+          request:
+            parameters:
+              paths:
+                derived_sample_id: true
+
+  updateDerivedSample:
+    handler: derived_sample/handler.update_derived_sample
+    events:
+      - http:
+          path: derivedSample/{derived_sample_id}
+          method: put
+          cors: true
+          timeout: 20
+          authorizer:
+            name: dsAuthFunc
+            arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
+            type: request
+            identitySource: method.request.header.Authorization
+            identityValidationExpression: .*
+          request:
+            parameters:
+              paths:
+                derived_sample_id: true
+  deleteDerivedSample:
+    handler: derived_sample/handler.delete_derived_sample
+    events:
+      - http:
+          path: derivedSample/{derived_sample_id}
+          method: delete
+          cors: true
+          timeout: 20
+          authorizer:
+            name: dsAuthFunc
+            arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
+            type: request
+            identitySource: method.request.header.Authorization
+            identityValidationExpression: .*
+          request:
+            parameters:
+              paths:
+                derived_sample_id: true
+
+  downloadDerivedSamplesByAttr:
+    handler: derived_sample/handler.download_derived_samples_by_attr
+    events:
+      - http:
+          path: derivedSamples/attr/{prop_name}/{prop_value}
+          method: get
+          cors: true
+          timeout: 20
+          authorizer:
+            name: dsAuthFunc
+            arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
+            type: request
+            identitySource: method.request.header.Authorization
+            identityValidationExpression: .*
+          request:
+            parameters:
+              paths:
+                prop_name: true
+                prop_value: true
+              query:
+                study_name: false
+
+
+  downloadDerivedSamplesByOsAttr:
+    handler: derived_sample/handler.download_derived_samples_by_os_attr
+    events:
+      - http:
+          path: derivedSamples/os/attr/{prop_name}/{prop_value}
+          method: get
+          cors: true
+          timeout: 20
+          authorizer:
+            name: dsAuthFunc
+            arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
+            type: request
+            identitySource: method.request.header.Authorization
+            identityValidationExpression: .*
+          request:
+            parameters:
+              paths:
+                prop_name: true
+                prop_value: true
+              query:
+                study_name: false
+
+resources:
+  Resources:
+    CreateDerivedSampleLogGroup:
+      Type: AWS::Logs::LogGroup
+      Properties:
+        RetentionInDays: "30"
+    DownloadDerivedSampleLogGroup:
+      Type: AWS::Logs::LogGroup
+      Properties:
+        RetentionInDays: "30"
+    UpdateDerivedSampleLogGroup:
+      Type: AWS::Logs::LogGroup
+      Properties:
+        RetentionInDays: "30"
+    DeleteDerivedSampleLogGroup:
+      Type: AWS::Logs::LogGroup
+      Properties:
+        RetentionInDays: "30"
+    DownloadDerivedSamplesByAttrLogGroup:
+      Type: AWS::Logs::LogGroup
+      Properties:
+        RetentionInDays: "30"
+    DownloadDerivedSamplesByOsAttrLogGroup:
+      Type: AWS::Logs::LogGroup
+      Properties:
+        RetentionInDays: "30"

@@ -1,0 +1,220 @@
+# Welcome to Serverless!
+#
+# This file is the main config file for your service.
+# It's very minimal at this point and uses default values.
+# You can always add more config options for more control.
+# We've included some commented out config examples here.
+# Just uncomment any of them to get that config option.
+#
+# For full config options, check the docs:
+#    docs.serverless.com
+#
+# Happy Coding!
+
+service: sims-assay-data-service
+#service: sims-backbone-service
+
+# You can pin your service to only deploy with a specific Serverless version
+# Check out our docs for more details
+# frameworkVersion: "=X.X.X"
+
+provider:
+  name: aws
+  runtime: python3.6
+  region: eu-west-1
+  stage: ${opt:stage, 'dev'}
+  versionFunctions: false
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - ec2:CreateNetworkInterface
+        - ec2:DescribeNetworkInterfaces
+        - ec2:DeleteNetworkInterface
+      Resource: "*"
+  environment:
+    DB_USER: ${file(../config.${self:provider.stage}.json):db_user}
+    DATABASE: ${file(../config.${self:provider.stage}.json):database}
+    DB_PASSWORD: ${file(../config.${self:provider.stage}.json):db_password}
+    DB_HOST: ${cf:sims-backbone-service-${self:provider.stage}.DbHostOutput}
+    AUTH_PROFILE_URL: ${file(../config.${self:provider.stage}.json):auth_profile}
+    PYTHON_PATH: '.:../server:../server/bb_server'
+  vpc:
+    securityGroupIds:
+      - ${cf:sims-backbone-service-${self:provider.stage}.ServerlessSecurityGroupOutput}
+    subnetIds:
+      - 'Fn::ImportValue': sims-backbone-service:PublicSubnetA-${self:provider.stage}
+      - 'Fn::ImportValue': sims-backbone-service:PublicSubnetB-${self:provider.stage}
+      - 'Fn::ImportValue': sims-backbone-service:PublicSubnetC-${self:provider.stage}
+  apiGateway:
+    restApiId: ${cf:sims-backbone-service-${self:provider.stage}.ApiGatewayRestApi}
+    restApiRootResourceId: ${cf:sims-backbone-service-${self:provider.stage}.ApiGatewayRestApiRootResource}
+
+plugins:
+      - serverless-python-requirements
+
+custom:
+  pythonRequirements:
+    dockerizePip: true
+
+package:
+    exclude:
+        - requirements.txt
+        - serverless.yml
+        - node_modules/**
+        - venv/**
+        - package.json
+        - package-lock.json
+        - endpoints.txt
+        - updateall.sh
+        - ../../server/backbone_server/connect.py
+    include:
+        - ../util/**
+        - assay_data/handler.py
+        - ../../server/bb_server/**
+        - ../../server/backbone_server/**/**
+        - ../client_secrets.${self:provider.stage}.json
+
+functions:
+
+  createAssayDatum:
+    handler: assay_data/handler.create_assay_datum
+    events:
+      - http:
+          path: assayDatum
+          method: post
+          cors: true
+          timeout: 20
+          authorizer:
+            name: adAuthFunc
+            arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
+            type: request
+            identitySource: method.request.header.Authorization
+            identityValidationExpression: .*
+
+  downloadAssayDatum:
+    handler: assay_data/handler.download_assay_datum
+    events:
+      - http:
+          path: assayDatum/{assay_datum_id}
+          method: get
+          cors: true
+          timeout: 20
+          authorizer:
+            name: adAuthFunc
+            arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
+            type: request
+            identitySource: method.request.header.Authorization
+            identityValidationExpression: .*
+          request:
+            parameters:
+              paths:
+                assay_datum_id: true
+
+  updateAssayDatum:
+    handler: assay_data/handler.update_assay_datum
+    events:
+      - http:
+          path: assayDatum/{assay_datum_id}
+          method: put
+          cors: true
+          timeout: 20
+          authorizer:
+            name: adAuthFunc
+            arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
+            type: request
+            identitySource: method.request.header.Authorization
+            identityValidationExpression: .*
+          request:
+            parameters:
+              paths:
+                assay_datum_id: true
+  deleteAssayDatum:
+    handler: assay_data/handler.delete_assay_datum
+    events:
+      - http:
+          path: assayDatum/{assay_datum_id}
+          method: delete
+          cors: true
+          timeout: 20
+          authorizer:
+            name: adAuthFunc
+            arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
+            type: request
+            identitySource: method.request.header.Authorization
+            identityValidationExpression: .*
+          request:
+            parameters:
+              paths:
+                assay_datum_id: true
+
+  downloadAssayDataByAttr:
+    handler: assay_data/handler.download_assay_data_by_attr
+    events:
+      - http:
+          path: assayData/attr/{prop_name}/{prop_value}
+          method: get
+          cors: true
+          timeout: 20
+          authorizer:
+            name: adAuthFunc
+            arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
+            type: request
+            identitySource: method.request.header.Authorization
+            identityValidationExpression: .*
+          request:
+            parameters:
+              paths:
+                prop_name: true
+                prop_value: true
+              query:
+                study_name: false
+
+
+  downloadAssayDataByOsAttr:
+    handler: assay_data/handler.download_assay_data_by_os_attr
+    events:
+      - http:
+          path: assayData/os/attr/{prop_name}/{prop_value}
+          method: get
+          cors: true
+          timeout: 20
+          authorizer:
+            name: adAuthFunc
+            arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
+            type: request
+            identitySource: method.request.header.Authorization
+            identityValidationExpression: .*
+          request:
+            parameters:
+              paths:
+                prop_name: true
+                prop_value: true
+              query:
+                study_name: false
+
+resources:
+  Resources:
+    CreateAssayDatumLogGroup:
+      Type: AWS::Logs::LogGroup
+      Properties:
+        RetentionInDays: "30"
+    DownloadAssayDatumLogGroup:
+      Type: AWS::Logs::LogGroup
+      Properties:
+        RetentionInDays: "30"
+    UpdateAssayDatumLogGroup:
+      Type: AWS::Logs::LogGroup
+      Properties:
+        RetentionInDays: "30"
+    DeleteAssayDatumLogGroup:
+      Type: AWS::Logs::LogGroup
+      Properties:
+        RetentionInDays: "30"
+    DownloadAssayDataByAttrLogGroup:
+      Type: AWS::Logs::LogGroup
+      Properties:
+        RetentionInDays: "30"
+    DownloadAssayDataByOsAttrLogGroup:
+      Type: AWS::Logs::LogGroup
+      Properties:
+        RetentionInDays: "30"
