@@ -650,6 +650,10 @@ class Uploader():
         if 'sample_individual_id' in values:
             idents.append(swagger_client.Attr ('individual_id', values['sample_individual_id'],
                                                      self._event_set))
+        if 'roma_pk_id' in values:
+            idents.append(swagger_client.Attr ('roma_pk_id', values['roma_pk_id'],
+                                                     self._event_set))
+
 
         if 'doc' in values:
             if isinstance(values['doc'], datetime.date):
@@ -728,8 +732,8 @@ class Uploader():
 
         try:
 
-            ret = self._dao.merge_sampling_events(existing.original_sample_id,
-                                               found.original_sample_id)
+            ret = self._dao.merge_sampling_events(existing.sampling_event_id,
+                                               found.sampling_event_id)
         except ApiException as err:
             msg = "Error updating merged original sample {} {} {} {}".format(values, found, existing, err)
             print(msg)
@@ -770,12 +774,28 @@ class Uploader():
                 return existing
 
         if 'individual_id' in values:
-            if values['individual_id'] in self._sample_cache:
+            try:
                 looked_up = self._dao.download_sampling_events_by_attr('individual_id',
                                                                        values['individual_id'])
                 if looked_up.count > 0:
                     existing = looked_up.sampling_events[0]
-                return existing
+            except ApiException as err:
+                #self._logger.debug("Error looking for {}".format(ident))
+                #print("Not found")
+                pass
+            return existing
+
+        if 'roma_pk_id' in values:
+            try:
+                looked_up = self._dao.download_sampling_events_by_attr('roma_pk_id',
+                                                                       values['roma_pk_id'])
+                if looked_up.count > 0:
+                    existing = looked_up.sampling_events[0]
+            except ApiException as err:
+                #self._logger.debug("Error looking for {}".format(ident))
+                #print("Not found")
+                pass
+            return existing
 
         if original_sample and\
            original_sample.sampling_event_id:

@@ -14,6 +14,8 @@ class Upload_ROMA(uploader.Uploader):
 
         print("Event set:" + self._event_set)
 
+        (instance,dumps,) = self._event_set.split('_')
+
         with open(filename) as json_file:
             data = json.load(json_file)
 
@@ -25,6 +27,7 @@ class Upload_ROMA(uploader.Uploader):
             items[item['model']][item['pk']] = item
 
         for key, item in items['samples.sample'].items():
+            roma_pk_id = instance + '_' + str(item['pk'])
             fields = item['fields']
             roma_id = fields['sample_name']
             source_code = fields['external_id'].strip()
@@ -64,6 +67,7 @@ class Upload_ROMA(uploader.Uploader):
             values = {
                 'study_id': study_id.strip(),
                 'sample_roma_id': roma_id.strip(),
+                'roma_pk_id': roma_pk_id,
                 'sample_oxford_id': oxford_code,
                 'sample_partner_id': source_code,
                 'species': taxon,
