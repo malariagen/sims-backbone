@@ -6,12 +6,14 @@ import logging
 import swagger_client
 from swagger_client.rest import ApiException
 
+from base_entity import BaseEntity
 
-class DerivedSample():
+class DerivedSampleProcessor(BaseEntity):
 
     _derived_sample_cache = {}
 
     def __init__(self, dao, event_set):
+        super().__init__(dao, event_set)
         self._logger = logging.getLogger(__name__)
         self._dao = dao
         self._event_set = event_set

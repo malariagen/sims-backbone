@@ -121,7 +121,8 @@ class TestROMA(TestBase):
                              'roma_dump')
             self.assertEqual(looked_up.location.attrs[0].study_name,
                              '9030')
-            self.assertEqual(looked_up.location.notes, 'roma_dump.20180116103346.json')
+#            self.assertEqual(looked_up.location.notes, 'roma_dump.20180116103346.json')
+            self.assertEqual(looked_up.location.notes, 'roma_dump')
             if looked_up.location.location_id not in TestROMA._locations:
                 TestROMA._locations.append(looked_up.location.location_id)
         except ApiException as error:

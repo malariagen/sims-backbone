@@ -6,15 +6,15 @@ import logging
 import swagger_client
 from swagger_client.rest import ApiException
 
+from base_entity import BaseEntity
 
-class AssayData():
+class AssayDataProcessor(BaseEntity):
 
     _assay_datum_cache = {}
 
     def __init__(self, dao, event_set):
+        super().__init__(dao, event_set)
         self._logger = logging.getLogger(__name__)
-        self._dao = dao
-        self._event_set = event_set
 
     def create_assay_datum_from_values(self, values):
 

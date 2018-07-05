@@ -20,6 +20,8 @@ from pprint import pformat
 import os
 import requests
 
+from original_sample import OriginalSampleProcessor
+
 import upload_ssr
 
 class SetCountry(upload_ssr.Upload_SSR):
@@ -146,6 +148,7 @@ class SetCountry(upload_ssr.Upload_SSR):
 
     def set_country(self, found, country_value, filename, values):
 
+        self.os_processor = OriginalSampleProcessor(self._dao, self._event_set)
         orig = deepcopy(found)
 
         if country_value not in self._country_cache:
@@ -169,7 +172,7 @@ class SetCountry(upload_ssr.Upload_SSR):
             try:
                 found.location = self.update_country(self._country_cache[country_value].alpha3, found.location)
             except Exception as cue:
-                self.report_conflict(found, 'Country', found.location.country,
+                self.os_processor.report_conflict(found, 'Country', found.location.country,
                                      country_value, 'not updated', values)
                 error = True
 
@@ -177,7 +180,7 @@ class SetCountry(upload_ssr.Upload_SSR):
             try:
                 found.proxy_location = self.update_country(self._country_cache[country_value].alpha3, found.proxy_location)
             except Exception as cue:
-                self.report_conflict(found, 'Country', found.proxy_location.country,
+                self.os_processor.report_conflict(found, 'Country', found.proxy_location.country,
                                      country_value, 'proxy not updated', values)
                 error = True
 
@@ -197,9 +200,9 @@ class SetCountry(upload_ssr.Upload_SSR):
 
                 except Exception as excp:
                     #print(str(excp), None)
-                    self.report(str(excp), None)
+                    self.os_processor.report(str(excp), None)
             else:
-                self.report("Unknown country {}".format(country_value), None)
+                self.os_processor.report("Unknown country {}".format(country_value), None)
 
         study_ident = False
 
@@ -220,7 +223,7 @@ class SetCountry(upload_ssr.Upload_SSR):
                     #print(str(excp), None)
                     #The location is more specific than the country but does not have a name for
                     #that study - probably because it was unknown when added
-                    self.report('Unable to add country location attr name for study ',
+                    self.os_processor.report('Unable to add country location attr name for study ',
                                 {'attr_source': ident.attr_source,
                                  'identifer_value' : ident.attr_value,
                                  'attr_type': ident.attr_type,
@@ -232,7 +235,7 @@ class SetCountry(upload_ssr.Upload_SSR):
 
         if found.location and found.proxy_location:
             if found.location.country != found.proxy_location.country:
-                self.report_conflict(found, 'Country', found.location.country,
+                self.os_processor.report_conflict(found, 'Country', found.location.country,
                                      found.proxy_location.country,
                                      'location and proxy location country mismatch',
                                      values)
@@ -241,9 +244,9 @@ class SetCountry(upload_ssr.Upload_SSR):
 
     def process_item(self, values):
 
-        o_sample = self.create_original_sample_from_values(values)
+        o_sample = self.os_processor.create_original_sample_from_values(values)
 
-        o_existing = self.lookup_original_sample(o_sample, values)
+        o_existing = self.os_processor.lookup_original_sample(o_sample, values)
 
         if o_existing.sampling_event_id:
             item = self._dao.download_sampling_event(o_existing.sampling_event_id)
@@ -266,8 +269,8 @@ if __name__ == '__main__':
     country_column = int(sys.argv[5])
     ssr = sys.argv[6]
     sd.load_location_cache()
-    sd.set_countries(input_file, id_type, id_column, country_column)
 
     sheets = None
     sd.load_data_file(ssr, sheets)
 
+    sd.set_countries(input_file, id_type, id_column, country_column)
