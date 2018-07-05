@@ -3,8 +3,8 @@ import { SamplingEventService } from '../typescript-angular-client/api/samplingE
 import { MetadataService } from '../typescript-angular-client/api/metadata.service';
 
 import { SamplingEvents } from '../typescript-angular-client/model/samplingEvents';
-import { DerivedSampleService, AssayDataService, AssayData, OriginalSampleService, OriginalSamples } from '../typescript-angular-client';
-import { DerivativeSamples } from '../typescript-angular-client/model/derivativeSamples';
+import { DerivedSampleService, AssayDataService, AssayData, OriginalSampleService, OriginalSamples, DerivedSamples } from '../typescript-angular-client';
+
 
 @Component({
   selector: 'app-event-search',
@@ -18,7 +18,7 @@ export class EventSearchComponent implements OnInit {
 
   originalSamples: OriginalSamples;
   samplingEvents: SamplingEvents;
-  derivedSamples: DerivativeSamples;
+  derivedSamples: DerivedSamples;
   assayData: AssayData;
   attr_type: string;
   attr_value: string;
