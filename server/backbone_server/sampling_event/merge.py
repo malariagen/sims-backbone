@@ -36,9 +36,6 @@ class SamplingEventMerge():
                 if not sampling_event2:
                     raise MissingKeyException("No sampling_event {}".format(merged))
 
-        print('About to merge')
-        print(sampling_event1)
-        print(sampling_event2)
         if sampling_event1.study_name:
             if sampling_event2.study_name:
                 if sampling_event1.study_name[:4] == '0000':
