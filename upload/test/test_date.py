@@ -198,4 +198,18 @@ class TestDate(TestBase):
 
 
 
+    """
+    """
+    def test_parse_fail(self):
+
+        api_instance = swagger_client.SamplingEventApi(self._api_client)
+
+        try:
+            looked_up = api_instance.download_sampling_events_by_os_attr('oxford_id', '12354')
+            looked_up = looked_up.sampling_events[0]
+            assert looked_up.doc is None
+        except ApiException as error:
+            self.fail("test_year_accuracy: Exception when calling download_sampling_event_by_os_attr {}"
+                        .format(error))
+
 

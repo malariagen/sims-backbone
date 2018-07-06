@@ -203,7 +203,7 @@ class Uploader():
                                 try:
                                     data_value, values[name + '_accuracy'] = self.parse_date(defn, data_value)
                                 except ValueError as dpe:
-                                    self.report("Failed to parse date '{}'".format(data_value),
+                                    self.se_processor.report("Failed to parse date '{}'".format(data_value),
                                                                                    values)
                                     continue
                             else:
