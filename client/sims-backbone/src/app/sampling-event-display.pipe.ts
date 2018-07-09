@@ -10,7 +10,9 @@ export class SamplingEventDisplayPipe implements PipeTransform {
   transform(value: SamplingEvent, key: string, studyId: string, locations: any): any {
     let ret = '';
 
-    if (key == 'doc') {
+    if (key == "sampling_event_id") {
+      return value.sampling_event_id
+    } else if (key == 'doc') {
       ret = value.doc;
     } else if (key == 'partner_species') {
       ret = value.partner_species;
