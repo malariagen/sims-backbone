@@ -405,7 +405,7 @@ class SamplingEventProcessor(BaseEntity):
 #                else:
 #                    print('Conflicting proxy_location new not set')
             elif proxy_loc:
-                print('Conflicting proxy_location existing not set')
+#                print('Conflicting proxy_location existing not set')
                 existing.proxy_location_id = proxy_loc.location_id
                 existing.proxy_location = proxy_loc
             return existing
