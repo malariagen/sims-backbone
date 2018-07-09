@@ -31,6 +31,9 @@ class SamplingEventMerge():
                 if not sampling_event1:
                     raise MissingKeyException("No sampling_event {}".format(into))
 
+                if into == merged:
+                    return sampling_event1
+
                 sampling_event2 = SamplingEventFetch.fetch(cursor, merged)
 
                 if not sampling_event2:

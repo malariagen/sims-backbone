@@ -72,8 +72,10 @@ class OriginalSampleMerge():
         if original_sample1.sampling_event_id:
             if original_sample2.sampling_event_id:
                 merge = SamplingEventMerge(self._connection)
-                merge.merge(original_sample1.sampling_event_id,
+                merged_se = merge.merge(original_sample1.sampling_event_id,
                             original_sample2.sampling_event_id)
+                original_sample1.sampling_event_id = merged_se.sampling_event_id
+                original_sample2.sampling_event_id = None
         else:
             original_sample1.sampling_event_id = original_sample2.sampling_event_id
 
