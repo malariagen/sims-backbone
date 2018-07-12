@@ -15,6 +15,11 @@ definitions:
       count:
         type: integer
         description: Used when pagination is applied to return the number of results
+      attr_types:
+          type: array
+          items:
+            type: string
+            description: 'Attr types used in this set of sampling events'
   OriginalSample:
     type: object
     description: 'Original sample details'
