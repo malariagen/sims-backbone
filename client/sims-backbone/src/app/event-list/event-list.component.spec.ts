@@ -125,7 +125,7 @@ describe('EventListComponent', () => {
       expect(component.table._data.length).toBe(test_entries.sampling_events.length);
 
       expect(component.table._data).toBe(test_entries.sampling_events);
-      
+
     })));
 
   it('should set headers', async(inject([HttpClient, HttpTestingController],
@@ -141,7 +141,7 @@ describe('EventListComponent', () => {
       // Finally, assert that there are no outstanding requests.
       backend.verify();
 
-      let expectedHeaders = ["study_id", "partner_id", "roma_id", "doc", "partner_species", "taxa", "partner_location_name", "location_curated_name", "location"];
+      let expectedHeaders = ["sampling_event_id", "study_id", "partner_id", "roma_id", "doc", "partner_species", "taxa", "partner_location_name", "location_curated_name", "location"];
 
       expect(component.displayedColumns.length).toBe(expectedHeaders.length);
 
