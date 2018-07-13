@@ -19,7 +19,7 @@ class TestOriginalSample(TestBase):
 
         try:
 
-            samp = swagger_client.OriginalSample(None, study_name='1000-MD-UP')
+            samp = swagger_client.OriginalSample(None, study_name='4000-MD-UP')
             created = api_instance.create_original_sample(samp)
             if not api_factory.is_authorized(None):
                 pytest.fail('Unauthorized call to create_original_sample succeeded')
@@ -41,7 +41,7 @@ class TestOriginalSample(TestBase):
 
         try:
 
-            samp = swagger_client.OriginalSample(None, study_name='1001-MD-UP')
+            samp = swagger_client.OriginalSample(None, study_name='4001-MD-UP')
             created = api_instance.create_original_sample(samp)
             api_instance.delete_original_sample(created.original_sample_id)
             with pytest.raises(ApiException, status=404):
@@ -77,7 +77,7 @@ class TestOriginalSample(TestBase):
 
         try:
 
-            samp = swagger_client.OriginalSample(None, study_name='1002-MD-UP')
+            samp = swagger_client.OriginalSample(None, study_name='4002-MD-UP')
             samp.attrs = [
                 swagger_client.Attr (attr_type='oxford', attr_value='1234',
                                            attr_source='same')
@@ -100,7 +100,7 @@ class TestOriginalSample(TestBase):
 
         try:
 
-            samp = swagger_client.OriginalSample(None, study_name='1003-MD-UP')
+            samp = swagger_client.OriginalSample(None, study_name='4003-MD-UP')
             samp.attrs = [
                 swagger_client.Attr (attr_type='partner_id', attr_value='12345')
             ]
@@ -125,7 +125,7 @@ class TestOriginalSample(TestBase):
 
         try:
 
-            samp = swagger_client.OriginalSample(None, study_name='1029-MD-UP')
+            samp = swagger_client.OriginalSample(None, study_name='4029-MD-UP')
             samp.attrs = [
                 swagger_client.Attr (attr_type='individual_id', attr_value='12345')
             ]
@@ -151,7 +151,7 @@ class TestOriginalSample(TestBase):
 
         try:
 
-            samp = swagger_client.OriginalSample(None, study_name='1004-MD-UP')
+            samp = swagger_client.OriginalSample(None, study_name='4004-MD-UP')
             samp.attrs = [
                 swagger_client.Attr (attr_type='oxford', attr_value='123456')
             ]
@@ -183,13 +183,13 @@ class TestOriginalSample(TestBase):
 
         try:
 
-            samp = swagger_client.OriginalSample(None, study_name='1022-MD-UP')
+            samp = swagger_client.OriginalSample(None, study_name='4022-MD-UP')
             samp.attrs = [
                 swagger_client.Attr (attr_type='partner_id', attr_value='123456')
             ]
             created = api_instance.create_original_sample(samp)
             looked_up = api_instance.download_original_samples_by_attr('partner_id', '123456',
-                                                                            study_name='1022')
+                                                                            study_name='4022')
             assert looked_up.count == 1
 
 
@@ -200,10 +200,10 @@ class TestOriginalSample(TestBase):
             created1 = api_instance.create_original_sample(samp)
 
             looked_up = api_instance.download_original_samples_by_attr('partner_id', '123456',
-                                                                            study_name='1022')
+                                                                            study_name='4022')
             assert looked_up.count == 2
 
-            ffetched = api_instance.download_original_samples(filter='attr:partner_id:123456:1022')
+            ffetched = api_instance.download_original_samples(filter='attr:partner_id:123456:4022')
 
             assert ffetched == looked_up
 
@@ -224,20 +224,20 @@ class TestOriginalSample(TestBase):
             ident1 = swagger_client.Attr(attr_type='oxford_id', attr_value='1234')
             ident2 = swagger_client.Attr(attr_type='roma_id', attr_value='12345')
             ident3 = swagger_client.Attr(attr_type='lims_id', attr_value='123456')
-            samp1 = swagger_client.OriginalSample(None, study_name='1022-MD-UP')
+            samp1 = swagger_client.OriginalSample(None, study_name='4022-MD-UP')
             samp1.attrs = [
                 ident1
             ]
             created1 = api_instance.create_original_sample(samp1)
 
-            samp2 = swagger_client.OriginalSample(None, study_name='1022-MD-UP')
+            samp2 = swagger_client.OriginalSample(None, study_name='4022-MD-UP')
             samp2.attrs = [
                 ident2
             ]
             created2 = api_instance.create_original_sample(samp2)
 
 
-            samp3 = swagger_client.OriginalSample(None, study_name='1022-MD-UP')
+            samp3 = swagger_client.OriginalSample(None, study_name='4022-MD-UP')
             samp3.attrs = [
                 ident1,
                 ident2,
@@ -261,7 +261,7 @@ class TestOriginalSample(TestBase):
 
         try:
 
-            samp = swagger_client.OriginalSample(None, study_name='1005-MD-UP',)
+            samp = swagger_client.OriginalSample(None, study_name='4005-MD-UP',)
             samp.attrs = [
                 swagger_client.Attr (attr_type='oxford', attr_value='1234567')
             ]
@@ -287,7 +287,7 @@ class TestOriginalSample(TestBase):
 
         try:
 
-            samp = swagger_client.OriginalSample(None, study_name='1006-MD-UP')
+            samp = swagger_client.OriginalSample(None, study_name='4006-MD-UP')
             samp.attrs = [
                 swagger_client.Attr (attr_type='oxford', attr_value='12345678',
                                            attr_source='upd')
@@ -318,7 +318,7 @@ class TestOriginalSample(TestBase):
 
         try:
 
-            new_samp = swagger_client.OriginalSample(None, study_name='1007-MD-UP')
+            new_samp = swagger_client.OriginalSample(None, study_name='4007-MD-UP')
             fake_id = uuid.uuid4()
             new_samp.original_sample_id = str(fake_id)
 
@@ -342,7 +342,7 @@ class TestOriginalSample(TestBase):
         try:
 
             test_id = 'MDG/DK_0005'
-            samp = swagger_client.OriginalSample(None, study_name='1008-MD-UP')
+            samp = swagger_client.OriginalSample(None, study_name='4008-MD-UP')
             samp.attrs = [
                 swagger_client.Attr (attr_type='partner_id', attr_value=test_id,
                                           attr_source='encode')
@@ -381,7 +381,7 @@ class TestOriginalSample(TestBase):
         api_instance = api_factory.OriginalSampleApi()
 
         try:
-            study_code = '1020-MD-UP'
+            study_code = '4020-MD-UP'
 
             samp = swagger_client.OriginalSample(None, study_name=study_code)
             created = api_instance.create_original_sample(samp)
@@ -411,7 +411,7 @@ class TestOriginalSample(TestBase):
         api_instance = api_factory.OriginalSampleApi()
 
         try:
-            study_code = '1021-MD-UP'
+            study_code = '4021-MD-UP'
 
             for i in range(5):
                 samp = swagger_client.OriginalSample(None, study_name=study_code)
@@ -460,7 +460,7 @@ class TestOriginalSample(TestBase):
         api_instance = api_factory.OriginalSampleApi()
 
         try:
-            samp = swagger_client.OriginalSample(None, study_name='1023-MD-UP')
+            samp = swagger_client.OriginalSample(None, study_name='4023-MD-UP')
             samp.attrs = [
                 swagger_client.Attr (attr_type='oxford', attr_value='12345678',
                                            attr_source='upd')
@@ -546,7 +546,7 @@ class TestOriginalSample(TestBase):
 
         try:
 
-            sampling_event = swagger_client.SamplingEvent(None, '1024-MD-UP', date(2017, 10, 10),
+            sampling_event = swagger_client.SamplingEvent(None, '4024-MD-UP', date(2017, 10, 10),
                                                 doc_accuracy='month')
             loc = swagger_client.Location(None, 27.463, 90.495, 'city',
                                           'Trongsa, Trongsa, Bhutan', 'test_create_with_locations', 'BTN')
@@ -555,7 +555,7 @@ class TestOriginalSample(TestBase):
             sampling_event.location_id = loc.location_id
             created_se = se_api_instance.create_sampling_event(sampling_event)
 
-            samp = swagger_client.OriginalSample(None, study_name='1024-MD-UP')
+            samp = swagger_client.OriginalSample(None, study_name='4024-MD-UP')
             samp.sampling_event_id = created_se.sampling_event_id
 
             samp.attrs = [
@@ -580,6 +580,8 @@ class TestOriginalSample(TestBase):
             fetched.original_sample_id = None
             assert samp == fetched, "upload != download response"
 
+            se_api_instance.delete_sampling_event(created_se.sampling_event_id)
+
             api_instance.delete_original_sample(created.original_sample_id)
 
         except ApiException as error:
@@ -595,7 +597,7 @@ class TestOriginalSample(TestBase):
 
         try:
 
-            sampling_event = swagger_client.SamplingEvent(None, '1024-MD-UP', date(2017, 10, 10),
+            sampling_event = swagger_client.SamplingEvent(None, '4025-MD-UP', date(2017, 10, 10),
                                                 doc_accuracy='month')
             loc = swagger_client.Location(None, 27.463, 90.495, 'city',
                                           'Trongsa, Trongsa, Bhutan', 'test_create_with_locations', 'BTN')
@@ -604,12 +606,12 @@ class TestOriginalSample(TestBase):
             sampling_event.location_id = loc.location_id
             created_se = se_api_instance.create_sampling_event(sampling_event)
 
-            samp1 = swagger_client.OriginalSample(None, study_name='1024-MD-UP')
+            samp1 = swagger_client.OriginalSample(None, study_name='4025-MD-UP')
             samp1.sampling_event_id = created_se.sampling_event_id
 
             created1 = api_instance.create_original_sample(samp1)
 
-            samp2 = swagger_client.OriginalSample(None, study_name='1024-MD-UP')
+            samp2 = swagger_client.OriginalSample(None, study_name='4025-MD-UP')
             samp2.sampling_event_id = created_se.sampling_event_id
 
             created2 = api_instance.create_original_sample(samp2)
@@ -636,6 +638,7 @@ class TestOriginalSample(TestBase):
             fetched.original_sample_id = None
             assert samp1 == fetched, "upload != download response"
 
+            se_api_instance.delete_sampling_event(created_se.sampling_event_id)
             api_instance.delete_original_sample(created1.original_sample_id)
             api_instance.delete_original_sample(created2.original_sample_id)
 
@@ -671,15 +674,15 @@ class TestOriginalSample(TestBase):
 
         try:
 
-            sampling_event = swagger_client.SamplingEvent(None, '1025-MD-UP', date(2017, 10, 10),
+            sampling_event = swagger_client.SamplingEvent(None, '4025-MD-UP', date(2017, 10, 10),
                                                 partner_species='PF')
             created_se = se_api_instance.create_sampling_event(sampling_event)
-            study_detail = study_api.download_study('1025')
+            study_detail = study_api.download_study('4025')
             study_detail.partner_species[0].taxa = [ swagger_client.Taxonomy(taxonomy_id=5833) ]
-            study_api.update_study('1025', study_detail)
+            study_api.update_study('4025', study_detail)
 
 
-            samp = swagger_client.OriginalSample(None, study_name='1025-MD-UP')
+            samp = swagger_client.OriginalSample(None, study_name='4025-MD-UP')
             samp.sampling_event_id = created_se.sampling_event_id
 
             samp.attrs = [
@@ -721,7 +724,7 @@ class TestOriginalSample(TestBase):
 
         try:
 
-            study_codes = [ '1031-MD-UP', '1032-MD-UP', '1033-MD-UP', '1034-MD-UP', '1034-MD-UP']
+            study_codes = [ '4031-MD-UP', '4032-MD-UP', '4033-MD-UP', '4034-MD-UP', '4034-MD-UP']
 
             for study_code in study_codes:
                 samp = swagger_client.SamplingEvent(None, study_code, date(2017, 10, 14),
