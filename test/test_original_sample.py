@@ -125,7 +125,7 @@ class TestOriginalSample(TestBase):
 
         try:
 
-            samp = swagger_client.OriginalSample(None, study_name='1025-MD-UP')
+            samp = swagger_client.OriginalSample(None, study_name='1029-MD-UP')
             samp.attrs = [
                 swagger_client.Attr (attr_type='individual_id', attr_value='12345')
             ]
@@ -516,3 +516,247 @@ class TestOriginalSample(TestBase):
         except ApiException as error:
             self.check_api_exception(api_factory, "OriginalSampleApi->download_original_samples_by_attr", error)
 
+
+    """
+    """
+    def test_os_location_lookup_missing(self, api_factory):
+
+        api_instance = api_factory.OriginalSampleApi()
+        try:
+
+            if api_factory.is_authorized(None):
+                with pytest.raises(ApiException, status=404):
+                    api_instance.download_original_samples_by_location(str(uuid.uuid4()))
+            else:
+                with pytest.raises(ApiException, status=403):
+                    api_instance.download_original_samples_by_location(str(uuid.uuid4()))
+
+        except ApiException as error:
+            self.check_api_exception(api_factory,
+                                     "OriginalSampleApi->download_original_samples_by_location", error)
+
+
+    """
+    """
+    def test_os_location_lookup(self, api_factory):
+
+        api_instance = api_factory.OriginalSampleApi()
+        se_api_instance = api_factory.SamplingEventApi()
+        location_api_instance = api_factory.LocationApi()
+
+        try:
+
+            sampling_event = swagger_client.SamplingEvent(None, '1024-MD-UP', date(2017, 10, 10),
+                                                doc_accuracy='month')
+            loc = swagger_client.Location(None, 27.463, 90.495, 'city',
+                                          'Trongsa, Trongsa, Bhutan', 'test_create_with_locations', 'BTN')
+            loc = location_api_instance.create_location(loc)
+
+            sampling_event.location_id = loc.location_id
+            created_se = se_api_instance.create_sampling_event(sampling_event)
+
+            samp = swagger_client.OriginalSample(None, study_name='1024-MD-UP')
+            samp.sampling_event_id = created_se.sampling_event_id
+
+            samp.attrs = [
+                swagger_client.Attr (attr_type='oxford', attr_value='12345678',
+                                           attr_source='upd')
+            ]
+            created = api_instance.create_original_sample(samp)
+
+            results = api_instance.download_original_samples_by_location(loc.location_id)
+            looked_up = results.original_samples[0]
+
+            fetched = api_instance.download_original_sample(looked_up.original_sample_id)
+
+            assert created == fetched, "create response != download response"
+
+            assert results.attr_types == ['oxford']
+
+            ffetched = api_instance.download_original_samples(filter='location:'+loc.location_id)
+
+            assert ffetched == results
+
+            fetched.original_sample_id = None
+            assert samp == fetched, "upload != download response"
+
+            api_instance.delete_original_sample(created.original_sample_id)
+
+        except ApiException as error:
+            self.check_api_exception(api_factory, "OriginalSampleApi->create_original_sample", error)
+
+    """
+    """
+    def test_os_location_lookup_paged(self, api_factory):
+
+        api_instance = api_factory.OriginalSampleApi()
+        se_api_instance = api_factory.SamplingEventApi()
+        location_api_instance = api_factory.LocationApi()
+
+        try:
+
+            sampling_event = swagger_client.SamplingEvent(None, '1024-MD-UP', date(2017, 10, 10),
+                                                doc_accuracy='month')
+            loc = swagger_client.Location(None, 27.463, 90.495, 'city',
+                                          'Trongsa, Trongsa, Bhutan', 'test_create_with_locations', 'BTN')
+            loc = location_api_instance.create_location(loc)
+
+            sampling_event.location_id = loc.location_id
+            created_se = se_api_instance.create_sampling_event(sampling_event)
+
+            samp1 = swagger_client.OriginalSample(None, study_name='1024-MD-UP')
+            samp1.sampling_event_id = created_se.sampling_event_id
+
+            created1 = api_instance.create_original_sample(samp1)
+
+            samp2 = swagger_client.OriginalSample(None, study_name='1024-MD-UP')
+            samp2.sampling_event_id = created_se.sampling_event_id
+
+            created2 = api_instance.create_original_sample(samp2)
+
+            results = api_instance.download_original_samples_by_location(loc.location_id,
+                                                                         start=0,
+                                                                         count=1)
+
+            assert results.count == 2
+            assert len(results.original_samples) == 1
+
+            looked_up = results.original_samples[0]
+
+            fetched = api_instance.download_original_sample(looked_up.original_sample_id)
+
+            assert created1 == fetched or created2 == fetched, "create response != download response"
+
+            ffetched = api_instance.download_original_samples(filter='location:'+loc.location_id,
+                                                              start=0,
+                                                              count=1)
+
+            assert ffetched == results
+
+            fetched.original_sample_id = None
+            assert samp1 == fetched, "upload != download response"
+
+            api_instance.delete_original_sample(created1.original_sample_id)
+            api_instance.delete_original_sample(created2.original_sample_id)
+
+        except ApiException as error:
+            self.check_api_exception(api_factory, "OriginalSampleApi->create_original_sample", error)
+
+    """
+    """
+    def test_os_taxa_lookup_missing(self, api_factory):
+
+        api_instance = api_factory.OriginalSampleApi()
+        try:
+
+            if api_factory.is_authorized(None):
+                with pytest.raises(ApiException, status=404):
+                    api_instance.download_original_samples_by_taxa(12345)
+            else:
+                with pytest.raises(ApiException, status=403):
+                    api_instance.download_original_samples_by_taxa(12345)
+
+        except ApiException as error:
+            self.check_api_exception(api_factory,
+                                     "OriginalSampleApi->download_original_samples_by_taxa", error)
+
+
+    """
+    """
+    def test_os_taxa_lookup(self, api_factory):
+
+        api_instance = api_factory.OriginalSampleApi()
+        se_api_instance = api_factory.SamplingEventApi()
+        study_api = api_factory.StudyApi()
+
+        try:
+
+            sampling_event = swagger_client.SamplingEvent(None, '1025-MD-UP', date(2017, 10, 10),
+                                                partner_species='PF')
+            created_se = se_api_instance.create_sampling_event(sampling_event)
+            study_detail = study_api.download_study('1025')
+            study_detail.partner_species[0].taxa = [ swagger_client.Taxonomy(taxonomy_id=5833) ]
+            study_api.update_study('1025', study_detail)
+
+
+            samp = swagger_client.OriginalSample(None, study_name='1025-MD-UP')
+            samp.sampling_event_id = created_se.sampling_event_id
+
+            samp.attrs = [
+                swagger_client.Attr (attr_type='oxford', attr_value='12345-T',
+                                           attr_source='upd')
+            ]
+            created = api_instance.create_original_sample(samp)
+
+            results = api_instance.download_original_samples_by_taxa(5833)
+            looked_up = results.original_samples[0]
+
+            fetched = api_instance.download_original_sample(looked_up.original_sample_id)
+
+            assert created == fetched, "create response != download response"
+
+            assert results.attr_types == ['oxford']
+
+            ffetched = api_instance.download_original_samples(filter='taxa:5833')
+
+            assert ffetched == results
+
+            fetched.original_sample_id = None
+            assert samp == fetched, "upload != download response"
+
+            for original_sample in results.original_samples:
+                se_api_instance.delete_sampling_event(original_sample.sampling_event_id)
+                api_instance.delete_original_sample(original_sample.original_sample_id)
+
+        except ApiException as error:
+            self.check_api_exception(api_factory, "OriginalSampleApi->create_original_sample", error)
+
+    """
+    """
+    def test_os_taxa_lookup_paged(self, api_factory):
+
+        api_instance = api_factory.OriginalSampleApi()
+        se_api_instance = api_factory.SamplingEventApi()
+        study_api = api_factory.StudyApi()
+
+        try:
+
+            study_codes = [ '1031-MD-UP', '1032-MD-UP', '1033-MD-UP', '1034-MD-UP', '1034-MD-UP']
+
+            for study_code in study_codes:
+                samp = swagger_client.SamplingEvent(None, study_code, date(2017, 10, 14),
+                                                    partner_species='PF')
+                created = se_api_instance.create_sampling_event(samp)
+                study_detail = study_api.download_study(study_code)
+                study_detail.partner_species[0].taxa = [ swagger_client.Taxonomy(taxonomy_id=5833) ]
+                study_api.update_study(study_code, study_detail)
+                samp1 = swagger_client.OriginalSample(None, study_name=study_code)
+                samp1.sampling_event_id = created.sampling_event_id
+                created1 = api_instance.create_original_sample(samp1)
+
+            results = api_instance.download_original_samples_by_taxa(5833,
+                                                                         start=0,
+                                                                         count=2)
+
+            assert results.count == 5
+            assert len(results.original_samples) == 2
+
+            looked_up = results.original_samples[0]
+
+            fetched = api_instance.download_original_sample(looked_up.original_sample_id)
+
+            ffetched = api_instance.download_original_samples(filter='taxa:5833',
+                                                              start=0,
+                                                              count=2)
+
+            assert ffetched == results
+
+            #Clean up
+            fetch_all = api_instance.download_original_samples_by_taxa(5833)
+
+            for original_sample in fetch_all.original_samples:
+                se_api_instance.delete_sampling_event(original_sample.sampling_event_id)
+                api_instance.delete_original_sample(original_sample.original_sample_id)
+
+        except ApiException as error:
+            self.check_api_exception(api_factory, "OriginalSampleApi->create_original_sample", error)

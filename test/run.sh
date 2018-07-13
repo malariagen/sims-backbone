@@ -20,9 +20,9 @@ then
 fi
 if [ "$1" = "one" ]
 then
-    python3 -m pytest -s -x -k $2
+    python3 -m pytest --cov=backbone_server --cov-report html -v -s -x -k $2
     #Or -k to run a specific test instead of just failing fast
 else
-    python3 -m pytest -s -x
+    python3 -m pytest -s -x --cov=backbone_server --cov-report html -v
 fi
 psql -c "DELETE FROM taxonomies WHERE id=7227;" backbone_test

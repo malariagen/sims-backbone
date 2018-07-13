@@ -30,7 +30,7 @@ class OriginalSamplesGetByLocation():
                 except MissingKeyException as mke:
                     raise mke
 
-                fields = '''SELECT original_samples.id, study_name, sampling_event_id,
+                fields = '''SELECT os.id, study_name, sampling_event_id,
                 days_in_culture'''
                 query_body = ''' FROM original_samples os
                 JOIN sampling_events se ON se.id = os.sampling_event_id
@@ -39,9 +39,9 @@ class OriginalSamplesGetByLocation():
                 args = (location_id, location_id,)
 
                 count_args = args
-                count_query = 'SELECT COUNT(v_original_samples.id) ' + query_body
+                count_query = 'SELECT COUNT(os.id) ' + query_body
 
-                query_body = query_body + ''' ORDER BY doc, id'''
+                query_body = query_body + ''' ORDER BY study_name, os.id'''
 
                 if not (start is None and count is None):
                     query_body = query_body + ' LIMIT %s OFFSET %s'
@@ -63,11 +63,13 @@ class OriginalSamplesGetByLocation():
 
                 original_samples.attr_types = []
 
-                col_query = '''select distinct attr_type from location_attrs se
-                JOIN attrs a ON se.location_id=a.id
-                WHERE location_id = %s'''
+                col_query = '''select distinct attr_type from original_sample_attrs osa
+                JOIN attrs a ON osa.attr_id=a.id
+                JOIN original_samples os ON os.id = osa.original_sample_id
+                JOIN sampling_events se ON se.id = os.sampling_event_id
+                WHERE se.location_id = %s OR se.proxy_location_id = %s'''
 
-                cursor.execute(col_query, (location_id,))
+                cursor.execute(col_query, (location_id,location_id))
                 for (attr_type,) in cursor:
                     original_samples.attr_types.append(attr_type)
 
