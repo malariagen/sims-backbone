@@ -306,3 +306,58 @@ class TestDerivedSample(TestBase):
         except ApiException as error:
             self.check_api_exception(api_factory, "DerivedSampleApi->download_derived_samples_by_attr", error)
 
+
+    """
+    """
+    def test_ds_os_attr_lookup(self, api_factory):
+
+        api_instance = api_factory.OriginalSampleApi()
+        ds_api_instance = api_factory.DerivedSampleApi()
+
+        try:
+
+            samp = swagger_client.OriginalSample(None, study_name='5000-MD-UP')
+            samp.attrs = [
+                swagger_client.Attr (attr_type='ds_os_attr', attr_value='123456')
+            ]
+            created = api_instance.create_original_sample(samp)
+            samp1 = swagger_client.DerivedSample(None)
+            samp2 = swagger_client.DerivedSample(None)
+
+            samp1.attrs = [
+                swagger_client.Attr (attr_type='test1', attr_value='test1',
+                                          attr_source='ds_os_attr')
+            ]
+            samp2.attrs = [
+                swagger_client.Attr (attr_type='test2', attr_value='test2',
+                                          attr_source='ds_os_attr')
+            ]
+            samp1.original_sample_id = created.original_sample_id
+            samp2.original_sample_id = created.original_sample_id
+            created1 = ds_api_instance.create_derived_sample(samp1)
+            created2 = ds_api_instance.create_derived_sample(samp2)
+            results = ds_api_instance.download_derived_samples_by_os_attr('ds_os_attr', '123456')
+
+            assert results.count == 2
+            assert results.derived_samples[0].derived_sample_id != results.derived_samples[1].derived_sample_id
+            assert results.derived_samples[0].original_sample_id == results.derived_samples[1].original_sample_id
+            assert results.derived_samples[0].original_sample_id == created.original_sample_id
+
+            ds_api_instance.delete_derived_sample(created1.derived_sample_id)
+            ds_api_instance.delete_derived_sample(created2.derived_sample_id)
+            api_instance.delete_original_sample(created.original_sample_id)
+
+        except ApiException as error:
+            self.check_api_exception(api_factory, "OriginalSampleApi->create_original_sample", error)
+
+    """
+    """
+    def test_ds_os_attr_lookup_missing(self, api_factory):
+
+        api_instance = api_factory.OriginalSampleApi()
+        ds_api_instance = api_factory.DerivedSampleApi()
+
+        with pytest.raises(ApiException, status=404):
+            results = ds_api_instance.download_derived_samples_by_os_attr('ds_os_attr', 'm123456')
+
+

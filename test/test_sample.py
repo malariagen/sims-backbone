@@ -987,3 +987,53 @@ class TestSample(TestBase):
         except ApiException as error:
             self.check_api_exception(api_factory, "SamplingEventApi->download_sampling_events_by_attr", error)
 
+
+    """
+    """
+    def test_lookup_sampling_event_by_os_attr(self, api_factory):
+
+        api_instance = api_factory.OriginalSampleApi()
+        se_api_instance = api_factory.SamplingEventApi()
+        location_api_instance = api_factory.LocationApi()
+
+        try:
+
+            sampling_event = swagger_client.SamplingEvent(None, '1026-MD-UP', date(2017, 10, 10),
+                                                doc_accuracy='month')
+            created_se = se_api_instance.create_sampling_event(sampling_event)
+
+            samp = swagger_client.OriginalSample(None, study_name='4024-MD-UP')
+            samp.sampling_event_id = created_se.sampling_event_id
+
+            samp.attrs = [
+                swagger_client.Attr (attr_type='oxford', attr_value='12345678',
+                                           attr_source='upd')
+            ]
+            created = api_instance.create_original_sample(samp)
+
+            results = se_api_instance.download_sampling_events_by_os_attr('oxford', '12345678')
+
+            assert results.count == 1
+
+            looked_up = results.sampling_events[0]
+
+            fetched = se_api_instance.download_sampling_event(looked_up.sampling_event_id)
+
+            assert created_se == fetched, "create response != download response"
+
+            results1 = se_api_instance.download_sampling_events_by_os_attr('oxford', '12345678',
+                                                                           '1026-MD-UP')
+
+            assert results == results1
+
+            with pytest.raises(ApiException, status=404):
+                results2 = se_api_instance.download_sampling_events_by_os_attr('oxford', '12345678',
+                                                                           '1027-MD-UP')
+
+            
+            se_api_instance.delete_sampling_event(created_se.sampling_event_id)
+
+            api_instance.delete_original_sample(created.original_sample_id)
+
+        except ApiException as error:
+            self.check_api_exception(api_factory, "OriginalSampleApi->create_original_sample", error)

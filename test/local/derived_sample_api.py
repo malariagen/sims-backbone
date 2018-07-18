@@ -95,6 +95,23 @@ class LocalDerivedSampleApi(BaseLocalApi):
 
         return self.create_response(ret, retcode, 'DerivedSamples')
 
+    def download_derived_samples_by_os_attr(self, propName, propValue, study_name=None):
+        """
+        fetches a samplingEvent by property value
+        
+        :param propName: name of property to search
+        :type propName: str
+        :param propValue: matching value of property to search
+        :type propValue: str
+
+        :rtype: DerivedSamples
+        """
+        (ret, retcode) = self.derived_sample_controller.download_derived_samples_by_os_attr(propName, propValue,
+                                                                               self._user,
+                                                                               self.auth_tokens())
+
+        return self.create_response(ret, retcode, 'DerivedSamples')
+
 
     def update_derived_sample(self, derivedSampleId, derivedSample):
         """
