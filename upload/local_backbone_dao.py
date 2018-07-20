@@ -240,6 +240,18 @@ class LocalBackboneDAO(AbstractBackboneDAO):
 
         return found_events
 
+    def download_original_sample(self, original_sample_id):
+
+        found_events, retcode = self.os_api_instance.download_original_sample(original_sample_id,
+                                                                              user=self._user, auths=self._auths)
+
+        self._logger.debug("GET /v1/originalSample/{} {}".format(original_sample_id,
+                                                                 retcode))
+        if retcode >= 400:
+            raise ApiException(status=retcode, reason='')
+
+        return found_events
+
     def download_original_samples_by_attr(self, attr_type, attr_value):
 
         found_events, retcode = self.os_api_instance.download_original_samples_by_attr(attr_type,
@@ -290,20 +302,20 @@ class LocalBackboneDAO(AbstractBackboneDAO):
 
         return found_events
 
-#    def merge_derived_samples(self, derived_sample_id1, derived_sample_id2):
-#
-#        found_events, retcode = self.os_api_instance.merge_derived_samples(derived_sample_id1,
-#                                                                            derived_sample_id2,
-#                                                                                            user=self._user, auths=self._auths)
-#
-#        self._logger.debug("PUT /v1/derivedSample/{}/{} {} {}".format(derived_sample_id1,
-#                                                                    derived_sample_id2
-#                                                                  , retcode))
-#        if retcode >= 400:
-#            raise ApiException(status=retcode, reason='')
-#
-#        return found_events
-#
+    def merge_derived_samples(self, derived_sample_id1, derived_sample_id2):
+
+        found_events, retcode = self.ds_api_instance.merge_derived_samples(derived_sample_id1,
+                                                                           derived_sample_id2,
+                                                                           user=self._user, auths=self._auths)
+
+        self._logger.debug("PUT /v1/derivedSample/merge/{}/{} {}".format(derived_sample_id1,
+                                                                         derived_sample_id2,
+                                                                         retcode))
+        if retcode >= 400:
+            raise ApiException(status=retcode, reason='')
+
+        return found_events
+
     def delete_derived_sample(self, derived_sample_id):
 
         found_events, retcode = self.ds_api_instance.delete_derived_sample(derived_sample_id,

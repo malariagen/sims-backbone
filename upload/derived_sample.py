@@ -89,9 +89,9 @@ class DerivedSampleProcessor(BaseEntity):
 
     def process_derived_sample(self, samp, existing, original_sample, values):
 
-        #print('process_sampling event {} {} {} {} {}'.format(values, location_name, location, proxy_location_name, proxy_location))
+        #print('process_derived_sample {} {} {}'.format(values, original_sample, existing))
 
-        if 'sample_lims_id' in values and values['sample_lims_id']:
+        if 'sanger_lims_id' in values and values['sanger_lims_id']:
             if not existing:
                 self.report("Could not find not adding ", values)
                 return None
