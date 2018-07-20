@@ -272,7 +272,7 @@ class OriginalSampleController(BaseController):
 
         return samp, retcode
 
-    def merge_original_samples(self, into, merged, user=None, token_info=None):  # noqa: E501
+    def merge_original_samples(self, into, merged, user=None, auths=None):  # noqa: E501
         """merges two OriginalSamples
 
         merges original samples with compatible properties updating references and merging sampling events # noqa: E501

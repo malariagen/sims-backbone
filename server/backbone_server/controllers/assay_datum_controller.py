@@ -28,7 +28,7 @@ from backbone_server.controllers.decorators  import apply_decorators
 class AssayDatumController(BaseController):
 
 
-    def create_assay_datum(self, assayDatum, user=None, token_info=None):  # noqa: E501
+    def create_assay_datum(self, assayDatum, user=None, auths=None):  # noqa: E501
         """create_assay_datum
 
         Create a AssayDatum # noqa: E501
@@ -55,7 +55,7 @@ class AssayDatumController(BaseController):
         return samp, retcode
 
 
-    def delete_assay_datum(self, assayDatumId, user=None, token_info=None):  # noqa: E501
+    def delete_assay_datum(self, assayDatumId, user=None, auths=None):  # noqa: E501
         """deletes an AssayDatum
 
          # noqa: E501
@@ -79,7 +79,7 @@ class AssayDatumController(BaseController):
         return None, retcode
 
 
-    def download_assay_datum(self, assayDatumId, user=None, token_info=None):  # noqa: E501
+    def download_assay_datum(self, assayDatumId, user=None, auths=None):  # noqa: E501
         """fetches an AssayDatum
 
          # noqa: E501
@@ -104,7 +104,7 @@ class AssayDatumController(BaseController):
         return samp, retcode
 
 
-    def download_assay_data_by_attr(self, propName, propValue, studyName=None, user=None, token_info=None):  # noqa: E501
+    def download_assay_data_by_attr(self, propName, propValue, studyName=None, user=None, auths=None):  # noqa: E501
         """fetches one or more AssayDatum by property value
 
          # noqa: E501
@@ -134,7 +134,7 @@ class AssayDatumController(BaseController):
         return samp, retcode
 
 
-    def download_assay_data_by_os_attr(self, propName, propValue, studyName=None, user=None, token_info=None):  # noqa: E501
+    def download_assay_data_by_os_attr(self, propName, propValue, studyName=None, user=None, auths=None):  # noqa: E501
         """fetches one or more assayData by property value of associated derived samples
 
          # noqa: E501
@@ -164,7 +164,7 @@ class AssayDatumController(BaseController):
         return samp, retcode
 
 
-    def update_assay_datum(self, assayDatumId, assayDatum, user=None, token_info=None):  # noqa: E501
+    def update_assay_datum(self, assayDatumId, assayDatum, user=None, auths=None):  # noqa: E501
         """updates an AssayDatum
 
          # noqa: E501

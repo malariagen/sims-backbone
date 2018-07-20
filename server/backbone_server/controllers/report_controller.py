@@ -54,7 +54,7 @@ class ReportController(BaseController):
 
         return studies, retcode
 
-    def multiple_location_gps(self, user=None, token_info=None):  # noqa: E501
+    def multiple_location_gps(self, user=None, auths=None):  # noqa: E501
         """fetches studies with multiple locations with the same GPS
 
          # noqa: E501
@@ -72,7 +72,7 @@ class ReportController(BaseController):
         return studies, retcode
 
 
-    def multiple_location_names(self, user=None, token_info=None):  # noqa: E501
+    def multiple_location_names(self, user=None, auths=None):  # noqa: E501
         """fetches studies with multiple locations with the same name
 
          # noqa: E501

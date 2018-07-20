@@ -28,7 +28,7 @@ from backbone_server.controllers.decorators  import apply_decorators
 class DerivedSampleController(BaseController):
 
 
-    def create_derived_sample(self, derivedSample, user=None, token_info=None):  # noqa: E501
+    def create_derived_sample(self, derivedSample, user=None, auths=None):  # noqa: E501
         """create_derived_sample
 
         Create a DerivedSample # noqa: E501
@@ -55,7 +55,7 @@ class DerivedSampleController(BaseController):
         return samp, retcode
 
 
-    def delete_derived_sample(self, derivedSampleId, user=None, token_info=None):  # noqa: E501
+    def delete_derived_sample(self, derivedSampleId, user=None, auths=None):  # noqa: E501
         """deletes an DerivedSample
 
          # noqa: E501
@@ -79,7 +79,7 @@ class DerivedSampleController(BaseController):
         return None, retcode
 
 
-    def download_derived_sample(self, derivedSampleId, user=None, token_info=None):  # noqa: E501
+    def download_derived_sample(self, derivedSampleId, user=None, auths=None):  # noqa: E501
         """fetches an DerivedSample
 
          # noqa: E501
@@ -104,7 +104,7 @@ class DerivedSampleController(BaseController):
         return samp, retcode
 
 
-    def download_derived_samples_by_attr(self, propName, propValue, studyName=None, user=None, token_info=None):  # noqa: E501
+    def download_derived_samples_by_attr(self, propName, propValue, studyName=None, user=None, auths=None):  # noqa: E501
         """fetches one or more DerivedSample by property value
 
          # noqa: E501
@@ -134,7 +134,7 @@ class DerivedSampleController(BaseController):
         return samp, retcode
 
 
-    def download_derived_samples_by_os_attr(self, propName, propValue, studyName=None, user=None, token_info=None):  # noqa: E501
+    def download_derived_samples_by_os_attr(self, propName, propValue, studyName=None, user=None, auths=None):  # noqa: E501
         """fetches one or more derivedSamples by property value of associated derived samples
 
          # noqa: E501
@@ -164,7 +164,7 @@ class DerivedSampleController(BaseController):
         return samp, retcode
 
 
-    def update_derived_sample(self, derivedSampleId, derivedSample, user=None, token_info=None):  # noqa: E501
+    def update_derived_sample(self, derivedSampleId, derivedSample, user=None, auths=None):  # noqa: E501
         """updates an DerivedSample
 
          # noqa: E501

@@ -308,7 +308,7 @@ class SamplingEventController(BaseController):
 
         return samp, retcode
 
-    def merge_sampling_events(self, into, merged, user=None, token_info=None):  # noqa: E501
+    def merge_sampling_events(self, into, merged, user=None, auths=None):  # noqa: E501
         """merges two samplingEvents
 
         merges sampling events with compatible properties updating references # noqa: E501
