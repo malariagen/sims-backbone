@@ -37,9 +37,6 @@ class OriginalSampleProcessor(BaseEntity):
         if 'sample_oxford_id' in values and values['sample_oxford_id']:
             idents.append(swagger_client.Attr ('oxford_id', values['sample_oxford_id'],
                                                      self._event_set))
-        if 'sample_lims_id' in values and values['sample_lims_id']:
-            idents.append(swagger_client.Attr ('sanger_lims_id', values['sample_lims_id'],
-                                                     self._event_set))
         if 'sample_alternate_oxford_id' in values and len(values['sample_alternate_oxford_id']) > 0:
             idents.append(swagger_client.Attr ('alt_oxford_id',
                                                      values['sample_alternate_oxford_id'],
@@ -137,12 +134,7 @@ class OriginalSampleProcessor(BaseEntity):
 
         ret = None
 
-        #print('process_sampling event {} {} {} {} {}'.format(values, location_name, location, proxy_location_name, proxy_location))
-
-        if 'sample_lims_id' in values and values['sample_lims_id']:
-            if not existing:
-                self.report("Could not find not adding ", values)
-                return None
+        #print('process original_sample {} {} {}'.format(values, samp, existing))
 
         if existing:
 

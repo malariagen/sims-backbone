@@ -37,6 +37,10 @@ class DerivedSampleProcessor(BaseEntity):
                                               values['sanger_sample_id'],
                                               self._event_set))
 
+        if 'sample_lims_id' in values and values['sample_lims_id']:
+            idents.append(swagger_client.Attr ('sanger_lims_id', values['sample_lims_id'],
+                                                     self._event_set))
+
         if 'dna_prep' in values:
             d_sample.dna_prep = values['dna_prep']
 
@@ -87,6 +91,11 @@ class DerivedSampleProcessor(BaseEntity):
 
         #print('process_sampling event {} {} {} {} {}'.format(values, location_name, location, proxy_location_name, proxy_location))
 
+        if 'sample_lims_id' in values and values['sample_lims_id']:
+            if not existing:
+                self.report("Could not find not adding ", values)
+                return None
+
         if existing:
             ret = self.merge_derived_samples(existing, samp, values)
         else:
@@ -95,7 +104,8 @@ class DerivedSampleProcessor(BaseEntity):
                 return None
 
             try:
-                samp.original_sample_id = original_sample.original_sample_id
+                if original_sample:
+                    samp.original_sample_id = original_sample.original_sample_id
                 created = self._dao.create_derived_sample(samp)
 
                 ret = created

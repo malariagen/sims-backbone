@@ -268,7 +268,8 @@ class Uploader():
 
         sampling_event = self.se_processor.process_sampling_event(values, samp, existing)
 
-        o_sample.sampling_event_id = sampling_event.sampling_event_id
+        if sampling_event:
+            o_sample.sampling_event_id = sampling_event.sampling_event_id
 
         original_sample = self.os_processor.process_original_sample(values, o_sample, o_existing)
 
