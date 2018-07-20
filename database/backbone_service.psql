@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 9.6.8
--- Dumped by pg_dump version 9.6.8
+-- Dumped from database version 9.6.9
+-- Dumped by pg_dump version 9.6.9
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -38,6 +38,10 @@ ALTER TABLE ONLY public.derived_sample_attrs DROP CONSTRAINT fk_derived_sample;
 ALTER TABLE ONLY public.locations DROP CONSTRAINT fk_country;
 ALTER TABLE ONLY public.assay_datum_attrs DROP CONSTRAINT fk_assay_datum;
 ALTER TABLE ONLY public.assay_data DROP CONSTRAINT fk_ad_ds;
+DROP INDEX public.studies_study_code_idx;
+DROP INDEX public.partner_species_identifiers_partner_species_idx;
+DROP INDEX public.original_sample_attrs_original_sample_id_idx;
+DROP INDEX public.location_attrs_location_id_idx;
 DROP INDEX public.idx_study_name;
 DROP INDEX public.idx_partner_species;
 DROP INDEX public.idx_ident_value;
@@ -51,6 +55,9 @@ DROP INDEX public.fki_location;
 DROP INDEX public.fki_fk_esn_es;
 DROP INDEX public.fki_fk_esm_se;
 DROP INDEX public.fki_fk_esm_es;
+DROP INDEX public.event_set_members_sampling_event_id_idx;
+DROP INDEX public.attrs_attr_type_idx;
+DROP INDEX public.attrs_attr_source_idx;
 ALTER TABLE ONLY public.studies DROP CONSTRAINT uniq_study_code;
 ALTER TABLE ONLY public.event_sets DROP CONSTRAINT uniq_event_sets;
 ALTER TABLE ONLY public.event_set_members DROP CONSTRAINT uniq_event_set_members;
@@ -583,6 +590,27 @@ ALTER TABLE ONLY public.studies
 
 
 --
+-- Name: attrs_attr_source_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX attrs_attr_source_idx ON public.attrs USING btree (attr_source);
+
+
+--
+-- Name: attrs_attr_type_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX attrs_attr_type_idx ON public.attrs USING btree (attr_type, attr_value);
+
+
+--
+-- Name: event_set_members_sampling_event_id_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX event_set_members_sampling_event_id_idx ON public.event_set_members USING btree (sampling_event_id);
+
+
+--
 -- Name: fki_fk_esm_es; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -671,6 +699,34 @@ CREATE INDEX idx_partner_species ON public.partner_species_identifiers USING btr
 --
 
 CREATE INDEX idx_study_name ON public.studies USING btree (study_name);
+
+
+--
+-- Name: location_attrs_location_id_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX location_attrs_location_id_idx ON public.location_attrs USING btree (location_id);
+
+
+--
+-- Name: original_sample_attrs_original_sample_id_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX original_sample_attrs_original_sample_id_idx ON public.original_sample_attrs USING btree (original_sample_id);
+
+
+--
+-- Name: partner_species_identifiers_partner_species_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX partner_species_identifiers_partner_species_idx ON public.partner_species_identifiers USING btree (partner_species);
+
+
+--
+-- Name: studies_study_code_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX studies_study_code_idx ON public.studies USING btree (study_code);
 
 
 --
