@@ -68,6 +68,11 @@ import { SamplingEventDisplayPipe } from './sampling-event-display.pipe';
 import { DownloaderJsonComponent } from './downloader-json/downloader-json.component';
 import { DownloaderCsvComponent } from './downloader-csv/downloader-csv.component';
 import { SampleOverviewComponent } from './sample-overview/sample-overview.component';
+import { OsListComponent } from './os-list/os-list.component';
+import { OriginalSampleDisplayPipe } from './original-sample-display.pipe';
+import { TaxaOsListComponent } from './taxa-os-list/taxa-os-list.component';
+import { DownloaderOsCsvComponent } from './downloader-os-csv/downloader-os-csv.component';
+import { DownloaderOsJsonComponent } from './downloader-os-json/downloader-os-json.component';
 
 export function getConfiguration(authService: AuthService) {
   return authService.getConfiguration();
@@ -108,7 +113,12 @@ export function getConfiguration(authService: AuthService) {
     SamplingEventDisplayPipe,
     DownloaderJsonComponent,
     DownloaderCsvComponent,
-    SampleOverviewComponent
+    SampleOverviewComponent,
+    OsListComponent,
+    OriginalSampleDisplayPipe,
+    TaxaOsListComponent,
+    DownloaderOsCsvComponent,
+    DownloaderOsJsonComponent
   ],
   imports: [
     BrowserModule,
