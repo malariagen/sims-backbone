@@ -25,9 +25,9 @@ class AssayDatumPost():
                 uuid_val = uuid.uuid4()
 
                 stmt = '''INSERT INTO assay_data 
-                            (id, derived_sample_id, ebi_run_acc)
+                            (id, derivative_sample_id, ebi_run_acc)
                             VALUES (%s, %s, %s)'''
-                args = (uuid_val, assay_datum.derived_sample_id,
+                args = (uuid_val, assay_datum.derivative_sample_id,
                         assay_datum.ebi_run_acc)
 
                 try:

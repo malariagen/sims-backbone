@@ -1022,15 +1022,15 @@ class TestSample(TestBase):
             assert created_se == fetched, "create response != download response"
 
             results1 = se_api_instance.download_sampling_events_by_os_attr('oxford', '12345678',
-                                                                           '1026-MD-UP')
+                                                                           study_name='1026-MD-UP')
 
             assert results == results1
 
             with pytest.raises(ApiException, status=404):
                 results2 = se_api_instance.download_sampling_events_by_os_attr('oxford', '12345678',
-                                                                           '1027-MD-UP')
+                                                                           study_name='1027-MD-UP')
 
-            
+
             se_api_instance.delete_sampling_event(created_se.sampling_event_id)
 
             api_instance.delete_original_sample(created.original_sample_id)

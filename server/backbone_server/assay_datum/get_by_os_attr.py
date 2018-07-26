@@ -21,7 +21,7 @@ class AssayDatumGetByOsAttr():
                 locations = {}
 
                 stmt = '''SELECT DISTINCT ad.id FROM assay_data ad
-                JOIN derived_samples ds ON ds.id = ad.derived_sample_id
+                JOIN derivative_samples ds ON ds.id = ad.derivative_sample_id
                 JOIN original_sample_attrs osa ON osa.original_sample_id = ds.original_sample_id
                 JOIN attrs ON attrs.id = osa.attr_id
                 WHERE attr_type = %s AND attr_value = %s'''

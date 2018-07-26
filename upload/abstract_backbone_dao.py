@@ -117,27 +117,27 @@ class AbstractBackboneDAO(abc.ABC):
         return self.os_api_instance.download_original_samples_by_attr(attr_type, attr_value)
 
 
-    def create_derived_sample(self, derived_sample):
+    def create_derivative_sample(self, derivative_sample):
 
-        return self.ds_api_instance.create_derived_sample(derived_sample)
+        return self.ds_api_instance.create_derivative_sample(derivative_sample)
 
 
-    def update_derived_sample(self, derived_sample_id, derived_sample):
+    def update_derivative_sample(self, derivative_sample_id, derivative_sample):
 
-        return self.ds_api_instance.update_derived_sample(derived_sample_id,
-                                                                            derived_sample)
+        return self.ds_api_instance.update_derivative_sample(derivative_sample_id,
+                                                                            derivative_sample)
 
-    def delete_derived_sample(self, derived_sample_id ):
+    def delete_derivative_sample(self, derivative_sample_id ):
 
-        return self.ds_api_instance.delete_derived_sample(derived_sample_id)
+        return self.ds_api_instance.delete_derivative_sample(derivative_sample_id)
 
-    def download_derived_sample(self, derived_sample_id):
+    def download_derivative_sample(self, derivative_sample_id):
 
-        return self.ds_api_instance.download_derived_sample(derived_sample_id)
+        return self.ds_api_instance.download_derivative_sample(derivative_sample_id)
 
-    def download_derived_samples_by_attr(self, attr_type, attr_value):
+    def download_derivative_samples_by_attr(self, attr_type, attr_value):
 
-        return self.ds_api_instance.download_derived_samples_by_attr(attr_type, attr_value)
+        return self.ds_api_instance.download_derivative_samples_by_attr(attr_type, attr_value)
 
 
     def create_assay_datum(self, assay_datum):

@@ -34,10 +34,10 @@ class AssayDatumPut():
                     raise MissingKeyException("Could not find assay_datum to update {}".format(assay_datum_id))
 
                 stmt = '''UPDATE assay_data 
-                            SET derived_sample_id = %s,
+                            SET derivative_sample_id = %s,
                             ebi_run_acc = %s
                             WHERE id = %s'''
-                args = (assay_datum.derived_sample_id,
+                args = (assay_datum.derivative_sample_id,
                         assay_datum.ebi_run_acc,
                         assay_datum_id)
 

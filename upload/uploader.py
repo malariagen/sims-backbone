@@ -26,7 +26,7 @@ from local_backbone_dao import LocalBackboneDAO
 from base_entity import BaseEntity
 from sampling_event import SamplingEventProcessor
 from original_sample import OriginalSampleProcessor
-from derived_sample import DerivedSampleProcessor
+from derivative_sample import DerivativeSampleProcessor
 from assay_data import AssayDataProcessor
 
 class Uploader():
@@ -85,7 +85,7 @@ class Uploader():
         self.se_processor = SamplingEventProcessor(self._dao, self._event_set)
         self.os_processor = OriginalSampleProcessor(self._dao, self._event_set)
         self.os_processor.sampling_event_processor = self.se_processor
-        self.ds_processor = DerivedSampleProcessor(self._dao, self._event_set)
+        self.ds_processor = DerivativeSampleProcessor(self._dao, self._event_set)
         self.ad_processor = AssayDataProcessor(self._dao, self._event_set)
 
         api_response = self._dao.create_event_set(event_set_id)
@@ -274,17 +274,17 @@ class Uploader():
         original_sample = self.os_processor.process_original_sample(values, o_sample, o_existing)
 
 
-        d_sample = self.ds_processor.create_derived_sample_from_values(values)
+        d_sample = self.ds_processor.create_derivative_sample_from_values(values)
 
-        dsamp = self.ds_processor.lookup_derived_sample(d_sample, values)
+        dsamp = self.ds_processor.lookup_derivative_sample(d_sample, values)
 
-        derived_sample = self.ds_processor.process_derived_sample(d_sample, dsamp, original_sample, values)
+        derivative_sample = self.ds_processor.process_derivative_sample(d_sample, dsamp, original_sample, values)
 
         ad_sample = self.ad_processor.create_assay_datum_from_values(values)
 
         adsamp = self.ad_processor.lookup_assay_datum(ad_sample, values)
 
-        self.ad_processor.process_assay_datum(ad_sample, adsamp, derived_sample, values)
+        self.ad_processor.process_assay_datum(ad_sample, adsamp, derivative_sample, values)
 
         #print(existing)
         #print(sampling_event)

@@ -1,9 +1,9 @@
     get:
       tags:
-        - derivedSample
-      summary: fetches one or more derivedSamples by property value of associated original samples
+        - derivativeSample
+      summary: fetches one or more derivativeSamples by property value of associated original samples
       description: ''
-      operationId: downloadDerivedSamplesByOsAttr
+      operationId: downloadDerivativeSamplesByOsAttr
       produces:
         - application/json
       parameters:
@@ -26,4 +26,4 @@
         '200':
           description: successful operation
           schema:
-            $ref: './swagger/definitions/derived_sample.yaml#/definitions/DerivedSamples'
+            $ref: './swagger/definitions/derivative_sample.yaml#/definitions/DerivativeSamples'

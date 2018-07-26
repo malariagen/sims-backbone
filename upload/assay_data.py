@@ -77,9 +77,9 @@ class AssayDataProcessor(BaseEntity):
         #    print('Not found {}'.format(samp))
         return existing
 
-    def process_assay_datum(self, samp, existing, derived_sample, values):
+    def process_assay_datum(self, samp, existing, derivative_sample, values):
 
-        #print('process_assay data {} {} {} {}'.format(samp, existing, derived_sample, values))
+        #print('process_assay data {} {} {} {}'.format(samp, existing, derivative_sample, values))
 
         if existing:
             ret = self.merge_assay_data(existing, samp, values)
@@ -89,7 +89,7 @@ class AssayDataProcessor(BaseEntity):
                 return None
 
             try:
-                samp.derived_sample_id = derived_sample.derived_sample_id
+                samp.derivative_sample_id = derivative_sample.derivative_sample_id
                 created = self._dao.create_assay_datum(samp)
 
                 ret = created
@@ -167,21 +167,21 @@ class AssayDataProcessor(BaseEntity):
                 change_reasons.append("Adding ident {}".format(new_ident))
                 existing.attrs.append(new_ident)
 
-        if samp.derived_sample_id != existing.derived_sample_id:
+        if samp.derivative_sample_id != existing.derivative_sample_id:
             #print(existing)
             #print(samp)
-            if existing.derived_sample_id:
-                se_existing = self._dao.download_derived_sample(existing.derived_sample_id)
-                if samp.derived_sample_id:
-                    se_samp = self._dao.download_derived_sample(samp.derived_sample_id)
-                    #se = self.merge_derived_samples(se_samp, se_existing, values)
-                    print('Need to merge derived samples? {} {} {}'.format(se_samp, se_existing,
+            if existing.derivative_sample_id:
+                se_existing = self._dao.download_derivative_sample(existing.derivative_sample_id)
+                if samp.derivative_sample_id:
+                    se_samp = self._dao.download_derivative_sample(samp.derivative_sample_id)
+                    #se = self.merge_derivative_samples(se_samp, se_existing, values)
+                    print('Need to merge derivative samples? {} {} {}'.format(se_samp, se_existing,
                                                                          values))
                     #print(se)
             else:
-                existing.derived_sample_id = samp.derived_sample_id
+                existing.derivative_sample_id = samp.derivative_sample_id
             changed = True
-            change_reasons.append('Set derived sample')
+            change_reasons.append('Set derivative sample')
 
         #print('\n'.join(change_reasons))
 

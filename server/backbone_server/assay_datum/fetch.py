@@ -2,7 +2,7 @@ from swagger_server.models.attr import Attr
 from swagger_server.models.assay_datum import AssayDatum
 from backbone_server.errors.missing_key_exception import MissingKeyException
 
-from backbone_server.derived_sample.fetch import DerivedSampleFetch
+from backbone_server.derivative_sample.fetch import DerivativeSampleFetch
 
 import logging
 
@@ -30,24 +30,24 @@ class AssayDatumFetch():
         return attrs
 
     @staticmethod
-    def fetch(cursor, assay_datum_id, derived_samples=None):
+    def fetch(cursor, assay_datum_id, derivative_samples=None):
 
         if not assay_datum_id:
             return None
 
-        stmt = '''SELECT assay_data.id, derived_sample_id, ebi_run_acc
+        stmt = '''SELECT assay_data.id, derivative_sample_id, ebi_run_acc
         FROM assay_data
         WHERE assay_data.id = %s'''
         cursor.execute( stmt, (assay_datum_id,))
 
         assay_datum = None
 
-        for (assay_datum_id, derived_sample_id,
+        for (assay_datum_id, derivative_sample_id,
              ebi_run_acc) in cursor:
             assay_datum = AssayDatum(str(assay_datum_id),
                                             ebi_run_acc=ebi_run_acc)
-            if derived_sample_id:
-                assay_datum.derived_sample_id = str(derived_sample_id)
+            if derivative_sample_id:
+                assay_datum.derivative_sample_id = str(derivative_sample_id)
 
         if not assay_datum:
             return assay_datum
@@ -61,15 +61,15 @@ class AssayDatumFetch():
     def load_assay_data(cursor, all_attrs=True):
 
         assay_data = []
-        derived_sample_list = []
+        derivative_sample_list = []
 
-        for (assay_datum_id, derived_sample_id, ebi_run_acc) in cursor:
+        for (assay_datum_id, derivative_sample_id, ebi_run_acc) in cursor:
             assay_datum = AssayDatum(str(assay_datum_id),
                                              ebi_run_acc=ebi_run_acc)
-            if derived_sample_id:
-                assay_datum.derived_sample_id = str(derived_sample_id)
-                if not str(derived_sample_id) in derived_sample_list:
-                    derived_sample_list.append(str(derived_sample_id))
+            if derivative_sample_id:
+                assay_datum.derivative_sample_id = str(derivative_sample_id)
+                if not str(derivative_sample_id) in derivative_sample_list:
+                    derivative_sample_list.append(str(derivative_sample_id))
 
             assay_data.append(assay_datum)
 
@@ -77,10 +77,10 @@ class AssayDatumFetch():
             assay_datum.attrs = AssayDatumFetch.fetch_attrs(cursor,
                                                                               assay_datum.assay_datum_id)
 
-        derived_samples = {}
+        derivative_samples = {}
 
-        for derived_sample_id in derived_sample_list:
-                derived_sample = DerivedSampleFetch.fetch(cursor, derived_sample_id)
-                derived_samples[derived_sample_id] = derived_sample
+        for derivative_sample_id in derivative_sample_list:
+                derivative_sample = DerivativeSampleFetch.fetch(cursor, derivative_sample_id)
+                derivative_samples[derivative_sample_id] = derivative_sample
 
-        return assay_data, derived_samples
+        return assay_data, derivative_samples

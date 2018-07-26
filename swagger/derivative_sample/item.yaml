@@ -1,15 +1,15 @@
     get:
       tags:
-        - derivedSample
-      summary: fetches an DerivedSample
+        - derivativeSample
+      summary: fetches an DerivativeSample
       description: ''
-      operationId: downloadDerivedSample
+      operationId: downloadDerivativeSample
       produces:
         - application/json
       parameters:
-        - name: derivedSampleId
+        - name: derivativeSampleId
           in: path
-          description: ID of DerivedSample to fetch
+          description: ID of DerivativeSample to fetch
           required: true
           type: string
 #          format: uuid
@@ -17,50 +17,50 @@
         '200':
           description: successful operation
           schema:
-            $ref: './swagger/definitions/derived_sample.yaml#/definitions/DerivedSample'
+            $ref: './swagger/definitions/derivative_sample.yaml#/definitions/DerivativeSample'
     put:
       tags:
-        - derivedSample
-      summary: updates an DerivedSample
+        - derivativeSample
+      summary: updates an DerivativeSample
       description: ''
-      operationId: updateDerivedSample
+      operationId: updateDerivativeSample
       produces:
         - application/json
       consumes:
         - application/json
       parameters:
-        - name: derivedSampleId
+        - name: derivativeSampleId
           in: path
-          description: ID of DerivedSample to update
+          description: ID of DerivativeSample to update
           required: true
           type: string
 #          format: uuid
         - in: body
-          name: derivedSample
+          name: derivativeSample
           required: true
           schema:
-            $ref: './swagger/definitions/derived_sample.yaml#/definitions/DerivedSample'
+            $ref: './swagger/definitions/derivative_sample.yaml#/definitions/DerivativeSample'
       responses:
         '200':
           description: successful operation
           schema:
-            $ref: './swagger/definitions/derived_sample.yaml#/definitions/DerivedSample'
+            $ref: './swagger/definitions/derivative_sample.yaml#/definitions/DerivativeSample'
         '404':
-          description: DerivedSample not found
+          description: DerivativeSample not found
           schema:
               type: string
     delete:
       tags:
-        - derivedSample
-      summary: deletes an DerivedSample
+        - derivativeSample
+      summary: deletes an DerivativeSample
       description: ''
-      operationId: deleteDerivedSample
+      operationId: deleteDerivativeSample
       produces:
         - application/json
       parameters:
-        - name: derivedSampleId
+        - name: derivativeSampleId
           in: path
-          description: ID of DerivedSample to fetch
+          description: ID of DerivativeSample to fetch
           required: true
           type: string
 #          format: uuid
@@ -68,4 +68,4 @@
         '200':
           description: successful operation
         '404':
-          description: DerivedSample not found
+          description: DerivativeSample not found
