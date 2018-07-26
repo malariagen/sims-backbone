@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, AfterContentInit, OnChanges, SimpleChanges } from '@angular/core';
-import { AssayData, DerivedSamples, OriginalSamples, SamplingEvent, SamplingEvents } from '../typescript-angular-client';
+import { AssayData, DerivativeSamples, OriginalSamples, SamplingEvent, SamplingEvents } from '../typescript-angular-client';
 
 import * as d3 from 'd3';
 
@@ -17,7 +17,7 @@ export class SampleOverviewComponent implements AfterContentInit, OnChanges {
   assayData: AssayData;
 
   @Input()
-  derivedSamples: DerivedSamples;
+  derivativeSamples: DerivativeSamples;
 
   @Input()
   originalSamples: OriginalSamples;
@@ -69,23 +69,23 @@ export class SampleOverviewComponent implements AfterContentInit, OnChanges {
       return;
     }
 
-    if (this.derivedSamples) {
-      this.derivedSamples.derived_samples.forEach(element => {
+    if (this.derivativeSamples) {
+      this.derivativeSamples.derivative_samples.forEach(element => {
         let label: string;
         element.attrs.forEach(attr => {
-          if (attr.attr_type == 'derived_sample_source') {
+          if (attr.attr_type == 'derivative_sample_source') {
             label = attr.attr_value;
           }
 
         });
         nodes_data.push({
-          "name": element.derived_sample_id,
-          "type": "derived",
+          "name": element.derivative_sample_id,
+          "type": "derivative",
           "label": label
         });
         links_data.push({
           "source": element.original_sample_id,
-          "target": element.derived_sample_id,
+          "target": element.derivative_sample_id,
           "type": "original"
         })
       });
@@ -107,7 +107,7 @@ export class SampleOverviewComponent implements AfterContentInit, OnChanges {
           "label": label
         });
         links_data.push({
-          "source": element.derived_sample_id,
+          "source": element.derivative_sample_id,
           "target": element.assay_datum_id
         })
       })
@@ -134,7 +134,7 @@ export class SampleOverviewComponent implements AfterContentInit, OnChanges {
     function nodeColour(d) {
       if (d.type == "original") {
         return "blue";
-      } else if (d.type == "derived") {
+      } else if (d.type == "derivative") {
         return "green";
       } else {
         return "red";

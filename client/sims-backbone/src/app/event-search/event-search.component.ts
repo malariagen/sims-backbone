@@ -3,14 +3,14 @@ import { SamplingEventService } from '../typescript-angular-client/api/samplingE
 import { MetadataService } from '../typescript-angular-client/api/metadata.service';
 
 import { SamplingEvents } from '../typescript-angular-client/model/samplingEvents';
-import { DerivedSampleService, AssayDataService, AssayData, OriginalSampleService, OriginalSamples, DerivedSamples } from '../typescript-angular-client';
+import { DerivativeSampleService, AssayDataService, AssayData, OriginalSampleService, OriginalSamples, DerivativeSamples } from '../typescript-angular-client';
 
 
 @Component({
   selector: 'app-event-search',
   providers: [
     SamplingEventService, MetadataService,
-    OriginalSampleService, DerivedSampleService, AssayDataService],
+    OriginalSampleService, DerivativeSampleService, AssayDataService],
   templateUrl: './event-search.component.html',
   styleUrls: ['./event-search.component.scss']
 })
@@ -18,7 +18,7 @@ export class EventSearchComponent implements OnInit {
 
   originalSamples: OriginalSamples;
   samplingEvents: SamplingEvents;
-  derivedSamples: DerivedSamples;
+  derivativeSamples: DerivativeSamples;
   assayData: AssayData;
   attr_type: string;
   attr_value: string;
@@ -29,7 +29,7 @@ export class EventSearchComponent implements OnInit {
 
   constructor(private sampleService: SamplingEventService, private metadataService: MetadataService,
     private originalSampleService: OriginalSampleService,
-    private derivedSampleService: DerivedSampleService, private assayDataService: AssayDataService) { }
+    private derivativeSampleService: DerivativeSampleService, private assayDataService: AssayDataService) { }
 
   ngOnInit() {
 
@@ -49,8 +49,8 @@ export class EventSearchComponent implements OnInit {
         this.originalSampleService.downloadOriginalSamplesByAttr(this.attr_type, this.attr_value).subscribe(originalSamples => {
           this.originalSamples = originalSamples;
 
-          this.derivedSampleService.downloadDerivedSamplesByOsAttr(this.attr_type, this.attr_value).subscribe(derivedSamples => {
-            this.derivedSamples = derivedSamples;
+          this.derivativeSampleService.downloadDerivativeSamplesByOsAttr(this.attr_type, this.attr_value).subscribe(derivativeSamples => {
+            this.derivativeSamples = derivativeSamples;
 
             this.assayDataService.downloadAssayDataByOsAttr(this.attr_type, this.attr_value).subscribe(assayData => {
               this.assayData = assayData;
