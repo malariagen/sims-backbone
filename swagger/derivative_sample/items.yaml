@@ -1,0 +1,36 @@
+  get:
+      tags:
+        - DerivativeSample
+      summary: fetches DerivativeSamples
+      description: ''
+      operationId: downloadDerivativeSamples
+      produces:
+        - application/json
+      parameters:
+        - name: filter
+          in: query
+          description: search filter e.g. studyId:0000, attr:name:value, location:locationId, taxa:taxId, eventSet:setName
+          required: false
+          type: string
+        - name: start
+          in: query
+          description: for pagination start the result set at a record x
+          required: false
+          type: integer
+        - name: count
+          in: query
+          description: for pagination the number of entries to return
+          required: false
+          type: integer
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: './swagger/definitions/derivative_sample.yaml#/definitions/DerivativeSamples'
+        '422':
+          description: 'processing error'
+          schema:
+            type: string
+
+
+
