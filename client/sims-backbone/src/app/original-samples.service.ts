@@ -1,7 +1,10 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Component } from '@angular/core';
 import { OriginalSampleService, OriginalSamples } from './typescript-angular-client';
 import { Observable } from 'rxjs';
 
+@Component({
+  providers: [OriginalSampleService]
+})
 @Injectable({
   providedIn: 'root'
 })

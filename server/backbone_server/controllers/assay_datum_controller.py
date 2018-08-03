@@ -33,7 +33,7 @@ class AssayDatumController(BaseController):
 
         Create a AssayDatum # noqa: E501
 
-        :param assayDatum: The derived sample to create
+        :param assayDatum: The assay datum to create
         :type assayDatum: dict | bytes
 
         :rtype: AssayDatum
@@ -135,7 +135,7 @@ class AssayDatumController(BaseController):
 
 
     def download_assay_data_by_os_attr(self, propName, propValue, studyName=None, user=None, auths=None):  # noqa: E501
-        """fetches one or more assayData by property value of associated derived samples
+        """fetches one or more assayData by property value of associated original samples
 
          # noqa: E501
 

@@ -81,7 +81,7 @@ class OriginalSampleMerge():
 
         with self._connection:
             with self._connection.cursor() as cursor:
-                stmt = '''UPDATE derived_samples SET original_sample_id = %s WHERE
+                stmt = '''UPDATE derivative_samples SET original_sample_id = %s WHERE
                 original_sample_id = %s'''
                 cursor.execute(stmt, (original_sample1.original_sample_id,
                                       original_sample2.original_sample_id))

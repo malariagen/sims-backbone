@@ -8,9 +8,9 @@ from swagger_client.rest import ApiException
 
 from base_entity import BaseEntity
 
-class DerivedSampleProcessor(BaseEntity):
+class DerivativeSampleProcessor(BaseEntity):
 
-    _derived_sample_cache = {}
+    _derivative_sample_cache = {}
 
     def __init__(self, dao, event_set):
         super().__init__(dao, event_set)
@@ -18,18 +18,18 @@ class DerivedSampleProcessor(BaseEntity):
         self._dao = dao
         self._event_set = event_set
 
-    def create_derived_sample_from_values(self, values):
+    def create_derivative_sample_from_values(self, values):
 
-        d_sample = swagger_client.DerivedSample(None)
+        d_sample = swagger_client.DerivativeSample(None)
 
         idents = []
-        if 'derived_sample_id' in values:
-            idents.append(swagger_client.Attr('derived_sample_id', values['derived_sample_id'],
+        if 'derivative_sample_id' in values:
+            idents.append(swagger_client.Attr('derivative_sample_id', values['derivative_sample_id'],
                                               self._event_set))
 
-        if 'derived_sample_source' in values:
-            idents.append(swagger_client.Attr('derived_sample_source',
-                                              values['derived_sample_source'],
+        if 'derivative_sample_source' in values:
+            idents.append(swagger_client.Attr('derivative_sample_source',
+                                              values['derivative_sample_source'],
                                               self._event_set))
 
         if 'sanger_sample_id' in values:
@@ -48,14 +48,14 @@ class DerivedSampleProcessor(BaseEntity):
 
         return d_sample
 
-    def lookup_derived_sample(self, samp, values):
+    def lookup_derivative_sample(self, samp, values):
 
         existing = None
 
         if 'unique_ds_id' in values:
-            if values['unique_ds_id'] in self._derived_sample_cache:
-                existing_sample_id = self._derived_sample_cache[values['unique_ds_id']]
-                existing = self._dao.download_derived_sample(existing_sample_id)
+            if values['unique_ds_id'] in self._derivative_sample_cache:
+                existing_sample_id = self._derivative_sample_cache[values['unique_ds_id']]
+                existing = self._dao.download_derivative_sample(existing_sample_id)
                 return existing
 
         #print ("not in cache: {}".format(samp))
@@ -65,17 +65,17 @@ class DerivedSampleProcessor(BaseEntity):
                 try:
                     #print("Looking for {} {}".format(ident.attr_type, ident.attr_value))
 
-                    found_events = self._dao.download_derived_samples_by_attr(ident.attr_type,
+                    found_events = self._dao.download_derivative_samples_by_attr(ident.attr_type,
                                                                               ident.attr_value)
 
-                    for found in found_events.derived_samples:
+                    for found in found_events.derivative_samples:
                         #Only here if found - otherwise 404 exception
-                        if existing and existing.derived_sample_id != found.derived_sample_id:
+                        if existing and existing.derivative_sample_id != found.derivative_sample_id:
                             msg = ("Merging into {} using {}"
                                    .format(existing.sampling_event_id,
                                            ident.attr_type), values)
                             print(msg)
-                            found = self.merge_derived_samples(existing, found, values)
+                            found = self.merge_derivative_samples(existing, found, values)
                         existing = found
                         #print ("found: {} {}".format(samp, found))
                 except ApiException as err:
@@ -87,9 +87,9 @@ class DerivedSampleProcessor(BaseEntity):
         #    print('Not found {}'.format(samp))
         return existing
 
-    def process_derived_sample(self, samp, existing, original_sample, values):
+    def process_derivative_sample(self, samp, existing, original_sample, values):
 
-        #print('process_derived_sample {} {} {}'.format(values, original_sample, existing))
+        #print('process_derivative_sample {} {} {}'.format(values, original_sample, existing))
 
         if 'sanger_lims_id' in values and values['sanger_lims_id']:
             if not existing:
@@ -97,7 +97,7 @@ class DerivedSampleProcessor(BaseEntity):
                 return None
 
         if existing:
-            ret = self.merge_derived_samples(existing, samp, values)
+            ret = self.merge_derivative_samples(existing, samp, values)
         else:
             #print("Creating {}".format(samp))
             if len(samp.attrs) == 0:
@@ -106,7 +106,7 @@ class DerivedSampleProcessor(BaseEntity):
             try:
                 if original_sample:
                     samp.original_sample_id = original_sample.original_sample_id
-                created = self._dao.create_derived_sample(samp)
+                created = self._dao.create_derivative_sample(samp)
 
                 ret = created
 
@@ -116,31 +116,31 @@ class DerivedSampleProcessor(BaseEntity):
                 sys.exit(1)
 
             if 'unique_ds_id' in values:
-                self._derived_sample_cache[values['unique_ds_id']] = created.derived_sample_id
+                self._derivative_sample_cache[values['unique_ds_id']] = created.derivative_sample_id
 
         return ret
 
-    def merge_derived_samples(self, existing, parsed, values):
+    def merge_derivative_samples(self, existing, parsed, values):
 
         if not parsed:
             return existing
 
-        if parsed.derived_sample_id:
+        if parsed.derivative_sample_id:
             #print('Merging via service {} {}'.format(existing, parsed))
             try:
 
-                ret = self._dao.merge_derived_samples(existing.derived_sample_id,
-                                                      parsed.derived_sample_id)
+                ret = self._dao.merge_derivative_samples(existing.derivative_sample_id,
+                                                      parsed.derivative_sample_id)
 
             except ApiException as err:
-                msg = "Error updating merged derived sample {} {} {} {}".format(values, parsed, existing, err)
+                msg = "Error updating merged derivative sample {} {} {} {}".format(values, parsed, existing, err)
                 print(msg)
                 self._logger.error(msg)
                 sys.exit(1)
 
             return ret
 
-        existing, changed = self.merge_derived_sample_objects(existing, parsed,
+        existing, changed = self.merge_derivative_sample_objects(existing, parsed,
                                                               values)
         ret = existing
 
@@ -148,9 +148,9 @@ class DerivedSampleProcessor(BaseEntity):
 
             #print("Updating {} to {}".format(parsed, existing))
             try:
-                existing = self._dao.update_derived_sample(existing.derived_sample_id, existing)
+                existing = self._dao.update_derivative_sample(existing.derivative_sample_id, existing)
             except ApiException as err:
-                msg = "Error updating merged derived sample {} {} {} {}".format(values, parsed, existing, err)
+                msg = "Error updating merged derivative sample {} {} {} {}".format(values, parsed, existing, err)
                 print(msg)
                 self._logger.error(msg)
                 sys.exit(1)
@@ -161,7 +161,7 @@ class DerivedSampleProcessor(BaseEntity):
 
         return existing
 
-    def merge_derived_sample_objects(self, existing, samp, values):
+    def merge_derivative_sample_objects(self, existing, samp, values):
 
         orig = deepcopy(existing)
         changed = False

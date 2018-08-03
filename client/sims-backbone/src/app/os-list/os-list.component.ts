@@ -22,6 +22,9 @@ export class OsListComponent implements OnInit, AfterViewInit {
   _studyName: string;
   _eventSetName: string;
 
+  @Input()
+  filter: string;
+
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatTable) table;
 
@@ -64,16 +67,6 @@ export class OsListComponent implements OnInit, AfterViewInit {
         .subscribe();
     }
       
-  }
-
-  @Input()
-  filter: string;
-
-  @Input()
-  set eventSetName(eventSetName) {
-    this._eventSetName = eventSetName;
-    this.downloadFileName = eventSetName + '_sampling_events.csv';
-    this.jsonDownloadFileName = eventSetName + '_sampling_events.json';
   }
 
   @Input()

@@ -18,6 +18,10 @@ class OriginalSampleDelete():
         with self._connection:
             with self._connection.cursor() as cursor:
 
+                stmt = '''UPDATE derivative_samples SET original_sample_id = NULL WHERE original_sample_id = %s'''
+
+                cursor.execute( stmt, (original_sample_id,))
+
                 stmt = '''DELETE FROM original_sample_attrs WHERE original_sample_id = %s'''
 
                 cursor.execute( stmt, (original_sample_id,))

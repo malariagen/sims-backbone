@@ -1,39 +1,39 @@
 import six
 
-from swagger_server.models.derived_sample import DerivedSample  # noqa: E501
-from swagger_server.models.derived_samples import DerivedSamples  # noqa: E501
+from swagger_server.models.derivative_sample import DerivativeSample  # noqa: E501
+from swagger_server.models.derivative_samples import DerivativeSamples  # noqa: E501
 from swagger_server import util
 
 import logging
 
-from backbone_server.controllers.derived_sample_controller  import DerivedSampleController
+from backbone_server.controllers.derivative_sample_controller  import DerivativeSampleController
 
 from local.base_local_api import BaseLocalApi
 
-class LocalDerivedSampleApi(BaseLocalApi):
+class LocalDerivativeSampleApi(BaseLocalApi):
 
     def __init__(self, api_client, user, auths, method):
 
         super().__init__(api_client, user, auths, method)
 
-        self.derived_sample_controller = DerivedSampleController()
+        self.derivative_sample_controller = DerivativeSampleController()
 
-    def create_derived_sample(self, samplingEvent):
+    def create_derivative_sample(self, samplingEvent):
         """
-        create_derived_sample
+        create_derivative_sample
         Create a samplingEvent
         :param samplingEvent: 
         :type samplingEvent: dict | bytes
 
-        :rtype: DerivedSample
+        :rtype: DerivativeSample
         """
 
-        (ret, retcode) = self.derived_sample_controller.create_derived_sample(samplingEvent, self._user,
+        (ret, retcode) = self.derivative_sample_controller.create_derivative_sample(samplingEvent, self._user,
                                                                self.auth_tokens())
 
-        return self.create_response(ret, retcode, 'DerivedSample')
+        return self.create_response(ret, retcode, 'DerivativeSample')
 
-    def delete_derived_sample(self, samplingEventId):
+    def delete_derivative_sample(self, samplingEventId):
         """
         deletes an samplingEvent
         
@@ -42,43 +42,43 @@ class LocalDerivedSampleApi(BaseLocalApi):
 
         :rtype: None
         """
-        (ret, retcode) = self.derived_sample_controller.delete_derived_sample(samplingEventId, self._user,
+        (ret, retcode) = self.derivative_sample_controller.delete_derivative_sample(samplingEventId, self._user,
                                                                self.auth_tokens())
 
         return self.create_response(ret, retcode)
 
 
-    def download_derived_sample(self, derivedSampleId):
+    def download_derivative_sample(self, derivativeSampleId):
         """
         fetches an samplingEvent
         
         :param samplingEventId: ID of samplingEvent to fetch
         :type samplingEventId: str
 
-        :rtype: DerivedSample
+        :rtype: DerivativeSample
         """
-        (ret, retcode) = self.derived_sample_controller.download_derived_sample(derivedSampleId, self._user,
+        (ret, retcode) = self.derivative_sample_controller.download_derivative_sample(derivativeSampleId, self._user,
                                                                  self.auth_tokens())
 
-        return self.create_response(ret, retcode, 'DerivedSample')
+        return self.create_response(ret, retcode, 'DerivativeSample')
 
-    def download_derived_samples(self, filter=None, start=None, count=None):
+    def download_derivative_samples(self, filter=None, start=None, count=None):
         """
         fetches an samplingEvent
         
         :param samplingEventId: ID of samplingEvent to fetch
         :type samplingEventId: str
 
-        :rtype: DerivedSample
+        :rtype: DerivativeSample
         """
-        (ret, retcode) = self.derived_sample_controller.download_derived_samples(filter, start,
+        (ret, retcode) = self.derivative_sample_controller.download_derivative_samples(filter, start,
                                                                                  count, self._user,
                                                                                  self.auth_tokens())
 
-        return self.create_response(ret, retcode, 'DerivedSamples')
+        return self.create_response(ret, retcode, 'DerivativeSamples')
 
 
-    def download_derived_samples_by_attr(self, propName, propValue, study_name=None):
+    def download_derivative_samples_by_attr(self, propName, propValue, study_name=None):
         """
         fetches a samplingEvent by property value
         
@@ -87,15 +87,15 @@ class LocalDerivedSampleApi(BaseLocalApi):
         :param propValue: matching value of property to search
         :type propValue: str
 
-        :rtype: DerivedSamples
+        :rtype: DerivativeSamples
         """
-        (ret, retcode) = self.derived_sample_controller.download_derived_samples_by_attr(propName, propValue,
+        (ret, retcode) = self.derivative_sample_controller.download_derivative_samples_by_attr(propName, propValue,
                                                                                self._user,
                                                                                self.auth_tokens())
 
-        return self.create_response(ret, retcode, 'DerivedSamples')
+        return self.create_response(ret, retcode, 'DerivativeSamples')
 
-    def download_derived_samples_by_os_attr(self, propName, propValue, study_name=None):
+    def download_derivative_samples_by_os_attr(self, propName, propValue, study_name=None):
         """
         fetches a samplingEvent by property value
         
@@ -104,16 +104,16 @@ class LocalDerivedSampleApi(BaseLocalApi):
         :param propValue: matching value of property to search
         :type propValue: str
 
-        :rtype: DerivedSamples
+        :rtype: DerivativeSamples
         """
-        (ret, retcode) = self.derived_sample_controller.download_derived_samples_by_os_attr(propName, propValue,
+        (ret, retcode) = self.derivative_sample_controller.download_derivative_samples_by_os_attr(propName, propValue,
                                                                                self._user,
                                                                                self.auth_tokens())
 
-        return self.create_response(ret, retcode, 'DerivedSamples')
+        return self.create_response(ret, retcode, 'DerivativeSamples')
 
 
-    def update_derived_sample(self, derivedSampleId, derivedSample):
+    def update_derivative_sample(self, derivativeSampleId, derivativeSample):
         """
         updates an samplingEvent
         
@@ -122,11 +122,11 @@ class LocalDerivedSampleApi(BaseLocalApi):
         :param samplingEvent: 
         :type samplingEvent: dict | bytes
 
-        :rtype: DerivedSample
+        :rtype: DerivativeSample
         """
-        (ret, retcode) = self.derived_sample_controller.update_derived_sample(derivedSampleId,
-                                                                              derivedSample, self._user,
+        (ret, retcode) = self.derivative_sample_controller.update_derivative_sample(derivativeSampleId,
+                                                                              derivativeSample, self._user,
                                                                self.auth_tokens())
 
-        return self.create_response(ret, retcode, 'DerivedSample')
+        return self.create_response(ret, retcode, 'DerivativeSample')
 

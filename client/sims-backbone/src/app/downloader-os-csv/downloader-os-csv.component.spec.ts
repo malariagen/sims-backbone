@@ -1,6 +1,12 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { DownloaderOsCsvComponent } from './downloader-os-csv.component';
+import { HttpClientModule } from '@angular/common/http';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { OAuthService } from 'angular-oauth2-oidc';
+import { createOAuthServiceSpy } from '../../testing/index.spec';
+import { OriginalSamplesService } from '../original-samples.service';
+import { OriginalSampleService } from '../typescript-angular-client';
 
 describe('DownloaderOsCsvComponent', () => {
   let component: DownloaderOsCsvComponent;
@@ -8,7 +14,16 @@ describe('DownloaderOsCsvComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ DownloaderOsCsvComponent ]
+      imports: [
+        HttpClientModule,
+        HttpClientTestingModule,
+      ],
+      declarations: [ DownloaderOsCsvComponent ],
+      providers: [
+        { provide: OAuthService, useValue: createOAuthServiceSpy() },
+        { provide: OriginalSamplesService },
+        { provide: OriginalSampleService },
+      ]
     })
     .compileComponents();
   }));

@@ -3,7 +3,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { EventSearchComponent } from './event-search.component';
 import { MatSelect, MatOption, MatInput, MatLabel, MatInputModule, MatSelectModule } from '@angular/material';
 import { Component, Input } from '@angular/core';
-import { SamplingEvents, OriginalSamples, DerivedSamples, AssayData } from '../typescript-angular-client';
+import { SamplingEvents, OriginalSamples, DerivativeSamples, AssayData } from '../typescript-angular-client';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { asyncData } from '../../testing/index.spec';
@@ -16,7 +16,7 @@ class SampleOverviewStubComponent {
   
   @Input() assayData: AssayData;
 
-  @Input() derivedSamples: DerivedSamples;
+  @Input() derivativeSamples: DerivativeSamples;
 
   @Input() originalSamples: OriginalSamples;
 
