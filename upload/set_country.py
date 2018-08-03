@@ -81,6 +81,10 @@ class SetCountry(upload_ssr.Upload_SSR):
                     if found_events:
                         found = found_events.sampling_events[0]
 
+                except AttributeError as e:
+                    print(found_events)
+                    print(e)
+                    continue
                 except ApiException as e:
                     print("Exception when looking for event {} {} {} {}\n".format(id_type,
                                                                                   id_value,
@@ -142,7 +146,7 @@ class SetCountry(upload_ssr.Upload_SSR):
                 self._country_study_location_cache[study[:4]][country_value] = location
 
         else:
-            self._report("Unknown country {} in study {}".format(country_value, study), None)
+            self.os_processor.report("Unknown country {} in study {}".format(country_value, study), None)
 
         return location
 
@@ -157,7 +161,7 @@ class SetCountry(upload_ssr.Upload_SSR):
                 self._country_cache[country_value] = metadata
             except ApiException as e:
                 if country_value != 'nan':
-                    self.report("Exception when looking up country {} {}".format(country_value,
+                    self.os_processor.report("Exception when looking up country {} {}".format(country_value,
                                                                                  found), None)
                 return found
 
@@ -248,16 +252,16 @@ class SetCountry(upload_ssr.Upload_SSR):
 
         o_existing = self.os_processor.lookup_original_sample(o_sample, values)
 
-        if o_existing.sampling_event_id:
+        if o_existing and o_existing.sampling_event_id:
             item = self._dao.download_sampling_event(o_existing.sampling_event_id)
         else:
-            self.report("original sample not found - probably duplicate key", values)
+            self.os_processor.report("original sample not found - probably duplicate key", values)
             return None
 
         if item:
             item = self.set_country(item, values['iso2'], self._data_file, values)
         else:
-            self.report("sampling event not found - probably duplicate key", values)
+            self.os_processor.report("sampling event not found - probably duplicate key", values)
 
         return item
 

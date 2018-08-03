@@ -167,6 +167,7 @@ class OriginalSampleProcessor(BaseEntity):
 
         if parsed.original_sample_id:
             #print('Merging via service {} {}'.format(existing, parsed))
+            ret = existing
             try:
 
                 ret = self._dao.merge_original_samples(existing.original_sample_id,
@@ -176,7 +177,7 @@ class OriginalSampleProcessor(BaseEntity):
                 msg = "Error updating merged original sample {} {} {} {}".format(values, parsed, existing, err)
                 print(msg)
                 self._logger.error(msg)
-                sys.exit(1)
+                #sys.exit(1)
 
             return ret
 

@@ -140,6 +140,19 @@ class LocalBackboneDAO(AbstractBackboneDAO):
 
         return found_events
 
+    def download_sampling_events_by_os_attr(self, attr_type, attr_value):
+
+        found_events, retcode = self.se_api_instance.download_sampling_events_by_os_attr(attr_type,
+                                                                                            urllib.parse.quote_plus(attr_value),
+                                                                                            user=self._user, auths=self._auths)
+
+        self._logger.debug("GET /v1/samplingEvents/os/attr/{}/{} {}".format(attr_type,
+                                                                  attr_value, retcode))
+        if retcode >= 400:
+            raise ApiException(status=retcode, reason='')
+
+        return found_events
+
     def download_sampling_events_by_location(self, location_id):
 
         found_events, retcode = self.se_api_instance.download_sampling_events_by_location(location_id, start=0, count=0,
@@ -221,7 +234,7 @@ class LocalBackboneDAO(AbstractBackboneDAO):
                                                                             original_sample_id2,
                                                                                             user=self._user, auths=self._auths)
 
-        self._logger.debug("PUT /v1/originalSample/{}/{} {} {}".format(original_sample_id1,
+        self._logger.debug("PUT /v1/originalSample/{}/{} {}".format(original_sample_id1,
                                                                     original_sample_id2
                                                                   , retcode))
         if retcode >= 400:

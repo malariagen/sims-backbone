@@ -4,6 +4,10 @@
             "column": 2,
             "type": "string"
         },
+        "unique_os_id": {
+            "column": 2,
+            "type": "string"
+        },
         "sample_oxford_id": {
             "column": 3,
             "type": "string"
