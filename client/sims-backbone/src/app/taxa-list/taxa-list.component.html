@@ -12,9 +12,14 @@
         </a>
       </div>
       <div fxFlex="10%">
+        <a [routerLink]="['/taxa/ds', t.taxonomy_id]">
+          Derivative Samples
+        </a>
+      </div>
+      <div fxFlex="10%">
         {{t.rank}}
       </div>
-      <div fxFlex="80%">
+      <div fxFlex="60%">
         {{t.taxonomy_id}} {{t.name}}
       </div>
     </div>

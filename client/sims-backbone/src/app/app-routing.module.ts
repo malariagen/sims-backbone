@@ -22,6 +22,7 @@ import { ReportUncuratedLocationsComponent } from './report-uncurated-locations/
 import { ReportMultipleLocationGpsComponent } from './report-multiple-location-gps/report-multiple-location-gps.component';
 import { ReportMultipleLocationNamesComponent } from './report-multiple-location-names/report-multiple-location-names.component';
 import { TaxaOsListComponent } from './taxa-os-list/taxa-os-list.component';
+import { TaxaDsListComponent } from './taxa-ds-list/taxa-ds-list.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/studies', pathMatch: 'full' },
@@ -34,6 +35,7 @@ const routes: Routes = [
   { path: 'taxa', component: TaxaListComponent },
   { path: 'taxa/events/:taxaId', component: TaxaEventListComponent },
   { path: 'taxa/os/:taxaId', component: TaxaOsListComponent },
+  { path: 'taxa/ds/:taxaId', component: TaxaDsListComponent },
   { path: 'eventSets', component: EventSetListComponent },
   { path: 'eventSet/events/:eventSetId', component: EventSetEventListComponent },
   { path: 'eventSet/:eventSetId', component: EventSetEditComponent },
