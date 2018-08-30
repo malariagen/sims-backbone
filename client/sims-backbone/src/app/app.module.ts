@@ -73,6 +73,11 @@ import { OriginalSampleDisplayPipe } from './original-sample-display.pipe';
 import { TaxaOsListComponent } from './taxa-os-list/taxa-os-list.component';
 import { DownloaderOsCsvComponent } from './downloader-os-csv/downloader-os-csv.component';
 import { DownloaderOsJsonComponent } from './downloader-os-json/downloader-os-json.component';
+import { DsListComponent } from './ds-list/ds-list.component';
+import { TaxaDsListComponent } from './taxa-ds-list/taxa-ds-list.component';
+import { DownloaderDsCsvComponent } from './downloader-ds-csv/downloader-ds-csv.component';
+import { DownloaderDsJsonComponent } from './downloader-ds-json/downloader-ds-json.component';
+import { DerivativeSampleDisplayPipe } from './derivative-sample-display.pipe';
 
 export function getConfiguration(authService: AuthService) {
   return authService.getConfiguration();
@@ -118,7 +123,12 @@ export function getConfiguration(authService: AuthService) {
     OriginalSampleDisplayPipe,
     TaxaOsListComponent,
     DownloaderOsCsvComponent,
-    DownloaderOsJsonComponent
+    DownloaderOsJsonComponent,
+    DsListComponent,
+    TaxaDsListComponent,
+    DownloaderDsCsvComponent,
+    DownloaderDsJsonComponent,
+    DerivativeSampleDisplayPipe
   ],
   imports: [
     BrowserModule,

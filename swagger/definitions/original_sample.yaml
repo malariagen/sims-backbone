@@ -19,7 +19,7 @@ definitions:
           type: array
           items:
             type: string
-            description: 'Attr types used in this set of sampling events'
+            description: 'Attr types used in this set of OriginalSamples'
   OriginalSample:
     type: object
     description: 'Original sample details'

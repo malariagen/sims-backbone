@@ -12,6 +12,7 @@ from backbone_server.derivative_sample.put import DerivativeSamplePut
 from backbone_server.derivative_sample.get import DerivativeSampleGetById
 from backbone_server.derivative_sample.delete import DerivativeSampleDelete
 from backbone_server.derivative_sample.get_by_attr import DerivativeSampleGetByAttr
+from backbone_server.derivative_sample.get_by_taxa import DerivativeSampleGetByTaxa
 from backbone_server.derivative_sample.get_by_os_attr import DerivativeSampleGetByOsAttr
 
 from backbone_server.controllers.base_controller  import BaseController
@@ -104,6 +105,50 @@ class DerivativeSampleController(BaseController):
         return samp, retcode
 
 
+    def download_derivative_samples(self, search_filter, start, count, user = None, auths = None):
+        """
+        fetches derivativeSamples for a event_set
+        
+        :param event_set_id: event_set
+        :type event_set_id: str
+
+        :rtype: DerivativeSamples
+        """
+
+        retcode = 200
+        samp = None
+
+        if search_filter:
+            search_filter = urllib.parse.unquote_plus(search_filter)
+            options = search_filter.split(':')
+            if len(options) < 2:
+                samp = 'Filter must be of the form type:arg(s)'
+                retcode = 422
+                return samp, retcode
+            search_funcs = {
+                "taxa": self.download_derivative_samples_by_taxa,
+            }
+            func = search_funcs.get(options[0])
+            if func:
+                return func(options[1], start, count, user, auths)
+            elif options[0] == 'attr':
+                study_name = None
+                if len(options) > 3 and options[3]:
+                    study_name = options[3]
+                return self.download_derivative_samples_by_attr(options[1],
+                                                             options[2],
+                                                             study_name,
+                                                             user,
+                                                             auths)
+            else:
+                samp = 'Invalid filter option'
+                retcode = 422
+        else:
+            samp = 'filter is required'
+            retcode = 422
+
+        return samp, retcode
+
     def download_derivative_samples_by_attr(self, propName, propValue, studyName=None, user=None, auths=None):  # noqa: E501
         """fetches one or more DerivativeSample by property value
 
@@ -159,6 +204,30 @@ class DerivativeSampleController(BaseController):
             samp = get.get(propName, propValue)
         except MissingKeyException as dme:
             logging.getLogger(__name__).error("download_derivativeSample: {}".format(repr(dme)))
+            retcode = 404
+
+        return samp, retcode
+
+
+    def download_derivative_samples_by_taxa(self, taxaId, start, count, user = None, auths = None):
+        """
+        fetches derivativeSamples for a taxa
+        
+        :param taxaId: taxa
+        :type taxaId: str
+
+        :rtype: DerivativeSamples
+        """
+
+        get = DerivativeSampleGetByTaxa(self.get_connection())
+
+        retcode = 200
+        samp = None
+
+        try:
+            samp = get.get(taxaId, start, count)
+        except MissingKeyException as dme:
+            logging.getLogger(__name__).error("download_derivative_samples_by_taxa: {}".format(repr(dme)))
             retcode = 404
 
         return samp, retcode

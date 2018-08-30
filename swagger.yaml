@@ -85,12 +85,16 @@ paths:
     $ref: './swagger/original_sample/by_set.yaml'
   '/derivativeSample':
     $ref: './swagger/derivative_sample/create.yaml'
+  '/derivativeSamples':
+    $ref: './swagger/derivative_sample/items.yaml'
   '/derivativeSample/{derivativeSampleId}':
     $ref: './swagger/derivative_sample/item.yaml'
   '/derivativeSamples/attr/{propName}/{propValue}':
     $ref: './swagger/derivative_sample/by_attr.yaml'
   '/derivativeSamples/os/attr/{propName}/{propValue}':
     $ref: './swagger/derivative_sample/by_os_attr.yaml'
+  '/derivativeSamples/taxa/{taxaId}':
+    $ref: './swagger/derivative_sample/by_taxa.yaml'
   '/assayDatum':
     $ref: './swagger/assay_data/create.yaml'
   '/assayDatum/{assayDatumId}':
