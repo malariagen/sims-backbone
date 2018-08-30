@@ -12,8 +12,7 @@ from backbone_server.original_sample.get_by_attr import OriginalSampleGetByAttr
 from backbone_server.original_sample.get_by_location import OriginalSamplesGetByLocation
 from backbone_server.original_sample.get_by_study import OriginalSamplesGetByStudy
 from backbone_server.original_sample.get_by_taxa import OriginalSamplesGetByTaxa
-
-from backbone_server.event_set.get import EventSetGetById
+from backbone_server.original_sample.get_by_event_set import OriginalSamplesGetByEventSet
 
 from swagger_server.models.original_samples import OriginalSamples
 
@@ -165,11 +164,9 @@ class OriginalSampleController(BaseController):
         samp = None
 
         try:
-            get = EventSetGetById(self.get_connection())
+            get = OriginalSamplesGetByEventSet(self.get_connection())
             event_set_id = urllib.parse.unquote_plus(event_set_id)
-            evntSt = get.get(event_set_id, start, count)
-
-            samp = evntSt.members
+            samp = get.get(event_set_id, start, count)
 
         except MissingKeyException as dme:
             logging.getLogger(__name__).error("download_original_samples_by_event_set: {}".format(repr(dme)))

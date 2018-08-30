@@ -582,6 +582,58 @@ class TestOriginalSample(TestBase):
 
             se_api_instance.delete_sampling_event(created_se.sampling_event_id)
 
+            location_api_instance.delete_location(loc.location_id)
+
+            api_instance.delete_original_sample(created.original_sample_id)
+
+        except ApiException as error:
+            self.check_api_exception(api_factory, "OriginalSampleApi->create_original_sample", error)
+
+
+    """
+    """
+    def test_os_event_set_lookup(self, api_factory):
+
+        api_instance = api_factory.OriginalSampleApi()
+        se_api_instance = api_factory.SamplingEventApi()
+        es_api_instance = api_factory.EventSetApi()
+
+        try:
+
+            event_set_name = 'test_os_event_set_lookup'
+
+            created_es = es_api_instance.create_event_set(event_set_name)
+
+            sampling_event = swagger_client.SamplingEvent(None, '4026-MD-UP', date(2017, 10, 10),
+                                                doc_accuracy='month')
+
+            created_se = se_api_instance.create_sampling_event(sampling_event)
+
+            created_set = es_api_instance.create_event_set_item(event_set_name, created_se.sampling_event_id)
+
+            print(created_set)
+            samp = swagger_client.OriginalSample(None, study_name='4024-MD-UP')
+            samp.sampling_event_id = created_se.sampling_event_id
+
+            samp.attrs = [
+                swagger_client.Attr (attr_type='oxford', attr_value='12345678',
+                                           attr_source='upd')
+            ]
+            created = api_instance.create_original_sample(samp)
+
+            results = api_instance.download_original_samples_by_event_set(event_set_name)
+            looked_up = results.original_samples[0]
+
+            fetched = api_instance.download_original_sample(looked_up.original_sample_id)
+
+            assert created == fetched, "create response != download response"
+
+            assert results.attr_types == ['oxford']
+
+            se_api_instance.delete_sampling_event(created_se.sampling_event_id)
+
+            es_api_instance.delete_event_set(event_set_name)
+
             api_instance.delete_original_sample(created.original_sample_id)
 
         except ApiException as error:
