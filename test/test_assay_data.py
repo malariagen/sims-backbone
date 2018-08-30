@@ -121,6 +121,90 @@ class TestAssayDatum(TestBase):
         except ApiException as error:
             self.check_api_exception(api_factory, "AssayDataApi->create_assay_datum", error)
 
+
+    """
+    """
+    def test_ad_os_attr_lookup_missing(self, api_factory):
+
+        api_instance = api_factory.AssayDataApi()
+
+        try:
+
+            if api_factory.is_authorized(None):
+                with pytest.raises(ApiException, status=404):
+                    results = api_instance.download_assay_data_by_os_attr('ds_os_attr',
+                                                                          'ad123456_404')
+            else:
+                with pytest.raises(ApiException, status=403):
+                    results = api_instance.download_assay_data_by_os_attr('ds_os_attr',
+                                                                          'ad123456_403')
+
+        except ApiException as error:
+            self.check_api_exception(api_factory, "AssayDataApi->update_assay_datum", error)
+
+    """
+    """
+    def test_ad_os_attr_lookup(self, api_factory):
+
+        api_instance = api_factory.AssayDataApi()
+
+        os_api_instance = api_factory.OriginalSampleApi()
+        ds_api_instance = api_factory.DerivativeSampleApi()
+
+        try:
+
+
+            samp = swagger_client.OriginalSample(None, study_name='5000-MD-UP')
+            samp.attrs = [
+                swagger_client.Attr (attr_type='ds_os_attr', attr_value='ad123456')
+            ]
+            created = os_api_instance.create_original_sample(samp)
+            samp1 = swagger_client.DerivativeSample(None)
+            samp2 = swagger_client.DerivativeSample(None)
+
+            samp1.attrs = [
+                swagger_client.Attr (attr_type='test1', attr_value='test1',
+                                          attr_source='ds_os_attr')
+            ]
+            samp2.attrs = [
+                swagger_client.Attr (attr_type='test2', attr_value='test2',
+                                          attr_source='ds_os_attr')
+            ]
+            samp1.original_sample_id = created.original_sample_id
+            samp2.original_sample_id = created.original_sample_id
+            created1 = ds_api_instance.create_derivative_sample(samp1)
+            created2 = ds_api_instance.create_derivative_sample(samp2)
+
+            ad_samp = swagger_client.AssayDatum(None)
+            ad_samp.attrs = [
+                swagger_client.Attr (attr_type='oxford', attr_value='123456')
+            ]
+            ad_samp.derivative_sample_id = created1.derivative_sample_id
+            ad_created = api_instance.create_assay_datum(ad_samp)
+
+            results = ds_api_instance.download_derivative_samples_by_os_attr('ds_os_attr', 'ad123456')
+
+            results = api_instance.download_assay_data_by_os_attr('ds_os_attr', 'ad123456')
+            looked_up = results.assay_data[0]
+
+            fetched = api_instance.download_assay_datum(looked_up.assay_datum_id)
+
+            assert ad_created == fetched, "create response != download response"
+
+            fetched.assay_datum_id = None
+            assert ad_samp == fetched, "upload != download response"
+
+            assert looked_up == ad_created
+
+            api_instance.delete_assay_datum(ad_created.assay_datum_id)
+            ds_api_instance.delete_derivative_sample(created1.derivative_sample_id)
+            ds_api_instance.delete_derivative_sample(created2.derivative_sample_id)
+            os_api_instance.delete_original_sample(created.original_sample_id)
+
+
+        except ApiException as error:
+            self.check_api_exception(api_factory, "AssayDataApi->create_assay_datum", error)
+
     """
     """
     def test_ad_attr_merge(self, api_factory):

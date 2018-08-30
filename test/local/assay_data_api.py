@@ -90,8 +90,27 @@ class LocalAssayDataApi(BaseLocalApi):
         :rtype: AssayData
         """
         (ret, retcode) = self.assay_datum_controller.download_assay_data_by_attr(propName, propValue,
-                                                                               self._user,
-                                                                               self.auth_tokens())
+                                                                                 study_name,
+                                                                                 self._user,
+                                                                                 self.auth_tokens())
+
+        return self.create_response(ret, retcode, 'AssayData')
+
+    def download_assay_data_by_os_attr(self, propName, propValue, study_name=None):
+        """
+        fetches a assayDatum by property value
+        
+        :param propName: name of property to search
+        :type propName: str
+        :param propValue: matching value of property to search
+        :type propValue: str
+
+        :rtype: AssayData
+        """
+        (ret, retcode) = self.assay_datum_controller.download_assay_data_by_os_attr(propName, propValue,
+                                                                                    study_name,
+                                                                                    self._user,
+                                                                                    self.auth_tokens())
 
         return self.create_response(ret, retcode, 'AssayData')
 
