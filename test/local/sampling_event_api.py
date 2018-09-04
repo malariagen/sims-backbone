@@ -207,3 +207,22 @@ class LocalSamplingEventApi(BaseLocalApi):
 
         return self.create_response(ret, retcode, 'SamplingEvent')
 
+
+    def merge_sampling_events(self, samplingEventId1, samplingEventId2):
+        """
+        merges samplingEvents
+        
+        :param samplingEventId1: ID of samplingEvent to update
+        :type samplingEventId1: str
+        :param samplingEventId2: ID of samplingEvent to update
+        :type samplingEventId2: str
+
+        :rtype: SamplingEvent
+        """
+        (ret, retcode) = self.sampling_event_controller.merge_sampling_events(samplingEventId1,
+                                                                              samplingEventId2,
+                                                                              self._user,
+                                                                              self.auth_tokens())
+
+        return self.create_response(ret, retcode, 'SamplingEvent')
+

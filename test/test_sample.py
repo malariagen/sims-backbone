@@ -1037,3 +1037,724 @@ class TestSample(TestBase):
 
         except ApiException as error:
             self.check_api_exception(api_factory, "OriginalSampleApi->create_original_sample", error)
+
+    def get_merge_events(self):
+
+            #Uses partner_id because only partner_id and individual_id are allowed to
+            #have the same value assigned to different sampling events
+            samp1 = swagger_client.SamplingEvent(None, '6000-MD-UP', date(2017, 10, 16))
+            samp1.attrs = [
+                swagger_client.Attr (attr_type='partner_id', attr_value='mrg1-12345678',
+                                           attr_source='mrg')
+            ]
+            samp1.doc_accuracy = 'day'
+            samp2 = swagger_client.SamplingEvent(None, '6000-MD-UP', date(2017, 10, 16))
+            samp2.attrs = [
+                swagger_client.Attr (attr_type='partner_id', attr_value='mrg2-12345678',
+                                           attr_source='mrg')
+            ]
+            samp2.doc_accuracy = 'day'
+
+            return samp1, samp2
+
+    """
+    """
+    def test_merge_sampling_events(self, api_factory):
+
+        api_instance = api_factory.SamplingEventApi()
+
+        try:
+
+            samp1, samp2 = self.get_merge_events()
+
+            created1 = api_instance.create_sampling_event(samp1)
+            created2 = api_instance.create_sampling_event(samp2)
+
+            api_instance.merge_sampling_events(created1.sampling_event_id,
+                                               created2.sampling_event_id)
+
+            fetched = api_instance.download_sampling_event(created1.sampling_event_id)
+
+            for attr in samp1.attrs:
+                assert attr in fetched.attrs
+            for attr in samp2.attrs:
+                assert attr in fetched.attrs
+
+            api_instance.delete_sampling_event(created1.sampling_event_id)
+
+            with pytest.raises(ApiException, status=404):
+                fetched = api_instance.download_sampling_event(created2.sampling_event_id)
+        except ApiException as error:
+            self.check_api_exception(api_factory, "SamplingEventApi->create_sampling_event", error)
+
+    """
+    """
+    def test_merge_sampling_events_study1(self, api_factory):
+
+        api_instance = api_factory.SamplingEventApi()
+
+        try:
+            
+            samp1, samp2 = self.get_merge_events()
+
+            samp1.study_name = '0000 no study'
+
+            created1 = api_instance.create_sampling_event(samp1)
+            created2 = api_instance.create_sampling_event(samp2)
+
+            api_instance.merge_sampling_events(created1.sampling_event_id,
+                                               created2.sampling_event_id)
+
+            fetched = api_instance.download_sampling_event(created1.sampling_event_id)
+
+            for attr in samp1.attrs:
+                assert attr in fetched.attrs
+            for attr in samp2.attrs:
+                assert attr in fetched.attrs
+
+            assert fetched.study_name == samp2.study_name
+
+            api_instance.delete_sampling_event(created1.sampling_event_id)
+
+            with pytest.raises(ApiException, status=404):
+                fetched = api_instance.download_sampling_event(created2.sampling_event_id)
+        except ApiException as error:
+            self.check_api_exception(api_factory, "SamplingEventApi->create_sampling_event", error)
+
+    """
+    """
+    def test_merge_sampling_events_study1_none(self, api_factory):
+
+        api_instance = api_factory.SamplingEventApi()
+
+        try:
+            
+            samp1, samp2 = self.get_merge_events()
+
+            samp1.study_name = None
+
+            created1 = api_instance.create_sampling_event(samp1)
+            created2 = api_instance.create_sampling_event(samp2)
+
+            api_instance.merge_sampling_events(created1.sampling_event_id,
+                                               created2.sampling_event_id)
+
+            fetched = api_instance.download_sampling_event(created1.sampling_event_id)
+
+            for attr in samp1.attrs:
+                assert attr in fetched.attrs
+            for attr in samp2.attrs:
+                assert attr in fetched.attrs
+
+            assert fetched.study_name == samp2.study_name
+
+            api_instance.delete_sampling_event(created1.sampling_event_id)
+
+            with pytest.raises(ApiException, status=404):
+                fetched = api_instance.download_sampling_event(created2.sampling_event_id)
+        except ApiException as error:
+            self.check_api_exception(api_factory, "SamplingEventApi->create_sampling_event", error)
+
+    """
+    """
+    def test_merge_sampling_events_study2(self, api_factory):
+
+        api_instance = api_factory.SamplingEventApi()
+
+        try:
+            
+            samp1, samp2 = self.get_merge_events()
+
+            samp2.study_name = '0000 no study'
+
+            created1 = api_instance.create_sampling_event(samp1)
+            created2 = api_instance.create_sampling_event(samp2)
+
+            api_instance.merge_sampling_events(created1.sampling_event_id,
+                                               created2.sampling_event_id)
+
+            fetched = api_instance.download_sampling_event(created1.sampling_event_id)
+
+            for attr in samp1.attrs:
+                assert attr in fetched.attrs
+            for attr in samp2.attrs:
+                assert attr in fetched.attrs
+
+            assert fetched.study_name == samp1.study_name
+
+            api_instance.delete_sampling_event(created1.sampling_event_id)
+
+            with pytest.raises(ApiException, status=404):
+                fetched = api_instance.download_sampling_event(created2.sampling_event_id)
+        except ApiException as error:
+            self.check_api_exception(api_factory, "SamplingEventApi->create_sampling_event", error)
+
+    """
+    """
+    def test_merge_sampling_events_study2_none(self, api_factory):
+
+        api_instance = api_factory.SamplingEventApi()
+
+        try:
+            
+            samp1, samp2 = self.get_merge_events()
+
+            samp2.study_name = None
+
+            created1 = api_instance.create_sampling_event(samp1)
+            created2 = api_instance.create_sampling_event(samp2)
+
+            api_instance.merge_sampling_events(created1.sampling_event_id,
+                                               created2.sampling_event_id)
+
+            fetched = api_instance.download_sampling_event(created1.sampling_event_id)
+
+            for attr in samp1.attrs:
+                assert attr in fetched.attrs
+            for attr in samp2.attrs:
+                assert attr in fetched.attrs
+
+            assert fetched.study_name == samp1.study_name
+
+            api_instance.delete_sampling_event(created1.sampling_event_id)
+
+            with pytest.raises(ApiException, status=404):
+                fetched = api_instance.download_sampling_event(created2.sampling_event_id)
+        except ApiException as error:
+            self.check_api_exception(api_factory, "SamplingEventApi->create_sampling_event", error)
+
+
+
+    """
+    """
+    def test_merge_sampling_events_study_fail(self, api_factory):
+
+        api_instance = api_factory.SamplingEventApi()
+
+        try:
+            
+            samp1, samp2 = self.get_merge_events()
+
+            samp2.study_name = '6001 incompat study'
+
+            created1 = api_instance.create_sampling_event(samp1)
+            created2 = api_instance.create_sampling_event(samp2)
+
+            with pytest.raises(ApiException, status=422):
+                api_instance.merge_sampling_events(created1.sampling_event_id,
+                                                   created2.sampling_event_id)
+
+            fetched = api_instance.download_sampling_event(created1.sampling_event_id)
+
+            assert fetched == created1
+
+            api_instance.delete_sampling_event(created1.sampling_event_id)
+            api_instance.delete_sampling_event(created2.sampling_event_id)
+
+        except ApiException as error:
+            self.check_api_exception(api_factory, "SamplingEventApi->create_sampling_event", error)
+
+    """
+    """
+    def test_merge_sampling_events_doc1_none(self, api_factory):
+
+        api_instance = api_factory.SamplingEventApi()
+
+        try:
+            
+            samp1, samp2 = self.get_merge_events()
+
+            samp1.doc = None
+
+            created1 = api_instance.create_sampling_event(samp1)
+            created2 = api_instance.create_sampling_event(samp2)
+
+            api_instance.merge_sampling_events(created1.sampling_event_id,
+                                               created2.sampling_event_id)
+
+            fetched = api_instance.download_sampling_event(created1.sampling_event_id)
+
+            for attr in samp1.attrs:
+                assert attr in fetched.attrs
+            for attr in samp2.attrs:
+                assert attr in fetched.attrs
+
+            assert fetched.doc == samp2.doc
+
+            api_instance.delete_sampling_event(created1.sampling_event_id)
+
+            with pytest.raises(ApiException, status=404):
+                fetched = api_instance.download_sampling_event(created2.sampling_event_id)
+        except ApiException as error:
+            self.check_api_exception(api_factory, "SamplingEventApi->create_sampling_event", error)
+
+    """
+    """
+    def test_merge_sampling_events_doc2_none(self, api_factory):
+
+        api_instance = api_factory.SamplingEventApi()
+
+        try:
+            
+            samp1, samp2 = self.get_merge_events()
+
+            samp2.doc = None
+
+            created1 = api_instance.create_sampling_event(samp1)
+            created2 = api_instance.create_sampling_event(samp2)
+
+            api_instance.merge_sampling_events(created1.sampling_event_id,
+                                               created2.sampling_event_id)
+
+            fetched = api_instance.download_sampling_event(created1.sampling_event_id)
+
+            for attr in samp1.attrs:
+                assert attr in fetched.attrs
+            for attr in samp2.attrs:
+                assert attr in fetched.attrs
+
+            assert fetched.doc == samp1.doc
+
+            api_instance.delete_sampling_event(created1.sampling_event_id)
+
+            with pytest.raises(ApiException, status=404):
+                fetched = api_instance.download_sampling_event(created2.sampling_event_id)
+        except ApiException as error:
+            self.check_api_exception(api_factory, "SamplingEventApi->create_sampling_event", error)
+
+
+
+    """
+    """
+    def test_merge_sampling_events_doc_fail(self, api_factory):
+
+        api_instance = api_factory.SamplingEventApi()
+
+        try:
+            
+            samp1, samp2 = self.get_merge_events()
+
+            samp2.doc= date(2018, 10, 16)
+
+            created1 = api_instance.create_sampling_event(samp1)
+            created2 = api_instance.create_sampling_event(samp2)
+
+            with pytest.raises(ApiException, status=422):
+                api_instance.merge_sampling_events(created1.sampling_event_id,
+                                                   created2.sampling_event_id)
+
+            fetched = api_instance.download_sampling_event(created1.sampling_event_id)
+
+            assert fetched == created1
+
+            api_instance.delete_sampling_event(created1.sampling_event_id)
+            api_instance.delete_sampling_event(created2.sampling_event_id)
+
+        except ApiException as error:
+            self.check_api_exception(api_factory, "SamplingEventApi->create_sampling_event", error)
+
+
+    """
+    """
+    def test_merge_sampling_events_doc_accuracy1_none(self, api_factory):
+
+        api_instance = api_factory.SamplingEventApi()
+
+        try:
+            
+            samp1, samp2 = self.get_merge_events()
+
+            samp1._doc_accuracy = None
+
+            created1 = api_instance.create_sampling_event(samp1)
+            created2 = api_instance.create_sampling_event(samp2)
+
+            api_instance.merge_sampling_events(created1.sampling_event_id,
+                                               created2.sampling_event_id)
+
+            fetched = api_instance.download_sampling_event(created1.sampling_event_id)
+
+            for attr in samp1.attrs:
+                assert attr in fetched.attrs
+            for attr in samp2.attrs:
+                assert attr in fetched.attrs
+
+            assert fetched.doc_accuracy == samp2.doc_accuracy
+
+            api_instance.delete_sampling_event(created1.sampling_event_id)
+
+            with pytest.raises(ApiException, status=404):
+                fetched = api_instance.download_sampling_event(created2.sampling_event_id)
+        except ApiException as error:
+            self.check_api_exception(api_factory, "SamplingEventApi->create_sampling_event", error)
+
+    """
+    """
+    def test_merge_sampling_events_doc_accuracy2_none(self, api_factory):
+
+        api_instance = api_factory.SamplingEventApi()
+
+        try:
+            
+            samp1, samp2 = self.get_merge_events()
+
+            samp2._doc_accuracy = None
+
+            created1 = api_instance.create_sampling_event(samp1)
+            created2 = api_instance.create_sampling_event(samp2)
+
+            api_instance.merge_sampling_events(created1.sampling_event_id,
+                                               created2.sampling_event_id)
+
+            fetched = api_instance.download_sampling_event(created1.sampling_event_id)
+
+            for attr in samp1.attrs:
+                assert attr in fetched.attrs
+            for attr in samp2.attrs:
+                assert attr in fetched.attrs
+
+            assert fetched.doc_accuracy == samp1.doc_accuracy
+
+            api_instance.delete_sampling_event(created1.sampling_event_id)
+
+            with pytest.raises(ApiException, status=404):
+                fetched = api_instance.download_sampling_event(created2.sampling_event_id)
+        except ApiException as error:
+            self.check_api_exception(api_factory, "SamplingEventApi->create_sampling_event", error)
+
+
+
+    """
+    """
+    def test_merge_sampling_events_doc_accuracy_fail(self, api_factory):
+
+        api_instance = api_factory.SamplingEventApi()
+
+        try:
+            
+            samp1, samp2 = self.get_merge_events()
+
+            samp2.doc_accuracy = 'month'
+
+            created1 = api_instance.create_sampling_event(samp1)
+            created2 = api_instance.create_sampling_event(samp2)
+
+            with pytest.raises(ApiException, status=422):
+                api_instance.merge_sampling_events(created1.sampling_event_id,
+                                                   created2.sampling_event_id)
+
+            fetched = api_instance.download_sampling_event(created1.sampling_event_id)
+
+            assert fetched == created1
+
+            api_instance.delete_sampling_event(created1.sampling_event_id)
+            api_instance.delete_sampling_event(created2.sampling_event_id)
+
+        except ApiException as error:
+            self.check_api_exception(api_factory, "SamplingEventApi->create_sampling_event", error)
+
+
+
+
+    """
+    """
+    def test_merge_sampling_events_location1_none(self, api_factory):
+
+        api_instance = api_factory.SamplingEventApi()
+        location_api_instance = api_factory.LocationApi()
+
+        try:
+
+            loc = swagger_client.Location(None, 27.463, 90.495, 'city',
+                                          'Trongsa, Trongsa, Bhutan', 'test_create_with_locations', 'BTN')
+            loc = location_api_instance.create_location(loc)
+
+
+            samp1, samp2 = self.get_merge_events()
+
+            samp2.location_id = loc.location_id
+
+            created1 = api_instance.create_sampling_event(samp1)
+            created2 = api_instance.create_sampling_event(samp2)
+
+            api_instance.merge_sampling_events(created1.sampling_event_id,
+                                               created2.sampling_event_id)
+
+            fetched = api_instance.download_sampling_event(created1.sampling_event_id)
+
+            for attr in samp1.attrs:
+                assert attr in fetched.attrs
+            for attr in samp2.attrs:
+                assert attr in fetched.attrs
+
+            assert fetched.location_id == samp2.location_id
+
+            api_instance.delete_sampling_event(created1.sampling_event_id)
+            location_api_instance.delete_location(loc.location_id)
+
+            with pytest.raises(ApiException, status=404):
+                fetched = api_instance.download_sampling_event(created2.sampling_event_id)
+        except ApiException as error:
+            self.check_api_exception(api_factory, "SamplingEventApi->create_sampling_event", error)
+
+    """
+    """
+    def test_merge_sampling_events_location2_none(self, api_factory):
+
+        api_instance = api_factory.SamplingEventApi()
+        location_api_instance = api_factory.LocationApi()
+
+        try:
+
+            loc = swagger_client.Location(None, 27.463, 90.495, 'city',
+                                          'Trongsa, Trongsa, Bhutan', 'test_create_with_locations', 'BTN')
+            loc = location_api_instance.create_location(loc)
+
+            samp1, samp2 = self.get_merge_events()
+
+            samp1.location_id = loc.location_id
+
+            created1 = api_instance.create_sampling_event(samp1)
+            created2 = api_instance.create_sampling_event(samp2)
+
+            api_instance.merge_sampling_events(created1.sampling_event_id,
+                                               created2.sampling_event_id)
+
+            fetched = api_instance.download_sampling_event(created1.sampling_event_id)
+
+            for attr in samp1.attrs:
+                assert attr in fetched.attrs
+            for attr in samp2.attrs:
+                assert attr in fetched.attrs
+
+            assert fetched.location_id == samp1.location_id
+
+            api_instance.delete_sampling_event(created1.sampling_event_id)
+            location_api_instance.delete_location(loc.location_id)
+
+            with pytest.raises(ApiException, status=404):
+                fetched = api_instance.download_sampling_event(created2.sampling_event_id)
+        except ApiException as error:
+            self.check_api_exception(api_factory, "SamplingEventApi->create_sampling_event", error)
+
+
+
+    """
+    """
+    def test_merge_sampling_events_location_fail(self, api_factory):
+
+        api_instance = api_factory.SamplingEventApi()
+        location_api_instance = api_factory.LocationApi()
+
+        try:
+
+            loc1 = swagger_client.Location(None, 27.463, 90.495, 'city',
+                                          'Trongsa, Trongsa, Bhutan', 'test_create_with_locations', 'BTN')
+            loc1 = location_api_instance.create_location(loc1)
+
+            loc2 = swagger_client.Location(None, 27.46, 90.49, 'city',
+                                          'Trongsa, Bhutan', 'test_create_with_locations', 'BTN')
+            loc2 = location_api_instance.create_location(loc2)
+
+            samp1, samp2 = self.get_merge_events()
+
+            samp1.location_id = loc1.location_id
+            samp2.location_id = loc2.location_id
+
+            created1 = api_instance.create_sampling_event(samp1)
+            created2 = api_instance.create_sampling_event(samp2)
+
+            with pytest.raises(ApiException, status=422):
+                api_instance.merge_sampling_events(created1.sampling_event_id,
+                                                   created2.sampling_event_id)
+
+            fetched = api_instance.download_sampling_event(created1.sampling_event_id)
+
+            assert fetched == created1
+
+            api_instance.delete_sampling_event(created1.sampling_event_id)
+            api_instance.delete_sampling_event(created2.sampling_event_id)
+            location_api_instance.delete_location(loc1.location_id)
+            location_api_instance.delete_location(loc2.location_id)
+
+        except ApiException as error:
+            self.check_api_exception(api_factory, "SamplingEventApi->create_sampling_event", error)
+
+    """
+    """
+    def test_merge_sampling_events_partner_species1(self, api_factory):
+
+        api_instance = api_factory.SamplingEventApi()
+
+        try:
+            
+            samp1, samp2 = self.get_merge_events()
+
+            samp1.partner_species = 'PF'
+
+            created1 = api_instance.create_sampling_event(samp1)
+            created2 = api_instance.create_sampling_event(samp2)
+
+            api_instance.merge_sampling_events(created1.sampling_event_id,
+                                               created2.sampling_event_id)
+
+            fetched = api_instance.download_sampling_event(created1.sampling_event_id)
+
+            for attr in samp1.attrs:
+                assert attr in fetched.attrs
+            for attr in samp2.attrs:
+                assert attr in fetched.attrs
+
+            assert fetched.partner_species == samp1.partner_species
+
+            api_instance.delete_sampling_event(created1.sampling_event_id)
+
+            with pytest.raises(ApiException, status=404):
+                fetched = api_instance.download_sampling_event(created2.sampling_event_id)
+        except ApiException as error:
+            self.check_api_exception(api_factory, "SamplingEventApi->create_sampling_event", error)
+
+    """
+    """
+    def test_merge_sampling_events_partner_species2(self, api_factory):
+
+        api_instance = api_factory.SamplingEventApi()
+
+        try:
+            
+            samp1, samp2 = self.get_merge_events()
+
+            samp2.partner_species = 'PV'
+
+            created1 = api_instance.create_sampling_event(samp1)
+            created2 = api_instance.create_sampling_event(samp2)
+
+            api_instance.merge_sampling_events(created1.sampling_event_id,
+                                               created2.sampling_event_id)
+
+            fetched = api_instance.download_sampling_event(created1.sampling_event_id)
+
+            for attr in samp1.attrs:
+                assert attr in fetched.attrs
+            for attr in samp2.attrs:
+                assert attr in fetched.attrs
+
+            assert fetched.partner_species == samp2.partner_species
+
+            api_instance.delete_sampling_event(created1.sampling_event_id)
+
+            with pytest.raises(ApiException, status=404):
+                fetched = api_instance.download_sampling_event(created2.sampling_event_id)
+        except ApiException as error:
+            self.check_api_exception(api_factory, "SamplingEventApi->create_sampling_event", error)
+
+
+
+    """
+    """
+    def test_merge_sampling_events_partner_species_fail(self, api_factory):
+
+        api_instance = api_factory.SamplingEventApi()
+
+        try:
+            
+            samp1, samp2 = self.get_merge_events()
+
+            samp1.partner_species = 'PF'
+            samp2.partner_species = 'PV'
+
+            created1 = api_instance.create_sampling_event(samp1)
+            created2 = api_instance.create_sampling_event(samp2)
+
+            with pytest.raises(ApiException, status=422):
+                api_instance.merge_sampling_events(created1.sampling_event_id,
+                                                   created2.sampling_event_id)
+
+            fetched = api_instance.download_sampling_event(created1.sampling_event_id)
+
+            assert fetched == created1
+
+            api_instance.delete_sampling_event(created1.sampling_event_id)
+            api_instance.delete_sampling_event(created2.sampling_event_id)
+
+        except ApiException as error:
+            self.check_api_exception(api_factory, "SamplingEventApi->create_sampling_event", error)
+
+
+    """
+    """
+    def test_merge_sampling_events_partner_species_missing_fail(self, api_factory):
+
+        api_instance = api_factory.SamplingEventApi()
+
+        try:
+            
+            samp1, samp2 = self.get_merge_events()
+
+            created1 = api_instance.create_sampling_event(samp1)
+
+            with pytest.raises(ApiException, status=404):
+                api_instance.merge_sampling_events(created1.sampling_event_id,
+                                                   None)
+
+
+            with pytest.raises(ApiException, status=404):
+                api_instance.merge_sampling_events(None,
+                                                   created1.sampling_event_id)
+
+            merged = api_instance.merge_sampling_events(created1.sampling_event_id,
+                                                        created1.sampling_event_id)
+
+            assert merged == created1
+
+            with pytest.raises(ApiException, status=404):
+                api_instance.merge_sampling_events(str(uuid.uuid4()),
+                                                   None)
+
+            with pytest.raises(ApiException, status=404):
+                api_instance.merge_sampling_events(None, str(uuid.uuid4()))
+
+            with pytest.raises(ApiException, status=404):
+                api_instance.merge_sampling_events(str(uuid.uuid4()), str(uuid.uuid4()))
+
+            api_instance.delete_sampling_event(created1.sampling_event_id)
+
+        except ApiException as error:
+            self.check_api_exception(api_factory, "SamplingEventApi->create_sampling_event", error)
+
+    """
+    """
+    def test_merge_sampling_events_attr_dedup(self, api_factory):
+
+        api_instance = api_factory.SamplingEventApi()
+
+        try:
+
+            samp1, samp2 = self.get_merge_events()
+
+            expected = len(samp1.attrs) + len(samp2.attrs)
+
+            samp2.attrs.append(samp1.attrs[0])
+
+            created1 = api_instance.create_sampling_event(samp1)
+            created2 = api_instance.create_sampling_event(samp2)
+
+            api_instance.merge_sampling_events(created1.sampling_event_id,
+                                               created2.sampling_event_id)
+
+            fetched = api_instance.download_sampling_event(created1.sampling_event_id)
+
+            for attr in samp1.attrs:
+                assert attr in fetched.attrs
+            for attr in samp2.attrs:
+                assert attr in fetched.attrs
+
+            assert len(fetched.attrs) == expected
+
+            api_instance.delete_sampling_event(created1.sampling_event_id)
+
+            with pytest.raises(ApiException, status=404):
+                fetched = api_instance.download_sampling_event(created2.sampling_event_id)
+        except ApiException as error:
+            self.check_api_exception(api_factory, "SamplingEventApi->create_sampling_event", error)
+
