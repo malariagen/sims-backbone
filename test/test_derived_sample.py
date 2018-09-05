@@ -361,3 +361,94 @@ class TestDerivativeSample(TestBase):
             results = ds_api_instance.download_derivative_samples_by_os_attr('ds_os_attr', 'm123456')
 
 
+    """
+    """
+    def test_ds_taxa_lookup(self, api_factory):
+
+        api_instance = api_factory.OriginalSampleApi()
+        se_api_instance = api_factory.SamplingEventApi()
+        ds_api_instance = api_factory.DerivativeSampleApi()
+        study_api = api_factory.StudyApi()
+
+        try:
+
+            sampling_event = swagger_client.SamplingEvent(None, '5001-MD-UP', date(2017, 10, 10),
+                                                partner_species='PF')
+            created_se = se_api_instance.create_sampling_event(sampling_event)
+            study_detail = study_api.download_study('5001')
+            study_detail.partner_species[0].taxa = [ swagger_client.Taxonomy(taxonomy_id=5833) ]
+            study_api.update_study('5001', study_detail)
+
+            samp = swagger_client.OriginalSample(None, study_name='5001-MD-UP')
+            samp.attrs = [
+                swagger_client.Attr (attr_type='ds_os_attr', attr_value='123456')
+            ]
+            samp.sampling_event_id = created_se.sampling_event_id
+            created = api_instance.create_original_sample(samp)
+            samp1 = swagger_client.DerivativeSample(None)
+            samp2 = swagger_client.DerivativeSample(None)
+
+            samp1.attrs = [
+                swagger_client.Attr (attr_type='test1', attr_value='test1',
+                                          attr_source='ds_os_attr')
+            ]
+            samp2.attrs = [
+                swagger_client.Attr (attr_type='test2', attr_value='test2',
+                                          attr_source='ds_os_attr')
+            ]
+            samp1.original_sample_id = created.original_sample_id
+            samp2.original_sample_id = created.original_sample_id
+            created1 = ds_api_instance.create_derivative_sample(samp1)
+            created2 = ds_api_instance.create_derivative_sample(samp2)
+            results = ds_api_instance.download_derivative_samples_by_taxa(5833)
+
+            assert results.count == 2
+            assert results.derivative_samples[0].derivative_sample_id != results.derivative_samples[1].derivative_sample_id
+            assert results.derivative_samples[0].original_sample_id == results.derivative_samples[1].original_sample_id
+            assert results.derivative_samples[0].original_sample_id == created.original_sample_id
+
+            results1 = ds_api_instance.download_derivative_samples_by_taxa(5833,0,1)
+
+            assert results1.count == 2
+            assert len(results1.derivative_samples) == 1
+            assert results1.derivative_samples[0].derivative_sample_id == results.derivative_samples[0].derivative_sample_id
+
+            results2 = ds_api_instance.download_derivative_samples_by_taxa(5833,1,1)
+
+            assert results2.count == 2
+            assert len(results2.derivative_samples) == 1
+            assert results2.derivative_samples[0].derivative_sample_id == results.derivative_samples[1].derivative_sample_id
+
+            results3 = ds_api_instance.download_derivative_samples(search_filter='taxa:5833')
+
+            assert results3 == results
+
+            ds_api_instance.delete_derivative_sample(created1.derivative_sample_id)
+            ds_api_instance.delete_derivative_sample(created2.derivative_sample_id)
+            api_instance.delete_original_sample(created.original_sample_id)
+            se_api_instance.delete_sampling_event(created_se.sampling_event_id)
+
+        except ApiException as error:
+            self.check_api_exception(api_factory, "OriginalSampleApi->create_original_sample", error)
+
+
+    """
+    """
+    def test_ds_taxa_lookup_fail(self, api_factory):
+
+        api_instance = api_factory.OriginalSampleApi()
+        se_api_instance = api_factory.SamplingEventApi()
+        ds_api_instance = api_factory.DerivativeSampleApi()
+        study_api = api_factory.StudyApi()
+
+        try:
+            with pytest.raises(ApiException, status=404):
+                results = ds_api_instance.download_derivative_samples_by_taxa(5833)
+
+            with pytest.raises(ApiException, status=404):
+                results = ds_api_instance.download_derivative_samples_by_taxa(123456)
+
+        except ApiException as error:
+            self.check_api_exception(api_factory,
+                                     "DerivativeSampleApi->download_derivative_samples_by_taxa", error)
+
