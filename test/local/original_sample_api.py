@@ -184,8 +184,28 @@ class LocalOriginalSampleApi(BaseLocalApi):
 
         :rtype: OriginalSample
         """
-        (ret, retcode) = self.original_sample_controller.update_original_sample(samplingEventId, samplingEvent, self._user,
-                                                               self.auth_tokens())
+        (ret, retcode) = self.original_sample_controller.update_original_sample(samplingEventId,
+                                                                                samplingEvent,
+                                                                                self._user,
+                                                                                self.auth_tokens())
+
+        return self.create_response(ret, retcode, 'OriginalSample')
+
+    def merge_original_samples(self, samplingEventId, samplingEventId2):
+        """
+        merges OriginalSamples
+        
+        :param samplingEventId1: ID of samplingEvent to update
+        :type samplingEventId1: str
+        :param samplingEventId2: ID of samplingEvent to update
+        :type samplingEventId2: str
+
+        :rtype: OriginalSample
+        """
+        (ret, retcode) = self.original_sample_controller.merge_original_samples(samplingEventId,
+                                                                                samplingEventId2,
+                                                                                self._user,
+                                                                                self.auth_tokens())
 
         return self.create_response(ret, retcode, 'OriginalSample')
 

@@ -32,6 +32,9 @@ class OriginalSampleMerge():
                 if not original_sample1:
                     raise MissingKeyException("No original_sample {}".format(into))
 
+                if original_sample1.original_sample_id == merged:
+                    return original_sample1
+
                 original_sample2 = OriginalSampleFetch.fetch(cursor, merged)
 
                 if not original_sample2:
