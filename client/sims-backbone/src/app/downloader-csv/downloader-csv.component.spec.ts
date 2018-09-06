@@ -111,7 +111,7 @@ describe('DownloaderCsvComponent', () => {
       fixture.detectChanges();
 
       const result = {
-        url: 'http://localhost/v1/samplingEvents?filter=' + component.filter + '&start=0&count=' + component.pageSize,
+        url: 'http://localhost/v1/samplingEvents?search_filter=' + component.filter + '&start=0&count=' + component.pageSize,
         method: 'GET'
       };
       let req = backend.expectOne(result);
@@ -178,7 +178,7 @@ describe('DownloaderCsvComponent', () => {
       fixture.detectChanges();
 
       const result = {
-        url: 'http://localhost/v1/samplingEvents?filter=' + component.filter + '&start=' + component.pageNumber * component.pageSize + '&count=' + component.pageSize,
+        url: 'http://localhost/v1/samplingEvents?search_filter=' + component.filter + '&start=' + component.pageNumber * component.pageSize + '&count=' + component.pageSize,
         method: 'GET'
       };
       let req = backend.expectOne(result);
@@ -190,7 +190,7 @@ describe('DownloaderCsvComponent', () => {
       expect(component.pageNumber).toBe(1);
 
       const result1 = {
-        url: 'http://localhost/v1/samplingEvents?filter=' + component.filter + '&start=' + component.pageNumber * component.pageSize + '&count=' + component.pageSize,
+        url: 'http://localhost/v1/samplingEvents?search_filter=' + component.filter + '&start=' + component.pageNumber * component.pageSize + '&count=' + component.pageSize,
         method: 'GET'
       };
       let req1 = backend.expectOne(result1);
