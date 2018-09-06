@@ -1245,6 +1245,7 @@ class TestOriginalSample(TestBase):
 
         se_api_instance = api_factory.SamplingEventApi()
         api_instance = api_factory.OriginalSampleApi()
+        ds_api_instance = api_factory.DerivativeSampleApi()
 
         try:
 
@@ -1261,6 +1262,22 @@ class TestOriginalSample(TestBase):
 
             created1 = api_instance.create_original_sample(samp1)
             created2 = api_instance.create_original_sample(samp2)
+
+            ds_samp1 = swagger_client.DerivativeSample(None)
+            ds_samp2 = swagger_client.DerivativeSample(None)
+
+            ds_samp1.attrs = [
+                swagger_client.Attr (attr_type='test1', attr_value='test1',
+                                          attr_source='ds_os_attr')
+            ]
+            ds_samp2.attrs = [
+                swagger_client.Attr (attr_type='test2', attr_value='test2',
+                                          attr_source='ds_os_attr')
+            ]
+            ds_samp1.original_sample_id = created1.original_sample_id
+            ds_samp2.original_sample_id = created2.original_sample_id
+            ds_created1 = ds_api_instance.create_derivative_sample(ds_samp1)
+            ds_created2 = ds_api_instance.create_derivative_sample(ds_samp2)
 
             merged = api_instance.merge_original_samples(created1.original_sample_id,
                                                          created2.original_sample_id)
@@ -1282,6 +1299,15 @@ class TestOriginalSample(TestBase):
             for attr in evnt2.attrs:
                 assert attr in fetched.attrs
 
+            ds1 = ds_api_instance.download_derivative_sample(ds_created1.derivative_sample_id)
+            ds2 = ds_api_instance.download_derivative_sample(ds_created2.derivative_sample_id)
+
+            assert ds1.original_sample_id == ds2.original_sample_id
+
+            assert ds1.original_sample_id == created1.original_sample_id
+
+            ds_api_instance.delete_derivative_sample(ds_created1.derivative_sample_id)
+            ds_api_instance.delete_derivative_sample(ds_created2.derivative_sample_id)
             api_instance.delete_original_sample(created1.original_sample_id)
             se_api_instance.delete_sampling_event(se_created1.sampling_event_id)
 
