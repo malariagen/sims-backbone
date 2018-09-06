@@ -1375,3 +1375,26 @@ class TestOriginalSample(TestBase):
         except ApiException as error:
             self.check_api_exception(api_factory, "SamplingEventApi->se_create_sampling_event", error)
 
+    """
+    """
+    def test_os_filter_fail(self, api_factory):
+
+        api_instance = api_factory.OriginalSampleApi()
+
+        try:
+
+            with pytest.raises(ApiException, status=422):
+                ffetched = api_instance.download_original_samples()
+
+            with pytest.raises(ApiException, status=422):
+                ffetched = api_instance.download_original_samples(filter='xxxxx')
+
+            with pytest.raises(ApiException, status=422):
+                ffetched = api_instance.download_original_samples(filter='xxxxx:xxxxx')
+
+            with pytest.raises(ApiException, status=422):
+                ffetched = api_instance.download_original_samples(filter='attr:oxford_id')
+
+        except ApiException as error:
+            self.check_api_exception(api_factory, "OriginalSampleApi->download_original_samples", error)
+

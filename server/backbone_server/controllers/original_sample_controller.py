@@ -136,6 +136,8 @@ class OriginalSampleController(BaseController):
                 study_name = None
                 if len(options) > 3 and options[3]:
                     study_name = options[3]
+                if len(options) < 3:
+                    return 'attr filter must have name and value', 422
                 return self.download_original_samples_by_attr(options[1],
                                                              options[2],
                                                              study_name,
