@@ -118,45 +118,45 @@ class SamplingEventController(BaseController):
         retcode = 200
         samp = None
 
-        if search_filter:
-            search_filter = urllib.parse.unquote_plus(search_filter)
-            options = search_filter.split(':')
-            if len(options) < 2:
-                samp = 'Filter must be of the form type:arg(s)'
-                retcode = 422
-                return samp, retcode
-            search_funcs = {
-                "studyId": self.download_sampling_events_by_study,
-                "location": self.download_sampling_events_by_location,
-                "taxa": self.download_sampling_events_by_taxa,
-                "eventSet": self.download_sampling_events_by_event_set,
-            }
-            func = search_funcs.get(options[0])
-            if func:
-                return func(options[1], start, count, user, auths)
-            elif options[0] == 'attr':
-                study_name = None
-                if len(options) > 3 and options[3]:
-                    study_name = options[3]
-                return self.download_sampling_events_by_attr(options[1],
-                                                             options[2],
-                                                             study_name,
-                                                             user,
-                                                             auths)
-            elif options[0] == 'os_attr':
-                study_name = None
-                if len(options) > 3 and options[3]:
-                    study_name = options[3]
-                return self.download_sampling_events_by_os_attr(options[1],
-                                                             options[2],
-                                                             study_name,
-                                                             user,
-                                                             auths)
-            else:
-                samp = 'Invalid filter option'
-                retcode = 422
+        search_filter = urllib.parse.unquote_plus(search_filter)
+        options = search_filter.split(':')
+        if len(options) < 2:
+            samp = 'Filter must be of the form type:arg(s)'
+            retcode = 422
+            return samp, retcode
+        search_funcs = {
+            "studyId": self.download_sampling_events_by_study,
+            "location": self.download_sampling_events_by_location,
+            "taxa": self.download_sampling_events_by_taxa,
+            "eventSet": self.download_sampling_events_by_event_set,
+        }
+        func = search_funcs.get(options[0])
+        if func:
+            return func(options[1], start, count, user, auths)
+        elif options[0] == 'attr':
+            study_name = None
+            if len(options) > 3 and options[3]:
+                study_name = options[3]
+            if len(options) < 3:
+                return 'attr filter must have name and value', 422
+            return self.download_sampling_events_by_attr(options[1],
+                                                         options[2],
+                                                         study_name,
+                                                         user,
+                                                         auths)
+        elif options[0] == 'os_attr':
+            study_name = None
+            if len(options) > 3 and options[3]:
+                study_name = options[3]
+            if len(options) < 3:
+                return 'os_attr filter must have name and value', 422
+            return self.download_sampling_events_by_os_attr(options[1],
+                                                         options[2],
+                                                         study_name,
+                                                         user,
+                                                         auths)
         else:
-            samp = 'filter is required'
+            samp = 'Invalid filter option'
             retcode = 422
 
         return samp, retcode
@@ -333,9 +333,6 @@ class SamplingEventController(BaseController):
         except MissingKeyException as dme:
             logging.getLogger(__name__).error("merge_samplingEvent: {}".format(repr(dme)))
             retcode = 404
-        except NestedEditException as nee:
-            logging.getLogger(__name__).error("merge_samplingEvent: {}".format(repr(nee)))
-            retcode = 422
 
         return samp, retcode
 

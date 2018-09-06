@@ -62,7 +62,7 @@ class LocalOriginalSampleApi(BaseLocalApi):
 
         return self.create_response(ret, retcode, 'OriginalSample')
 
-    def download_original_samples(self, filter=None, start=None, count=None):
+    def download_original_samples(self, search_filter=None, start=None, count=None):
         """
         fetches an samplingEvent
         
@@ -71,7 +71,7 @@ class LocalOriginalSampleApi(BaseLocalApi):
 
         :rtype: OriginalSample
         """
-        (ret, retcode) = self.original_sample_controller.download_original_samples(filter, start,
+        (ret, retcode) = self.original_sample_controller.download_original_samples(search_filter, start,
                                                                                  count, self._user,
                                                                                  self.auth_tokens())
 

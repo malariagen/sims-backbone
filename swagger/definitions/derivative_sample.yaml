@@ -18,7 +18,6 @@ definitions:
           items:
             type: string
             description: 'Attr types used in this set of DerivativeSamples'
-  OriginalSample:
   DerivativeSample:
     type: object
     properties:

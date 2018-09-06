@@ -56,13 +56,13 @@ def download_derivative_sample(derivativeSampleId, user=None, token_info=None): 
 
 
 
-def download_derivative_samples(filter=None, start=None, count=None, user=None, token_info=None):  # noqa: E501
+def download_derivative_samples(search_filter=None, start=None, count=None, user=None, token_info=None):  # noqa: E501
     """fetches derivativeSamples
 
      # noqa: E501
 
-    :param filter: search filter e.g. studyId:0000, attr:name:value, location:locationId, taxa:taxId, eventSet:setName
-    :type filter: str
+    :param search_filter: search filter e.g. studyId:0000, attr:name:value, location:locationId, taxa:taxId, eventSet:setName
+    :type search_filter: str
     :param start: for pagination start the result set at a record x
     :type start: int
     :param count: for pagination the number of entries to return
@@ -70,7 +70,7 @@ def download_derivative_samples(filter=None, start=None, count=None, user=None, 
 
     :rtype: DerivativeSamples
     """
-    return derivative_sample_controller.download_derivative_samples(filter, start,
+    return derivative_sample_controller.download_derivative_samples(search_filter, start,
                                                                     count, user,
                                                                     derivative_sample_controller.token_info(token_info))
 

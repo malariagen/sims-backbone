@@ -8,25 +8,6 @@ class OriginalSampleEdit():
 
 
     @staticmethod
-    def check_location_details(cursor, location_id, location):
-
-        current_location = None
-
-        if location_id:
-            current_location = LocationFetch.fetch(cursor, location_id)
-
-            cli = current_location.attrs
-
-            #It's OK if the location id is set but the location object not filled in
-            if location:
-                idents = location.attrs
-
-                if location != current_location:
-                    raise NestedEditException("Implied location edit not allowed for {}".format(location_id))
-
-        return current_location
-
-    @staticmethod
     def fetch_study_id(cursor, study_name, create):
         study_id = None
 
@@ -45,27 +26,6 @@ class OriginalSampleEdit():
             cursor.execute('''INSERT INTO studies (id, study_code, study_name) VALUES (%s, %s,
                            %s)''', (study_id, study_name[:4], study_name))
         return study_id
-
-    @staticmethod
-    def fetch_partner_species(cursor, original_sample, study_id):
-        partner_species = None
-
-        if not original_sample.partner_species:
-            return partner_species
-
-        cursor.execute('''SELECT id FROM partner_species_identifiers WHERE study_id = %s AND
-                       partner_species = %s''',
-                           (study_id, original_sample.partner_species))
-        result = cursor.fetchone()
-
-        if result:
-            partner_species = result[0]
-        else:
-            partner_species = uuid.uuid4()
-            cursor.execute('''INSERT INTO partner_species_identifiers (id, study_id,
-                           partner_species) VALUES (%s, %s, %s)''',
-                           (partner_species, study_id, original_sample.partner_species))
-        return partner_species
 
     @staticmethod
     def add_attrs(cursor, uuid_val, original_sample):

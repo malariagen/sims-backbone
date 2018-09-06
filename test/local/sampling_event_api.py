@@ -62,7 +62,7 @@ class LocalSamplingEventApi(BaseLocalApi):
 
         return self.create_response(ret, retcode, 'SamplingEvent')
 
-    def download_sampling_events(self, filter=None, start=None, count=None):
+    def download_sampling_events(self, search_filter=None, start=None, count=None):
         """
         fetches an samplingEvent
         
@@ -71,7 +71,7 @@ class LocalSamplingEventApi(BaseLocalApi):
 
         :rtype: SamplingEvent
         """
-        (ret, retcode) = self.sampling_event_controller.download_sampling_events(filter, start,
+        (ret, retcode) = self.sampling_event_controller.download_sampling_events(search_filter, start,
                                                                                  count, self._user,
                                                                                  self.auth_tokens())
 

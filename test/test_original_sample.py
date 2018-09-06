@@ -163,7 +163,7 @@ class TestOriginalSample(TestBase):
 
             assert created == fetched, "create response != download response"
 
-            ffetched = api_instance.download_original_samples(filter='attr:oxford:123456')
+            ffetched = api_instance.download_original_samples(search_filter='attr:oxford:123456')
 
             assert ffetched == results
 
@@ -203,7 +203,7 @@ class TestOriginalSample(TestBase):
                                                                             study_name='4022')
             assert looked_up.count == 2
 
-            ffetched = api_instance.download_original_samples(filter='attr:partner_id:123456:4022')
+            ffetched = api_instance.download_original_samples(search_filter='attr:partner_id:123456:4022')
 
             assert ffetched == looked_up
 
@@ -364,7 +364,7 @@ class TestOriginalSample(TestBase):
             fetched.original_sample_id = None
             assert samp == fetched, "upload != download response"
 
-            ffetched = api_instance.download_original_samples(filter=urllib.parse.quote_plus('attr:partner_id:' + test_id))
+            ffetched = api_instance.download_original_samples(search_filter=urllib.parse.quote_plus('attr:partner_id:' + test_id))
 
             assert ffetched == results
 
@@ -392,7 +392,7 @@ class TestOriginalSample(TestBase):
 
             assert created == fetched.original_samples[0], "create response != download response"
 
-            ffetched = api_instance.download_original_samples(filter='studyId:' + study_code)
+            ffetched = api_instance.download_original_samples(search_filter='studyId:' + study_code)
 
             assert ffetched.count == 1, "Study not found"
 
@@ -400,6 +400,8 @@ class TestOriginalSample(TestBase):
 
             api_instance.delete_original_sample(created.original_sample_id)
 
+            with pytest.raises(ApiException, status=404):
+                fetched = api_instance.download_original_samples_by_study('asdfhjik')
         except ApiException as error:
             self.check_api_exception(api_factory, "OriginalSampleApi->create_original_sample", error)
 
@@ -423,7 +425,7 @@ class TestOriginalSample(TestBase):
             assert len(fetched1.original_samples) ==2, "Wrong number of original_samples returned"
             assert fetched1.count == 5, "Wrong total of original_samples returned"
 
-            ffetched = api_instance.download_original_samples(filter='studyId:' + study_code,
+            ffetched = api_instance.download_original_samples(search_filter='studyId:' + study_code,
                                                              start=0, count=2)
 
             assert ffetched == fetched1
@@ -573,7 +575,7 @@ class TestOriginalSample(TestBase):
 
             assert results.attr_types == ['oxford']
 
-            ffetched = api_instance.download_original_samples(filter='location:'+loc.location_id)
+            ffetched = api_instance.download_original_samples(search_filter='location:'+loc.location_id)
 
             assert ffetched == results
 
@@ -636,6 +638,9 @@ class TestOriginalSample(TestBase):
 
             api_instance.delete_original_sample(created.original_sample_id)
 
+            with pytest.raises(ApiException, status=404):
+                results = api_instance.download_original_samples_by_event_set(event_set_name)
+
         except ApiException as error:
             self.check_api_exception(api_factory, "OriginalSampleApi->create_original_sample", error)
 
@@ -681,7 +686,7 @@ class TestOriginalSample(TestBase):
 
             assert created1 == fetched or created2 == fetched, "create response != download response"
 
-            ffetched = api_instance.download_original_samples(filter='location:'+loc.location_id,
+            ffetched = api_instance.download_original_samples(search_filter='location:'+loc.location_id,
                                                               start=0,
                                                               count=1)
 
@@ -691,6 +696,7 @@ class TestOriginalSample(TestBase):
             assert samp1 == fetched, "upload != download response"
 
             se_api_instance.delete_sampling_event(created_se.sampling_event_id)
+            location_api_instance.delete_location(loc.location_id)
             api_instance.delete_original_sample(created1.original_sample_id)
             api_instance.delete_original_sample(created2.original_sample_id)
 
@@ -752,7 +758,7 @@ class TestOriginalSample(TestBase):
 
             assert results.attr_types == ['oxford']
 
-            ffetched = api_instance.download_original_samples(filter='taxa:5833')
+            ffetched = api_instance.download_original_samples(search_filter='taxa:5833')
 
             assert ffetched == results
 
@@ -800,7 +806,7 @@ class TestOriginalSample(TestBase):
 
             fetched = api_instance.download_original_sample(looked_up.original_sample_id)
 
-            ffetched = api_instance.download_original_samples(filter='taxa:5833',
+            ffetched = api_instance.download_original_samples(search_filter='taxa:5833',
                                                               start=0,
                                                               count=2)
 
@@ -1384,16 +1390,13 @@ class TestOriginalSample(TestBase):
         try:
 
             with pytest.raises(ApiException, status=422):
-                ffetched = api_instance.download_original_samples()
+                ffetched = api_instance.download_original_samples(search_filter='xxxxx')
 
             with pytest.raises(ApiException, status=422):
-                ffetched = api_instance.download_original_samples(filter='xxxxx')
+                ffetched = api_instance.download_original_samples(search_filter='xxxxx:xxxxx')
 
             with pytest.raises(ApiException, status=422):
-                ffetched = api_instance.download_original_samples(filter='xxxxx:xxxxx')
-
-            with pytest.raises(ApiException, status=422):
-                ffetched = api_instance.download_original_samples(filter='attr:oxford_id')
+                ffetched = api_instance.download_original_samples(search_filter='attr:oxford_id')
 
         except ApiException as error:
             self.check_api_exception(api_factory, "OriginalSampleApi->download_original_samples", error)

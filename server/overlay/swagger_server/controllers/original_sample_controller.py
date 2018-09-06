@@ -52,13 +52,13 @@ def download_original_sample(originalSampleId, user=None, token_info=None):
                                                              original_sample_controller.token_info(token_info))
 
 
-def download_original_samples(filter=None, start=None, count=None, user=None, token_info=None):  # noqa: E501
+def download_original_samples(search_filter=None, start=None, count=None, user=None, token_info=None):  # noqa: E501
     """fetches originalSamples
 
      # noqa: E501
 
-    :param filter: search filter e.g. studyId:0000, attr:name:value, location:locationId, taxa:taxId, eventSet:setName
-    :type filter: str
+    :param search_filter: search filter e.g. studyId:0000, attr:name:value, location:locationId, taxa:taxId, eventSet:setName
+    :type search_filter: str
     :param start: for pagination start the result set at a record x
     :type start: int
     :param count: for pagination the number of entries to return
@@ -66,7 +66,7 @@ def download_original_samples(filter=None, start=None, count=None, user=None, to
 
     :rtype: OriginalSamples
     """
-    return original_sample_controller.download_original_samples(filter, start,
+    return original_sample_controller.download_original_samples(search_filter, start,
                                                               count, user,
                                                               original_sample_controller.token_info(token_info))
 

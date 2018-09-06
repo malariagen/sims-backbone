@@ -164,7 +164,7 @@ class TestSample(TestBase):
 
             assert created == fetched, "create response != download response"
 
-            ffetched = api_instance.download_sampling_events(filter='attr:oxford:123456')
+            ffetched = api_instance.download_sampling_events(search_filter='attr:oxford:123456')
 
             assert ffetched == results
 
@@ -204,7 +204,7 @@ class TestSample(TestBase):
                                                                             study_name='1022')
             assert looked_up.count == 2
 
-            ffetched = api_instance.download_sampling_events(filter='attr:partner_id:123456:1022')
+            ffetched = api_instance.download_sampling_events(search_filter='attr:partner_id:123456:1022')
 
             assert ffetched == looked_up
 
@@ -365,7 +365,7 @@ class TestSample(TestBase):
             fetched.sampling_event_id = None
             assert samp == fetched, "upload != download response"
 
-            ffetched = api_instance.download_sampling_events(filter=urllib.parse.quote_plus('attr:partner_id:' + test_id))
+            ffetched = api_instance.download_sampling_events(search_filter=urllib.parse.quote_plus('attr:partner_id:' + test_id))
 
             assert ffetched == results
 
@@ -464,7 +464,7 @@ class TestSample(TestBase):
             assert fetched.sampling_events[0].partner_taxonomies is not None, 'Taxonomies missing'
             assert int(fetched.sampling_events[0].partner_taxonomies[0].taxonomy_id) == 5833, 'Wrong Taxonomy'
 
-            ffetched = api_instance.download_sampling_events(filter='taxa:5833')
+            ffetched = api_instance.download_sampling_events(search_filter='taxa:5833')
 
             assert ffetched == fetched
 
@@ -593,7 +593,7 @@ class TestSample(TestBase):
 
             assert created == fetched.sampling_events[0], "create response != download response"
 
-            ffetched = api_instance.download_sampling_events(filter='studyId:' + study_code)
+            ffetched = api_instance.download_sampling_events(search_filter='studyId:' + study_code)
 
             assert ffetched.count == 1, "Study not found"
 
@@ -625,7 +625,7 @@ class TestSample(TestBase):
             assert len(fetched1.sampling_events) ==2, "Wrong number of sampling_events returned"
             assert fetched1.count == 5, "Wrong total of sampling_events returned"
 
-            ffetched = api_instance.download_sampling_events(filter='studyId:' + study_code,
+            ffetched = api_instance.download_sampling_events(search_filter='studyId:' + study_code,
                                                              start=0, count=2)
 
             assert ffetched == fetched1
@@ -680,7 +680,7 @@ class TestSample(TestBase):
 
             assert created == fetched.sampling_events[0], "create response != download response"
 
-            ffetched = api_instance.download_sampling_events(filter='eventSet:' + es_name)
+            ffetched = api_instance.download_sampling_events(search_filter='eventSet:' + es_name)
 
             assert ffetched == fetched
 
@@ -775,7 +775,7 @@ class TestSample(TestBase):
             assert len(fetched1.sampling_events) ==2, "Wrong number of sampling_events returned"
             assert fetched1.count == 5, "Wrong total of sampling_events returned"
 
-            ffetched = api_instance.download_sampling_events(filter='eventSet:' + es_name, start=0,
+            ffetched = api_instance.download_sampling_events(search_filter='eventSet:' + es_name, start=0,
                                                             count=2)
 
             assert ffetched == fetched1
@@ -1757,4 +1757,24 @@ class TestSample(TestBase):
                 fetched = api_instance.download_sampling_event(created2.sampling_event_id)
         except ApiException as error:
             self.check_api_exception(api_factory, "SamplingEventApi->create_sampling_event", error)
+
+    """
+    """
+    def test_os_filter_fail(self, api_factory):
+
+        api_instance = api_factory.SamplingEventApi()
+
+        try:
+
+            with pytest.raises(ApiException, status=422):
+                ffetched = api_instance.download_sampling_events(search_filter='xxxxx')
+
+            with pytest.raises(ApiException, status=422):
+                ffetched = api_instance.download_sampling_events(search_filter='xxxxx:xxxxx')
+
+            with pytest.raises(ApiException, status=422):
+                ffetched = api_instance.download_sampling_events(search_filter='attr:oxford_id')
+
+        except ApiException as error:
+            self.check_api_exception(api_factory, "SamplingEventApi->download_sampling_events", error)
 

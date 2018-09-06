@@ -7,10 +7,10 @@
       produces:
         - application/json
       parameters:
-        - name: filter
+        - name: search_filter
           in: query
           description: search filter e.g. studyId:0000, attr:name:value, location:locationId, taxa:taxId, eventSet:setName
-          required: false
+          required: true
           type: string
         - name: start
           in: query

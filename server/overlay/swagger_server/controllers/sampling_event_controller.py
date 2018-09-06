@@ -52,13 +52,13 @@ def download_sampling_event(samplingEventId, user=None, token_info=None):
                                                              sampling_event_controller.token_info(token_info))
 
 
-def download_sampling_events(filter=None, start=None, count=None, user=None, token_info=None):  # noqa: E501
+def download_sampling_events(search_filter=None, start=None, count=None, user=None, token_info=None):  # noqa: E501
     """fetches samplingEvents
 
      # noqa: E501
 
-    :param filter: search filter e.g. studyId:0000, attr:name:value, location:locationId, taxa:taxId, eventSet:setName
-    :type filter: str
+    :param search_filter: search filter e.g. studyId:0000, attr:name:value, location:locationId, taxa:taxId, eventSet:setName
+    :type search_filter: str
     :param start: for pagination start the result set at a record x
     :type start: int
     :param count: for pagination the number of entries to return
@@ -66,7 +66,7 @@ def download_sampling_events(filter=None, start=None, count=None, user=None, tok
 
     :rtype: SamplingEvents
     """
-    return sampling_event_controller.download_sampling_events(filter, start,
+    return sampling_event_controller.download_sampling_events(search_filter, start,
                                                               count, user,
                                                               sampling_event_controller.token_info(token_info))
 

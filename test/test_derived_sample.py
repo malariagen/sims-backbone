@@ -118,6 +118,8 @@ class TestDerivativeSample(TestBase):
 
             api_instance.delete_derivative_sample(created.derivative_sample_id)
 
+            with pytest.raises(ApiException, status=404):
+                results = api_instance.download_derivative_samples_by_attr('asdfghjk', '123456')
         except ApiException as error:
             self.check_api_exception(api_factory, "DerivativeSampleApi->create_derivative_sample", error)
 
@@ -451,4 +453,24 @@ class TestDerivativeSample(TestBase):
         except ApiException as error:
             self.check_api_exception(api_factory,
                                      "DerivativeSampleApi->download_derivative_samples_by_taxa", error)
+
+    """
+    """
+    def test_ds_filter_fail(self, api_factory):
+
+        api_instance = api_factory.DerivativeSampleApi()
+
+        try:
+
+            with pytest.raises(ApiException, status=422):
+                ffetched = api_instance.download_derivative_samples(search_filter='xxxxx')
+
+            with pytest.raises(ApiException, status=422):
+                ffetched = api_instance.download_derivative_samples(search_filter='xxxxx:xxxxx')
+
+            with pytest.raises(ApiException, status=422):
+                ffetched = api_instance.download_derivative_samples(search_filter='attr:oxford_id')
+
+        except ApiException as error:
+            self.check_api_exception(api_factory, "derivativeSampleApi->download_derivative_samples", error)
 
