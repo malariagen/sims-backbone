@@ -13,6 +13,7 @@ then
         virtualenv client-env -p /usr/bin/python
         source client-env/bin/activate
     fi
+    pip3 install -r ../../test/requirements.txt
     pip3 install -r ../requirements.txt
     pip3 install -r ../../python_client/requirements.txt
     pip3 install -r $(pwd)/../../server/backbone_server/REQUIREMENTS
@@ -25,5 +26,5 @@ if [ "$1" = "one" ]
 then
     python3 -m pytest -s -x -k $2
 else
-    python3 -m pytest -s -x
+    python3 -m pytest -s -x --cov=.. --cov-report html -v
 fi
