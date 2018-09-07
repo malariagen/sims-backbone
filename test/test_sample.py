@@ -387,6 +387,11 @@ class TestSample(TestBase):
                                                 doc_accuracy='month')
             loc = swagger_client.Location(None, 27.463, 90.495, 'city',
                                           'Trongsa, Trongsa, Bhutan', 'test_create_with_locations', 'BTN')
+            ident = swagger_client.Attr(attr_type='partner_name', attr_value='Trongsa',
+                                        study_name='1009-MD-UP')
+            loc.attrs = [
+                ident
+            ]
             loc = location_api_instance.create_location(loc)
 
             samp.location_id = loc.location_id
@@ -399,6 +404,7 @@ class TestSample(TestBase):
                                           'Trongsa, Bhutan', 'test_create_with_locations', 'BTN')
             proxy_loc = location_api_instance.create_location(proxy_loc)
             samp.proxy_location_id = proxy_loc.location_id
+            samp.study_name = '9009-MD-UP'
             fetched = api_instance.update_sampling_event(fetched.sampling_event_id, samp)
             assert samp.location_id == fetched.location_id, "upload location != download response"
             assert samp.proxy_location_id == fetched.proxy_location_id, "upload proxy_location != download response"
@@ -407,6 +413,8 @@ class TestSample(TestBase):
             looked_up = api_instance.download_sampling_events_by_location(loc.location_id)
 
             assert looked_up.count == 1
+
+            assert looked_up.locations[looked_up.sampling_events[0].location_id].attrs[0].study_name == samp.study_name
 
             looked_up = api_instance.download_sampling_events_by_location(proxy_loc.location_id)
 

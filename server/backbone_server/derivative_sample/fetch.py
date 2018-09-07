@@ -64,7 +64,7 @@ class DerivativeSampleFetch():
         derivative_samples = []
         original_sample_list = []
 
-        for (derivative_sample_id, original_sample_id, dna_prep) in cursor:
+        for (derivative_sample_id, original_sample_id, dna_prep, study_id) in cursor:
             derivative_sample = DerivativeSample(str(derivative_sample_id),
                                              dna_prep=dna_prep)
             if original_sample_id:

@@ -29,7 +29,7 @@ class DerivativeSampleGetByTaxa():
 
                 locations = {}
 
-                fields = '''SELECT DISTINCT ds.id, os.study_id '''
+                fields = '''SELECT DISTINCT ds.id, original_sample_id, dna_prep, os.study_id '''
 
                 query_body = '''FROM derivative_samples ds
                 JOIN original_samples os ON os.id = ds.original_sample_id
@@ -55,15 +55,11 @@ class DerivativeSampleGetByTaxa():
                 derivative_samples = DerivativeSamples(derivative_samples=[], count=0)
                 event_ids = []
 
-                for derivative_sample_id, study_id in cursor:
-                    event_ids.append(derivative_sample_id)
+                cursor.execute(stmt, args)
 
-                for derivative_sample_id in event_ids:
-                    derivative_sample = DerivativeSampleFetch.fetch(cursor,
-                                                                    derivative_sample_id,
-                                                                    locations)
-                    derivative_samples.derivative_samples.append(derivative_sample)
-                    derivative_samples.count = derivative_samples.count + 1
+                derivative_samples.derivative_samples, derivative_samples.original_samples = DerivativeSampleFetch.load_derivative_samples(cursor, True)
+
+                derivative_samples.count = len(derivative_samples.derivative_samples)
 
                 if not (start is None and count is None):
                     cursor.execute(count_query, count_args)

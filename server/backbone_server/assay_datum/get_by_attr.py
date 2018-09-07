@@ -20,26 +20,19 @@ class AssayDatumGetByAttr():
 
                 derivative_samples = {}
 
-                stmt = '''SELECT DISTINCT assay_datum_id FROM assay_datum_attrs
+                stmt = '''SELECT DISTINCT assay_datum_id, derivative_sample_id, ebi_run_acc FROM assay_datum_attrs
                 JOIN attrs ON attrs.id = assay_datum_attrs.attr_id
+                JOIN assay_data ON assay_data.id = assay_datum_attrs.assay_datum_id
                 WHERE attr_type = %s AND attr_value = %s'''
                 args = (attr_type, attr_value)
 
                 cursor.execute(stmt, args)
 
                 assay_data = AssayData(assay_data=[], count=0)
-                event_ids = []
 
-                for assay_datum_id in cursor:
-                    event_ids.append(assay_datum_id)
+                assay_data.assay_data, assay_data.derivative_samples = AssayDatumFetch.load_assay_data(cursor)
 
-                for assay_datum_id in event_ids:
-                    assay_datum = AssayDatumFetch.fetch(cursor, assay_datum_id,
-                                                                derivative_samples)
-                    assay_data.assay_data.append(assay_datum)
-                    assay_data.count = assay_data.count + 1
-
-                assay_data.derivative_samples = derivative_samples
+                assay_data.count = len(assay_data.assay_data)
 
                 assay_data.attr_types = [attr_type]
 

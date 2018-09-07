@@ -19,7 +19,6 @@ from backbone_server.controllers.base_controller  import BaseController
 from backbone_server.errors.duplicate_key_exception import DuplicateKeyException
 from backbone_server.errors.missing_key_exception import MissingKeyException
 from backbone_server.errors.permission_exception import PermissionException
-from backbone_server.errors.nested_edit_exception import NestedEditException
 from backbone_server.errors.incompatible_exception import IncompatibleException
 
 from backbone_server.controllers.decorators  import apply_decorators
@@ -47,9 +46,6 @@ class AssayDatumController(BaseController):
             samp = post.post(assayDatum)
         except DuplicateKeyException as dke:
             logging.getLogger(__name__).error("create_assayDatum: {}".format(repr(dke)))
-            retcode = 422
-        except NestedEditException as nee:
-            logging.getLogger(__name__).error("create_assayDatum: {}".format(repr(nee)))
             retcode = 422
 
         return samp, retcode
@@ -190,8 +186,5 @@ class AssayDatumController(BaseController):
         except MissingKeyException as dme:
             logging.getLogger(__name__).error("update_assayDatum: {}".format(repr(dme)))
             retcode = 404
-        except NestedEditException as nee:
-            logging.getLogger(__name__).error("update_assayDatum: {}".format(repr(nee)))
-            retcode = 422
 
         return samp, retcode
