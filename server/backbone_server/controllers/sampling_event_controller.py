@@ -50,9 +50,11 @@ class SamplingEventController(BaseController):
             samp = post.post(samplingEvent)
         except DuplicateKeyException as dke:
             logging.getLogger(__name__).error("create_samplingEvent: {}".format(repr(dke)))
+            samp = dke.message
             retcode = 422
         except NestedEditException as nee:
             logging.getLogger(__name__).error("create_samplingEvent: {}".format(repr(nee)))
+            samp = nee.message
             retcode = 422
 
         return samp, retcode
@@ -329,9 +331,11 @@ class SamplingEventController(BaseController):
             samp = merge.merge(into, merged)
         except IncompatibleException as dke:
             logging.getLogger(__name__).error("merge_samplingEvent: {}".format(repr(dke)))
+            samp = dke.message
             retcode = 422
         except MissingKeyException as dme:
             logging.getLogger(__name__).error("merge_samplingEvent: {}".format(repr(dme)))
+            samp = dme.message
             retcode = 404
 
         return samp, retcode
@@ -357,12 +361,14 @@ class SamplingEventController(BaseController):
             samp = put.put(samplingEventId, samplingEvent)
         except DuplicateKeyException as dke:
             logging.getLogger(__name__).error("update_samplingEvent: {}".format(repr(dke)))
+            samp = dke.message
             retcode = 422
         except MissingKeyException as dme:
             logging.getLogger(__name__).error("update_samplingEvent: {}".format(repr(dme)))
             retcode = 404
         except NestedEditException as nee:
             logging.getLogger(__name__).error("update_samplingEvent: {}".format(repr(nee)))
+            samp = nee.message
             retcode = 422
 
         return samp, retcode

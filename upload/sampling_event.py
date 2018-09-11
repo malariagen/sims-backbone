@@ -317,11 +317,19 @@ class SamplingEventProcessor(BaseEntity):
             ret = self._dao.merge_sampling_events(existing.sampling_event_id,
                                                found.sampling_event_id)
         except ApiException as err:
-            msg = "Error updating merged sampling events {} {} {} {}".format(values, found, existing, err)
-            #print(msg)
+            msg = "Error updating merged sampling events {} {} {}".format(values, found, existing)
             self.report_conflict(existing, "SamplingEvent", existing,
-                                                 found, err.reason, values)
-            self._logger.error(msg)
+                                                 found, err.body, values)
+            #self._logger.error(msg)
+            if err.status == 422:
+                if err.body.startswith('"Incompatible location_id '):
+                    words = err.body.split(' ')
+                    loc_id1 = words[2]
+                    assert loc_id1 == existing.location_id
+                    loc_id2 = words[3].strip().strip('\"')
+                    conflict_loc = self._dao.download_location(loc_id2)
+                    self.report_conflict(None, "Location", existing.location, conflict_loc, msg, values)
+
             #sys.exit(1)
 
         return ret
