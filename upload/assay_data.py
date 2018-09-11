@@ -89,7 +89,8 @@ class AssayDataProcessor(BaseEntity):
                 return None
 
             try:
-                samp.derivative_sample_id = derivative_sample.derivative_sample_id
+                if derivative_sample:
+                    samp.derivative_sample_id = derivative_sample.derivative_sample_id
                 created = self._dao.create_assay_datum(samp)
 
                 ret = created
