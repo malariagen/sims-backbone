@@ -71,8 +71,13 @@ class Uploader():
     def message_buffer(self):
         return BaseEntity.message_buffer
 
+    @property
+    def use_message_buffer(self):
+        return BaseEntity.use_message_buffer
+
+    @use_message_buffer.setter
     def use_message_buffer(self, use_buffer):
-        BaseEntity.use_message_buffer = use_buffer
+        BaseEntity.set_use_message_buffer(use_buffer)
 
     def setup(self, filename):
 

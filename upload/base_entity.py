@@ -4,7 +4,18 @@ from pprint import pformat
 
 import logging
 
-class BaseEntity():
+class BaseEntityProperties(type):
+
+    @property
+    def message_buffer(self):
+        return self._message_buffer
+
+    @property
+    def use_message_buffer(self):
+        return self._use_message_buffer
+
+
+class BaseEntity(object, metaclass=BaseEntityProperties):
 
     _message_buffer = []
     _use_message_buffer = False
@@ -14,17 +25,10 @@ class BaseEntity():
         self._dao = dao
         self._event_set = event_set
 
-    @property
-    def message_buffer(self):
-        return BaseEntity._message_buffer
+    @classmethod
+    def set_use_message_buffer(cls, use_buffer):
+        cls._use_message_buffer = use_buffer
 
-    @property
-    def use_message_buffer(self):
-        return BaseEntity._use_message_buffer
-
-    @use_message_buffer.setter
-    def use_message_buffer(self, use_buffer):
-        BaseEntity._use_message_buffer = use_buffer
 
     def report(self, message, values):
 
@@ -34,6 +38,7 @@ class BaseEntity():
             msg = message
 
         if BaseEntity.use_message_buffer:
+            print("using message buffer")
             BaseEntity._message_buffer.append(msg)
         else:
             print(msg)
