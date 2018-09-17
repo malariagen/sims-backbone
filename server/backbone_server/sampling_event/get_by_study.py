@@ -27,7 +27,7 @@ class SamplingEventsGetByStudy():
                 if not study_id:
                     raise MissingKeyException("No study {}".format(study_name))
 
-                fields = '''SELECT v_sampling_events.id, study_id, doc, doc_accuracy,
+                fields = '''SELECT DISTINCT v_sampling_events.id, study_id, doc, doc_accuracy,
                                 partner_species, v_sampling_events.partner_species_id,
                                 location_id, latitude, longitude, accuracy, curated_name, curation_method, country, notes, partner_name,
                                 proxy_location_id, proxy_latitude, proxy_longitude, proxy_accuracy,
@@ -38,7 +38,7 @@ class SamplingEventsGetByStudy():
                 args = (study_id,)
 
                 count_args = args
-                count_query = 'SELECT COUNT(v_sampling_events.id) ' + query_body
+                count_query = 'SELECT COUNT(DISTINCT v_sampling_events.id) ' + query_body
 
                 query_body = query_body + ''' ORDER BY doc, id'''
 
