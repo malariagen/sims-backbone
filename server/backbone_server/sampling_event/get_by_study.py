@@ -34,8 +34,7 @@ class SamplingEventsGetByStudy():
                                 proxy_curated_name, proxy_curation_method, proxy_country, proxy_notes,
                                 proxy_partner_name'''
                 query_body = ''' FROM v_sampling_events
-                        LEFT JOIN studies s ON s.study_name = v_sampling_events.study_id
-                        WHERE s.id = %s'''
+                        WHERE studies_id = %s'''
                 args = (study_id,)
 
                 count_args = args

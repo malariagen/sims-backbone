@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 9.6.9
--- Dumped by pg_dump version 9.6.9
+-- Dumped from database version 9.6.10
+-- Dumped by pg_dump version 9.6.10
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -43,6 +43,8 @@ DROP INDEX public.partner_species_identifiers_partner_species_idx;
 DROP INDEX public.original_sample_attrs_original_sample_id_idx;
 DROP INDEX public.location_attrs_location_id_idx;
 DROP INDEX public.idx_study_name;
+DROP INDEX public.idx_study_id;
+DROP INDEX public.idx_se_doc;
 DROP INDEX public.idx_partner_species;
 DROP INDEX public.idx_ident_value;
 DROP INDEX public.idx_ident_type;
@@ -90,6 +92,7 @@ DROP SEQUENCE public.event_sets_id_seq;
 DROP TABLE public.event_sets;
 DROP TABLE public.event_set_notes;
 DROP TABLE public.event_set_members;
+DROP TABLE public.derived_sample_attrs;
 DROP TABLE public.derivative_samples;
 DROP TABLE public.derivative_sample_attrs;
 DROP TABLE public.countries;
@@ -247,6 +250,16 @@ CREATE TABLE public.derivative_samples (
     id uuid NOT NULL,
     original_sample_id uuid,
     dna_prep character varying
+);
+
+
+--
+-- Name: derived_sample_attrs; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.derived_sample_attrs (
+    derived_sample_id uuid,
+    attr_id uuid
 );
 
 
@@ -422,6 +435,7 @@ CREATE TABLE public.taxonomy_identifiers (
 CREATE VIEW public.v_sampling_events AS
  SELECT sampling_events.id,
     studies.study_name AS study_id,
+    studies.id AS studies_id,
     sampling_events.doc,
     sampling_events.doc_accuracy,
     partner_species_identifiers.partner_species,
@@ -692,6 +706,20 @@ CREATE INDEX idx_ident_value ON public.attrs USING btree (attr_value);
 --
 
 CREATE INDEX idx_partner_species ON public.partner_species_identifiers USING btree (partner_species);
+
+
+--
+-- Name: idx_se_doc; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_se_doc ON public.sampling_events USING btree (doc);
+
+
+--
+-- Name: idx_study_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_study_id ON public.studies USING btree (id);
 
 
 --
