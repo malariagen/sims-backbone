@@ -18,12 +18,12 @@ class CountryGet():
 
                 stmt = '''SELECT english, alpha2, alpha3 FROM countries WHERE '''
                 if len(country_id) == 2:
-                    stmt = stmt + ''' alpha2 =%s'''
+                    stmt = stmt + ''' LOWER(alpha2) =%s'''
                 elif len(country_id) == 3:
-                    stmt = stmt + ''' alpha3 =%s'''
+                    stmt = stmt + ''' LOWER(alpha3) =%s'''
                 else:
-                    stmt = stmt + ''' english =%s'''
-                cursor.execute( stmt, (country_id,))
+                    stmt = stmt + ''' LOWER(english) =%s'''
+                cursor.execute( stmt, (country_id.casefold(),))
 
                 country = None
 
