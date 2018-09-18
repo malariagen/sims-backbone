@@ -1,6 +1,6 @@
     get:
       tags:
-        - DerivativeSample
+        - derivativeSample
       summary: fetches DerivativeSamples for a given taxonomy classification code
       description: ''
       operationId: downloadDerivativeSamplesByTaxa

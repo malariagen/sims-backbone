@@ -1,6 +1,6 @@
   get:
       tags:
-        - DerivativeSample
+        - derivativeSample
       summary: fetches DerivativeSamples
       description: ''
       operationId: downloadDerivativeSamples
