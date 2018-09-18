@@ -21,6 +21,7 @@ import os
 import requests
 
 from original_sample import OriginalSampleProcessor
+from sampling_event import SamplingEventProcessor
 
 import upload_ssr
 
@@ -153,6 +154,7 @@ class SetCountry(upload_ssr.Upload_SSR):
     def set_country(self, found, country_value, filename, values):
 
         self.os_processor = OriginalSampleProcessor(self._dao, self._event_set)
+        self.se_processor = SamplingEventProcessor(self._dao, self._event_set)
         orig = deepcopy(found)
 
         if country_value not in self._country_cache:
@@ -174,7 +176,7 @@ class SetCountry(upload_ssr.Upload_SSR):
         error = False
         if found.location:
             try:
-                found.location = self.update_country(self._country_cache[country_value].alpha3, found.location)
+                found.location = self.se_processor.update_country(self._country_cache[country_value].alpha3, found.location)
             except Exception as cue:
                 self.os_processor.report_conflict(found, 'Country', found.location.country,
                                      country_value, 'not updated', values)
@@ -182,7 +184,7 @@ class SetCountry(upload_ssr.Upload_SSR):
 
         if found.proxy_location:
             try:
-                found.proxy_location = self.update_country(self._country_cache[country_value].alpha3, found.proxy_location)
+                found.proxy_location = self.se_processor.update_country(self._country_cache[country_value].alpha3, found.proxy_location)
             except Exception as cue:
                 self.os_processor.report_conflict(found, 'Country', found.proxy_location.country,
                                      country_value, 'proxy not updated', values)
