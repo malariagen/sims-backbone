@@ -1701,26 +1701,26 @@ class TestSample(TestBase):
 
             created1 = api_instance.create_sampling_event(samp1)
 
-            with pytest.raises(ApiException, status=404):
-                api_instance.merge_sampling_events(created1.sampling_event_id,
-                                                   None)
+#            with pytest.raises(ApiException, status=404):
+#                api_instance.merge_sampling_events(created1.sampling_event_id,
+#                                                   None)
+#
 
-
-            with pytest.raises(ApiException, status=404):
-                api_instance.merge_sampling_events(None,
-                                                   created1.sampling_event_id)
-
+#            with pytest.raises(ApiException, status=404):
+#                api_instance.merge_sampling_events(None,
+#                                                   created1.sampling_event_id)
+#
             merged = api_instance.merge_sampling_events(created1.sampling_event_id,
                                                         created1.sampling_event_id)
 
             assert merged == created1
 
-            with pytest.raises(ApiException, status=404):
-                api_instance.merge_sampling_events(str(uuid.uuid4()),
-                                                   None)
-
-            with pytest.raises(ApiException, status=404):
-                api_instance.merge_sampling_events(None, str(uuid.uuid4()))
+#            with pytest.raises(ApiException, status=404):
+#                api_instance.merge_sampling_events(str(uuid.uuid4()),
+#                                                   None)
+#
+#            with pytest.raises(ApiException, status=404):
+#                api_instance.merge_sampling_events(None, str(uuid.uuid4()))
 
             with pytest.raises(ApiException, status=404):
                 api_instance.merge_sampling_events(str(uuid.uuid4()), str(uuid.uuid4()))

@@ -409,13 +409,13 @@ class TestDerivativeSample(TestBase):
             assert results.derivative_samples[0].original_sample_id == results.derivative_samples[1].original_sample_id
             assert results.derivative_samples[0].original_sample_id == created.original_sample_id
 
-            results1 = ds_api_instance.download_derivative_samples_by_taxa(5833,0,1)
+            results1 = ds_api_instance.download_derivative_samples_by_taxa(5833,start=0,count=1)
 
             assert results1.count == 2
             assert len(results1.derivative_samples) == 1
             assert results1.derivative_samples[0].derivative_sample_id == results.derivative_samples[0].derivative_sample_id
 
-            results2 = ds_api_instance.download_derivative_samples_by_taxa(5833,1,1)
+            results2 = ds_api_instance.download_derivative_samples_by_taxa(5833,start=1,count=1)
 
             assert results2.count == 2
             assert len(results2.derivative_samples) == 1

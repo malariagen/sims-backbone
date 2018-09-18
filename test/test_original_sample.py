@@ -885,18 +885,18 @@ class TestOriginalSample(TestBase):
 
             created1 = api_instance.create_original_sample(samp1)
 
-            with pytest.raises(ApiException, status=404):
-                merged = api_instance.merge_original_samples(created1.original_sample_id,
-                                                             None)
+#            with pytest.raises(ApiException, status=404):
+#                merged = api_instance.merge_original_samples(created1.original_sample_id,
+#                                                             None)
 
             with pytest.raises(ApiException, status=404):
                 merged = api_instance.merge_original_samples(created1.original_sample_id,
                                                              str(uuid.uuid4()))
 
-            with pytest.raises(ApiException, status=404):
-                merged = api_instance.merge_original_samples(None,
-                                                             created1.original_sample_id)
-
+#            with pytest.raises(ApiException, status=404):
+#                merged = api_instance.merge_original_samples(None,
+#                                                             created1.original_sample_id)
+#
             with pytest.raises(ApiException, status=404):
                 merged = api_instance.merge_original_samples(str(uuid.uuid4()),
                                                              created1.original_sample_id)
