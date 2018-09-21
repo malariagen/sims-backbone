@@ -89,8 +89,6 @@ paths:
     $ref: './swagger/derivative_sample/items.yaml'
   '/derivativeSample/{derivativeSampleId}':
     $ref: './swagger/derivative_sample/item.yaml'
-  '/derivativeSamples':
-    $ref: './swagger/derivative_sample/items.yaml'
   '/derivativeSamples/attr/{propName}/{propValue}':
     $ref: './swagger/derivative_sample/by_attr.yaml'
   '/derivativeSamples/os/attr/{propName}/{propValue}':
