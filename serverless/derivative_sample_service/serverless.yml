@@ -11,7 +11,7 @@
 #
 # Happy Coding!
 
-service: sims-derived-sample-service
+service: sims-derivative-sample-service
 #service: sims-backbone-service
 
 # You can pin your service to only deploy with a specific Serverless version
@@ -69,18 +69,18 @@ package:
         - ../../server/backbone_server/connect.py
     include:
         - ../util/**
-        - derived_sample/handler.py
+        - derivative_sample/handler.py
         - ../../server/bb_server/**
         - ../../server/backbone_server/**/**
         - ../client_secrets.${self:provider.stage}.json
 
 functions:
 
-  createDerivedSample:
-    handler: derived_sample/handler.create_derived_sample
+  createDerivativeSample:
+    handler: derivative_sample/handler.create_derivative_sample
     events:
       - http:
-          path: derivedSample
+          path: derivativeSample
           method: post
           cors: true
           timeout: 20
@@ -91,11 +91,11 @@ functions:
             identitySource: method.request.header.Authorization
             identityValidationExpression: .*
 
-  downloadDerivedSample:
-    handler: derived_sample/handler.download_derived_sample
+  downloadDerivativeSample:
+    handler: derivative_sample/handler.download_derivative_sample
     events:
       - http:
-          path: derivedSample/{derived_sample_id}
+          path: derivativeSample/{derivative_sample_id}
           method: get
           cors: true
           timeout: 20
@@ -108,13 +108,13 @@ functions:
           request:
             parameters:
               paths:
-                derived_sample_id: true
+                derivative_sample_id: true
 
-  updateDerivedSample:
-    handler: derived_sample/handler.update_derived_sample
+  updateDerivativeSample:
+    handler: derivative_sample/handler.update_derivative_sample
     events:
       - http:
-          path: derivedSample/{derived_sample_id}
+          path: derivativeSample/{derivative_sample_id}
           method: put
           cors: true
           timeout: 20
@@ -127,12 +127,12 @@ functions:
           request:
             parameters:
               paths:
-                derived_sample_id: true
-  deleteDerivedSample:
-    handler: derived_sample/handler.delete_derived_sample
+                derivative_sample_id: true
+  deleteDerivativeSample:
+    handler: derivative_sample/handler.delete_derivative_sample
     events:
       - http:
-          path: derivedSample/{derived_sample_id}
+          path: derivativeSample/{derivative_sample_id}
           method: delete
           cors: true
           timeout: 20
@@ -145,13 +145,13 @@ functions:
           request:
             parameters:
               paths:
-                derived_sample_id: true
+                derivative_sample_id: true
 
-  downloadDerivedSamplesByAttr:
-    handler: derived_sample/handler.download_derived_samples_by_attr
+  downloadDerivativeSamplesByAttr:
+    handler: derivative_sample/handler.download_derivative_samples_by_attr
     events:
       - http:
-          path: derivedSamples/attr/{prop_name}/{prop_value}
+          path: derivativeSamples/attr/{prop_name}/{prop_value}
           method: get
           cors: true
           timeout: 20
@@ -170,11 +170,11 @@ functions:
                 study_name: false
 
 
-  downloadDerivedSamplesByOsAttr:
-    handler: derived_sample/handler.download_derived_samples_by_os_attr
+  downloadDerivativeSamplesByOsAttr:
+    handler: derivative_sample/handler.download_derivative_samples_by_os_attr
     events:
       - http:
-          path: derivedSamples/os/attr/{prop_name}/{prop_value}
+          path: derivativeSamples/os/attr/{prop_name}/{prop_value}
           method: get
           cors: true
           timeout: 20
@@ -194,27 +194,27 @@ functions:
 
 resources:
   Resources:
-    CreateDerivedSampleLogGroup:
+    CreateDerivativeSampleLogGroup:
       Type: AWS::Logs::LogGroup
       Properties:
         RetentionInDays: "30"
-    DownloadDerivedSampleLogGroup:
+    DownloadDerivativeSampleLogGroup:
       Type: AWS::Logs::LogGroup
       Properties:
         RetentionInDays: "30"
-    UpdateDerivedSampleLogGroup:
+    UpdateDerivativeSampleLogGroup:
       Type: AWS::Logs::LogGroup
       Properties:
         RetentionInDays: "30"
-    DeleteDerivedSampleLogGroup:
+    DeleteDerivativeSampleLogGroup:
       Type: AWS::Logs::LogGroup
       Properties:
         RetentionInDays: "30"
-    DownloadDerivedSamplesByAttrLogGroup:
+    DownloadDerivativeSamplesByAttrLogGroup:
       Type: AWS::Logs::LogGroup
       Properties:
         RetentionInDays: "30"
-    DownloadDerivedSamplesByOsAttrLogGroup:
+    DownloadDerivativeSamplesByOsAttrLogGroup:
       Type: AWS::Logs::LogGroup
       Properties:
         RetentionInDays: "30"
