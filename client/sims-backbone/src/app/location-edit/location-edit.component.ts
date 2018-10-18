@@ -1,3 +1,5 @@
+/// <reference types="@types/googlemaps" />
+
 import { Component, NgZone, OnInit } from '@angular/core';
 import { ActivatedRoute, Params } from '@angular/router';
 import { FormGroup, FormArray, FormControl, FormBuilder, Validators } from '@angular/forms';
@@ -10,7 +12,6 @@ import { Locations } from '../typescript-angular-client/model/locations';
 import { LocationService } from '../typescript-angular-client/api/location.service';
 import { MetadataService } from '../typescript-angular-client/api/metadata.service';
 
-import { } from 'googlemaps';
 import { MapsAPILoader } from '@agm/core';
 import { LatLngLiteral } from '@agm/core';
 
