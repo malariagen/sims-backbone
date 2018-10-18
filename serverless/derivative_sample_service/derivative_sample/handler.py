@@ -63,6 +63,53 @@ def download_derivative_sample(event, context):
 
     return create_response(event, retcode, value)
 
+def download_derivative_samples(event, context):
+
+    user = event['requestContext']['authorizer']['principalId']
+
+    search_filter = None
+    start = None
+    count = None
+    if 'queryStringParameters' in event and event["queryStringParameters"]:
+        if 'search_filter' in event["queryStringParameters"]:
+            search_filter = event["queryStringParameters"]["search_filter"]
+        if 'start' in event["queryStringParameters"]:
+            start = event["queryStringParameters"]["start"]
+        if 'count' in event["queryStringParameters"]:
+            count = event["queryStringParameters"]["count"]
+
+    value, retcode =  derivative_sample_controller.download_derivative_samples(search_filter,
+                                                                               start, count,
+                                                                               user,
+                                                                               derivative_sample_controller.authorizer(event['requestContext']['authorizer']))
+
+    return create_response(event, retcode, value)
+
+
+def download_derivative_samples_by_taxa(event, context):
+
+    user = event['requestContext']['authorizer']['principalId']
+
+    if 'pathParameters' in event:
+        taxa_id = event["pathParameters"]["taxaId"]
+        prop_value = event["pathParameters"]["prop_value"]
+
+    start = None
+    count = None
+    if 'queryStringParameters' in event and event["queryStringParameters"]:
+        if 'start' in event["queryStringParameters"]:
+            start = event["queryStringParameters"]["start"]
+        if 'count' in event["queryStringParameters"]:
+            count = event["queryStringParameters"]["count"]
+
+    value, retcode = derivative_sample_controller.download_derivative_samples_by_taxa(taxa_id,
+                                                                                  start,
+                                                                                  count,
+                                                                                  user,
+                                                                                  derivative_sample_controller.authorizer(event['requestContext']['authorizer']))
+
+
+    return create_response(event, retcode, value)
 
 def download_derivative_samples_by_attr(event, context):
 

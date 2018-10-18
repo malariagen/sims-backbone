@@ -110,6 +110,27 @@ functions:
               paths:
                 derivative_sample_id: true
 
+  downloadDerivativeSamples:
+    handler: derivative_sample/handler.download_derivative_samples
+    events:
+      - http:
+          path: derivativeSamples
+          method: get
+          cors: true
+          timeout: 20
+          authorizer:
+            name: dsAuthFunc
+            arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
+            type: request
+            identitySource: method.request.header.Authorization
+            identityValidationExpression: .*
+          request:
+            parameters:
+              query:
+                search_filter: false
+                start: false
+                count: false
+
   updateDerivativeSample:
     handler: derivative_sample/handler.update_derivative_sample
     events:
@@ -146,6 +167,30 @@ functions:
             parameters:
               paths:
                 derivative_sample_id: true
+
+
+  downloadDerivativeSamplesByTaxa:
+    handler: derivative_sample/handler.download_derivative_samples_by_taxa
+    events:
+      - http:
+          path: derivativeSamples/taxa/{taxa_id}
+          method: get
+          cors: true
+          timeout: 20
+          authorizer:
+            name: dsAuthFunc
+            arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
+            type: request
+            identitySource: method.request.header.Authorization
+            identityValidationExpression: .*
+          request:
+            parameters:
+              paths:
+                taxa_id: true
+              query:
+                search_filter: false
+                start: false
+                count: false
 
   downloadDerivativeSamplesByAttr:
     handler: derivative_sample/handler.download_derivative_samples_by_attr
@@ -202,11 +247,19 @@ resources:
       Type: AWS::Logs::LogGroup
       Properties:
         RetentionInDays: "30"
+    DownloadDerivativeSamplesLogGroup:
+      Type: AWS::Logs::LogGroup
+      Properties:
+        RetentionInDays: "30"
     UpdateDerivativeSampleLogGroup:
       Type: AWS::Logs::LogGroup
       Properties:
         RetentionInDays: "30"
     DeleteDerivativeSampleLogGroup:
+      Type: AWS::Logs::LogGroup
+      Properties:
+        RetentionInDays: "30"
+    DownloadDerivativeSamplesByTaxaLogGroup:
       Type: AWS::Logs::LogGroup
       Properties:
         RetentionInDays: "30"
