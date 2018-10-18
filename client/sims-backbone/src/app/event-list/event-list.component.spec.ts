@@ -18,7 +18,6 @@ import { OAuthService } from 'angular-oauth2-oidc';
 
 import { createAuthServiceSpy, ActivatedRouteStub, asyncData, createOAuthServiceSpy, getTestSamplingEvents } from '../../testing/index.spec';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { HttpResponse } from 'selenium-webdriver/http';
 
 
 @Component({ selector: 'app-downloader-csv', template: '' })
