@@ -45,6 +45,17 @@
     },
     "model": "locations.location"
 },
+    {
+        "model": "locations.proxylocation",
+        "fields": {
+            "updated_by": 1,
+            "location": 1,
+            "study": 1,
+            "created_by": 1,
+            "proxy_location": 2
+        },
+        "pk": 1
+    },
 {
     "pk": 1,
     "fields": {

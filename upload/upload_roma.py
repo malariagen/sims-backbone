@@ -28,6 +28,11 @@ class Upload_ROMA(uploader.Uploader):
                 items[item['model']] = {}
             items[item['model']][item['pk']] = item
 
+        proxy_locations = {}
+        for key, item in items['locations.proxylocation'].items():
+            fields = item['fields']
+            proxy_locations[fields['location']] = fields['proxy_location']
+
         for key, item in items['samples.sample'].items():
             roma_pk_id = instance + '_' + str(item['pk'])
             fields = item['fields']
@@ -36,11 +41,20 @@ class Upload_ROMA(uploader.Uploader):
             #source_code = None
             date_format = '%Y-%m-%d'
             doc = datetime.datetime(*(time.strptime(fields['collection_date'], date_format))[:6]).date()
+
             loc = items['locations.location'][fields['location']]
             latitude = loc['fields']['latitude']
             longitude = loc['fields']['longitude']
             loc_name = loc['fields']['location_name']
             country = items['locations.country'][loc['fields']['country']]['fields']['iso3']
+
+            if fields['location'] in proxy_locations:
+                proxy_loc = items['locations.location'][proxy_locations[fields['location']]]
+                proxy_latitude = proxy_loc['fields']['latitude']
+                proxy_longitude = proxy_loc['fields']['longitude']
+                proxy_loc_name = proxy_loc['fields']['location_name']
+                proxy_country = items['locations.country'][proxy_loc['fields']['country']]['fields']['iso3']
+
             roma_manifest_id = fields['manifest']
             roma_study_id = items['samples.manifest'][roma_manifest_id]['fields']['study']
             study_id = items['managements.study'][roma_study_id]['fields']['project_code'][1:]
@@ -79,6 +93,10 @@ class Upload_ROMA(uploader.Uploader):
                 'country': country.strip(),
                 'latitude': latitude,
                 'longitude': longitude,
+                'proxy_latitude': proxy_latitude,
+                'proxy_longitude': proxy_longitude,
+                'proxy_location_name': proxy_loc_name,
+                'proxy_country': proxy_country
             }
 
 

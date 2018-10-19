@@ -119,12 +119,13 @@ class TestROMA(TestBase):
 
     """
     """
-    def test_location(self):
+    def test_roma_location(self):
 
         api_instance = swagger_client.SamplingEventApi(self._api_client)
 
         try:
             looked_up = api_instance.download_sampling_events_by_os_attr('roma_id', 'TST00001')
+
             looked_up = looked_up.sampling_events[0]
             self.assertEqual(looked_up.location.latitude, 12.5)
             self.assertEqual(looked_up.location.longitude, 103.9)
@@ -137,8 +138,20 @@ class TestROMA(TestBase):
                              '9030')
 #            self.assertEqual(looked_up.location.notes, 'roma_dump.20180116103346.json')
             self.assertEqual(looked_up.location.notes, 'roma_dump')
+
+            self.assertEqual(looked_up.proxy_location.latitude, 12.51)
+            self.assertEqual(looked_up.proxy_location.longitude, 103.91)
+            self.assertEqual(looked_up.proxy_location.country, 'KHM')
+            self.assertEqual(looked_up.proxy_location.attrs[0].attr_value,
+                             ' Test name with spaces ')
+            self.assertEqual(looked_up.proxy_location.attrs[0].attr_source,
+                             'roma_dump')
+            self.assertEqual(looked_up.proxy_location.attrs[0].study_name,
+                             '9030')
             if looked_up.location.location_id not in TestROMA._locations:
                 TestROMA._locations.append(looked_up.location.location_id)
+            if looked_up.proxy_location.location_id not in TestROMA._locations:
+                TestROMA._locations.append(looked_up.proxy_location.location_id)
         except ApiException as error:
             self.fail("test_year_accuracy: Exception when calling download_sampling_event_by_os_attr {}"
                         .format(error))
