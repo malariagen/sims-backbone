@@ -102,6 +102,20 @@ class TestROMA(TestBase):
             self.fail("test_year_accuracy: Exception when calling download_sampling_event_by_os_attr {}"
                         .format(error))
 
+    """
+    """
+    def test_date_of_collection(self):
+
+        api_instance = swagger_client.SamplingEventApi(self._api_client)
+
+        try:
+            looked_up = api_instance.download_sampling_events_by_os_attr('roma_id', 'TST00002')
+            looked_up = looked_up.sampling_events[0]
+            self.assertEqual(looked_up.doc, datetime.date(2012, 11, 22))
+        except ApiException as error:
+            self.fail("test_year_accuracy: Exception when calling download_sampling_event_by_os_attr {}"
+                        .format(error))
+
 
     """
     """

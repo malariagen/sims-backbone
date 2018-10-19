@@ -5,6 +5,8 @@ import swagger_client
 from swagger_client.rest import ApiException
 import uploader
 import json
+import datetime
+import time
 
 class Upload_ROMA(uploader.Uploader):
 
@@ -32,7 +34,8 @@ class Upload_ROMA(uploader.Uploader):
             roma_id = fields['sample_name']
             source_code = fields['external_id'].strip()
             #source_code = None
-            doc = fields['collection_date']
+            date_format = '%Y-%m-%d'
+            doc = datetime.datetime(*(time.strptime(fields['collection_date'], date_format))[:6]).date()
             loc = items['locations.location'][fields['location']]
             latitude = loc['fields']['latitude']
             longitude = loc['fields']['longitude']
