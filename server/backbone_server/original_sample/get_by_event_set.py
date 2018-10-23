@@ -30,12 +30,14 @@ class OriginalSamplesGetByEventSet():
                 if not event_set_id:
                     raise MissingKeyException("No event_set_name {}".format(event_set_name))
 
-                fields = '''SELECT os.id, study_name, os.sampling_event_id, days_in_culture '''
+                fields = '''SELECT os.id, study_name, os.sampling_event_id,
+                days_in_culture, partner_species '''
                 query_body = ''' FROM original_samples os
                 JOIN sampling_events se ON se.id = os.sampling_event_id
+                LEFT JOIN partner_species_identifiers psi ON psi.id = os.partner_species_id
                 JOIN event_set_members esm ON esm.sampling_event_id = se.id
                 LEFT JOIN studies s ON s.id = os.study_id
-                        WHERE esm.event_set_id = %s'''
+                WHERE esm.event_set_id = %s'''
                 args = (event_set_id,)
 
                 count_args = args
@@ -64,11 +66,11 @@ class OriginalSamplesGetByEventSet():
                 original_samples.attr_types = []
 
                 col_query = '''select distinct attr_type from original_sample_attrs sea
-                        JOIN attrs a ON a.id=sea.attr_id
-                        JOIN original_samples os ON os.id = sea.original_sample_id
-                        JOIN sampling_events se ON se.id = os.sampling_event_id
-                        JOIN event_set_members esm ON esm.sampling_event_id = se.id
-                        WHERE esm.event_set_id = %s'''
+                JOIN attrs a ON a.id=sea.attr_id
+                JOIN original_samples os ON os.id = sea.original_sample_id
+                JOIN sampling_events se ON se.id = os.sampling_event_id
+                JOIN event_set_members esm ON esm.sampling_event_id = se.id
+                WHERE esm.event_set_id = %s'''
 
                 cursor.execute(col_query, (event_set_id,))
                 for (attr_type,) in cursor:

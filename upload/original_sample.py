@@ -57,6 +57,10 @@ class OriginalSampleProcessor(BaseEntity):
         if 'days_in_culture' in values:
             o_sample.days_in_culture = int(float(values['days_in_culture']))
 
+        if 'species' in values and values['species'] and len(values['species']) > 0:
+            o_sample.partner_species = values['species']
+
+
         o_sample.attrs = idents
 
         return o_sample
@@ -270,6 +274,30 @@ class OriginalSampleProcessor(BaseEntity):
             new_ident_value = True
             change_reasons.append('Set SamplingEvent')
 
+        if samp.partner_species:
+            if existing.partner_species:
+                if existing.partner_species != samp.partner_species:
+                    fuzzyMatch = False
+                    if existing.partner_species == 'Plasmodium falciparum/vivax mixture':
+                        if samp.partner_species == 'Plasmodium vivax':
+                            fuzzyMatch = True
+                        if samp.partner_species == 'Plasmodium falciparum':
+                            fuzzyMatch = True
+
+                    if existing.partner_species == 'Plasmodium falciparum':
+                        if samp.partner_species == 'P. falciparum':
+                            fuzzyMatch = True
+
+                    if not fuzzyMatch:
+                        msg = "Not updated"
+                        self.report_conflict(existing, "Species",
+                                             existing.partner_species, samp.partner_species,
+                                             msg, values)
+
+            else:
+                existing.partner_species = samp.partner_species
+                new_ident_value = True
+                change_reasons.append('Set species')
         #print('\n'.join(change_reasons))
 
         return existing, new_ident_value

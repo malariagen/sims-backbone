@@ -281,6 +281,7 @@ class TestMerge(TestBase):
         looked_up = os_api_instance.download_original_samples_by_attr('oxford_id',
                                                                              'EXTST000002')
         looked_up = looked_up.original_samples[0]
+        self.assertEquals(looked_up.partner_species, 'Plasmodium falciparum')
 
 #        msg = "Merging into {} ".format(looked_up.sampling_event_id) +\
 #                "using oxford_id\t[('sample_lims_id', 'TEAM112_0000000001'), ('sample_source_id', 'TST00002'), ('sample_source_id1', 'EXTST000002'), ('sample_source_id2', 'OX0001-C'), ('sample_source_type', 'roma_id'), ('sample_source_type1', 'oxford_id'), ('sample_source_type2', 'oxford_id'), ('study_id', '0000-Unknown'), ('unique_id', '19465')]"
@@ -318,8 +319,6 @@ class TestMerge(TestBase):
                                                                              'EXTST000002')
 
         looked_up = looked_up.sampling_events[0]
-
-        self.assertEquals(looked_up.partner_species, 'Plasmodium falciparum')
 
         self.assertEquals(looked_up.location.latitude, 12.5)
 

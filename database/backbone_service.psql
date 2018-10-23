@@ -356,6 +356,7 @@ CREATE TABLE public.original_samples (
     id uuid NOT NULL,
     study_id uuid,
     sampling_event_id uuid,
+    partner_species_id uuid,
     days_in_culture integer
 );
 
@@ -390,7 +391,6 @@ CREATE TABLE public.sampling_events (
     study_id uuid,
     doc date,
     doc_accuracy character varying,
-    partner_species_id uuid,
     location_id uuid,
     proxy_location_id uuid
 );
@@ -438,8 +438,6 @@ CREATE VIEW public.v_sampling_events AS
     studies.id AS studies_id,
     sampling_events.doc,
     sampling_events.doc_accuracy,
-    partner_species_identifiers.partner_species,
-    sampling_events.partner_species_id,
     sampling_events.location_id,
     public.st_x(loc.location) AS latitude,
     public.st_y(loc.location) AS longitude,
@@ -458,9 +456,8 @@ CREATE VIEW public.v_sampling_events AS
     proxy_loc.country AS proxy_country,
     proxy_loc.notes AS proxy_notes,
     pla.attr_value AS proxy_partner_name
-   FROM ((((((((public.sampling_events
+   FROM (((((((public.sampling_events
      LEFT JOIN public.studies ON ((studies.id = sampling_events.study_id)))
-     LEFT JOIN public.partner_species_identifiers ON ((partner_species_identifiers.id = sampling_events.partner_species_id)))
      LEFT JOIN public.locations loc ON ((loc.id = sampling_events.location_id)))
      LEFT JOIN public.location_attrs li ON ((li.location_id = sampling_events.location_id)))
      LEFT JOIN public.attrs la ON (((la.study_id = sampling_events.study_id) AND (li.attr_id = la.id) AND ((la.attr_type)::text = 'partner_name'::text))))
@@ -913,7 +910,7 @@ ALTER TABLE ONLY public.sampling_event_attrs
 -- Name: sampling_events fk_species; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.sampling_events
+ALTER TABLE ONLY public.original_samples
     ADD CONSTRAINT fk_species FOREIGN KEY (partner_species_id) REFERENCES public.partner_species_identifiers(id);
 
 

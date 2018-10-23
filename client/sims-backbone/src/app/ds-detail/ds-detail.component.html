@@ -1,0 +1,17 @@
+<div *ngIf="derivativeSamples">
+    {{ derivativeSamples.count }} matching derivative samples
+    <div fxLayout="column" *ngFor="let derivativeSample of derivativeSamples.derivative_samples">
+      <div fxLayout="row">
+        <div [fxFlex]="grow">
+          <h3>Derivative Sample Details</h3>
+          <div>ID: {{derivativeSample.derivative_sample_id}}</div>
+          <div>DNA prep: {{derivativeSample.dna_prep}}</div>
+        </div>
+      </div>
+      <div fxLayout="row">
+        <div [fxFlex]="grow">
+          <app-attr-table [attrs]="derivativeSample.attrs"></app-attr-table>
+        </div>
+      </div>
+    </div>
+  </div>

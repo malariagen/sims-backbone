@@ -31,19 +31,19 @@ class SamplingEventsGetByTaxa():
                 if not vtaxa_id:
                     raise MissingKeyException("No taxa {}".format(taxa_id))
 
-                fields = '''SELECT id, study_id, doc, doc_accuracy,
-                                partner_species, v_sampling_events.partner_species_id,
-                                location_id, latitude, longitude, accuracy, curated_name, curation_method, country, notes, partner_name,
-                                proxy_location_id, proxy_latitude, proxy_longitude, proxy_accuracy,
-                                proxy_curated_name, proxy_curation_method, proxy_country, proxy_notes,
-                                proxy_partner_name'''
+                fields = '''SELECT DISTINCT v_sampling_events.id, v_sampling_events.study_id, doc, doc_accuracy,
+                location_id, latitude, longitude, accuracy, curated_name, curation_method, country, notes, partner_name,
+                proxy_location_id, proxy_latitude, proxy_longitude, proxy_accuracy,
+                proxy_curated_name, proxy_curation_method, proxy_country, proxy_notes,
+                proxy_partner_name'''
                 query_body = ''' FROM v_sampling_events
-                        LEFT JOIN taxonomy_identifiers ti ON ti.partner_species_id = v_sampling_events.partner_species_id
-                        WHERE ti.taxonomy_id = %s'''
+                LEFT JOIN original_samples os ON os.sampling_event_id = v_sampling_events.id
+                LEFT JOIN taxonomy_identifiers ti ON ti.partner_species_id = os.partner_species_id
+                WHERE ti.taxonomy_id = %s'''
                 args = (taxa_id,)
 
                 count_args = args
-                count_query = 'SELECT COUNT(id) ' + query_body
+                count_query = 'SELECT COUNT(v_sampling_events.id) ' + query_body
 
                 query_body = query_body + ''' ORDER BY doc, study_id, id'''
 
@@ -68,10 +68,11 @@ class SamplingEventsGetByTaxa():
                 sampling_events.attr_types = []
 
                 col_query = '''select distinct attr_type from sampling_event_attrs sea
-                        JOIN attrs a ON a.id=sea.attr_id
-                        JOIN sampling_events se ON se.id = sea.sampling_event_id
-                        LEFT JOIN taxonomy_identifiers ti ON ti.partner_species_id = se.partner_species_id
-                        WHERE ti.taxonomy_id = %s'''
+                JOIN attrs a ON a.id=sea.attr_id
+                JOIN sampling_events se ON se.id = sea.sampling_event_id
+                JOIN original_samples os ON os.sampling_event_id = se.id
+                LEFT JOIN taxonomy_identifiers ti ON ti.partner_species_id = os.partner_species_id
+                WHERE ti.taxonomy_id = %s'''
 
                 cursor.execute(col_query, (taxa_id,))
                 for (attr_type,) in cursor:

@@ -34,6 +34,12 @@ definitions:
         type: string
       days_in_culture:
         type: integer
+      partner_species:
+        type: string
+      partner_taxonomies:
+        type: array
+        items:
+            $ref: '#/definitions/Taxonomy'
       attrs:
         type: array
         items:
@@ -43,6 +49,35 @@ definitions:
         type: object
         description: 'The samples derivative from this original sample'
         $ref: './derivative_sample.yaml#/definitions/DerivativeSamples'
+  PartnerSpecies:
+    type: object
+    properties:
+      taxa:
+        type: array
+        items:
+          $ref: '#/definitions/Taxonomy'
+      partner_species:
+        type: string
+        description: the description as supplied by the partner
+  Taxonomies:
+    type: object
+    properties:
+      taxonomies:
+        type: array
+        items:
+          $ref: '#/definitions/Taxonomy'
+      count:
+        type: integer
+        description: Used when pagination is applied to return the number of results
+  Taxonomy:
+    type: object
+    properties:
+      taxonomy_id:
+        type: number
+      name:
+        type: string
+      rank:
+        type: string
   SamplingEventMap:
     type: object
     description: 'Map of sampling events'

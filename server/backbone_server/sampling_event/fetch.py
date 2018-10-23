@@ -49,35 +49,6 @@ class SamplingEventFetch():
 
         return attrs
 
-
-    @staticmethod
-    def fetch_taxonomies(cursor, study_id, partner_species):
-
-        ret = None
-
-        if not study_id:
-            return None
-
-        if not partner_species:
-            return None
-
-        stmt = '''select DISTINCT taxonomy_id FROM taxonomy_identifiers ti
-                    JOIN partner_species_identifiers psi ON ti.partner_species_id=psi.id
-                    JOIN studies s ON psi.study_id=s.id
-                    WHERE partner_species = %s AND s.study_code = %s'''
-
-        cursor.execute(stmt, (partner_species, study_id[:4]))
-
-        partner_taxonomies = []
-        for (taxa_id,) in cursor:
-            taxa = Taxonomy(taxa_id)
-            partner_taxonomies.append(taxa)
-
-        if len(partner_taxonomies) == 0:
-            partner_taxonomies = None
-
-        return partner_taxonomies
-
     @staticmethod
     def fetch(cursor, sampling_event_id, locations=None):
 
@@ -85,19 +56,17 @@ class SamplingEventFetch():
             return None
 
         stmt = '''SELECT sampling_events.id, studies.study_name AS study_id, doc, doc_accuracy,
-                            partner_species, partner_species_id, location_id, proxy_location_id
+                            location_id, proxy_location_id
         FROM sampling_events
         LEFT JOIN studies ON studies.id = sampling_events.study_id
-        LEFT JOIN partner_species_identifiers ON partner_species_identifiers.id = sampling_events.partner_species_id
         WHERE sampling_events.id = %s'''
         cursor.execute( stmt, (sampling_event_id,))
 
         sampling_event = None
 
-        for (sampling_event_id, study_id, doc, doc_accuracy, partner_species, partner_species_id, location_id, proxy_location_id) in cursor:
-            sampling_event = SamplingEvent(str(sampling_event_id), study_name = study_id, 
-                                   doc = doc, doc_accuracy = doc_accuracy,
-                                   partner_species = partner_species)
+        for (sampling_event_id, study_id, doc, doc_accuracy, location_id, proxy_location_id) in cursor:
+            sampling_event = SamplingEvent(str(sampling_event_id), study_name=study_id,
+                                   doc=doc, doc_accuracy=doc_accuracy)
             if location_id:
                 sampling_event.location_id = str(location_id)
                 sampling_event.public_location_id = str(location_id)
@@ -109,9 +78,6 @@ class SamplingEventFetch():
             return sampling_event
 
         sampling_event.attrs = SamplingEventFetch.fetch_attrs(cursor, sampling_event_id)
-
-        sampling_event.partner_taxonomies = SamplingEventFetch.fetch_taxonomies(cursor, study_id,
-                                                                        partner_species)
 
         sampling_event.event_sets = SamplingEventFetch.fetch_event_sets(cursor, sampling_event_id)
 
@@ -138,39 +104,35 @@ class SamplingEventFetch():
         sampling_events = []
         location_list = []
 
-        for (sampling_event_id, study_id, doc, doc_accuracy, partner_species, partner_species_id,
+        for (sampling_event_id, study_id, doc, doc_accuracy,
              location_id, latitude, longitude, accuracy,
              curated_name, curation_method, country, notes,
              partner_name, proxy_location_id, proxy_latitude, proxy_longitude, proxy_accuracy,
              proxy_curated_name, proxy_curation_method,
              proxy_country, proxy_notes, proxy_partner_name) in cursor:
             sampling_event = SamplingEvent(str(sampling_event_id), study_name=study_id,
-                                   doc=doc, doc_accuracy=doc_accuracy,
-                                   partner_species=partner_species)
+                                           doc=doc, doc_accuracy=doc_accuracy)
             if location_id:
                 sampling_event.location_id = str(location_id)
                 sampling_event.public_location_id = str(location_id)
-                if not str(location_id) in location_list:
+                if str(location_id) not in location_list:
                     location_list.append(str(location_id))
             if proxy_location_id:
                 sampling_event.proxy_location_id = str(proxy_location_id)
                 sampling_event.public_location_id = str(proxy_location_id)
-                if not str(proxy_location_id) in location_list:
+                if str(proxy_location_id) not in location_list:
                     location_list.append(str(proxy_location_id))
 
             sampling_events.append(sampling_event)
 
         for sampling_event in sampling_events:
             sampling_event.attrs = SamplingEventFetch.fetch_attrs(cursor,
-                                                                              sampling_event.sampling_event_id)
-            sampling_event.partner_taxonomies = SamplingEventFetch.fetch_taxonomies(cursor,
-                                                                                    sampling_event.study_name,
-                                                                        sampling_event.partner_species)
+                                                                  sampling_event.sampling_event_id)
 
         locations = {}
 
         for location_id in location_list:
-                location = LocationFetch.fetch(cursor, location_id)
-                locations[location_id] = location
+            location = LocationFetch.fetch(cursor, location_id)
+            locations[location_id] = location
 
         return sampling_events, locations

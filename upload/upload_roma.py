@@ -29,9 +29,10 @@ class Upload_ROMA(uploader.Uploader):
             items[item['model']][item['pk']] = item
 
         proxy_locations = {}
-        for key, item in items['locations.proxylocation'].items():
-            fields = item['fields']
-            proxy_locations[fields['location']] = fields['proxy_location']
+        if 'locations.proxy_location' in items:
+            for key, item in items['locations.proxylocation'].items():
+                fields = item['fields']
+                proxy_locations[fields['location']] = fields['proxy_location']
 
         for key, item in items['samples.sample'].items():
             roma_pk_id = instance + '_' + str(item['pk'])
@@ -47,6 +48,11 @@ class Upload_ROMA(uploader.Uploader):
             longitude = loc['fields']['longitude']
             loc_name = loc['fields']['location_name']
             country = items['locations.country'][loc['fields']['country']]['fields']['iso3']
+
+            proxy_latitude = None
+            proxy_longitude = None
+            proxy_loc_name = None
+            proxy_country = None
 
             if fields['location'] in proxy_locations:
                 proxy_loc = items['locations.location'][proxy_locations[fields['location']]]

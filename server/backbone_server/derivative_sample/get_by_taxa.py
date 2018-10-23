@@ -27,15 +27,12 @@ class DerivativeSampleGetByTaxa():
                 if not vtaxa_id:
                     raise MissingKeyException("No taxa {}".format(taxa_id))
 
-                locations = {}
-
                 fields = '''SELECT DISTINCT ds.id, original_sample_id, dna_prep, os.study_id '''
 
                 query_body = '''FROM derivative_samples ds
                 JOIN original_samples os ON os.id = ds.original_sample_id
-                JOIN sampling_events se ON se.id = os.sampling_event_id
                 LEFT JOIN studies s ON s.id = os.study_id
-                JOIN taxonomy_identifiers ti ON ti.partner_species_id = se.partner_species_id
+                JOIN taxonomy_identifiers ti ON ti.partner_species_id = os.partner_species_id
                 WHERE ti.taxonomy_id = %s'''
                 args = (taxa_id, )
 
@@ -53,7 +50,6 @@ class DerivativeSampleGetByTaxa():
                 cursor.execute(stmt, args)
 
                 derivative_samples = DerivativeSamples(derivative_samples=[], count=0)
-                event_ids = []
 
                 cursor.execute(stmt, args)
 
@@ -68,12 +64,11 @@ class DerivativeSampleGetByTaxa():
                 derivative_samples.attr_types = []
 
                 col_query = '''select distinct attr_type from derivative_sample_attrs dsa
-                        JOIN attrs a ON a.id=dsa.attr_id
-                        JOIN derivative_samples ds ON ds.id = dsa.derivative_sample_id
-                        JOIN original_samples os ON os.id = ds.original_sample_id
-                        JOIN sampling_events se ON se.id = os.sampling_event_id
-                        LEFT JOIN taxonomy_identifiers ti ON ti.partner_species_id = se.partner_species_id
-                        WHERE ti.taxonomy_id = %s'''
+                JOIN attrs a ON a.id=dsa.attr_id
+                JOIN derivative_samples ds ON ds.id = dsa.derivative_sample_id
+                JOIN original_samples os ON os.id = ds.original_sample_id
+                LEFT JOIN taxonomy_identifiers ti ON ti.partner_species_id = os.partner_species_id
+                WHERE ti.taxonomy_id = %s'''
 
                 cursor.execute(col_query, (taxa_id,))
                 for (attr_type,) in cursor:

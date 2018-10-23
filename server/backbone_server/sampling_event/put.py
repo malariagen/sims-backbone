@@ -47,14 +47,13 @@ class SamplingEventPut():
                 SamplingEventEdit.check_location_details(cursor, sampling_event.proxy_location_id,
                                                          sampling_event.proxy_location)
 
-                partner_species = SamplingEventEdit.fetch_partner_species(cursor, sampling_event, study_id)
                 stmt = '''UPDATE sampling_events 
                             SET study_id = %s, doc = %s, doc_accuracy = %s,
-                            location_id = %s, proxy_location_id = %s, partner_species_id = %s
+                            location_id = %s, proxy_location_id = %s
                             WHERE id = %s'''
                 args = (study_id, sampling_event.doc, sampling_event.doc_accuracy,
                         sampling_event.location_id, sampling_event.proxy_location_id,
-                        partner_species, sampling_event_id)
+                        sampling_event_id)
 
                 try:
                     cursor.execute(stmt, args)
@@ -70,7 +69,6 @@ class SamplingEventPut():
                 except DuplicateKeyException as err:
                     raise err
 
-                SamplingEventEdit.clean_up_taxonomies(cursor)
 
                 LocationEdit.clean_up_attrs(cursor, sampling_event.location_id, original_study_id)
                 LocationEdit.clean_up_attrs(cursor, sampling_event.proxy_location_id, original_study_id)

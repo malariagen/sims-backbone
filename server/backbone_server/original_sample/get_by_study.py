@@ -28,7 +28,7 @@ class OriginalSamplesGetByStudy():
                     raise MissingKeyException("No study {}".format(study_name))
 
                 fields = '''SELECT original_samples.id, study_name, sampling_event_id,
-                days_in_culture'''
+                days_in_culture, partner_species_id'''
                 query_body = ''' FROM original_samples
                 LEFT JOIN sampling_events se ON se.id = original_samples.sampling_event_id
                         LEFT JOIN studies s ON s.id = original_samples.study_id

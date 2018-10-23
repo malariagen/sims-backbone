@@ -89,15 +89,6 @@ class SamplingEventMerge():
         else:
             sampling_event1.proxy_location_id = sampling_event2.proxy_location_id
 
-        if sampling_event1.partner_species:
-            if sampling_event2.partner_species:
-                if sampling_event1.partner_species != sampling_event2.partner_species:
-                    msg = 'Incompatible partner_species {} {}'.format(sampling_event1.partner_species,
-                                                       sampling_event2.partner_species)
-                    raise IncompatibleException(msg)
-        else:
-            sampling_event1.partner_species = sampling_event2.partner_species
-
         if sampling_event2.attrs:
             for new_ident in sampling_event2.attrs:
                 found = False

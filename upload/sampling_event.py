@@ -116,7 +116,8 @@ class SamplingEventProcessor(BaseEntity):
         partner_name = values[prefix + 'location_name']
 
         if not partner_name:
-            self.report("No location name: ",values)
+            if prefix + 'latitude' in values and values[prefix + 'latitude']:
+                self.report("No location name: ",values)
             return None, None
 
         #Will have been set to 0000 if not present
@@ -291,10 +292,6 @@ class SamplingEventProcessor(BaseEntity):
             study_id = values['study_id']
 
         samp = swagger_client.SamplingEvent(None, study_name = study_id, doc = doc)
-
-
-        if 'species' in values and values['species'] and len(values['species']) > 0:
-            samp.partner_species = values['species']
 
         if doc_accuracy:
             samp.doc_accuracy = doc_accuracy
@@ -565,30 +562,6 @@ class SamplingEventProcessor(BaseEntity):
                 new_ident_value = True
                 change_reasons.append('Set proxy location')
 
-        if samp.partner_species:
-            if existing.partner_species:
-                if existing.partner_species != samp.partner_species:
-                    fuzzyMatch = False
-                    if existing.partner_species == 'Plasmodium falciparum/vivax mixture':
-                        if samp.partner_species == 'Plasmodium vivax':
-                            fuzzyMatch = True
-                        if samp.partner_species == 'Plasmodium falciparum':
-                            fuzzyMatch = True
-
-                    if existing.partner_species == 'Plasmodium falciparum':
-                        if samp.partner_species == 'P. falciparum':
-                            fuzzyMatch = True
-
-                    if not fuzzyMatch:
-                        msg = "Not updated"
-                        self.report_conflict(existing, "Species",
-                                             existing.partner_species, samp.partner_species,
-                                             msg, values)
-
-            else:
-                existing.partner_species = samp.partner_species
-                new_ident_value = True
-                change_reasons.append('Set species')
 
         #print('\n'.join(change_reasons))
 

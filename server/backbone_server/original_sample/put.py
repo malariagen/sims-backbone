@@ -38,12 +38,15 @@ class OriginalSamplePut():
 
                 if study_id != original_study_id:
                     pass
+                partner_species = OriginalSampleEdit.fetch_partner_species(cursor, original_sample, study_id)
                 stmt = '''UPDATE original_samples 
                             SET study_id = %s, sampling_event_id = %s,
-                            days_in_culture = %s
+                            days_in_culture = %s,
+                            partner_species_id = %s
                             WHERE id = %s'''
                 args = (study_id, original_sample.sampling_event_id,
                         original_sample.days_in_culture,
+                        partner_species,
                         original_sample_id)
 
                 try:
@@ -59,6 +62,8 @@ class OriginalSamplePut():
                     raise DuplicateKeyException("Error updating original_sample {}".format(original_sample)) from err
                 except DuplicateKeyException as err:
                     raise err
+
+                OriginalSampleEdit.clean_up_taxonomies(cursor)
 
                 original_sample = OriginalSampleFetch.fetch(cursor, original_sample_id)
 

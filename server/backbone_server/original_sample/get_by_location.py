@@ -23,19 +23,18 @@ class OriginalSamplesGetByLocation():
         with self._connection:
             with self._connection.cursor() as cursor:
 
-                locations = {}
-
                 try:
                     location = LocationFetch.fetch(cursor, location_id)
                 except MissingKeyException as mke:
                     raise mke
 
                 fields = '''SELECT os.id, study_name, sampling_event_id,
-                days_in_culture'''
+                days_in_culture, partner_species'''
                 query_body = ''' FROM original_samples os
                 JOIN sampling_events se ON se.id = os.sampling_event_id
+                LEFT JOIN partner_species_identifiers psi ON psi.id = os.partner_species_id
                 LEFT JOIN studies s ON s.id = os.study_id
-                        WHERE location_id = %s OR proxy_location_id = %s'''
+                WHERE location_id = %s OR proxy_location_id = %s'''
                 args = (location_id, location_id,)
 
                 count_args = args

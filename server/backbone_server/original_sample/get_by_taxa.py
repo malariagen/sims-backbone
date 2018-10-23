@@ -31,18 +31,20 @@ class OriginalSamplesGetByTaxa():
                 if not vtaxa_id:
                     raise MissingKeyException("No taxa {}".format(taxa_id))
 
-                fields = '''SELECT os.id, study_name, sampling_event_id, days_in_culture '''
+                fields = '''SELECT os.id, study_name, sampling_event_id,
+                days_in_culture, partner_species '''
                 query_body = ''' FROM original_samples os
-                JOIN sampling_events se ON se.id = os.sampling_event_id
+                LEFT JOIN sampling_events se ON se.id = os.sampling_event_id
                 LEFT JOIN studies s ON s.id = os.study_id
-                        JOIN taxonomy_identifiers ti ON ti.partner_species_id = se.partner_species_id
-                        WHERE ti.taxonomy_id = %s'''
+                LEFT JOIN partner_species_identifiers psi ON psi.id = os.partner_species_id
+                JOIN taxonomy_identifiers ti ON ti.partner_species_id = os.partner_species_id
+                WHERE ti.taxonomy_id = %s'''
                 args = (taxa_id,)
 
                 count_args = args
                 count_query = 'SELECT COUNT(os.id) ' + query_body
 
-                query_body = query_body + ''' ORDER BY doc, os.study_id, id'''
+                query_body = query_body + ''' ORDER BY doc, study_name, os.id'''
 
                 if not (start is None and count is None):
                     query_body = query_body + ' LIMIT %s OFFSET %s'
@@ -65,11 +67,10 @@ class OriginalSamplesGetByTaxa():
                 original_samples.attr_types = []
 
                 col_query = '''select distinct attr_type from original_sample_attrs sea
-                        JOIN attrs a ON a.id=sea.attr_id
-                        JOIN original_samples os ON os.id = sea.original_sample_id
-                        JOIN sampling_events se ON se.id = os.sampling_event_id
-                        LEFT JOIN taxonomy_identifiers ti ON ti.partner_species_id = se.partner_species_id
-                        WHERE ti.taxonomy_id = %s'''
+                JOIN attrs a ON a.id=sea.attr_id
+                JOIN original_samples os ON os.id = sea.original_sample_id
+                LEFT JOIN taxonomy_identifiers ti ON ti.partner_species_id = os.partner_species_id
+                WHERE ti.taxonomy_id = %s'''
 
                 cursor.execute(col_query, (taxa_id,))
                 for (attr_type,) in cursor:

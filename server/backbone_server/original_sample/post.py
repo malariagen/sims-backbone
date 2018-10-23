@@ -27,11 +27,12 @@ class OriginalSamplePost():
 
                 study_id = SamplingEventEdit.fetch_study_id(cursor, original_sample.study_name, True)
 
+                partner_species = OriginalSampleEdit.fetch_partner_species(cursor, original_sample, study_id)
                 stmt = '''INSERT INTO original_samples 
-                            (id, study_id, sampling_event_id, days_in_culture)
-                            VALUES (%s, %s, %s, %s)'''
+                            (id, study_id, sampling_event_id, days_in_culture, partner_species_id)
+                            VALUES (%s, %s, %s, %s, %s)'''
                 args = (uuid_val,study_id, original_sample.sampling_event_id,
-                        original_sample.days_in_culture)
+                        original_sample.days_in_culture, partner_species)
 
                 try:
                     cursor.execute(stmt, args)

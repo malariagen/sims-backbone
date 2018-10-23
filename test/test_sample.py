@@ -81,7 +81,7 @@ class TestSample(TestBase):
             samp = swagger_client.SamplingEvent(None, '1002-MD-UP', date(2017, 10, 12))
             samp.attrs = [
                 swagger_client.Attr (attr_type='oxford', attr_value='1234',
-                                           attr_source='same')
+                                     attr_source='same')
             ]
             created = api_instance.create_sampling_event(samp)
 
@@ -190,18 +190,18 @@ class TestSample(TestBase):
             ]
             created = api_instance.create_sampling_event(samp)
             looked_up = api_instance.download_sampling_events_by_attr('partner_id', '123456',
-                                                                            study_name='1022')
+                                                                      study_name='1022')
             assert looked_up.count == 1
 
 
             with pytest.raises(ApiException, status=404):
                 looked_up = api_instance.download_sampling_events_by_attr('oxford', '123456',
-                                                                            study_name='9999')
+                                                                          study_name='9999')
 
             created1 = api_instance.create_sampling_event(samp)
 
             looked_up = api_instance.download_sampling_events_by_attr('partner_id', '123456',
-                                                                            study_name='1022')
+                                                                      study_name='1022')
             assert looked_up.count == 2
 
             ffetched = api_instance.download_sampling_events(search_filter='attr:partner_id:123456:1022')
@@ -291,7 +291,7 @@ class TestSample(TestBase):
             samp = swagger_client.SamplingEvent(None, '1006-MD-UP', date(2017, 10, 16))
             samp.attrs = [
                 swagger_client.Attr (attr_type='oxford', attr_value='12345678',
-                                           attr_source='upd')
+                                     attr_source='upd')
             ]
             created = api_instance.create_sampling_event(samp)
             looked_up = api_instance.download_sampling_events_by_attr('oxford', '12345678')
@@ -299,7 +299,7 @@ class TestSample(TestBase):
             new_samp = swagger_client.SamplingEvent(None, '0001-MD-UP', date(2018, 10, 10))
             new_samp.attrs = [
                 swagger_client.Attr (attr_type='oxford', attr_value='123456789',
-                                          attr_source='upd')
+                                     attr_source='upd')
             ]
             new_created = api_instance.create_sampling_event(new_samp)
             with pytest.raises(ApiException, status=422):
@@ -346,7 +346,7 @@ class TestSample(TestBase):
             samp = swagger_client.SamplingEvent(None, '1008-MD-UP', date(2017, 10, 14))
             samp.attrs = [
                 swagger_client.Attr (attr_type='partner_id', attr_value=test_id,
-                                          attr_source='encode')
+                                     attr_source='encode')
             ]
             created = api_instance.create_sampling_event(samp)
 
@@ -357,7 +357,7 @@ class TestSample(TestBase):
             assert samp == fetched, "upload != download response"
 
             results = api_instance.download_sampling_events_by_attr('partner_id',
-                                                                      urllib.parse.quote_plus(test_id))
+                                                                    urllib.parse.quote_plus(test_id))
             looked_up = results.sampling_events[0]
             fetched = api_instance.download_sampling_event(looked_up.sampling_event_id)
 
@@ -401,7 +401,7 @@ class TestSample(TestBase):
             assert samp.location_id == fetched.public_location_id, "upload public_location != proxy download response"
 
             proxy_loc = swagger_client.Location(None, 27.4, 90.4, 'region',
-                                          'Trongsa, Bhutan', 'test_create_with_locations', 'BTN')
+                                                'Trongsa, Bhutan', 'test_create_with_locations', 'BTN')
             proxy_loc = location_api_instance.create_location(proxy_loc)
             samp.proxy_location_id = proxy_loc.location_id
             samp.study_name = '9009-MD-UP'
@@ -452,16 +452,28 @@ class TestSample(TestBase):
     """
     def test_taxa_lookup(self, api_factory):
 
+        os_api_instance = api_factory.OriginalSampleApi()
         api_instance = api_factory.SamplingEventApi()
         study_api = api_factory.StudyApi()
 
         try:
             study_code = '1010-MD-UP'
 
-            samp = swagger_client.SamplingEvent(None, study_code, date(2017, 10, 14),
-                                                partner_species='PF')
-            created = api_instance.create_sampling_event(samp)
+            sampling_event = swagger_client.SamplingEvent(None, study_code, date(2017, 10, 14))
+            created_se = api_instance.create_sampling_event(sampling_event)
+
+            samp = swagger_client.OriginalSample(None, study_name=study_code,
+                                                 partner_species='PF')
+            samp.sampling_event_id = created_se.sampling_event_id
+
+            samp.attrs = [
+                swagger_client.Attr (attr_type='oxford', attr_value='12345678',
+                                     attr_source='upd')
+            ]
+            created_os = os_api_instance.create_original_sample(samp)
+
             study_detail = study_api.download_study(study_code)
+
             study_detail.partner_species[0].taxa = [ swagger_client.Taxonomy(taxonomy_id=5833) ]
             study_api.update_study(study_code, study_detail)
 
@@ -469,19 +481,14 @@ class TestSample(TestBase):
 
             assert fetched.count == 1, "Taxa not found"
 
-            assert fetched.sampling_events[0].partner_taxonomies is not None, 'Taxonomies missing'
-            assert int(fetched.sampling_events[0].partner_taxonomies[0].taxonomy_id) == 5833, 'Wrong Taxonomy'
-
             ffetched = api_instance.download_sampling_events(search_filter='taxa:5833')
 
             assert ffetched == fetched
 
-            #As the taxonomy wasn't set when created was created it won't be in the response
-            #separate test for this
-            fetched.sampling_events[0].partner_taxonomies = None
-            assert created == fetched.sampling_events[0], "create response != download response"
+            assert created_se == fetched.sampling_events[0], "create response != download response"
 
-            api_instance.delete_sampling_event(created.sampling_event_id)
+            api_instance.delete_sampling_event(created_se.sampling_event_id)
+            os_api_instance.delete_original_sample(created_os.original_sample_id)
 
         except ApiException as error:
             self.check_api_exception(api_factory, "SamplingEventApi->create_sampling_event", error)
@@ -509,16 +516,22 @@ class TestSample(TestBase):
     """
     def test_taxa_lookup_paged(self, api_factory):
 
+        os_api_instance = api_factory.OriginalSampleApi()
         api_instance = api_factory.SamplingEventApi()
         study_api = api_factory.StudyApi()
 
+        original_samples = []
         try:
             study_codes = [ '1011-MD-UP', '1012-MD-UP', '1013-MD-UP', '1014-MD-UP', '1014-MD-UP']
 
             for study_code in study_codes:
-                samp = swagger_client.SamplingEvent(None, study_code, date(2017, 10, 14),
-                                                    partner_species='PF')
-                created = api_instance.create_sampling_event(samp)
+                samp_event = swagger_client.SamplingEvent(None, study_code, date(2017, 10, 14))
+                created_se = api_instance.create_sampling_event(samp_event)
+                samp = swagger_client.OriginalSample(None, study_name=study_code,
+                                                     partner_species='PF')
+                samp.sampling_event_id = created_se.sampling_event_id
+                created_os = os_api_instance.create_original_sample(samp)
+                original_samples.append(created_os.original_sample_id)
                 study_detail = study_api.download_study(study_code)
                 study_detail.partner_species[0].taxa = [ swagger_client.Taxonomy(taxonomy_id=5833) ]
                 study_api.update_study(study_code, study_detail)
@@ -549,34 +562,8 @@ class TestSample(TestBase):
             for sampling_event in fetch_all.sampling_events:
                 api_instance.delete_sampling_event(sampling_event.sampling_event_id)
 
-        except ApiException as error:
-            self.check_api_exception(api_factory, "SamplingEventApi->create_sampling_event", error)
-
-
-    """
-    """
-    def test_taxa_on_create(self, api_factory):
-
-        api_instance = api_factory.SamplingEventApi()
-        study_api = api_factory.StudyApi()
-
-        try:
-            study_code = '1015-MD-UP'
-
-            samp = swagger_client.SamplingEvent(None, study_code, date(2017, 10, 14),
-                                                partner_species='PF')
-            created = api_instance.create_sampling_event(samp)
-            study_detail = study_api.download_study(study_code)
-            study_detail.partner_species[0].taxa = [ swagger_client.Taxonomy(taxonomy_id=5833) ]
-            study_api.update_study(study_code, study_detail)
-
-
-            created2 = api_instance.create_sampling_event(samp)
-
-            assert not created2.partner_taxonomies is None, 'Taxonomies missing'
-            assert int(created2.partner_taxonomies[0].taxonomy_id) == 5833, 'Wrong Taxonomy'
-            api_instance.delete_sampling_event(created.sampling_event_id)
-            api_instance.delete_sampling_event(created2.sampling_event_id)
+            for original_sample in original_samples:
+                os_api_instance.delete_original_sample(original_sample)
 
         except ApiException as error:
             self.check_api_exception(api_factory, "SamplingEventApi->create_sampling_event", error)
@@ -591,8 +578,7 @@ class TestSample(TestBase):
         try:
             study_code = '1020-MD-UP'
 
-            samp = swagger_client.SamplingEvent(None, study_code, date(2017, 10, 14),
-                                                partner_species='PF')
+            samp = swagger_client.SamplingEvent(None, study_code, date(2017, 10, 14))
             created = api_instance.create_sampling_event(samp)
 
             fetched = api_instance.download_sampling_events_by_study(study_code)
@@ -623,8 +609,7 @@ class TestSample(TestBase):
             study_code = '1021-MD-UP'
 
             for i in range(5):
-                samp = swagger_client.SamplingEvent(None, study_code, date(2017, 10, 14),
-                                                    partner_species='PF')
+                samp = swagger_client.SamplingEvent(None, study_code, date(2017, 10, 14))
                 created = api_instance.create_sampling_event(samp)
 
 
@@ -676,8 +661,7 @@ class TestSample(TestBase):
 
             study_code = '1022-MD-UP'
 
-            samp = swagger_client.SamplingEvent(None, study_code, date(2017, 10, 14),
-                                                partner_species='PF')
+            samp = swagger_client.SamplingEvent(None, study_code, date(2017, 10, 14))
             created = api_instance.create_sampling_event(samp)
 
             es_api_instance.create_event_set_item(es_name, created.sampling_event_id)
@@ -714,8 +698,7 @@ class TestSample(TestBase):
 
             study_code = '1023-MD-UP'
 
-            samp = swagger_client.SamplingEvent(None, study_code, date(2017, 10, 14),
-                                                partner_species='PF')
+            samp = swagger_client.SamplingEvent(None, study_code, date(2017, 10, 14))
             created = api_instance.create_sampling_event(samp)
 
             es_api_instance.create_event_set_item(es_name, created.sampling_event_id)
@@ -772,8 +755,7 @@ class TestSample(TestBase):
             es_api_instance.create_event_set(es_name)
 
             for i in range(5):
-                samp = swagger_client.SamplingEvent(None, study_code, date(2017, 10, 14),
-                                                    partner_species='PF')
+                samp = swagger_client.SamplingEvent(None, study_code, date(2017, 10, 14))
                 created = api_instance.create_sampling_event(samp)
                 es_api_instance.create_event_set_item(es_name, created.sampling_event_id)
 
@@ -784,7 +766,7 @@ class TestSample(TestBase):
             assert fetched1.count == 5, "Wrong total of sampling_events returned"
 
             ffetched = api_instance.download_sampling_events(search_filter='eventSet:' + es_name, start=0,
-                                                            count=2)
+                                                             count=2)
 
             assert ffetched == fetched1
 
@@ -823,7 +805,7 @@ class TestSample(TestBase):
             samp = swagger_client.SamplingEvent(None, '1023-MD-UP', date(2017, 10, 16))
             samp.attrs = [
                 swagger_client.Attr (attr_type='oxford', attr_value='12345678',
-                                           attr_source='upd')
+                                     attr_source='upd')
             ]
             created = api_instance.create_sampling_event(samp)
             idents = metadata_api_instance.get_attr_types()
@@ -1007,7 +989,7 @@ class TestSample(TestBase):
         try:
 
             sampling_event = swagger_client.SamplingEvent(None, '1026-MD-UP', date(2017, 10, 10),
-                                                doc_accuracy='month')
+                                                          doc_accuracy='month')
             created_se = se_api_instance.create_sampling_event(sampling_event)
 
             samp = swagger_client.OriginalSample(None, study_name='4024-MD-UP')
@@ -1015,7 +997,7 @@ class TestSample(TestBase):
 
             samp.attrs = [
                 swagger_client.Attr (attr_type='oxford', attr_value='12345678',
-                                           attr_source='upd')
+                                     attr_source='upd')
             ]
             created = api_instance.create_original_sample(samp)
 
@@ -1036,7 +1018,7 @@ class TestSample(TestBase):
 
             with pytest.raises(ApiException, status=404):
                 results2 = se_api_instance.download_sampling_events_by_os_attr('oxford', '12345678',
-                                                                           study_name='1027-MD-UP')
+                                                                               study_name='1027-MD-UP')
 
 
             se_api_instance.delete_sampling_event(created_se.sampling_event_id)
@@ -1053,13 +1035,13 @@ class TestSample(TestBase):
             samp1 = swagger_client.SamplingEvent(None, '6000-MD-UP', date(2017, 10, 16))
             samp1.attrs = [
                 swagger_client.Attr (attr_type='partner_id', attr_value='mrg1-12345678',
-                                           attr_source='mrg')
+                                     attr_source='mrg')
             ]
             samp1.doc_accuracy = 'day'
             samp2 = swagger_client.SamplingEvent(None, '6000-MD-UP', date(2017, 10, 16))
             samp2.attrs = [
                 swagger_client.Attr (attr_type='partner_id', attr_value='mrg2-12345678',
-                                           attr_source='mrg')
+                                     attr_source='mrg')
             ]
             samp2.doc_accuracy = 'day'
 
@@ -1085,8 +1067,8 @@ class TestSample(TestBase):
 
             for attr in samp1.attrs:
                 assert attr in fetched.attrs
-            for attr in samp2.attrs:
-                assert attr in fetched.attrs
+                for attr in samp2.attrs:
+                    assert attr in fetched.attrs
 
             api_instance.delete_sampling_event(created1.sampling_event_id)
 
@@ -1102,7 +1084,7 @@ class TestSample(TestBase):
         api_instance = api_factory.SamplingEventApi()
 
         try:
-            
+
             samp1, samp2 = self.get_merge_events()
 
             samp1.study_name = '0000 no study'
@@ -1117,8 +1099,8 @@ class TestSample(TestBase):
 
             for attr in samp1.attrs:
                 assert attr in fetched.attrs
-            for attr in samp2.attrs:
-                assert attr in fetched.attrs
+                for attr in samp2.attrs:
+                    assert attr in fetched.attrs
 
             assert fetched.study_name == samp2.study_name
 
@@ -1136,7 +1118,7 @@ class TestSample(TestBase):
         api_instance = api_factory.SamplingEventApi()
 
         try:
-            
+
             samp1, samp2 = self.get_merge_events()
 
             samp1.study_name = None
@@ -1151,8 +1133,8 @@ class TestSample(TestBase):
 
             for attr in samp1.attrs:
                 assert attr in fetched.attrs
-            for attr in samp2.attrs:
-                assert attr in fetched.attrs
+                for attr in samp2.attrs:
+                    assert attr in fetched.attrs
 
             assert fetched.study_name == samp2.study_name
 
@@ -1170,7 +1152,7 @@ class TestSample(TestBase):
         api_instance = api_factory.SamplingEventApi()
 
         try:
-            
+
             samp1, samp2 = self.get_merge_events()
 
             samp2.study_name = '0000 no study'
@@ -1185,8 +1167,8 @@ class TestSample(TestBase):
 
             for attr in samp1.attrs:
                 assert attr in fetched.attrs
-            for attr in samp2.attrs:
-                assert attr in fetched.attrs
+                for attr in samp2.attrs:
+                    assert attr in fetched.attrs
 
             assert fetched.study_name == samp1.study_name
 
@@ -1204,7 +1186,7 @@ class TestSample(TestBase):
         api_instance = api_factory.SamplingEventApi()
 
         try:
-            
+
             samp1, samp2 = self.get_merge_events()
 
             samp2.study_name = None
@@ -1219,8 +1201,8 @@ class TestSample(TestBase):
 
             for attr in samp1.attrs:
                 assert attr in fetched.attrs
-            for attr in samp2.attrs:
-                assert attr in fetched.attrs
+                for attr in samp2.attrs:
+                    assert attr in fetched.attrs
 
             assert fetched.study_name == samp1.study_name
 
@@ -1240,7 +1222,7 @@ class TestSample(TestBase):
         api_instance = api_factory.SamplingEventApi()
 
         try:
-            
+
             samp1, samp2 = self.get_merge_events()
 
             samp2.study_name = '6001 incompat study'
@@ -1269,7 +1251,7 @@ class TestSample(TestBase):
         api_instance = api_factory.SamplingEventApi()
 
         try:
-            
+
             samp1, samp2 = self.get_merge_events()
 
             samp1.doc = None
@@ -1284,8 +1266,8 @@ class TestSample(TestBase):
 
             for attr in samp1.attrs:
                 assert attr in fetched.attrs
-            for attr in samp2.attrs:
-                assert attr in fetched.attrs
+                for attr in samp2.attrs:
+                    assert attr in fetched.attrs
 
             assert fetched.doc == samp2.doc
 
@@ -1303,7 +1285,7 @@ class TestSample(TestBase):
         api_instance = api_factory.SamplingEventApi()
 
         try:
-            
+
             samp1, samp2 = self.get_merge_events()
 
             samp2.doc = None
@@ -1318,8 +1300,8 @@ class TestSample(TestBase):
 
             for attr in samp1.attrs:
                 assert attr in fetched.attrs
-            for attr in samp2.attrs:
-                assert attr in fetched.attrs
+                for attr in samp2.attrs:
+                    assert attr in fetched.attrs
 
             assert fetched.doc == samp1.doc
 
@@ -1339,7 +1321,7 @@ class TestSample(TestBase):
         api_instance = api_factory.SamplingEventApi()
 
         try:
-            
+
             samp1, samp2 = self.get_merge_events()
 
             samp2.doc= date(2018, 10, 16)
@@ -1369,7 +1351,7 @@ class TestSample(TestBase):
         api_instance = api_factory.SamplingEventApi()
 
         try:
-            
+
             samp1, samp2 = self.get_merge_events()
 
             samp1._doc_accuracy = None
@@ -1384,8 +1366,8 @@ class TestSample(TestBase):
 
             for attr in samp1.attrs:
                 assert attr in fetched.attrs
-            for attr in samp2.attrs:
-                assert attr in fetched.attrs
+                for attr in samp2.attrs:
+                    assert attr in fetched.attrs
 
             assert fetched.doc_accuracy == samp2.doc_accuracy
 
@@ -1403,7 +1385,7 @@ class TestSample(TestBase):
         api_instance = api_factory.SamplingEventApi()
 
         try:
-            
+
             samp1, samp2 = self.get_merge_events()
 
             samp2._doc_accuracy = None
@@ -1418,8 +1400,8 @@ class TestSample(TestBase):
 
             for attr in samp1.attrs:
                 assert attr in fetched.attrs
-            for attr in samp2.attrs:
-                assert attr in fetched.attrs
+                for attr in samp2.attrs:
+                    assert attr in fetched.attrs
 
             assert fetched.doc_accuracy == samp1.doc_accuracy
 
@@ -1439,7 +1421,7 @@ class TestSample(TestBase):
         api_instance = api_factory.SamplingEventApi()
 
         try:
-            
+
             samp1, samp2 = self.get_merge_events()
 
             samp2.doc_accuracy = 'month'
@@ -1492,8 +1474,8 @@ class TestSample(TestBase):
 
             for attr in samp1.attrs:
                 assert attr in fetched.attrs
-            for attr in samp2.attrs:
-                assert attr in fetched.attrs
+                for attr in samp2.attrs:
+                    assert attr in fetched.attrs
 
             assert fetched.location_id == samp2.location_id
 
@@ -1532,8 +1514,8 @@ class TestSample(TestBase):
 
             for attr in samp1.attrs:
                 assert attr in fetched.attrs
-            for attr in samp2.attrs:
-                assert attr in fetched.attrs
+                for attr in samp2.attrs:
+                    assert attr in fetched.attrs
 
             assert fetched.location_id == samp1.location_id
 
@@ -1557,11 +1539,11 @@ class TestSample(TestBase):
         try:
 
             loc1 = swagger_client.Location(None, 27.463, 90.495, 'city',
-                                          'Trongsa, Trongsa, Bhutan', 'test_create_with_locations', 'BTN')
+                                           'Trongsa, Trongsa, Bhutan', 'test_create_with_locations', 'BTN')
             loc1 = location_api_instance.create_location(loc1)
 
             loc2 = swagger_client.Location(None, 27.46, 90.49, 'city',
-                                          'Trongsa, Bhutan', 'test_create_with_locations', 'BTN')
+                                           'Trongsa, Bhutan', 'test_create_with_locations', 'BTN')
             loc2 = location_api_instance.create_location(loc2)
 
             samp1, samp2 = self.get_merge_events()
@@ -1590,148 +1572,6 @@ class TestSample(TestBase):
 
     """
     """
-    def test_merge_sampling_events_partner_species1(self, api_factory):
-
-        api_instance = api_factory.SamplingEventApi()
-
-        try:
-            
-            samp1, samp2 = self.get_merge_events()
-
-            samp1.partner_species = 'PF'
-
-            created1 = api_instance.create_sampling_event(samp1)
-            created2 = api_instance.create_sampling_event(samp2)
-
-            api_instance.merge_sampling_events(created1.sampling_event_id,
-                                               created2.sampling_event_id)
-
-            fetched = api_instance.download_sampling_event(created1.sampling_event_id)
-
-            for attr in samp1.attrs:
-                assert attr in fetched.attrs
-            for attr in samp2.attrs:
-                assert attr in fetched.attrs
-
-            assert fetched.partner_species == samp1.partner_species
-
-            api_instance.delete_sampling_event(created1.sampling_event_id)
-
-            with pytest.raises(ApiException, status=404):
-                fetched = api_instance.download_sampling_event(created2.sampling_event_id)
-        except ApiException as error:
-            self.check_api_exception(api_factory, "SamplingEventApi->create_sampling_event", error)
-
-    """
-    """
-    def test_merge_sampling_events_partner_species2(self, api_factory):
-
-        api_instance = api_factory.SamplingEventApi()
-
-        try:
-            
-            samp1, samp2 = self.get_merge_events()
-
-            samp2.partner_species = 'PV'
-
-            created1 = api_instance.create_sampling_event(samp1)
-            created2 = api_instance.create_sampling_event(samp2)
-
-            api_instance.merge_sampling_events(created1.sampling_event_id,
-                                               created2.sampling_event_id)
-
-            fetched = api_instance.download_sampling_event(created1.sampling_event_id)
-
-            for attr in samp1.attrs:
-                assert attr in fetched.attrs
-            for attr in samp2.attrs:
-                assert attr in fetched.attrs
-
-            assert fetched.partner_species == samp2.partner_species
-
-            api_instance.delete_sampling_event(created1.sampling_event_id)
-
-            with pytest.raises(ApiException, status=404):
-                fetched = api_instance.download_sampling_event(created2.sampling_event_id)
-        except ApiException as error:
-            self.check_api_exception(api_factory, "SamplingEventApi->create_sampling_event", error)
-
-
-
-    """
-    """
-    def test_merge_sampling_events_partner_species_fail(self, api_factory):
-
-        api_instance = api_factory.SamplingEventApi()
-
-        try:
-            
-            samp1, samp2 = self.get_merge_events()
-
-            samp1.partner_species = 'PF'
-            samp2.partner_species = 'PV'
-
-            created1 = api_instance.create_sampling_event(samp1)
-            created2 = api_instance.create_sampling_event(samp2)
-
-            with pytest.raises(ApiException, status=422):
-                api_instance.merge_sampling_events(created1.sampling_event_id,
-                                                   created2.sampling_event_id)
-
-            fetched = api_instance.download_sampling_event(created1.sampling_event_id)
-
-            assert fetched == created1
-
-            api_instance.delete_sampling_event(created1.sampling_event_id)
-            api_instance.delete_sampling_event(created2.sampling_event_id)
-
-        except ApiException as error:
-            self.check_api_exception(api_factory, "SamplingEventApi->create_sampling_event", error)
-
-
-    """
-    """
-    def test_merge_sampling_events_partner_species_missing_fail(self, api_factory):
-
-        api_instance = api_factory.SamplingEventApi()
-
-        try:
-            
-            samp1, samp2 = self.get_merge_events()
-
-            created1 = api_instance.create_sampling_event(samp1)
-
-#            with pytest.raises(ApiException, status=404):
-#                api_instance.merge_sampling_events(created1.sampling_event_id,
-#                                                   None)
-#
-
-#            with pytest.raises(ApiException, status=404):
-#                api_instance.merge_sampling_events(None,
-#                                                   created1.sampling_event_id)
-#
-            merged = api_instance.merge_sampling_events(created1.sampling_event_id,
-                                                        created1.sampling_event_id)
-
-            assert merged == created1
-
-#            with pytest.raises(ApiException, status=404):
-#                api_instance.merge_sampling_events(str(uuid.uuid4()),
-#                                                   None)
-#
-#            with pytest.raises(ApiException, status=404):
-#                api_instance.merge_sampling_events(None, str(uuid.uuid4()))
-
-            with pytest.raises(ApiException, status=404):
-                api_instance.merge_sampling_events(str(uuid.uuid4()), str(uuid.uuid4()))
-
-            api_instance.delete_sampling_event(created1.sampling_event_id)
-
-        except ApiException as error:
-            self.check_api_exception(api_factory, "SamplingEventApi->create_sampling_event", error)
-
-    """
-    """
     def test_merge_sampling_events_attr_dedup(self, api_factory):
 
         api_instance = api_factory.SamplingEventApi()
@@ -1754,8 +1594,8 @@ class TestSample(TestBase):
 
             for attr in samp1.attrs:
                 assert attr in fetched.attrs
-            for attr in samp2.attrs:
-                assert attr in fetched.attrs
+                for attr in samp2.attrs:
+                    assert attr in fetched.attrs
 
             assert len(fetched.attrs) == expected
 

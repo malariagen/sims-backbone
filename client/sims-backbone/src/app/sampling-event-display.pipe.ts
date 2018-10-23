@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { SamplingEvent, Taxonomy, Location } from './typescript-angular-client';
+import { SamplingEvent, Location } from './typescript-angular-client';
 
 @Pipe({
   name: 'samplingEventDisplay'
@@ -14,8 +14,6 @@ export class SamplingEventDisplayPipe implements PipeTransform {
       return value.sampling_event_id
     } else if (key == 'doc') {
       ret = value.doc;
-    } else if (key == 'partner_species') {
-      ret = value.partner_species;
     } else if (key == 'study_id') {
       ret = value.study_name;
     } else if (key == 'location') {
@@ -46,14 +44,6 @@ export class SamplingEventDisplayPipe implements PipeTransform {
             }
           });
         }
-      }
-    } else if (key == 'taxa') {
-      if (value.partner_taxonomies) {
-        let taxas = [];
-        value.partner_taxonomies.forEach((taxa: Taxonomy) => {
-          taxas.push(taxa.taxonomy_id);
-        })
-        ret = taxas.join(';');
       }
     } else {
 

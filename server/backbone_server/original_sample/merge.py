@@ -62,6 +62,15 @@ class OriginalSampleMerge():
         else:
             original_sample1.days_in_culture = original_sample2.days_in_culture
 
+        if original_sample1.partner_species:
+            if original_sample2.partner_species:
+                if original_sample1.partner_species != original_sample2.partner_species:
+                    msg = 'Incompatible partner_species {} {}'.format(original_sample1.partner_species,
+                                                       original_sample2.partner_species)
+                    raise IncompatibleException(msg)
+        else:
+            original_sample1.partner_species = original_sample2.partner_species
+
         if original_sample2.attrs:
             for new_ident in original_sample2.attrs:
                 found = False

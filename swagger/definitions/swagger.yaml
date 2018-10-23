@@ -50,12 +50,6 @@ definitions:
       public_location:
         description: 'proxy location if set otherwise location'
         $ref: '#/definitions/Location'
-      partner_species:
-        type: string
-      partner_taxonomies:
-        type: array
-        items:
-            $ref: '#/definitions/Taxonomy'
       attrs:
         type: array
         items:
@@ -119,25 +113,6 @@ definitions:
           description: 'Location properties'
           type: object
           $ref: '#/definitions/Location'
-  Taxonomies:
-    type: object
-    properties:
-      taxonomies:
-        type: array
-        items:
-          $ref: '#/definitions/Taxonomy'
-      count:
-        type: integer
-        description: Used when pagination is applied to return the number of results
-  Taxonomy:
-    type: object
-    properties:
-      taxonomy_id:
-        type: number
-      name:
-        type: string
-      rank:
-        type: string
   Attr:
     type: object
     properties:
@@ -168,16 +143,6 @@ definitions:
       count:
         type: integer
         description: Used when pagination is applied to return the number of results
-  PartnerSpecies:
-    type: object
-    properties:
-      taxa:
-        type: array
-        items:
-          $ref: '#/definitions/Taxonomy'
-      partner_species:
-        type: string
-        description: the description as supplied by the partner
   Study:
     type: object
     required:
@@ -190,7 +155,7 @@ definitions:
       partner_species:
           type: array
           items:
-              $ref: '#/definitions/PartnerSpecies'
+            $ref: './original_sample.yaml#/definitions/PartnerSpecies'
       locations:
           $ref: '#/definitions/Locations'
   EventSetNote:

@@ -33,6 +33,38 @@ class TestOriginalSample(TestBase):
         except ApiException as error:
             self.check_api_exception(api_factory, "OriginalSampleApi->create_original_sample", error)
 
+
+    """
+    """
+    def test_os_taxa_on_create(self, api_factory):
+
+        api_instance = api_factory.OriginalSampleApi()
+        study_api = api_factory.StudyApi()
+
+        try:
+
+            study_code = '4000-MD-UP'
+            samp = swagger_client.OriginalSample(None, study_name=study_code,
+                                                 partner_species='PF')
+            created = api_instance.create_original_sample(samp)
+            if not api_factory.is_authorized(None):
+                pytest.fail('Unauthorized call to create_original_sample succeeded')
+
+            study_detail = study_api.download_study(study_code)
+            study_detail.partner_species[0].taxa = [ swagger_client.Taxonomy(taxonomy_id=5833) ]
+            study_api.update_study(study_code, study_detail)
+
+            created2 = api_instance.create_original_sample(samp)
+
+            assert not created2.partner_taxonomies is None, 'Taxonomies missing'
+            assert int(created2.partner_taxonomies[0].taxonomy_id) == 5833, 'Wrong Taxonomy'
+            api_instance.delete_original_sample(created.original_sample_id)
+            api_instance.delete_original_sample(created2.original_sample_id)
+
+        except ApiException as error:
+            self.check_api_exception(api_factory, "OriginalSampleApi->create_original_sample", error)
+
+
     """
     """
     def test_os_delete(self, api_factory):
@@ -80,7 +112,7 @@ class TestOriginalSample(TestBase):
             samp = swagger_client.OriginalSample(None, study_name='4002-MD-UP')
             samp.attrs = [
                 swagger_client.Attr (attr_type='oxford', attr_value='1234',
-                                           attr_source='same')
+                                     attr_source='same')
             ]
             created = api_instance.create_original_sample(samp)
 
@@ -189,18 +221,18 @@ class TestOriginalSample(TestBase):
             ]
             created = api_instance.create_original_sample(samp)
             looked_up = api_instance.download_original_samples_by_attr('partner_id', '123456',
-                                                                            study_name='4022')
+                                                                       study_name='4022')
             assert looked_up.count == 1
 
 
             with pytest.raises(ApiException, status=404):
                 looked_up = api_instance.download_original_samples_by_attr('oxford', '123456',
-                                                                            study_name='9999')
+                                                                           study_name='9999')
 
             created1 = api_instance.create_original_sample(samp)
 
             looked_up = api_instance.download_original_samples_by_attr('partner_id', '123456',
-                                                                            study_name='4022')
+                                                                       study_name='4022')
             assert looked_up.count == 2
 
             ffetched = api_instance.download_original_samples(search_filter='attr:partner_id:123456:4022')
@@ -290,7 +322,7 @@ class TestOriginalSample(TestBase):
             samp = swagger_client.OriginalSample(None, study_name='4006-MD-UP')
             samp.attrs = [
                 swagger_client.Attr (attr_type='oxford', attr_value='12345678',
-                                           attr_source='upd')
+                                     attr_source='upd')
             ]
             created = api_instance.create_original_sample(samp)
             looked_up = api_instance.download_original_samples_by_attr('oxford', '12345678')
@@ -298,7 +330,7 @@ class TestOriginalSample(TestBase):
             new_samp = swagger_client.OriginalSample(None, study_name='0001-MD-UP')
             new_samp.attrs = [
                 swagger_client.Attr (attr_type='oxford', attr_value='123456789',
-                                          attr_source='upd')
+                                     attr_source='upd')
             ]
             new_created = api_instance.create_original_sample(new_samp)
             with pytest.raises(ApiException, status=422):
@@ -345,7 +377,7 @@ class TestOriginalSample(TestBase):
             samp = swagger_client.OriginalSample(None, study_name='4008-MD-UP')
             samp.attrs = [
                 swagger_client.Attr (attr_type='partner_id', attr_value=test_id,
-                                          attr_source='encode')
+                                     attr_source='encode')
             ]
             created = api_instance.create_original_sample(samp)
 
@@ -356,7 +388,7 @@ class TestOriginalSample(TestBase):
             assert samp == fetched, "upload != download response"
 
             results = api_instance.download_original_samples_by_attr('partner_id',
-                                                                      urllib.parse.quote_plus(test_id))
+                                                                     urllib.parse.quote_plus(test_id))
             looked_up = results.original_samples[0]
             fetched = api_instance.download_original_sample(looked_up.original_sample_id)
 
@@ -426,7 +458,7 @@ class TestOriginalSample(TestBase):
             assert fetched1.count == 5, "Wrong total of original_samples returned"
 
             ffetched = api_instance.download_original_samples(search_filter='studyId:' + study_code,
-                                                             start=0, count=2)
+                                                              start=0, count=2)
 
             assert ffetched == fetched1
 
@@ -465,7 +497,7 @@ class TestOriginalSample(TestBase):
             samp = swagger_client.OriginalSample(None, study_name='4023-MD-UP')
             samp.attrs = [
                 swagger_client.Attr (attr_type='oxford', attr_value='12345678',
-                                           attr_source='upd')
+                                     attr_source='upd')
             ]
             created = api_instance.create_original_sample(samp)
             idents = metadata_api_instance.get_attr_types()
@@ -549,7 +581,7 @@ class TestOriginalSample(TestBase):
         try:
 
             sampling_event = swagger_client.SamplingEvent(None, '4024-MD-UP', date(2017, 10, 10),
-                                                doc_accuracy='month')
+                                                          doc_accuracy='month')
             loc = swagger_client.Location(None, 27.463, 90.495, 'city',
                                           'Trongsa, Trongsa, Bhutan', 'test_create_with_locations', 'BTN')
             loc = location_api_instance.create_location(loc)
@@ -562,7 +594,7 @@ class TestOriginalSample(TestBase):
 
             samp.attrs = [
                 swagger_client.Attr (attr_type='oxford', attr_value='12345678',
-                                           attr_source='upd')
+                                     attr_source='upd')
             ]
             created = api_instance.create_original_sample(samp)
 
@@ -607,7 +639,7 @@ class TestOriginalSample(TestBase):
             created_es = es_api_instance.create_event_set(event_set_name)
 
             sampling_event = swagger_client.SamplingEvent(None, '4026-MD-UP', date(2017, 10, 10),
-                                                doc_accuracy='month')
+                                                          doc_accuracy='month')
 
             created_se = se_api_instance.create_sampling_event(sampling_event)
 
@@ -619,7 +651,7 @@ class TestOriginalSample(TestBase):
 
             samp.attrs = [
                 swagger_client.Attr (attr_type='oxford', attr_value='12345678',
-                                           attr_source='upd')
+                                     attr_source='upd')
             ]
             created = api_instance.create_original_sample(samp)
 
@@ -655,7 +687,7 @@ class TestOriginalSample(TestBase):
         try:
 
             sampling_event = swagger_client.SamplingEvent(None, '4025-MD-UP', date(2017, 10, 10),
-                                                doc_accuracy='month')
+                                                          doc_accuracy='month')
             loc = swagger_client.Location(None, 27.463, 90.495, 'city',
                                           'Trongsa, Trongsa, Bhutan', 'test_create_with_locations', 'BTN')
             loc = location_api_instance.create_location(loc)
@@ -727,28 +759,24 @@ class TestOriginalSample(TestBase):
     def test_os_taxa_lookup(self, api_factory):
 
         api_instance = api_factory.OriginalSampleApi()
-        se_api_instance = api_factory.SamplingEventApi()
         study_api = api_factory.StudyApi()
 
         try:
 
-            sampling_event = swagger_client.SamplingEvent(None, '4025-MD-UP', date(2017, 10, 10),
-                                                partner_species='PF')
-            created_se = se_api_instance.create_sampling_event(sampling_event)
+            samp = swagger_client.OriginalSample(None, study_name='4025-MD-UP',
+                                                 partner_species='PF')
+            samp.attrs = [
+                swagger_client.Attr (attr_type='oxford', attr_value='12345-T',
+                                     attr_source='upd')
+            ]
+            created = api_instance.create_original_sample(samp)
+
             study_detail = study_api.download_study('4025')
             study_detail.partner_species[0].taxa = [ swagger_client.Taxonomy(taxonomy_id=5833) ]
             study_api.update_study('4025', study_detail)
 
-
-            samp = swagger_client.OriginalSample(None, study_name='4025-MD-UP')
-            samp.sampling_event_id = created_se.sampling_event_id
-
-            samp.attrs = [
-                swagger_client.Attr (attr_type='oxford', attr_value='12345-T',
-                                           attr_source='upd')
-            ]
-            created = api_instance.create_original_sample(samp)
-
+            created.partner_taxonomies = study_detail.partner_species[0].taxa
+            samp.partner_taxonomies = study_detail.partner_species[0].taxa
             results = api_instance.download_original_samples_by_taxa(5833)
             looked_up = results.original_samples[0]
 
@@ -763,10 +791,10 @@ class TestOriginalSample(TestBase):
             assert ffetched == results
 
             fetched.original_sample_id = None
+
             assert samp == fetched, "upload != download response"
 
             for original_sample in results.original_samples:
-                se_api_instance.delete_sampling_event(original_sample.sampling_event_id)
                 api_instance.delete_original_sample(original_sample.original_sample_id)
 
         except ApiException as error:
@@ -777,7 +805,6 @@ class TestOriginalSample(TestBase):
     def test_os_taxa_lookup_paged(self, api_factory):
 
         api_instance = api_factory.OriginalSampleApi()
-        se_api_instance = api_factory.SamplingEventApi()
         study_api = api_factory.StudyApi()
 
         try:
@@ -785,19 +812,17 @@ class TestOriginalSample(TestBase):
             study_codes = [ '4031-MD-UP', '4032-MD-UP', '4033-MD-UP', '4034-MD-UP', '4034-MD-UP']
 
             for study_code in study_codes:
-                samp = swagger_client.SamplingEvent(None, study_code, date(2017, 10, 14),
-                                                    partner_species='PF')
-                created = se_api_instance.create_sampling_event(samp)
+                samp1 = swagger_client.OriginalSample(None,
+                                                      study_name=study_code,
+                                                      partner_species='PF')
+                created1 = api_instance.create_original_sample(samp1)
                 study_detail = study_api.download_study(study_code)
                 study_detail.partner_species[0].taxa = [ swagger_client.Taxonomy(taxonomy_id=5833) ]
                 study_api.update_study(study_code, study_detail)
-                samp1 = swagger_client.OriginalSample(None, study_name=study_code)
-                samp1.sampling_event_id = created.sampling_event_id
-                created1 = api_instance.create_original_sample(samp1)
 
             results = api_instance.download_original_samples_by_taxa(5833,
-                                                                         start=0,
-                                                                         count=2)
+                                                                     start=0,
+                                                                     count=2)
 
             assert results.count == 5
             assert len(results.original_samples) == 2
@@ -816,7 +841,6 @@ class TestOriginalSample(TestBase):
             fetch_all = api_instance.download_original_samples_by_taxa(5833)
 
             for original_sample in fetch_all.original_samples:
-                se_api_instance.delete_sampling_event(original_sample.sampling_event_id)
                 api_instance.delete_original_sample(original_sample.original_sample_id)
 
         except ApiException as error:
@@ -827,16 +851,16 @@ class TestOriginalSample(TestBase):
     def get_merge_samples(self):
 
         samp1 = swagger_client.OriginalSample(None, study_name='4035-MD-UP',
-                                             days_in_culture=3)
+                                              days_in_culture=3)
         samp1.attrs = [
             swagger_client.Attr (attr_type='partner_id', attr_value='os1-12345678',
-                                       attr_source='mrg')
+                                 attr_source='mrg')
         ]
         samp2 = swagger_client.OriginalSample(None, study_name='4035-MD-UP',
-                                             days_in_culture=3)
+                                              days_in_culture=3)
         samp2.attrs = [
             swagger_client.Attr (attr_type='partner_id', attr_value='os2-12345678',
-                                       attr_source='mrg')
+                                 attr_source='mrg')
         ]
 
         return samp1, samp2
@@ -862,8 +886,8 @@ class TestOriginalSample(TestBase):
 
             for attr in samp1.attrs:
                 assert attr in fetched.attrs
-            for attr in samp2.attrs:
-                assert attr in fetched.attrs
+                for attr in samp2.attrs:
+                    assert attr in fetched.attrs
 
             api_instance.delete_original_sample(created1.original_sample_id)
 
@@ -885,18 +909,11 @@ class TestOriginalSample(TestBase):
 
             created1 = api_instance.create_original_sample(samp1)
 
-#            with pytest.raises(ApiException, status=404):
-#                merged = api_instance.merge_original_samples(created1.original_sample_id,
-#                                                             None)
 
             with pytest.raises(ApiException, status=404):
                 merged = api_instance.merge_original_samples(created1.original_sample_id,
                                                              str(uuid.uuid4()))
 
-#            with pytest.raises(ApiException, status=404):
-#                merged = api_instance.merge_original_samples(None,
-#                                                             created1.original_sample_id)
-#
             with pytest.raises(ApiException, status=404):
                 merged = api_instance.merge_original_samples(str(uuid.uuid4()),
                                                              created1.original_sample_id)
@@ -956,8 +973,8 @@ class TestOriginalSample(TestBase):
 
             for attr in samp1.attrs:
                 assert attr in fetched.attrs
-            for attr in samp2.attrs:
-                assert attr in fetched.attrs
+                for attr in samp2.attrs:
+                    assert attr in fetched.attrs
 
             api_instance.delete_original_sample(created1.original_sample_id)
 
@@ -991,8 +1008,8 @@ class TestOriginalSample(TestBase):
 
             for attr in samp1.attrs:
                 assert attr in fetched.attrs
-            for attr in samp2.attrs:
-                assert attr in fetched.attrs
+                for attr in samp2.attrs:
+                    assert attr in fetched.attrs
 
             api_instance.delete_original_sample(created1.original_sample_id)
 
@@ -1026,8 +1043,8 @@ class TestOriginalSample(TestBase):
 
             for attr in samp1.attrs:
                 assert attr in fetched.attrs
-            for attr in samp2.attrs:
-                assert attr in fetched.attrs
+                for attr in samp2.attrs:
+                    assert attr in fetched.attrs
 
             api_instance.delete_original_sample(created1.original_sample_id)
 
@@ -1061,8 +1078,8 @@ class TestOriginalSample(TestBase):
 
             for attr in samp1.attrs:
                 assert attr in fetched.attrs
-            for attr in samp2.attrs:
-                assert attr in fetched.attrs
+                for attr in samp2.attrs:
+                    assert attr in fetched.attrs
 
             api_instance.delete_original_sample(created1.original_sample_id)
 
@@ -1120,8 +1137,8 @@ class TestOriginalSample(TestBase):
 
             for attr in samp1.attrs:
                 assert attr in fetched.attrs
-            for attr in samp2.attrs:
-                assert attr in fetched.attrs
+                for attr in samp2.attrs:
+                    assert attr in fetched.attrs
 
             api_instance.delete_original_sample(created1.original_sample_id)
 
@@ -1155,8 +1172,8 @@ class TestOriginalSample(TestBase):
 
             for attr in samp1.attrs:
                 assert attr in fetched.attrs
-            for attr in samp2.attrs:
-                assert attr in fetched.attrs
+                for attr in samp2.attrs:
+                    assert attr in fetched.attrs
 
             api_instance.delete_original_sample(created1.original_sample_id)
 
@@ -1190,6 +1207,7 @@ class TestOriginalSample(TestBase):
 
         except ApiException as error:
             self.check_api_exception(api_factory, "OriginalSampleApi->create_original_sample", error)
+
     """
     """
     def test_merge_os_attr_dedup(self, api_factory):
@@ -1214,8 +1232,8 @@ class TestOriginalSample(TestBase):
 
             for attr in samp1.attrs:
                 assert attr in fetched.attrs
-            for attr in samp2.attrs:
-                assert attr in fetched.attrs
+                for attr in samp2.attrs:
+                    assert attr in fetched.attrs
 
             assert len(fetched.attrs) == expected
 
@@ -1233,13 +1251,13 @@ class TestOriginalSample(TestBase):
             samp1 = swagger_client.SamplingEvent(None, '6000-MD-UP', date(2017, 10, 16))
             samp1.attrs = [
                 swagger_client.Attr (attr_type='partner_id', attr_value='mrg1-12345678',
-                                           attr_source='mrg')
+                                     attr_source='mrg')
             ]
             samp1.doc_accuracy = 'day'
             samp2 = swagger_client.SamplingEvent(None, '6000-MD-UP', date(2017, 10, 16))
             samp2.attrs = [
                 swagger_client.Attr (attr_type='partner_id', attr_value='mrg2-12345678',
-                                           attr_source='mrg')
+                                     attr_source='mrg')
             ]
             samp2.doc_accuracy = 'day'
 
@@ -1274,11 +1292,11 @@ class TestOriginalSample(TestBase):
 
             ds_samp1.attrs = [
                 swagger_client.Attr (attr_type='test1', attr_value='test1',
-                                          attr_source='ds_os_attr')
+                                     attr_source='ds_os_attr')
             ]
             ds_samp2.attrs = [
                 swagger_client.Attr (attr_type='test2', attr_value='test2',
-                                          attr_source='ds_os_attr')
+                                     attr_source='ds_os_attr')
             ]
             ds_samp1.original_sample_id = created1.original_sample_id
             ds_samp2.original_sample_id = created2.original_sample_id
@@ -1293,8 +1311,8 @@ class TestOriginalSample(TestBase):
 
             for attr in samp1.attrs:
                 assert attr in fetched.attrs
-            for attr in samp2.attrs:
-                assert attr in fetched.attrs
+                for attr in samp2.attrs:
+                    assert attr in fetched.attrs
 
             assert fetched.sampling_event_id == se_created1.sampling_event_id
 
@@ -1302,8 +1320,8 @@ class TestOriginalSample(TestBase):
 
             for attr in evnt1.attrs:
                 assert attr in fetched.attrs
-            for attr in evnt2.attrs:
-                assert attr in fetched.attrs
+                for attr in evnt2.attrs:
+                    assert attr in fetched.attrs
 
             ds1 = ds_api_instance.download_derivative_sample(ds_created1.derivative_sample_id)
             ds2 = ds_api_instance.download_derivative_sample(ds_created2.derivative_sample_id)
@@ -1338,8 +1356,8 @@ class TestOriginalSample(TestBase):
 
             evnt1, evnt2 = self.get_merge_events()
 
-            evnt1.partner_species = 'PF'
-            evnt2.partner_species = 'PV'
+            evnt1.doc_accuracy = 'day'
+            evnt2.doc_accuracy = 'month'
             se_created1 = se_api_instance.create_sampling_event(evnt1)
             se_created2 = se_api_instance.create_sampling_event(evnt2)
 
@@ -1360,8 +1378,8 @@ class TestOriginalSample(TestBase):
 
             for attr in samp1.attrs:
                 assert attr in fetched.attrs
-            for attr in samp2.attrs:
-                assert attr not in fetched.attrs
+                for attr in samp2.attrs:
+                    assert attr not in fetched.attrs
 
             assert fetched.sampling_event_id == se_created1.sampling_event_id
 
@@ -1369,8 +1387,8 @@ class TestOriginalSample(TestBase):
 
             for attr in evnt1.attrs:
                 assert attr in fetched.attrs
-            for attr in evnt2.attrs:
-                assert attr not in fetched.attrs
+                for attr in evnt2.attrs:
+                    assert attr not in fetched.attrs
 
             api_instance.delete_original_sample(created1.original_sample_id)
             se_api_instance.delete_sampling_event(se_created1.sampling_event_id)
@@ -1400,4 +1418,134 @@ class TestOriginalSample(TestBase):
 
         except ApiException as error:
             self.check_api_exception(api_factory, "OriginalSampleApi->download_original_samples", error)
+
+    """
+    """
+    def test_merge_os_partner_species1(self, api_factory):
+
+        api_instance = api_factory.OriginalSampleApi()
+
+        try:
+
+            samp1, samp2 = self.get_merge_samples()
+
+            samp1.partner_species = 'PF'
+
+            created1 = api_instance.create_original_sample(samp1)
+            created2 = api_instance.create_original_sample(samp2)
+
+            api_instance.merge_original_samples(created1.original_sample_id,
+                                               created2.original_sample_id)
+
+            fetched = api_instance.download_original_sample(created1.original_sample_id)
+
+            for attr in samp1.attrs:
+                assert attr in fetched.attrs
+                for attr in samp2.attrs:
+                    assert attr in fetched.attrs
+
+            assert fetched.partner_species == samp1.partner_species
+
+            api_instance.delete_original_sample(created1.original_sample_id)
+
+            with pytest.raises(ApiException, status=404):
+                fetched = api_instance.download_original_sample(created2.original_sample_id)
+        except ApiException as error:
+            self.check_api_exception(api_factory,
+                                     "OriginalSampleApi->create_original_sample", error)
+
+    """
+    """
+    def test_merge_os_partner_species2(self, api_factory):
+
+        api_instance = api_factory.OriginalSampleApi()
+
+        try:
+
+            samp1, samp2 = self.get_merge_samples()
+
+            samp2.partner_species = 'PV'
+
+            created1 = api_instance.create_original_sample(samp1)
+            created2 = api_instance.create_original_sample(samp2)
+
+            api_instance.merge_original_samples(created1.original_sample_id,
+                                               created2.original_sample_id)
+
+            fetched = api_instance.download_original_sample(created1.original_sample_id)
+
+            for attr in samp1.attrs:
+                assert attr in fetched.attrs
+                for attr in samp2.attrs:
+                    assert attr in fetched.attrs
+
+            assert fetched.partner_species == samp2.partner_species
+
+            api_instance.delete_original_sample(created1.original_sample_id)
+
+            with pytest.raises(ApiException, status=404):
+                fetched = api_instance.download_original_sample(created2.original_sample_id)
+        except ApiException as error:
+            self.check_api_exception(api_factory,
+                                     "OriginalSampleApi->create_original_sample", error)
+
+
+
+    """
+    """
+    def test_merge_os_partner_species_fail(self, api_factory):
+
+        api_instance = api_factory.OriginalSampleApi()
+
+        try:
+
+            samp1, samp2 = self.get_merge_samples()
+
+            samp1.partner_species = 'PF'
+            samp2.partner_species = 'PV'
+
+            created1 = api_instance.create_original_sample(samp1)
+            created2 = api_instance.create_original_sample(samp2)
+
+            with pytest.raises(ApiException, status=422):
+                api_instance.merge_original_samples(created1.original_sample_id,
+                                                   created2.original_sample_id)
+
+            fetched = api_instance.download_original_sample(created1.original_sample_id)
+
+            assert fetched == created1
+
+            api_instance.delete_original_sample(created1.original_sample_id)
+            api_instance.delete_original_sample(created2.original_sample_id)
+
+        except ApiException as error:
+            self.check_api_exception(api_factory,
+                                     "OriginalSampleApi->create_original_sample", error)
+
+
+    """
+    """
+    def test_merge_os_partner_species_missing_fail(self, api_factory):
+
+        api_instance = api_factory.OriginalSampleApi()
+
+        try:
+
+            samp1, samp2 = self.get_merge_samples()
+
+            created1 = api_instance.create_original_sample(samp1)
+
+            merged = api_instance.merge_original_samples(created1.original_sample_id,
+                                                        created1.original_sample_id)
+
+            assert merged == created1
+
+            with pytest.raises(ApiException, status=404):
+                api_instance.merge_original_samples(str(uuid.uuid4()), str(uuid.uuid4()))
+
+            api_instance.delete_original_sample(created1.original_sample_id)
+
+        except ApiException as error:
+            self.check_api_exception(api_factory,
+                                     "OriginalSampleApi->create_original_sample", error)
 

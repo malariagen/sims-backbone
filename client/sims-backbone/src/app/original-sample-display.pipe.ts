@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { OriginalSample } from './typescript-angular-client';
+import { OriginalSample, Taxonomy } from './typescript-angular-client';
 
 @Pipe({
   name: 'originalSampleDisplay'
@@ -13,8 +13,18 @@ export class OriginalSampleDisplayPipe implements PipeTransform {
       return value.original_sample_id
     } else if (key == "sampling_event_id") {
       return value.sampling_event_id
+    } else if (key == 'partner_species') {
+      ret = value.partner_species;
     } else if (key == 'study_id') {
       ret = value.study_name;
+    } else if (key == 'taxa') {
+      if (value.partner_taxonomies) {
+        let taxas = [];
+        value.partner_taxonomies.forEach((taxa: Taxonomy) => {
+          taxas.push(taxa.taxonomy_id);
+        })
+        ret = taxas.join(';');
+      }
     } else {
 
       value.attrs.forEach(ident => {

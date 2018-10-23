@@ -136,7 +136,7 @@ paths:
         '200':
           description: successful operation
           schema:
-            $ref: './swagger/definitions/swagger.yaml#/definitions/Taxonomies'
+            $ref: './swagger/definitions/original_sample.yaml#/definitions/Taxonomies'
     post:
       tags:
         - metadata
@@ -151,12 +151,12 @@ paths:
           name: taxonomy
           required: true
           schema:
-            $ref: './swagger/definitions/swagger.yaml#/definitions/Taxonomy'
+            $ref: './swagger/definitions/original_sample.yaml#/definitions/Taxonomy'
       responses:
         '200':
           description: successful operation
           schema:
-            $ref: './swagger/definitions/swagger.yaml#/definitions/Taxonomy'
+            $ref: './swagger/definitions/original_sample.yaml#/definitions/Taxonomy'
   '/metadata/attr_types':
     get:
       tags:

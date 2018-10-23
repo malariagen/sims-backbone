@@ -28,6 +28,27 @@ class OriginalSampleEdit():
         return study_id
 
     @staticmethod
+    def fetch_partner_species(cursor, original_sample, study_id):
+        partner_species = None
+
+        if not original_sample.partner_species:
+            return partner_species
+
+        cursor.execute('''SELECT id FROM partner_species_identifiers WHERE study_id = %s AND
+                       partner_species = %s''',
+                           (study_id, original_sample.partner_species))
+        result = cursor.fetchone()
+
+        if result:
+            partner_species = result[0]
+        else:
+            partner_species = uuid.uuid4()
+            cursor.execute('''INSERT INTO partner_species_identifiers (id, study_id,
+                           partner_species) VALUES (%s, %s, %s)''',
+                           (partner_species, study_id, original_sample.partner_species))
+        return partner_species
+
+    @staticmethod
     def add_attrs(cursor, uuid_val, original_sample):
         if original_sample.attrs:
             for ident in original_sample.attrs:
@@ -67,3 +88,14 @@ class OriginalSampleEdit():
                     VALUES (%s, %s)'''
                 cursor.execute(stmt, (uuid_val, attr_id))
 
+
+
+    @staticmethod
+    def clean_up_taxonomies(cursor):
+
+        unused_species = '(select partner_species_identifiers.id from partner_species_identifiers LEFT JOIN studies ON studies.id = study_id LEFT JOIN original_samples ON original_samples.study_id = studies.id WHERE original_samples.id IS NULL)'
+        unused_idents = 'DELETE FROM taxonomy_identifiers WHERE partner_species_id IN ' + unused_species
+        unused_species_idents = 'DELETE FROM partner_species_identifiers WHERE id IN ' + unused_species
+
+        cursor.execute(unused_idents)
+        cursor.execute(unused_species_idents)

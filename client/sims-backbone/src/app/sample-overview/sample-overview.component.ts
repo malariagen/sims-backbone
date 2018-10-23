@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, AfterContentInit, OnChanges, SimpleChanges } from '@angular/core';
-import { AssayData, DerivativeSamples, OriginalSamples, SamplingEvent, SamplingEvents } from '../typescript-angular-client';
+import { AssayData, DerivativeSamples, OriginalSamples, SamplingEvents } from '../typescript-angular-client';
 
 import * as d3 from 'd3';
 
@@ -9,7 +9,7 @@ import * as d3 from 'd3';
   styleUrls: ['./sample-overview.component.css']
 })
 export class SampleOverviewComponent implements AfterContentInit, OnChanges {
-
+  
   height: number = 320;
   width: number = 400;
   svg: d3.Selection<d3.BaseType, {}, HTMLElement, any>;
@@ -27,19 +27,17 @@ export class SampleOverviewComponent implements AfterContentInit, OnChanges {
 
   constructor() { }
 
-  @Input()
-  set redraw(value: number) {
-    this.buildGraph();
-
-  }
   ngAfterContentInit() {
 
-
-
-    console.log(this);
   }
 
   ngOnChanges(changes: SimpleChanges): void {
+    
+    if (changes.derivativeSamples && !this.assayData) {
+      console.log(changes);
+      this.buildGraph();
+    }
+
 
   }
 

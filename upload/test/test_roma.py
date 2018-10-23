@@ -92,11 +92,11 @@ class TestROMA(TestBase):
     """
     def test_species(self):
 
-        api_instance = swagger_client.SamplingEventApi(self._api_client)
+        api_instance = swagger_client.OriginalSampleApi(self._api_client)
 
         try:
-            looked_up = api_instance.download_sampling_events_by_os_attr('roma_id', 'TST00002')
-            looked_up = looked_up.sampling_events[0]
+            looked_up = api_instance.download_original_samples_by_attr('roma_id', 'TST00002')
+            looked_up = looked_up.original_samples[0]
             self.assertEquals(looked_up.partner_species, 'Plasmodium falciparum')
         except ApiException as error:
             self.fail("test_year_accuracy: Exception when calling download_sampling_event_by_os_attr {}"
