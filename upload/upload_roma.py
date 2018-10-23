@@ -29,7 +29,8 @@ class Upload_ROMA(uploader.Uploader):
             items[item['model']][item['pk']] = item
 
         proxy_locations = {}
-        if 'locations.proxy_location' in items:
+
+        if 'locations.proxylocation' in items:
             for key, item in items['locations.proxylocation'].items():
                 fields = item['fields']
                 proxy_locations[fields['location']] = fields['proxy_location']
@@ -104,7 +105,6 @@ class Upload_ROMA(uploader.Uploader):
                 'proxy_location_name': proxy_loc_name,
                 'proxy_country': proxy_country
             }
-
 
             sampling_event = self.process_item(values)
 
