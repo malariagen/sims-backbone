@@ -16,8 +16,6 @@ describe('DownloaderJsonComponent', () => {
 
   const test_entries = getTestSamplingEvents();
 
-  const httpClientSpy: { get: jasmine.Spy };
-
   let httpClient: HttpClient;
   let httpTestingController: HttpTestingController;
 
