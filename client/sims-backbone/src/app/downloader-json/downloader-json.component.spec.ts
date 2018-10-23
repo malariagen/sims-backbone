@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed, inject, tick, fakeAsync } from '@angular/core/testing';
+import { async, ComponentFixture, TestBed, inject } from '@angular/core/testing';
 
 import { DownloaderJsonComponent } from './downloader-json.component';
 import { createOAuthServiceSpy, getTestSamplingEvents } from 'testing/index.spec';
@@ -14,9 +14,9 @@ describe('DownloaderJsonComponent', () => {
   let component: DownloaderJsonComponent;
   let fixture: ComponentFixture<DownloaderJsonComponent>;
 
-  let test_entries = getTestSamplingEvents();
+  const test_entries = getTestSamplingEvents();
 
-  let httpClientSpy: { get: jasmine.Spy };
+  const httpClientSpy: { get: jasmine.Spy };
 
   let httpClient: HttpClient;
   let httpTestingController: HttpTestingController;
@@ -96,7 +96,7 @@ describe('DownloaderJsonComponent', () => {
       fixture.detectChanges();
 
       const result = {
-        url: 'http://localhost/v1/samplingEvents?filter=' + component.filter + '&start=0&count=' + component.pageSize,
+        url: 'http://localhost/v1/samplingEvents?search_filter=' + component.filter + '&start=0&count=' + component.pageSize,
         method: 'GET'
       };
       let req = backend.expectOne(result);
@@ -146,7 +146,7 @@ describe('DownloaderJsonComponent', () => {
       fixture.detectChanges();
 
       const result = {
-        url: 'http://localhost/v1/samplingEvents?filter=' + component.filter + '&start=' + component.pageNumber * component.pageSize + '&count=' + component.pageSize,
+        url: 'http://localhost/v1/samplingEvents?search_filter=' + component.filter + '&start=' + component.pageNumber * component.pageSize + '&count=' + component.pageSize,
         method: 'GET'
       };
       let req = backend.expectOne(result);
@@ -158,7 +158,7 @@ describe('DownloaderJsonComponent', () => {
       expect(component.pageNumber).toBe(1);
 
       const result1 = {
-        url: 'http://localhost/v1/samplingEvents?filter=' + component.filter + '&start=' + component.pageNumber * component.pageSize + '&count=' + component.pageSize,
+        url: 'http://localhost/v1/samplingEvents?search_filter=' + component.filter + '&start=' + component.pageNumber * component.pageSize + '&count=' + component.pageSize,
         method: 'GET'
       };
       let req1 = backend.expectOne(result1);

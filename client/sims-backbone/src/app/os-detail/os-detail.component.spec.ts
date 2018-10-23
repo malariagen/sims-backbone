@@ -1,6 +1,13 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { FlexLayoutModule } from '@angular/flex-layout';
 
 import { OsDetailComponent } from './os-detail.component';
+import { Component, Input } from '@angular/core';
+
+@Component({ selector: 'app-attr-table', template: '' })
+class AttrsTableStubComponent {
+  @Input() attrs;
+}
 
 describe('OsDetailComponent', () => {
   let component: OsDetailComponent;
@@ -8,7 +15,8 @@ describe('OsDetailComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ OsDetailComponent ]
+      imports: [FlexLayoutModule],
+      declarations: [ OsDetailComponent, AttrsTableStubComponent ]
     })
     .compileComponents();
   }));

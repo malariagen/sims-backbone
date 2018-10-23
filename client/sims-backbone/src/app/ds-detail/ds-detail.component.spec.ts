@@ -1,6 +1,13 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { FlexLayoutModule } from '@angular/flex-layout';
 
 import { DsDetailComponent } from './ds-detail.component';
+import { Component, Input } from '@angular/core';
+
+@Component({ selector: 'app-attr-table', template: '' })
+class AttrsTableStubComponent {
+  @Input() attrs;
+}
 
 describe('DsDetailComponent', () => {
   let component: DsDetailComponent;
@@ -8,7 +15,8 @@ describe('DsDetailComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ DsDetailComponent ]
+      imports: [FlexLayoutModule],
+      declarations: [ DsDetailComponent, AttrsTableStubComponent ]
     })
     .compileComponents();
   }));

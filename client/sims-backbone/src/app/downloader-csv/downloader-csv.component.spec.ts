@@ -67,8 +67,6 @@ describe('DownloaderCsvComponent', () => {
         "partner_id",
         "roma_id",
         "doc",
-        "partner_species",
-        "taxa",
         "partner_location_name",
         "location_curated_name",
         "location"
@@ -137,8 +135,6 @@ describe('DownloaderCsvComponent', () => {
         "partner_id",
         "roma_id",
         "doc",
-        "partner_species",
-        "taxa",
         "partner_location_name",
         "location_curated_name",
         "location"
@@ -153,9 +149,9 @@ describe('DownloaderCsvComponent', () => {
         //Also fake function stops the actual saveAs being called and generating a download
 
         expect(fileName).toBe(component.fileName);
-        let resultString = '"study_id"	"partner_id"	"roma_id"	"doc"	"partner_species"	"taxa"	"partner_location_name"	"location_curated_name"	"location"\r\n'
-          + '"9999"	"9999_1"	"9999_1R"	"2003-06-01"	"An. dirus A"	"7168"	"Cambodia"	""	"12.565679, 104.990963"\r\n'
-          + '"9999"	"9999_2"	"9999_2R"	"2003-06-01"	"An. dirus A"	"7168"	"Cambodia"	""	"12.565679, 104.990963"\r\n';
+        let resultString = '"study_id"	"partner_id"	"roma_id"	"doc"	"partner_location_name"	"location_curated_name"	"location"\r\n'
+          + '"9999"	"9999_1"	"9999_1R"	"2003-06-01"	"Cambodia"	""	"12.565679, 104.990963"\r\n'
+          + '"9999"	"9999_2"	"9999_2R"	"2003-06-01"	"Cambodia"	""	"12.565679, 104.990963"\r\n';
 
         //        expect(blob.size).toBe(resultString.length);
         expect(blob.type).toBe('text/csv;charset=utf-8');

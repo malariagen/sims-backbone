@@ -140,7 +140,7 @@ describe('EventListComponent', () => {
       // Finally, assert that there are no outstanding requests.
       backend.verify();
 
-      let expectedHeaders = ["sampling_event_id", "study_id", "partner_id", "roma_id", "doc", "partner_species", "taxa", "partner_location_name", "location_curated_name", "location"];
+      let expectedHeaders = ["sampling_event_id", "study_id", "partner_id", "roma_id", "doc", "partner_location_name", "location_curated_name", "location"];
 
       expect(component.displayedColumns.length).toBe(expectedHeaders.length);
 
