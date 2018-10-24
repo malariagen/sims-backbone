@@ -169,7 +169,7 @@ functions:
                 derivative_sample_id: true
 
 
-  downloadDerivativeSamplesByTaxa:
+  downloadDSByTaxa:
     handler: derivative_sample/handler.download_derivative_samples_by_taxa
     events:
       - http:
@@ -192,7 +192,7 @@ functions:
                 start: false
                 count: false
 
-  downloadDerivativeSamplesByAttr:
+  downloadDSByAttr:
     handler: derivative_sample/handler.download_derivative_samples_by_attr
     events:
       - http:
@@ -215,7 +215,7 @@ functions:
                 study_name: false
 
 
-  downloadDerivativeSamplesByOsAttr:
+  downloadDSByOsAttr:
     handler: derivative_sample/handler.download_derivative_samples_by_os_attr
     events:
       - http:
@@ -259,15 +259,15 @@ resources:
       Type: AWS::Logs::LogGroup
       Properties:
         RetentionInDays: "30"
-    DownloadDerivativeSamplesByTaxaLogGroup:
+    DownloadDSByTaxaLogGroup:
       Type: AWS::Logs::LogGroup
       Properties:
         RetentionInDays: "30"
-    DownloadDerivativeSamplesByAttrLogGroup:
+    DownloadDSByAttrLogGroup:
       Type: AWS::Logs::LogGroup
       Properties:
         RetentionInDays: "30"
-    DownloadDerivativeSamplesByOsAttrLogGroup:
+    DownloadDSByOsAttrLogGroup:
       Type: AWS::Logs::LogGroup
       Properties:
         RetentionInDays: "30"
