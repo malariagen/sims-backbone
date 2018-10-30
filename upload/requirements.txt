@@ -1,6 +1,6 @@
 chardet==3.0.4
 idna==2.6
-requests==2.18.4
+requests==2.20.0
 numpy==1.14.0
 pandas==0.22.0
 pytz==2017.3
