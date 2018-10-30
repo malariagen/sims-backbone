@@ -11,12 +11,12 @@ from backbone_server.sampling_event.edit import SamplingEventEdit
 
 import logging
 
+
 class SamplingEventsGetByTaxa():
 
     def __init__(self, conn):
         self._logger = logging.getLogger(__name__)
         self._connection = conn
-
 
     def get(self, taxa_id, start, count):
         with self._connection:
@@ -31,7 +31,7 @@ class SamplingEventsGetByTaxa():
                 if not vtaxa_id:
                     raise MissingKeyException("No taxa {}".format(taxa_id))
 
-                fields = '''SELECT DISTINCT v_sampling_events.id, v_sampling_events.study_id, doc, doc_accuracy,
+                fields = '''SELECT DISTINCT v_sampling_events.id, studies.study_name AS study_id, doc, doc_accuracy,
                 location_id, latitude, longitude, accuracy, curated_name, curation_method, country, notes, partner_name,
                 proxy_location_id, proxy_latitude, proxy_longitude, proxy_accuracy,
                 proxy_curated_name, proxy_curation_method, proxy_country, proxy_notes,
@@ -39,6 +39,7 @@ class SamplingEventsGetByTaxa():
                 query_body = ''' FROM v_sampling_events
                 LEFT JOIN original_samples os ON os.sampling_event_id = v_sampling_events.id
                 LEFT JOIN taxonomy_identifiers ti ON ti.partner_species_id = os.partner_species_id
+                LEFT JOIN studies ON studies.id = v_sampling_events.study_id
                 WHERE ti.taxonomy_id = %s'''
                 args = (taxa_id,)
 
@@ -57,7 +58,8 @@ class SamplingEventsGetByTaxa():
 
                 cursor.execute(stmt, args)
 
-                sampling_events.sampling_events, sampling_events.locations = SamplingEventFetch.load_sampling_events(cursor, True)
+                sampling_events.sampling_events, sampling_events.locations = SamplingEventFetch.load_sampling_events(
+                    cursor, True)
 
                 if not (start is None and count is None):
                     cursor.execute(count_query, count_args)
@@ -77,6 +79,5 @@ class SamplingEventsGetByTaxa():
                 cursor.execute(col_query, (taxa_id,))
                 for (attr_type,) in cursor:
                     sampling_events.attr_types.append(attr_type)
-
 
         return sampling_events

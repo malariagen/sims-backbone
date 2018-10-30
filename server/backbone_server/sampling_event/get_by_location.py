@@ -11,12 +11,12 @@ from backbone_server.sampling_event.edit import SamplingEventEdit
 
 import logging
 
+
 class SamplingEventsGetByLocation():
 
     def __init__(self, conn):
         self._logger = logging.getLogger(__name__)
         self._connection = conn
-
 
     def get(self, location_id, start, count):
 
@@ -30,12 +30,13 @@ class SamplingEventsGetByLocation():
                 except MissingKeyException as mke:
                     raise mke
 
-                fields = '''SELECT v_sampling_events.id, study_id, doc, doc_accuracy,
+                fields = '''SELECT v_sampling_events.id, studies.study_name AS study_id, doc, doc_accuracy,
                                 location_id, latitude, longitude, accuracy, curated_name, curation_method, country, notes, partner_name,
                                 proxy_location_id, proxy_latitude, proxy_longitude, proxy_accuracy,
                                 proxy_curated_name, proxy_curation_method, proxy_country, proxy_notes,
                                 proxy_partner_name'''
                 query_body = ''' FROM v_sampling_events
+                        LEFT JOIN studies ON studies.id = v_sampling_events.study_id
                         WHERE location_id = %s OR proxy_location_id = %s'''
                 args = (location_id, location_id,)
 
@@ -54,7 +55,8 @@ class SamplingEventsGetByLocation():
 
                 cursor.execute(stmt, args)
 
-                sampling_events.sampling_events, sampling_events.locations = SamplingEventFetch.load_sampling_events(cursor, True)
+                sampling_events.sampling_events, sampling_events.locations = SamplingEventFetch.load_sampling_events(
+                    cursor, True)
 
                 if not (start is None and count is None):
                     cursor.execute(count_query, count_args)

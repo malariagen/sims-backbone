@@ -14,6 +14,7 @@ import logging
 
 from backbone_server.location.fetch import LocationFetch
 
+
 class EventSetFetch():
 
     @staticmethod
@@ -21,7 +22,7 @@ class EventSetFetch():
 
         stmt = '''SELECT id FROM event_sets WHERE event_set_name = %s'''
 
-        cursor.execute( stmt, (event_set_name,))
+        cursor.execute(stmt, (event_set_name,))
 
         res = cursor.fetchone()
 
@@ -47,7 +48,6 @@ class EventSetFetch():
 
         event_set = EventSet(res[0])
 
-
         stmt = '''SELECT note_name, note_text FROM event_set_notes WHERE event_set_id = %s'''
 
         cursor.execute(stmt, (event_set_id,))
@@ -63,20 +63,22 @@ class EventSetFetch():
         if count is not None and count == 0:
             return event_set
 
-        fields = '''SELECT id, study_id, doc, doc_accuracy,
+        fields_tmpl = '''SELECT {}.id, {} doc, doc_accuracy,
                         location_id, latitude, longitude, accuracy, curated_name, curation_method, country, notes, partner_name,
                         proxy_location_id, proxy_latitude, proxy_longitude, proxy_accuracy,
                         proxy_curated_name, proxy_curation_method, proxy_country, proxy_notes,
                         proxy_partner_name'''
-        query_body = ''' FROM v_sampling_events
+        fields = fields_tmpl.format('vse', ' studies.study_name as study_id,')
+        query_body = ''' FROM (''' + fields_tmpl.format('v_sampling_events', ' v_sampling_events.study_id,') + ''' FROM v_sampling_events
                         JOIN event_set_members esm ON esm.sampling_event_id = v_sampling_events.id
-                        WHERE esm.event_set_id = %s'''
-
+                        WHERE esm.event_set_id = %s
+        ) vse
+                        LEFT JOIN studies ON studies.id = vse.study_id'''
 
         args = (event_set_id,)
 
         count_args = args
-        count_query = 'SELECT COUNT(v_sampling_events.id) ' + query_body
+        count_query = 'SELECT COUNT(vse.id) ' + query_body
 
         query_body = query_body + ''' ORDER BY doc, study_id, id'''
 
@@ -91,7 +93,8 @@ class EventSetFetch():
 
         cursor.execute(stmt, args)
 
-        sampling_events.sampling_events, sampling_events.locations = SamplingEventFetch.load_sampling_events(cursor, True)
+        sampling_events.sampling_events, sampling_events.locations = SamplingEventFetch.load_sampling_events(
+            cursor, True)
 
         if not (start is None and count is None):
             cursor.execute(count_query, count_args)

@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 9.6.10
--- Dumped by pg_dump version 9.6.10
+-- Dumped from database version 9.6.9
+-- Dumped by pg_dump version 9.6.9
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -18,7 +18,7 @@ SET row_security = off;
 ALTER TABLE ONLY public.taxonomy_identifiers DROP CONSTRAINT fk_taxa;
 ALTER TABLE ONLY public.attrs DROP CONSTRAINT fk_study_loc;
 ALTER TABLE ONLY public.sampling_events DROP CONSTRAINT fk_study;
-ALTER TABLE ONLY public.sampling_events DROP CONSTRAINT fk_species;
+ALTER TABLE ONLY public.original_samples DROP CONSTRAINT fk_species;
 ALTER TABLE ONLY public.sampling_event_attrs DROP CONSTRAINT fk_sampling_event_attr;
 ALTER TABLE ONLY public.sampling_event_attrs DROP CONSTRAINT fk_sampling_event;
 ALTER TABLE ONLY public.sampling_events DROP CONSTRAINT fk_proxy_location;
@@ -434,8 +434,7 @@ CREATE TABLE public.taxonomy_identifiers (
 
 CREATE VIEW public.v_sampling_events AS
  SELECT sampling_events.id,
-    studies.study_name AS study_id,
-    studies.id AS studies_id,
+    sampling_events.study_id,
     sampling_events.doc,
     sampling_events.doc_accuracy,
     sampling_events.location_id,
@@ -456,8 +455,7 @@ CREATE VIEW public.v_sampling_events AS
     proxy_loc.country AS proxy_country,
     proxy_loc.notes AS proxy_notes,
     pla.attr_value AS proxy_partner_name
-   FROM (((((((public.sampling_events
-     LEFT JOIN public.studies ON ((studies.id = sampling_events.study_id)))
+   FROM ((((((public.sampling_events
      LEFT JOIN public.locations loc ON ((loc.id = sampling_events.location_id)))
      LEFT JOIN public.location_attrs li ON ((li.location_id = sampling_events.location_id)))
      LEFT JOIN public.attrs la ON (((la.study_id = sampling_events.study_id) AND (li.attr_id = la.id) AND ((la.attr_type)::text = 'partner_name'::text))))
@@ -907,7 +905,7 @@ ALTER TABLE ONLY public.sampling_event_attrs
 
 
 --
--- Name: sampling_events fk_species; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: original_samples fk_species; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.original_samples
