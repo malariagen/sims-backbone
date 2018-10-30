@@ -405,7 +405,6 @@ class TestOriginalSample(TestBase):
         except ApiException as error:
             self.check_api_exception(api_factory, "OriginalSampleApi->create_original_sample", error)
 
-
     """
     """
     def test_os_study_lookup(self, api_factory):
@@ -429,6 +428,45 @@ class TestOriginalSample(TestBase):
             assert ffetched.count == 1, "Study not found"
 
             assert ffetched == fetched
+
+            api_instance.delete_original_sample(created.original_sample_id)
+
+            with pytest.raises(ApiException, status=404):
+                fetched = api_instance.download_original_samples_by_study('asdfhjik')
+        except ApiException as error:
+            self.check_api_exception(api_factory, "OriginalSampleApi->create_original_sample", error)
+
+    """
+    """
+    def test_os_study_lookup_with_taxa(self, api_factory):
+
+        api_instance = api_factory.OriginalSampleApi()
+        study_api = api_factory.StudyApi()
+
+        try:
+            study_code = '4036-MD-UP-A'
+
+            samp = swagger_client.OriginalSample(None, study_name=study_code,
+                                                partner_species='PF')
+            created = api_instance.create_original_sample(samp)
+
+            study_detail = study_api.download_study(study_code)
+            study_detail.partner_species[0].taxa = [ swagger_client.Taxonomy(taxonomy_id=5833) ]
+            study_api.update_study(study_code, study_detail)
+
+            fetched = api_instance.download_original_samples_by_study(study_code)
+
+            assert fetched.count == 1, "Study not found"
+
+            ffetched = api_instance.download_original_samples(search_filter='studyId:' + study_code)
+
+            assert ffetched.count == 1, "Study not found"
+
+            assert ffetched == fetched
+
+            fetched.original_samples[0].partner_taxonomies = None
+
+            assert created == fetched.original_samples[0], "create response != download response"
 
             api_instance.delete_original_sample(created.original_sample_id)
 
