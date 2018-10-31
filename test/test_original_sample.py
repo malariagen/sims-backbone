@@ -683,7 +683,6 @@ class TestOriginalSample(TestBase):
 
             created_set = es_api_instance.create_event_set_item(event_set_name, created_se.sampling_event_id)
 
-            print(created_set)
             samp = swagger_client.OriginalSample(None, study_name='4024-MD-UP')
             samp.sampling_event_id = created_se.sampling_event_id
 
