@@ -22,7 +22,7 @@ class LocalDerivativeSampleApi(BaseLocalApi):
         """
         create_derivative_sample
         Create a samplingEvent
-        :param samplingEvent: 
+        :param samplingEvent:
         :type samplingEvent: dict | bytes
 
         :rtype: DerivativeSample
@@ -36,7 +36,7 @@ class LocalDerivativeSampleApi(BaseLocalApi):
     def delete_derivative_sample(self, samplingEventId):
         """
         deletes an samplingEvent
-        
+
         :param samplingEventId: ID of samplingEvent to fetch
         :type samplingEventId: str
 
@@ -51,7 +51,7 @@ class LocalDerivativeSampleApi(BaseLocalApi):
     def download_derivative_sample(self, derivativeSampleId):
         """
         fetches an samplingEvent
-        
+
         :param samplingEventId: ID of samplingEvent to fetch
         :type samplingEventId: str
 
@@ -65,7 +65,7 @@ class LocalDerivativeSampleApi(BaseLocalApi):
     def download_derivative_samples(self, filter=None, start=None, count=None):
         """
         fetches an samplingEvent
-        
+
         :param samplingEventId: ID of samplingEvent to fetch
         :type samplingEventId: str
 
@@ -81,7 +81,7 @@ class LocalDerivativeSampleApi(BaseLocalApi):
     def download_derivative_samples_by_attr(self, propName, propValue, study_name=None):
         """
         fetches a samplingEvent by property value
-        
+
         :param propName: name of property to search
         :type propName: str
         :param propValue: matching value of property to search
@@ -98,7 +98,7 @@ class LocalDerivativeSampleApi(BaseLocalApi):
     def download_derivative_samples_by_os_attr(self, propName, propValue, study_name=None):
         """
         fetches a samplingEvent by property value
-        
+
         :param propName: name of property to search
         :type propName: str
         :param propValue: matching value of property to search
@@ -116,7 +116,7 @@ class LocalDerivativeSampleApi(BaseLocalApi):
     def download_derivative_samples(self, search_filter, start=None, count=None):
         """
         fetches a samplingEvent by property value
-        
+
         :param propName: name of property to search
         :type propName: str
         :param propValue: matching value of property to search
@@ -131,10 +131,48 @@ class LocalDerivativeSampleApi(BaseLocalApi):
 
         return self.create_response(ret, retcode, 'DerivativeSamples')
 
+    def download_derivative_samples_by_study(self, studyName, start=None, count=None):
+        """
+        fetches samplingEvents for a study
+
+        :param studyName: 4 digit study code
+        :type studyName: str
+        :param start: for pagination start the result set at a record x
+        :type start: int
+        :param count: for pagination the number of entries to return
+        :type count: int
+
+        :rtype: DerivativeSamples
+        """
+        (ret, retcode) = self.derivative_sample_controller.download_derivative_samples_by_study(studyName, start,
+                                                                           count, self._user,
+                                                                           self.auth_tokens())
+
+        return self.create_response(ret, retcode, 'DerivativeSamples')
+
+    def download_derivative_samples_by_event_set(self, eventSetId, start=None, count=None):
+        """
+        fetches samplingEvents in a given event set
+
+        :param eventSetId: Event Set name
+        :type eventSetId: str
+        :param start: for pagination start the result set at a record x
+        :type start: int
+        :param count: for pagination the number of entries to return
+        :type count: int
+
+        :rtype: DerivativeSamples
+        """
+        (ret, retcode) = self.derivative_sample_controller.download_derivative_samples_by_event_set(eventSetId,start,
+                                                                               count, self._user,
+                                                                           self.auth_tokens())
+
+        return self.create_response(ret, retcode, 'DerivativeSamples')
+
     def download_derivative_samples_by_taxa(self, taxaId, start=None, count=None):
         """
         fetches a samplingEvent by property value
-        
+
         :param propName: name of property to search
         :type propName: str
         :param propValue: matching value of property to search
@@ -152,10 +190,10 @@ class LocalDerivativeSampleApi(BaseLocalApi):
     def update_derivative_sample(self, derivativeSampleId, derivativeSample):
         """
         updates an samplingEvent
-        
+
         :param samplingEventId: ID of samplingEvent to update
         :type samplingEventId: str
-        :param samplingEvent: 
+        :param samplingEvent:
         :type samplingEvent: dict | bytes
 
         :rtype: DerivativeSample
