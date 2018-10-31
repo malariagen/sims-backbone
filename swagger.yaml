@@ -95,6 +95,10 @@ paths:
     $ref: './swagger/derivative_sample/by_os_attr.yaml'
   '/derivativeSamples/taxa/{taxaId}':
     $ref: './swagger/derivative_sample/by_taxa.yaml'
+  '/derivativeSamples/eventSet/{eventSetId}':
+    $ref: './swagger/derivative_sample/by_set.yaml'
+  '/derivativeSamples/study/{studyName}':
+    $ref: './swagger/derivative_sample/by_study.yaml'
   '/assayDatum':
     $ref: './swagger/assay_data/create.yaml'
   '/assayDatum/{assayDatumId}':

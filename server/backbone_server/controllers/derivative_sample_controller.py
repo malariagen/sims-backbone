@@ -12,7 +12,9 @@ from backbone_server.derivative_sample.put import DerivativeSamplePut
 from backbone_server.derivative_sample.get import DerivativeSampleGetById
 from backbone_server.derivative_sample.delete import DerivativeSampleDelete
 from backbone_server.derivative_sample.get_by_attr import DerivativeSampleGetByAttr
-from backbone_server.derivative_sample.get_by_taxa import DerivativeSampleGetByTaxa
+from backbone_server.derivative_sample.get_by_event_set import DerivativeSamplesGetByEventSet
+from backbone_server.derivative_sample.get_by_study import DerivativeSamplesGetByStudy
+from backbone_server.derivative_sample.get_by_taxa import DerivativeSamplesGetByTaxa
 from backbone_server.derivative_sample.get_by_os_attr import DerivativeSampleGetByOsAttr
 
 from backbone_server.controllers.base_controller  import BaseController
@@ -104,7 +106,7 @@ class DerivativeSampleController(BaseController):
     def download_derivative_samples(self, search_filter, start, count, user = None, auths = None):
         """
         fetches derivativeSamples for a event_set
-        
+
         :param event_set_id: event_set
         :type event_set_id: str
 
@@ -121,6 +123,8 @@ class DerivativeSampleController(BaseController):
             retcode = 422
             return samp, retcode
         search_funcs = {
+            "eventSet": self.download_derivative_samples_by_event_set,
+            "studyId": self.download_derivative_samples_by_study,
             "taxa": self.download_derivative_samples_by_taxa,
         }
         func = search_funcs.get(options[0])
@@ -140,6 +144,30 @@ class DerivativeSampleController(BaseController):
         else:
             samp = 'Invalid filter option'
             retcode = 422
+
+        return samp, retcode
+
+    def download_derivative_samples_by_event_set(self, event_set_id, start, count, user = None, auths = None):
+        """
+        fetches derivativeSamples for a event_set
+
+        :param event_set_id: event_set
+        :type event_set_id: str
+
+        :rtype: DerivativeSamples
+        """
+
+        retcode = 200
+        samp = None
+
+        try:
+            get = DerivativeSamplesGetByEventSet(self.get_connection())
+            event_set_id = urllib.parse.unquote_plus(event_set_id)
+            samp = get.get(event_set_id, start, count)
+
+        except MissingKeyException as dme:
+            logging.getLogger(__name__).error("download_derivative_samples_by_event_set: {}".format(repr(dme)))
+            retcode = 404
 
         return samp, retcode
 
@@ -203,17 +231,40 @@ class DerivativeSampleController(BaseController):
         return samp, retcode
 
 
+    def download_derivative_samples_by_study(self, studyName, start, count, user = None, auths = None):
+        """
+        fetches derivativeSamples for a study
+
+        :param studyName: location
+        :type studyName: str
+
+        :rtype: DerivativeSamples
+        """
+
+        get = DerivativeSamplesGetByStudy(self.get_connection())
+
+        retcode = 200
+        samp = None
+
+        try:
+            samp = get.get(studyName, start, count)
+        except MissingKeyException as dme:
+            logging.getLogger(__name__).error("download_derivativeSample: {}".format(repr(dme)))
+            retcode = 404
+
+        return samp, retcode
+
     def download_derivative_samples_by_taxa(self, taxaId, start, count, user = None, auths = None):
         """
         fetches derivativeSamples for a taxa
-        
+
         :param taxaId: taxa
         :type taxaId: str
 
         :rtype: DerivativeSamples
         """
 
-        get = DerivativeSampleGetByTaxa(self.get_connection())
+        get = DerivativeSamplesGetByTaxa(self.get_connection())
 
         retcode = 200
         samp = None
@@ -234,7 +285,7 @@ class DerivativeSampleController(BaseController):
 
         :param derivativeSampleId: ID of DerivativeSample to update
         :type derivativeSampleId: str
-        :param derivativeSample: 
+        :param derivativeSample:
         :type derivativeSample: dict | bytes
 
         :rtype: DerivativeSample

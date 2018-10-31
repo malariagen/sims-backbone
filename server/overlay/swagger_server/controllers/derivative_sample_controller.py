@@ -16,7 +16,7 @@ def create_derivative_sample(derivativeSample, user=None, token_info=None):  # n
 
     Create a DerivativeSample # noqa: E501
 
-    :param derivativeSample: The derivative sample to create
+    :param derivativeSample: The original sample to create
     :type derivativeSample: dict | bytes
 
     :rtype: DerivativeSample
@@ -57,7 +57,7 @@ def download_derivative_sample(derivativeSampleId, user=None, token_info=None): 
 
 
 def download_derivative_samples(search_filter=None, start=None, count=None, user=None, token_info=None):  # noqa: E501
-    """fetches derivativeSamples
+    """fetches DerivativeSamples
 
      # noqa: E501
 
@@ -91,9 +91,27 @@ def download_derivative_samples_by_attr(propName, propValue, studyName=None, use
     return derivative_sample_controller.download_derivative_samples_by_attr(propName, propValue, studyName, user,
                                                                             derivative_sample_controller.token_info(token_info))
 
+def download_derivative_samples_by_event_set(eventSetId, start=None, count=None, user=None, token_info=None):
+    """fetches DerivativeSamples in a given event set
+
+     # noqa: E501
+
+    :param eventSetId: Event Set name
+    :type eventSetId: str
+    :param start: for pagination start the result set at a record x
+    :type start: int
+    :param count: for pagination the number of entries to return
+    :type count: int
+
+    :rtype: DerivativeSamples
+    """
+    return derivative_sample_controller.download_derivative_samples_by_event_set(eventSetId,start,
+                                                                                 count, user,
+                                                                                 derivative_sample_controller.token_info(token_info))
+
 
 def download_derivative_samples_by_os_attr(propName, propValue, studyName=None, user=None, token_info=None):  # noqa: E501
-    """fetches one or more derivativeSamples by property value of associated derivative samples
+    """fetches one or more derivativeSamples by property value of associated original samples
 
      # noqa: E501
 
@@ -110,10 +128,27 @@ def download_derivative_samples_by_os_attr(propName, propValue, studyName=None, 
                                                                                derivative_sample_controller.token_info(token_info))
 
 
-def download_derivative_samples_by_taxa(taxaId, start=None, count=None, user=None, token_info=None):
+def download_derivative_samples_by_study(studyName, start=None, count=None, user=None, token_info=None):
+    """fetches DerivativeSamples for a study
+
+     # noqa: E501
+
+    :param studyName: 4 digit study code
+    :type studyName: str
+    :param start: for pagination start the result set at a record x
+    :type start: int
+    :param count: for pagination the number of entries to return
+    :type count: int
+
+    :rtype: DerivativeSamples
     """
-    fetches derivativeSamples for a given taxonomy classification code
-    
+    return derivative_sample_controller.download_derivative_samples_by_study(studyName, start,
+                                                                             count, user,
+                                                                             derivative_sample_controller.token_info(token_info))
+
+def download_derivative_samples_by_taxa(taxaId, start=None, count=None, user=None, token_info=None):
+    """fetches DerivativeSamples for a given taxonomy classification code
+
     :param taxaId: NCBI taxonomy code
     :type taxaId: str
     :param start: for pagination start the result set at a record x
@@ -134,7 +169,7 @@ def update_derivative_sample(derivativeSampleId, derivativeSample, user=None, to
 
     :param derivativeSampleId: ID of DerivativeSample to update
     :type derivativeSampleId: str
-    :param derivativeSample: 
+    :param derivativeSample:
     :type derivativeSample: dict | bytes
 
     :rtype: DerivativeSample

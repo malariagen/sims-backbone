@@ -4,42 +4,38 @@ from swagger_server.models.derivative_samples import DerivativeSamples
 from backbone_server.errors.missing_key_exception import MissingKeyException
 
 from backbone_server.derivative_sample.fetch import DerivativeSampleFetch
+from backbone_server.original_sample.edit import OriginalSampleEdit
 
 import logging
 
-class DerivativeSamplesGetByTaxa():
+class DerivativeSamplesGetByStudy():
 
     def __init__(self, conn):
         self._logger = logging.getLogger(__name__)
         self._connection = conn
 
-    def get(self, taxa_id, start, count):
+    def get(self, study_name, start, count):
 
         with self._connection:
             with self._connection.cursor() as cursor:
 
-                stmt = '''SELECT id FROM taxonomies WHERE id = %s'''
-                cursor.execute(stmt, (taxa_id, ))
-                vtaxa_id = None
-                for tid in cursor:
-                    vtaxa_id = tid
+                study_id = OriginalSampleEdit.fetch_study_id(cursor, study_name, False)
 
-                if not vtaxa_id:
-                    raise MissingKeyException("No taxa {}".format(taxa_id))
+                if not study_id:
+                    raise MissingKeyException("No study {}".format(study_name))
 
-                fields = '''SELECT DISTINCT ds.id, original_sample_id, dna_prep, os.study_id '''
+                fields = '''SELECT DISTINCT ds.id, original_sample_id, dna_prep, s.study_name '''
 
                 query_body = '''FROM derivative_samples ds
                 JOIN original_samples os ON os.id = ds.original_sample_id
                 LEFT JOIN studies s ON s.id = os.study_id
-                JOIN taxonomy_identifiers ti ON ti.partner_species_id = os.partner_species_id
-                WHERE ti.taxonomy_id = %s'''
-                args = (taxa_id, )
+                WHERE os.study_id = %s'''
+                args = (study_id, )
 
                 count_args = args
                 count_query = 'SELECT COUNT(ds.id) ' + query_body
 
-                query_body = query_body + ''' ORDER BY os.study_id, id'''
+                query_body = query_body + ''' ORDER BY s.study_name, id'''
 
                 if not (start is None and count is None):
                     query_body = query_body + ' LIMIT %s OFFSET %s'
@@ -67,15 +63,15 @@ class DerivativeSamplesGetByTaxa():
                 JOIN attrs a ON a.id=dsa.attr_id
                 JOIN derivative_samples ds ON ds.id = dsa.derivative_sample_id
                 JOIN original_samples os ON os.id = ds.original_sample_id
-                LEFT JOIN taxonomy_identifiers ti ON ti.partner_species_id = os.partner_species_id
-                WHERE ti.taxonomy_id = %s'''
+                WHERE os.study_id = %s'''
 
-                cursor.execute(col_query, (taxa_id,))
+                cursor.execute(col_query, (study_id,))
                 for (attr_type,) in cursor:
                     derivative_samples.attr_types.append(attr_type)
 
 
         if derivative_samples.count == 0:
-            raise MissingKeyException("DerivativeSamples not found for taxa {}".format(taxa_id))
+            msg = "DerivativeSamples not found for study_name {}".format(study_name)
+            raise MissingKeyException(msg)
 
         return derivative_samples

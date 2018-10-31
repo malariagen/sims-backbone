@@ -7,34 +7,36 @@ from backbone_server.derivative_sample.fetch import DerivativeSampleFetch
 
 import logging
 
-class DerivativeSamplesGetByTaxa():
+
+class DerivativeSamplesGetByEventSet():
 
     def __init__(self, conn):
         self._logger = logging.getLogger(__name__)
         self._connection = conn
 
-    def get(self, taxa_id, start, count):
+    def get(self, event_set_name, start, count):
 
         with self._connection:
             with self._connection.cursor() as cursor:
 
-                stmt = '''SELECT id FROM taxonomies WHERE id = %s'''
-                cursor.execute(stmt, (taxa_id, ))
-                vtaxa_id = None
+                stmt = '''SELECT id FROM event_sets WHERE event_set_name = %s'''
+                cursor.execute(stmt, (event_set_name, ))
+                event_set_id = None
                 for tid in cursor:
-                    vtaxa_id = tid
+                    event_set_id = tid
 
-                if not vtaxa_id:
-                    raise MissingKeyException("No taxa {}".format(taxa_id))
+                if not event_set_id:
+                    raise MissingKeyException(
+                        "No event_set_name {}".format(event_set_name))
 
                 fields = '''SELECT DISTINCT ds.id, original_sample_id, dna_prep, os.study_id '''
 
                 query_body = '''FROM derivative_samples ds
                 JOIN original_samples os ON os.id = ds.original_sample_id
+                JOIN event_set_members esm ON esm.sampling_event_id = os.sampling_event_id
                 LEFT JOIN studies s ON s.id = os.study_id
-                JOIN taxonomy_identifiers ti ON ti.partner_species_id = os.partner_species_id
-                WHERE ti.taxonomy_id = %s'''
-                args = (taxa_id, )
+                WHERE esm.event_set_id = %s'''
+                args = (event_set_id, )
 
                 count_args = args
                 count_query = 'SELECT COUNT(ds.id) ' + query_body
@@ -49,13 +51,18 @@ class DerivativeSamplesGetByTaxa():
 
                 cursor.execute(stmt, args)
 
-                derivative_samples = DerivativeSamples(derivative_samples=[], count=0)
+                derivative_samples = DerivativeSamples(
+                    derivative_samples=[], count=0)
 
                 cursor.execute(stmt, args)
 
-                derivative_samples.derivative_samples, derivative_samples.original_samples = DerivativeSampleFetch.load_derivative_samples(cursor, True)
+                deriv_samps, orig_samps = DerivativeSampleFetch.load_derivative_samples(cursor, True)
 
-                derivative_samples.count = len(derivative_samples.derivative_samples)
+                derivative_samples.derivative_samples = deriv_samps
+                derivative_samples.original_samples = orig_samps
+
+                derivative_samples.count = len(
+                    derivative_samples.derivative_samples)
 
                 if not (start is None and count is None):
                     cursor.execute(count_query, count_args)
@@ -67,15 +74,16 @@ class DerivativeSamplesGetByTaxa():
                 JOIN attrs a ON a.id=dsa.attr_id
                 JOIN derivative_samples ds ON ds.id = dsa.derivative_sample_id
                 JOIN original_samples os ON os.id = ds.original_sample_id
-                LEFT JOIN taxonomy_identifiers ti ON ti.partner_species_id = os.partner_species_id
-                WHERE ti.taxonomy_id = %s'''
+                JOIN event_set_members esm ON esm.sampling_event_id = os.sampling_event_id
+                WHERE esm.event_set_id = %s'''
 
-                cursor.execute(col_query, (taxa_id,))
+                cursor.execute(col_query, (event_set_id,))
                 for (attr_type,) in cursor:
                     derivative_samples.attr_types.append(attr_type)
 
-
         if derivative_samples.count == 0:
-            raise MissingKeyException("DerivativeSamples not found for taxa {}".format(taxa_id))
+            msg = "DerivativeSamples not found for event set {}".format(
+                event_set_id)
+            raise MissingKeyException(msg)
 
         return derivative_samples

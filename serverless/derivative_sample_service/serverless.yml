@@ -131,6 +131,50 @@ functions:
                 start: false
                 count: false
 
+  downloadDsByStudy:
+    handler: derivative_sample/handler.download_derivative_samples_by_study
+    events:
+      - http:
+          path: derivativeSamples/study/{study_name}
+          method: get
+          cors: true
+          timeout: 300
+          authorizer:
+            name: dsAuthFunc
+            arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
+            type: request
+            identitySource: method.request.header.Authorization
+            identityValidationExpression: .*
+          request:
+            parameters:
+              paths:
+                study_name: true
+              query:
+                start: false
+                count: false
+
+  downloadDsByEventSet:
+    handler: derivative_sample/handler.download_derivative_samples_by_event_set
+    events:
+      - http:
+          path: derivativeSamples/eventSet/{event_set_id}
+          method: get
+          cors: true
+          timeout: 300
+          authorizer:
+            name: dsAuthFunc
+            arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
+            type: request
+            identitySource: method.request.header.Authorization
+            identityValidationExpression: .*
+          request:
+            parameters:
+              paths:
+                event_set_id: true
+              query:
+                start: false
+                count: false
+
   updateDerivativeSample:
     handler: derivative_sample/handler.update_derivative_sample
     events:
@@ -268,6 +312,14 @@ resources:
       Properties:
         RetentionInDays: "30"
     DownloadDSByOsAttrLogGroup:
+      Type: AWS::Logs::LogGroup
+      Properties:
+        RetentionInDays: "30"
+    DownloadDsByStudyLogGroup:
+      Type: AWS::Logs::LogGroup
+      Properties:
+        RetentionInDays: "30"
+    DownloadDsByEventSetLogGroup:
       Type: AWS::Logs::LogGroup
       Properties:
         RetentionInDays: "30"
