@@ -212,13 +212,20 @@ class TestOriginalSample(TestBase):
     def test_os_attr_lookup_by_study(self, api_factory):
 
         api_instance = api_factory.OriginalSampleApi()
+        se_api_instance = api_factory.SamplingEventApi()
 
         try:
 
+            sampling_event = swagger_client.SamplingEvent(None, '4026-MD-UP', date(2017, 10, 10),
+                                                          doc_accuracy='month')
+
+            created_se = se_api_instance.create_sampling_event(sampling_event)
             samp = swagger_client.OriginalSample(None, study_name='4022-MD-UP')
             samp.attrs = [
                 swagger_client.Attr (attr_type='partner_id', attr_value='123456')
             ]
+            samp.sampling_event_id = created_se.sampling_event_id
+
             created = api_instance.create_original_sample(samp)
             looked_up = api_instance.download_original_samples_by_attr('partner_id', '123456',
                                                                        study_name='4022')
@@ -241,6 +248,7 @@ class TestOriginalSample(TestBase):
 
             api_instance.delete_original_sample(created.original_sample_id)
             api_instance.delete_original_sample(created1.original_sample_id)
+            se_api_instance.delete_sampling_event(created_se.sampling_event_id)
 
         except ApiException as error:
             self.check_api_exception(api_factory, "OriginalSampleApi->create_original_sample", error)
@@ -410,11 +418,19 @@ class TestOriginalSample(TestBase):
     def test_os_study_lookup(self, api_factory):
 
         api_instance = api_factory.OriginalSampleApi()
+        se_api_instance = api_factory.SamplingEventApi()
 
         try:
             study_code = '4020-MD-UP'
 
+            sampling_event = swagger_client.SamplingEvent(None, '4026-MD-UP', date(2017, 10, 10),
+                                                          doc_accuracy='month')
+
+            created_se = se_api_instance.create_sampling_event(sampling_event)
+
             samp = swagger_client.OriginalSample(None, study_name=study_code)
+            samp.sampling_event_id = created_se.sampling_event_id
+
             created = api_instance.create_original_sample(samp)
 
             fetched = api_instance.download_original_samples_by_study(study_code)
@@ -423,6 +439,8 @@ class TestOriginalSample(TestBase):
 
             assert created == fetched.original_samples[0], "create response != download response"
 
+            assert fetched.original_samples[0].sampling_event_id in fetched.sampling_events
+
             ffetched = api_instance.download_original_samples(search_filter='studyId:' + study_code)
 
             assert ffetched.count == 1, "Study not found"
@@ -430,6 +448,7 @@ class TestOriginalSample(TestBase):
             assert ffetched == fetched
 
             api_instance.delete_original_sample(created.original_sample_id)
+            se_api_instance.delete_sampling_event(created_se.sampling_event_id)
 
             with pytest.raises(ApiException, status=404):
                 fetched = api_instance.download_original_samples_by_study('asdfhjik')
@@ -639,6 +658,8 @@ class TestOriginalSample(TestBase):
             results = api_instance.download_original_samples_by_location(loc.location_id)
             looked_up = results.original_samples[0]
 
+            assert looked_up.sampling_event_id in results.sampling_events
+
             fetched = api_instance.download_original_sample(looked_up.original_sample_id)
 
             assert created == fetched, "create response != download response"
@@ -695,6 +716,7 @@ class TestOriginalSample(TestBase):
             results = api_instance.download_original_samples_by_event_set(event_set_name)
             looked_up = results.original_samples[0]
 
+            assert looked_up.sampling_event_id in results.sampling_events
             fetched = api_instance.download_original_sample(looked_up.original_sample_id)
 
             assert created == fetched, "create response != download response"
@@ -796,12 +818,19 @@ class TestOriginalSample(TestBase):
     def test_os_taxa_lookup(self, api_factory):
 
         api_instance = api_factory.OriginalSampleApi()
+        se_api_instance = api_factory.SamplingEventApi()
         study_api = api_factory.StudyApi()
 
         try:
 
+            sampling_event = swagger_client.SamplingEvent(None, '4026-MD-UP', date(2017, 10, 10),
+                                                          doc_accuracy='month')
+
+            created_se = se_api_instance.create_sampling_event(sampling_event)
             samp = swagger_client.OriginalSample(None, study_name='4025-MD-UP',
                                                  partner_species='PF')
+            samp.sampling_event_id = created_se.sampling_event_id
+
             samp.attrs = [
                 swagger_client.Attr (attr_type='oxford', attr_value='12345-T',
                                      attr_source='upd')
@@ -833,6 +862,7 @@ class TestOriginalSample(TestBase):
 
             for original_sample in results.original_samples:
                 api_instance.delete_original_sample(original_sample.original_sample_id)
+            se_api_instance.delete_sampling_event(created_se.sampling_event_id)
 
         except ApiException as error:
             self.check_api_exception(api_factory, "OriginalSampleApi->create_original_sample", error)

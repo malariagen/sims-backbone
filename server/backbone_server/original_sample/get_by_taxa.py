@@ -56,7 +56,7 @@ class OriginalSamplesGetByTaxa():
 
                 cursor.execute(stmt, args)
 
-                original_samples.original_samples, original_samples.locations = OriginalSampleFetch.load_original_samples(cursor, True)
+                original_samples.original_samples, original_samples.sampling_events = OriginalSampleFetch.load_original_samples(cursor, True)
 
                 if not (start is None and count is None):
                     cursor.execute(count_query, count_args)
