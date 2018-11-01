@@ -1,7 +1,26 @@
 <div *ngIf="studies" class="grid grid-pad">
-    <a *ngFor="let study of studies.studies"  [routerLink]="['/study', study.code]"  class="col-1-4">
-      <div class="module">
-          <h4>{{study.name}}</h4>
+  <div *ngFor="let study of studies.studies">
+    <div fxLayout="row">
+      <div fxFlex="40%">
+        <a [routerLink]="['/study', study.code]">
+          {{study.name}}
+        </a>
       </div>
-    </a>
+      <div fxFlex="10%">
+        <a [routerLink]="['/study/events', study.code]">
+          Sampling Events
+        </a>
+      </div>
+      <div fxFlex="10%">
+        <a [routerLink]="['/study/os', study.code]">
+          Original Samples
+        </a>
+      </div>
+      <div fxFlex="10%">
+        <a [routerLink]="['/study/ds', study.code]">
+          Derivative Samples
+        </a>
+      </div>
+    </div>
   </div>
+</div>

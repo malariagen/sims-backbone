@@ -30,8 +30,10 @@ export class OsListComponent implements OnInit, AfterViewInit {
 
   selectedEvents = new Set<string>();
 
+  @Input()
   downloadFileName: string = 'data.csv';
 
+  @Input()
   jsonDownloadFileName: string = 'data.json';
 
   constructor(private changeDetector: ChangeDetectorRef, private originalSamplesService: OriginalSamplesService) { }
@@ -66,7 +68,7 @@ export class OsListComponent implements OnInit, AfterViewInit {
         )
         .subscribe();
     }
-      
+
   }
 
   @Input()
@@ -82,16 +84,16 @@ export class OsListComponent implements OnInit, AfterViewInit {
       this.paginator.pageIndex,
       this.paginator.pageSize
     );
-    
+
   }
 
   defineColumnHeaders(sampling_events) {
 
-    if(sampling_events == undefined) {
+    if (sampling_events == undefined) {
       return;
     }
 
-    let columnsForDisplay = ['original_sample_id', 'study_id', 'partner_species', 'taxa',];
+    let columnsForDisplay = ['original_sample_id', 'study_id', 'partner_species', 'taxa', 'doc'];
     columnsForDisplay = columnsForDisplay.concat(this._dataSource.attrTypes);
     columnsForDisplay = columnsForDisplay.concat(['sampling_event_id']);
 
@@ -99,7 +101,7 @@ export class OsListComponent implements OnInit, AfterViewInit {
       this.displayedColumns = columnsForDisplay;
       this.changeDetector.markForCheck();
     }
-    
+
   }
 
 

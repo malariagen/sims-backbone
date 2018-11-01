@@ -1,13 +1,15 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { OriginalSample, Taxonomy } from './typescript-angular-client';
+import { OriginalSample, Taxonomy, SamplingEvent } from './typescript-angular-client';
 
 @Pipe({
   name: 'originalSampleDisplay'
 })
 export class OriginalSampleDisplayPipe implements PipeTransform {
 
-  transform(value: OriginalSample, key: string, studyId: string, locations: any): any {
+  transform(value: OriginalSample, key: string, studyId: string, samplingEvents: any): any {
     let ret = '';
+
+    const samplingEvent: SamplingEvent = samplingEvents[value.sampling_event_id];
 
     if (key == "original_sample_id") {
       return value.original_sample_id
@@ -24,6 +26,10 @@ export class OriginalSampleDisplayPipe implements PipeTransform {
           taxas.push(taxa.taxonomy_id);
         })
         ret = taxas.join(';');
+      }
+    } else if(key == 'doc') {
+      if (samplingEvent) {
+        ret = samplingEvent.doc;
       }
     } else {
 

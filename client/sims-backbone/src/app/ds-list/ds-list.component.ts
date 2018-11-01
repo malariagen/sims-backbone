@@ -93,7 +93,7 @@ export class DsListComponent implements OnInit, AfterViewInit {
       return;
     }
 
-    let columnsForDisplay = ['derivative_sample_id', 'dna_prep'];
+    let columnsForDisplay = ['derivative_sample_id', 'dna_prep', 'partner_species'];
     columnsForDisplay = columnsForDisplay.concat(this._dataSource.attrTypes);
     columnsForDisplay = columnsForDisplay.concat(['original_sample_id']);
 

@@ -7,9 +7,19 @@
       <div fxFlex="50%">
         {{es.event_set_name}}
       </div>
-      <div fxFlex="20%">
+      <div fxFlex="10%">
         <a [routerLink]="['/eventSet/events', es.event_set_name]">
           Events
+        </a>
+      </div>
+      <div fxFlex="10%">
+        <a [routerLink]="['/eventSet/os', es.event_set_name]">
+          Original Samples
+        </a>
+      </div>
+      <div fxFlex="10%">
+        <a [routerLink]="['/eventSet/ds', es.event_set_name]">
+          Derivative Samples
         </a>
       </div>
       <div fxFlex="20%">

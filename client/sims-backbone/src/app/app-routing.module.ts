@@ -23,12 +23,18 @@ import { ReportMultipleLocationGpsComponent } from './report-multiple-location-g
 import { ReportMultipleLocationNamesComponent } from './report-multiple-location-names/report-multiple-location-names.component';
 import { TaxaOsListComponent } from './taxa-os-list/taxa-os-list.component';
 import { TaxaDsListComponent } from './taxa-ds-list/taxa-ds-list.component';
+import { EventSetOsListComponent } from './event-set-os-list/event-set-os-list.component';
+import { EventSetDsListComponent } from './event-set-ds-list/event-set-ds-list.component';
+import { StudyOsListComponent } from './study-os-list/study-os-list.component';
+import { StudyDsListComponent } from './study-ds-list/study-ds-list.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/studies', pathMatch: 'full' },
   { path: 'full-map', component: AllLocationsMapComponent },
   { path: 'location/:locationId', component: LocationEditComponent },
   { path: 'study/events/:studyName', component: StudyEventListComponent },
+  { path: 'study/os/:studyName', component: StudyOsListComponent },
+  { path: 'study/ds/:studyName', component: StudyDsListComponent },
   { path: 'location/events/:locationId', component: LocationEventListComponent },
   { path: 'studies', component: AllStudiesListComponent },
   { path: 'study/:studyCode', component: StudyEditComponent },
@@ -38,6 +44,8 @@ const routes: Routes = [
   { path: 'taxa/ds/:taxaId', component: TaxaDsListComponent },
   { path: 'eventSets', component: EventSetListComponent },
   { path: 'eventSet/events/:eventSetId', component: EventSetEventListComponent },
+  { path: 'eventSet/os/:eventSetId', component: EventSetOsListComponent },
+  { path: 'eventSet/ds/:eventSetId', component: EventSetDsListComponent },
   { path: 'eventSet/:eventSetId', component: EventSetEditComponent },
   { path: 'search', component: EventSearchComponent },
   {

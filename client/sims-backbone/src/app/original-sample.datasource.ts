@@ -1,7 +1,7 @@
 import { DataSource } from "@angular/cdk/table";
 import { CollectionViewer } from "@angular/cdk/collections";
 import { Observable } from "rxjs/Observable";
-import { OriginalSample, OriginalSamples, LocationMap } from "./typescript-angular-client";
+import { OriginalSample, OriginalSamples, LocationMap, SamplingEventMap } from "./typescript-angular-client";
 
 import { BehaviorSubject } from "rxjs/BehaviorSubject";
 import { catchError, finalize } from "rxjs/operators";
@@ -10,7 +10,7 @@ import { OriginalSamplesService } from "./original-samples.service";
 
 export class OriginalSamplesSource implements DataSource<OriginalSample> {
 
-    locations: LocationMap;
+    samplingEvents: SamplingEventMap;
     originalSampleCount: number;
     attrTypes: Array<string>;
 
@@ -34,7 +34,6 @@ export class OriginalSamplesSource implements DataSource<OriginalSample> {
         sortDirection = 'asc', pageIndex = 0, pageSize = 3) {
 
         this.loadingSubject.next(true);
-        let ses: OriginalSamples;
 
         this.originalSamplesService.findOriginalSamples(filter, sortDirection,
             pageIndex, pageSize).pipe(
@@ -42,11 +41,11 @@ export class OriginalSamplesSource implements DataSource<OriginalSample> {
                 finalize(() => this.loadingSubject.next(false))
             )
             .subscribe(result => {
-                let originalSamples = <OriginalSamples>result;
+                const originalSamples = <OriginalSamples>result;
                 this.originalSampleCount = originalSamples.count;
                 this.attrTypes = originalSamples.attr_types;
-                
-                //this.locations = { ...this.locations, ...originalSamples.locations };
+
+                this.samplingEvents = { ...this.samplingEvents, ...originalSamples.sampling_events };
 
                 this.originalSamplesSubject.next(originalSamples.original_samples);
             },

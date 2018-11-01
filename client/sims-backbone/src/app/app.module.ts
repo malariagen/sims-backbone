@@ -81,6 +81,10 @@ import { DerivativeSampleDisplayPipe } from './derivative-sample-display.pipe';
 import { OsDetailComponent } from './os-detail/os-detail.component';
 import { DsDetailComponent } from './ds-detail/ds-detail.component';
 import { AdDetailComponent } from './ad-detail/ad-detail.component';
+import { EventSetOsListComponent } from './event-set-os-list/event-set-os-list.component';
+import { EventSetDsListComponent } from './event-set-ds-list/event-set-ds-list.component';
+import { StudyOsListComponent } from './study-os-list/study-os-list.component';
+import { StudyDsListComponent } from './study-ds-list/study-ds-list.component';
 
 export function getConfiguration(authService: AuthService) {
   return authService.getConfiguration();
@@ -134,7 +138,11 @@ export function getConfiguration(authService: AuthService) {
     DerivativeSampleDisplayPipe,
     OsDetailComponent,
     DsDetailComponent,
-    AdDetailComponent
+    AdDetailComponent,
+    EventSetOsListComponent,
+    EventSetDsListComponent,
+    StudyOsListComponent,
+    StudyDsListComponent
   ],
   imports: [
     BrowserModule,

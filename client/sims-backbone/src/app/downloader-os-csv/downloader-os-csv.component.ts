@@ -85,7 +85,7 @@ export class DownloaderOsCsvComponent implements CollectionViewer {
       }
       this.headers.forEach(field => {
 
-        let text: string = this.displayPipe.transform(k, field, null, this._dataSource.locations);
+        let text: string = this.displayPipe.transform(k, field, null, this._dataSource.samplingEvents);
         if (text) {
           tabText += '"' + text + '"' + this.separator;
         } else {

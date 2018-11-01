@@ -1,12 +1,12 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { TaxaOsListComponent } from './taxa-os-list.component';
+import { EventSetOsListComponent } from './event-set-os-list.component';
+import { Input, Component } from '@angular/core';
+import { ActivatedRouteStub, createOAuthServiceSpy } from 'testing/index.spec';
 import { RouterModule, ActivatedRoute } from '@angular/router';
-import { OAuthService } from 'angular-oauth2-oidc';
 import { HttpClientModule } from '@angular/common/http';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { createOAuthServiceSpy, ActivatedRouteStub } from 'testing/index.spec';
-import { Input, Component } from '@angular/core';
+import { OAuthService } from 'angular-oauth2-oidc';
 
 @Component({
   selector: 'app-os-list',
@@ -18,9 +18,9 @@ export class OsListComponentStub {
   @Input() downloadFileName: string;
   @Input() jsonDownloadFileName: string;
 }
-describe('TaxaOsListComponent', () => {
-  let component: TaxaOsListComponent;
-  let fixture: ComponentFixture<TaxaOsListComponent>;
+describe('EventSetOsListComponent', () => {
+  let component: EventSetOsListComponent;
+  let fixture: ComponentFixture<EventSetOsListComponent>;
 
   let activatedRoute: ActivatedRouteStub;
   beforeEach(async(() => {
@@ -28,7 +28,7 @@ describe('TaxaOsListComponent', () => {
     activatedRoute = new ActivatedRouteStub();
 
     activatedRoute.setParamMap({
-      taxaId: 5877
+      eventSetId: '1234'
     });
 
     TestBed.configureTestingModule({
@@ -38,7 +38,7 @@ describe('TaxaOsListComponent', () => {
         HttpClientTestingModule,
       ],
       declarations: [
-        TaxaOsListComponent,
+        EventSetOsListComponent,
         OsListComponentStub
       ],
       providers: [
@@ -50,7 +50,7 @@ describe('TaxaOsListComponent', () => {
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(TaxaOsListComponent);
+    fixture = TestBed.createComponent(EventSetOsListComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

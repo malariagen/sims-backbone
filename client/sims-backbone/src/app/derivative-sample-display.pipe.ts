@@ -1,18 +1,21 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { DerivativeSample } from './typescript-angular-client';
+import { DerivativeSample, OriginalSample } from './typescript-angular-client';
 
 @Pipe({
   name: 'derivativeSampleDisplay'
 })
 export class DerivativeSampleDisplayPipe implements PipeTransform {
 
-  transform(value: DerivativeSample, key: string, studyId: string): any {
+  transform(value: DerivativeSample, key: string, studyId: string, originalSamples: any): any {
     let ret = '';
+    let originalSample : OriginalSample = originalSamples[value.original_sample_id];
 
     if (key == "derivative_sample_id") {
       return value.derivative_sample_id
     } else if (key == "original_sample_id") {
       return value.original_sample_id
+    } else if (key == 'partner_species') {
+      ret = originalSample.partner_species;
     } else if (key == 'dna_prep') {
       ret = value.dna_prep
     } else {

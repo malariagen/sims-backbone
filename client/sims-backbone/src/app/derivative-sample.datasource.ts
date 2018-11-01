@@ -1,7 +1,7 @@
 import { DataSource } from "@angular/cdk/table";
 import { CollectionViewer } from "@angular/cdk/collections";
 import { Observable } from "rxjs/Observable";
-import { DerivativeSample, DerivativeSamples } from "./typescript-angular-client";
+import { DerivativeSample, DerivativeSamples, OriginalSampleMap } from "./typescript-angular-client";
 
 import { BehaviorSubject } from "rxjs/BehaviorSubject";
 import { catchError, finalize } from "rxjs/operators";
@@ -10,6 +10,7 @@ import { DerivativeSamplesService } from "./derivative-samples.service";
 
 export class DerivativeSamplesSource implements DataSource<DerivativeSample> {
 
+    originalSamples: OriginalSampleMap;
     derivativeSampleCount: number;
     attrTypes: Array<string>;
 
@@ -33,7 +34,6 @@ export class DerivativeSamplesSource implements DataSource<DerivativeSample> {
         sortDirection = 'asc', pageIndex = 0, pageSize = 3) {
 
         this.loadingSubject.next(true);
-        let ses: DerivativeSamples;
 
         this.derivativeSamplesService.findDerivativeSamples(filter, sortDirection,
             pageIndex, pageSize).pipe(
@@ -41,11 +41,11 @@ export class DerivativeSamplesSource implements DataSource<DerivativeSample> {
                 finalize(() => this.loadingSubject.next(false))
             )
             .subscribe(result => {
-                let derivativeSamples = <DerivativeSamples>result;
+                const derivativeSamples = <DerivativeSamples>result;
                 this.derivativeSampleCount = derivativeSamples.count;
                 this.attrTypes = derivativeSamples.attr_types;
-                
-                //this.locations = { ...this.locations, ...originalSamples.locations };
+
+                this.originalSamples = { ...this.originalSamples, ...derivativeSamples.original_samples };
 
                 this.derivativeSamplesSubject.next(derivativeSamples.derivative_samples);
             },

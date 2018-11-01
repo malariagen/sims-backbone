@@ -8,7 +8,7 @@
 
     <ng-container *ngFor="let col of displayedColumns" matColumnDef= {{col}}>
       <mat-header-cell *matHeaderCellDef md-sort-header > {{ col }} </mat-header-cell>
-      <mat-cell  *matCellDef="let row" [innerHTML]="row | derivativeSampleDisplay : col : _studyName : _dataSource.samplingEvents"></mat-cell>
+      <mat-cell  *matCellDef="let row" [innerHTML]="row | derivativeSampleDisplay : col : _studyName : _dataSource.originalSamples"></mat-cell>
     </ng-container>
     
     
