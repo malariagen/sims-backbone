@@ -1,0 +1,14 @@
+Note that this doesn't work but took a while to figure out so is recorded here for posterity as
+there are some bits that might be useful elsewhere
+
+Why doesn't it work
+
+Mostly DMS does not support the postgres data types e.g. uuid
+
+indexes are not migrated
+
+constraints are not migrated
+
+Possibly other things as well but that's enough!
+
+You can't just run through the script as you need to wait for the replication to start up

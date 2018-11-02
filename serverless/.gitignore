@@ -1,3 +1,4 @@
 config.dev.json
+config.source.json
 .serverless/
 node_modules/
