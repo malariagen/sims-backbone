@@ -76,7 +76,7 @@ package:
 
 functions:
 
-  missing_locations:
+  missingLocations:
     handler: report/handler.missing_locations
     events:
       - http:
@@ -90,7 +90,7 @@ functions:
             type: request
             identitySource: method.request.header.Authorization
             identityValidationExpression: .*
-  missing_taxon:
+  missingTaxon:
     handler: report/handler.missing_taxon
     events:
       - http:
@@ -104,7 +104,7 @@ functions:
             type: request
             identitySource: method.request.header.Authorization
             identityValidationExpression: .*
-  multiple_location_gps:
+  multipleLocationGps:
     handler: report/handler.multiple_location_gps
     events:
       - http:
@@ -118,7 +118,7 @@ functions:
             type: request
             identitySource: method.request.header.Authorization
             identityValidationExpression: .*
-  multiple_location_names:
+  multipleLocationNames:
     handler: report/handler.multiple_location_names
     events:
       - http:
@@ -132,7 +132,7 @@ functions:
             type: request
             identitySource: method.request.header.Authorization
             identityValidationExpression: .*
-  uncurated_locations:
+  uncuratedLocations:
     handler: report/handler.uncurated_locations
     events:
       - http:
@@ -153,15 +153,23 @@ functions:
 
 resources:
   Resources:
-    MissingUnderscoreLocationsLogGroup:
+    MissingLocationsLogGroup:
       Type: AWS::Logs::LogGroup
       Properties:
         RetentionInDays: "30"
-    MissingUnderscoreTaxonLogGroup:
+    MissingTaxonLogGroup:
       Type: AWS::Logs::LogGroup
       Properties:
         RetentionInDays: "30"
-    UncuratedUnderscoreLocationsLogGroup:
+    MultipleLocationGpsLogGroup:
+      Type: AWS::Logs::LogGroup
+      Properties:
+        RetentionInDays: "30"
+    MultipleLocationNamesLogGroup:
+      Type: AWS::Logs::LogGroup
+      Properties:
+        RetentionInDays: "30"
+    UncuratedLocationsLogGroup:
       Type: AWS::Logs::LogGroup
       Properties:
         RetentionInDays: "30"

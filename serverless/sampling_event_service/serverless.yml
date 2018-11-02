@@ -76,7 +76,7 @@ package:
 
 functions:
 
-  createSampling_event:
+  createSamplingEvent:
     handler: sampling_event/handler.create_sampling_event
     events:
       - http:
@@ -91,7 +91,7 @@ functions:
             identitySource: method.request.header.Authorization
             identityValidationExpression: .*
 
-  downloadSampling_event:
+  downloadSamplingEvent:
     handler: sampling_event/handler.download_sampling_event
     events:
       - http:
@@ -110,7 +110,7 @@ functions:
               paths:
                 sampling_event_id: true
 
-  downloadSampling_events:
+  downloadSamplingEvents:
     handler: sampling_event/handler.download_sampling_events
     events:
       - http:
@@ -131,7 +131,7 @@ functions:
                 start: false
                 count: false
 
-  updateSampling_event:
+  updateSamplingEvent:
     handler: sampling_event/handler.update_sampling_event
     events:
       - http:
@@ -149,7 +149,7 @@ functions:
             parameters:
               paths:
                 sampling_event_id: true
-  deleteSampling_event:
+  deleteSamplingEvent:
     handler: sampling_event/handler.delete_sampling_event
     events:
       - http:
@@ -168,7 +168,7 @@ functions:
               paths:
                 sampling_event_id: true
 
-  downloadSampling_events_by_attr:
+  downloadSamplingEventsByAttr:
     handler: sampling_event/handler.download_sampling_events_by_attr
     events:
       - http:
@@ -212,7 +212,7 @@ functions:
               query:
                 study_name: false
 
-  downloadSampling_events_by_loc:
+  downloadSamplingEventsByLoc:
     handler: sampling_event/handler.download_sampling_events_by_location
     events:
       - http:
@@ -234,7 +234,7 @@ functions:
                 start: false
                 count: false
 
-  download_events_by_study:
+  downloadEventsByStudy:
     handler: sampling_event/handler.download_sampling_events_by_study
     events:
       - http:
@@ -256,7 +256,7 @@ functions:
                 start: false
                 count: false
 
-  downloadSampling_events_by_taxa:
+  downloadSamplingEventsByTaxa:
     handler: sampling_event/handler.download_sampling_events_by_taxa
     events:
       - http:
@@ -278,7 +278,7 @@ functions:
                 start: false
                 count: false
 
-  download_events_by_event_set:
+  downloadEventsByEventSet:
     handler: sampling_event/handler.download_sampling_events_by_event_set
     events:
       - http:
@@ -322,47 +322,47 @@ functions:
 
 resources:
   Resources:
-    CreateUnderscoresamplingUnderscoreeventLogGroup:
+    CreateSamplingEventLogGroup:
       Type: AWS::Logs::LogGroup
       Properties:
         RetentionInDays: "30"
-    DownloadUnderscoresamplingUnderscoreeventLogGroup:
+    DownloadSamplingEventLogGroup:
       Type: AWS::Logs::LogGroup
       Properties:
         RetentionInDays: "30"
-    DownloadUnderscoresamplingUnderscoreeventsLogGroup:
+    DownloadSamplingEventsLogGroup:
       Type: AWS::Logs::LogGroup
       Properties:
         RetentionInDays: "30"
-    UpdateUnderscoresamplingUnderscoreeventLogGroup:
+    UpdateSamplingEventLogGroup:
       Type: AWS::Logs::LogGroup
       Properties:
         RetentionInDays: "30"
-    DeleteUnderscoresamplingUnderscoreeventLogGroup:
+    DeleteSamplingEventLogGroup:
       Type: AWS::Logs::LogGroup
       Properties:
         RetentionInDays: "30"
-    DownloadSamplingUnderscoreeventUnderscorebyUnderscoreattrLogGroup:
+    DownloadSamplingEventsByAttrLogGroup:
       Type: AWS::Logs::LogGroup
       Properties:
         RetentionInDays: "30"
-    DownloadSamplingEventByOsAttrLogGroup:
+    DownloadSamplingEventsByOsAttrLogGroup:
       Type: AWS::Logs::LogGroup
       Properties:
         RetentionInDays: "30"
-    DownloadSamplingUnderscoreeventsUnderscorebyUnderscorelocLogGroup:
+    DownloadSamplingEventsByLocLogGroup:
       Type: AWS::Logs::LogGroup
       Properties:
         RetentionInDays: "30"
-    DownloadUnderscoreeventsUnderscorebyUnderscorestudyLogGroup:
+    DownloadEventsByStudyLogGroup:
       Type: AWS::Logs::LogGroup
       Properties:
         RetentionInDays: "30"
-    DownloadSamplingUnderscoreeventsUnderscorebyUnderscoretaxaLogGroup:
+    DownloadSamplingEventsByTaxaLogGroup:
       Type: AWS::Logs::LogGroup
       Properties:
         RetentionInDays: "30"
-    DownloadUnderscoreeventsUnderscorebyUnderscoreeventUnderscoresetLogGroup:
+    DownloadEventsByEventSetLogGroup:
       Type: AWS::Logs::LogGroup
       Properties:
         RetentionInDays: "30"

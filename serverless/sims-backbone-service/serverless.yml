@@ -117,7 +117,7 @@ functions:
           - Ref: ServerlessSubnetB
           - Ref: ServerlessSubnetC
 
-  get_country_metadata:
+  getCountryMetadata:
     handler: metadata/handler.get_country_metadata
     events:
       - http:
@@ -135,7 +135,7 @@ functions:
               paths:
                 country_id: true
 
-  get_attr_types:
+  getAttrTypes:
     handler: metadata/handler.get_attr_types
     events:
       - http:
@@ -148,7 +148,7 @@ functions:
             type: request
             identitySource: method.request.header.Authorization
 
-  get_location_attr_types:
+  getLocationAttrTypes:
     handler: metadata/handler.get_location_attr_types
     events:
       - http:
@@ -161,7 +161,7 @@ functions:
             type: request
             identitySource: method.request.header.Authorization
 
-  get_taxonomy_metadata:
+  getTaxonomyMetadata:
     handler: metadata/handler.get_taxonomy_metadata
     events:
       - http:
@@ -174,7 +174,7 @@ functions:
             type: request
             identitySource: method.request.header.Authorization
             identityValidationExpression: .*
-  create_taxonomy:
+  createTaxonomy:
     handler: metadata/handler.create_taxonomy
     events:
       - http:
@@ -188,7 +188,7 @@ functions:
             identitySource: method.request.header.Authorization
             identityValidationExpression: .*
 
-  download_studies:
+  downloadStudies:
     handler: studies/handler.download_studies
     events:
       - http:
@@ -207,7 +207,7 @@ functions:
                 start: false
                 count: false
 
-  download_study:
+  downloadStudy:
     handler: studies/handler.download_study
     events:
       - http:
@@ -224,7 +224,7 @@ functions:
             parameters:
               paths:
                 study_name: true
-  update_study:
+  updateStudy:
     handler: studies/handler.update_study
     events:
       - http:
@@ -549,35 +549,35 @@ resources:
       Type: AWS::Logs::LogGroup
       Properties:
         RetentionInDays: "30"
-    GetUnderscorecountryUnderscoremetadataLogGroup:
+    GetCountryMetadataLogGroup:
       Type: AWS::Logs::LogGroup
       Properties:
         RetentionInDays: "30"
-    GetUnderscoreattrUnderscoretypesLogGroup:
+    GetAttrTypesLogGroup:
       Type: AWS::Logs::LogGroup
       Properties:
         RetentionInDays: "30"
-    GetUnderscoreattrUnderscorelocationUnderscoretypesLogGroup:
+    GetLocationAttrTypesLogGroup:
       Type: AWS::Logs::LogGroup
       Properties:
         RetentionInDays: "30"
-    GetUnderscoretaxonomyUnderscoremetadataLogGroup:
+    GetTaxonomyMetadataLogGroup:
       Type: AWS::Logs::LogGroup
       Properties:
         RetentionInDays: "30"
-    CreateUnderscoretaxonomyLogGroup:
+    CreateTaxonomyLogGroup:
       Type: AWS::Logs::LogGroup
       Properties:
         RetentionInDays: "30"
-    DownloadUnderscorestudiesLogGroup:
+    DownloadStudiesLogGroup:
       Type: AWS::Logs::LogGroup
       Properties:
         RetentionInDays: "30"
-    DownloadUnderscorestudyLogGroup:
+    DownloadStudyLogGroup:
       Type: AWS::Logs::LogGroup
       Properties:
         RetentionInDays: "30"
-    UpdateUnderscorestudyLogGroup:
+    UpdateStudyLogGroup:
       Type: AWS::Logs::LogGroup
       Properties:
         RetentionInDays: "30"
