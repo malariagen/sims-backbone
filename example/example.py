@@ -34,6 +34,9 @@ class Example():
                     headers = {'service': 'http://localhost/studies'}
                     token_response = requests.get(os.getenv('TOKEN_URL'), args,
                                                   headers=headers)
+                    if token_response.status_code == 401:
+                        print('Auth failed')
+                        sys.exit(1)
                     auth_token = token_response.text.split('=')
                     token = auth_token[1].split('&')[0]
                     self._auth_token = token
