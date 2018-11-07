@@ -60,25 +60,15 @@ class EventSetFetch():
         if len(event_set.notes) == 0:
             event_set.notes = None
 
-        if count is not None and count == 0:
-            return event_set
-
-        fields_tmpl = '''SELECT {}.id, {} doc, doc_accuracy,
-                        location_id, latitude, longitude, accuracy, curated_name, curation_method, country, notes, partner_name,
-                        proxy_location_id, proxy_latitude, proxy_longitude, proxy_accuracy,
-                        proxy_curated_name, proxy_curation_method, proxy_country, proxy_notes,
-                        proxy_partner_name'''
-        fields = fields_tmpl.format('vse', ' studies.study_name as study_id,')
-        query_body = ''' FROM (''' + fields_tmpl.format('v_sampling_events', ' v_sampling_events.study_id,') + ''' FROM v_sampling_events
-                        JOIN event_set_members esm ON esm.sampling_event_id = v_sampling_events.id
-                        WHERE esm.event_set_id = %s
-        ) vse
-                        LEFT JOIN studies ON studies.id = vse.study_id'''
+        fields = '''SELECT sampling_events.id'''
+        query_body = ''' FROM sampling_events
+                        JOIN event_set_members esm ON esm.sampling_event_id = sampling_events.id
+                        WHERE esm.event_set_id = %s'''
 
         args = (event_set_id,)
 
         count_args = args
-        count_query = 'SELECT COUNT(vse.id) ' + query_body
+        count_query = 'SELECT COUNT(sampling_events.id) ' + query_body
 
         query_body = query_body + ''' ORDER BY doc, study_id, id'''
 
@@ -93,8 +83,17 @@ class EventSetFetch():
 
         cursor.execute(stmt, args)
 
-        sampling_events.sampling_events, sampling_events.locations = SamplingEventFetch.load_sampling_events(
-            cursor, True)
+        samp_ids = []
+        for samp_id in cursor:
+            samp_ids.append(samp_id)
+
+        locations = {}
+        sampling_events.sampling_events = []
+        for samp_id in samp_ids:
+            event = SamplingEventFetch.fetch(cursor, samp_id, locations)
+            sampling_events.sampling_events.append(event)
+        sampling_events.locations = locations
+
 
         if not (start is None and count is None):
             cursor.execute(count_query, count_args)

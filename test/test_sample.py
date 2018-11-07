@@ -668,7 +668,9 @@ class TestSample(TestBase):
 
             fetched = api_instance.download_sampling_events_by_event_set(es_name)
 
-            assert fetched.count ==1, "event_set not found"
+            assert fetched.count == 1, "event_set not found"
+
+            created.event_sets = [es_name]
 
             assert created == fetched.sampling_events[0], "create response != download response"
 
@@ -705,7 +707,9 @@ class TestSample(TestBase):
 
             fetched = api_instance.download_sampling_events_by_event_set(es_name)
 
-            assert fetched.count ==1, "event_set not found"
+            assert fetched.count == 1, "event_set not found"
+
+            created.event_sets = [es_name]
 
             assert created == fetched.sampling_events[0], "create response != download response"
             api_instance.delete_sampling_event(created.sampling_event_id)

@@ -19,8 +19,8 @@ class UncuratedLocations():
             with self._connection.cursor() as cursor:
 
                 # , curated_name, accuracy, country, partner_name
-                stmt = '''select distinct studies.study_name AS study_id FROM v_sampling_events
-                LEFT JOIN studies ON studies.id = v_sampling_events.study_id
+                stmt = '''select distinct studies.study_name AS study_id FROM sampling_events
+                LEFT JOIN studies ON studies.id = sampling_events.study_id
                 where curated_name is NULL or accuracy IS NULL OR country IS NULL ORDER BY study_id;'''
 
                 cursor.execute(stmt)

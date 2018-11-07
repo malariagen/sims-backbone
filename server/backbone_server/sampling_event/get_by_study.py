@@ -27,18 +27,14 @@ class SamplingEventsGetByStudy():
                 if not study_id:
                     raise MissingKeyException("No study {}".format(study_name))
 
-                fields = '''SELECT DISTINCT v_sampling_events.id, studies.study_name AS study_id, doc, doc_accuracy,
-                                location_id, latitude, longitude, accuracy, curated_name, curation_method, country, notes, partner_name,
-                                proxy_location_id, proxy_latitude, proxy_longitude, proxy_accuracy,
-                                proxy_curated_name, proxy_curation_method, proxy_country, proxy_notes,
-                                proxy_partner_name'''
-                query_body = ''' FROM v_sampling_events
-                        LEFT JOIN studies ON studies.id = v_sampling_events.study_id
+                fields = '''SELECT sampling_events.id '''
+                query_body = ''' FROM sampling_events
+                        LEFT JOIN studies ON studies.id = sampling_events.study_id
                         WHERE study_id = %s'''
                 args = (study_id,)
 
                 count_args = args
-                count_query = 'SELECT COUNT(DISTINCT v_sampling_events.id) ' + query_body
+                count_query = 'SELECT COUNT(sampling_events.id) ' + query_body
 
                 query_body = query_body + ''' ORDER BY doc, id'''
 
@@ -52,8 +48,16 @@ class SamplingEventsGetByStudy():
 
                 cursor.execute(stmt, args)
 
-                sampling_events.sampling_events, sampling_events.locations = SamplingEventFetch.load_sampling_events(
-                    cursor, True)
+                samp_ids = []
+                for samp_id in cursor:
+                    samp_ids.append(samp_id)
+
+                locations = {}
+                sampling_events.sampling_events = []
+                for samp_id in samp_ids:
+                    event = SamplingEventFetch.fetch(cursor, samp_id, locations)
+                    sampling_events.sampling_events.append(event)
+                sampling_events.locations = locations
 
                 if not (start is None and count is None):
                     cursor.execute(count_query, count_args)
