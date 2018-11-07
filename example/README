@@ -1,0 +1,8 @@
+The fetch script provides a simple way to create a CSV e.g.
+
+./run_fetch.sh --studies 1129 1130 --event-sets "Ag 1000g" "Ag ITN-IRS" AGPED1 --cols os.attr:oxford_id loc.country se.doc loc.attr:partner_name loc.latitude loc.longitude 
+
+The cols parameter allows you to specify what will be in the output via:
+
+- a prefix - se sampling event, loc (public) location, os original sample, ds derivative sample
+- a field name or 'attr:attribute name' e.g. loc.attr:partner_name
