@@ -8,7 +8,7 @@ import { Observable } from 'rxjs/Observable';
 
 import { EventSetEditDialogComponent } from '../event-set-edit-dialog/event-set-edit-dialog.component';
 
-import { AfterViewChecked, AfterViewInit } from '@angular/core/src/metadata/lifecycle_hooks';
+import { AfterViewChecked, AfterViewInit } from '@angular/core';
 import { SamplingEventsSource } from '../sampling-event.datasource';
 import { SamplingEventsService } from '../sampling-events.service';
 import { tap } from 'rxjs/operators';
@@ -39,14 +39,32 @@ export class EventListComponent implements OnInit, AfterViewInit {
 
   jsonDownloadFileName: string = 'data.json';
 
+
+  @Input()
+  filter: string;
+
+  @Input()
+  set eventSetName(eventSetName) {
+    this._eventSetName = eventSetName;
+    this.downloadFileName = eventSetName + '_sampling_events.csv';
+    this.jsonDownloadFileName = eventSetName + '_sampling_events.json';
+  }
+
+  @Input()
+  set studyName(studyName: string) {
+    this._studyName = studyName;
+    this.downloadFileName = studyName + '_sampling_events.csv';
+    this.jsonDownloadFileName = studyName + '_sampling_events.json';
+  }
+
   constructor(private changeDetector: ChangeDetectorRef, public dialog: MatDialog, private samplingEventsService: SamplingEventsService) { }
 
   ngOnInit(): void {
 
     this._dataSource = new SamplingEventsSource(this.samplingEventsService);
 
-    //Recalcuate the column headers when the data changes
-    let obs: Observable<SamplingEvent[]> = this._dataSource.connect(this.table);
+    // Recalcuate the column headers when the data changes
+    const obs: Observable<SamplingEvent[]> = this._dataSource.connect(this.table);
 
     obs.subscribe({
       next: sevents => this.defineColumnHeaders(sevents),
@@ -71,24 +89,7 @@ export class EventListComponent implements OnInit, AfterViewInit {
         )
         .subscribe();
     }
-      
-  }
 
-  @Input()
-  filter: string;
-
-  @Input()
-  set eventSetName(eventSetName) {
-    this._eventSetName = eventSetName;
-    this.downloadFileName = eventSetName + '_sampling_events.csv';
-    this.jsonDownloadFileName = eventSetName + '_sampling_events.json';
-  }
-
-  @Input()
-  set studyName(studyName: string) {
-    this._studyName = studyName;
-    this.downloadFileName = studyName + '_sampling_events.csv';
-    this.jsonDownloadFileName = studyName + '_sampling_events.json';
   }
 
   loadEventsPage() {

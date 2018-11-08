@@ -1,11 +1,10 @@
-import { Injectable, Component } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { SamplingEvents, SamplingEventService } from './typescript-angular-client';
 import { Observable } from 'rxjs/Observable';
 
-@Component({
-  providers: [SamplingEventService]
+@Injectable({
+  providedIn: 'root'
 })
-@Injectable()
 export class SamplingEventsService {
 
   constructor(private sampleService: SamplingEventService) { }
