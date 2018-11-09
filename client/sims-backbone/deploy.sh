@@ -5,8 +5,7 @@ ENDPOINT="https://${API}.execute-api.${REGION}.amazonaws.com/${BUILD_ENV}/sims-b
 echo ${ENDPOINT}
 S3_BUCKET="sims-backbone-${BUILD_ENV}"
 URL="http://${S3_BUCKET}.s3-website-${REGION}.amazonaws.com/"
-sed -e "s#\(apiLocation: '\)\(.*\)'#\1${ENDPOINT}\'#" src/environments/environment.${BUILD_ENV}.ts
-sed -e "s#\(redirectUri: '\)\(.*\)'#\1${URL}\'#" src/environments/environment.${BUILD_ENV}.ts
+sed -i -e "s#\(apiLocation: '\)\(.*\)'#\1${ENDPOINT}\'#"  -e "s#\(redirectUri: '\)\(.*\)'#\1${URL}\'#" src/environments/environment.${BUILD_ENV}.ts
 
 
 echo Build started on `date`
