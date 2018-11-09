@@ -77,8 +77,8 @@ def download_original_samples(event, context):
             start = int(event["queryStringParameters"]["start"])
         if 'count' in event["queryStringParameters"]:
             count = int(event["queryStringParameters"]["count"])
-        if 'filter' in event['queryStringParameters']:
-            search_filter = event["queryStringParameters"]["filter"]
+        if 'search_filter' in event['queryStringParameters']:
+            search_filter = event["queryStringParameters"]["search_filter"]
 
     value, retcode = original_sample_controller.download_original_samples(search_filter, start,
                                                                           count, user,

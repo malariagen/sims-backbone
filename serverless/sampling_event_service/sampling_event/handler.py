@@ -77,8 +77,8 @@ def download_sampling_events(event, context):
             start = int(event["queryStringParameters"]["start"])
         if 'count' in event["queryStringParameters"]:
             count = int(event["queryStringParameters"]["count"])
-        if 'filter' in event['queryStringParameters']:
-            search_filter = event["queryStringParameters"]["filter"]
+        if 'search_filter' in event['queryStringParameters']:
+            search_filter = event["queryStringParameters"]["search_filter"]
 
     value, retcode = sampling_event_controller.download_sampling_events(search_filter, start,
                                                                                  count, user,
