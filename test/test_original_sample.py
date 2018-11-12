@@ -431,6 +431,11 @@ class TestOriginalSample(TestBase):
             samp = swagger_client.OriginalSample(None, study_name=study_code)
             samp.sampling_event_id = created_se.sampling_event_id
 
+            samp.attrs = [
+                swagger_client.Attr (attr_type='partner_id',
+                                     attr_value='os_study_lookup',
+                                     attr_source='encode')
+            ]
             created = api_instance.create_original_sample(samp)
 
             fetched = api_instance.download_original_samples_by_study(study_code)
@@ -440,6 +445,8 @@ class TestOriginalSample(TestBase):
             assert created == fetched.original_samples[0], "create response != download response"
 
             assert fetched.original_samples[0].sampling_event_id in fetched.sampling_events
+
+            assert fetched.attr_types == [ samp.attrs[0].attr_type ]
 
             ffetched = api_instance.download_original_samples(search_filter='studyId:' + study_code)
 

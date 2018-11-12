@@ -61,8 +61,10 @@ class OriginalSamplesGetByStudy():
 
                 original_samples.attr_types = []
 
-                col_query = '''select distinct attr_type from original_sample_attrs se
-                JOIN attrs a ON se.original_sample_id=a.id WHERE a.study_id = %s'''
+                col_query = '''select DISTINCT attr_type from original_samples os
+                JOIN original_sample_attrs ose ON ose.original_sample_id=os.id
+                JOIN attrs a ON a.id=ose.attr_id
+                WHERE os.study_id = %s'''
 
                 cursor.execute(col_query, (study_id,))
                 for (attr_type,) in cursor:
