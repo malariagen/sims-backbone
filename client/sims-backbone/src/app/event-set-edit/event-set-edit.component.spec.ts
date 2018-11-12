@@ -9,6 +9,8 @@ import { OAuthService } from 'angular-oauth2-oidc';
 import { EventSetService } from '../typescript-angular-client';
 import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
+import {ObserversModule} from '@angular/cdk/observers';
+
 
 @Component({
   selector: 'app-event-set-edit-dialog',
@@ -44,7 +46,8 @@ describe('EventSetEditComponent', () => {
         FormsModule, 
         ReactiveFormsModule, 
         RouterModule,
-        MatDialogModule
+        MatDialogModule,
+        ObserversModule
       ],
       declarations: [
         EventSetEditComponent,

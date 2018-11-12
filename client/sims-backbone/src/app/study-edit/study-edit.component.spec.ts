@@ -11,6 +11,7 @@ import { OAuthService } from 'angular-oauth2-oidc';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 import { HttpTestingController, HttpClientTestingModule } from '@angular/common/http/testing';
+import {ObserversModule} from '@angular/cdk/observers';
 
 @Component({
   selector: 'app-taxonomy-edit',
@@ -48,7 +49,8 @@ describe('StudyEditComponent', () => {
         ReactiveFormsModule,
         RouterModule,
         HttpClientModule,
-        HttpClientTestingModule
+        HttpClientTestingModule,
+        ObserversModule
       ],
       declarations: [
         StudyEditComponent,

@@ -10,6 +10,7 @@ import { MatFormField } from '@angular/material';
 import { HttpTestingController } from '@angular/common/http/testing';
 import { OAuthService } from 'angular-oauth2-oidc';
 import { MapsAPILoader } from '@agm/core';
+import {ObserversModule} from '@angular/cdk/observers';
 
 import { HttpBackend, HttpClient, HttpClientModule } from '@angular/common/http';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
@@ -78,7 +79,8 @@ describe('LocationEditComponent', () => {
         ReactiveFormsModule,
         RouterModule,
         HttpClientModule,
-        HttpClientTestingModule
+        HttpClientTestingModule,
+        ObserversModule
       ],
       declarations: [
         LocationEditComponent,
