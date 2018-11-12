@@ -23,8 +23,6 @@ export class EventSearchComponent implements OnInit {
   attr_type: string;
   attr_value: string;
 
-  searches: number = 0;
-
   options: string[];
 
   constructor(private sampleService: SamplingEventService, private metadataService: MetadataService,
@@ -54,7 +52,6 @@ export class EventSearchComponent implements OnInit {
 
             this.assayDataService.downloadAssayDataByOsAttr(this.attr_type, this.attr_value).subscribe(assayData => {
               this.assayData = assayData;
-              this.searches++;
             });
 
           });
