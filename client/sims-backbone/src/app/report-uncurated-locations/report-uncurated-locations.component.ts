@@ -24,16 +24,6 @@ export class ReportUncuratedLocationsComponent implements OnInit {
     this.reportService.uncuratedLocations().subscribe(
       (studies) => {
         this.studies = studies;
-      },
-      (err) => {
-
-        if (err.status == 401) {
-          this.oauthService.logOut();
-          this.oauthService.initImplicitFlow();
-        } else {
-          console.error(err);
-        }
-
       }
     )
   }

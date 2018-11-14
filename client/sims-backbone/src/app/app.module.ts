@@ -2,7 +2,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule, InjectionToken } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 
 import { MatFormFieldModule, MatSelectModule, MatPaginatorModule } from '@angular/material';
 import { MatInputModule } from '@angular/material';
@@ -85,6 +85,7 @@ import { EventSetOsListComponent } from './event-set-os-list/event-set-os-list.c
 import { EventSetDsListComponent } from './event-set-ds-list/event-set-ds-list.component';
 import { StudyOsListComponent } from './study-os-list/study-os-list.component';
 import { StudyDsListComponent } from './study-ds-list/study-ds-list.component';
+import { ResponseInterceptor } from './auth/response.interceptor';
 
 export function getConfiguration(authService: AuthService) {
   return authService.getConfiguration();
@@ -170,13 +171,19 @@ export function getConfiguration(authService: AuthService) {
     }),
     OAuthModule.forRoot()
   ],
-  providers: [AuthService, 
-  {
-    provide: Configuration,
-    useFactory: getConfiguration,
-    deps: [AuthService],
-    multi: false
-  }
+  providers: [
+    AuthService,
+    {
+      provide: Configuration,
+      useFactory: getConfiguration,
+      deps: [AuthService],
+      multi: false
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: ResponseInterceptor,
+      multi: true
+    }
   ],
   entryComponents: [
     ErrorDialogComponent,

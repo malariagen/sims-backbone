@@ -28,17 +28,7 @@ export class AllLocationsMapComponent implements OnInit {
     this.locationService.downloadLocations().subscribe(
       (locations) => {
         this.locations = locations;
-      },
-      (err) => {
-        console.log(err);
-        if (err.status == 401) {
-          this.oauthService.logOut();
-          this.oauthService.initImplicitFlow();
-        } else {
-          console.error(err);
-        }
-      },
-      () => { }
+      }
     )
   }
 

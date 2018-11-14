@@ -23,16 +23,6 @@ export class ReportMissingLocationsComponent implements OnInit {
     this.reportService.missingLocations().subscribe(
       (studies) => {
         this.studies = studies;
-      },
-      (err) => {
-
-        if (err.status == 401) {
-          this.oauthService.logOut();
-          this.oauthService.initImplicitFlow();
-        } else {
-          console.error(err);
-        }
-
       }
     )
   }
