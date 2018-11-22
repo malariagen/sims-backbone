@@ -45,6 +45,7 @@ class Upload_ROMA(uploader.Uploader):
             doc = datetime.datetime(*(time.strptime(fields['collection_date'], date_format))[:6]).date()
 
             loc = items['locations.location'][fields['location']]
+            src_location_id = instance + '_loc_' + str(loc['pk'])
             latitude = loc['fields']['latitude']
             longitude = loc['fields']['longitude']
             loc_name = loc['fields']['location_name']
@@ -57,6 +58,7 @@ class Upload_ROMA(uploader.Uploader):
 
             if fields['location'] in proxy_locations:
                 proxy_loc = items['locations.location'][proxy_locations[fields['location']]]
+                proxy_src_location_id = instance + '_loc_' + str(proxy_loc['pk'])
                 proxy_latitude = proxy_loc['fields']['latitude']
                 proxy_longitude = proxy_loc['fields']['longitude']
                 proxy_loc_name = proxy_loc['fields']['location_name']
@@ -96,6 +98,8 @@ class Upload_ROMA(uploader.Uploader):
                 'sample_partner_id': source_code,
                 'species': taxon,
                 'doc': doc,
+                'src_location_id': src_location_id,
+                'proxy_src_location_id': proxy_src_location_id,
                 'location_name': loc_name.strip(),
                 'country': country.strip(),
                 'latitude': latitude,

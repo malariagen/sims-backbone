@@ -13,7 +13,7 @@ import uuid
 
 class LocationEdit():
 
-    _insert_ident_stmt = '''INSERT INTO location_attrs 
+    _insert_ident_stmt = '''INSERT INTO location_attrs
                     (location_id, study_id, attr_type, attr_value, attr_source)
                     VALUES (%s, %s, %s, %s, %s)'''
 
@@ -24,7 +24,9 @@ class LocationEdit():
         study_id = None
         if ident.study_name:
             study_id = SamplingEventEdit.fetch_study_id(cursor, ident.study_name, True)
-        stmt = 'SELECT id FROM attrs WHERE attr_type=%s AND attr_value=%s AND attr_source=%s'
+        stmt = '''SELECT id FROM attrs
+                JOIN location_attrs la ON la.attr_id = attrs.id
+                WHERE attr_type=%s AND attr_value=%s AND attr_source=%s'''
         args = (ident.attr_type, ident.attr_value, ident.attr_source)
 
         if study_id:
@@ -40,7 +42,7 @@ class LocationEdit():
 
         uuid_val = uuid.uuid4()
 
-        insert_stmt = '''INSERT INTO attrs 
+        insert_stmt = '''INSERT INTO attrs
                     (id, study_id, attr_type, attr_value, attr_source)
                     VALUES (%s, %s, %s, %s, %s)'''
 
@@ -83,15 +85,20 @@ class LocationEdit():
     def add_attrs(cursor, uuid_val, location):
 
         studies = []
+        study_attrs = {}
 
         try:
             if location.attrs:
                 for ident in location.attrs:
                     attr_id, study_id = LocationEdit.get_or_create_location_attr_id(cursor, ident)
                     if ident.study_name:
-                        if study_id in studies:
-                            raise DuplicateKeyException("Error inserting location {}".format(location))
-                        studies.append(study_id)
+                        if ident.attr_type in study_attrs:
+                            studies = study_attrs[ident.attr_type]
+                            if study_id in studies:
+                                raise DuplicateKeyException("Error inserting location - duplicate name for study {}".format(location))
+                        else:
+                            study_attrs[ident.attr_type] = []
+                        study_attrs[ident.attr_type].append(study_id)
 
                     cursor.execute('INSERT INTO location_attrs(location_id, attr_id) VALUES (%s, %s)',
                                    (uuid_val, attr_id))

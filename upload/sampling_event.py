@@ -47,9 +47,9 @@ class SamplingEventProcessor(BaseEntity):
             #print("values: {} {}".format(study_id, partner_name))
             if study_id and partner_name:
 #                print("adding attr {}".format(looked_up.attrs))
-                new_ident = swagger_client.Attr( attr_type = 'partner_name', 
+                new_ident = swagger_client.Attr( attr_type = 'partner_name',
                                                       attr_value = partner_name,
-                                                      attr_source = self._event_set, 
+                                                      attr_source = self._event_set,
                                                       study_name = study_id)
                 #print("adding attr2 {}".format(new_ident))
                 looked_up.attrs.append(new_ident)
@@ -131,6 +131,11 @@ class SamplingEventProcessor(BaseEntity):
                                       attr_value=partner_name,
                                       attr_source=self._event_set, study_name=study_id)
         ]
+        if prefix + "src_location_id" in values:
+            src_lid = swagger_client.Attr(attr_type='src_location_id',
+                                      attr_value=values[prefix + 'src_location_id'],
+                                      attr_source=self._event_set, study_name=study_id)
+            loc.attrs.append(src_lid)
 
         try:
             if prefix + 'latitude' in values and values[prefix + 'latitude']:
@@ -164,12 +169,26 @@ class SamplingEventProcessor(BaseEntity):
         conflict = False
         looked_up = None
 
-        try:
-            looked_up = self._dao.download_gps_location(str(loc.latitude), str(loc.longitude))
-        except Exception as err:
-            #print(repr(err))
-            #print("Failed to find location {}".format(loc))
-            return looked_up_location, conflict
+        #print(loc)
+        for attr in loc.attrs:
+            if attr.attr_type == 'src_location_id':
+                #print(attr)
+                try:
+                    looked_up = self._dao.download_location_by_attr('src_location_id',
+                                                                    attr.attr_value)
+                except Exception as err:
+                    #print(repr(err))
+                    #print("Failed to find location {}".format(loc))
+                    pass
+
+        #print(looked_up)
+        if not looked_up:
+            try:
+                looked_up = self._dao.download_gps_location(str(loc.latitude), str(loc.longitude))
+            except Exception as err:
+                #print(repr(err))
+                #print("Failed to find location {}".format(loc))
+                return looked_up_location, conflict
 
         if not looked_up and not partner_name == "##Unknown":
             try:
@@ -249,7 +268,6 @@ class SamplingEventProcessor(BaseEntity):
             try:
                 created = self._dao.create_location(loc)
                 ret = created
-            #    print("Created location {}".format(created))
             except ApiException as err:
                 if err.status == 422:
                     self.report_conflict(None, "Location name", None,
