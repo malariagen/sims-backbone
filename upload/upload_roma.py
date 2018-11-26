@@ -55,6 +55,7 @@ class Upload_ROMA(uploader.Uploader):
             proxy_longitude = None
             proxy_loc_name = None
             proxy_country = None
+            proxy_src_location_id = None
 
             if fields['location'] in proxy_locations:
                 proxy_loc = items['locations.location'][proxy_locations[fields['location']]]
