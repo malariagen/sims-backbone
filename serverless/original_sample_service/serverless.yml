@@ -32,10 +32,10 @@ provider:
         - ec2:DeleteNetworkInterface
       Resource: "*"
   environment:
-    DB_USER: ${file(../config.${self:provider.stage}.json):db_user}
-    DATABASE: ${file(../config.${self:provider.stage}.json):database}
-    DB_PASSWORD: ${file(../config.${self:provider.stage}.json):db_password}
-    DB_HOST: ${cf:sims-backbone-service-${self:provider.stage}.DbHostOutput}
+    POSTGRES_USER: ${file(../config.${self:provider.stage}.json):db_user}
+    POSTGRES_DB: ${file(../config.${self:provider.stage}.json):database}
+    POSTGRES_PASSWORD: ${file(../config.${self:provider.stage}.json):db_password}
+    POSTGRES_HOST: ${cf:sims-backbone-service-${self:provider.stage}.DbHostOutput}
     AUTH_PROFILE_URL: ${file(../config.${self:provider.stage}.json):auth_profile}
     PYTHON_PATH: '.:../server:../server/bb_server'
   vpc:

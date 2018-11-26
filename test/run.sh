@@ -11,7 +11,7 @@ then
     pip3 install -r requirements.txt
 fi
 source client-env/bin/activate
-export DATABASE=backbone_test
+export POSTGRES_DB=backbone_test
 grep security: ../server/bb_server/swagger_server/swagger/swagger.yaml
 if [ $? -eq 1 ]
 then

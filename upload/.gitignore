@@ -12,3 +12,5 @@ config_dev.json
 cmis_config.json
 upload-env/
 Sanger_LIMS/
+environment
+data/

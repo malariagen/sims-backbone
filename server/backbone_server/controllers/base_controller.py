@@ -30,10 +30,11 @@ class BaseController():
             from psycopg2.extras import LoggingConnection
 
             config = {
-                'user': os.getenv('DB_USER',os.getenv('USER')),
-                'database': os.getenv('DATABASE','backbone_service'),
-                'password': os.getenv('DB_PASSWORD',None),
-                'host': os.getenv('DB_HOST','localhost'),
+                'user': os.getenv('POSTGRES_USER',os.getenv('USER')),
+                'database': os.getenv('POSTGRES_DB','backbone_service'),
+                'password': os.getenv('POSTGRES_PASSWORD',None),
+                'host': os.getenv('POSTGRES_HOST','localhost'),
+                'post': os.getenv('POSTGRES_PORT',5432),
             }
 
             psycopg2.extensions.register_type(register_uuid())

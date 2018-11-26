@@ -52,8 +52,8 @@ class Uploader():
                 if 'dao_type' in args:
                     if args['dao_type'] == 'local':
                         if 'database' in args:
-                            os.environ['DATABASE'] = args['database']
-                        print('Using database {}'.format(os.getenv('DATABASE','backbone_service')))
+                            os.environ['POSTGRES_DB'] = args['database']
+                        print('Using database {}'.format(os.getenv('POSTGRES_DB','backbone_service')))
                         self._dao = LocalBackboneDAO(args['username'], args['auths'])
                 if 'debug' in args:
                     if args['debug']:

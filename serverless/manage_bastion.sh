@@ -55,13 +55,13 @@ then
 elif [ $1 = "tunnel" ]
 then
     get_params
-    DB_HOST=$(aws cloudformation list-exports | jq '.Exports[] | select(.Name == "sims-backbone-service:DbHost-dev") | .Value '| sed -e 's/"//g')
+    POSTGRES_HOST=$(aws cloudformation list-exports | jq '.Exports[] | select(.Name == "sims-backbone-service:DbHost-dev") | .Value '| sed -e 's/"//g')
     STAGE="dev"
     TGT_USERNAME=$(jq -r '.db_user' config.${STAGE}.json)
     TGT_PASSWORD=$(jq -r '.db_password' config.${STAGE}.json)
     TGT_DB=$(jq -r '.database' config.${STAGE}.json)
     set -x
-    ssh -i ~/.ssh/id_ec2 -L 3333:${DB_HOST}:5432 -N ubuntu@${INSTANCE_IP} &
+    ssh -i ~/.ssh/id_ec2 -L 3333:${POSTGRES_HOST}:5432 -N ubuntu@${INSTANCE_IP} &
     echo "psql -h localhost -p 3333 ${TGT_DB} ${TGT_USERNAME}"
     echo ${TGT_PASSWORD}
 elif [ $1 = "info" ]

@@ -18,8 +18,8 @@ then
     export PYTHONPATH=$(pwd):$(pwd)/bb_server:${PYTHONPATH}
     if [ "$1" = "test" ]
     then
-        DATABASE=backbone_test
-        export DATABASE
+        POSTGRES_DB=backbone_test
+        export POSTGRES_DB
         if [ "$2" = "rebuild" ]
         then
             (cd ../database;./rebuild.sh test)
