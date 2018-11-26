@@ -34,7 +34,7 @@ class BaseController():
                 'database': os.getenv('POSTGRES_DB','backbone_service'),
                 'password': os.getenv('POSTGRES_PASSWORD',None),
                 'host': os.getenv('POSTGRES_HOST','localhost'),
-                'post': os.getenv('POSTGRES_PORT',5432),
+                'port': os.getenv('POSTGRES_PORT',5432),
             }
 
             psycopg2.extensions.register_type(register_uuid())
