@@ -224,6 +224,20 @@ class OriginalSampleProcessor(BaseEntity):
                    existing_ident.attr_value == new_ident.attr_value and \
                    existing_ident.study_name == new_ident.study_name:
                     found = True
+                elif existing_ident.attr_type == new_ident.attr_type and \
+                   existing_ident.attr_value == new_ident.attr_value and \
+                   existing_ident.study_name == new_ident.study_name:
+                    #This section ignores anything after _ in the attr_source
+                    #This avoids having many duplicate attrs
+                    #when the date is part of the source
+                    parts = new_ident.attr_source.split('_')
+                    if len(parts) > 0:
+                        new_prefix = parts[0]
+                        parts = existing_ident.attr_source.split('_')
+                        if len(parts) > 0:
+                            existing_ident_prefix = parts[0]
+                            if new_prefix == existing_ident_prefix:
+                                found = True
             if not found:
                 new_ident_value = True
                 change_reasons.append("Adding ident {}".format(new_ident))
