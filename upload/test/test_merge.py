@@ -163,7 +163,7 @@ class TestMerge(TestBase):
 
         json_data = json.loads(self._oxford_config)
 
-        sd.load_data_file(json_data, 'merge_oxford.tsv')
+        sd.load_data_file(json_data, 'oxford_merge.tsv')
 
         self._messages = sd.message_buffer
 
@@ -218,13 +218,13 @@ class TestMerge(TestBase):
     }
 }''')
 
-        sd.load_data_file(json_data, 'merge_pf_6.tsv')
+        sd.load_data_file(json_data, 'pf6_merge.tsv')
         sd1 = Uploader(self._config_file)
         sd1.use_message_buffer = True
 
         json_data = json.loads(self._pv_3_config)
 
-        sd1.load_data_file(json_data, 'merge_pv_3.tsv')
+        sd1.load_data_file(json_data, 'pv3_merge.tsv')
 
         el = Upload_ROMA(self._config_file)
         el.use_message_buffer = True
@@ -235,7 +235,7 @@ class TestMerge(TestBase):
 
         json_data = json.loads(self._sanger_lims_config)
 
-        sd.load_data_file(json_data, 'merge_sanger_lims.tsv')
+        sd.load_data_file(json_data, 'sanger-lims_merge.tsv')
     """
     """
     @classmethod
@@ -265,8 +265,8 @@ class TestMerge(TestBase):
 
         self.deleteStudies(['9030','9031'], locations)
 
-        self.deleteEventSets(['merge_oxford', 'merge_pf_6', 'merge_pv_3', 'roma_dump',
-                          'merge_sanger_lims'], locations)
+        self.deleteEventSets(['oxford_merge', 'pf6_merge', 'pv3_merge', 'roma_dump',
+                          'sanger-lims_merge'], locations)
 
         self.tearDownSSR(locations)
         self.tearDownLocations(locations)
@@ -301,13 +301,13 @@ class TestMerge(TestBase):
 
         self.assertIn(ident, looked_up.attrs)
 
-        ident = swagger_client.Attr(attr_source='merge_oxford',
+        ident = swagger_client.Attr(attr_source='oxford_merge',
                                           attr_type='alt_oxford_id',
                                           attr_value='216714')
 
         self.assertIn(ident, looked_up.attrs)
 
-        ident = swagger_client.Attr(attr_source='merge_sanger_lims',
+        ident = swagger_client.Attr(attr_source='sanger-lims_merge',
                                           attr_type='oxford_id',
                                           attr_value='EXTST000002')
 
