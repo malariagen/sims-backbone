@@ -34,7 +34,7 @@ export class SampleOverviewComponent implements AfterContentInit, OnChanges {
   ngOnChanges(changes: SimpleChanges): void {
     
     if (changes.derivativeSamples && !this.assayData) {
-      console.log(changes);
+      //console.log(changes);
       this.buildGraph();
     }
 
