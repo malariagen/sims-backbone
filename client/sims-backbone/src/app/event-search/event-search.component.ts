@@ -44,16 +44,15 @@ export class EventSearchComponent implements OnInit {
     if (this.attr_type && this.attr_value) {
       this.sampleService.downloadSamplingEventsByOsAttr(this.attr_type, this.attr_value).subscribe(samplingEvents => {
         this.samplingEvents = samplingEvents;
-        this.originalSampleService.downloadOriginalSamplesByAttr(this.attr_type, this.attr_value).subscribe(originalSamples => {
-          this.originalSamples = originalSamples;
+      });
+      this.originalSampleService.downloadOriginalSamplesByAttr(this.attr_type, this.attr_value).subscribe(originalSamples => {
+        this.originalSamples = originalSamples;
 
-          this.derivativeSampleService.downloadDerivativeSamplesByOsAttr(this.attr_type, this.attr_value).subscribe(derivativeSamples => {
-            this.derivativeSamples = derivativeSamples;
+        this.derivativeSampleService.downloadDerivativeSamplesByOsAttr(this.attr_type, this.attr_value).subscribe(derivativeSamples => {
+          this.derivativeSamples = derivativeSamples;
 
-            this.assayDataService.downloadAssayDataByOsAttr(this.attr_type, this.attr_value).subscribe(assayData => {
-              this.assayData = assayData;
-            });
-
+          this.assayDataService.downloadAssayDataByOsAttr(this.attr_type, this.attr_value).subscribe(assayData => {
+            this.assayData = assayData;
           });
         });
       });
