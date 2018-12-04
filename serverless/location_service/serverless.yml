@@ -192,7 +192,7 @@ functions:
           path: locations
           method: get
           cors: true
-          timeout: 20
+          timeout: 300
           authorizer:
             name: lsAuthFunc
             arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
