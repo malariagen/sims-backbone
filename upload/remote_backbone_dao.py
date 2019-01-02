@@ -36,6 +36,7 @@ class RemoteBackboneDAO(AbstractBackboneDAO):
         self.ds_api_instance = swagger_client.DerivativeSampleApi(swagger_client.ApiClient(configuration))
         self.ad_api_instance = swagger_client.AssayDataApi(swagger_client.ApiClient(configuration))
         self.metadata_api_instance = swagger_client.MetadataApi(swagger_client.ApiClient(configuration))
+        self.study_api_instance = swagger_client.StudyApi(swagger_client.ApiClient(configuration))
 
     def get_access_token(self, config_file):
 

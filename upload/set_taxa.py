@@ -19,6 +19,9 @@ from pprint import pprint
 import os
 import requests
 
+from remote_backbone_dao import RemoteBackboneDAO
+from local_backbone_dao import LocalBackboneDAO
+
 
 class SetTaxa():
 
@@ -28,30 +31,30 @@ class SetTaxa():
     _api_client = None
 
     def __init__(self, config_file):
-        # Configure OAuth2 access token for authorization: OauthSecurity
-        auth_token = self.get_access_token(config_file)
+        self._dao = RemoteBackboneDAO()
 
-        configuration = swagger_client.Configuration()
-        if auth_token:
-            configuration.access_token = auth_token
+        self._config_file = config_file
 
-        if os.getenv('REMOTE_HOST_URL'):
-          configuration.host = "http://localhost:8080/v1"
+        try:
+            with open(config_file) as json_file:
+                args = json.load(json_file)
+                if 'dao_type' in args:
+                    if args['dao_type'] == 'local':
+                        if 'database' in args:
+                            os.environ['POSTGRES_DB'] = args['database']
+                        print('Using database {}'.format(os.getenv('POSTGRES_DB','backbone_service')))
+                        self._dao = LocalBackboneDAO(args['username'], args['auths'])
+                if 'debug' in args:
+                    if args['debug']:
+                        log_time = datetime.datetime.now().strftime("%Y_%m_%d_%H_%M")
+                        log_file = 'uploader_{}.log'.format(log_time)
+                        print("Debugging to {}".format(log_file))
+                        logging.basicConfig(level=logging.DEBUG, filename=log_file)
+        except FileNotFoundError as fnfe:
+            print('No config file found: {}'.format(config_file))
+            pass
 
-        self._api_client = swagger_client.ApiClient(configuration)
-
-    def get_access_token(self, config_file):
-
-        if not self._auth_token:
-            if os.getenv('TOKEN_URL'):
-                with open(config_file) as json_file:
-                    args = json.load(json_file)
-                    r = requests.get(os.getenv('TOKEN_URL'), args, headers = { 'service': 'http://localhost/full-map' })
-                    at = r.text.split('=')
-                    token = at[1].split('&')[0]
-                    self._auth_token = token
-
-        return self._auth_token
+        self._dao.setup(config_file)
 
     def load_taxa_map(self):
 
@@ -69,13 +72,11 @@ class SetTaxa():
 
     def set_taxa(self):
 
-        study_api = swagger_client.StudyApi(self._api_client)
-
-        studies = study_api.download_studies()
+        studies = self._dao.download_studies()
 
         update = False
         for study in studies.studies:
-            study_detail = study_api.download_study(study.code)
+            study_detail = self._dao.download_study(study.code)
             for species in study_detail.partner_species:
                 if species.partner_species in self._taxa_map:
                     taxa = self._taxa_map[species.partner_species]
@@ -88,7 +89,7 @@ class SetTaxa():
 
             if update:
                 #print(study_detail)
-                study_api.update_study(study.code, study_detail)
+                self._dao.update_study(study.code, study_detail)
 
 
 if __name__ == '__main__':

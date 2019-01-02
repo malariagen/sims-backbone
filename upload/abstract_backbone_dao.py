@@ -157,3 +157,11 @@ class AbstractBackboneDAO(abc.ABC):
 
         return self.ad_api_instance.download_assay_data_by_attr(attr_type, attr_value)
 
+    def download_study(self, study_code):
+        return self.study_api_instance.download_study(study_code)
+
+    def download_studies(self):
+        return self.study_api_instance.download_studies()
+
+    def update_study(self, study_code, study_detail):
+        return self.study_api_instance.update_study(study_code, study_detail)

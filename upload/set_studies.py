@@ -1,11 +1,16 @@
 import json
 import os
 import sys
+import datetime
+import logging
 
 import requests
 
 from cmislib import CmisClient
 import swagger_client
+
+from remote_backbone_dao import RemoteBackboneDAO
+from local_backbone_dao import LocalBackboneDAO
 
 class SetStudies():
 
@@ -14,32 +19,33 @@ class SetStudies():
     _api_client = None
 
     def __init__(self, config_file, cmis_config):
-        # Configure OAuth2 access token for authorization: OauthSecurity
-        auth_token = self.get_access_token(config_file)
-
-        configuration = swagger_client.Configuration()
-        if auth_token:
-            configuration.access_token = auth_token
-
-        if os.getenv('REMOTE_HOST_URL'):
-          configuration.host = os.getenv('REMOTE_HOST_URL')
-
-        self._api_client = swagger_client.ApiClient(configuration)
 
         self.get_cmis_client(cmis_config)
 
-    def get_access_token(self, config_file):
+        self._dao = RemoteBackboneDAO()
 
-        if not self._auth_token:
-            if os.getenv('TOKEN_URL'):
-                with open(config_file) as json_file:
-                    args = json.load(json_file)
-                    r = requests.get(os.getenv('TOKEN_URL'), args, headers = { 'service': 'http://localhost/full-map' })
-                    at = r.text.split('=')
-                    token = at[1].split('&')[0]
-                    self._auth_token = token
+        self._config_file = config_file
 
-        return self._auth_token
+        try:
+            with open(config_file) as json_file:
+                args = json.load(json_file)
+                if 'dao_type' in args:
+                    if args['dao_type'] == 'local':
+                        if 'database' in args:
+                            os.environ['POSTGRES_DB'] = args['database']
+                        print('Using database {}'.format(os.getenv('POSTGRES_DB','backbone_service')))
+                        self._dao = LocalBackboneDAO(args['username'], args['auths'])
+                if 'debug' in args:
+                    if args['debug']:
+                        log_time = datetime.datetime.now().strftime("%Y_%m_%d_%H_%M")
+                        log_file = 'uploader_{}.log'.format(log_time)
+                        print("Debugging to {}".format(log_file))
+                        logging.basicConfig(level=logging.DEBUG, filename=log_file)
+        except FileNotFoundError as fnfe:
+            print('No config file found: {}'.format(config_file))
+            pass
+
+        self._dao.setup(config_file)
 
     def get_cmis_client(self, config_file):
 
@@ -51,9 +57,7 @@ class SetStudies():
 
     def update_study_names(self):
 
-        study_api = swagger_client.StudyApi(self._api_client)
-
-        studies = study_api.download_studies()
+        studies = self._dao.download_studies()
 
         studies_dict = {}
         for study in studies.studies:
@@ -68,9 +72,9 @@ class SetStudies():
                 if studies_dict[code] != result.getName():
                     print('Updating {} to {}'.format(studies_dict[code],
                                                      result.getName()))
-                    study_detail = study_api.download_study(code)
+                    study_detail = self._dao.download_study(code)
                     study_detail.name = result.getName()
-                    study_api.update_study(code, study_detail)
+                    self._dao.update_study(code, study_detail)
 
 
 if __name__ == '__main__':
