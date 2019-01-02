@@ -13,5 +13,4 @@ do
         mv ${i} ${INPUT1_STAGING_DIR}/archive/roma/$(basename ${i}).$(date +%Y-%m-%d:%H:%M:%S)
 done
 python3 set_taxa.py ${IMPORT_CONFIG}
-pip3 install git+https://github.com/idwright/chemistry-cmislib.git
 python3 set_studies.py ${IMPORT_CONFIG} cmis_config.json
