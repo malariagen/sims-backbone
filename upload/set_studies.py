@@ -66,7 +66,6 @@ class SetStudies():
         results = self.repo.query("select * from cggh:collaborationFolder")
 
         for result in results:
-            print(result.getName())
             code = result.getName()[:4]
             if code in studies_dict:
                 if studies_dict[code] != result.getName():
