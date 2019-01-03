@@ -1,9 +1,16 @@
-BUILD_ENV=dev
-API=$(aws cloudformation list-exports | jq ".Exports[] | select(.Name == \"sims-backbone-service:ApiGatewayRestApi-${BUILD_ENV}\") | .Value "| sed -e 's/"//g')
+if [ "$1" = "" ]
+then
+    BUILD_ENV=dev
+    STAGE=dev
+else
+    BUILD_ENV=dev
+    STAGE=$1
+fi
+API=$(aws cloudformation list-exports | jq ".Exports[] | select(.Name == \"sims-backbone-service:ApiGatewayRestApi-${STAGE}\") | .Value "| sed -e 's/"//g')
 REGION=$(aws configure get region)
-ENDPOINT="https://${API}.execute-api.${REGION}.amazonaws.com/${BUILD_ENV}/sims-backbone-service/v1"
+ENDPOINT="https://${API}.execute-api.${REGION}.amazonaws.com/${STAGE}/sims-backbone-service/v1"
 echo ${ENDPOINT}
-S3_BUCKET="sims-backbone-${BUILD_ENV}"
+S3_BUCKET="sims-backbone-${STAGE}"
 URL="http://${S3_BUCKET}.s3-website-${REGION}.amazonaws.com/"
 sed -i -e "s#\(apiLocation: '\)\(.*\)'#\1${ENDPOINT}\'#"  -e "s#\(redirectUri: '\)\(.*\)'#\1${URL}\'#" src/environments/environment.${BUILD_ENV}.ts
 
