@@ -1,12 +1,18 @@
 KEYPAIR=ec2-keypair
 IMAGE_ID=$(aws ec2 describe-images --owners 099720109477 --filters Name=root-device-type,Values=ebs Name=architecture,Values=x86_64 Name=name,Values='*ubuntu-bionic-18.04*' Name=virtualization-type,Values=hvm --query 'sort_by(Images, &Name)[-1].ImageId' | sed -e 's/"//g')
 
-NAME_TAG="Backbone Bastion Dev"
-VPC=$(aws cloudformation list-exports | jq '.Exports[] | select(.Name == "sims-backbone-service:ServerlessVPC-dev") | .Value '| sed -e 's/"//g')
-SUBNETA=$(aws cloudformation list-exports | jq '.Exports[] | select(.Name == "sims-backbone-service:PublicSubnetA-dev") | .Value '| sed -e 's/"//g')
-SUBNETB=$(aws cloudformation list-exports | jq '.Exports[] | select(.Name == "sims-backbone-service:PublicSubnetB-dev") | .Value '| sed -e 's/"//g')
-SUBNETC=$(aws cloudformation list-exports | jq '.Exports[] | select(.Name == "sims-backbone-service:PublicSubnetC-dev") | .Value '| sed -e 's/"//g')
-SG_NAME="BastionSecurityGroup"
+if [ "$2" = "" ]
+then
+    STAGE=dev
+else
+    STAGE=$2
+fi
+NAME_TAG="Backbone Bastion ${STAGE}"
+VPC=$(aws cloudformation list-exports | jq ".Exports[] | select(.Name == \"sims-backbone-service:ServerlessVPC-${STAGE}\") | .Value "| sed -e 's/"//g')
+SUBNETA=$(aws cloudformation list-exports | jq ".Exports[] | select(.Name == \"sims-backbone-service:PublicSubnetA-${STAGE}\") | .Value "| sed -e 's/"//g')
+SUBNETB=$(aws cloudformation list-exports | jq ".Exports[] | select(.Name == \"sims-backbone-service:PublicSubnetB-${STAGE}\") | .Value "| sed -e 's/"//g')
+SUBNETC=$(aws cloudformation list-exports | jq ".Exports[] | select(.Name == \"sims-backbone-service:PublicSubnetC-${STAGE}\") | .Value "| sed -e 's/"//g')
+SG_NAME="BastionSecurityGroup${STAGE}"
 
 function create_host {
 
@@ -55,8 +61,7 @@ then
 elif [ $1 = "tunnel" ]
 then
     get_params
-    POSTGRES_HOST=$(aws cloudformation list-exports | jq '.Exports[] | select(.Name == "sims-backbone-service:DbHost-dev") | .Value '| sed -e 's/"//g')
-    STAGE="dev"
+    POSTGRES_HOST=$(aws cloudformation list-exports | jq ".Exports[] | select(.Name == \"sims-backbone-service:DbHost-${STAGE}\") | .Value "| sed -e 's/"//g')
     TGT_USERNAME=$(jq -r '.db_user' config.${STAGE}.json)
     TGT_PASSWORD=$(jq -r '.db_password' config.${STAGE}.json)
     TGT_DB=$(jq -r '.database' config.${STAGE}.json)
