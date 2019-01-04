@@ -4,3 +4,5 @@ export PYTHONPATH=$(pwd)/../python_client:$(pwd)/../server:$(pwd)/../server/bb_s
 export TOKEN_URL=https://sso3.malariagen.net/sso/oauth2.0/accessToken
 export IMPORT_CONFIG=config_dev.json
 export CMIS_CONFIG=cmis_config.json
+export INPUT1_STAGING_DIR=input
+export OUTPUT1_STAGING_DIR=output
