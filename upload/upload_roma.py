@@ -121,6 +121,10 @@ class Upload_ROMA(uploader.Uploader):
 
     def validate(self, input_values, output_values):
 
+        if not output_values:
+            #Item wasn't processed but should be messages elsewhere
+            return
+
         if 'study_id' in input_values:
             if input_values['study_id'][:4] != output_values.study_name[:4]:
                 if input_values['study_id'][:4] != '0000':
