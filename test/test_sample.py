@@ -1630,3 +1630,45 @@ class TestSample(TestBase):
         except ApiException as error:
             self.check_api_exception(api_factory, "SamplingEventApi->download_sampling_events", error)
 
+    """
+    """
+    def test_create_future_date(self, api_factory):
+
+        api_instance = api_factory.SamplingEventApi()
+
+        try:
+
+            samp = swagger_client.SamplingEvent(None, '1028-MD-UP', date(2037, 10, 10),
+                                                doc_accuracy='month')
+            with pytest.raises(ApiException, status=422):
+                created = api_instance.create_sampling_event(samp)
+
+        except ApiException as error:
+            self.check_api_exception(api_factory, "SamplingEventApi->create_sampling_event", error)
+
+    """
+    """
+    def test_update_future_date(self, api_factory):
+
+        api_instance = api_factory.SamplingEventApi()
+
+        try:
+
+            samp = swagger_client.SamplingEvent(None, '1029-MD-UP', date(2017, 10, 15))
+            samp.attrs = [
+                swagger_client.Attr (attr_type='oxford', attr_value='1234567')
+            ]
+            created = api_instance.create_sampling_event(samp)
+            looked_up = api_instance.download_sampling_events_by_attr('oxford', '1234567')
+            looked_up = looked_up.sampling_events[0]
+            new_samp = swagger_client.SamplingEvent(None, '1030-MD-UP', date(2038, 11, 11))
+            with pytest.raises(ApiException, status=422):
+                updated = api_instance.update_sampling_event(looked_up.sampling_event_id, new_samp)
+            fetched = api_instance.download_sampling_event(looked_up.sampling_event_id)
+            assert created == fetched, "update response != download response"
+
+            api_instance.delete_sampling_event(looked_up.sampling_event_id)
+
+        except ApiException as error:
+            self.check_api_exception(api_factory, "SamplingEventApi->create_sampling_event", error)
+

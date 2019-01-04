@@ -594,6 +594,8 @@ class SamplingEventProcessor(BaseEntity):
                 self.report("Could not find not adding ", values)
                 return None
 
+        ret = existing
+
         if existing:
 
             #print("existing pre merge")
@@ -602,17 +604,19 @@ class SamplingEventProcessor(BaseEntity):
                                                                  values)
             #print("existing post merge")
             #print(existing)
-            ret = existing
+            try:
 
-            if changed:
-                #Make sure no implied edit - location should have been updated before here
-                existing.location = None
-                existing.proxy_location = None
-                #print("Updating {} to {}".format(orig, existing))
-                ret = self._dao.update_sampling_event(existing.sampling_event_id, existing)
+                if changed:
+                    #Make sure no implied edit - location should have been updated before here
+                    existing.location = None
+                    existing.proxy_location = None
+                    #print("Updating {} to {}".format(orig, existing))
+                    ret = self._dao.update_sampling_event(existing.sampling_event_id, existing)
 
-            if not existing.event_sets or self._event_set not in existing.event_sets:
-                self._dao.create_event_set_item(self._event_set, existing.sampling_event_id)
+                if not existing.event_sets or self._event_set not in existing.event_sets:
+                    self._dao.create_event_set_item(self._event_set, existing.sampling_event_id)
+            except ApiException as err:
+                self.report("Error on update {}".format(str(err.body)), values)
 
         else:
             #print("Creating {}".format(samp))
@@ -629,9 +633,9 @@ class SamplingEventProcessor(BaseEntity):
                 self._dao.create_event_set_item(self._event_set, created.sampling_event_id)
 
             except ApiException as err:
-                print("Error adding sample {} {}".format(samp, err))
-                self._logger.error("Error inserting {}".format(samp))
-                sys.exit(1)
+                #print("Error adding sample {} {}".format(samp, err))
+                #self._logger.error("Error inserting {}".format(samp))
+                self.report("Error on insertion {}".format(str(err.body)), values)
 
             if 'unique_id' in values:
                 self._sample_cache[values['unique_id']] = created.sampling_event_id

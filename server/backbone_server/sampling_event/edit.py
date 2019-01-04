@@ -1,11 +1,22 @@
 from backbone_server.errors.duplicate_key_exception import DuplicateKeyException
 from backbone_server.errors.nested_edit_exception import NestedEditException
+from backbone_server.errors.invalid_date_exception import InvalidDateException
 
 from backbone_server.location.fetch import LocationFetch
 import uuid
 
+from datetime import datetime
+
 class SamplingEventEdit():
 
+
+    @staticmethod
+    def check_date(sampling_event):
+        present = datetime.date(datetime.now())
+
+        if sampling_event.doc:
+            if sampling_event.doc > present:
+                raise InvalidDateException("The date of collection is in the future {}".format(sampling_event.doc))
 
     @staticmethod
     def check_location_details(cursor, location_id, location):

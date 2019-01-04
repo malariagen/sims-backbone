@@ -25,6 +25,7 @@ from backbone_server.errors.missing_key_exception import MissingKeyException
 from backbone_server.errors.permission_exception import PermissionException
 from backbone_server.errors.nested_edit_exception import NestedEditException
 from backbone_server.errors.incompatible_exception import IncompatibleException
+from backbone_server.errors.invalid_date_exception import InvalidDateException
 
 from backbone_server.controllers.decorators  import apply_decorators
 
@@ -35,7 +36,7 @@ class SamplingEventController(BaseController):
         """
         create_sampling_event
         Create a samplingEvent
-        :param samplingEvent: 
+        :param samplingEvent:
         :type samplingEvent: dict | bytes
 
         :rtype: SamplingEvent
@@ -56,6 +57,10 @@ class SamplingEventController(BaseController):
             logging.getLogger(__name__).error("create_samplingEvent: {}".format(repr(nee)))
             samp = str(nee)
             retcode = 422
+        except InvalidDateException as ide:
+            logging.getLogger(__name__).error("create_samplingEvent: {}".format(repr(ide)))
+            samp = str(ide)
+            retcode = 422
 
         return samp, retcode
 
@@ -63,7 +68,7 @@ class SamplingEventController(BaseController):
     def delete_sampling_event(self, samplingEventId, user = None, auths = None):
         """
         deletes an samplingEvent
-        
+
         :param samplingEventId: ID of samplingEvent to fetch
         :type samplingEventId: str
 
@@ -87,7 +92,7 @@ class SamplingEventController(BaseController):
     def download_sampling_event(self, samplingEventId, user = None, auths = None):
         """
         fetches an samplingEvent
-        
+
         :param samplingEventId: ID of samplingEvent to fetch
         :type samplingEventId: str
 
@@ -110,7 +115,7 @@ class SamplingEventController(BaseController):
     def download_sampling_events(self, search_filter, start, count, user = None, auths = None):
         """
         fetches samplingEvents for a event_set
-        
+
         :param event_set_id: event_set
         :type event_set_id: str
 
@@ -166,7 +171,7 @@ class SamplingEventController(BaseController):
     def download_sampling_events_by_event_set(self, event_set_id, start, count, user = None, auths = None):
         """
         fetches samplingEvents for a event_set
-        
+
         :param event_set_id: event_set
         :type event_set_id: str
 
@@ -192,7 +197,7 @@ class SamplingEventController(BaseController):
     def download_sampling_events_by_attr(self, propName, propValue, study_name=None, user=None, auths=None):
         """
         fetches a samplingEvent by property value
-        
+
         :param propName: name of property to search
         :type propName: str
         :param propValue: matching value of property to search
@@ -218,7 +223,7 @@ class SamplingEventController(BaseController):
     def download_sampling_events_by_os_attr(self, propName, propValue, study_name=None, user=None, auths=None):
         """
         fetches a samplingEvent by property value of associated original sample
-        
+
         :param propName: name of property to search
         :type propName: str
         :param propValue: matching value of property to search
@@ -244,7 +249,7 @@ class SamplingEventController(BaseController):
     def download_sampling_events_by_location(self, locationId, start, count, user = None, auths = None):
         """
         fetches samplingEvents for a location
-        
+
         :param locationId: location
         :type locationId: str
 
@@ -267,7 +272,7 @@ class SamplingEventController(BaseController):
     def download_sampling_events_by_study(self, studyName, start, count, user = None, auths = None):
         """
         fetches samplingEvents for a study
-        
+
         :param studyName: location
         :type studyName: str
 
@@ -290,7 +295,7 @@ class SamplingEventController(BaseController):
     def download_sampling_events_by_taxa(self, taxaId, start, count, user = None, auths = None):
         """
         fetches samplingEvents for a taxa
-        
+
         :param taxaId: taxa
         :type taxaId: str
 
@@ -343,10 +348,10 @@ class SamplingEventController(BaseController):
     def update_sampling_event(self, samplingEventId, samplingEvent, user = None, auths = None):
         """
         updates an samplingEvent
-        
+
         :param samplingEventId: ID of samplingEvent to update
         :type samplingEventId: str
-        :param samplingEvent: 
+        :param samplingEvent:
         :type samplingEvent: dict | bytes
 
         :rtype: SamplingEvent
@@ -369,6 +374,10 @@ class SamplingEventController(BaseController):
         except NestedEditException as nee:
             logging.getLogger(__name__).error("update_samplingEvent: {}".format(repr(nee)))
             samp = str(nee)
+            retcode = 422
+        except InvalidDateException as ide:
+            logging.getLogger(__name__).error("create_samplingEvent: {}".format(repr(ide)))
+            samp = str(ide)
             retcode = 422
 
         return samp, retcode

@@ -34,6 +34,8 @@ class SamplingEventPut():
                 if not existing_sampling_event:
                     raise MissingKeyException("Could not find sampling_event to update {}".format(sampling_event_id))
 
+                SamplingEventEdit.check_date(sampling_event)
+
                 study_id = SamplingEventEdit.fetch_study_id(cursor, sampling_event.study_name, True)
 
                 if study_id != original_study_id:
@@ -47,7 +49,7 @@ class SamplingEventPut():
                 SamplingEventEdit.check_location_details(cursor, sampling_event.proxy_location_id,
                                                          sampling_event.proxy_location)
 
-                stmt = '''UPDATE sampling_events 
+                stmt = '''UPDATE sampling_events
                             SET study_id = %s, doc = %s, doc_accuracy = %s,
                             location_id = %s, proxy_location_id = %s
                             WHERE id = %s'''
