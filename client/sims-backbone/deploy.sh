@@ -3,7 +3,7 @@ then
     BUILD_ENV=dev
     STAGE=dev
 else
-    BUILD_ENV=dev
+    BUILD_ENV=$1
     STAGE=$1
 fi
 API=$(aws cloudformation list-exports | jq ".Exports[] | select(.Name == \"sims-backbone-service:ApiGatewayRestApi-${STAGE}\") | .Value "| sed -e 's/"//g')
