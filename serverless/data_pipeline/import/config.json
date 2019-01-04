@@ -1,0 +1,5 @@
+{
+       "username": "import-pipeline",
+       "dao_type": "local",
+       "auths": ["cn=editor,ou=sims,ou=projects,ou=groups,dc=malariagen,dc=net"]
+}

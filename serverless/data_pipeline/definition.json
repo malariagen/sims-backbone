@@ -1,0 +1,101 @@
+{
+    "objects": [
+        {
+            "id": "ActionId_rRmM7",
+            "name": "SNSOK",
+            "role": "DataPipelineDefaultRole",
+            "subject": "Success",
+            "type": "SnsAlarm",
+            "message": "Script ran OK",
+            "topicArn": ""
+        },
+        {
+            "id": "S3InputLocation",
+            "name": "S3InputLocation",
+            "directoryPath": "#{myS3InputLoc}",
+            "type": "S3DataNode"
+        },
+        {
+            "id": "Default",
+            "name": "Default",
+            "failureAndRerunMode": "CASCADE",
+            "schedule": {
+                "ref": "DefaultSchedule"
+            },
+            "resourceRole": "DataPipelineDefaultResourceRole",
+            "role": "DataPipelineDefaultRole",
+            "pipelineLogUri": "",
+            "scheduleType": "cron"
+        },
+        {
+            "id": "EC2ResourceObj",
+            "name": "EC2ResourceObj",
+            "subnetId": "",
+            "securityGroupIds": "",
+            "instanceType": "t1.micro",
+            "type": "Ec2Resource",
+            "terminateAfter": "2 Days"
+        },
+        {
+            "id": "ShellCommandActivityObj",
+            "name": "ShellCommandActivityObj",
+            "output": {
+                "ref": "S3OutputLocation"
+            },
+            "input": {
+                "ref": "S3InputLocation"
+            },
+            "stage": "true",
+            "scriptUri": "",
+            "onFail": {
+                "ref": "ActionId_05Pwc"
+            },
+            "runsOn": {
+                "ref": "EC2ResourceObj"
+            },
+            "type": "ShellCommandActivity",
+            "onSuccess": {
+                "ref": "ActionId_rRmM7"
+            }
+        },
+        {
+            "id": "ActionId_05Pwc",
+            "name": "SNSFailed",
+            "role": "DataPipelineDefaultRole",
+            "subject": "SIMS import",
+            "type": "SnsAlarm",
+            "message": "Failed",
+            "topicArn": ""
+        },
+        {
+            "id": "S3OutputLocation",
+            "name": "S3OutputLocation",
+            "directoryPath": "#{myS3OutputLoc}/#{format(@scheduledStartTime, 'YYYY-MM-dd-HH-mm-ss')}",
+            "type": "S3DataNode"
+        },
+        {
+            "id": "DefaultSchedule",
+            "name": "Every week",
+            "occurrences": "1",
+            "period": "1 Week",
+            "type": "Schedule",
+            "startAt": "FIRST_ACTIVATION_DATE_TIME"
+        }
+    ],
+    "parameters": [
+        {
+            "id": "myS3InputLoc",
+            "description": "S3 input folder",
+            "type": "AWS::S3::ObjectKey"
+        },
+        {
+            "id": "myS3OutputLoc",
+            "description": "S3 output folder",
+            "type": "AWS::S3::ObjectKey"
+        }
+    ],
+    "values": {
+        "myS3InputLoc": "",
+        "myS3OutputLoc": ""
+    }
+}
