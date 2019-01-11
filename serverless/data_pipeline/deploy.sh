@@ -1,9 +1,9 @@
 
-if [ "$2" = "" ]
+if [ "$1" = "" ]
 then
     STAGE=dev
 else
-    STAGE=$2
+    STAGE=$1
 fi
 
 BUCKET="s3://malariagen-sims-import-${STAGE}"
