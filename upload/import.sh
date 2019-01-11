@@ -22,6 +22,7 @@ if [ ${INPUT1_STAGING_DIR} = "s3://malariagen-sims-import-test/" ]
 then
     ENVIRON=test
 elif [ ${INPUT1_STAGING_DIR} = "s3://malariagen-sims-import-production/" ]
+then
     ENVIRON=production
 else
     ENVIRON=dev
