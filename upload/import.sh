@@ -3,11 +3,9 @@
 test -f environment && source environment
 test -f ${INPUT1_STAGING_DIR}/import/environment && source ${INPUT1_STAGING_DIR}/import/environment
 
-# Redirect stdout ( > ) into a named pipe ( >() ) running "tee"
 OUTFILE=${OUTPUT1_STAGING_DIR}/import_$(date +%Y-%m-%d:%H:%M:%S).log
-OUTFILE1=${OUTPUT1_STAGING_DIR}/import_$(date +%Y-%m-%d:%H:%M:%S).log1
-echo "Hello" > ${OUTFILE1}
-exec &> > ${OUTFILE}
+# Redirect stdout ( > ) into a named pipe ( >() ) running "tee"
+exec &> >(tee -i ${OUTFILE})
 
 ARCHIVE_DIR=${OUTPUT1_STAGING_DIR}/archive
 
