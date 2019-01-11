@@ -71,7 +71,10 @@ class Upload_ROMA(uploader.Uploader):
 
             tags = {}
             if 'tags' in fields and fields['tags']:
-                tags = json.loads(fields['tags'])
+                if isinstance(fields['tags'], str):
+                    tags = json.loads(fields['tags'])
+                else:
+                    tags = fields['tags']
 
             oxford_code = None
             taxon = None
