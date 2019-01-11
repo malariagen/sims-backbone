@@ -19,3 +19,12 @@ do
 done
 python3 set_taxa.py ${IMPORT_CONFIG} 2>&1 | tee -a ${OUTFILE}
 python3 set_studies.py ${IMPORT_CONFIG} ${CMIS_CONFIG} 2>&1 | tee -a ${OUTFILE}
+if [ ${INPUT1_STAGING_DIR} = "s3://malariagen-sims-import-test/" ]
+then
+    ENVIRON=test
+elif [ ${INPUT1_STAGING_DIR} = "s3://malariagen-sims-import-production/" ]
+    ENVIRON=production
+else
+    ENVIRON=dev
+fi
+python3 upload_log.py ${CMIS_CONFIG} ${ENVIRON} ${OUTFILE}
