@@ -31,6 +31,7 @@ class SetTaxa():
     _api_client = None
 
     def __init__(self, config_file):
+        self._logger = logging.getLogger(__name__)
         self._dao = RemoteBackboneDAO()
 
         self._config_file = config_file
@@ -38,18 +39,18 @@ class SetTaxa():
         try:
             with open(config_file) as json_file:
                 args = json.load(json_file)
-                if 'dao_type' in args:
-                    if args['dao_type'] == 'local':
-                        if 'database' in args:
-                            os.environ['POSTGRES_DB'] = args['database']
-                        print('Using database {}'.format(os.getenv('POSTGRES_DB','backbone_service')))
-                        self._dao = LocalBackboneDAO(args['username'], args['auths'])
                 if 'debug' in args:
                     if args['debug']:
                         log_time = datetime.datetime.now().strftime("%Y_%m_%d_%H_%M")
                         log_file = 'uploader_{}.log'.format(log_time)
                         print("Debugging to {}".format(log_file))
                         logging.basicConfig(level=logging.DEBUG, filename=log_file)
+                if 'dao_type' in args:
+                    if args['dao_type'] == 'local':
+                        if 'database' in args:
+                            os.environ['POSTGRES_DB'] = args['database']
+                        self._logger.debug('Using database {}'.format(os.getenv('POSTGRES_DB','backbone_service')))
+                        self._dao = LocalBackboneDAO(args['username'], args['auths'])
         except FileNotFoundError as fnfe:
             print('No config file found: {}'.format(config_file))
             pass

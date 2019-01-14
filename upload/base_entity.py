@@ -38,7 +38,7 @@ class BaseEntity(object, metaclass=BaseEntityProperties):
             msg = message
 
         if BaseEntity.use_message_buffer:
-            print("using message buffer")
+            self._logger.debug("using message buffer")
             BaseEntity._message_buffer.append(msg)
         else:
             print(msg)
