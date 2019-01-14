@@ -1,23 +1,20 @@
 import logging
 
-from swagger_server.models.studies import Studies
-
 from backbone_server.errors.missing_key_exception import MissingKeyException
 from backbone_server.errors.integrity_exception import IntegrityException
 from backbone_server.study.gets import StudiesGet
 from backbone_server.study.get import StudyGet
 from backbone_server.study.put import StudyPut
 
-from backbone_server.controllers.base_controller  import BaseController
+from backbone_server.controllers.base_controller import BaseController
 
-from backbone_server.errors.permission_exception import PermissionException
+from backbone_server.controllers.decorators import apply_decorators
 
-from backbone_server.controllers.decorators  import apply_decorators
 
 @apply_decorators
 class StudyController(BaseController):
 
-    def download_studies(self, start=None, count=None, user=None, auths = None):
+    def download_studies(self, start=None, count=None, user=None, auths=None):
         """
         fetches studies
 
@@ -35,7 +32,7 @@ class StudyController(BaseController):
 
         return studies, 200
 
-    def download_study(self, studyName, user=None, auths = None):
+    def download_study(self, studyName, user=None, auths=None):
         """
         fetches a study
 
@@ -57,8 +54,7 @@ class StudyController(BaseController):
 
         return study, retcode
 
-
-    def update_study(self, studyName, study, user=None, auths = None):
+    def update_study(self, studyName, study, user=None, auths=None):
         """
         updates a study
 

@@ -16,23 +16,21 @@ from backbone_server.sampling_event.get_by_taxa import SamplingEventsGetByTaxa
 
 from backbone_server.event_set.get import EventSetGetById
 
-from swagger_server.models.sampling_events import SamplingEvents
-
-from backbone_server.controllers.base_controller  import BaseController
+from backbone_server.controllers.base_controller import BaseController
 
 from backbone_server.errors.duplicate_key_exception import DuplicateKeyException
 from backbone_server.errors.missing_key_exception import MissingKeyException
-from backbone_server.errors.permission_exception import PermissionException
 from backbone_server.errors.nested_edit_exception import NestedEditException
 from backbone_server.errors.incompatible_exception import IncompatibleException
 from backbone_server.errors.invalid_date_exception import InvalidDateException
 
-from backbone_server.controllers.decorators  import apply_decorators
+from backbone_server.controllers.decorators import apply_decorators
+
 
 @apply_decorators
 class SamplingEventController(BaseController):
 
-    def create_sampling_event(self, samplingEvent, user = None, auths = None):
+    def create_sampling_event(self, samplingEvent, user=None, auths=None):
         """
         create_sampling_event
         Create a samplingEvent
@@ -64,8 +62,7 @@ class SamplingEventController(BaseController):
 
         return samp, retcode
 
-
-    def delete_sampling_event(self, samplingEventId, user = None, auths = None):
+    def delete_sampling_event(self, samplingEventId, user=None, auths=None):
         """
         deletes an samplingEvent
 
@@ -78,7 +75,6 @@ class SamplingEventController(BaseController):
         delete = SamplingEventDelete(self.get_connection())
 
         retcode = 200
-        samp = None
 
         try:
             delete.delete(samplingEventId)
@@ -88,8 +84,7 @@ class SamplingEventController(BaseController):
 
         return None, retcode
 
-
-    def download_sampling_event(self, samplingEventId, user = None, auths = None):
+    def download_sampling_event(self, samplingEventId, user=None, auths=None):
         """
         fetches an samplingEvent
 
@@ -112,7 +107,7 @@ class SamplingEventController(BaseController):
 
         return samp, retcode
 
-    def download_sampling_events(self, search_filter, start, count, user = None, auths = None):
+    def download_sampling_events(self, search_filter, start, count, user=None, auths=None):
         """
         fetches samplingEvents for a event_set
 
@@ -158,17 +153,17 @@ class SamplingEventController(BaseController):
             if len(options) < 3:
                 return 'os_attr filter must have name and value', 422
             return self.download_sampling_events_by_os_attr(options[1],
-                                                         options[2],
-                                                         study_name,
-                                                         user,
-                                                         auths)
+                                                            options[2],
+                                                            study_name,
+                                                            user,
+                                                            auths)
         else:
             samp = 'Invalid filter option'
             retcode = 422
 
         return samp, retcode
 
-    def download_sampling_events_by_event_set(self, event_set_id, start, count, user = None, auths = None):
+    def download_sampling_events_by_event_set(self, event_set_id, start, count, user=None, auths=None):
         """
         fetches samplingEvents for a event_set
 
@@ -189,7 +184,8 @@ class SamplingEventController(BaseController):
             samp = evntSt.members
 
         except MissingKeyException as dme:
-            logging.getLogger(__name__).debug("download_sampling_events_by_event_set: {}".format(repr(dme)))
+            logging.getLogger(__name__).debug(
+                "download_sampling_events_by_event_set: {}".format(repr(dme)))
             retcode = 404
 
         return samp, retcode
@@ -241,12 +237,13 @@ class SamplingEventController(BaseController):
             propValue = urllib.parse.unquote_plus(propValue)
             samp = get.get(propName, propValue, study_name)
         except MissingKeyException as dme:
-            logging.getLogger(__name__).debug("download_samplingEvents_by_os_attr: {}".format(repr(dme)))
+            logging.getLogger(__name__).debug(
+                "download_samplingEvents_by_os_attr: {}".format(repr(dme)))
             retcode = 404
 
         return samp, retcode
 
-    def download_sampling_events_by_location(self, locationId, start, count, user = None, auths = None):
+    def download_sampling_events_by_location(self, locationId, start, count, user=None, auths=None):
         """
         fetches samplingEvents for a location
 
@@ -269,7 +266,7 @@ class SamplingEventController(BaseController):
 
         return samp, retcode
 
-    def download_sampling_events_by_study(self, studyName, start, count, user = None, auths = None):
+    def download_sampling_events_by_study(self, studyName, start, count, user=None, auths=None):
         """
         fetches samplingEvents for a study
 
@@ -292,7 +289,7 @@ class SamplingEventController(BaseController):
 
         return samp, retcode
 
-    def download_sampling_events_by_taxa(self, taxaId, start, count, user = None, auths = None):
+    def download_sampling_events_by_taxa(self, taxaId, start, count, user=None, auths=None):
         """
         fetches samplingEvents for a taxa
 
@@ -310,7 +307,8 @@ class SamplingEventController(BaseController):
         try:
             samp = get.get(taxaId, start, count)
         except MissingKeyException as dme:
-            logging.getLogger(__name__).debug("download_sampling_events_by_taxa: {}".format(repr(dme)))
+            logging.getLogger(__name__).debug(
+                "download_sampling_events_by_taxa: {}".format(repr(dme)))
             retcode = 404
 
         return samp, retcode
@@ -345,7 +343,7 @@ class SamplingEventController(BaseController):
 
         return samp, retcode
 
-    def update_sampling_event(self, samplingEventId, samplingEvent, user = None, auths = None):
+    def update_sampling_event(self, samplingEventId, samplingEvent, user=None, auths=None):
         """
         updates an samplingEvent
 
@@ -381,4 +379,3 @@ class SamplingEventController(BaseController):
             retcode = 422
 
         return samp, retcode
-

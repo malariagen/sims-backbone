@@ -14,21 +14,19 @@ from backbone_server.original_sample.get_by_study import OriginalSamplesGetByStu
 from backbone_server.original_sample.get_by_taxa import OriginalSamplesGetByTaxa
 from backbone_server.original_sample.get_by_event_set import OriginalSamplesGetByEventSet
 
-from swagger_server.models.original_samples import OriginalSamples
-
-from backbone_server.controllers.base_controller  import BaseController
+from backbone_server.controllers.base_controller import BaseController
 
 from backbone_server.errors.duplicate_key_exception import DuplicateKeyException
 from backbone_server.errors.missing_key_exception import MissingKeyException
-from backbone_server.errors.permission_exception import PermissionException
 from backbone_server.errors.incompatible_exception import IncompatibleException
 
-from backbone_server.controllers.decorators  import apply_decorators
+from backbone_server.controllers.decorators import apply_decorators
+
 
 @apply_decorators
 class OriginalSampleController(BaseController):
 
-    def create_original_sample(self, originalSample, user = None, auths = None):
+    def create_original_sample(self, originalSample, user=None, auths=None):
         """
         create_original_sample
         Create a originalSample
@@ -51,8 +49,7 @@ class OriginalSampleController(BaseController):
 
         return samp, retcode
 
-
-    def delete_original_sample(self, originalSampleId, user = None, auths = None):
+    def delete_original_sample(self, originalSampleId, user=None, auths=None):
         """
         deletes an originalSample
 
@@ -65,7 +62,6 @@ class OriginalSampleController(BaseController):
         delete = OriginalSampleDelete(self.get_connection())
 
         retcode = 200
-        samp = None
 
         try:
             delete.delete(originalSampleId)
@@ -75,8 +71,7 @@ class OriginalSampleController(BaseController):
 
         return None, retcode
 
-
-    def download_original_sample(self, originalSampleId, user = None, auths = None):
+    def download_original_sample(self, originalSampleId, user=None, auths=None):
         """
         fetches an originalSample
 
@@ -99,7 +94,7 @@ class OriginalSampleController(BaseController):
 
         return samp, retcode
 
-    def download_original_samples(self, search_filter, start, count, user = None, auths = None):
+    def download_original_samples(self, search_filter, start, count, user=None, auths=None):
         """
         fetches originalSamples for a event_set
 
@@ -134,17 +129,17 @@ class OriginalSampleController(BaseController):
             if len(options) < 3:
                 return 'attr filter must have name and value', 422
             return self.download_original_samples_by_attr(options[1],
-                                                         options[2],
-                                                         study_name,
-                                                         user,
-                                                         auths)
+                                                          options[2],
+                                                          study_name,
+                                                          user,
+                                                          auths)
         else:
             samp = 'Invalid filter option'
             retcode = 422
 
         return samp, retcode
 
-    def download_original_samples_by_event_set(self, event_set_id, start, count, user = None, auths = None):
+    def download_original_samples_by_event_set(self, event_set_id, start, count, user=None, auths=None):
         """
         fetches originalSamples for a event_set
 
@@ -163,7 +158,8 @@ class OriginalSampleController(BaseController):
             samp = get.get(event_set_id, start, count)
 
         except MissingKeyException as dme:
-            logging.getLogger(__name__).debug("download_original_samples_by_event_set: {}".format(repr(dme)))
+            logging.getLogger(__name__).debug(
+                "download_original_samples_by_event_set: {}".format(repr(dme)))
             retcode = 404
 
         return samp, retcode
@@ -194,7 +190,7 @@ class OriginalSampleController(BaseController):
 
         return samp, retcode
 
-    def download_original_samples_by_location(self, locationId, start, count, user = None, auths = None):
+    def download_original_samples_by_location(self, locationId, start, count, user=None, auths=None):
         """
         fetches originalSamples for a location
 
@@ -217,7 +213,7 @@ class OriginalSampleController(BaseController):
 
         return samp, retcode
 
-    def download_original_samples_by_study(self, studyName, start, count, user = None, auths = None):
+    def download_original_samples_by_study(self, studyName, start, count, user=None, auths=None):
         """
         fetches originalSamples for a study
 
@@ -240,7 +236,7 @@ class OriginalSampleController(BaseController):
 
         return samp, retcode
 
-    def download_original_samples_by_taxa(self, taxaId, start, count, user = None, auths = None):
+    def download_original_samples_by_taxa(self, taxaId, start, count, user=None, auths=None):
         """
         fetches originalSamples for a taxa
 
@@ -258,7 +254,8 @@ class OriginalSampleController(BaseController):
         try:
             samp = get.get(taxaId, start, count)
         except MissingKeyException as dme:
-            logging.getLogger(__name__).debug("download_original_samples_by_taxa: {}".format(repr(dme)))
+            logging.getLogger(__name__).debug(
+                "download_original_samples_by_taxa: {}".format(repr(dme)))
             retcode = 404
 
         return samp, retcode
@@ -292,7 +289,7 @@ class OriginalSampleController(BaseController):
 
         return samp, retcode
 
-    def update_original_sample(self, originalSampleId, originalSample, user = None, auths = None):
+    def update_original_sample(self, originalSampleId, originalSample, user=None, auths=None):
         """
         updates an originalSample
 
@@ -319,4 +316,3 @@ class OriginalSampleController(BaseController):
             retcode = 404
 
         return samp, retcode
-

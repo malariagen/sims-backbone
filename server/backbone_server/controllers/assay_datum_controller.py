@@ -1,8 +1,4 @@
 
-from swagger_server.models.assay_datum import AssayDatum  # noqa: E501
-from swagger_server.models.assay_data import AssayData  # noqa: E501
-from swagger_server import util
-
 import logging
 
 import urllib
@@ -14,18 +10,16 @@ from backbone_server.assay_datum.delete import AssayDatumDelete
 from backbone_server.assay_datum.get_by_attr import AssayDatumGetByAttr
 from backbone_server.assay_datum.get_by_os_attr import AssayDatumGetByOsAttr
 
-from backbone_server.controllers.base_controller  import BaseController
+from backbone_server.controllers.base_controller import BaseController
 
 from backbone_server.errors.duplicate_key_exception import DuplicateKeyException
 from backbone_server.errors.missing_key_exception import MissingKeyException
-from backbone_server.errors.permission_exception import PermissionException
-from backbone_server.errors.incompatible_exception import IncompatibleException
 
-from backbone_server.controllers.decorators  import apply_decorators
+from backbone_server.controllers.decorators import apply_decorators
+
 
 @apply_decorators
 class AssayDatumController(BaseController):
-
 
     def create_assay_datum(self, assayDatum, user=None, auths=None):  # noqa: E501
         """create_assay_datum
@@ -50,7 +44,6 @@ class AssayDatumController(BaseController):
 
         return samp, retcode
 
-
     def delete_assay_datum(self, assayDatumId, user=None, auths=None):  # noqa: E501
         """deletes an AssayDatum
 
@@ -64,7 +57,6 @@ class AssayDatumController(BaseController):
         delete = AssayDatumDelete(self.get_connection())
 
         retcode = 200
-        samp = None
 
         try:
             delete.delete(assayDatumId)
@@ -73,7 +65,6 @@ class AssayDatumController(BaseController):
             retcode = 404
 
         return None, retcode
-
 
     def download_assay_datum(self, assayDatumId, user=None, auths=None):  # noqa: E501
         """fetches an AssayDatum
@@ -98,7 +89,6 @@ class AssayDatumController(BaseController):
             retcode = 404
 
         return samp, retcode
-
 
     def download_assay_data_by_attr(self, propName, propValue, studyName=None, user=None, auths=None):  # noqa: E501
         """fetches one or more AssayDatum by property value
@@ -129,7 +119,6 @@ class AssayDatumController(BaseController):
 
         return samp, retcode
 
-
     def download_assay_data_by_os_attr(self, propName, propValue, studyName=None, user=None, auths=None):  # noqa: E501
         """fetches one or more assayData by property value of associated original samples
 
@@ -158,7 +147,6 @@ class AssayDatumController(BaseController):
             retcode = 404
 
         return samp, retcode
-
 
     def update_assay_datum(self, assayDatumId, assayDatum, user=None, auths=None):  # noqa: E501
         """updates an AssayDatum

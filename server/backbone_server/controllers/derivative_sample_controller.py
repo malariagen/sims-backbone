@@ -1,8 +1,4 @@
 
-from swagger_server.models.derivative_sample import DerivativeSample  # noqa: E501
-from swagger_server.models.derivative_samples import DerivativeSamples  # noqa: E501
-from swagger_server import util
-
 import logging
 
 import urllib
@@ -11,24 +7,22 @@ from backbone_server.derivative_sample.post import DerivativeSamplePost
 from backbone_server.derivative_sample.put import DerivativeSamplePut
 from backbone_server.derivative_sample.get import DerivativeSampleGetById
 from backbone_server.derivative_sample.delete import DerivativeSampleDelete
-from backbone_server.derivative_sample.get_by_attr import DerivativeSampleGetByAttr
-from backbone_server.derivative_sample.get_by_event_set import DerivativeSamplesGetByEventSet
-from backbone_server.derivative_sample.get_by_study import DerivativeSamplesGetByStudy
-from backbone_server.derivative_sample.get_by_taxa import DerivativeSamplesGetByTaxa
-from backbone_server.derivative_sample.get_by_os_attr import DerivativeSampleGetByOsAttr
+from backbone_server.derivative_sample.get_by_attr import DerivativeSampleGetByAttr  # noqa: E501
+from backbone_server.derivative_sample.get_by_event_set import DerivativeSamplesGetByEventSet   # noqa: E501
+from backbone_server.derivative_sample.get_by_study import DerivativeSamplesGetByStudy  # noqa: E501
+from backbone_server.derivative_sample.get_by_taxa import DerivativeSamplesGetByTaxa    # noqa: E501
+from backbone_server.derivative_sample.get_by_os_attr import DerivativeSampleGetByOsAttr  # noqa: E501
 
-from backbone_server.controllers.base_controller  import BaseController
+from backbone_server.controllers.base_controller import BaseController
 
 from backbone_server.errors.duplicate_key_exception import DuplicateKeyException
 from backbone_server.errors.missing_key_exception import MissingKeyException
-from backbone_server.errors.permission_exception import PermissionException
-from backbone_server.errors.incompatible_exception import IncompatibleException
 
-from backbone_server.controllers.decorators  import apply_decorators
+from backbone_server.controllers.decorators import apply_decorators
+
 
 @apply_decorators
 class DerivativeSampleController(BaseController):
-
 
     def create_derivative_sample(self, derivativeSample, user=None, auths=None):  # noqa: E501
         """create_derivative_sample
@@ -53,7 +47,6 @@ class DerivativeSampleController(BaseController):
 
         return samp, retcode
 
-
     def delete_derivative_sample(self, derivativeSampleId, user=None, auths=None):  # noqa: E501
         """deletes an DerivativeSample
 
@@ -67,7 +60,6 @@ class DerivativeSampleController(BaseController):
         delete = DerivativeSampleDelete(self.get_connection())
 
         retcode = 200
-        samp = None
 
         try:
             delete.delete(derivativeSampleId)
@@ -76,7 +68,6 @@ class DerivativeSampleController(BaseController):
             retcode = 404
 
         return None, retcode
-
 
     def download_derivative_sample(self, derivativeSampleId, user=None, auths=None):  # noqa: E501
         """fetches an DerivativeSample
@@ -102,8 +93,7 @@ class DerivativeSampleController(BaseController):
 
         return samp, retcode
 
-
-    def download_derivative_samples(self, search_filter, start, count, user = None, auths = None):
+    def download_derivative_samples(self, search_filter, start, count, user=None, auths=None):
         """
         fetches derivativeSamples for a event_set
 
@@ -137,17 +127,17 @@ class DerivativeSampleController(BaseController):
             if len(options) < 3:
                 return 'attr filter must have name and value', 422
             return self.download_derivative_samples_by_attr(options[1],
-                                                         options[2],
-                                                         study_name,
-                                                         user,
-                                                         auths)
+                                                            options[2],
+                                                            study_name,
+                                                            user,
+                                                            auths)
         else:
             samp = 'Invalid filter option'
             retcode = 422
 
         return samp, retcode
 
-    def download_derivative_samples_by_event_set(self, event_set_id, start, count, user = None, auths = None):
+    def download_derivative_samples_by_event_set(self, event_set_id, start, count, user=None, auths=None):
         """
         fetches derivativeSamples for a event_set
 
@@ -166,7 +156,8 @@ class DerivativeSampleController(BaseController):
             samp = get.get(event_set_id, start, count)
 
         except MissingKeyException as dme:
-            logging.getLogger(__name__).debug("download_derivative_samples_by_event_set: {}".format(repr(dme)))
+            logging.getLogger(__name__).debug(
+                "download_derivative_samples_by_event_set: {}".format(repr(dme)))
             retcode = 404
 
         return samp, retcode
@@ -200,7 +191,6 @@ class DerivativeSampleController(BaseController):
 
         return samp, retcode
 
-
     def download_derivative_samples_by_os_attr(self, propName, propValue, studyName=None, user=None, auths=None):  # noqa: E501
         """fetches one or more derivativeSamples by property value of associated derivative samples
 
@@ -230,8 +220,7 @@ class DerivativeSampleController(BaseController):
 
         return samp, retcode
 
-
-    def download_derivative_samples_by_study(self, studyName, start, count, user = None, auths = None):
+    def download_derivative_samples_by_study(self, studyName, start, count, user=None, auths=None):
         """
         fetches derivativeSamples for a study
 
@@ -254,7 +243,7 @@ class DerivativeSampleController(BaseController):
 
         return samp, retcode
 
-    def download_derivative_samples_by_taxa(self, taxaId, start, count, user = None, auths = None):
+    def download_derivative_samples_by_taxa(self, taxaId, start, count, user=None, auths=None):
         """
         fetches derivativeSamples for a taxa
 
@@ -272,11 +261,11 @@ class DerivativeSampleController(BaseController):
         try:
             samp = get.get(taxaId, start, count)
         except MissingKeyException as dme:
-            logging.getLogger(__name__).debug("download_derivative_samples_by_taxa: {}".format(repr(dme)))
+            logging.getLogger(__name__).debug(
+                "download_derivative_samples_by_taxa: {}".format(repr(dme)))
             retcode = 404
 
         return samp, retcode
-
 
     def update_derivative_sample(self, derivativeSampleId, derivativeSample, user=None, auths=None):  # noqa: E501
         """updates an DerivativeSample

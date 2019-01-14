@@ -1,26 +1,22 @@
-from swagger_server.models.country import Country
-from swagger_server.models.taxonomies import Taxonomies
-from swagger_server.models.taxonomy import Taxonomy
-
 from backbone_server.metadata.country import CountryGet
 from backbone_server.metadata.taxonomies import TaxonomiesGet
 from backbone_server.metadata.taxonomy_post import TaxonomyPost
 from backbone_server.metadata.attr_types import AttrTypesGet
 
-from backbone_server.controllers.base_controller  import BaseController
+from backbone_server.controllers.base_controller import BaseController
 
 from backbone_server.errors.missing_key_exception import MissingKeyException
-from backbone_server.errors.permission_exception import PermissionException
 
 import logging
 import urllib
 
-from backbone_server.controllers.decorators  import apply_decorators
+from backbone_server.controllers.decorators import apply_decorators
+
 
 @apply_decorators
 class MetadataController(BaseController):
 
-    def create_taxonomy(self, taxonomy, user=None, auths = None):
+    def create_taxonomy(self, taxonomy, user=None, auths=None):
         """
         create_taxonomy
         Create a Taxonomy
@@ -38,8 +34,7 @@ class MetadataController(BaseController):
 
         return taxa, retcode
 
-
-    def get_country_metadata(self, countryId, user=None, auths = None):
+    def get_country_metadata(self, countryId, user=None, auths=None):
         """
         fetches all the names for a country
         guesses the search criteria
@@ -78,7 +73,6 @@ class MetadataController(BaseController):
 
         return ident_types, 200
 
-
     def get_location_attr_types(self, user=None, auths=None):  # noqa: E501
         """fetches all the location attr types
 
@@ -94,8 +88,7 @@ class MetadataController(BaseController):
 
         return ident_types, 200
 
-
-    def get_taxonomy_metadata(self, user=None, auths = None):
+    def get_taxonomy_metadata(self, user=None, auths=None):
         """
         fetches all the registered taxa
         guesses the search criteria

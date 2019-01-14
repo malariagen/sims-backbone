@@ -1,6 +1,3 @@
-from swagger_server.models.event_set import EventSet
-from swagger_server.models.event_set_note import EventSetNote
-
 import logging
 
 import urllib
@@ -16,13 +13,13 @@ from backbone_server.event_set.get import EventSetGetById
 from backbone_server.event_set.gets import EventSetsGet
 from backbone_server.event_set.delete import EventSetDelete
 
-from backbone_server.controllers.base_controller  import BaseController
+from backbone_server.controllers.base_controller import BaseController
 
 from backbone_server.errors.duplicate_key_exception import DuplicateKeyException
 from backbone_server.errors.missing_key_exception import MissingKeyException
-from backbone_server.errors.permission_exception import PermissionException
 
-from backbone_server.controllers.decorators  import apply_decorators
+from backbone_server.controllers.decorators import apply_decorators
+
 
 @apply_decorators
 class EventSetController(BaseController):
@@ -53,8 +50,7 @@ class EventSetController(BaseController):
 
         return evntSt, retcode
 
-
-    def create_event_set_item(self, eventSetId, samplingEventId, user = None, auths = None):
+    def create_event_set_item(self, eventSetId, samplingEventId, user=None, auths=None):
         """
         Adds a samplingEvent to an eventSet
 
@@ -83,8 +79,7 @@ class EventSetController(BaseController):
 
         return evntSt, retcode
 
-
-    def create_event_set_note(self, eventSetId, noteId, note, user = None, auths = None):
+    def create_event_set_note(self, eventSetId, noteId, note, user=None, auths=None):
         """
         Adds a note to an eventSet
 
@@ -116,8 +111,7 @@ class EventSetController(BaseController):
 
         return evntSt, retcode
 
-
-    def delete_event_set(self, eventSetId, user = None, auths = None):
+    def delete_event_set(self, eventSetId, user=None, auths=None):
         """
         deletes an eventSet
 
@@ -141,8 +135,7 @@ class EventSetController(BaseController):
 
         return evntSt, retcode
 
-
-    def delete_event_set_item(self, eventSetId, samplingEventId, user = None, auths = None):
+    def delete_event_set_item(self, eventSetId, samplingEventId, user=None, auths=None):
         """
         deletes a samplingEvent from an eventSet
 
@@ -168,8 +161,7 @@ class EventSetController(BaseController):
 
         return evntSt, retcode
 
-
-    def delete_event_set_note(self, eventSetId, noteId, user = None, auths = None):
+    def delete_event_set_note(self, eventSetId, noteId, user=None, auths=None):
         """
         deletes an eventSet note
 
@@ -196,8 +188,7 @@ class EventSetController(BaseController):
 
         return evntSt, retcode
 
-
-    def download_event_set(self, eventSetId, start=None, count=None, user = None, auths = None):
+    def download_event_set(self, eventSetId, start=None, count=None, user=None, auths=None):
         """
         fetches an eventSet
 
@@ -220,8 +211,7 @@ class EventSetController(BaseController):
 
         return evntSt, retcode
 
-
-    def download_event_sets(self, user = None, auths = None):
+    def download_event_sets(self, user=None, auths=None):
         """
         fetches an eventSet
 
@@ -236,8 +226,7 @@ class EventSetController(BaseController):
 
         return evntSts, retcode
 
-
-    def update_event_set(self, eventSetId, eventSet, user = None, auths = None):
+    def update_event_set(self, eventSetId, eventSet, user=None, auths=None):
         """
         updates an eventSet
 
@@ -262,8 +251,7 @@ class EventSetController(BaseController):
 
         return evntSt, retcode
 
-
-    def update_event_set_note(self, eventSetId, noteId, note, user = None, auths = None):
+    def update_event_set_note(self, eventSetId, noteId, note, user=None, auths=None):
         """
         Adds a note to an eventSet
 
