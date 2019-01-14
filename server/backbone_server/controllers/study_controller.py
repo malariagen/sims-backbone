@@ -20,7 +20,7 @@ class StudyController(BaseController):
     def download_studies(self, start=None, count=None, user=None, auths = None):
         """
         fetches studies
-        
+
         :param start: for pagination start the result set at a record x
         :type start: int
         :param count: for pagination the number of entries to return
@@ -38,7 +38,7 @@ class StudyController(BaseController):
     def download_study(self, studyName, user=None, auths = None):
         """
         fetches a study
-        
+
         :param studyName: ID of study to fetch
         :type studyName: str
 
@@ -52,7 +52,7 @@ class StudyController(BaseController):
         try:
             study = get.get(studyName)
         except MissingKeyException as dme:
-            logging.getLogger(__name__).error("update_study: {}".format(repr(dme)))
+            logging.getLogger(__name__).debug("update_study: {}".format(repr(dme)))
             retcode = 404
 
         return study, retcode
@@ -61,10 +61,10 @@ class StudyController(BaseController):
     def update_study(self, studyName, study, user=None, auths = None):
         """
         updates a study
-        
+
         :param studyName: ID of study to update
         :type studyName: str
-        :param study: 
+        :param study:
         :type study: dict | bytes
 
         :rtype: Study
@@ -78,10 +78,10 @@ class StudyController(BaseController):
 
             updated_study = put.put(studyName, study)
         except IntegrityException as dme:
-            logging.getLogger(__name__).error("update_study: {}".format(repr(dme)))
+            logging.getLogger(__name__).debug("update_study: {}".format(repr(dme)))
             retcode = 422
         except MissingKeyException as dme:
-            logging.getLogger(__name__).error("update_study: {}".format(repr(dme)))
+            logging.getLogger(__name__).debug("update_study: {}".format(repr(dme)))
             retcode = 404
 
         return updated_study, retcode

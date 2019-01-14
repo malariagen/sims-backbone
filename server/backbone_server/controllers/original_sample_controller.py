@@ -32,7 +32,7 @@ class OriginalSampleController(BaseController):
         """
         create_original_sample
         Create a originalSample
-        :param originalSample: 
+        :param originalSample:
         :type originalSample: dict | bytes
 
         :rtype: OriginalSample
@@ -46,7 +46,7 @@ class OriginalSampleController(BaseController):
 
             samp = post.post(originalSample)
         except DuplicateKeyException as dke:
-            logging.getLogger(__name__).error("create_originalSample: {}".format(repr(dke)))
+            logging.getLogger(__name__).debug("create_originalSample: {}".format(repr(dke)))
             retcode = 422
 
         return samp, retcode
@@ -55,7 +55,7 @@ class OriginalSampleController(BaseController):
     def delete_original_sample(self, originalSampleId, user = None, auths = None):
         """
         deletes an originalSample
-        
+
         :param originalSampleId: ID of originalSample to fetch
         :type originalSampleId: str
 
@@ -70,7 +70,7 @@ class OriginalSampleController(BaseController):
         try:
             delete.delete(originalSampleId)
         except MissingKeyException as dme:
-            logging.getLogger(__name__).error("delete_originalSample: {}".format(repr(dme)))
+            logging.getLogger(__name__).debug("delete_originalSample: {}".format(repr(dme)))
             retcode = 404
 
         return None, retcode
@@ -79,7 +79,7 @@ class OriginalSampleController(BaseController):
     def download_original_sample(self, originalSampleId, user = None, auths = None):
         """
         fetches an originalSample
-        
+
         :param originalSampleId: ID of originalSample to fetch
         :type originalSampleId: str
 
@@ -94,7 +94,7 @@ class OriginalSampleController(BaseController):
         try:
             samp = get.get(originalSampleId)
         except MissingKeyException as dme:
-            logging.getLogger(__name__).error("download_originalSample: {}".format(repr(dme)))
+            logging.getLogger(__name__).debug("download_originalSample: {}".format(repr(dme)))
             retcode = 404
 
         return samp, retcode
@@ -102,7 +102,7 @@ class OriginalSampleController(BaseController):
     def download_original_samples(self, search_filter, start, count, user = None, auths = None):
         """
         fetches originalSamples for a event_set
-        
+
         :param event_set_id: event_set
         :type event_set_id: str
 
@@ -147,7 +147,7 @@ class OriginalSampleController(BaseController):
     def download_original_samples_by_event_set(self, event_set_id, start, count, user = None, auths = None):
         """
         fetches originalSamples for a event_set
-        
+
         :param event_set_id: event_set
         :type event_set_id: str
 
@@ -163,7 +163,7 @@ class OriginalSampleController(BaseController):
             samp = get.get(event_set_id, start, count)
 
         except MissingKeyException as dme:
-            logging.getLogger(__name__).error("download_original_samples_by_event_set: {}".format(repr(dme)))
+            logging.getLogger(__name__).debug("download_original_samples_by_event_set: {}".format(repr(dme)))
             retcode = 404
 
         return samp, retcode
@@ -171,7 +171,7 @@ class OriginalSampleController(BaseController):
     def download_original_samples_by_attr(self, propName, propValue, study_name=None, user=None, auths=None):
         """
         fetches a originalSample by property value
-        
+
         :param propName: name of property to search
         :type propName: str
         :param propValue: matching value of property to search
@@ -189,7 +189,7 @@ class OriginalSampleController(BaseController):
             propValue = urllib.parse.unquote_plus(propValue)
             samp = get.get(propName, propValue, study_name)
         except MissingKeyException as dme:
-            logging.getLogger(__name__).error("download_originalSample: {}".format(repr(dme)))
+            logging.getLogger(__name__).debug("download_originalSample: {}".format(repr(dme)))
             retcode = 404
 
         return samp, retcode
@@ -197,7 +197,7 @@ class OriginalSampleController(BaseController):
     def download_original_samples_by_location(self, locationId, start, count, user = None, auths = None):
         """
         fetches originalSamples for a location
-        
+
         :param locationId: location
         :type locationId: str
 
@@ -212,7 +212,7 @@ class OriginalSampleController(BaseController):
         try:
             samp = get.get(locationId, start, count)
         except MissingKeyException as dme:
-            logging.getLogger(__name__).error("download_originalSample: {}".format(repr(dme)))
+            logging.getLogger(__name__).debug("download_originalSample: {}".format(repr(dme)))
             retcode = 404
 
         return samp, retcode
@@ -220,7 +220,7 @@ class OriginalSampleController(BaseController):
     def download_original_samples_by_study(self, studyName, start, count, user = None, auths = None):
         """
         fetches originalSamples for a study
-        
+
         :param studyName: location
         :type studyName: str
 
@@ -235,7 +235,7 @@ class OriginalSampleController(BaseController):
         try:
             samp = get.get(studyName, start, count)
         except MissingKeyException as dme:
-            logging.getLogger(__name__).error("download_originalSample: {}".format(repr(dme)))
+            logging.getLogger(__name__).debug("download_originalSample: {}".format(repr(dme)))
             retcode = 404
 
         return samp, retcode
@@ -243,7 +243,7 @@ class OriginalSampleController(BaseController):
     def download_original_samples_by_taxa(self, taxaId, start, count, user = None, auths = None):
         """
         fetches originalSamples for a taxa
-        
+
         :param taxaId: taxa
         :type taxaId: str
 
@@ -258,7 +258,7 @@ class OriginalSampleController(BaseController):
         try:
             samp = get.get(taxaId, start, count)
         except MissingKeyException as dme:
-            logging.getLogger(__name__).error("download_original_samples_by_taxa: {}".format(repr(dme)))
+            logging.getLogger(__name__).debug("download_original_samples_by_taxa: {}".format(repr(dme)))
             retcode = 404
 
         return samp, retcode
@@ -284,10 +284,10 @@ class OriginalSampleController(BaseController):
 
             samp = merge.merge(into, merged)
         except IncompatibleException as dke:
-            logging.getLogger(__name__).error("merge_originalSample: {}".format(repr(dke)))
+            logging.getLogger(__name__).debug("merge_originalSample: {}".format(repr(dke)))
             retcode = 422
         except MissingKeyException as dme:
-            logging.getLogger(__name__).error("merge_originalSample: {}".format(repr(dme)))
+            logging.getLogger(__name__).debug("merge_originalSample: {}".format(repr(dme)))
             retcode = 404
 
         return samp, retcode
@@ -295,10 +295,10 @@ class OriginalSampleController(BaseController):
     def update_original_sample(self, originalSampleId, originalSample, user = None, auths = None):
         """
         updates an originalSample
-        
+
         :param originalSampleId: ID of originalSample to update
         :type originalSampleId: str
-        :param originalSample: 
+        :param originalSample:
         :type originalSample: dict | bytes
 
         :rtype: OriginalSample
@@ -312,10 +312,10 @@ class OriginalSampleController(BaseController):
 
             samp = put.put(originalSampleId, originalSample)
         except DuplicateKeyException as dke:
-            logging.getLogger(__name__).error("update_originalSample: {}".format(repr(dke)))
+            logging.getLogger(__name__).debug("update_originalSample: {}".format(repr(dke)))
             retcode = 422
         except MissingKeyException as dme:
-            logging.getLogger(__name__).error("update_originalSample: {}".format(repr(dme)))
+            logging.getLogger(__name__).debug("update_originalSample: {}".format(repr(dme)))
             retcode = 404
 
         return samp, retcode

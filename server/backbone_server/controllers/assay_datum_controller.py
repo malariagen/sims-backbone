@@ -45,7 +45,7 @@ class AssayDatumController(BaseController):
 
             samp = post.post(assayDatum)
         except DuplicateKeyException as dke:
-            logging.getLogger(__name__).error("create_assayDatum: {}".format(repr(dke)))
+            logging.getLogger(__name__).debug("create_assayDatum: {}".format(repr(dke)))
             retcode = 422
 
         return samp, retcode
@@ -69,7 +69,7 @@ class AssayDatumController(BaseController):
         try:
             delete.delete(assayDatumId)
         except MissingKeyException as dme:
-            logging.getLogger(__name__).error("delete_assayDatum: {}".format(repr(dme)))
+            logging.getLogger(__name__).debug("delete_assayDatum: {}".format(repr(dme)))
             retcode = 404
 
         return None, retcode
@@ -94,7 +94,7 @@ class AssayDatumController(BaseController):
         try:
             samp = get.get(assayDatumId)
         except MissingKeyException as dme:
-            logging.getLogger(__name__).error("download_assayDatum: {}".format(repr(dme)))
+            logging.getLogger(__name__).debug("download_assayDatum: {}".format(repr(dme)))
             retcode = 404
 
         return samp, retcode
@@ -124,7 +124,7 @@ class AssayDatumController(BaseController):
             propValue = urllib.parse.unquote_plus(propValue)
             samp = get.get(propName, propValue)
         except MissingKeyException as dme:
-            logging.getLogger(__name__).error("download_assayDatum: {}".format(repr(dme)))
+            logging.getLogger(__name__).debug("download_assayDatum: {}".format(repr(dme)))
             retcode = 404
 
         return samp, retcode
@@ -154,7 +154,7 @@ class AssayDatumController(BaseController):
             propValue = urllib.parse.unquote_plus(propValue)
             samp = get.get(propName, propValue)
         except MissingKeyException as dme:
-            logging.getLogger(__name__).error("download_assayDatum: {}".format(repr(dme)))
+            logging.getLogger(__name__).debug("download_assayDatum: {}".format(repr(dme)))
             retcode = 404
 
         return samp, retcode
@@ -167,7 +167,7 @@ class AssayDatumController(BaseController):
 
         :param assayDatumId: ID of AssayDatum to update
         :type assayDatumId: str
-        :param assayDatum: 
+        :param assayDatum:
         :type assayDatum: dict | bytes
 
         :rtype: AssayDatum
@@ -181,10 +181,10 @@ class AssayDatumController(BaseController):
 
             samp = put.put(assayDatumId, assayDatum)
         except DuplicateKeyException as dke:
-            logging.getLogger(__name__).error("update_assayDatum: {}".format(repr(dke)))
+            logging.getLogger(__name__).debug("update_assayDatum: {}".format(repr(dke)))
             retcode = 422
         except MissingKeyException as dme:
-            logging.getLogger(__name__).error("update_assayDatum: {}".format(repr(dme)))
+            logging.getLogger(__name__).debug("update_assayDatum: {}".format(repr(dme)))
             retcode = 404
 
         return samp, retcode

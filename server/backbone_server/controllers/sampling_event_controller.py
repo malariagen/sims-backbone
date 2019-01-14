@@ -50,15 +50,15 @@ class SamplingEventController(BaseController):
 
             samp = post.post(samplingEvent)
         except DuplicateKeyException as dke:
-            logging.getLogger(__name__).error("create_samplingEvent: {}".format(repr(dke)))
+            logging.getLogger(__name__).debug("create_samplingEvent: {}".format(repr(dke)))
             samp = str(dke)
             retcode = 422
         except NestedEditException as nee:
-            logging.getLogger(__name__).error("create_samplingEvent: {}".format(repr(nee)))
+            logging.getLogger(__name__).debug("create_samplingEvent: {}".format(repr(nee)))
             samp = str(nee)
             retcode = 422
         except InvalidDateException as ide:
-            logging.getLogger(__name__).error("create_samplingEvent: {}".format(repr(ide)))
+            logging.getLogger(__name__).debug("create_samplingEvent: {}".format(repr(ide)))
             samp = str(ide)
             retcode = 422
 
@@ -83,7 +83,7 @@ class SamplingEventController(BaseController):
         try:
             delete.delete(samplingEventId)
         except MissingKeyException as dme:
-            logging.getLogger(__name__).error("delete_samplingEvent: {}".format(repr(dme)))
+            logging.getLogger(__name__).debug("delete_samplingEvent: {}".format(repr(dme)))
             retcode = 404
 
         return None, retcode
@@ -107,7 +107,7 @@ class SamplingEventController(BaseController):
         try:
             samp = get.get(samplingEventId)
         except MissingKeyException as dme:
-            logging.getLogger(__name__).error("download_samplingEvent: {}".format(repr(dme)))
+            logging.getLogger(__name__).debug("download_samplingEvent: {}".format(repr(dme)))
             retcode = 404
 
         return samp, retcode
@@ -189,7 +189,7 @@ class SamplingEventController(BaseController):
             samp = evntSt.members
 
         except MissingKeyException as dme:
-            logging.getLogger(__name__).error("download_sampling_events_by_event_set: {}".format(repr(dme)))
+            logging.getLogger(__name__).debug("download_sampling_events_by_event_set: {}".format(repr(dme)))
             retcode = 404
 
         return samp, retcode
@@ -215,7 +215,7 @@ class SamplingEventController(BaseController):
             propValue = urllib.parse.unquote_plus(propValue)
             samp = get.get(propName, propValue, study_name)
         except MissingKeyException as dme:
-            logging.getLogger(__name__).error("download_samplingEvent: {}".format(repr(dme)))
+            logging.getLogger(__name__).debug("download_samplingEvent: {}".format(repr(dme)))
             retcode = 404
 
         return samp, retcode
@@ -241,7 +241,7 @@ class SamplingEventController(BaseController):
             propValue = urllib.parse.unquote_plus(propValue)
             samp = get.get(propName, propValue, study_name)
         except MissingKeyException as dme:
-            logging.getLogger(__name__).error("download_samplingEvents_by_os_attr: {}".format(repr(dme)))
+            logging.getLogger(__name__).debug("download_samplingEvents_by_os_attr: {}".format(repr(dme)))
             retcode = 404
 
         return samp, retcode
@@ -264,7 +264,7 @@ class SamplingEventController(BaseController):
         try:
             samp = get.get(locationId, start, count)
         except MissingKeyException as dme:
-            logging.getLogger(__name__).error("download_samplingEvent: {}".format(repr(dme)))
+            logging.getLogger(__name__).debug("download_samplingEvent: {}".format(repr(dme)))
             retcode = 404
 
         return samp, retcode
@@ -287,7 +287,7 @@ class SamplingEventController(BaseController):
         try:
             samp = get.get(studyName, start, count)
         except MissingKeyException as dme:
-            logging.getLogger(__name__).error("download_samplingEvent: {}".format(repr(dme)))
+            logging.getLogger(__name__).debug("download_samplingEvent: {}".format(repr(dme)))
             retcode = 404
 
         return samp, retcode
@@ -310,7 +310,7 @@ class SamplingEventController(BaseController):
         try:
             samp = get.get(taxaId, start, count)
         except MissingKeyException as dme:
-            logging.getLogger(__name__).error("download_sampling_events_by_taxa: {}".format(repr(dme)))
+            logging.getLogger(__name__).debug("download_sampling_events_by_taxa: {}".format(repr(dme)))
             retcode = 404
 
         return samp, retcode
@@ -335,11 +335,11 @@ class SamplingEventController(BaseController):
 
             samp = merge.merge(into, merged)
         except IncompatibleException as dke:
-            logging.getLogger(__name__).error("merge_samplingEvent: {}".format(repr(dke)))
+            logging.getLogger(__name__).debug("merge_samplingEvent: {}".format(repr(dke)))
             samp = str(dke)
             retcode = 422
         except MissingKeyException as dme:
-            logging.getLogger(__name__).error("merge_samplingEvent: {}".format(repr(dme)))
+            logging.getLogger(__name__).debug("merge_samplingEvent: {}".format(repr(dme)))
             samp = str(dme)
             retcode = 404
 
@@ -365,18 +365,18 @@ class SamplingEventController(BaseController):
 
             samp = put.put(samplingEventId, samplingEvent)
         except DuplicateKeyException as dke:
-            logging.getLogger(__name__).error("update_samplingEvent: {}".format(repr(dke)))
+            logging.getLogger(__name__).debug("update_samplingEvent: {}".format(repr(dke)))
             samp = str(dke)
             retcode = 422
         except MissingKeyException as dme:
-            logging.getLogger(__name__).error("update_samplingEvent: {}".format(repr(dme)))
+            logging.getLogger(__name__).debug("update_samplingEvent: {}".format(repr(dme)))
             retcode = 404
         except NestedEditException as nee:
-            logging.getLogger(__name__).error("update_samplingEvent: {}".format(repr(nee)))
+            logging.getLogger(__name__).debug("update_samplingEvent: {}".format(repr(nee)))
             samp = str(nee)
             retcode = 422
         except InvalidDateException as ide:
-            logging.getLogger(__name__).error("create_samplingEvent: {}".format(repr(ide)))
+            logging.getLogger(__name__).debug("create_samplingEvent: {}".format(repr(ide)))
             samp = str(ide)
             retcode = 422
 

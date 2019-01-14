@@ -48,7 +48,7 @@ class DerivativeSampleController(BaseController):
 
             samp = post.post(derivativeSample)
         except DuplicateKeyException as dke:
-            logging.getLogger(__name__).error("create_derivativeSample: {}".format(repr(dke)))
+            logging.getLogger(__name__).debug("create_derivativeSample: {}".format(repr(dke)))
             retcode = 422
 
         return samp, retcode
@@ -72,7 +72,7 @@ class DerivativeSampleController(BaseController):
         try:
             delete.delete(derivativeSampleId)
         except MissingKeyException as dme:
-            logging.getLogger(__name__).error("delete_derivativeSample: {}".format(repr(dme)))
+            logging.getLogger(__name__).debug("delete_derivativeSample: {}".format(repr(dme)))
             retcode = 404
 
         return None, retcode
@@ -97,7 +97,7 @@ class DerivativeSampleController(BaseController):
         try:
             samp = get.get(derivativeSampleId)
         except MissingKeyException as dme:
-            logging.getLogger(__name__).error("download_derivativeSample: {}".format(repr(dme)))
+            logging.getLogger(__name__).debug("download_derivativeSample: {}".format(repr(dme)))
             retcode = 404
 
         return samp, retcode
@@ -166,7 +166,7 @@ class DerivativeSampleController(BaseController):
             samp = get.get(event_set_id, start, count)
 
         except MissingKeyException as dme:
-            logging.getLogger(__name__).error("download_derivative_samples_by_event_set: {}".format(repr(dme)))
+            logging.getLogger(__name__).debug("download_derivative_samples_by_event_set: {}".format(repr(dme)))
             retcode = 404
 
         return samp, retcode
@@ -195,7 +195,7 @@ class DerivativeSampleController(BaseController):
             propValue = urllib.parse.unquote_plus(propValue)
             samp = get.get(propName, propValue)
         except MissingKeyException as dme:
-            logging.getLogger(__name__).error("download_derivativeSample: {}".format(repr(dme)))
+            logging.getLogger(__name__).debug("download_derivativeSample: {}".format(repr(dme)))
             retcode = 404
 
         return samp, retcode
@@ -225,7 +225,7 @@ class DerivativeSampleController(BaseController):
             propValue = urllib.parse.unquote_plus(propValue)
             samp = get.get(propName, propValue)
         except MissingKeyException as dme:
-            logging.getLogger(__name__).error("download_derivativeSample: {}".format(repr(dme)))
+            logging.getLogger(__name__).debug("download_derivativeSample: {}".format(repr(dme)))
             retcode = 404
 
         return samp, retcode
@@ -249,7 +249,7 @@ class DerivativeSampleController(BaseController):
         try:
             samp = get.get(studyName, start, count)
         except MissingKeyException as dme:
-            logging.getLogger(__name__).error("download_derivativeSample: {}".format(repr(dme)))
+            logging.getLogger(__name__).debug("download_derivativeSample: {}".format(repr(dme)))
             retcode = 404
 
         return samp, retcode
@@ -272,7 +272,7 @@ class DerivativeSampleController(BaseController):
         try:
             samp = get.get(taxaId, start, count)
         except MissingKeyException as dme:
-            logging.getLogger(__name__).error("download_derivative_samples_by_taxa: {}".format(repr(dme)))
+            logging.getLogger(__name__).debug("download_derivative_samples_by_taxa: {}".format(repr(dme)))
             retcode = 404
 
         return samp, retcode
@@ -299,10 +299,10 @@ class DerivativeSampleController(BaseController):
 
             samp = put.put(derivativeSampleId, derivativeSample)
         except DuplicateKeyException as dke:
-            logging.getLogger(__name__).error("update_derivativeSample: {}".format(repr(dke)))
+            logging.getLogger(__name__).debug("update_derivativeSample: {}".format(repr(dke)))
             retcode = 422
         except MissingKeyException as dme:
-            logging.getLogger(__name__).error("update_derivativeSample: {}".format(repr(dme)))
+            logging.getLogger(__name__).debug("update_derivativeSample: {}".format(repr(dme)))
             retcode = 404
 
         return samp, retcode

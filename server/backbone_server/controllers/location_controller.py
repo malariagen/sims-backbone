@@ -25,7 +25,7 @@ class LocationController(BaseController):
         """
         create_location
         Create a location
-        :param location: 
+        :param location:
         :type location: dict | bytes
 
         :rtype: Location
@@ -39,7 +39,7 @@ class LocationController(BaseController):
 
             loc = post.post(location)
         except DuplicateKeyException as dke:
-            logging.getLogger(__name__).error("create_location: {}".format(repr(dke)))
+            logging.getLogger(__name__).debug("create_location: {}".format(repr(dke)))
             retcode = 422
 
         return loc, retcode
@@ -48,7 +48,7 @@ class LocationController(BaseController):
     def delete_location(self, locationId, user = None, auths = None):
         """
         deletes an location
-        
+
         :param locationId: ID of location to fetch
         :type locationId: str
 
@@ -63,7 +63,7 @@ class LocationController(BaseController):
         try:
             delete.delete(locationId)
         except MissingKeyException as dme:
-            logging.getLogger(__name__).error("delete_location: {}".format(repr(dme)))
+            logging.getLogger(__name__).debug("delete_location: {}".format(repr(dme)))
             retcode = 404
 
         return None, retcode
@@ -91,10 +91,10 @@ class LocationController(BaseController):
             lng = Decimal(longitude)
             loc = get.get(lat, lng)
         except MissingKeyException as dme:
-            logging.getLogger(__name__).error("download_partner_location: {}".format(repr(dme)))
+            logging.getLogger(__name__).debug("download_partner_location: {}".format(repr(dme)))
             retcode = 404
         except InvalidOperation as nfe:
-            logging.getLogger(__name__).error("download_partner_location: {}".format(repr(nfe)))
+            logging.getLogger(__name__).debug("download_partner_location: {}".format(repr(nfe)))
             retcode = 422
 
         return loc, retcode
@@ -102,7 +102,7 @@ class LocationController(BaseController):
     def download_location(self, locationId, user = None, auths = None):
         """
         fetches an location
-        
+
         :param locationId: ID of location to fetch
         :type locationId: str
 
@@ -117,7 +117,7 @@ class LocationController(BaseController):
         try:
             loc = get.get(locationId)
         except MissingKeyException as dme:
-            logging.getLogger(__name__).error("download_location: {}".format(repr(dme)))
+            logging.getLogger(__name__).debug("download_location: {}".format(repr(dme)))
             retcode = 404
 
         return loc, retcode
@@ -127,7 +127,7 @@ class LocationController(BaseController):
                           auths = None):
         """
         fetches locations
-        
+
         :param studyName: restrict to a particular study
         :type studyName: str
         :param start: for pagination start the result set at a record x
@@ -153,7 +153,7 @@ class LocationController(BaseController):
     def download_partner_location(self, partnerId, user = None, auths = None):
         """
         fetches location(s) by partner name
-        
+
         :param partnerId: ID of location to fetch
         :type partnerId: str
 
@@ -168,7 +168,7 @@ class LocationController(BaseController):
         try:
             loc = get.get(partnerId)
         except MissingKeyException as dme:
-            logging.getLogger(__name__).error("download_partner_location: {}".format(repr(dme)))
+            logging.getLogger(__name__).debug("download_partner_location: {}".format(repr(dme)))
             retcode = 404
 
         return loc, retcode
@@ -177,10 +177,10 @@ class LocationController(BaseController):
     def update_location(self, locationId, location, user = None, auths = None):
         """
         updates an location
-        
+
         :param locationId: ID of location to update
         :type locationId: str
-        :param location: 
+        :param location:
         :type location: dict | bytes
 
         :rtype: Location
@@ -194,10 +194,10 @@ class LocationController(BaseController):
 
             loc = put.put(locationId, location)
         except DuplicateKeyException as dke:
-            logging.getLogger(__name__).error("update_location: {}".format(repr(dke)))
+            logging.getLogger(__name__).debug("update_location: {}".format(repr(dke)))
             retcode = 422
         except MissingKeyException as dme:
-            logging.getLogger(__name__).error("update_location: {}".format(repr(dme)))
+            logging.getLogger(__name__).debug("update_location: {}".format(repr(dme)))
             retcode = 404
 
         return loc, retcode

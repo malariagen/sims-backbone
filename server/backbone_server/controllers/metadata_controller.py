@@ -24,7 +24,7 @@ class MetadataController(BaseController):
         """
         create_taxonomy
         Create a Taxonomy
-        :param taxonomy: 
+        :param taxonomy:
         :type taxonomy: dict | bytes
 
         :rtype: Taxonomy
@@ -59,7 +59,7 @@ class MetadataController(BaseController):
         try:
             country = get.get(countryId)
         except MissingKeyException as dme:
-            logging.getLogger(__name__).error("get_country_metadata: {}".format(repr(dme)))
+            logging.getLogger(__name__).debug("get_country_metadata: {}".format(repr(dme)))
             retcode = 404
 
         return country, retcode

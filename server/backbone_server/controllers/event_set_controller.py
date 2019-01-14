@@ -30,10 +30,10 @@ class EventSetController(BaseController):
     def create_event_set(self, eventSetId, user=None, auths=None):
         """
         creates an eventSet
-        
+
         :param eventSetId: ID of eventSet to create
         :type eventSetId: str
-        :param eventSet: 
+        :param eventSet:
         :type eventSet: dict | bytes
 
         :rtype: EventSet
@@ -48,7 +48,7 @@ class EventSetController(BaseController):
 
             evntSt = post.post(eventSetId)
         except DuplicateKeyException as dke:
-            logging.getLogger(__name__).error("create_event_set: {}".format(repr(dke)))
+            logging.getLogger(__name__).debug("create_event_set: {}".format(repr(dke)))
             retcode = 422
 
         return evntSt, retcode
@@ -57,7 +57,7 @@ class EventSetController(BaseController):
     def create_event_set_item(self, eventSetId, samplingEventId, user = None, auths = None):
         """
         Adds a samplingEvent to an eventSet
-        
+
         :param eventSetId: ID of eventSet to modify
         :type eventSetId: str
         :param samplingEventId: ID of samplingEvent to add to the set
@@ -75,10 +75,10 @@ class EventSetController(BaseController):
 
             evntSt = post.post(eventSetId, samplingEventId)
         except DuplicateKeyException as dke:
-            logging.getLogger(__name__).error("create_event_set_item: {}".format(repr(dke)))
+            logging.getLogger(__name__).debug("create_event_set_item: {}".format(repr(dke)))
             retcode = 422
         except MissingKeyException as dke:
-            logging.getLogger(__name__).error("create_event_set_item: {}".format(repr(dke)))
+            logging.getLogger(__name__).debug("create_event_set_item: {}".format(repr(dke)))
             retcode = 404
 
         return evntSt, retcode
@@ -87,12 +87,12 @@ class EventSetController(BaseController):
     def create_event_set_note(self, eventSetId, noteId, note, user = None, auths = None):
         """
         Adds a note to an eventSet
-        
+
         :param eventSetId: ID of eventSet to modify
         :type eventSetId: str
         :param noteId: ID of note to modify in the set
         :type noteId: str
-        :param note: 
+        :param note:
         :type note: dict | bytes
 
         :rtype: None
@@ -108,10 +108,10 @@ class EventSetController(BaseController):
 
             evntSt = post.post(eventSetId, noteId, note)
         except DuplicateKeyException as dke:
-            logging.getLogger(__name__).error("create_event_set_note: {}".format(repr(dke)))
+            logging.getLogger(__name__).debug("create_event_set_note: {}".format(repr(dke)))
             retcode = 422
         except MissingKeyException as dke:
-            logging.getLogger(__name__).error("create_event_set_note: {}".format(repr(dke)))
+            logging.getLogger(__name__).debug("create_event_set_note: {}".format(repr(dke)))
             retcode = 404
 
         return evntSt, retcode
@@ -120,7 +120,7 @@ class EventSetController(BaseController):
     def delete_event_set(self, eventSetId, user = None, auths = None):
         """
         deletes an eventSet
-        
+
         :param eventSetId: ID of eventSet to delete
         :type eventSetId: str
 
@@ -136,7 +136,7 @@ class EventSetController(BaseController):
 
             evntSt = delete.delete(eventSetId)
         except MissingKeyException as mke:
-            logging.getLogger(__name__).error("delete_event_set: {}".format(repr(mke)))
+            logging.getLogger(__name__).debug("delete_event_set: {}".format(repr(mke)))
             retcode = 404
 
         return evntSt, retcode
@@ -145,7 +145,7 @@ class EventSetController(BaseController):
     def delete_event_set_item(self, eventSetId, samplingEventId, user = None, auths = None):
         """
         deletes a samplingEvent from an eventSet
-        
+
         :param eventSetId: ID of eventSet to modify
         :type eventSetId: str
         :param samplingEventId: ID of samplingEvent to remove from the set
@@ -163,7 +163,7 @@ class EventSetController(BaseController):
 
             evntSt = delete.delete(eventSetId, samplingEventId)
         except MissingKeyException as dke:
-            logging.getLogger(__name__).error("delete_event_set_item: {}".format(repr(dke)))
+            logging.getLogger(__name__).debug("delete_event_set_item: {}".format(repr(dke)))
             retcode = 404
 
         return evntSt, retcode
@@ -172,7 +172,7 @@ class EventSetController(BaseController):
     def delete_event_set_note(self, eventSetId, noteId, user = None, auths = None):
         """
         deletes an eventSet note
-        
+
         :param eventSetId: ID of eventSet to modify
         :type eventSetId: str
         :param noteId: ID of note to remove from the set
@@ -191,7 +191,7 @@ class EventSetController(BaseController):
 
             evntSt = delete.delete(eventSetId, noteId)
         except MissingKeyException as dke:
-            logging.getLogger(__name__).error("delete_event_set_note: {}".format(repr(dke)))
+            logging.getLogger(__name__).debug("delete_event_set_note: {}".format(repr(dke)))
             retcode = 404
 
         return evntSt, retcode
@@ -200,7 +200,7 @@ class EventSetController(BaseController):
     def download_event_set(self, eventSetId, start=None, count=None, user = None, auths = None):
         """
         fetches an eventSet
-        
+
         :param eventSetId: ID of eventSet to fetch
         :type eventSetId: str
 
@@ -215,7 +215,7 @@ class EventSetController(BaseController):
             eventSetId = urllib.parse.unquote_plus(eventSetId)
             evntSt = get.get(eventSetId, start, count)
         except MissingKeyException as dke:
-            logging.getLogger(__name__).error("download_event_set: {}".format(repr(dke)))
+            logging.getLogger(__name__).debug("download_event_set: {}".format(repr(dke)))
             retcode = 404
 
         return evntSt, retcode
@@ -224,7 +224,7 @@ class EventSetController(BaseController):
     def download_event_sets(self, user = None, auths = None):
         """
         fetches an eventSet
-        
+
         :rtype: EventSets
         """
 
@@ -240,10 +240,10 @@ class EventSetController(BaseController):
     def update_event_set(self, eventSetId, eventSet, user = None, auths = None):
         """
         updates an eventSet
-        
+
         :param eventSetId: ID of eventSet to update
         :type eventSetId: str
-        :param eventSet: 
+        :param eventSet:
         :type eventSet: dict | bytes
 
         :rtype: EventSet
@@ -257,7 +257,7 @@ class EventSetController(BaseController):
             eventSetId = urllib.parse.unquote_plus(eventSetId)
             evntSt = put.put(eventSetId, eventSet)
         except MissingKeyException as dke:
-            logging.getLogger(__name__).error("update_event_set: {}".format(repr(dke)))
+            logging.getLogger(__name__).debug("update_event_set: {}".format(repr(dke)))
             retcode = 404
 
         return evntSt, retcode
@@ -266,12 +266,12 @@ class EventSetController(BaseController):
     def update_event_set_note(self, eventSetId, noteId, note, user = None, auths = None):
         """
         Adds a note to an eventSet
-        
+
         :param eventSetId: ID of eventSet to modify
         :type eventSetId: str
         :param noteId: ID of note to modify in the set
         :type noteId: str
-        :param note: 
+        :param note:
         :type note: dict | bytes
 
         :rtype: None
@@ -286,10 +286,10 @@ class EventSetController(BaseController):
             noteId = urllib.parse.unquote_plus(noteId)
             evnt_set = put.put(eventSetId, noteId, note)
         except MissingKeyException as dke:
-            logging.getLogger(__name__).error("update_event_set_note: {}".format(repr(dke)))
+            logging.getLogger(__name__).debug("update_event_set_note: {}".format(repr(dke)))
             retcode = 404
         except DuplicateKeyException as dke:
-            logging.getLogger(__name__).error("update_event_set_note: {}".format(repr(dke)))
+            logging.getLogger(__name__).debug("update_event_set_note: {}".format(repr(dke)))
             retcode = 422
 
         return evnt_set, retcode
