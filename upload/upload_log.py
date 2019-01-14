@@ -38,7 +38,8 @@ class UploadLog():
 
         with open(log_file, 'rb') as content_file:
             filename = os.path.basename(log_file)
-            log_folder.createDocument(filename, contentFile=content_file)
+            log_folder.createDocument(filename, contentFile=content_file,
+                                      contentType='text/plain')
 
 
 
