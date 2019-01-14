@@ -90,7 +90,7 @@ def apply_decorators(Cls):
                 return x
             x = self.oInstance.__getattribute__(s)
             protected = False
-            if isinstance(x, types.FunctionType):  # it is an instance method
+            if type(x) == type(self.__init__): # it is an instance method
                 protected = True
                 # Don't want any methods from BaseController protected as
                 # they don't have the correct args
