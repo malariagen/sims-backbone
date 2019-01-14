@@ -3,6 +3,7 @@
 ENVIRON=$1
 
 if [ -z ${ENVIRON} ]
+then
     ENVIRON=dev
 fi
 test -f environment && source environment
