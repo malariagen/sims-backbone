@@ -17,4 +17,4 @@ ${PIP_CMD} install -r upload/requirements.txt
 ${PIP_CMD} install git+https://github.com/idwright/chemistry-cmislib.git
 
 cd upload
-./import.sh
+./import.sh $1
