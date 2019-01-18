@@ -12,6 +12,13 @@ class AbstractBackboneDAO(abc.ABC):
 
         return api_response
 
+    def download_event_set(self, eventSetId):
+        return self.es_api_instance.download_event_set(eventSetId)
+
+    def delete_event_set(self, eventSetId):
+        return self.es_api_instance.delete_event_set(eventSetId)
+
+
     def create_event_set_item(self, event_set_id, sampling_event_id):
         self.es_api_instance.create_event_set_item(event_set_id, sampling_event_id)
 
@@ -43,6 +50,11 @@ class AbstractBackboneDAO(abc.ABC):
 
         return ret
 
+    def delete_location(self, location_id):
+        ret = self.location_api_instance.delete_location(location_id)
+
+        return ret
+
     def download_partner_location(self, partner_name):
 
         ret = self.location_api_instance.download_partner_location(partner_name)
@@ -54,10 +66,19 @@ class AbstractBackboneDAO(abc.ABC):
 
         return existing
 
+    def download_sampling_events_by_event_set(self, eventSetId):
+        return self.se_api_instance.download_sampling_events_by_event_set(eventSetId)
+
     def download_sampling_events_by_attr(self, attr_type, attr_value):
 
         found_events = self.se_api_instance.download_sampling_events_by_attr(attr_type,
                                                                                    attr_value)
+
+        return found_events
+
+    def download_sampling_events_by_study(self, study_name):
+
+        found_events = self.se_api_instance.download_sampling_events_by_study(study_name)
 
         return found_events
 

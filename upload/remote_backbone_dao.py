@@ -80,6 +80,7 @@ class RemoteBackboneDAO(AbstractBackboneDAO):
 
         return ret
 
+
     def download_sampling_events_by_attr(self, attr_type, attr_value):
 
         value = urllib.parse.quote_plus(attr_value)

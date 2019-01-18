@@ -166,11 +166,10 @@ class TestCountry(TestBase):
     """
     """
     def test_country_specific(self):
-        api_instance = swagger_client.SamplingEventApi(self._api_client)
 
         try:
-            looked_up = api_instance.download_sampling_events_by_os_attr('partner_id',
-                                                                           urllib.parse.quote_plus('MDG/TST_0001'))
+            looked_up = self._dao.download_sampling_events_by_os_attr('partner_id',
+                                                                           'MDG/TST_0001')
 
             looked_up = looked_up.sampling_events[0]
 
@@ -199,11 +198,10 @@ class TestCountry(TestBase):
     """
     """
     def test_country_from_oxford(self):
-        api_instance = swagger_client.SamplingEventApi(self._api_client)
 
         try:
-            looked_up = api_instance.download_sampling_events_by_os_attr('oxford_id',
-                                                                           urllib.parse.quote_plus('CT0003-C'))
+            looked_up = self._dao.download_sampling_events_by_os_attr('oxford_id',
+                                                                           'CT0003-C')
 
             looked_up = looked_up.sampling_events[0]
             #print(looked_up)
@@ -220,11 +218,10 @@ class TestCountry(TestBase):
     """
     """
     def test_country_from_ssr(self):
-        api_instance = swagger_client.SamplingEventApi(self._api_client)
 
         try:
-            looked_up = api_instance.download_sampling_events_by_os_attr('oxford_id',
-                                                                           urllib.parse.quote_plus('CT0002-C'))
+            looked_up = self._dao.download_sampling_events_by_os_attr('oxford_id',
+                                                                           'CT0002-C')
 
             looked_up = looked_up.sampling_events[0]
 #            print(looked_up)
@@ -241,12 +238,11 @@ class TestCountry(TestBase):
     """
     """
     def test_country_mismatch(self):
-        api_instance = swagger_client.SamplingEventApi(self._api_client)
 
         try:
 
-            looked_up = api_instance.download_sampling_events_by_os_attr('partner_id',
-                                                                           urllib.parse.quote_plus('MDG/TST_0004'))
+            looked_up = self._dao.download_sampling_events_by_os_attr('partner_id',
+                                                                           'MDG/TST_0004')
 
             looked_up = looked_up.sampling_events[0]
             self.assertEqual(looked_up.proxy_location.country, 'MDG')

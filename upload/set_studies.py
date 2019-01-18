@@ -25,6 +25,10 @@ class SetStudies():
 
         self._dao = RemoteBackboneDAO()
 
+        if os.getenv('LOCAL_TEST'):
+            self._dao = LocalBackboneDAO('upload_test',
+                                         [ 'cn=editor,ou=sims,ou=projects,ou=groups,dc=malariagen,dc=net'])
+
         self._config_file = config_file
 
         try:

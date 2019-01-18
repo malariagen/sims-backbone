@@ -116,7 +116,6 @@ class TestLocation(TestBase):
 
         locations = TestLocation._locations
 
-        event_api_instance = swagger_client.SamplingEventApi(self._api_client)
 
         self.deleteStudies(['9040', '9041', '9042'], locations)
 
@@ -130,12 +129,10 @@ class TestLocation(TestBase):
     """
     def test_location_duplicate_name(self):
 
-        location_api = swagger_client.LocationApi(self._api_client)
-        api_instance = swagger_client.SamplingEventApi(self._api_client)
 
         try:
-            conflict_loc = location_api.download_gps_location('13.86208','107.097015')
-            results = api_instance.download_sampling_events_by_os_attr('oxford_id', '22345')
+            conflict_loc = self._dao.download_gps_location('13.86208','107.097015')
+            results = self._dao.download_sampling_events_by_os_attr('oxford_id', '22345')
             looked_up = results.sampling_events[0]
 
             assert looked_up.location_id != looked_up.proxy_location_id
@@ -160,10 +157,9 @@ class TestLocation(TestBase):
     """
     def test_location_duplicate_name_ok(self):
 
-        api_instance = swagger_client.SamplingEventApi(self._api_client)
 
         try:
-            looked_up = api_instance.download_sampling_events_by_os_attr('oxford_id', '22346')
+            looked_up = self._dao.download_sampling_events_by_os_attr('oxford_id', '22346')
             looked_up = looked_up.sampling_events[0]
 
             self.assertIsNotNone(looked_up.location_id)
@@ -171,7 +167,7 @@ class TestLocation(TestBase):
             if looked_up.location_id not in TestLocation._locations:
                 TestLocation._locations.append(looked_up.location_id)
 
-            looked_up = api_instance.download_sampling_events_by_os_attr('oxford_id', '22347')
+            looked_up = self._dao.download_sampling_events_by_os_attr('oxford_id', '22347')
             looked_up = looked_up.sampling_events[0]
 
             self.assertIsNotNone(looked_up.location_id)
@@ -189,9 +185,8 @@ class TestLocation(TestBase):
     """
     def test_location_duplicate_gps_simple(self):
 
-        api_instance = swagger_client.LocationApi(self._api_client)
 
-        locs = api_instance.download_gps_location(str(13.86208),str(107.097015))
+        locs = self._dao.download_gps_location(str(13.86208),str(107.097015))
 
         assert locs.count == 4
 
@@ -204,10 +199,9 @@ class TestLocation(TestBase):
     """
     """
     def test_location_name_study(self):
-        api_instance = swagger_client.SamplingEventApi(self._api_client)
 
         try:
-            looked_up = api_instance.download_sampling_events_by_os_attr('oxford_id', 'AG0001-C')
+            looked_up = self._dao.download_sampling_events_by_os_attr('oxford_id', 'AG0001-C')
 
             looked_up = looked_up.sampling_events[0]
 

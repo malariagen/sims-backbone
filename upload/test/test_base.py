@@ -13,6 +13,9 @@ from swagger_client.rest import RESTResponse
 
 from swagger_client.api_client import ApiClient
 
+from remote_backbone_dao import RemoteBackboneDAO
+from local_backbone_dao import LocalBackboneDAO
+
 
 class MockResponse:
     def __init__(self, json_data, status_code):
@@ -24,6 +27,7 @@ class TestBase(unittest.TestCase):
 
 
     _api_client = None
+    _dao = None
 
     _config_file = '../config_dev.json'
 
@@ -54,11 +58,24 @@ class TestBase(unittest.TestCase):
 
         return api_client
 
+    @classmethod
+    def getDAO(self):
+        dao = RemoteBackboneDAO()
+
+        if os.getenv('LOCAL_TEST'):
+            dao = LocalBackboneDAO('upload_test',
+                                   [ 'cn=editor,ou=sims,ou=projects,ou=groups,dc=malariagen,dc=net'])
+
+        dao.setup(self._config_file)
+        return dao
+
     """
     """
     def setUp(self):
 
         self._api_client = TestBase.getApiClient()
+        self._dao = TestBase.getDAO()
+        self._dao.setup(self._config_file)
 
     """
     """
@@ -84,7 +101,7 @@ class TestBase(unittest.TestCase):
             locations.append(event.location_id)
         if event.proxy_location_id and event.proxy_location_id not in locations:
             locations.append(event.proxy_location_id)
-        event_api_instance.delete_sampling_event(event.sampling_event_id)
+        TestBase.getDAO().delete_sampling_event(event.sampling_event_id)
 
     """
     """
@@ -95,12 +112,12 @@ class TestBase(unittest.TestCase):
         event_api_instance = swagger_client.SamplingEventApi(TestBase.getApiClient())
 
         for event_set in event_sets:
-            test_events = event_api_instance.download_sampling_events_by_event_set(event_set)
+            test_events = TestBase.getDAO().download_sampling_events_by_event_set(event_set)
 
             for event in test_events.sampling_events:
                 TestBase.deleteSamplingEvent(event, locations)
 
-            api_instance.delete_event_set(event_set)
+            TestBase.getDAO().delete_event_set(event_set)
 
     """
     """
@@ -110,7 +127,7 @@ class TestBase(unittest.TestCase):
         event_api_instance = swagger_client.SamplingEventApi(TestBase.getApiClient())
 
         for study in studies:
-            test_events = event_api_instance.download_sampling_events_by_study(study)
+            test_events = TestBase.getDAO().download_sampling_events_by_study(study)
 
             for event in test_events.sampling_events:
                 TestBase.deleteSamplingEvent(event, locations)
@@ -132,5 +149,5 @@ class TestBase(unittest.TestCase):
 
         for loc in locations:
             if loc:
-                location_api_instance.delete_location(loc)
+                TestBase.getDAO().delete_location(loc)
 

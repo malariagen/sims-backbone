@@ -39,10 +39,9 @@ class TestROMA(TestBase):
     """
     def test_strip(self):
 
-        api_instance = swagger_client.SamplingEventApi(self._api_client)
 
         try:
-            looked_up = api_instance.download_sampling_events_by_os_attr('roma_id', 'TST00003')
+            looked_up = self._dao.download_sampling_events_by_os_attr('roma_id', 'TST00003')
             looked_up = looked_up.sampling_events[0]
             self.assertEquals(looked_up.location.attrs[0].attr_value,
                               'Test name with spaces')
@@ -57,12 +56,11 @@ class TestROMA(TestBase):
     """
     def test_partner_id(self):
 
-        api_instance = swagger_client.SamplingEventApi(self._api_client)
 
         try:
-            r_looked_up = api_instance.download_sampling_events_by_os_attr('roma_id', 'TST00002')
+            r_looked_up = self._dao.download_sampling_events_by_os_attr('roma_id', 'TST00002')
             r_looked_up = r_looked_up.sampling_events[0]
-            p_looked_up = api_instance.download_sampling_events_by_os_attr('partner_id', 'EXTST000002')
+            p_looked_up = self._dao.download_sampling_events_by_os_attr('partner_id', 'EXTST000002')
             p_looked_up = p_looked_up.sampling_events[0]
             self.assertEquals(r_looked_up.sampling_event_id, p_looked_up.sampling_event_id)
         except ApiException as error:
@@ -75,12 +73,11 @@ class TestROMA(TestBase):
     """
     def test_oxford_id(self):
 
-        api_instance = swagger_client.SamplingEventApi(self._api_client)
 
         try:
-            r_looked_up = api_instance.download_sampling_events_by_os_attr('roma_id', 'TST00002')
+            r_looked_up = self._dao.download_sampling_events_by_os_attr('roma_id', 'TST00002')
             r_looked_up = r_looked_up.sampling_events[0]
-            ox_looked_up = api_instance.download_sampling_events_by_os_attr('oxford_id', 'OX0001-C')
+            ox_looked_up = self._dao.download_sampling_events_by_os_attr('oxford_id', 'OX0001-C')
             ox_looked_up = ox_looked_up.sampling_events[0]
             self.assertEquals(r_looked_up.sampling_event_id, ox_looked_up.sampling_event_id)
 
@@ -92,10 +89,9 @@ class TestROMA(TestBase):
     """
     def test_species(self):
 
-        api_instance = swagger_client.OriginalSampleApi(self._api_client)
 
         try:
-            looked_up = api_instance.download_original_samples_by_attr('roma_id', 'TST00002')
+            looked_up = self._dao.download_original_samples_by_attr('roma_id', 'TST00002')
             looked_up = looked_up.original_samples[0]
             self.assertEquals(looked_up.partner_species, 'Plasmodium falciparum')
         except ApiException as error:
@@ -106,10 +102,9 @@ class TestROMA(TestBase):
     """
     def test_date_of_collection(self):
 
-        api_instance = swagger_client.SamplingEventApi(self._api_client)
 
         try:
-            looked_up = api_instance.download_sampling_events_by_os_attr('roma_id', 'TST00002')
+            looked_up = self._dao.download_sampling_events_by_os_attr('roma_id', 'TST00002')
             looked_up = looked_up.sampling_events[0]
             self.assertEqual(looked_up.doc, datetime.date(2012, 11, 22))
         except ApiException as error:
@@ -121,10 +116,9 @@ class TestROMA(TestBase):
     """
     def test_roma_location(self):
 
-        api_instance = swagger_client.SamplingEventApi(self._api_client)
 
         try:
-            looked_up = api_instance.download_sampling_events_by_os_attr('roma_id', 'TST00001')
+            looked_up = self._dao.download_sampling_events_by_os_attr('roma_id', 'TST00001')
 
             looked_up = looked_up.sampling_events[0]
             self.assertEqual(looked_up.location.latitude, 12.5)

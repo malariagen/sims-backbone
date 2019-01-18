@@ -46,7 +46,33 @@ class LocalBackboneDAO(AbstractBackboneDAO):
 
         if retcode >= 400:
             if retcode != 422:  # Already exists
-                print("Exception when calling EventSetApi->create_event_set: \n")
+                self._logger.debug("Exception when calling EventSetApi->create_event_set: \n")
+                raise ApiException(http_resp=HTTPResponse(
+                    body=api_response, status=retcode))
+
+        return api_response
+
+    def delete_event_set(self, event_set_id):
+
+        api_response, retcode = self.es_api_instance.delete_event_set(
+            event_set_id, user=self._user, auths=self._auths)
+
+        if retcode >= 400:
+            if retcode != 422:  # Already exists
+                self._logger.debug("Exception when calling EventSetApi->delete_event_set: \n")
+                raise ApiException(http_resp=HTTPResponse(
+                    body=api_response, status=retcode))
+
+        return api_response
+
+    def download_event_set(self, event_set_id, start=None, count=None):
+
+        api_response, retcode = self.es_api_instance.download_event_set(
+            event_set_id, start, count, user=self._user, auths=self._auths)
+
+        if retcode >= 400:
+            if retcode != 422:  # Already exists
+                self._logger.debug("Exception when calling EventSetApi->download_event_set: \n")
                 raise ApiException(http_resp=HTTPResponse(
                     body=api_response, status=retcode))
 
@@ -82,7 +108,7 @@ class LocalBackboneDAO(AbstractBackboneDAO):
 
         if retcode >= 400:
             raise ApiException(http_resp=HTTPResponse(
-                body=created, status=retcode))
+                body=f'"{created}"\n', status=retcode))
 
         return created
 
@@ -143,6 +169,22 @@ class LocalBackboneDAO(AbstractBackboneDAO):
 
         return existing
 
+    def download_sampling_events_by_event_set(self, event_set_name, start=None,
+                                          count=None):
+
+        found_events, retcode = self.se_api_instance.download_sampling_events_by_event_set(urllib.parse.quote_plus(event_set_name),
+                                                                                           start,
+                                                                                           count,
+                                                                                           user=self._user,
+                                                                                           auths=self._auths)
+
+        self._logger.debug("GET /v1/samplingEvents/event_set/{} {}".format(event_set_name, retcode))
+        if retcode >= 400:
+            raise ApiException(http_resp=HTTPResponse(
+                body=found_events, status=retcode))
+
+        return found_events
+
     def download_sampling_events_by_attr(self, attr_type, attr_value):
 
         found_events, retcode = self.se_api_instance.download_sampling_events_by_attr(attr_type,
@@ -152,6 +194,22 @@ class LocalBackboneDAO(AbstractBackboneDAO):
 
         self._logger.debug("GET /v1/samplingEvents/attr/{}/{} {}".format(attr_type,
                                                                          attr_value, retcode))
+        if retcode >= 400:
+            raise ApiException(http_resp=HTTPResponse(
+                body=found_events, status=retcode))
+
+        return found_events
+
+    def download_sampling_events_by_study(self, study_name, start=None,
+                                          count=None):
+
+        found_events, retcode = self.se_api_instance.download_sampling_events_by_study(study_name,
+                                                                                       start,
+                                                                                       count,
+                                                                                       user=self._user, auths=self._auths)
+
+        self._logger.debug("GET /v1/samplingEvents/study/{} {}".format(study_name,
+                                                                         retcode))
         if retcode >= 400:
             raise ApiException(http_resp=HTTPResponse(
                 body=found_events, status=retcode))
@@ -205,7 +263,7 @@ class LocalBackboneDAO(AbstractBackboneDAO):
                                                                  retcode))
         if retcode >= 400:
             raise ApiException(http_resp=HTTPResponse(
-                body=ret, status=retcode))
+                body=f'"{ret}"\n', status=retcode))
 
         return ret
 
