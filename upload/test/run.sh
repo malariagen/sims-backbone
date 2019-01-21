@@ -22,6 +22,13 @@ if [ "${TRAVIS}" != "true" ]
 then
     source client-env/bin/activate
 fi
+if [ ! -z "${LOCAL_TEST}" ]
+then
+    if [ "${LOCAL_TEST}" -eq 1 ]
+    then
+        export BB_NOAUTH=1
+    fi
+fi
 if [ "$1" = "one" ]
 then
     python3 -m pytest -s -x -k $2
