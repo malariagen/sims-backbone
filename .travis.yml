@@ -23,7 +23,7 @@ script:
   - psql -c "DELETE FROM attrs;" -U ${POSTGRES_USER} backbone_service
   - psql -c "DELETE FROM studies;" -U ${POSTGRES_USER} backbone_service
   - psql -c "DELETE FROM taxonomies WHERE id=7227;" -U ${POSTGRES_USER} backbone_service
-  - (cd upload/test;./run.sh)
+  - (cd upload/test;LOCAL_TEST=1 ./run.sh)
   - (cd client/sims-backbone;xvfb-run -a ng test --no-watch --no-progress --browsers=ChromeNoSandbox --code-coverage)
     #  - (cd client/sims-backbone;xvfb-run -a ng e2e --no-progress --config=protractor-ci.conf.js)
 
@@ -42,9 +42,6 @@ before_script:
     - psql -c "SELECT postgis_full_version();" -U ${POSTGRES_USER} backbone_service
     - psql -c "\copy countries (English, French, alpha2, alpha3, numeric_code) FROM './database/country_codes.tsv' DELIMITER E'\t'  HEADER CSV; " -U ${POSTGRES_USER} backbone_service
     - psql -c "\copy taxonomies (id, rank, name) FROM './database/taxa.tsv' DELIMITER E'\t'  HEADER CSV;" -U ${POSTGRES_USER} backbone_service
-    - (cd server;./run.sh build noauth)
-    - (cd server;./run.sh &)
-    - sleep 5
     - export PYTHONPATH=$(pwd)/python_client:$(pwd)/server:$(pwd)/server/bb_server
     - export REMOTE_HOST_URL=http://localhost:8080/v1
 
