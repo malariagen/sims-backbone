@@ -77,13 +77,17 @@ class SetCountry(upload_ssr.Upload_SSR):
                     'id_value': id_value
                 }
                 try:
-                    found_events = self._dao.download_sampling_events_by_os_attr(id_type,
+                    found_samples = self._dao.download_original_samples_by_attr(id_type,
                                                                urllib.parse.quote_plus(id_value))
-                    if found_events:
-                        found = found_events.sampling_events[0]
+                    if found_samples:
+                        for found_sample in found_samples.original_samples:
+                            found_event = self._dao.download_sampling_event(found_sample.sampling_event_id)
+                            if found_event:
+                                found = found_event
+                                found_event.original_sample = found_sample
 
                 except AttributeError as e:
-                    print(found_events)
+                    print(found_samples)
                     print(e)
                     continue
                 except ApiException as e:
@@ -92,7 +96,7 @@ class SetCountry(upload_ssr.Upload_SSR):
                                                                                   id_column, e))
                     continue
 
-                self.set_country(found, country_value, filename, values)
+                self.set_country(found, found.original_sample, country_value, filename, values)
 
     def find_country_for_study(self, country_value, study, country_ident):
 
@@ -109,10 +113,11 @@ class SetCountry(upload_ssr.Upload_SSR):
 
             for named_loc in named_locations.locations:
                 for ident in named_loc.attrs:
-                    if ident.study_name[:4] == study[:4]:
-                        self._country_study_location_cache[study[:4]][country_value] = named_loc
-                        #print('Found location')
-                        return named_loc
+                    if ident.study_name:
+                        if ident.study_name[:4] == study[:4]:
+                            self._country_study_location_cache[study[:4]][country_value] = named_loc
+                            #print('Found location')
+                            return named_loc
         except ApiException as e:
             pass
 
@@ -151,7 +156,7 @@ class SetCountry(upload_ssr.Upload_SSR):
 
         return location
 
-    def set_country(self, found, country_value, filename, values):
+    def set_country(self, found, original_sample, country_value, filename, values):
 
         self.os_processor = OriginalSampleProcessor(self._dao, self._event_set)
         self.se_processor = SamplingEventProcessor(self._dao, self._event_set)
@@ -170,7 +175,7 @@ class SetCountry(upload_ssr.Upload_SSR):
         ident = swagger_client.Attr('partner_name',
                                           attr_value=self._country_cache[country_value].english,
                                           attr_source='set_country {}'.format(filename),
-                                          study_name=found.study_name)
+                                          study_name=original_sample.study_name)
 
 
         error = False
@@ -195,7 +200,8 @@ class SetCountry(upload_ssr.Upload_SSR):
 
         if not found.location:
 
-            location = self.find_country_for_study(country_value, found.study_name, ident)
+            location = self.find_country_for_study(country_value,
+                                                   original_sample.study_name, ident)
 
             if location:
                 try:
@@ -215,8 +221,9 @@ class SetCountry(upload_ssr.Upload_SSR):
         if found.location:
             if found.location.attrs:
                 for attr in found.location.attrs:
-                    if attr.study_name[:4] == found.study_name[:4]:
-                        study_ident = True
+                    if attr.study_name:
+                        if attr.study_name[:4] == original_sample.study_name[:4]:
+                            study_ident = True
 
         if not study_ident:
             if found.location:
@@ -233,7 +240,7 @@ class SetCountry(upload_ssr.Upload_SSR):
                                 {'attr_source': ident.attr_source,
                                  'identifer_value' : ident.attr_value,
                                  'attr_type': ident.attr_type,
-                                 'study_id': found.study_name,
+                                 'study_id': original_sample.study_name,
                                  'latitude': found.location.latitude,
                                  'longitude': found.location.longitude,
                                  'sampling_event_id': found.sampling_event_id
@@ -261,7 +268,7 @@ class SetCountry(upload_ssr.Upload_SSR):
             return None
 
         if item:
-            item = self.set_country(item, values['iso2'], self._data_file, values)
+            item = self.set_country(item, o_sample, values['iso2'], self._data_file, values)
         else:
             self.os_processor.report("sampling event not found - probably duplicate key", values)
 

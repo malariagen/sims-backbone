@@ -55,17 +55,16 @@ class SamplingEventFetch():
         if not sampling_event_id:
             return None
 
-        stmt = '''SELECT sampling_events.id, studies.study_name AS study_id, doc, doc_accuracy,
+        stmt = '''SELECT sampling_events.id, doc, doc_accuracy,
                             location_id, proxy_location_id
         FROM sampling_events
-        LEFT JOIN studies ON studies.id = sampling_events.study_id
         WHERE sampling_events.id = %s'''
         cursor.execute( stmt, (sampling_event_id,))
 
         sampling_event = None
 
-        for (sampling_event_id, study_id, doc, doc_accuracy, location_id, proxy_location_id) in cursor:
-            sampling_event = SamplingEvent(str(sampling_event_id), study_name=study_id,
+        for (sampling_event_id, doc, doc_accuracy, location_id, proxy_location_id) in cursor:
+            sampling_event = SamplingEvent(str(sampling_event_id),
                                    doc=doc, doc_accuracy=doc_accuracy)
             if location_id:
                 sampling_event.location_id = str(location_id)

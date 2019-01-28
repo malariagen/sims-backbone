@@ -45,7 +45,7 @@ class TestEventSets(TestBase):
             event_set = 'EventSet2'
             created = api_instance.create_event_set(event_set)
 
-            samp = swagger_client.SamplingEvent(None, '4000-MD-UP', date(2017, 10, 10))
+            samp = swagger_client.SamplingEvent(None, date(2017, 10, 10))
             created = event_api_instance.create_sampling_event(samp)
 
             created_set = api_instance.create_event_set_item(event_set, created.sampling_event_id)
@@ -337,10 +337,10 @@ class TestEventSets(TestBase):
             event_set = 'EventSet8'
             created = api_instance.create_event_set(event_set)
 
-            samp = swagger_client.SamplingEvent(None, '4001-MD-UP', date(2017, 10, 10))
+            samp = swagger_client.SamplingEvent(None, date(2017, 10, 10))
             created = event_api_instance.create_sampling_event(samp)
 
-            samp2 = swagger_client.SamplingEvent(None, '4001-MD-UP', date(2017, 10, 11))
+            samp2 = swagger_client.SamplingEvent(None, date(2017, 10, 11))
             created2 = event_api_instance.create_sampling_event(samp2)
 
             created_set = api_instance.create_event_set_item(event_set, created.sampling_event_id)
@@ -444,7 +444,7 @@ class TestEventSets(TestBase):
             event_set = 'EventSet11'
             created = api_instance.create_event_set(event_set)
 
-            samp = swagger_client.SamplingEvent(None, '4000-MD-UP', date(2017, 10, 10))
+            samp = swagger_client.SamplingEvent(None, date(2017, 10, 10))
             created = event_api_instance.create_sampling_event(samp)
 
             created_set = api_instance.create_event_set_item(event_set, created.sampling_event_id)
@@ -472,7 +472,7 @@ class TestEventSets(TestBase):
             event_set = 'EventSet12'
             created = api_instance.create_event_set(event_set)
 
-            samp = swagger_client.SamplingEvent(None, '4000-MD-UP', date(2017, 10, 10))
+            samp = swagger_client.SamplingEvent(None, date(2017, 10, 10))
             created = event_api_instance.create_sampling_event(samp)
 
             created_set = api_instance.create_event_set_item(event_set, created.sampling_event_id)

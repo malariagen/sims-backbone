@@ -128,12 +128,7 @@ class Upload_ROMA(uploader.Uploader):
             #Item wasn't processed but should be messages elsewhere
             return
 
-        if 'study_id' in input_values:
-            if input_values['study_id'][:4] != output_values.study_name[:4]:
-                if input_values['study_id'][:4] != '0000':
-                    pass
-                    #print("Conflicting study id {} {}".format(input_values, output_values))
-        else:
+        if 'study_id' not in input_values:
             print("No study id {} {}".format(input_values, output_values))
 
 if __name__ == '__main__':

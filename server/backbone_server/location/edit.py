@@ -66,10 +66,9 @@ class LocationEdit():
         JOIN attrs a ON a.id = li.attr_id
         LEFT JOIN sampling_events se ON
             (se.location_id = li.location_id OR se.proxy_location_id = li.location_id)
-                AND se.study_id = a.study_id
-        WHERE se.id IS NULL AND li.location_id = %s group by a.study_id, li.location_id, a.id;'''
+        WHERE se.id IS NULL AND li.location_id = %s AND a.study_id = %s group by a.study_id, li.location_id, a.id;'''
 
-        cursor.execute(stmt, (location_id,))
+        cursor.execute(stmt, (location_id, old_study_id,))
 
         obsolete_idents = []
         for (attr_id, study_id, location_id) in cursor:

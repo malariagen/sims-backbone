@@ -62,6 +62,13 @@ class SamplingEventEdit():
     def add_attrs(cursor, uuid_val, sampling_event):
         if sampling_event.attrs:
             for ident in sampling_event.attrs:
+                study_id = None
+
+                if ident.study_name:
+                    study_id = SamplingEventEdit.fetch_study_id(cursor,
+                                                                ident.study_name,
+                                                                True)
+
                 if not (ident.attr_type == 'partner_id' or \
                         ident.attr_type == 'individual_id'):
                     cursor.execute('''SELECT * FROM attrs
@@ -74,7 +81,6 @@ class SamplingEventEdit():
                     if cursor.fetchone():
                         raise DuplicateKeyException("Error inserting sampling_event attr {} {}"
                                                     .format(ident.attr_type, sampling_event))
-
                     cursor.execute('''SELECT * FROM attrs
                                    JOIN sampling_event_attrs ON sampling_event_attrs.attr_id =
                                    attrs.id
@@ -88,10 +94,10 @@ class SamplingEventEdit():
 
                 attr_id = uuid.uuid4()
                 stmt = '''INSERT INTO attrs
-                    (id, attr_type, attr_value, attr_source)
-                    VALUES (%s, %s, %s, %s)'''
+                    (id, attr_type, attr_value, attr_source, study_id)
+                    VALUES (%s, %s, %s, %s, %s)'''
                 cursor.execute(stmt, (attr_id, ident.attr_type, ident.attr_value,
-                                      ident.attr_source))
+                                      ident.attr_source, study_id))
 
                 stmt = '''INSERT INTO sampling_event_attrs
                     (sampling_event_id, attr_id)

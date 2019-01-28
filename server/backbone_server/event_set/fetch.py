@@ -70,7 +70,7 @@ class EventSetFetch():
         count_args = args
         count_query = 'SELECT COUNT(sampling_events.id) ' + query_body
 
-        query_body = query_body + ''' ORDER BY doc, study_id, id'''
+        query_body = query_body + ''' ORDER BY doc, id'''
 
         if not (start is None and count is None):
             if count and count > 0:

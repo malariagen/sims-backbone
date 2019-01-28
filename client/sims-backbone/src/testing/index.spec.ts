@@ -71,8 +71,7 @@ export function getTestSamplingEvents() {
             ],
             "location_id": "ba58650c-f365-41bd-a73d-d8517e9a01e5",
             "public_location_id": "ba58650c-f365-41bd-a73d-d8517e9a01e5",
-            "sampling_event_id": "0b0593ae-c613-42b6-8d3f-2bec2b3bd29c",
-            "study_name": "9999"
+            "sampling_event_id": "0b0593ae-c613-42b6-8d3f-2bec2b3bd29c"
           },
           {
             "doc": "2003-06-01",
@@ -90,8 +89,7 @@ export function getTestSamplingEvents() {
             ],
             "location_id": "ba58650c-f365-41bd-a73d-d8517e9a01e5",
             "public_location_id": "ba58650c-f365-41bd-a73d-d8517e9a01e5",
-            "sampling_event_id": "6890728f-c5e0-4c16-ac6d-b2505188a72b",
-            "study_name": "9999"
+            "sampling_event_id": "6890728f-c5e0-4c16-ac6d-b2505188a72b"
           }
         ]
       }

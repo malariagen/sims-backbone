@@ -309,7 +309,7 @@ class SamplingEventProcessor(BaseEntity):
         if 'study_id' in values:
             study_id = values['study_id']
 
-        samp = swagger_client.SamplingEvent(None, study_name = study_id, doc = doc)
+        samp = swagger_client.SamplingEvent(None, doc = doc)
 
         if doc_accuracy:
             samp.doc_accuracy = doc_accuracy
@@ -474,43 +474,6 @@ class SamplingEventProcessor(BaseEntity):
         change_reasons = []
 
 #        print("existing {} {}".format(existing, study_id))
-        if samp.study_name:
-            if existing.study_name:
-                if samp.study_name != existing.study_name:
-                    if samp.study_name[:4] == existing.study_name[:4]:
-                        #print("#Short and full study ids used {} {} {}".format(values, study_id, existing.study_name))
-                        pass
-                    else:
-                        if not (existing.study_name[:4] == '0000' or samp.study_name[:4] == '0000'):
-                            self.report_conflict(existing,"Study",
-                                                 existing.study_name, samp.study_name,
-                                                 "", values)
-
-                        if not samp.study_name[:4] == '0000':
-                            if ((int(samp.study_name[:4]) < int(existing.study_name[:4]) or
-                                 existing.study_name[:4] == '0000') and
-                                (samp.study_name[:4] != '1089')):
-                                self.set_additional_event(existing.sampling_event_id,
-                                                          existing.study_name)
-                                existing.study_name = samp.study_name
-                                new_ident_value = True
-                                change_reasons.append('Updated study')
-                            else:
-                                if not (samp.study_name[:4] == '0000' or samp.study_name[:4] == '1089'):
-                                    self.set_additional_event(existing.sampling_event_id,
-                                                              samp.study_name)
-            else:
-                existing.study_name = samp.study_name
-                new_ident_value = True
-                change_reasons.append('Set study')
-        else:
-            if existing.study_name:
-#                    print("Adding loc ident {} {}".format(location_name, existing.study_name))
-                self.add_location_attr(existing.study_name, location, '', location_name,
-                                             values)
-                self.add_location_attr(existing.study_name, proxy_location, 'proxy_',
-                                         proxy_location_name, values)
-
         if samp.doc:
             if existing.doc:
                 if samp.doc != existing.doc:

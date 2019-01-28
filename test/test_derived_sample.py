@@ -582,7 +582,7 @@ class TestDerivativeSample(TestBase):
 
             created_es = es_api_instance.create_event_set(event_set_name)
 
-            sampling_event = swagger_client.SamplingEvent(None, '4026-MD-UP', date(2017, 10, 10),
+            sampling_event = swagger_client.SamplingEvent(None, date(2017, 10, 10),
                                                           doc_accuracy='month')
 
             created_se = se_api_instance.create_sampling_event(sampling_event)

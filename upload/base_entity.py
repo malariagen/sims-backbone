@@ -73,7 +73,6 @@ class BaseEntity(object, metaclass=BaseEntityProperties):
 
         if sampling_event:
             event_id = sampling_event.sampling_event_id
-            study_name = sampling_event.study_name
 
         msg = "Conflicting {} value\t{}\t{}\t{}\t{}\t{}".format(report_type, message,
                                                                 event_id, study_name,

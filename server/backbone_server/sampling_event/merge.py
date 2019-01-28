@@ -39,19 +39,6 @@ class SamplingEventMerge():
                 if not sampling_event2:
                     raise MissingKeyException("No sampling_event {}".format(merged))
 
-        if sampling_event1.study_name:
-            if sampling_event2.study_name:
-                if sampling_event1.study_name[:4] == '0000':
-                    sampling_event1.study_name = sampling_event2.study_name
-                elif sampling_event2.study_name[:4] == '0000':
-                    pass
-                elif sampling_event1.study_name != sampling_event2.study_name:
-                    msg = 'Incompatible study_name {} {}'.format(sampling_event1.study_name,
-                                                       sampling_event2.study_name)
-                    raise IncompatibleException(msg)
-        else:
-            sampling_event1.study_name = sampling_event2.study_name
-
         if sampling_event1.doc:
             if sampling_event2.doc:
                 if sampling_event1.doc != sampling_event2.doc:

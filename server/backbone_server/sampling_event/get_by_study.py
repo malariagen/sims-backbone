@@ -29,8 +29,9 @@ class SamplingEventsGetByStudy():
 
                 fields = '''SELECT sampling_events.id '''
                 query_body = ''' FROM sampling_events
-                        LEFT JOIN studies ON studies.id = sampling_events.study_id
-                        WHERE study_id = %s'''
+                        LEFT JOIN original_samples os ON os.sampling_event_id = sampling_events.id
+                        LEFT JOIN studies ON studies.id = os.study_id
+                        WHERE os.study_id = %s'''
                 args = (study_id,)
 
                 count_args = args

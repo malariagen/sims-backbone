@@ -14,8 +14,6 @@ export class SamplingEventDisplayPipe implements PipeTransform {
       return value.sampling_event_id
     } else if (key == 'doc') {
       ret = value.doc;
-    } else if (key == 'study_id') {
-      ret = value.study_name;
     } else if (key == 'location') {
       if (value.location_id) {
         let loc = locations[value.location_id];
@@ -34,9 +32,8 @@ export class SamplingEventDisplayPipe implements PipeTransform {
         if (location.attrs) {
           location.attrs.forEach(ident => {
             let ident_value = ident.attr_value;
-            if (studyId || value.study_name) {
-              if ((studyId && (ident.study_name == studyId)) ||
-              value.study_name && (ident.study_name == value.study_name)) {
+            if (studyId) {
+              if ((studyId && (ident.study_name == studyId))) {
                 ret = ident_value;
               }
             } else {

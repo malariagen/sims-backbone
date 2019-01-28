@@ -1,0 +1,65 @@
+definitions:
+  Locations:
+    type: object
+    properties:
+      locations:
+        type: array
+        items:
+          $ref: '#/definitions/Location'
+      count:
+        type: integer
+        description: Used when pagination is applied to return the number of results
+  Location:
+    type: object
+    properties:
+      location_id:
+        type: string
+#        format: uuid
+      latitude:
+        type: number
+      longitude:
+        type: number
+      accuracy:
+        type: string
+        enum:
+            - location
+            - building
+            - city
+            - region
+            - country
+      curated_name:
+        type: string
+      curation_method:
+        type: string
+      country:
+        type: string
+      notes:
+        type: string
+        nullable: true
+      attrs:
+        type: array
+        items:
+            $ref: './swagger.yaml#/definitions/Attr'
+  LocationMap:
+    type: object
+    description: 'A dictionary of location id and values'
+    additionalProperties:
+      type: object
+      properties:
+        location_id:
+          type: string
+          description: 'A location id in uuid format'
+#          format: uuid
+        location:
+          description: 'Location properties'
+          type: object
+          $ref: '#/definitions/Location'
+  Country:
+    type: object
+    properties:
+      english:
+        type: string
+      alpha2:
+        type: string
+      alpha3:
+        type: string

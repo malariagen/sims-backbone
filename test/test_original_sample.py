@@ -216,7 +216,7 @@ class TestOriginalSample(TestBase):
 
         try:
 
-            sampling_event = swagger_client.SamplingEvent(None, '4026-MD-UP', date(2017, 10, 10),
+            sampling_event = swagger_client.SamplingEvent(None, date(2017, 10, 10),
                                                           doc_accuracy='month')
 
             created_se = se_api_instance.create_sampling_event(sampling_event)
@@ -423,7 +423,7 @@ class TestOriginalSample(TestBase):
         try:
             study_code = '4020-MD-UP'
 
-            sampling_event = swagger_client.SamplingEvent(None, '4026-MD-UP', date(2017, 10, 10),
+            sampling_event = swagger_client.SamplingEvent(None, date(2017, 10, 10),
                                                           doc_accuracy='month')
 
             created_se = se_api_instance.create_sampling_event(sampling_event)
@@ -644,7 +644,7 @@ class TestOriginalSample(TestBase):
 
         try:
 
-            sampling_event = swagger_client.SamplingEvent(None, '4024-MD-UP', date(2017, 10, 10),
+            sampling_event = swagger_client.SamplingEvent(None, date(2017, 10, 10),
                                                           doc_accuracy='month')
             loc = swagger_client.Location(None, 27.463, 90.495, 'city',
                                           'Trongsa, Trongsa, Bhutan', 'test_create_with_locations', 'BTN')
@@ -704,7 +704,7 @@ class TestOriginalSample(TestBase):
 
             created_es = es_api_instance.create_event_set(event_set_name)
 
-            sampling_event = swagger_client.SamplingEvent(None, '4026-MD-UP', date(2017, 10, 10),
+            sampling_event = swagger_client.SamplingEvent(None, date(2017, 10, 10),
                                                           doc_accuracy='month')
 
             created_se = se_api_instance.create_sampling_event(sampling_event)
@@ -752,7 +752,7 @@ class TestOriginalSample(TestBase):
 
         try:
 
-            sampling_event = swagger_client.SamplingEvent(None, '4025-MD-UP', date(2017, 10, 10),
+            sampling_event = swagger_client.SamplingEvent(None, date(2017, 10, 10),
                                                           doc_accuracy='month')
             loc = swagger_client.Location(None, 27.463, 90.495, 'city',
                                           'Trongsa, Trongsa, Bhutan', 'test_create_with_locations', 'BTN')
@@ -830,7 +830,7 @@ class TestOriginalSample(TestBase):
 
         try:
 
-            sampling_event = swagger_client.SamplingEvent(None, '4026-MD-UP', date(2017, 10, 10),
+            sampling_event = swagger_client.SamplingEvent(None, date(2017, 10, 10),
                                                           doc_accuracy='month')
 
             created_se = se_api_instance.create_sampling_event(sampling_event)
@@ -1322,13 +1322,13 @@ class TestOriginalSample(TestBase):
 
             #Uses partner_id because only partner_id and individual_id are allowed to
             #have the same value assigned to different sampling events
-            samp1 = swagger_client.SamplingEvent(None, '6000-MD-UP', date(2017, 10, 16))
+            samp1 = swagger_client.SamplingEvent(None, date(2017, 10, 16))
             samp1.attrs = [
                 swagger_client.Attr (attr_type='partner_id', attr_value='mrg1-12345678',
                                      attr_source='mrg')
             ]
             samp1.doc_accuracy = 'day'
-            samp2 = swagger_client.SamplingEvent(None, '6000-MD-UP', date(2017, 10, 16))
+            samp2 = swagger_client.SamplingEvent(None, date(2017, 10, 16))
             samp2.attrs = [
                 swagger_client.Attr (attr_type='partner_id', attr_value='mrg2-12345678',
                                      attr_source='mrg')

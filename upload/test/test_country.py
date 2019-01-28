@@ -168,10 +168,9 @@ class TestCountry(TestBase):
     def test_country_specific(self):
 
         try:
-            looked_up = self._dao.download_sampling_events_by_os_attr('partner_id',
-                                                                           'MDG/TST_0001')
-
-            looked_up = looked_up.sampling_events[0]
+            original_sample = self._dao.download_original_samples_by_attr('partner_id',
+                                                                          'MDG/TST_0001').original_samples[0]
+            looked_up = self._dao.download_sampling_event(original_sample.sampling_event_id)
 
             #print(looked_up)
             self.assertEqual(looked_up.proxy_location.country, 'MDG')
@@ -182,9 +181,9 @@ class TestCountry(TestBase):
             self.assertEqual(looked_up.location.latitude, -16.94223)
             self.assertEqual(looked_up.location.longitude, 46.83144)
             for ident in looked_up.location.attrs:
-                if ident.study_name[:4] == looked_up.study_name[:4]:
+                if ident.study_name[:4] == original_sample.study_name[:4]:
                     self.assertEqual(ident.attr_value, 'Maevatanana')
-            self.assertEqual(looked_up.study_name[:4], '9050')
+            self.assertEqual(original_sample.study_name[:4], '9050')
 
             if looked_up.location_id not in TestCountry._locations:
                 TestCountry._locations.append(looked_up.location_id)
@@ -208,7 +207,6 @@ class TestCountry(TestBase):
             self.assertEqual(looked_up.location.country, 'BEN')
             self.assertEqual(looked_up.location.latitude, 9.30769)
             self.assertEqual(looked_up.location.longitude, 2.315834)
-            self.assertEqual(looked_up.study_name[:4], '0000')
             if looked_up.location_id not in TestCountry._locations:
                 TestCountry._locations.append(looked_up.location_id)
         except ApiException as error:
@@ -228,7 +226,6 @@ class TestCountry(TestBase):
             self.assertEqual(looked_up.location.country, 'MDG')
             self.assertEqual(looked_up.location.latitude, -18.766947)
             self.assertEqual(looked_up.location.longitude, 46.869107)
-            self.assertEqual(looked_up.study_name[:4], '9051')
             if looked_up.location_id not in TestCountry._locations:
                 TestCountry._locations.append(looked_up.location_id)
         except ApiException as error:
@@ -241,18 +238,18 @@ class TestCountry(TestBase):
 
         try:
 
-            looked_up = self._dao.download_sampling_events_by_os_attr('partner_id',
-                                                                           'MDG/TST_0004')
+            original_sample = self._dao.download_original_samples_by_attr('partner_id',
+                                                                          'MDG/TST_0004').original_samples[0]
+            looked_up = self._dao.download_sampling_event(original_sample.sampling_event_id)
 
-            looked_up = looked_up.sampling_events[0]
             self.assertEqual(looked_up.proxy_location.country, 'MDG')
             self.assertEqual(looked_up.proxy_location.latitude, -19.0)
             self.assertEqual(looked_up.proxy_location.longitude, 47.0)
             self.assertEqual(looked_up.proxy_location.attrs[0].attr_value, 'Madagascar')
 
             msgs = [
-                "Conflicting Country value\tnot updated {{'accuracy': None, 'attrs': [{{'attr_source': 'countries', 'attr_type': 'partner_name', 'attr_value': 'Maevatanana', 'study_name': '9052'}}], 'country': 'MDG', 'curated_name': None, 'curation_method': None, 'latitude': -16.94223, 'location_id': '{location_id}', 'longitude': 46.83144, 'notes': 'countries'}}\t{event_id}\t9052\tMDG\tIN\t[('id_value', 'CT0004-C')]".format(location_id=looked_up.location_id, event_id=looked_up.sampling_event_id),
-                "Conflicting Country value\tproxy not updated {{'accuracy': None, 'attrs': [{{'attr_source': 'countries', 'attr_type': 'partner_name', 'attr_value': 'Madagascar', 'study_name': '9052'}}], 'country': 'MDG', 'curated_name': None, 'curation_method': None, 'latitude': -19.0, 'location_id': '{location_id}', 'longitude': 47.0, 'notes': 'countries'}}\t{event_id}\t9052\tMDG\tIN\t[('id_value', 'CT0004-C')]".format(location_id=looked_up.proxy_location_id, event_id=looked_up.sampling_event_id)
+                "Conflicting Country value\tnot updated {{'accuracy': None, 'attrs': [{{'attr_source': 'countries', 'attr_type': 'partner_name', 'attr_value': 'Maevatanana', 'study_name': '9052'}}], 'country': 'MDG', 'curated_name': None, 'curation_method': None, 'latitude': -16.94223, 'location_id': '{location_id}', 'longitude': 46.83144, 'notes': 'countries'}}\t{event_id}\t\tMDG\tIN\t[('id_value', 'CT0004-C')]".format(location_id=looked_up.location_id, event_id=looked_up.sampling_event_id),
+                "Conflicting Country value\tproxy not updated {{'accuracy': None, 'attrs': [{{'attr_source': 'countries', 'attr_type': 'partner_name', 'attr_value': 'Madagascar', 'study_name': '9052'}}], 'country': 'MDG', 'curated_name': None, 'curation_method': None, 'latitude': -19.0, 'location_id': '{location_id}', 'longitude': 47.0, 'notes': 'countries'}}\t{event_id}\t\tMDG\tIN\t[('id_value', 'CT0004-C')]".format(location_id=looked_up.proxy_location_id, event_id=looked_up.sampling_event_id)
             ]
 
             for msg in msgs:
@@ -262,9 +259,9 @@ class TestCountry(TestBase):
             self.assertEqual(looked_up.location.latitude, -16.94223)
             self.assertEqual(looked_up.location.longitude, 46.83144)
             for ident in looked_up.location.attrs:
-                if ident.study_name[:4] == looked_up.study_name[:4]:
+                if ident.study_name[:4] == original_sample.study_name[:4]:
                     self.assertNotEqual(ident.attr_value, 'India')
-            self.assertEqual(looked_up.study_name[:4], '9052')
+            self.assertEqual(original_sample.study_name[:4], '9052')
             if looked_up.location_id not in TestCountry._locations:
                 TestCountry._locations.append(looked_up.location_id)
         except ApiException as error:

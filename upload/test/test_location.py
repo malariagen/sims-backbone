@@ -201,13 +201,13 @@ class TestLocation(TestBase):
     def test_location_name_study(self):
 
         try:
-            looked_up = self._dao.download_sampling_events_by_os_attr('oxford_id', 'AG0001-C')
-
-            looked_up = looked_up.sampling_events[0]
+            original_sample = self._dao.download_original_samples_by_attr('oxford_id',
+                                                                          'AG0001-C').original_samples[0]
+            looked_up = self._dao.download_sampling_event(original_sample.sampling_event_id)
 
             self.assertIsNotNone(looked_up.location)
 
-            self.assertEqual(looked_up.location.attrs[0].study_name[:4], looked_up.study_name[:4])
+            self.assertEqual(looked_up.location.attrs[0].study_name[:4], original_sample.study_name[:4])
 
             if looked_up.location_id not in TestLocation._locations:
                 TestLocation._locations.append(looked_up.location_id)

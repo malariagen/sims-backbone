@@ -31,7 +31,7 @@ class SamplingEventGetByOsAttr():
                     JOIN attrs ON attrs.id = original_sample_attrs.attr_id
                     JOIN original_samples ON original_samples.id = original_sample_attrs.original_sample_id
                     LEFT JOIN sampling_events ON original_samples.sampling_event_id=sampling_events.id
-                    LEFT JOIN studies ON sampling_events.study_id=studies.id
+                    LEFT JOIN studies ON original_samples.study_id=studies.id
                 WHERE attr_type = %s AND attr_value = %s AND study_code = %s'''
                     args = args + (study_name[:4],)
 

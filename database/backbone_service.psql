@@ -388,7 +388,6 @@ CREATE TABLE public.sampling_event_attrs (
 
 CREATE TABLE public.sampling_events (
     id uuid NOT NULL,
-    study_id uuid,
     doc date,
     doc_accuracy character varying,
     location_id uuid,
@@ -434,7 +433,6 @@ CREATE TABLE public.taxonomy_identifiers (
 
 CREATE VIEW public.v_sampling_events AS
  SELECT sampling_events.id,
-    sampling_events.study_id,
     sampling_events.doc,
     sampling_events.doc_accuracy,
     sampling_events.location_id,
@@ -458,7 +456,7 @@ CREATE VIEW public.v_sampling_events AS
    FROM ((((((public.sampling_events
      LEFT JOIN public.locations loc ON ((loc.id = sampling_events.location_id)))
      LEFT JOIN public.location_attrs li ON ((li.location_id = sampling_events.location_id)))
-     LEFT JOIN public.attrs la ON (((la.study_id = sampling_events.study_id) AND (li.attr_id = la.id) AND ((la.attr_type)::text = 'partner_name'::text))))
+     LEFT JOIN public.attrs la ON (((li.attr_id = la.id) AND ((la.attr_type)::text = 'partner_name'::text))))
      LEFT JOIN public.locations proxy_loc ON ((proxy_loc.id = sampling_events.proxy_location_id)))
      LEFT JOIN public.location_attrs pli ON ((pli.location_id = sampling_events.proxy_location_id)))
      LEFT JOIN public.attrs pla ON (((pla.study_id = sampling_events.study_id) AND (pli.attr_id = pla.id) AND ((pla.attr_type)::text = 'partner_name'::text))));

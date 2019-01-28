@@ -73,9 +73,10 @@ class TestSampling_Event(TestBase):
     def test_multiple_study(self):
 
 
+        original_sample = self._dao.download_original_samples_by_attr('oxford_id',
+                                                                      '123456').original_samples[0]
+        looked_up = self._dao.download_sampling_event(original_sample.sampling_event_id)
 
-        looked_up = self._dao.download_sampling_events_by_os_attr('oxford_id', '123456')
-        looked_up = looked_up.sampling_events[0]
 
         for study in ["9011 Upload test study", "9012 Upload test study 3"]:
             eset = "Additional events: {}".format(study)
@@ -87,7 +88,7 @@ class TestSampling_Event(TestBase):
             self.assertTrue(found, "Not added to additional events")
             self._dao.delete_event_set(eset)
 
-        self.assertEqual(looked_up.study_name, '9010 Upload test study 2', 'Not lowest study code')
+        self.assertEqual(original_sample.study_name, '9010 Upload test study 2', 'Not lowest study code')
 
         for study in ["0000-Unknown", "1089 R&D special study"]:
             eset = "Additional events: {}".format(study)
@@ -97,9 +98,9 @@ class TestSampling_Event(TestBase):
             self.assertEqual(context.exception.status, 404)
 
         messages = [
-            "Conflicting Study value\t\t{}\t9011 Upload test study\t9011 Upload test study\t9010 Upload test study 2\t[('sample_oxford_id', '123456'), ('study_id', '9010 Upload test study 2')]",
-            "Conflicting Study value\t\t{}\t9010 Upload test study 2\t9010 Upload test study 2\t9012 Upload test study 3\t[('sample_oxford_id', '123456'), ('study_id', '9012 Upload test study 3')]",
-            "Conflicting Study value\t\t{}\t9010 Upload test study 2\t9010 Upload test study 2\t1089 R&D special study\t[('sample_oxford_id', '123456'), ('study_id', '1089 R&D special study')]"
+            "Conflicting Study value\t\t{}\t\t9011 Upload test study\t9010 Upload test study 2\t[('sample_oxford_id', '123456'), ('study_id', '9010 Upload test study 2')]",
+            "Conflicting Study value\t\t{}\t\t9010 Upload test study 2\t9012 Upload test study 3\t[('sample_oxford_id', '123456'), ('study_id', '9012 Upload test study 3')]",
+            "Conflicting Study value\t\t{}\t\t9010 Upload test study 2\t1089 R&D special study\t[('sample_oxford_id', '123456'), ('study_id', '1089 R&D special study')]"
             ]
         for msg in messages:
             msg = msg.format(looked_up.sampling_event_id)
@@ -110,11 +111,13 @@ class TestSampling_Event(TestBase):
     def test_location_name_changed_study(self):
 
 
-        looked_up = self._dao.download_sampling_events_by_os_attr('oxford_id', '123456')
+        original_sample = self._dao.download_original_samples_by_attr('oxford_id',
+                                                                      '123456').original_samples[0]
+        looked_up = self._dao.download_sampling_event(original_sample.sampling_event_id)
 
-        if looked_up.sampling_events[0].location_id not in TestSampling_Event._locations:
-            TestSampling_Event._locations.append(looked_up.sampling_events[0].location_id)
+        if looked_up.location_id not in TestSampling_Event._locations:
+            TestSampling_Event._locations.append(looked_up.location_id)
 
-        assert len(looked_up.sampling_events[0].location.attrs) == 1, 'Too many location attrs {}'.format(looked_up)
-        assert looked_up.sampling_events[0].location.attrs[0].study_name == '9010 Upload test study 2', 'Study name in location not updated'
+        assert len(looked_up.location.attrs) == 1, 'Too many location attrs {}'.format(looked_up)
+        assert looked_up.location.attrs[0].study_name == '9010 Upload test study 2', 'Study name in location not updated'
 

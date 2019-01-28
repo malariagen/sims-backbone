@@ -23,12 +23,12 @@ class SamplingEventPut():
         with self._connection:
             with self._connection.cursor() as cursor:
 
-                stmt = '''SELECT id, study_id FROM sampling_events WHERE  id = %s'''
+                stmt = '''SELECT id FROM sampling_events WHERE  id = %s'''
                 cursor.execute( stmt, (sampling_event_id,))
 
                 existing_sampling_event = None
 
-                for (sampling_event_id, original_study_id) in cursor:
+                for (sampling_event_id, ) in cursor:
                     existing_sampling_event = SamplingEvent(sampling_event_id)
 
                 if not existing_sampling_event:
@@ -36,24 +36,16 @@ class SamplingEventPut():
 
                 SamplingEventEdit.check_date(sampling_event)
 
-                study_id = SamplingEventEdit.fetch_study_id(cursor, sampling_event.study_name, True)
-
-                if study_id != original_study_id:
-                    LocationEdit.update_attr_study(cursor, sampling_event.location_id,
-                                                         original_study_id, study_id)
-                    LocationEdit.update_attr_study(cursor, sampling_event.proxy_location_id,
-                                                         original_study_id, study_id)
-
                 SamplingEventEdit.check_location_details(cursor, sampling_event.location_id,
                                                          sampling_event.location)
                 SamplingEventEdit.check_location_details(cursor, sampling_event.proxy_location_id,
                                                          sampling_event.proxy_location)
 
                 stmt = '''UPDATE sampling_events
-                            SET study_id = %s, doc = %s, doc_accuracy = %s,
+                            SET doc = %s, doc_accuracy = %s,
                             location_id = %s, proxy_location_id = %s
                             WHERE id = %s'''
-                args = (study_id, sampling_event.doc, sampling_event.doc_accuracy,
+                args = (sampling_event.doc, sampling_event.doc_accuracy,
                         sampling_event.location_id, sampling_event.proxy_location_id,
                         sampling_event_id)
 
@@ -71,9 +63,6 @@ class SamplingEventPut():
                 except DuplicateKeyException as err:
                     raise err
 
-
-                LocationEdit.clean_up_attrs(cursor, sampling_event.location_id, original_study_id)
-                LocationEdit.clean_up_attrs(cursor, sampling_event.proxy_location_id, original_study_id)
 
                 sampling_event = SamplingEventFetch.fetch(cursor, sampling_event_id)
 

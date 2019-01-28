@@ -35,7 +35,7 @@ class SamplingEventsGetByTaxa():
                 query_body = ''' FROM sampling_events
                 LEFT JOIN original_samples os ON os.sampling_event_id = sampling_events.id
                 LEFT JOIN taxonomy_identifiers ti ON ti.partner_species_id = os.partner_species_id
-                LEFT JOIN studies ON studies.id = sampling_events.study_id
+                LEFT JOIN studies ON studies.id = os.study_id
                 WHERE ti.taxonomy_id = %s'''
                 args = (taxa_id,)
 

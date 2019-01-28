@@ -107,12 +107,7 @@ class Upload_SSR(uploader.Uploader):
         if not output_values:
             return
 
-        if 'study_id' in input_values:
-            if input_values['study_id'][:4] != output_values.study_name[:4]:
-                if input_values['study_id'][:4] != '0000':
-                    pass
-                    #print("Conflicting study id {} {}".format(input_values, output_values))
-        else:
+        if 'study_id' not in input_values:
             print("No study id {} {}".format(input_values, output_values))
 
 if __name__ == '__main__':

@@ -14,13 +14,13 @@ class TestStudies(TestBase):
 
     def test_download_studies(self, api_factory):
 
-        api_instance = api_factory.SamplingEventApi()
+        api_instance = api_factory.OriginalSampleApi()
         study_api = api_factory.StudyApi()
 
-        samp = swagger_client.SamplingEvent(None, '2000-MD-UP', date(2017, 10, 10),
-                                            doc_accuracy='month')
+        samp = swagger_client.OriginalSample(None,
+                                             study_name='2000-MD-UP')
         try:
-            created = api_instance.create_sampling_event(samp)
+            created = api_instance.create_original_sample(samp)
 
             studies = study_api.download_studies()
 
@@ -34,7 +34,7 @@ class TestStudies(TestBase):
 
             assert found, 'Study does not exist'
 
-            api_instance.delete_sampling_event(created.sampling_event_id)
+            api_instance.delete_original_sample(created.original_sample_id)
 
         except ApiException as error:
             self.check_api_exception(
@@ -224,19 +224,25 @@ class TestStudies(TestBase):
     def test_download_samples_by_study(self, api_factory):
 
         api_instance = api_factory.SamplingEventApi()
+        os_api_instance = api_factory.OriginalSampleApi()
         study_api = api_factory.StudyApi()
 
         try:
 
-            samp = swagger_client.SamplingEvent(None, study_name='2006-MD-UP',
+            samp = swagger_client.SamplingEvent(None,
                                                 doc_accuracy='month')
             created = api_instance.create_sampling_event(samp)
+            osamp = swagger_client.OriginalSample(None,
+                                                  study_name='2006-MD-UP')
+            osamp.sampling_event_id = created.sampling_event_id
+            os_created = os_api_instance.create_original_sample(osamp)
 
             events = api_instance.download_sampling_events_by_study(
                 '2006-MD-UP')
 
             assert events.count == 1, "Event expected"
 
+            os_api_instance.delete_original_sample(os_created.original_sample_id)
             api_instance.delete_sampling_event(created.sampling_event_id)
 
         except ApiException as error:
