@@ -46,7 +46,8 @@
                 "ref": "S3InputLocation"
             },
             "stage": "true",
-            "scriptUri": "",
+            "command": "",
+            "scriptArgument": [],
             "onFail": {
                 "ref": "ActionId_05Pwc"
             },

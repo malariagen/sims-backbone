@@ -34,14 +34,17 @@ SG_ID=$(aws cloudformation list-exports | jq ".Exports[] | select(.Name == \"sim
 SNS_ARN=$(aws sns list-topics --query 'Topics[*].TopicArn' | grep "sims_import_notification")
 
 #Two different ways of doing the same thing here
-jq ".values.myS3InputLoc = \"${BUCKET}/\" | \
-        .values.myS3OutputLoc = \"${BUCKET}/output/\" | \
+jq ".values.myS3InputLoc = \"${BUCKET}\" | \
+        .values.myS3OutputLoc = \"${BUCKET}/output\" | \
         .objects |= map(if .id==\"Default\" then .pipelineLogUri = \"${BUCKET}/logs/\" else . end) | \
         .objects |= map(if .id==\"EC2ResourceObj\" then .subnetId = ${SUBNETA} else . end) | \
         .objects |= map(if .id==\"EC2ResourceObj\" then .securityGroupIds = ${SG_ID} else . end) | \
         .objects |= map(if .type==\"SnsAlarm\" then .topicArn = ${SNS_ARN} else . end) | \
-        (.objects[] | select (.id == \"ShellCommandActivityObj\") | .scriptUri) |= \"${BUCKET}/import/setup.sh\" " definition.json > definition-${STAGE}.json
-
+        .objects |= map(if .id==\"ActionId_05Pwc\" then .subject = \"SIMS import ${STAGE} failed\" else . end) | \
+        .objects |= map(if .id==\"ActionId_rRmM7\" then .subject = \"SIMS import ${STAGE} succeeded\" else . end) | \
+        .objects |= map(if .type==\"SnsAlarm\" then .message = \"See https://alfresco.malariagen.net/share/page/site/sims/documentlibrary#filter=path%7C%2FImport%2520Logs%2F${STAGE}%7C&page=1 for details\" else . end) | \
+        .objects |= map(if .id==\"ShellCommandActivityObj\" then .scriptArgument += [ \"${STAGE}\" ] else . end) | \
+        (.objects[] | select (.id == \"ShellCommandActivityObj\") | .command) |= \"/bin/bash \${INPUT1_STAGING_DIR}/import/setup.sh ${STAGE}\" " definition.json > definition-${STAGE}.json
 
 PIPELINE_NAME=SIMS-IMPORT-${STAGE}
 PIPELINE_ID=$(aws datapipeline list-pipelines --query "pipelineIdList[?name=='${PIPELINE_NAME}'].id" --output=text)
