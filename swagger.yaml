@@ -126,7 +126,7 @@ paths:
         '200':
           description: successful operation
           schema:
-            $ref: './swagger/definitions/swagger.yaml#/definitions/Country'
+            $ref: './swagger/definitions/location.yaml#/definitions/Country'
   '/metadata/taxonomy':
     get:
       tags:
@@ -287,7 +287,7 @@ paths:
         '201':
           description: successful operation
           schema:
-            $ref: './swagger/definitions/swagger.yaml#/definitions/EventSet'
+            $ref: './swagger/definitions/sampling_event.yaml#/definitions/EventSet'
     get:
       tags:
         - eventSet
@@ -316,7 +316,7 @@ paths:
         '200':
           description: successful operation
           schema:
-            $ref: './swagger/definitions/swagger.yaml#/definitions/EventSet'
+            $ref: './swagger/definitions/sampling_event.yaml#/definitions/EventSet'
     put:
       tags:
         - eventSet
@@ -337,12 +337,12 @@ paths:
           name: eventSet
           required: true
           schema:
-            $ref: './swagger/definitions/swagger.yaml#/definitions/EventSet'
+            $ref: './swagger/definitions/sampling_event.yaml#/definitions/EventSet'
       responses:
         '200':
           description: successful operation
           schema:
-            $ref: './swagger/definitions/swagger.yaml#/definitions/EventSet'
+            $ref: './swagger/definitions/sampling_event.yaml#/definitions/EventSet'
         '404':
           description: EventSet not found
           schema:
@@ -441,7 +441,7 @@ paths:
           name: note
           required: true
           schema:
-            $ref: './swagger/definitions/swagger.yaml#/definitions/EventSetNote'
+            $ref: './swagger/definitions/sampling_event.yaml#/definitions/EventSetNote'
       responses:
         '201':
           description: successful operation
@@ -470,7 +470,7 @@ paths:
           name: note
           required: true
           schema:
-            $ref: './swagger/definitions/swagger.yaml#/definitions/EventSetNote'
+            $ref: './swagger/definitions/sampling_event.yaml#/definitions/EventSetNote'
       responses:
         '200':
           description: successful operation
@@ -513,7 +513,7 @@ paths:
         '200':
           description: successful operation
           schema:
-            $ref: './swagger/definitions/swagger.yaml#/definitions/EventSets'
+            $ref: './swagger/definitions/sampling_event.yaml#/definitions/EventSets'
   '/missingTaxon':
     get:
       tags:

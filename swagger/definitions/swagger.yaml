@@ -1,118 +1,4 @@
 definitions:
-  SamplingEvents:
-    type: object
-    properties:
-      sampling_events:
-        type: array
-        items:
-          $ref: '#/definitions/SamplingEvent'
-      locations:
-        $ref: '#/definitions/LocationMap'
-      attr_types:
-          type: array
-          items:
-            type: string
-            description: 'Attr types used in this set of sampling events'
-      count:
-        type: integer
-        description: Used when pagination is applied to return the number of results
-  SamplingEvent:
-    type: object
-    properties:
-      sampling_event_id:
-        type: string
-#        format: uuid
-      study_name:
-        type: string
-      doc:
-        type: string
-        format: date
-        description: 'Date of collection'
-      doc_accuracy:
-        type: string
-        enum:
-            - day
-            - month
-            - year
-      location_id:
-        type: string
-#        format: uuid
-      location:
-        $ref: '#/definitions/Location'
-      proxy_location_id:
-        type: string
-#        format: uuid
-      proxy_location:
-        $ref: '#/definitions/Location'
-      public_location_id:
-        description: 'proxy location if set otherwise location'
-        type: string
-      public_location:
-        description: 'proxy location if set otherwise location'
-        $ref: '#/definitions/Location'
-      attrs:
-        type: array
-        items:
-            $ref: '#/definitions/Attr'
-      event_sets:
-        type: array
-        items:
-            type: string
-  Locations:
-    type: object
-    properties:
-      locations:
-        type: array
-        items:
-          $ref: '#/definitions/Location'
-      count:
-        type: integer
-        description: Used when pagination is applied to return the number of results
-  Location:
-    type: object
-    properties:
-      location_id:
-        type: string
-#        format: uuid
-      latitude:
-        type: number
-      longitude:
-        type: number
-      accuracy:
-        type: string
-        enum:
-            - location
-            - building
-            - city
-            - region
-            - country
-      curated_name:
-        type: string
-      curation_method:
-        type: string
-      country:
-        type: string
-      notes:
-        type: string
-        nullable: true
-      attrs:
-        type: array
-        items:
-            $ref: '#/definitions/Attr'
-  LocationMap:
-    type: object
-    description: 'A dictionary of location id and values'
-    additionalProperties:
-      type: object
-      properties:
-        location_id:
-          type: string
-          description: 'A location id in uuid format'
-#          format: uuid
-        location:
-          description: 'Location properties'
-          type: object
-          $ref: '#/definitions/Location'
   Attr:
     type: object
     properties:
@@ -123,15 +9,6 @@ definitions:
       attr_source:
         type: string
       study_name:
-        type: string
-  Country:
-    type: object
-    properties:
-      english:
-        type: string
-      alpha2:
-        type: string
-      alpha3:
         type: string
   Studies:
     type: object
@@ -157,31 +34,4 @@ definitions:
           items:
             $ref: './original_sample.yaml#/definitions/PartnerSpecies'
       locations:
-          $ref: '#/definitions/Locations'
-  EventSetNote:
-    type: object
-    required:
-        - note_name
-    properties:
-      note_name:
-        type: string
-      note_text:
-        type: string
-  EventSet:
-    type: object
-    properties:
-      event_set_name:
-        type: string
-      members:
-        $ref: '#/definitions/SamplingEvents'
-      notes:
-        type: array
-        items:
-          $ref: '#/definitions/EventSetNote'
-  EventSets:
-    type: object
-    properties:
-      event_sets:
-        type: array
-        items:
-          $ref: '#/definitions/EventSet'
+          $ref: './location.yaml#/definitions/Locations'

@@ -89,4 +89,4 @@ definitions:
 #          format: uuid
         sampling_event:
           type: object
-          $ref: '#/definitions/SamplingEvent'
+          $ref: './swagger/definitions/sampling_event.yaml#/definitions/SamplingEvent'

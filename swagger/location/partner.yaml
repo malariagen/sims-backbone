@@ -16,7 +16,7 @@
         '200':
           description: successful operation
           schema:
-            $ref: './swagger/definitions/swagger.yaml#/definitions/Locations'
+            $ref: './swagger/definitions/location.yaml#/definitions/Locations'
         '404':
           description: 'location not found'
           schema:
