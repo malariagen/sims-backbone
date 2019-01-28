@@ -1,5 +1,5 @@
 #!/bin/bash
-export TOKEN_URL=https://sso3.malariagen.net/sso/oauth2.0/accessToken
+export TOKEN_URL=https://www.malariagen.net/sso/oauth2.0/accessToken
 export PYTHONPATH=$(pwd)/../python_client:$(pwd)/../server:$(pwd)/../server/bb_server
 if [ ! -d client-env ]
 then

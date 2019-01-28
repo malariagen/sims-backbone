@@ -2,7 +2,7 @@
 set -e
 if [ "${TRAVIS}" != "true" ]
 then
-  export TOKEN_URL=https://sso3.malariagen.net/sso/oauth2.0/accessToken
+  export TOKEN_URL=https://www.malariagen.net/sso/oauth2.0/accessToken
 fi
 export PYTHONPATH=$(pwd)/..:$(pwd)/../../python_client:$(pwd)/../../server:$(pwd)/../../server/bb_server
 if [ ! -d client-env ]

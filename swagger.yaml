@@ -31,9 +31,9 @@ securityDefinitions:
     OauthSecurity:
       type: oauth2
       flow: accessCode
-      authorizationUrl: "https://sso3.malariagen.net/sso/oauth2.0/authorize"
-      tokenUrl: "https://sso3.malariagen.net/sso/oauth2.0/accessToken"
-      x-tokenInfoUrl: "https://sso3.malariagen.net/sso/oauth2.0/profile"
+      authorizationUrl: "https://www.malariagen.net/sso/oauth2.0/authorize"
+      tokenUrl: "https://www.malariagen.net/sso/oauth2.0/accessToken"
+      x-tokenInfoUrl: "https://www.malariagen.net/sso/oauth2.0/profile"
 paths:
   '/location':
     $ref: './swagger/location/create.yaml'
