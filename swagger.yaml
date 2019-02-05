@@ -65,6 +65,12 @@ paths:
     $ref: './swagger/sampling_event/by_taxa.yaml'
   '/samplingEvents/eventSet/{eventSetId}':
     $ref: './swagger/sampling_event/by_set.yaml'
+  '/individual':
+    $ref: './swagger/individual/create.yaml'
+  '/individual/{individualId}':
+    $ref: './swagger/individual/item.yaml'
+  '/individuals':
+    $ref: './swagger/individual/individuals.yaml'
   '/originalSample':
     $ref: './swagger/original_sample/create.yaml'
   '/originalSample/{originalSampleId}':

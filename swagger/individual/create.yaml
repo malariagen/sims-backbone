@@ -1,0 +1,20 @@
+    post:
+      tags:
+        - individual
+      description: 'Create a individual'
+      operationId: createIndividual
+      produces:
+        - application/json
+      consumes:
+        - application/json
+      parameters:
+        - in: body
+          name: individual
+          required: true
+          schema:
+            $ref: './swagger/definitions/individual.yaml#/definitions/Individual'
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: './swagger/definitions/individual.yaml#/definitions/Individual'

@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 9.6.9
--- Dumped by pg_dump version 9.6.9
+-- Dumped from database version 9.6.10
+-- Dumped by pg_dump version 9.6.10
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -17,7 +17,6 @@ SET row_security = off;
 
 ALTER TABLE ONLY public.taxonomy_identifiers DROP CONSTRAINT fk_taxa;
 ALTER TABLE ONLY public.attrs DROP CONSTRAINT fk_study_loc;
-ALTER TABLE ONLY public.sampling_events DROP CONSTRAINT fk_study;
 ALTER TABLE ONLY public.original_samples DROP CONSTRAINT fk_species;
 ALTER TABLE ONLY public.sampling_event_attrs DROP CONSTRAINT fk_sampling_event_attr;
 ALTER TABLE ONLY public.sampling_event_attrs DROP CONSTRAINT fk_sampling_event;
@@ -30,6 +29,9 @@ ALTER TABLE ONLY public.original_sample_attrs DROP CONSTRAINT fk_original_sample
 ALTER TABLE ONLY public.location_attrs DROP CONSTRAINT fk_location_attr;
 ALTER TABLE ONLY public.location_attrs DROP CONSTRAINT fk_location;
 ALTER TABLE ONLY public.sampling_events DROP CONSTRAINT fk_location;
+ALTER TABLE ONLY public.individual_attrs DROP CONSTRAINT fk_individual_attr;
+ALTER TABLE ONLY public.individual_attrs DROP CONSTRAINT fk_individual;
+ALTER TABLE ONLY public.sampling_events DROP CONSTRAINT fk_individual;
 ALTER TABLE ONLY public.event_set_notes DROP CONSTRAINT fk_esn_es;
 ALTER TABLE ONLY public.event_set_members DROP CONSTRAINT fk_esm_se;
 ALTER TABLE ONLY public.event_set_members DROP CONSTRAINT fk_esm_es;
@@ -42,6 +44,7 @@ DROP INDEX public.studies_study_code_idx;
 DROP INDEX public.partner_species_identifiers_partner_species_idx;
 DROP INDEX public.original_sample_attrs_original_sample_id_idx;
 DROP INDEX public.location_attrs_location_id_idx;
+DROP INDEX public.individual_attrs_individual_id_idx;
 DROP INDEX public.idx_study_name;
 DROP INDEX public.idx_study_id;
 DROP INDEX public.idx_se_doc;
@@ -54,6 +57,9 @@ DROP INDEX public.fki_proxy_location;
 DROP INDEX public.fki_location_id;
 DROP INDEX public.fki_location_attr_id;
 DROP INDEX public.fki_location;
+DROP INDEX public.fki_individual_id;
+DROP INDEX public.fki_individual_attr_id;
+DROP INDEX public.fki_individual;
 DROP INDEX public.fki_fk_esn_es;
 DROP INDEX public.fki_fk_esm_se;
 DROP INDEX public.fki_fk_esm_es;
@@ -71,6 +77,7 @@ ALTER TABLE ONLY public.event_sets DROP CONSTRAINT pk_es;
 ALTER TABLE ONLY public.partner_species_identifiers DROP CONSTRAINT partner_species_identifiers_id;
 ALTER TABLE ONLY public.original_samples DROP CONSTRAINT original_sample_id;
 ALTER TABLE ONLY public.locations DROP CONSTRAINT location_id;
+ALTER TABLE ONLY public.individuals DROP CONSTRAINT individual_id;
 ALTER TABLE ONLY public.derivative_samples DROP CONSTRAINT derivative_sample_id;
 ALTER TABLE ONLY public.countries DROP CONSTRAINT countries_id;
 ALTER TABLE ONLY public.attrs DROP CONSTRAINT attr_id;
@@ -88,6 +95,8 @@ DROP TABLE public.original_samples;
 DROP TABLE public.original_sample_attrs;
 DROP TABLE public.locations;
 DROP TABLE public.location_attrs;
+DROP TABLE public.individuals;
+DROP TABLE public.individual_attrs;
 DROP SEQUENCE public.event_sets_id_seq;
 DROP TABLE public.event_sets;
 DROP TABLE public.event_set_notes;
@@ -314,6 +323,25 @@ ALTER SEQUENCE public.event_sets_id_seq OWNED BY public.event_sets.id;
 
 
 --
+-- Name: individual_attrs; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.individual_attrs (
+    individual_id uuid,
+    attr_id uuid
+);
+
+
+--
+-- Name: individuals; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.individuals (
+    id uuid NOT NULL
+);
+
+
+--
 -- Name: location_attrs; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -391,6 +419,7 @@ CREATE TABLE public.sampling_events (
     doc date,
     doc_accuracy character varying,
     location_id uuid,
+    individual_id uuid,
     proxy_location_id uuid
 );
 
@@ -436,6 +465,7 @@ CREATE VIEW public.v_sampling_events AS
     sampling_events.doc,
     sampling_events.doc_accuracy,
     sampling_events.location_id,
+    sampling_events.individual_id,
     public.st_x(loc.location) AS latitude,
     public.st_y(loc.location) AS longitude,
     loc.accuracy,
@@ -459,7 +489,7 @@ CREATE VIEW public.v_sampling_events AS
      LEFT JOIN public.attrs la ON (((li.attr_id = la.id) AND ((la.attr_type)::text = 'partner_name'::text))))
      LEFT JOIN public.locations proxy_loc ON ((proxy_loc.id = sampling_events.proxy_location_id)))
      LEFT JOIN public.location_attrs pli ON ((pli.location_id = sampling_events.proxy_location_id)))
-     LEFT JOIN public.attrs pla ON (((pla.study_id = sampling_events.study_id) AND (pli.attr_id = pla.id) AND ((pla.attr_type)::text = 'partner_name'::text))));
+     LEFT JOIN public.attrs pla ON (((pli.attr_id = pla.id) AND ((pla.attr_type)::text = 'partner_name'::text))));
 
 
 --
@@ -506,6 +536,14 @@ ALTER TABLE ONLY public.countries
 
 ALTER TABLE ONLY public.derivative_samples
     ADD CONSTRAINT derivative_sample_id PRIMARY KEY (id);
+
+
+--
+-- Name: individuals individual_id; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.individuals
+    ADD CONSTRAINT individual_id PRIMARY KEY (id);
 
 
 --
@@ -639,6 +677,27 @@ CREATE INDEX fki_fk_esn_es ON public.event_set_notes USING btree (event_set_id);
 
 
 --
+-- Name: fki_individual; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX fki_individual ON public.sampling_events USING btree (individual_id);
+
+
+--
+-- Name: fki_individual_attr_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX fki_individual_attr_id ON public.individual_attrs USING btree (attr_id);
+
+
+--
+-- Name: fki_individual_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX fki_individual_id ON public.individual_attrs USING btree (individual_id);
+
+
+--
 -- Name: fki_location; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -720,6 +779,13 @@ CREATE INDEX idx_study_id ON public.studies USING btree (id);
 --
 
 CREATE INDEX idx_study_name ON public.studies USING btree (study_name);
+
+
+--
+-- Name: individual_attrs_individual_id_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX individual_attrs_individual_id_idx ON public.individual_attrs USING btree (individual_id);
 
 
 --
@@ -812,6 +878,30 @@ ALTER TABLE ONLY public.event_set_members
 
 ALTER TABLE ONLY public.event_set_notes
     ADD CONSTRAINT fk_esn_es FOREIGN KEY (event_set_id) REFERENCES public.event_sets(id);
+
+
+--
+-- Name: sampling_events fk_individual; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.sampling_events
+    ADD CONSTRAINT fk_individual FOREIGN KEY (individual_id) REFERENCES public.individuals(id);
+
+
+--
+-- Name: individual_attrs fk_individual; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.individual_attrs
+    ADD CONSTRAINT fk_individual FOREIGN KEY (individual_id) REFERENCES public.individuals(id);
+
+
+--
+-- Name: individual_attrs fk_individual_attr; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.individual_attrs
+    ADD CONSTRAINT fk_individual_attr FOREIGN KEY (attr_id) REFERENCES public.attrs(id);
 
 
 --
@@ -911,14 +1001,6 @@ ALTER TABLE ONLY public.original_samples
 
 
 --
--- Name: sampling_events fk_study; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.sampling_events
-    ADD CONSTRAINT fk_study FOREIGN KEY (study_id) REFERENCES public.studies(id);
-
-
---
 -- Name: attrs fk_study_loc; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -939,8 +1021,8 @@ ALTER TABLE ONLY public.taxonomy_identifiers
 --
 
 REVOKE ALL ON SCHEMA public FROM postgres;
-GRANT ALL ON SCHEMA public TO PUBLIC;
 GRANT ALL ON SCHEMA public TO iwright;
+GRANT ALL ON SCHEMA public TO PUBLIC;
 
 
 --

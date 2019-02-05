@@ -4,6 +4,7 @@ import swagger_client
 
 from local.event_set_api import LocalEventSetApi
 from local.location_api import LocalLocationApi
+from local.individual_api import LocalIndividualApi
 from local.metadata_api import LocalMetadataApi
 from local.sampling_event_api import LocalSamplingEventApi
 from local.study_api import LocalStudyApi
@@ -141,5 +142,16 @@ class ApiFactory():
             ret = LocalStudyApi(self._api_client, self._user, self._auths, self._method)
         else:
             ret = swagger_client.StudyApi(self._api_client)
+
+        return ret
+
+    def IndividualApi(self):
+
+        ret = None
+
+        if self.isLocal():
+            ret = LocalIndividualApi(self._api_client, self._user, self._auths, self._method)
+        else:
+            ret = swagger_client.IndividualApi(self._api_client)
 
         return ret
