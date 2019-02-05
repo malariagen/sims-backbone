@@ -46,8 +46,8 @@ class OriginalSamplePut():
                         LocationEdit.update_attr_study(cursor, sampling_event.proxy_location_id,
                                                              original_study_id, study_id)
 
-                    LocationEdit.clean_up_attrs(cursor, sampling_event.location_id, original_study_id)
-                    LocationEdit.clean_up_attrs(cursor, sampling_event.proxy_location_id, original_study_id)
+                        LocationEdit.clean_up_attrs(cursor, sampling_event.location_id, original_study_id)
+                        LocationEdit.clean_up_attrs(cursor, sampling_event.proxy_location_id, original_study_id)
 
                 partner_species = OriginalSampleEdit.fetch_partner_species(cursor, original_sample, study_id)
                 stmt = '''UPDATE original_samples
