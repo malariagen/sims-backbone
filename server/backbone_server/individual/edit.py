@@ -55,6 +55,23 @@ class IndividualEdit():
 
 
 
+    @staticmethod
+    def delete_attrs(cursor, individual_id):
+
+        cursor.execute('''SELECT attr_id FROM individual_attrs WHERE
+                       individual_id = %s''', (individual_id,))
+
+        attr_ids = []
+        for (attr_id,) in cursor:
+           attr_ids.append(attr_id)
+
+        stmt = '''DELETE FROM individual_attrs WHERE individual_id = %s'''
+
+        cursor.execute( stmt, (individual_id,))
+
+        for attr_id in attr_ids:
+            cursor.execute('''DELETE FROM attrs WHERE id = %s''', (attr_id,))
+
 
     @staticmethod
     def clean_up_attrs(cursor, individual_id, old_study_id):
@@ -93,14 +110,6 @@ class IndividualEdit():
             if individual.attrs:
                 for ident in individual.attrs:
                     attr_id, study_id = IndividualEdit.get_or_create_individual_attr_id(cursor, ident)
-                    if ident.study_name:
-                        if ident.attr_type in study_attrs:
-                            studies = study_attrs[ident.attr_type]
-                            if study_id in studies:
-                                raise DuplicateKeyException("Error inserting individual - duplicate name for study {}".format(individual))
-                        else:
-                            study_attrs[ident.attr_type] = []
-                        study_attrs[ident.attr_type].append(study_id)
 
                     cursor.execute('INSERT INTO individual_attrs(individual_id, attr_id) VALUES (%s, %s)',
                                    (uuid_val, attr_id))
@@ -157,4 +166,12 @@ class IndividualEdit():
                                                             create=False)
             if match:
                 raise DuplicateKeyException("Error updating individual - duplicate with {}".format(ident))
+
+        for ident in individual.attrs:
+            count = 0
+            for ident1 in individual.attrs:
+                if ident == ident1:
+                    count = count + 1
+            if count > 1:
+                raise DuplicateKeyException("Error updating individual - duplicate attrs {}".format(ident))
 

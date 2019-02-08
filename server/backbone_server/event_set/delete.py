@@ -21,20 +21,22 @@ class EventSetDelete():
         with self._connection:
             with self._connection.cursor() as cursor:
 
-                event_set_id = EventSetFetch.fetch_event_set_id(cursor,event_set_name)
+                return self.run_command(cursor, event_set_name)
 
-                args = (event_set_id,)
+    def run_command(self, cursor, event_set_name):
 
-                stmt = '''DELETE FROM event_set_members WHERE event_set_id = %s'''
-                cursor.execute(stmt, args)
+        event_set_id = EventSetFetch.fetch_event_set_id(cursor,event_set_name)
 
-                stmt = '''DELETE FROM event_set_notes WHERE event_set_id = %s'''
-                cursor.execute(stmt, args)
+        args = (event_set_id,)
 
-                stmt = '''DELETE FROM event_sets WHERE id = %s'''
-                cursor.execute(stmt, args)
+        stmt = '''DELETE FROM event_set_members WHERE event_set_id = %s'''
+        cursor.execute(stmt, args)
 
+        stmt = '''DELETE FROM event_set_notes WHERE event_set_id = %s'''
+        cursor.execute(stmt, args)
 
+        stmt = '''DELETE FROM event_sets WHERE id = %s'''
+        cursor.execute(stmt, args)
 
         return None
 

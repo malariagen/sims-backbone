@@ -16,15 +16,19 @@ class LocationDelete():
         with self._connection:
             with self._connection.cursor() as cursor:
 
-                stmt = '''DELETE FROM location_attrs WHERE location_id = %s'''
+                return self.run_command(cursor, location_id)
 
-                cursor.execute( stmt, (location_id,))
+    def run_command(self, cursor, location_id):
 
-                stmt = '''DELETE FROM locations WHERE id = %s'''
+        stmt = '''DELETE FROM location_attrs WHERE location_id = %s'''
 
-                cursor.execute( stmt, (location_id,))
+        cursor.execute( stmt, (location_id,))
 
-                rc = cursor.rowcount
+        stmt = '''DELETE FROM locations WHERE id = %s'''
+
+        cursor.execute( stmt, (location_id,))
+
+        rc = cursor.rowcount
 
         if rc != 1:
             raise MissingKeyException("Error deleting location {}".format(location_id))

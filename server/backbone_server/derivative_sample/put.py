@@ -12,50 +12,55 @@ import logging
 
 class DerivativeSamplePut():
 
-    def __init__(self, conn):
+    def __init__(self, conn, cursor=None):
         self._logger = logging.getLogger(__name__)
         self._connection = conn
+        self._cursor = cursor
 
 
     def put(self, derivative_sample_id, derivative_sample):
 
         with self._connection:
             with self._connection.cursor() as cursor:
+                return self.run_command(cursor, derivative_sample_id,
+                                 derivative_sample)
 
-                stmt = '''SELECT id FROM derivative_samples WHERE id = %s'''
-                cursor.execute( stmt, (derivative_sample_id,))
+    def run_command(self, cursor, derivative_sample_id, derivative_sample):
 
-                existing_derivative_sample = None
+        stmt = '''SELECT id FROM derivative_samples WHERE id = %s'''
+        cursor.execute( stmt, (derivative_sample_id,))
 
-                for (derivative_sample_id,) in cursor:
-                    existing_derivative_sample = DerivativeSample(derivative_sample_id)
+        existing_derivative_sample = None
 
-                if not existing_derivative_sample:
-                    raise MissingKeyException("Could not find derivative_sample to update {}".format(derivative_sample_id))
+        for (derivative_sample_id,) in cursor:
+            existing_derivative_sample = DerivativeSample(derivative_sample_id)
 
-                stmt = '''UPDATE derivative_samples 
-                            SET original_sample_id = %s,
-                            dna_prep = %s
-                            WHERE id = %s'''
-                args = (derivative_sample.original_sample_id,
-                        derivative_sample.dna_prep,
-                        derivative_sample_id)
+        if not existing_derivative_sample:
+            raise MissingKeyException("Could not find derivative_sample to update {}".format(derivative_sample_id))
 
-                try:
-                    cursor.execute(stmt, args)
-                    rc = cursor.rowcount
+        stmt = '''UPDATE derivative_samples
+                    SET original_sample_id = %s,
+                    dna_prep = %s
+                    WHERE id = %s'''
+        args = (derivative_sample.original_sample_id,
+                derivative_sample.dna_prep,
+                derivative_sample_id)
 
-                    cursor.execute('DELETE FROM derivative_sample_attrs WHERE derivative_sample_id = %s',
-                                   (derivative_sample_id,))
+        try:
+            cursor.execute(stmt, args)
+            rc = cursor.rowcount
 
-                    DerivativeSampleEdit.add_attrs(cursor, derivative_sample_id, derivative_sample)
+            cursor.execute('DELETE FROM derivative_sample_attrs WHERE derivative_sample_id = %s',
+                           (derivative_sample_id,))
 
-                except psycopg2.IntegrityError as err:
-                    raise DuplicateKeyException("Error updating derivative_sample {}".format(derivative_sample)) from err
-                except DuplicateKeyException as err:
-                    raise err
+            DerivativeSampleEdit.add_attrs(cursor, derivative_sample_id, derivative_sample)
 
-                derivative_sample = DerivativeSampleFetch.fetch(cursor, derivative_sample_id)
+        except psycopg2.IntegrityError as err:
+            raise DuplicateKeyException("Error updating derivative_sample {}".format(derivative_sample)) from err
+        except DuplicateKeyException as err:
+            raise err
+
+        derivative_sample = DerivativeSampleFetch.fetch(cursor, derivative_sample_id)
 
         if rc != 1:
             raise MissingKeyException("Error updating derivative_sample {}".format(derivative_sample_id))

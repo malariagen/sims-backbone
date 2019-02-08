@@ -13,58 +13,64 @@ import logging
 
 class SamplingEventPut():
 
-    def __init__(self, conn):
+    def __init__(self, conn, cursor=None):
         self._logger = logging.getLogger(__name__)
         self._connection = conn
+        self._cursor = cursor
 
 
     def put(self, sampling_event_id, sampling_event):
 
         with self._connection:
             with self._connection.cursor() as cursor:
+                return self.run_command(cursor, sampling_event_id, sampling_event)
 
-                stmt = '''SELECT id FROM sampling_events WHERE  id = %s'''
-                cursor.execute( stmt, (sampling_event_id,))
+    def run_command(self, cursor, sampling_event_id, sampling_event):
 
-                existing_sampling_event = None
+        stmt = '''SELECT id FROM sampling_events WHERE  id = %s'''
+        cursor.execute( stmt, (sampling_event_id,))
 
-                for (sampling_event_id, ) in cursor:
-                    existing_sampling_event = SamplingEvent(sampling_event_id)
+        existing_sampling_event = None
 
-                if not existing_sampling_event:
-                    raise MissingKeyException("Could not find sampling_event to update {}".format(sampling_event_id))
+        for (sampling_event_id, ) in cursor:
+            existing_sampling_event = SamplingEvent(sampling_event_id)
 
-                SamplingEventEdit.check_date(sampling_event)
+        if not existing_sampling_event:
+            raise MissingKeyException("Could not find sampling_event to update {}".format(sampling_event_id))
 
-                SamplingEventEdit.check_location_details(cursor, sampling_event.location_id,
-                                                         sampling_event.location)
-                SamplingEventEdit.check_location_details(cursor, sampling_event.proxy_location_id,
-                                                         sampling_event.proxy_location)
+        SamplingEventEdit.check_date(sampling_event)
 
-                stmt = '''UPDATE sampling_events
-                            SET doc = %s, doc_accuracy = %s,
-                            location_id = %s, proxy_location_id = %s
-                            WHERE id = %s'''
-                args = (sampling_event.doc, sampling_event.doc_accuracy,
-                        sampling_event.location_id, sampling_event.proxy_location_id,
-                        sampling_event_id)
+        SamplingEventEdit.check_location_details(cursor, sampling_event.location_id,
+                                                 sampling_event.location)
+        SamplingEventEdit.check_location_details(cursor, sampling_event.proxy_location_id,
+                                                 sampling_event.proxy_location)
 
-                try:
-                    cursor.execute(stmt, args)
-                    rc = cursor.rowcount
+        stmt = '''UPDATE sampling_events
+                    SET doc = %s, doc_accuracy = %s,
+                    location_id = %s, proxy_location_id = %s,
+                    individual_id = %s
+                    WHERE id = %s'''
+        args = (sampling_event.doc, sampling_event.doc_accuracy,
+                sampling_event.location_id, sampling_event.proxy_location_id,
+                sampling_event.individual_id,
+                sampling_event_id)
 
-                    cursor.execute('DELETE FROM sampling_event_attrs WHERE sampling_event_id = %s',
-                                   (sampling_event_id,))
+        try:
+            cursor.execute(stmt, args)
+            rc = cursor.rowcount
 
-                    SamplingEventEdit.add_attrs(cursor, sampling_event_id, sampling_event)
+            cursor.execute('DELETE FROM sampling_event_attrs WHERE sampling_event_id = %s',
+                           (sampling_event_id,))
 
-                except psycopg2.IntegrityError as err:
-                    raise DuplicateKeyException("Error updating sampling_event {}".format(sampling_event)) from err
-                except DuplicateKeyException as err:
-                    raise err
+            SamplingEventEdit.add_attrs(cursor, sampling_event_id, sampling_event)
+
+        except psycopg2.IntegrityError as err:
+            raise DuplicateKeyException("Error updating sampling_event {}".format(sampling_event)) from err
+        except DuplicateKeyException as err:
+            raise err
 
 
-                sampling_event = SamplingEventFetch.fetch(cursor, sampling_event_id)
+        sampling_event = SamplingEventFetch.fetch(cursor, sampling_event_id)
 
         if rc != 1:
             raise MissingKeyException("Error updating sampling_event {}".format(sampling_event_id))

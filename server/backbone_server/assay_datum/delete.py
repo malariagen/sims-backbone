@@ -16,15 +16,19 @@ class AssayDatumDelete():
         with self._connection:
             with self._connection.cursor() as cursor:
 
-                stmt = '''DELETE FROM assay_datum_attrs WHERE assay_datum_id = %s'''
+                return self.run_command(cursor, assay_datum_id)
 
-                cursor.execute( stmt, (assay_datum_id,))
+    def run_command(self, cursor, assay_datum_id):
 
-                stmt = '''DELETE FROM assay_data WHERE id = %s'''
+        stmt = '''DELETE FROM assay_datum_attrs WHERE assay_datum_id = %s'''
 
-                cursor.execute( stmt, (assay_datum_id,))
+        cursor.execute( stmt, (assay_datum_id,))
 
-                rc = cursor.rowcount
+        stmt = '''DELETE FROM assay_data WHERE id = %s'''
+
+        cursor.execute( stmt, (assay_datum_id,))
+
+        rc = cursor.rowcount
 
 
         if rc != 1:

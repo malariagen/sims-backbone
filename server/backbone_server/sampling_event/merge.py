@@ -26,18 +26,23 @@ class SamplingEventMerge():
         with self._connection:
             with self._connection.cursor() as cursor:
 
-                sampling_event1 = SamplingEventFetch.fetch(cursor, into)
+                return self.run_command(cursor, into, merged)
 
-                if not sampling_event1:
-                    raise MissingKeyException("No sampling_event {}".format(into))
 
-                if into == merged:
-                    return sampling_event1
+    def run_command(self, cursor, into, merged):
 
-                sampling_event2 = SamplingEventFetch.fetch(cursor, merged)
+        sampling_event1 = SamplingEventFetch.fetch(cursor, into)
 
-                if not sampling_event2:
-                    raise MissingKeyException("No sampling_event {}".format(merged))
+        if not sampling_event1:
+            raise MissingKeyException("No sampling_event {}".format(into))
+
+        if into == merged:
+            return sampling_event1
+
+        sampling_event2 = SamplingEventFetch.fetch(cursor, merged)
+
+        if not sampling_event2:
+            raise MissingKeyException("No sampling_event {}".format(merged))
 
         if sampling_event1.doc:
             if sampling_event2.doc:
@@ -86,19 +91,17 @@ class SamplingEventMerge():
                     new_ident_value = True
                     sampling_event1.attrs.append(new_ident)
 
-        with self._connection:
-            with self._connection.cursor() as cursor:
-                stmt = '''UPDATE original_samples SET sampling_event_id = %s WHERE sampling_event_id = %s'''
+        stmt = '''UPDATE original_samples SET sampling_event_id = %s WHERE sampling_event_id = %s'''
 
-                cursor.execute(stmt,
-                               (sampling_event1.sampling_event_id,
-                                sampling_event2.sampling_event_id))
+        cursor.execute(stmt,
+                       (sampling_event1.sampling_event_id,
+                        sampling_event2.sampling_event_id))
 
 
         delete = SamplingEventDelete(self._connection)
 
-        delete.delete(sampling_event2.sampling_event_id)
+        delete.run_command(cursor, sampling_event2.sampling_event_id)
 
         put = SamplingEventPut(self._connection)
 
-        return put.put(sampling_event1.sampling_event_id, sampling_event1)
+        return put.run_command(cursor, sampling_event1.sampling_event_id, sampling_event1)

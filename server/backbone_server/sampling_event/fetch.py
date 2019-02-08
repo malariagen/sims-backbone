@@ -56,16 +56,18 @@ class SamplingEventFetch():
             return None
 
         stmt = '''SELECT sampling_events.id, doc, doc_accuracy,
-                            location_id, proxy_location_id
+                            location_id, proxy_location_id, individual_id
         FROM sampling_events
         WHERE sampling_events.id = %s'''
         cursor.execute( stmt, (sampling_event_id,))
 
         sampling_event = None
 
-        for (sampling_event_id, doc, doc_accuracy, location_id, proxy_location_id) in cursor:
+        for (sampling_event_id, doc, doc_accuracy, location_id,
+             proxy_location_id, individual_id) in cursor:
             sampling_event = SamplingEvent(str(sampling_event_id),
-                                   doc=doc, doc_accuracy=doc_accuracy)
+                                           doc=doc, doc_accuracy=doc_accuracy,
+                                           individual_id=individual_id)
             if location_id:
                 sampling_event.location_id = str(location_id)
                 sampling_event.public_location_id = str(location_id)

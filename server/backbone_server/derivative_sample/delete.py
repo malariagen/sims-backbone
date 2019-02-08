@@ -16,15 +16,19 @@ class DerivativeSampleDelete():
         with self._connection:
             with self._connection.cursor() as cursor:
 
-                stmt = '''DELETE FROM derivative_sample_attrs WHERE derivative_sample_id = %s'''
+                return self.run_command(cursor, derivative_sample_id)
 
-                cursor.execute( stmt, (derivative_sample_id,))
+    def run_command(self, cursor, derivative_sample_id):
 
-                stmt = '''DELETE FROM derivative_samples WHERE id = %s'''
+        stmt = '''DELETE FROM derivative_sample_attrs WHERE derivative_sample_id = %s'''
 
-                cursor.execute( stmt, (derivative_sample_id,))
+        cursor.execute( stmt, (derivative_sample_id,))
 
-                rc = cursor.rowcount
+        stmt = '''DELETE FROM derivative_samples WHERE id = %s'''
+
+        cursor.execute( stmt, (derivative_sample_id,))
+
+        rc = cursor.rowcount
 
 
         if rc != 1:

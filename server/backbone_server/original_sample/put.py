@@ -14,69 +14,73 @@ import logging
 
 class OriginalSamplePut():
 
-    def __init__(self, conn):
+    def __init__(self, conn, cursor=None):
         self._logger = logging.getLogger(__name__)
         self._connection = conn
+        self._cursor = cursor
 
 
     def put(self, original_sample_id, original_sample):
 
         with self._connection:
             with self._connection.cursor() as cursor:
+                return self.run_command(cursor, original_sample_id, original_sample)
 
-                stmt = '''SELECT id, study_id, sampling_event_id FROM original_samples WHERE  id = %s'''
-                cursor.execute( stmt, (original_sample_id,))
+    def run_command(self, cursor, original_sample_id, original_sample):
 
-                existing_original_sample = None
+        stmt = '''SELECT id, study_id, sampling_event_id FROM original_samples WHERE  id = %s'''
+        cursor.execute( stmt, (original_sample_id,))
 
-                for (original_sample_id, original_study_id, sampling_event_id) in cursor:
-                    existing_original_sample = OriginalSample(original_sample_id)
+        existing_original_sample = None
 
-                if not existing_original_sample:
-                    raise MissingKeyException("Could not find original_sample to update {}".format(original_sample_id))
+        for (original_sample_id, original_study_id, sampling_event_id) in cursor:
+            existing_original_sample = OriginalSample(original_sample_id)
 
-                study_id = OriginalSampleEdit.fetch_study_id(cursor, original_sample.study_name, True)
+        if not existing_original_sample:
+            raise MissingKeyException("Could not find original_sample to update {}".format(original_sample_id))
 
-                if study_id != original_study_id:
+        study_id = OriginalSampleEdit.fetch_study_id(cursor, original_sample.study_name, True)
 
-                    sampling_event = SamplingEventFetch.fetch(cursor, sampling_event_id)
-                    if sampling_event:
-                        LocationEdit.update_attr_study(cursor, sampling_event.location_id,
-                                                             original_study_id, study_id)
-                        LocationEdit.update_attr_study(cursor, sampling_event.proxy_location_id,
-                                                             original_study_id, study_id)
+        if study_id != original_study_id:
 
-                        LocationEdit.clean_up_attrs(cursor, sampling_event.location_id, original_study_id)
-                        LocationEdit.clean_up_attrs(cursor, sampling_event.proxy_location_id, original_study_id)
+            sampling_event = SamplingEventFetch.fetch(cursor, sampling_event_id)
+            if sampling_event:
+                LocationEdit.update_attr_study(cursor, sampling_event.location_id,
+                                                     original_study_id, study_id)
+                LocationEdit.update_attr_study(cursor, sampling_event.proxy_location_id,
+                                                     original_study_id, study_id)
 
-                partner_species = OriginalSampleEdit.fetch_partner_species(cursor, original_sample, study_id)
-                stmt = '''UPDATE original_samples
-                            SET study_id = %s, sampling_event_id = %s,
-                            days_in_culture = %s,
-                            partner_species_id = %s
-                            WHERE id = %s'''
-                args = (study_id, original_sample.sampling_event_id,
-                        original_sample.days_in_culture,
-                        partner_species,
-                        original_sample_id)
+                LocationEdit.clean_up_attrs(cursor, sampling_event.location_id, original_study_id)
+                LocationEdit.clean_up_attrs(cursor, sampling_event.proxy_location_id, original_study_id)
 
-                try:
-                    cursor.execute(stmt, args)
-                    rc = cursor.rowcount
+        partner_species = OriginalSampleEdit.fetch_partner_species(cursor, original_sample, study_id)
+        stmt = '''UPDATE original_samples
+                    SET study_id = %s, sampling_event_id = %s,
+                    days_in_culture = %s,
+                    partner_species_id = %s
+                    WHERE id = %s'''
+        args = (study_id, original_sample.sampling_event_id,
+                original_sample.days_in_culture,
+                partner_species,
+                original_sample_id)
 
-                    cursor.execute('DELETE FROM original_sample_attrs WHERE original_sample_id = %s',
-                                   (original_sample_id,))
+        try:
+            cursor.execute(stmt, args)
+            rc = cursor.rowcount
 
-                    OriginalSampleEdit.add_attrs(cursor, original_sample_id, original_sample)
+            cursor.execute('DELETE FROM original_sample_attrs WHERE original_sample_id = %s',
+                           (original_sample_id,))
 
-                except psycopg2.IntegrityError as err:
-                    raise DuplicateKeyException("Error updating original_sample {}".format(original_sample)) from err
-                except DuplicateKeyException as err:
-                    raise err
+            OriginalSampleEdit.add_attrs(cursor, original_sample_id, original_sample)
 
-                OriginalSampleEdit.clean_up_taxonomies(cursor)
+        except psycopg2.IntegrityError as err:
+            raise DuplicateKeyException("Error updating original_sample {}".format(original_sample)) from err
+        except DuplicateKeyException as err:
+            raise err
 
-                original_sample = OriginalSampleFetch.fetch(cursor, original_sample_id)
+        OriginalSampleEdit.clean_up_taxonomies(cursor)
+
+        original_sample = OriginalSampleFetch.fetch(cursor, original_sample_id)
 
         if rc != 1:
             raise MissingKeyException("Error updating original_sample {}".format(original_sample_id))

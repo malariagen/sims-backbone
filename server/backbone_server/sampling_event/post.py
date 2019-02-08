@@ -32,10 +32,13 @@ class SamplingEventPost():
                 uuid_val = uuid.uuid4()
 
                 stmt = '''INSERT INTO sampling_events
-                            (id, doc, doc_accuracy, location_id, proxy_location_id)
-                            VALUES (%s, %s, %s, %s, %s)'''
+                            (id, doc, doc_accuracy, location_id,
+                            proxy_location_id, individual_id)
+                            VALUES (%s, %s, %s, %s, %s, %s)'''
                 args = (uuid_val, sampling_event.doc, sampling_event.doc_accuracy,
-                        sampling_event.location_id, sampling_event.proxy_location_id)
+                        sampling_event.location_id,
+                        sampling_event.proxy_location_id,
+                        sampling_event.individual_id)
 
                 try:
                     cursor.execute(stmt, args)

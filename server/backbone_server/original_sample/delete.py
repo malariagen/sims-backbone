@@ -18,21 +18,25 @@ class OriginalSampleDelete():
         with self._connection:
             with self._connection.cursor() as cursor:
 
-                stmt = '''UPDATE derivative_samples SET original_sample_id = NULL WHERE original_sample_id = %s'''
+                return self.run_command(cursor, original_sample_id)
 
-                cursor.execute( stmt, (original_sample_id,))
+    def run_command(self, cursor, original_sample_id):
 
-                stmt = '''DELETE FROM original_sample_attrs WHERE original_sample_id = %s'''
+        stmt = '''UPDATE derivative_samples SET original_sample_id = NULL WHERE original_sample_id = %s'''
 
-                cursor.execute( stmt, (original_sample_id,))
+        cursor.execute( stmt, (original_sample_id,))
 
-                stmt = '''DELETE FROM original_samples WHERE id = %s'''
+        stmt = '''DELETE FROM original_sample_attrs WHERE original_sample_id = %s'''
 
-                cursor.execute( stmt, (original_sample_id,))
+        cursor.execute( stmt, (original_sample_id,))
 
-                rc = cursor.rowcount
+        stmt = '''DELETE FROM original_samples WHERE id = %s'''
 
-                OriginalSampleEdit.clean_up_taxonomies(cursor)
+        cursor.execute( stmt, (original_sample_id,))
+
+        rc = cursor.rowcount
+
+        OriginalSampleEdit.clean_up_taxonomies(cursor)
 
 
         if rc != 1:

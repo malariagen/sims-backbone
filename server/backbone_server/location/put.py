@@ -13,57 +13,61 @@ import logging
 
 class LocationPut(LocationEdit):
 
-    def __init__(self, conn):
+    def __init__(self, conn, cursor=None):
         self._logger = logging.getLogger(__name__)
         self._connection = conn
+        self._cursor = cursor
 
 
     def put(self, location_id, location):
 
         with self._connection:
             with self._connection.cursor() as cursor:
+                return self.run_command(cursor, location_id, location)
 
-                stmt = '''SELECT id, ST_X(location) as latitude, ST_Y(location) as longitude,
-                accuracy, curated_name, curation_method, country
-                               FROM locations WHERE  id = %s'''
-                cursor.execute( stmt, (location_id,))
+    def run_command(self, cursor, location_id, location):
 
-                existing_location = None
+        stmt = '''SELECT id, ST_X(location) as latitude, ST_Y(location) as longitude,
+        accuracy, curated_name, curation_method, country
+                       FROM locations WHERE  id = %s'''
+        cursor.execute( stmt, (location_id,))
 
-                for (location_id, latitude, longitude, accuracy, curated_name,
-                     curation_method, country) in cursor:
-                    existing_location = Location(location_id, latitude, longitude, accuracy,
-                                        curated_name, curation_method, country)
+        existing_location = None
 
-                if not existing_location:
-                    raise MissingKeyException("Error updating location {}".format(location_id))
+        for (location_id, latitude, longitude, accuracy, curated_name,
+             curation_method, country) in cursor:
+            existing_location = Location(location_id, latitude, longitude, accuracy,
+                                curated_name, curation_method, country)
 
-                LocationEdit.check_for_duplicate(cursor, location, location_id)
+        if not existing_location:
+            raise MissingKeyException("Error updating location {}".format(location_id))
 
-                stmt = '''UPDATE locations 
-                            SET location = ST_SetSRID(ST_MakePoint(%s, %s), 4326),
-                            accuracy = %s, curated_name = %s, curation_method = %s, country = %s,
-                            notes = %s
-                            WHERE id = %s''' 
-                args = (location.latitude, location.longitude,
-                        location.accuracy, location.curated_name, location.curation_method,
-                        location.country, location.notes, location_id)
-                try:
-                    cursor.execute(stmt, args)
-                    rc = cursor.rowcount
+        LocationEdit.check_for_duplicate(cursor, location, location_id)
 
-                    cursor.execute('''DELETE FROM location_attrs WHERE location_id = %s''',
-                                   (location_id,))
+        stmt = '''UPDATE locations
+                    SET location = ST_SetSRID(ST_MakePoint(%s, %s), 4326),
+                    accuracy = %s, curated_name = %s, curation_method = %s, country = %s,
+                    notes = %s
+                    WHERE id = %s'''
+        args = (location.latitude, location.longitude,
+                location.accuracy, location.curated_name, location.curation_method,
+                location.country, location.notes, location_id)
+        try:
+            cursor.execute(stmt, args)
+            rc = cursor.rowcount
 
-                    LocationEdit.add_attrs(cursor, location_id, location)
+            cursor.execute('''DELETE FROM location_attrs WHERE location_id = %s''',
+                           (location_id,))
 
-                except psycopg2.IntegrityError as err:
-                    raise DuplicateKeyException("Error updating location {}".format(location)) from err
+            LocationEdit.add_attrs(cursor, location_id, location)
 
-                location = LocationFetch.fetch(cursor, location_id)
+        except psycopg2.IntegrityError as err:
+            raise DuplicateKeyException("Error updating location {}".format(location)) from err
+
+        location = LocationFetch.fetch(cursor, location_id)
 
 
         if rc != 1:
             raise MissingKeyException("Error updating location {}".format(location_id))
-#
+        #
         return location
