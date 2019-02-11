@@ -1,0 +1,29 @@
+{
+    "name": "sims-original-sample-service",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "",
+    "license": "ISC",
+    "devDependencies": {
+        "serverless": "^1.37.0",
+        "serverless-python-requirements": "^4.2.5"
+    },
+    "configurations": [
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "run download event sets function",
+            "program": "${workspaceRoot}/node_modules/.bin/sls",
+            "args": [
+                "invoke",
+                "local",
+                "-f",
+                "download_event_sets"
+            ]
+        }
+    ]
+}

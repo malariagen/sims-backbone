@@ -451,9 +451,8 @@ class SamplingEventProcessor(BaseEntity):
                         if samp.location_id != found.proxy_location_id:
                             continue
                     if existing and existing.sampling_event_id != found.sampling_event_id:
-                        #self.report("Merging into {} using {}"
-                        #                .format(existing.sampling_event_id,
-                        #                                   ident.attr_type), values)
+                        #self.report("Merging into {} using {}" .format(existing.sampling_event_id,
+                        #                                               location), values)
                         found = self.merge_events(existing, found, values)
                     existing = found
                     if samp.study_name[:4] == '0000':

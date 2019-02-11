@@ -11,7 +11,7 @@ definitions:
           $ref: '#/definitions/OriginalSample'
       sampling_events:
         type: object
-        $ref: '#/definitions/SamplingEventMap'
+        $ref: './sampling_event.yaml#/definitions/SamplingEventMap'
       count:
         type: integer
         description: Used when pagination is applied to return the number of results
@@ -78,15 +78,3 @@ definitions:
         type: string
       rank:
         type: string
-  SamplingEventMap:
-    type: object
-    description: 'Map of sampling events'
-    additionalProperties:
-      type: object
-      properties:
-        sampling_event_id:
-          type: string
-#          format: uuid
-        sampling_event:
-          type: object
-          $ref: './swagger/definitions/sampling_event.yaml#/definitions/SamplingEvent'

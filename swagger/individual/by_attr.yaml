@@ -1,0 +1,29 @@
+    get:
+      tags:
+        - Individual
+      summary: fetches one or more individuals by property value
+      description: ''
+      operationId: downloadIndividualsByAttr
+      produces:
+        - application/json
+      parameters:
+        - name: propName
+          in: path
+          description: name of property to search
+          required: true
+          type: string
+        - name: propValue
+          in: path
+          description: matching value of property to search
+          required: true
+          type: string
+        - name: studyName
+          in: query
+          description: if you want to restrict the search to a study e.g. for patient_id
+          required: false
+          type: string
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: './swagger/definitions/individual.yaml#/definitions/Individuals'

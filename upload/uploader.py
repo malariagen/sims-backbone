@@ -28,6 +28,7 @@ from sampling_event import SamplingEventProcessor
 from original_sample import OriginalSampleProcessor
 from derivative_sample import DerivativeSampleProcessor
 from assay_data import AssayDataProcessor
+from individual import IndividualProcessor
 
 class Uploader():
 
@@ -96,6 +97,7 @@ class Uploader():
         self.os_processor.sampling_event_processor = self.se_processor
         self.ds_processor = DerivativeSampleProcessor(self._dao, self._event_set)
         self.ad_processor = AssayDataProcessor(self._dao, self._event_set)
+        self.i_processor = IndividualProcessor(self._dao, self._event_set)
 
         api_response = self._dao.create_event_set(event_set_id)
 
@@ -265,6 +267,7 @@ class Uploader():
 
         location_name, location = self.se_processor.process_location(values, '')
         proxy_location_name, proxy_location = self.se_processor.process_location(values, 'proxy_')
+
         #print(samp)
 
         existing = self.se_processor.lookup_sampling_event(o_existing, samp, location, proxy_location, values)
@@ -275,6 +278,17 @@ class Uploader():
         if proxy_location:
             samp.proxy_location_id = proxy_location.location_id
 
+        indiv = self.i_processor.create_individual_from_values(values)
+        existing_indiv = None
+        if existing and existing.individual_id:
+            existing_indiv = self._dao.download_individual(existing.individual_id)
+        else:
+            existing_indiv = self.i_processor.lookup_individual(indiv, values)
+
+        individual = self.i_processor.process_individual(values, indiv,
+                                                         existing_indiv)
+        if individual:
+            samp.individual_id = individual.individual_id
         sampling_event = self.se_processor.process_sampling_event(values, samp, existing)
 
         if sampling_event:

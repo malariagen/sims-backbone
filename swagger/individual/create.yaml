@@ -1,6 +1,6 @@
     post:
       tags:
-        - individual
+        - Individual
       description: 'Create a individual'
       operationId: createIndividual
       produces:

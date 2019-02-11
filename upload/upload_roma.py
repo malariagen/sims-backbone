@@ -78,12 +78,15 @@ class Upload_ROMA(uploader.Uploader):
 
             oxford_code = None
             taxon = None
+            patient_id = None
             if '27. original_oxford_code' in tags:
                 oxford_code = tags['27. original_oxford_code'].strip()
                 pass
-            if '24. Patient Id' in tags:
-                #oxford_code = tags['24. Patient Id']
-                pass
+            if 'Patient Id' in tags:
+                patient_id = tags['Patient Id']
+            elif '24. Patient Id' in tags:
+                patient_id = tags['24. Patient Id']
+
             if 'Species' in tags:
                 taxon = tags['Species'].strip()
             else:
@@ -100,6 +103,7 @@ class Upload_ROMA(uploader.Uploader):
                 'roma_pk_id': roma_pk_id,
                 'sample_oxford_id': oxford_code,
                 'sample_partner_id': source_code,
+                'patient_id': patient_id,
                 'species': taxon,
                 'doc': doc,
                 'src_location_id': src_location_id,

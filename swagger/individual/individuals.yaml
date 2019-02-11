@@ -1,6 +1,6 @@
     get:
       tags:
-        - individual
+        - Individual
       summary: fetches individuals
       description: ''
       operationId: downloadIndividuals

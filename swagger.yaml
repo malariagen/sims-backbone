@@ -69,6 +69,10 @@ paths:
     $ref: './swagger/individual/create.yaml'
   '/individual/{individualId}':
     $ref: './swagger/individual/item.yaml'
+  '/individuals/attr/{propName}/{propValue}':
+    $ref: './swagger/individual/by_attr.yaml'
+  '/individuals/merge/{into}/{merged}':
+    $ref: './swagger/individual/merge.yaml'
   '/individuals':
     $ref: './swagger/individual/individuals.yaml'
   '/originalSample':

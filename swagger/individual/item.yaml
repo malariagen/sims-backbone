@@ -1,6 +1,6 @@
     get:
       tags:
-        - individual
+        - Individual
       summary: fetches an individual
       description: ''
       operationId: downloadIndividual
@@ -20,7 +20,7 @@
             $ref: './swagger/definitions/individual.yaml#/definitions/Individual'
     put:
       tags:
-        - individual
+        - Individual
       summary: updates an individual
       description: ''
       operationId: updateIndividual
@@ -50,7 +50,7 @@
               type: string
     delete:
       tags:
-        - individual
+        - Individual
       summary: deletes an individual
       description: ''
       operationId: deleteIndividual

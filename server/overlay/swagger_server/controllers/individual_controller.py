@@ -76,6 +76,41 @@ def download_individuals(studyName=None, start=None, count=None, orderby=None, u
                                                   individual_controller.token_info(token_info))
 
 
+def download_individuals_by_attr(propName, propValue, studyName, user = None, token_info = None): # noqa: E501
+    """fetches one or more individuals by property value
+
+     # noqa: E501
+
+    :param propName: name of property to search
+    :type propName: str
+    :param propValue: matching value of property to search
+    :type propValue: str
+    :param studyName: if you want to restrict the search to a study e.g. for patient_id
+    :type studyName: str
+
+    :rtype: Individuals
+    """
+    return individual_controller.download_individuals_by_attr(propName,
+                                                              propValue, studyName, user,
+                                                              individual_controller.token_info(token_info))
+
+
+def merge_individuals(into, merged, user = None, token_info = None):
+    """merges two Individuals
+
+    merges individuals # noqa: E501
+
+    :param into: name of property to search
+    :type into: str
+    :param merged: matching value of property to search
+    :type merged: str
+
+    :rtype: Individual
+    """
+    return individual_controller.merge_individuals(into, merged, user,
+                                               individual_controller.token_info(token_info))
+
+
 
 def update_individual(individualId, individual, user = None, token_info = None):
     """

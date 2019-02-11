@@ -20,6 +20,10 @@
             "column": 6,
             "type": "string"
         },
+        "donor_source_code": {
+            "column": 7,
+            "type": "string"
+        },
         "sample_source_type": {
             "column": 8,
             "type": "string"

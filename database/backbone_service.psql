@@ -1021,8 +1021,8 @@ ALTER TABLE ONLY public.taxonomy_identifiers
 --
 
 REVOKE ALL ON SCHEMA public FROM postgres;
-GRANT ALL ON SCHEMA public TO iwright;
 GRANT ALL ON SCHEMA public TO PUBLIC;
+GRANT ALL ON SCHEMA public TO iwright;
 
 
 --

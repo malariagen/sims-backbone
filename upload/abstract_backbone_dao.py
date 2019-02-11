@@ -186,3 +186,31 @@ class AbstractBackboneDAO(abc.ABC):
 
     def update_study(self, study_code, study_detail):
         return self.study_api_instance.update_study(study_code, study_detail)
+
+    def create_individual(self, individual):
+
+        return self.i_api_instance.create_individual(individual)
+
+
+    def update_individual(self, individual_id, individual):
+
+        return self.i_api_instance.update_individual(individual_id, individual)
+
+    def merge_individuals(self, individual_id1, individual_id2):
+
+        return self.i_api_instance.merge_individuals(individual_id1, individual_id2)
+
+    def delete_individual(self, individual_id ):
+
+        return self.i_api_instance.delete_individual(individual_id)
+
+    def download_individual(self, individual_id):
+
+        return self.i_api_instance.download_individual(individual_id)
+
+    def download_individuals_by_attr(self, prop_name, prop_value, study_name=None):
+
+        return self.i_api_instance.download_individuals_by_attr(prop_name,
+                                                                prop_value,
+                                                                study_name=study_name)
+

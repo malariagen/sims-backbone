@@ -88,3 +88,15 @@ definitions:
         type: array
         items:
           $ref: '#/definitions/EventSet'
+  SamplingEventMap:
+    type: object
+    description: 'Map of sampling events'
+    additionalProperties:
+      type: object
+      properties:
+        sampling_event_id:
+          type: string
+#          format: uuid
+        sampling_event:
+          type: object
+          $ref: '#/definitions/SamplingEvent'

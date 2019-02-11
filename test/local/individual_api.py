@@ -81,6 +81,36 @@ class LocalIndividualApi(BaseLocalApi):
 
         return self.create_response(ret, retcode, 'Individuals')
 
+    def download_individuals_by_attr(self, attrName, attrValue, studyName=None):
+        """
+        fetches individuals
+
+        :param studyName: restrict to a particular study
+        :type studyName: str
+        :param start: for pagination start the result set at a record x
+        :type start: int
+        :param count: for pagination the number of entries to return
+        :type count: int
+        :param orderby: how to order the result set
+        :type orderby: str
+
+        :rtype: Individuals
+        """
+        (ret, retcode) = self.individual_controller.download_individuals_by_attr(attrName,
+                                                                                 attrValue,
+                                                                                 studyName,
+                                                                                 self._user,
+                                                                                 self.auth_tokens())
+
+        return self.create_response(ret, retcode, 'Individuals')
+
+
+    def merge_individuals(self, individual1, individual2):
+
+        (ret, retcode) = self.individual_controller.merge_individuals(individual1, individual2, self._user,
+                                                   self.auth_tokens())
+
+        return self.create_response(ret, retcode, 'Individual')
 
     def update_individual(self, individualId, individual):
         """

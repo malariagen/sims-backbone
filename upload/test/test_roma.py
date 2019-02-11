@@ -150,3 +150,25 @@ class TestROMA(TestBase):
             self.fail("test_year_accuracy: Exception when calling download_sampling_event_by_os_attr {}"
                         .format(error))
 
+    """
+    """
+    def test_roma_individual(self):
+
+
+        try:
+            looked_up = self._dao.download_sampling_events_by_os_attr('roma_id', 'TST00001')
+
+            looked_up = looked_up.sampling_events[0]
+
+            assert looked_up.individual_id
+
+            indiv = self._dao.download_individual(looked_up.individual_id)
+
+            assert indiv.attrs[0].attr_type == 'patient_id'
+            assert indiv.attrs[0].attr_value == '103335'
+            assert indiv.attrs[0].attr_source == 'roma_dump'
+            assert indiv.attrs[0].study_name == '9030'
+
+        except ApiException as error:
+            self.fail("test_year_accuracy: Exception when test_roma_individual {}"
+                        .format(error))

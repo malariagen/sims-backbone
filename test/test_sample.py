@@ -1520,3 +1520,72 @@ class TestSample(TestBase):
 
         except ApiException as error:
             self.check_api_exception(api_factory, "SamplingEventApi->create_sampling_event", error)
+
+    """
+    """
+    def test_create_with_individual(self, api_factory):
+
+        api_instance = api_factory.SamplingEventApi()
+        individual_api_instance = api_factory.IndividualApi()
+
+        try:
+
+            samp = swagger_client.SamplingEvent(None, date(2017, 10, 10),
+                                                doc_accuracy='month')
+            indiv = swagger_client.Individual(None)
+            ident = swagger_client.Attr(attr_type='patient_id', attr_value='Tron',
+                                        study_name='9090-MD-UP')
+            indiv.attrs = [
+                ident
+            ]
+            indiv = individual_api_instance.create_individual(indiv)
+
+            samp.individual_id = indiv.individual_id
+            created = api_instance.create_sampling_event(samp)
+            fetched = api_instance.download_sampling_event(created.sampling_event_id)
+
+            assert samp.individual_id == created.individual_id, "upload individual != response"
+            assert samp.individual_id == fetched.individual_id, "upload individual != download response"
+
+            api_instance.delete_sampling_event(created.sampling_event_id)
+
+            individual_api_instance.delete_individual(indiv.individual_id)
+
+
+        except ApiException as error:
+            self.check_api_exception(api_factory, "IndividualApi->create_individual", error)
+
+    """
+    """
+    def test_update_with_individual(self, api_factory):
+
+        api_instance = api_factory.SamplingEventApi()
+        individual_api_instance = api_factory.IndividualApi()
+
+        try:
+
+            samp = swagger_client.SamplingEvent(None, date(2017, 10, 10),
+                                                doc_accuracy='month')
+            indiv = swagger_client.Individual(None)
+            ident = swagger_client.Attr(attr_type='patient_id', attr_value='Tron',
+                                        study_name='9090-MD-UP')
+            indiv.attrs = [
+                ident
+            ]
+            indiv = individual_api_instance.create_individual(indiv)
+
+            created = api_instance.create_sampling_event(samp)
+            created.individual_id = indiv.individual_id
+            updated = api_instance.update_sampling_event(created.sampling_event_id,
+                                                         created)
+            fetched = api_instance.download_sampling_event(created.sampling_event_id)
+            assert indiv.individual_id == fetched.individual_id, "upload individual != download response"
+
+            api_instance.delete_sampling_event(created.sampling_event_id)
+
+            individual_api_instance.delete_individual(indiv.individual_id)
+
+
+        except ApiException as error:
+            self.check_api_exception(api_factory, "IndividualApi->create_individual", error)
+

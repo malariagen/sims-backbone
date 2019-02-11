@@ -287,29 +287,53 @@ class TestIndividual(TestBase):
 
     """
     """
-#    def test_get_individual_attrs(self, api_factory):
-#
-#        metadata_api_instance = api_factory.MetadataApi()
-#        api_instance = api_factory.IndividualApi()
-#
-#        try:
-#            indiv = self.get_next_individual()
-#            indiv = swagger_client.Individual(None, 27.46362, 90.49542, 'country',
-#                                          'Trongsa, Trongsa, Bhutan', 'pv_3_individuals.txt', 'BTN')
-#            indiv.attrs = [
-#                swagger_client.Attr(attr_type='partner_name', attr_value='bhutan', study_name='1234-PV')
-#            ]
-#            created = api_instance.create_individual(indiv)
-#
-#            idents = metadata_api_instance.get_individual_attr_types()
-#
-#            assert 'partner_name' in idents
-#
-#            api_instance.delete_individual(created.individual_id)
-#
-#        except ApiException as error:
-#            self.check_api_exception(api_factory, "IndividualApi->create_individual", error)
-#
+    def test_get_by_attr(self, api_factory):
+
+        api_instance = api_factory.IndividualApi()
+
+        try:
+            indiv = self.get_next_individual()
+            created = api_instance.create_individual(indiv)
+
+            fetched = api_instance.download_individuals_by_attr(indiv.attrs[0].attr_type,indiv.attrs[0].attr_value,indiv.attrs[0].study_name)
+
+            assert len(fetched.individuals) == 1
+            assert fetched.individuals[0].individual_id == created.individual_id
+
+            api_instance.delete_individual(created.individual_id)
+
+        except ApiException as error:
+            self.check_api_exception(api_factory, "IndividualApi->create_individual", error)
+
+    """
+    """
+    def test_merge_individual(self, api_factory):
+
+        api_instance = api_factory.IndividualApi()
+
+        try:
+            indiv = self.get_next_individual()
+            created = api_instance.create_individual(indiv)
+            indiv1 = self.get_next_individual()
+            created1 = api_instance.create_individual(indiv1)
+
+            merged_res = api_instance.merge_individuals(created.individual_id,
+                                                    created1.individual_id)
+
+            merged = api_instance.download_individual(merged_res.individual_id)
+
+            assert merged_res == merged
+
+            assert len(merged.attrs) == len(indiv.attrs) + len(indiv1.attrs)
+
+            assert merged.attrs[0] != merged.attrs[1]
+
+            with pytest.raises(ApiException, status=404):
+                api_instance.delete_individual(created1.individual_id)
+            api_instance.delete_individual(created.individual_id)
+
+        except ApiException as error:
+            self.check_api_exception(api_factory, "IndividualApi->create_individual", error)
 #
 #    """
 #    Used to check permissions

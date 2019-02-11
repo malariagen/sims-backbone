@@ -17,6 +17,7 @@ from backbone_server.controllers.study_controller import StudyController
 from backbone_server.controllers.original_sample_controller import OriginalSampleController
 from backbone_server.controllers.derivative_sample_controller import DerivativeSampleController
 from backbone_server.controllers.assay_datum_controller import AssayDatumController
+from backbone_server.controllers.individual_controller import IndividualController
 
 from swagger_client.rest import ApiException
 
@@ -38,6 +39,7 @@ class LocalBackboneDAO(AbstractBackboneDAO):
         self.ad_api_instance = AssayDatumController()
         self.metadata_api_instance = MetadataController()
         self.study_api_instance = StudyController()
+        self.i_api_instance = IndividualController()
 
     def create_event_set(self, event_set_id):
 
@@ -564,4 +566,86 @@ class LocalBackboneDAO(AbstractBackboneDAO):
                 body=ret_data, status=retcode))
 
         return ret_data
+
+
+    def create_individual(self, individual):
+
+        found_events, retcode = self.i_api_instance.create_individual(individual,
+                                                                      user=self._user, auths=self._auths)
+
+        self._logger.debug(
+            "POST /v1/individual {} {}".format(individual, retcode))
+        if retcode >= 400:
+            raise ApiException(http_resp=HTTPResponse(
+                body=found_events, status=retcode))
+
+        return found_events
+
+    def update_individual(self, individual_id, individual):
+
+        found_events, retcode = self.i_api_instance.update_individual(individual_id, individual,
+                                                                      user=self._user, auths=self._auths)
+
+        self._logger.debug(
+            "PUT /v1/individual/{} {} {}".format(individual_id, individual, retcode))
+        if retcode >= 400:
+            raise ApiException(http_resp=HTTPResponse(
+                body=found_events, status=retcode))
+
+        return found_events
+
+    def merge_individuals(self, individual_id1, individual_id2):
+
+        found_events, retcode = self.i_api_instance.merge_individuals(individual_id1,
+                                                                      individual_id2,
+                                                                      user=self._user, auths=self._auths)
+
+        self._logger.debug("PUT /v1/individual/{}/{} {}".format(individual_id1,
+                                                                individual_id2, retcode))
+        if retcode >= 400:
+            raise ApiException(http_resp=HTTPResponse(
+                body=found_events, status=retcode))
+
+        return found_events
+
+    def delete_individual(self, individual_id):
+
+        found_events, retcode = self.i_api_instance.delete_individual(individual_id,
+                                                                      user=self._user, auths=self._auths)
+
+        self._logger.debug(
+            "DELETE /v1/individual/{}  {}".format(individual_id, retcode))
+        if retcode >= 400:
+            raise ApiException(http_resp=HTTPResponse(
+                body=found_events, status=retcode))
+
+        return found_events
+
+    def download_individual(self, individual_id):
+
+        found_events, retcode = self.i_api_instance.download_individual(individual_id,
+                                                                        user=self._user, auths=self._auths)
+
+        self._logger.debug("GET /v1/individual/{} {}".format(individual_id,
+                                                                 retcode))
+        if retcode >= 400:
+            raise ApiException(http_resp=HTTPResponse(
+                body=found_events, status=retcode))
+
+        return found_events
+
+    def download_individuals_by_attr(self, prop_name, prop_value, study_name):
+
+        found_events, retcode = self.i_api_instance.download_individuals_by_attr(prop_name,
+                                                                                 urllib.parse.quote_plus(prop_value),
+                                                                                 study_name,
+                                                                                 user=self._user, auths=self._auths)
+
+        self._logger.debug("GET /v1/individuals/attr/{}/{} {}".format(prop_name,
+                                                                      prop_value, retcode))
+        if retcode >= 400:
+            raise ApiException(http_resp=HTTPResponse(
+                body=found_events, status=retcode))
+
+        return found_events
 
