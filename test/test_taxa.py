@@ -13,7 +13,6 @@ class TestTaxa(TestBase):
 
     """
     """
-
     def test_create_partner_species(self, api_factory):
 
         api_instance = api_factory.OriginalSampleApi()
@@ -36,7 +35,6 @@ class TestTaxa(TestBase):
 
     """
     """
-
     def test_update_partner_species(self, api_factory):
 
         api_instance = api_factory.OriginalSampleApi()
@@ -122,3 +120,75 @@ class TestTaxa(TestBase):
         except ApiException as error:
             self.check_api_exception(
                 api_factory, "MetadataApi->create_taxonomy", error)
+
+    """
+    """
+    def test_multiple_partner_species(self, api_factory):
+
+        api_instance = api_factory.OriginalSampleApi()
+        study_api_instance = api_factory.StudyApi()
+
+        study_ident = '3000-MD-UP'
+        try:
+
+            samp1 = swagger_client.OriginalSample(None, study_name=study_ident,
+                                                  partner_species='P. falciparum')
+            created1 = api_instance.create_original_sample(samp1)
+            fetched1 = api_instance.download_original_sample(created1.original_sample_id)
+            assert created1 == fetched1, "create response != download response"
+            fetched1.original_sample_id = None
+            assert samp1 == fetched1, "upload != download response"
+
+            samp2 = swagger_client.OriginalSample(None, study_name=study_ident,
+                                                  partner_species='P. falciparum')
+            created2 = api_instance.create_original_sample(samp2)
+            fetched2 = api_instance.download_original_sample(created2.original_sample_id)
+            assert created2 == fetched2, "create response != download response"
+            fetched2.original_sample_id = None
+            assert samp2 == fetched2, "upload != download response"
+
+            samp3 = swagger_client.OriginalSample(None, study_name=study_ident,
+                                                  partner_species='P. falciparum + P. vivax')
+            created3 = api_instance.create_original_sample(samp3)
+            fetched3 = api_instance.download_original_sample(created3.original_sample_id)
+            assert created3 == fetched3, "create response != download response"
+            fetched3.original_sample_id = None
+            assert samp3 == fetched3, "upload != download response"
+
+            samp4 = swagger_client.OriginalSample(None, study_name=study_ident,
+                                                  partner_species='P. falciparum + P. vivax')
+            created4 = api_instance.create_original_sample(samp4)
+            fetched4 = api_instance.download_original_sample(created4.original_sample_id)
+            assert created4 == fetched4, "create response != download response"
+            fetched4.original_sample_id = None
+            assert samp4 == fetched4, "upload != download response"
+
+            study_detail = study_api_instance.download_study(study_ident)
+
+            for species in study_detail.partner_species:
+                if species.partner_species == 'P. falciparum':
+                    species.taxa = [swagger_client.Taxonomy(taxonomy_id=5833)]
+                else:
+                    species.taxa = [swagger_client.Taxonomy(taxonomy_id=5833),
+                                    swagger_client.Taxonomy(taxonomy_id=5855)]
+
+            study_api_instance.update_study(study_ident, study_detail)
+
+            fetched1 = api_instance.download_original_sample(created1.original_sample_id)
+
+            assert len(fetched1.partner_taxonomies) == 1
+            assert (int)(fetched1.partner_taxonomies[0].taxonomy_id) == 5833
+
+            fetched3 = api_instance.download_original_sample(created3.original_sample_id)
+
+            assert len(fetched3.partner_taxonomies) == 2
+            assert (int)(fetched3.partner_taxonomies[0].taxonomy_id) == 5833 and (int)(fetched3.partner_taxonomies[1].taxonomy_id) == 5855
+
+            api_instance.delete_original_sample(created1.original_sample_id)
+            api_instance.delete_original_sample(created2.original_sample_id)
+            api_instance.delete_original_sample(created3.original_sample_id)
+            api_instance.delete_original_sample(created4.original_sample_id)
+
+        except ApiException as error:
+            self.check_api_exception(api_factory,
+                                     "OriginalSampleApi->test_multiple_partner_species", error)
