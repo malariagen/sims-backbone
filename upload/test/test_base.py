@@ -38,7 +38,7 @@ class TestBase(unittest.TestCase):
         auth_token = None
         configuration = swagger_client.Configuration()
 
-        if os.getenv('TOKEN_URL'):
+        if os.getenv('TOKEN_URL') and not os.getenv('BB_NOAUTH'):
             try:
                 with open(self._config_file) as json_file:
                     args = json.load(json_file)
