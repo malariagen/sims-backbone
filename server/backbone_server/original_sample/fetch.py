@@ -113,8 +113,9 @@ class OriginalSampleFetch():
             os_id = original_sample.original_sample_id
             original_sample.attrs = OriginalSampleFetch.fetch_attrs(cursor,
                                                                     os_id)
-            taxa = OriginalSampleFetch.fetch_taxonomies(cursor, study_id,
-                                                        partner_species)
+            taxa = OriginalSampleFetch.fetch_taxonomies(cursor,
+                                                        original_sample.study_name,
+                                                        original_sample.partner_species)
             original_sample.partner_taxonomies = taxa
 
         sampling_events = {}

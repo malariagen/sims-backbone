@@ -184,6 +184,20 @@ class TestTaxa(TestBase):
             assert len(fetched3.partner_taxonomies) == 2
             assert (int)(fetched3.partner_taxonomies[0].taxonomy_id) == 5833 and (int)(fetched3.partner_taxonomies[1].taxonomy_id) == 5855
 
+            fetched = api_instance.download_original_samples_by_taxa(5833)
+
+            assert len(fetched.original_samples) == 4
+
+            for original_sample in fetched.original_samples:
+                if original_sample.original_sample_id == fetched1.original_sample_id:
+                    assert original_sample == fetched1
+                if original_sample.original_sample_id == fetched2.original_sample_id:
+                    assert original_sample == fetched2
+                if original_sample.original_sample_id == fetched3.original_sample_id:
+                    assert original_sample == fetched3
+                if original_sample.original_sample_id == fetched4.original_sample_id:
+                    assert original_sample == fetched4
+
             api_instance.delete_original_sample(created1.original_sample_id)
             api_instance.delete_original_sample(created2.original_sample_id)
             api_instance.delete_original_sample(created3.original_sample_id)
