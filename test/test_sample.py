@@ -1549,7 +1549,8 @@ class TestSample(TestBase):
 
             api_instance.delete_sampling_event(created.sampling_event_id)
 
-            individual_api_instance.delete_individual(indiv.individual_id)
+            with pytest.raises(ApiException, status=404):
+                individual_api_instance.delete_individual(indiv.individual_id)
 
 
         except ApiException as error:
@@ -1583,7 +1584,8 @@ class TestSample(TestBase):
 
             api_instance.delete_sampling_event(created.sampling_event_id)
 
-            individual_api_instance.delete_individual(indiv.individual_id)
+            with pytest.raises(ApiException, status=404):
+                individual_api_instance.delete_individual(indiv.individual_id)
 
 
         except ApiException as error:

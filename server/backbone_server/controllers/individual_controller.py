@@ -89,7 +89,7 @@ class IndividualController(BaseController):
         except MissingKeyException as dme:
             logging.getLogger(__name__).debug("download_individual: {}".format(repr(dme)))
             retcode = 404
-            loc = str(dke)
+            loc = str(dme)
 
         return loc, retcode
 

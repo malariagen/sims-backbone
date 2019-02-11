@@ -25,7 +25,10 @@ class SamplingEventDelete():
 
         cursor.execute( stmt, (sampling_event_id,))
 
-        individual_id = cursor.fetchone()[0]
+        individual_id = None
+
+        for (individual_id, ) in cursor:
+            pass
 
         individual_ids = 0
 
