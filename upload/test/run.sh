@@ -29,8 +29,11 @@ then
         export BB_NOAUTH=1
     fi
 fi
-POSTGRES_DB=backbone_test
-export POSTGRES_DB
+if [ -z ${POSTGRES_DB} ]
+then
+    POSTGRES_DB=backbone_test
+    export POSTGRES_DB
+fi
 if [ "$1" = "one" ]
 then
     python3 -m pytest -s -x -k $2

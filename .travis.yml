@@ -16,13 +16,12 @@ install:
     - nvm install 8
     - npm install -g @angular/cli
     - (cd client/sims-backbone;npm install)
-    - (cd client/sims-backbone;sed -i -e "s/url(\([-a-zA-Z0-9\.]*\))/url('\1')/" ./node_modules/material-design-icons/iconfont/material-icons.css)
 
 script:
   - (export LOCAL_TEST=1;pytest --cov=backbone_server --cov-report term-missing -v test/)
-  - psql -c "DELETE FROM attrs;" -U ${POSTGRES_USER} backbone_service
-  - psql -c "DELETE FROM studies;" -U ${POSTGRES_USER} backbone_service
-  - psql -c "DELETE FROM taxonomies WHERE id=7227;" -U ${POSTGRES_USER} backbone_service
+  - psql -c "DELETE FROM attrs;" -U ${POSTGRES_USER} ${POSTGRES_DB}
+  - psql -c "DELETE FROM studies;" -U ${POSTGRES_USER} ${POSTGRES_DB}
+  - psql -c "DELETE FROM taxonomies WHERE id=7227;" -U ${POSTGRES_USER} ${POSTGRES_DB}
   - (cd upload/test;LOCAL_TEST=1 ./run.sh)
   - (cd client/sims-backbone;xvfb-run -a ng test --no-watch --no-progress --browsers=ChromeNoSandbox --code-coverage)
     #  - (cd client/sims-backbone;xvfb-run -a ng e2e --no-progress --config=protractor-ci.conf.js)
@@ -34,14 +33,15 @@ before_install:
     - ./generate.sh noauth
 
 before_script:
-    - psql -c 'create database backbone_service;' -U postgres
-    - psql -U postgres -c "create extension postgis" backbone_service
     - export POSTGRES_USER="postgres"
-    - psql -c "\i database/backbone_service.psql;" -U ${POSTGRES_USER} backbone_service
-    - psql -c 'ALTER DATABASE backbone_service SET search_path=public, backbone_service, contrib;' -U postgres
-    - psql -c "SELECT postgis_full_version();" -U ${POSTGRES_USER} backbone_service
-    - psql -c "\copy countries (English, French, alpha2, alpha3, numeric_code) FROM './database/country_codes.tsv' DELIMITER E'\t'  HEADER CSV; " -U ${POSTGRES_USER} backbone_service
-    - psql -c "\copy taxonomies (id, rank, name) FROM './database/taxa.tsv' DELIMITER E'\t'  HEADER CSV;" -U ${POSTGRES_USER} backbone_service
+    - export POSTGRES_DB="backbone_service"
+    - psql -c "create database ${POSTGRES_DB};" -U ${POSTGRES_USER}
+    - psql -U ${POSTGRES_USER} -c "create extension postgis" ${POSTGRES_DB}
+    - psql -c "\i database/backbone_service.psql;" -U ${POSTGRES_USER} ${POSTGRES_DB}
+    - psql -c "ALTER DATABASE ${POSTGRES_DB} SET search_path=public, ${POSTGRES_DB}, contrib;" -U postgres
+    - psql -c "SELECT postgis_full_version();" -U ${POSTGRES_USER} ${POSTGRES_DB}
+    - psql -c "\copy countries (English, French, alpha2, alpha3, numeric_code) FROM './database/country_codes.tsv' DELIMITER E'\t'  HEADER CSV; " -U ${POSTGRES_USER} ${POSTGRES_DB}
+    - psql -c "\copy taxonomies (id, rank, name) FROM './database/taxa.tsv' DELIMITER E'\t'  HEADER CSV;" -U ${POSTGRES_USER} ${POSTGRES_DB}
     - export PYTHONPATH=$(pwd)/python_client:$(pwd)/server:$(pwd)/server/bb_server
     - export REMOTE_HOST_URL=http://localhost:8080/v1
 
