@@ -323,14 +323,18 @@ if __name__ == '__main__':
             if pref == 'os':
                 value = fetch.get_attr(o_sample, name)
             elif pref == 'se':
-                if o_sample.sampling_event_id not in all_sampling_events:
-                    print(o_sample)
-                value = fetch.get_attr(
-                    all_sampling_events[o_sample.sampling_event_id], name)
+                if o_sample.sampling_event_id:
+                    if o_sample.sampling_event_id not in all_sampling_events:
+                        print(o_sample)
+                    value = fetch.get_attr(
+                        all_sampling_events[o_sample.sampling_event_id], name)
+                else:
+                    value = None
             elif pref == 'loc':
-                se = all_sampling_events[o_sample.sampling_event_id]
-                value = fetch.get_attr(
-                    all_locations[se.public_location_id], name)
+                if o_sample.sampling_event_id:
+                    se = all_sampling_events[o_sample.sampling_event_id]
+                    value = fetch.get_attr(
+                        all_locations[se.public_location_id], name)
             if not pref == 'ds':
                 row.append(value)
 
