@@ -86,6 +86,7 @@ import { EventSetDsListComponent } from './event-set-ds-list/event-set-ds-list.c
 import { StudyOsListComponent } from './study-os-list/study-os-list.component';
 import { StudyDsListComponent } from './study-ds-list/study-ds-list.component';
 import { ResponseInterceptor } from './auth/response.interceptor';
+import { IndividualViewComponent } from './individual-view/individual-view.component';
 
 export function getConfiguration(authService: AuthService) {
   return authService.getConfiguration();
@@ -143,7 +144,8 @@ export function getConfiguration(authService: AuthService) {
     EventSetOsListComponent,
     EventSetDsListComponent,
     StudyOsListComponent,
-    StudyDsListComponent
+    StudyDsListComponent,
+    IndividualViewComponent
   ],
   imports: [
     BrowserModule,

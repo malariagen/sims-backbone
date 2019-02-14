@@ -24,6 +24,14 @@
     </div>
     <div fxLayout="row">
       <div [fxFlex]="grow">
+        <div *ngIf="_samplingEvent.individual_id">
+          <h3>Individual</h3>
+          <app-individual-view [individual_id]="_samplingEvent.individual_id"></app-individual-view>
+        </div>
+      </div>
+    </div>
+    <div fxLayout="row">
+      <div [fxFlex]="grow">
         <div *ngIf="_samplingEvent.location">
           <h3>Location</h3>
           <app-location-view [location]="_samplingEvent.location"></app-location-view>

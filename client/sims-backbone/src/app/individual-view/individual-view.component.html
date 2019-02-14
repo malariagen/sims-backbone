@@ -1,0 +1,7 @@
+<div *ngIf="individual">
+  <div fxLayout="row">
+    <div [fxFlex]="grow">
+      <app-attr-table [attrs]="individual.attrs"></app-attr-table>
+    </div>
+  </div>
+</div>
