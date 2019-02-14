@@ -34,10 +34,19 @@ export class EventSearchComponent implements OnInit {
     this.metadataService.getAttrTypes().subscribe(attr_types => {
       this.options = attr_types;
     });
+    this.warmUp();
 
     this.attr_type = 'oxford_id';
     //this.attr_value = 'QS0167-C';
     this.search();
+    
+  }
+
+  warmUp() {
+    this.sampleService.downloadSamplingEventsByOsAttr('', '').subscribe();
+    this.originalSampleService.downloadOriginalSamplesByAttr('', '').subscribe();
+    this.derivativeSampleService.downloadDerivativeSamplesByOsAttr('', '').subscribe();
+    this.assayDataService.downloadAssayDataByOsAttr('', '').subscribe();
   }
 
   search() {
