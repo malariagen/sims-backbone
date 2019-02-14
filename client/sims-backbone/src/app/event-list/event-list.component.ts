@@ -107,7 +107,7 @@ export class EventListComponent implements OnInit, AfterViewInit {
       return;
     }
 
-    let columnsForDisplay = ['sampling_event_id', 'study_id'];
+    let columnsForDisplay = ['sampling_event_id', 'individual_id'];
     columnsForDisplay = columnsForDisplay.concat(this._dataSource.attrTypes);
     columnsForDisplay = columnsForDisplay.concat(['doc', 'partner_location_name', 'location_curated_name', 'location']);
 
