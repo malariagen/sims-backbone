@@ -95,7 +95,7 @@ class TestROMA(TestBase):
             looked_up = looked_up.original_samples[0]
             self.assertEquals(looked_up.partner_species, 'Plasmodium falciparum')
         except ApiException as error:
-            self.fail("test_year_accuracy: Exception when calling download_sampling_event_by_os_attr {}"
+            self.fail("test_species: Exception when calling download_sampling_event_by_os_attr {}"
                         .format(error))
 
     """
@@ -108,7 +108,7 @@ class TestROMA(TestBase):
             looked_up = looked_up.sampling_events[0]
             self.assertEqual(looked_up.doc, datetime.date(2012, 11, 22))
         except ApiException as error:
-            self.fail("test_year_accuracy: Exception when calling download_sampling_event_by_os_attr {}"
+            self.fail("test_year_of_collection: Exception when calling download_sampling_event_by_os_attr {}"
                         .format(error))
 
 
@@ -147,7 +147,7 @@ class TestROMA(TestBase):
             if looked_up.proxy_location.location_id not in TestROMA._locations:
                 TestROMA._locations.append(looked_up.proxy_location.location_id)
         except ApiException as error:
-            self.fail("test_year_accuracy: Exception when calling download_sampling_event_by_os_attr {}"
+            self.fail("test_roma_location: Exception when calling download_sampling_event_by_os_attr {}"
                         .format(error))
 
     """
@@ -170,5 +170,21 @@ class TestROMA(TestBase):
             assert indiv.attrs[0].study_name == '9030'
 
         except ApiException as error:
-            self.fail("test_year_accuracy: Exception when test_roma_individual {}"
+            self.fail("test_roma_individual : Exception when download_sampling_events_by_os_attr{}"
+                        .format(error))
+
+    """
+    """
+    def test_roma_no_individual(self):
+
+
+        try:
+            looked_up = self._dao.download_sampling_events_by_os_attr('roma_id', 'TST00003')
+
+            looked_up = looked_up.sampling_events[0]
+
+            assert looked_up.individual_id is None
+
+        except ApiException as error:
+            self.fail("test_no_roma_individual : Exception when download_sampling_events_by_os_attr{}"
                         .format(error))

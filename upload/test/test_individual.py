@@ -76,7 +76,7 @@ class TestIndividual(TestBase):
 
         try:
             looked_up = self._dao.download_sampling_events_by_os_attr('oxford_id',
-                                                          'TS0001-C')
+                                                                      'TS0001-C')
             looked_up = looked_up.sampling_events[0]
 
             individual = self._dao.download_individual(looked_up.individual_id)
@@ -85,7 +85,7 @@ class TestIndividual(TestBase):
             assert individual.attrs[0].attr_value == '3D7'
 
             looked_up1 = self._dao.download_sampling_events_by_os_attr('oxford_id',
-                                                          'TS0001-CW7')
+                                                                       'TS0001-CW7')
             looked_up1 = looked_up1.sampling_events[0]
 
             individual1 = self._dao.download_individual(looked_up1.individual_id)
@@ -96,5 +96,22 @@ class TestIndividual(TestBase):
             assert looked_up.individual_id == looked_up1.individual_id
 
         except ApiException as error:
-            self.fail("test_year_accuracy: Exception when calling download_sampling_event_by_attr {}"
-                        .format(error))
+            self.fail("test_individual: Exception when calling download_sampling_event_by_attr {}"
+                      .format(error))
+
+    """
+    """
+    def test_no_individual(self):
+
+
+        try:
+            looked_up = self._dao.download_sampling_events_by_os_attr('oxford_id',
+                                                                      'TS0001-CW5')
+            looked_up = looked_up.sampling_events[0]
+
+            assert looked_up.individual is None
+
+
+        except ApiException as error:
+            self.fail("test_no_individual: Exception when calling download_sampling_event_by_attr {}"
+                      .format(error))

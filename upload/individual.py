@@ -25,13 +25,13 @@ class IndividualProcessor(BaseEntity):
         o_sample = swagger_client.Individual(None)
 
         idents = []
-        if 'patient_id' in values:
+        if 'patient_id' in values and values['patient_id']:
             idents.append(swagger_client.Attr('patient_id',
                                               str(values['patient_id']),
                                               study_name=study_id,
                                               attr_source=self._event_set))
 
-        if 'donor_source_code' in values:
+        if 'donor_source_code' in values and values['donor_source_code']:
             idents.append(swagger_client.Attr('donor_source_code',
                                               str(values['donor_source_code']),
                                               study_name=study_id,
