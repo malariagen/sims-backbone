@@ -13,6 +13,10 @@ class AttrsTableStubComponent {
 class LocationViewStubComponent {
   @Input() location;
 }
+@Component({ selector: 'app-individual-view', template: '' })
+class IndividualViewStubComponent {
+  @Input() individual_id;
+}
 
 describe('EventDetailComponent', () => {
   let component: EventDetailComponent;
@@ -21,9 +25,14 @@ describe('EventDetailComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [FlexLayoutModule],
-      declarations: [ EventDetailComponent, AttrsTableStubComponent, LocationViewStubComponent ]
+      declarations: [
+        EventDetailComponent,
+        AttrsTableStubComponent,
+        LocationViewStubComponent,
+        IndividualViewStubComponent
+      ]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {

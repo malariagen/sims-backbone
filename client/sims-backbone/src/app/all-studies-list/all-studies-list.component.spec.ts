@@ -60,7 +60,8 @@ describe('AllStudiesListComponent', () => {
   });
 
   it('should have requested all studies', () => {
-    expect(httpClientSpy.get.calls.mostRecent().args[0]).toBe('http://localhost/v1/studies', 'url');
-    expect(httpClientSpy.get.calls.count()).toBe(1, 'one call');
+    expect(httpClientSpy.get.calls.first().args[0]).toBe('http://localhost/v1/studies', 'url');
+    expect(httpClientSpy.get.calls.mostRecent().args[0]).toBe('http://localhost/v1/study/9999', 'url');
+    expect(httpClientSpy.get.calls.count()).toBe(4, 'one call');
   });
 });

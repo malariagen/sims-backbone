@@ -3,7 +3,7 @@ import { IndividualService, Individual } from '../typescript-angular-client';
 
 @Component({
   selector: 'app-individual-view',
-  providers: [IndividualService]
+  providers: [IndividualService],
   templateUrl: './individual-view.component.html',
   styleUrls: ['./individual-view.component.scss']
 })
