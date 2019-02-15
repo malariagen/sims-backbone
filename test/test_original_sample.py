@@ -1623,3 +1623,47 @@ class TestOriginalSample(TestBase):
             self.check_api_exception(api_factory,
                                      "OriginalSampleApi->create_original_sample", error)
 
+    """
+    """
+    def test_os_update_study(self, api_factory):
+
+        api_instance = api_factory.OriginalSampleApi()
+        se_api_instance = api_factory.SamplingEventApi()
+        location_api_instance = api_factory.LocationApi()
+
+        try:
+
+            sampling_event = swagger_client.SamplingEvent(None, date(2017, 10, 10),
+                                                          doc_accuracy='month')
+            loc = swagger_client.Location(None, 27.463, 90.495, 'city',
+                                          'Trongsa, Trongsa, Bhutan',
+                                          'test_os_update_study', 'BTN')
+            loc.attrs = [
+                swagger_client.Attr(attr_type='partner_name',
+                                    attr_value='Trongsa',
+                                    attr_source='upd_s',
+                                    study_name='4035-MD-UP')
+            ]
+            loc = location_api_instance.create_location(loc)
+
+            sampling_event.location_id = loc.location_id
+            created_se = se_api_instance.create_sampling_event(sampling_event)
+
+            samp = swagger_client.OriginalSample(None, study_name='4035-MD-UP')
+            samp.sampling_event_id = created_se.sampling_event_id
+
+            created = api_instance.create_original_sample(samp)
+            looked_up = api_instance.download_original_sample(created.original_sample_id)
+            looked_up.study_name = '4036-MD-UP'
+            updated = api_instance.update_original_sample(looked_up.original_sample_id, looked_up)
+            fetched = api_instance.download_original_sample(looked_up.original_sample_id)
+
+            fetched_se = se_api_instance.download_sampling_event(fetched.sampling_event_id)
+            assert fetched_se.location.attrs[0].study_name == looked_up.study_name
+            assert updated == fetched, "update response != download response"
+            se_api_instance.delete_sampling_event(created_se.sampling_event_id)
+            location_api_instance.delete_location(loc.location_id)
+            api_instance.delete_original_sample(looked_up.original_sample_id)
+
+        except ApiException as error:
+            self.check_api_exception(api_factory, "OriginalSampleApi->create_original_sample", error)
