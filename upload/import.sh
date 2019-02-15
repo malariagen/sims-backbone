@@ -19,7 +19,7 @@ shopt -s nullglob
 for i in ${INPUT1_STAGING_DIR}/import/roma/*
 do
     test -d ${ARCHIVE_DIR}/roma || mkdir -p ${ARCHIVE_DIR}/roma
-    INSTANCE=$(echo -n ${i} | awk -F_ '{print $1}')
+    INSTANCE=$(basename ${i} | awk -F_ '{print $1}')
     ROMA_LOG=${OUTPUT1_STAGING_DIR}/${INSTANCE}_$(date +%Y-%m-%d-%H%M%S).log
     python3 upload_roma.py ${IMPORT_CONFIG} $i 2>&1 | tee -i ${ROMA_LOG}
     python3 upload_log.py ${CMIS_CONFIG} ${ENVIRON} ${ROMA_LOG}
