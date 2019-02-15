@@ -619,3 +619,137 @@ class TestDerivativeSample(TestBase):
 
         except ApiException as error:
             self.check_api_exception(api_factory, "OriginalSampleApi->create_original_sample", error)
+
+    """
+    """
+    def test_ds_parent_create(self, api_factory):
+
+        api_instance = api_factory.DerivativeSampleApi()
+
+        try:
+
+            parent_samp = swagger_client.DerivativeSample(None)
+            parent_created = api_instance.create_derivative_sample(parent_samp)
+
+            samp = swagger_client.DerivativeSample(None)
+
+            samp.parent_derivative_sample_id = parent_created.derivative_sample_id
+
+            created = api_instance.create_derivative_sample(samp)
+            if not api_factory.is_authorized(None):
+                pytest.fail('Unauthorized call to create_derivative_sample succeeded')
+
+            fetched = api_instance.download_derivative_sample(created.derivative_sample_id)
+            assert created == fetched, "create response != download response"
+            fetched.derivative_sample_id = None
+            assert samp == fetched, "upload != download response"
+            api_instance.delete_derivative_sample(parent_created.derivative_sample_id)
+            api_instance.delete_derivative_sample(created.derivative_sample_id)
+
+        except ApiException as error:
+            self.check_api_exception(api_factory, "DerivativeSampleApi->create_derivative_sample", error)
+
+    """
+    """
+    def test_ds_parent_update(self, api_factory):
+
+        api_instance = api_factory.DerivativeSampleApi()
+
+        try:
+
+            parent_samp = swagger_client.DerivativeSample(None)
+            parent_created = api_instance.create_derivative_sample(parent_samp)
+
+            samp = swagger_client.DerivativeSample(None)
+            samp.attrs = [
+                swagger_client.Attr (attr_type='oxford', attr_value='1234567')
+            ]
+            created = api_instance.create_derivative_sample(samp)
+            looked_up = api_instance.download_derivative_samples_by_attr('oxford', '1234567')
+            looked_up = looked_up.derivative_samples[0]
+            new_samp = swagger_client.DerivativeSample(None)
+            new_samp.parent_derivative_sample_id = parent_created.derivative_sample_id
+            updated = api_instance.update_derivative_sample(looked_up.derivative_sample_id, new_samp)
+            fetched = api_instance.download_derivative_sample(looked_up.derivative_sample_id)
+            assert updated == fetched, "update response != download response"
+            fetched.derivative_sample_id = None
+            assert new_samp == fetched, "update != download response"
+
+            assert fetched.parent_derivative_sample_id == new_samp.parent_derivative_sample_id
+
+            api_instance.delete_derivative_sample(parent_created.derivative_sample_id)
+            api_instance.delete_derivative_sample(looked_up.derivative_sample_id)
+
+        except ApiException as error:
+            self.check_api_exception(api_factory, "DerivativeSampleApi->create_derivative_sample", error)
+
+    """
+    """
+    def test_ds_nested_delete_ds(self, api_factory):
+
+        api_instance = api_factory.DerivativeSampleApi()
+
+        try:
+
+            parent_samp = swagger_client.DerivativeSample(None)
+            parent_created = api_instance.create_derivative_sample(parent_samp)
+
+            samp = swagger_client.DerivativeSample(None)
+
+            samp.parent_derivative_sample_id = parent_created.derivative_sample_id
+
+            created = api_instance.create_derivative_sample(samp)
+
+            child_samp = swagger_client.DerivativeSample(None)
+
+            child_samp.parent_derivative_sample_id = created.derivative_sample_id
+
+            child_created = api_instance.create_derivative_sample(child_samp)
+
+            api_instance.delete_derivative_sample(created.derivative_sample_id)
+
+            fetched = api_instance.download_derivative_sample(child_created.derivative_sample_id)
+
+            assert fetched.parent_derivative_sample_id == parent_created.derivative_sample_id
+
+            api_instance.delete_derivative_sample(child_created.derivative_sample_id)
+            api_instance.delete_derivative_sample(parent_created.derivative_sample_id)
+
+        except ApiException as error:
+            self.check_api_exception(api_factory, "DerivativeSampleApi->create_derivative_sample", error)
+
+    """
+    """
+    def test_ds_nested_delete_os(self, api_factory):
+
+        api_instance = api_factory.DerivativeSampleApi()
+        os_api_instance = api_factory.OriginalSampleApi()
+
+        try:
+
+            parent_samp = swagger_client.OriginalSample(None)
+            parent_created = os_api_instance.create_original_sample(parent_samp)
+
+            samp = swagger_client.DerivativeSample(None)
+
+            samp.original_sample_id = parent_created.original_sample_id
+
+            created = api_instance.create_derivative_sample(samp)
+
+            child_samp = swagger_client.DerivativeSample(None)
+
+            child_samp.parent_derivative_sample_id = created.derivative_sample_id
+
+            child_created = api_instance.create_derivative_sample(child_samp)
+
+            api_instance.delete_derivative_sample(created.derivative_sample_id)
+
+            fetched = api_instance.download_derivative_sample(child_created.derivative_sample_id)
+
+            assert fetched.original_sample_id == parent_created.original_sample_id
+
+            api_instance.delete_derivative_sample(child_created.derivative_sample_id)
+            os_api_instance.delete_original_sample(parent_created.original_sample_id)
+
+        except ApiException as error:
+            self.check_api_exception(api_factory, "DerivativeSampleApi->create_derivative_sample", error)

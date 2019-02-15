@@ -25,11 +25,13 @@ class DerivativeSamplePost():
 
                 uuid_val = uuid.uuid4()
 
-                stmt = '''INSERT INTO derivative_samples 
-                            (id, original_sample_id, dna_prep)
-                            VALUES (%s, %s, %s)'''
+                stmt = '''INSERT INTO derivative_samples
+                            (id, original_sample_id, dna_prep,
+                            parent_derivative_sample_id)
+                            VALUES (%s, %s, %s, %s)'''
                 args = (uuid_val, derivative_sample.original_sample_id,
-                        derivative_sample.dna_prep)
+                        derivative_sample.dna_prep,
+                        derivative_sample.parent_derivative_sample_id)
 
                 try:
                     cursor.execute(stmt, args)

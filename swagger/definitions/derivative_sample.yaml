@@ -36,6 +36,9 @@ definitions:
       assay_data:
         type: object
         $ref: './assay_data.yaml#/definitions/AssayData'
+      parent_derivative_sample_id:
+        type: string
+#        format: uuid
   OriginalSampleMap:
     type: object
     additionalProperties:

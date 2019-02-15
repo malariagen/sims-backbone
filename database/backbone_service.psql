@@ -40,6 +40,7 @@ ALTER TABLE ONLY public.derivative_sample_attrs DROP CONSTRAINT fk_derivative_sa
 ALTER TABLE ONLY public.locations DROP CONSTRAINT fk_country;
 ALTER TABLE ONLY public.assay_datum_attrs DROP CONSTRAINT fk_assay_datum;
 ALTER TABLE ONLY public.assay_data DROP CONSTRAINT fk_ad_ds;
+ALTER TABLE ONLY public.derivative_samples DROP CONSTRAINT derivative_samples_derivative_samples_fk;
 DROP INDEX public.studies_study_code_idx;
 DROP INDEX public.partner_species_identifiers_partner_species_idx;
 DROP INDEX public.original_sample_attrs_original_sample_id_idx;
@@ -258,7 +259,8 @@ CREATE TABLE public.derivative_sample_attrs (
 CREATE TABLE public.derivative_samples (
     id uuid NOT NULL,
     original_sample_id uuid,
-    dna_prep character varying
+    dna_prep character varying,
+    parent_derivative_sample_id uuid
 );
 
 
@@ -817,6 +819,14 @@ CREATE INDEX studies_study_code_idx ON public.studies USING btree (study_code);
 
 
 --
+-- Name: derivative_samples derivative_samples_derivative_samples_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.derivative_samples
+    ADD CONSTRAINT derivative_samples_derivative_samples_fk FOREIGN KEY (parent_derivative_sample_id) REFERENCES public.derivative_samples(id);
+
+
+--
 -- Name: assay_data fk_ad_ds; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1020,9 +1030,7 @@ ALTER TABLE ONLY public.taxonomy_identifiers
 -- Name: SCHEMA public; Type: ACL; Schema: -; Owner: -
 --
 
-REVOKE ALL ON SCHEMA public FROM postgres;
 GRANT ALL ON SCHEMA public TO PUBLIC;
-GRANT ALL ON SCHEMA public TO iwright;
 
 
 --
