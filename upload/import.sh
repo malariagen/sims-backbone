@@ -24,8 +24,7 @@ do
     python3 upload_roma.py ${IMPORT_CONFIG} $i 2>&1 | tee -i ${ROMA_LOG}
     python3 upload_log.py ${CMIS_CONFIG} ${ENVIRON} ${ROMA_LOG}
     #INPUT_STAGING_DIR is a copy so changes aren't synced
-    cp ${i} ${ARCHIVE_DIR}/roma/$(basename ${i}).$(date +%Y-%m-%d:%H:%M:%S)
-    aws s3 rm "s3://malariagen-sims-import-${ENVIRON}/import/roma/$(basename ${i})"
+    aws s3 mv "s3://malariagen-sims-import-${ENVIRON}/import/roma/$(basename ${i})" "s3://malariagen-sims-import-${ENVIRON}/output/archive/roma/$(basename ${i})"
 done
 METADATA_LOG=${OUTPUT1_STAGING_DIR}/metadata_$(date +%Y-%m-%d-%H%M%S).log
 python3 set_taxa.py ${IMPORT_CONFIG} | tee -i ${METADATA_LOG}
