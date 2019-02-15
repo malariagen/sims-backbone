@@ -11,15 +11,9 @@ import swagger_client
 
 class UploadLog():
 
-
-    _auth_token = ''
-    _api_client = None
-
     def __init__(self, cmis_config):
 
         self.get_cmis_client(cmis_config)
-
-        self._dao = RemoteBackboneDAO()
 
     def get_cmis_client(self, config_file):
 
