@@ -458,6 +458,10 @@ class TestSample(TestBase):
             study_code = '1010-MD-UP'
 
             sampling_event = swagger_client.SamplingEvent(None, date(2017, 10, 14))
+            sampling_event.attrs = [
+                swagger_client.Attr (attr_type='se_oxford', attr_value='12345678',
+                                     attr_source='se_taxa_lookup')
+            ]
             created_se = api_instance.create_sampling_event(sampling_event)
 
             samp = swagger_client.OriginalSample(None, study_name=study_code,
@@ -478,6 +482,7 @@ class TestSample(TestBase):
             fetched = api_instance.download_sampling_events_by_taxa(5833)
 
             assert fetched.count == 1, "Taxa not found"
+            assert fetched.attr_types[0] == sampling_event.attrs[0].attr_type
 
             ffetched = api_instance.download_sampling_events(search_filter='taxa:5833')
 
@@ -1036,6 +1041,10 @@ class TestSample(TestBase):
 
             assert results == results1
 
+            ffetched = se_api_instance.download_sampling_events(search_filter='os_attr:oxford:12345678:4024')
+
+            assert ffetched == results1
+
             with pytest.raises(ApiException, status=404):
                 results2 = se_api_instance.download_sampling_events_by_os_attr('oxford', '12345678',
                                                                                study_name='1027-MD-UP')
@@ -1094,6 +1103,34 @@ class TestSample(TestBase):
 
             with pytest.raises(ApiException, status=404):
                 fetched = api_instance.download_sampling_event(created2.sampling_event_id)
+        except ApiException as error:
+            self.check_api_exception(api_factory, "SamplingEventApi->create_sampling_event", error)
+
+    """
+    """
+    def test_merge_sampling_events_missing(self, api_factory):
+
+        api_instance = api_factory.SamplingEventApi()
+
+        try:
+
+            samp1, samp2 = self.get_merge_events()
+
+            created1 = api_instance.create_sampling_event(samp1)
+
+            with pytest.raises(ApiException, status=404):
+                api_instance.merge_sampling_events(created1.sampling_event_id,
+                                                   str(uuid.uuid4()))
+
+            with pytest.raises(ApiException, status=404):
+                api_instance.merge_sampling_events(str(uuid.uuid4()),
+                                                   created1.sampling_event_id)
+
+            with pytest.raises(ApiException, status=404):
+                api_instance.merge_sampling_events(str(uuid.uuid4()),
+                                                   str(uuid.uuid4()))
+            api_instance.delete_sampling_event(created1.sampling_event_id)
+
         except ApiException as error:
             self.check_api_exception(api_factory, "SamplingEventApi->create_sampling_event", error)
 

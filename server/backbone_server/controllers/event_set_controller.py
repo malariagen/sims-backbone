@@ -201,13 +201,19 @@ class EventSetController(BaseController):
         retcode = 200
         evntSt = None
 
-        try:
-            get = EventSetGetById(self.get_connection())
-            eventSetId = urllib.parse.unquote_plus(eventSetId)
-            evntSt = get.get(eventSetId, start, count)
-        except MissingKeyException as dke:
-            logging.getLogger(__name__).debug("download_event_set: {}".format(repr(dke)))
+        if not eventSetId:
+            evntSt = 'No event set specified to download'
+            logging.getLogger(__name__).debug("download_event_set: {}".format(evntSt))
             retcode = 404
+        else:
+            try:
+                get = EventSetGetById(self.get_connection())
+                eventSetId = urllib.parse.unquote_plus(eventSetId)
+                evntSt = get.get(eventSetId, start, count)
+            except MissingKeyException as dke:
+                logging.getLogger(__name__).debug("download_event_set: {}".format(repr(dke)))
+                evntSt = str(dke)
+                retcode = 404
 
         return evntSt, retcode
 

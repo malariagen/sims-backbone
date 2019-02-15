@@ -84,8 +84,7 @@ class IndividualEdit():
 
         stmt = '''select a.id, a.study_id, li.individual_id FROM individual_attrs li
         JOIN attrs a ON a.id = li.attr_id
-        LEFT JOIN sampling_events se ON
-            (se.individual_id = li.individual_id OR se.proxy_individual_id = li.individual_id)
+        LEFT JOIN sampling_events se ON se.individual_id = li.individual_id
         WHERE se.id IS NULL AND li.individual_id = %s AND a.study_id = %s group by a.study_id, li.individual_id, a.id;'''
 
         cursor.execute(stmt, (individual_id, old_study_id,))
@@ -115,8 +114,6 @@ class IndividualEdit():
                                    (uuid_val, attr_id))
 
         except psycopg2.IntegrityError as err:
-            print(err.pgcode)
-            print(err.pgerror)
             raise DuplicateKeyException("Error inserting individual {}".format(individual)) from err
 
 

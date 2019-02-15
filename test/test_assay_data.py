@@ -98,13 +98,19 @@ class TestAssayDatum(TestBase):
     def test_ad_attr_lookup(self, api_factory):
 
         api_instance = api_factory.AssayDataApi()
+        ds_api_instance = api_factory.DerivativeSampleApi()
 
         try:
 
+            samp1 = swagger_client.DerivativeSample(None)
+            created1 = ds_api_instance.create_derivative_sample(samp1)
+
             samp = swagger_client.AssayDatum(None)
             samp.attrs = [
-                swagger_client.Attr (attr_type='oxford', attr_value='123456')
+                swagger_client.Attr(attr_type='oxford', attr_value='123456')
             ]
+            samp.derivative_sample_id = created1.derivative_sample_id
+
             created = api_instance.create_assay_datum(samp)
             results = api_instance.download_assay_data_by_attr('oxford', '123456')
             looked_up = results.assay_data[0]
@@ -117,6 +123,7 @@ class TestAssayDatum(TestBase):
             assert samp == fetched, "upload != download response"
 
             api_instance.delete_assay_datum(created.assay_datum_id)
+            ds_api_instance.delete_derivative_sample(created1.derivative_sample_id)
 
         except ApiException as error:
             self.check_api_exception(api_factory, "AssayDataApi->create_assay_datum", error)

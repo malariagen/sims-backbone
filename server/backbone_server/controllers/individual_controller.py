@@ -121,7 +121,7 @@ class IndividualController(BaseController):
 
     def download_individuals_by_attr(self, propName, propValue, studyName=None, user=None, auths=None):
         """
-        fetches a originalSample by property value
+        fetches a individual by property value
 
         :param propName: name of property to search
         :type propName: str
@@ -140,7 +140,7 @@ class IndividualController(BaseController):
             propValue = urllib.parse.unquote_plus(propValue)
             samp = get.get(propName, propValue, studyName)
         except MissingKeyException as dme:
-            logging.getLogger(__name__).debug("download_originalSample: {}".format(repr(dme)))
+            logging.getLogger(__name__).debug("download_individual_by_attr: {}".format(repr(dme)))
             retcode = 404
             loc = str(dme)
 

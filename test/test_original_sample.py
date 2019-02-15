@@ -1630,6 +1630,7 @@ class TestOriginalSample(TestBase):
         api_instance = api_factory.OriginalSampleApi()
         se_api_instance = api_factory.SamplingEventApi()
         location_api_instance = api_factory.LocationApi()
+        indiv_api_instance = api_factory.IndividualApi()
 
         try:
 
@@ -1642,26 +1643,41 @@ class TestOriginalSample(TestBase):
                 swagger_client.Attr(attr_type='partner_name',
                                     attr_value='Trongsa',
                                     attr_source='upd_s',
-                                    study_name='4035-MD-UP')
+                                    study_name='4037-MD-UP')
             ]
             loc = location_api_instance.create_location(loc)
-
             sampling_event.location_id = loc.location_id
+            indiv = swagger_client.Individual(None)
+            indiv.attrs = [
+                swagger_client.Attr(attr_type='individual_id',
+                                    attr_value='patient0',
+                                    attr_source='upd_s',
+                                    study_name='4037-MD-UP')
+            ]
+            individual = indiv_api_instance.create_individual(indiv)
+            sampling_event.individual_id = individual.individual_id
+
             created_se = se_api_instance.create_sampling_event(sampling_event)
 
-            samp = swagger_client.OriginalSample(None, study_name='4035-MD-UP')
+            samp = swagger_client.OriginalSample(None, study_name='4037-MD-UP')
             samp.sampling_event_id = created_se.sampling_event_id
 
             created = api_instance.create_original_sample(samp)
             looked_up = api_instance.download_original_sample(created.original_sample_id)
-            looked_up.study_name = '4036-MD-UP'
+            looked_up.study_name = '4038-MD-UP'
             updated = api_instance.update_original_sample(looked_up.original_sample_id, looked_up)
             fetched = api_instance.download_original_sample(looked_up.original_sample_id)
 
             fetched_se = se_api_instance.download_sampling_event(fetched.sampling_event_id)
             assert fetched_se.location.attrs[0].study_name == looked_up.study_name
             assert updated == fetched, "update response != download response"
+
+            fetched_i = indiv_api_instance.download_individual(individual.individual_id)
+            assert fetched_i.attrs[0].study_name == looked_up.study_name
+
             se_api_instance.delete_sampling_event(created_se.sampling_event_id)
+            with pytest.raises(ApiException, status=404):
+                indiv_api_instance.delete_individual(individual.individual_id)
             location_api_instance.delete_location(loc.location_id)
             api_instance.delete_original_sample(looked_up.original_sample_id)
 

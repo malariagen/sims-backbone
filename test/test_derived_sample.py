@@ -622,6 +622,112 @@ class TestDerivativeSample(TestBase):
 
     """
     """
+    def test_ds_event_set_lookup_paged(self, api_factory):
+
+        api_instance = api_factory.OriginalSampleApi()
+        se_api_instance = api_factory.SamplingEventApi()
+        es_api_instance = api_factory.EventSetApi()
+        ds_api_instance = api_factory.DerivativeSampleApi()
+
+        try:
+
+            event_set_name = 'test_ds_event_set_lookup'
+            study_code = '7005-MD-UP'
+
+            created_es = es_api_instance.create_event_set(event_set_name)
+
+            sampling_event = swagger_client.SamplingEvent(None, date(2017, 10, 10),
+                                                          doc_accuracy='month')
+
+            created_se = se_api_instance.create_sampling_event(sampling_event)
+
+            created_set = es_api_instance.create_event_set_item(event_set_name, created_se.sampling_event_id)
+
+            created, created1, created2 = self.create_test_samples(api_factory,
+                                                                   study_code)
+
+            created.sampling_event_id = created_se.sampling_event_id
+
+            api_instance.update_original_sample(created.original_sample_id,
+                                                created)
+
+            results = ds_api_instance.download_derivative_samples_by_event_set(event_set_name,
+                                                                    start=0,count=1)
+            looked_up = results.derivative_samples[0]
+
+            fetched = ds_api_instance.download_derivative_sample(looked_up.derivative_sample_id)
+
+            assert created1 == fetched or created2 == fetched, "create response != download response"
+
+            assert results.attr_types == ['test1', 'test2']
+
+            assert len(results.derivative_samples) == 1
+            assert results.count == 2
+
+            se_api_instance.delete_sampling_event(created_se.sampling_event_id)
+
+            es_api_instance.delete_event_set(event_set_name)
+
+            ds_api_instance.delete_derivative_sample(created1.derivative_sample_id)
+            ds_api_instance.delete_derivative_sample(created2.derivative_sample_id)
+            api_instance.delete_original_sample(created.original_sample_id)
+
+            with pytest.raises(ApiException, status=404):
+                results = api_instance.download_original_samples_by_event_set(event_set_name)
+
+        except ApiException as error:
+            self.check_api_exception(api_factory, "OriginalSampleApi->create_original_sample", error)
+
+    """
+    """
+    def test_ds_event_set_lookup_no_ds(self, api_factory):
+
+        api_instance = api_factory.OriginalSampleApi()
+        se_api_instance = api_factory.SamplingEventApi()
+        es_api_instance = api_factory.EventSetApi()
+        ds_api_instance = api_factory.DerivativeSampleApi()
+
+        try:
+
+            event_set_name = 'test_ds_event_set_lookup'
+            study_code = '7005-MD-UP'
+
+            created_es = es_api_instance.create_event_set(event_set_name)
+
+            sampling_event = swagger_client.SamplingEvent(None, date(2017, 10, 10),
+                                                          doc_accuracy='month')
+
+            created_se = se_api_instance.create_sampling_event(sampling_event)
+
+            created_set = es_api_instance.create_event_set_item(event_set_name, created_se.sampling_event_id)
+
+
+            with pytest.raises(ApiException, status=404):
+                ds_api_instance.download_derivative_samples_by_event_set(event_set_name)
+
+            se_api_instance.delete_sampling_event(created_se.sampling_event_id)
+
+            es_api_instance.delete_event_set(event_set_name)
+
+        except ApiException as error:
+            self.check_api_exception(api_factory, "OriginalSampleApi->create_original_sample", error)
+
+    """
+    """
+    def test_ds_event_set_lookup_missing(self, api_factory):
+
+        ds_api_instance = api_factory.DerivativeSampleApi()
+
+        try:
+
+            with pytest.raises(ApiException, status=404):
+                ds_api_instance.download_derivative_samples_by_event_set('does not exist')
+
+        except ApiException as error:
+            self.check_api_exception(api_factory, "OriginalSampleApi->create_original_sample", error)
+
+    """
+    """
     def test_ds_parent_create(self, api_factory):
 
         api_instance = api_factory.DerivativeSampleApi()

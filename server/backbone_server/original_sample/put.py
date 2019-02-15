@@ -5,6 +5,7 @@ from backbone_server.original_sample.edit import OriginalSampleEdit
 from backbone_server.original_sample.fetch import OriginalSampleFetch
 from backbone_server.sampling_event.fetch import SamplingEventFetch
 from backbone_server.location.edit import LocationEdit
+from backbone_server.individual.edit import IndividualEdit
 
 from swagger_server.models.original_sample import OriginalSample
 
@@ -52,6 +53,12 @@ class OriginalSamplePut():
 
                 LocationEdit.clean_up_attrs(cursor, sampling_event.location_id, original_study_id)
                 LocationEdit.clean_up_attrs(cursor, sampling_event.proxy_location_id, original_study_id)
+
+                if sampling_event.individual_id:
+                    IndividualEdit.update_attr_study(cursor, sampling_event.individual_id,
+                                                     original_study_id, study_id)
+                    IndividualEdit.clean_up_attrs(cursor, sampling_event.individual_id,
+                                                  original_study_id)
 
         partner_species = OriginalSampleEdit.fetch_partner_species(cursor, original_sample, study_id)
         stmt = '''UPDATE original_samples

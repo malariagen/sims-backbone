@@ -35,7 +35,7 @@ def api_factory(request, user, auths, method):
     #Not allowed to be None
     configuration.access_token = 'abcd'
     if not auths or 'cn=editor,ou=sims,ou=projects,ou=groups,dc=malariagen,dc=net' in auths:
-        if os.getenv('TOKEN_URL'):
+        if os.getenv('TOKEN_URL') and not os.getenv('LOCAL_TEST'):
             with open('../upload/config_dev.json') as json_file:
                 args = json.load(json_file)
                 token_request = requests.get(os.getenv('TOKEN_URL'),

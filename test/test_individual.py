@@ -150,6 +150,18 @@ class TestIndividual(TestBase):
             assert looked_up_indivs.count == 2, 'Wrong number of individuals'
             assert len(looked_up_indivs.individuals) == 1, 'Wrong number of individuals'
 
+            looked_up_indivs = api_instance.download_individuals(studyName=indiv1.attrs[0].study_name)
+            assert looked_up_indivs.count == 2, 'Wrong number of individuals'
+            assert len(looked_up_indivs.individuals) == 2, 'Wrong number of individuals'
+
+            looked_up_indivs = api_instance.download_individuals(orderby='study_name')
+            assert looked_up_indivs.count == 2, 'Wrong number of individuals'
+            assert len(looked_up_indivs.individuals) == 2, 'Wrong number of individuals'
+
+            looked_up_indivs = api_instance.download_individuals(studyName='XXXXX')
+            assert looked_up_indivs.count == 0, 'Wrong number of individuals'
+            assert len(looked_up_indivs.individuals) == 0, 'Wrong number of individuals'
+
             looked_up_indivs = api_instance.download_individuals(start=10, count=2)
             assert looked_up_indivs.count == 2, 'Wrong number of individuals'
             assert len(looked_up_indivs.individuals) == 0, 'Wrong number of individuals'
@@ -307,6 +319,20 @@ class TestIndividual(TestBase):
 
     """
     """
+    def test_get_by_attr_missing(self, api_factory):
+
+        api_instance = api_factory.IndividualApi()
+
+        try:
+
+            with pytest.raises(ApiException, status=404):
+                fetched = api_instance.download_individuals_by_attr('','')
+
+        except ApiException as error:
+            self.check_api_exception(api_factory, "IndividualApi->create_individual", error)
+
+    """
+    """
     def test_merge_individual(self, api_factory):
 
         api_instance = api_factory.IndividualApi()
@@ -330,6 +356,33 @@ class TestIndividual(TestBase):
 
             with pytest.raises(ApiException, status=404):
                 api_instance.delete_individual(created1.individual_id)
+            api_instance.delete_individual(created.individual_id)
+
+        except ApiException as error:
+            self.check_api_exception(api_factory, "IndividualApi->create_individual", error)
+
+    """
+    """
+    def test_merge_individual_missing(self, api_factory):
+
+        api_instance = api_factory.IndividualApi()
+
+        try:
+            indiv = self.get_next_individual()
+            created = api_instance.create_individual(indiv)
+
+            with pytest.raises(ApiException, status=404):
+                merged_res = api_instance.merge_individuals(str(uuid.uuid4()),
+                                                        created.individual_id)
+
+            with pytest.raises(ApiException, status=404):
+                merged_res = api_instance.merge_individuals(created.individual_id,
+                                                            str(uuid.uuid4()))
+            with pytest.raises(ApiException, status=404):
+                merged_res = api_instance.merge_individuals(str(uuid.uuid4()),
+                                                            str(uuid.uuid4()))
+
+
             api_instance.delete_individual(created.individual_id)
 
         except ApiException as error:

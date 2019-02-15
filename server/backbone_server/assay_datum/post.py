@@ -24,7 +24,7 @@ class AssayDatumPost():
 
                 uuid_val = uuid.uuid4()
 
-                stmt = '''INSERT INTO assay_data 
+                stmt = '''INSERT INTO assay_data
                             (id, derivative_sample_id, ebi_run_acc)
                             VALUES (%s, %s, %s)'''
                 args = (uuid_val, assay_datum.derivative_sample_id,
@@ -36,8 +36,6 @@ class AssayDatumPost():
                     AssayDatumEdit.add_attrs(cursor, uuid_val, assay_datum)
 
                 except psycopg2.IntegrityError as err:
-                    print(err.pgcode)
-                    print(err.pgerror)
                     raise DuplicateKeyException("Error inserting assay_datum {}".format(assay_datum)) from err
                 except DuplicateKeyException as err:
                     raise err
