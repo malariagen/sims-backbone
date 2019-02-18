@@ -46,6 +46,7 @@ class EventSetController(BaseController):
             evntSt = post.post(eventSetId)
         except DuplicateKeyException as dke:
             logging.getLogger(__name__).debug("create_event_set: {}".format(repr(dke)))
+            evntSt = str(dke)
             retcode = 422
 
         return evntSt, retcode
@@ -73,9 +74,11 @@ class EventSetController(BaseController):
         except DuplicateKeyException as dke:
             logging.getLogger(__name__).debug("create_event_set_item: {}".format(repr(dke)))
             retcode = 422
+            evntSt = str(dke)
         except MissingKeyException as dke:
             logging.getLogger(__name__).debug("create_event_set_item: {}".format(repr(dke)))
             retcode = 404
+            evntSt = str(dke)
 
         return evntSt, retcode
 
@@ -105,9 +108,11 @@ class EventSetController(BaseController):
         except DuplicateKeyException as dke:
             logging.getLogger(__name__).debug("create_event_set_note: {}".format(repr(dke)))
             retcode = 422
+            evntSt = str(dke)
         except MissingKeyException as dke:
             logging.getLogger(__name__).debug("create_event_set_note: {}".format(repr(dke)))
             retcode = 404
+            evntSt = str(dke)
 
         return evntSt, retcode
 
@@ -129,9 +134,10 @@ class EventSetController(BaseController):
             eventSetId = urllib.parse.unquote_plus(eventSetId)
 
             evntSt = delete.delete(eventSetId)
-        except MissingKeyException as mke:
-            logging.getLogger(__name__).debug("delete_event_set: {}".format(repr(mke)))
+        except MissingKeyException as dke:
+            logging.getLogger(__name__).debug("delete_event_set: {}".format(repr(dke)))
             retcode = 404
+            evntSt = str(dke)
 
         return evntSt, retcode
 
@@ -158,6 +164,7 @@ class EventSetController(BaseController):
         except MissingKeyException as dke:
             logging.getLogger(__name__).debug("delete_event_set_item: {}".format(repr(dke)))
             retcode = 404
+            evntSt = str(dke)
 
         return evntSt, retcode
 
@@ -185,6 +192,7 @@ class EventSetController(BaseController):
         except MissingKeyException as dke:
             logging.getLogger(__name__).debug("delete_event_set_note: {}".format(repr(dke)))
             retcode = 404
+            evntSt = str(dke)
 
         return evntSt, retcode
 
@@ -254,6 +262,7 @@ class EventSetController(BaseController):
         except MissingKeyException as dke:
             logging.getLogger(__name__).debug("update_event_set: {}".format(repr(dke)))
             retcode = 404
+            evntSt = str(dke)
 
         return evntSt, retcode
 
@@ -282,8 +291,10 @@ class EventSetController(BaseController):
         except MissingKeyException as dke:
             logging.getLogger(__name__).debug("update_event_set_note: {}".format(repr(dke)))
             retcode = 404
+            evntSt = str(dke)
         except DuplicateKeyException as dke:
             logging.getLogger(__name__).debug("update_event_set_note: {}".format(repr(dke)))
             retcode = 422
+            evntSt = str(dke)
 
         return evnt_set, retcode
