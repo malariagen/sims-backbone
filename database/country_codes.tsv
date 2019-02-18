@@ -69,6 +69,7 @@ El Salvador	El Salvador	SV	SLV	222
 Equatorial Guinea	Guinée équatoriale (la)	GQ	GNQ	226
 Eritrea	Érythrée (l')	ER	ERI	232
 Estonia	Estonie (l')	EE	EST	233
+Eswatini	Eswatini (l')	SZ	SWZ	748
 Ethiopia	Éthiopie (l')	ET	ETH	231
 Falkland Islands (the) [Malvinas]	Falkland (les Îles)/Malouines (les Îles)	FK	FLK	238
 Faroe Islands (the)	Féroé (les Îles)	FO	FRO	234
@@ -120,7 +121,7 @@ Korea (the Democratic People's Republic of)	Corée (la République populaire d�
 Korea (the Republic of)	Corée (la République de)	KR	KOR	410
 Kuwait	Koweït (le)	KW	KWT	414
 Kyrgyzstan	Kirghizistan (le)	KG	KGZ	417
-Lao People's Democratic Republic (the)	Lao, République démocratique populaire	LA	LAO	418
+Lao People's Democratic Republic (the)	Lao (la République démocratique populaire)	LA	LAO	418
 Latvia	Lettonie (la)	LV	LVA	428
 Lebanon	Liban (le)	LB	LBN	422
 Lesotho	Lesotho (le)	LS	LSO	426
@@ -137,14 +138,14 @@ Malaysia	Malaisie (la)	MY	MYS	458
 Maldives	Maldives (les)	MV	MDV	462
 Mali	Mali (le)	ML	MLI	466
 Malta	Malte	MT	MLT	470
-Marshall Islands (the)	Marshall (Îles)	MH	MHL	584
+Marshall Islands (the)	Marshall (les Îles)	MH	MHL	584
 Martinique	Martinique (la)	MQ	MTQ	474
 Mauritania	Mauritanie (la)	MR	MRT	478
 Mauritius	Maurice	MU	MUS	480
 Mayotte	Mayotte	YT	MYT	175
 Mexico	Mexique (le)	MX	MEX	484
 Micronesia (Federated States of)	Micronésie (États fédérés de)	FM	FSM	583
-Moldova (the Republic of)	Moldova, République de	MD	MDA	498
+Moldova (the Republic of)	Moldova (la République de)	MD	MDA	498
 Monaco	Monaco	MC	MCO	492
 Mongolia	Mongolie (la)	MN	MNG	496
 Montenegro	Monténégro (le)	ME	MNE	499
@@ -202,7 +203,7 @@ Singapore	Singapour	SG	SGP	702
 Sint Maarten (Dutch part)	Saint-Martin (partie néerlandaise)	SX	SXM	534
 Slovakia	Slovaquie (la)	SK	SVK	703
 Slovenia	Slovénie (la)	SI	SVN	705
-Solomon Islands	Salomon (Îles)	SB	SLB	90
+Solomon Islands	Salomon (les Îles)	SB	SLB	90
 Somalia	Somalie (la)	SO	SOM	706
 South Africa	Afrique du Sud (l')	ZA	ZAF	710
 South Georgia and the South Sandwich Islands	Géorgie du Sud-et-les Îles Sandwich du Sud (la)	GS	SGS	239
@@ -212,13 +213,12 @@ Sri Lanka	Sri Lanka	LK	LKA	144
 Sudan (the)	Soudan (le)	SD	SDN	729
 Suriname	Suriname (le)	SR	SUR	740
 Svalbard and Jan Mayen	Svalbard et l'Île Jan Mayen (le)	SJ	SJM	744
-Swaziland	Swaziland (le)	SZ	SWZ	748
 Sweden	Suède (la)	SE	SWE	752
 Switzerland	Suisse (la)	CH	CHE	756
-Syrian Arab Republic	République arabe syrienne (la)	SY	SYR	760
+Syrian Arab Republic (the)	République arabe syrienne (la)	SY	SYR	760
 Taiwan (Province of China)	Taïwan (Province de Chine)	TW	TWN	158
 Tajikistan	Tadjikistan (le)	TJ	TJK	762
-Tanzania, United Republic of	Tanzanie, République-Unie de	TZ	TZA	834
+Tanzania, the United Republic of	Tanzanie (la République-Unie de)	TZ	TZA	834
 Thailand	Thaïlande (la)	TH	THA	764
 Timor-Leste	Timor-Leste (le)	TL	TLS	626
 Togo	Togo (le)	TG	TGO	768
