@@ -14,14 +14,13 @@ class Upload_ROMA(uploader.Uploader):
 
         self.setup(filename)
 
-        print("Event set:" + self._event_set)
-
         (instance,dumps,) = self._event_set.split('_')
 
         with open(filename) as json_file:
             data = json.load(json_file)
 
         items = {}
+        event_sets = []
 
         for item in data:
             if not item['model'] in items:
@@ -34,6 +33,7 @@ class Upload_ROMA(uploader.Uploader):
             for key, item in items['locations.proxylocation'].items():
                 fields = item['fields']
                 proxy_locations[fields['location']] = fields['proxy_location']
+
 
         for key, item in items['samples.sample'].items():
             roma_pk_id = instance + '_' + str(item['pk'])
@@ -67,6 +67,7 @@ class Upload_ROMA(uploader.Uploader):
 
             roma_manifest_id = fields['manifest']
             roma_study_id = items['samples.manifest'][roma_manifest_id]['fields']['study']
+            manifest = instance + '_' + items['samples.manifest'][roma_manifest_id]['fields']['name']
             study_id = items['managements.study'][roma_study_id]['fields']['project_code'][1:]
 
             tags = {}
@@ -115,13 +116,21 @@ class Upload_ROMA(uploader.Uploader):
                 'proxy_latitude': proxy_latitude,
                 'proxy_longitude': proxy_longitude,
                 'proxy_location_name': proxy_loc_name,
-                'proxy_country': proxy_country
+                'proxy_country': proxy_country,
+                'manifest': manifest
             }
 
             sampling_event = self.process_item(values)
 
-#            print(values)
-#            print(sampling_event)
+            if values['manifest'] not in event_sets:
+                self._dao.create_event_set(values['manifest'])
+                event_sets.append(values['manifest'])
+
+            if not sampling_event.event_sets or values['manifest'] not in sampling_event.event_sets:
+                self._dao.create_event_set_item(values['manifest'],
+                                                sampling_event.sampling_event_id)
+            #print(values)
+            #print(sampling_event)
 
             self.validate(values, sampling_event)
 

@@ -30,9 +30,12 @@ class TestROMA(TestBase):
     @classmethod
     def tearDownClass(self):
 
-        self.deleteStudies(['9030'], TestROMA._locations)
+        TestBase.deleteStudies(['9030'], TestROMA._locations)
 
-        self.tearDownLocations(TestROMA._locations)
+        TestBase.tearDownLocations(TestROMA._locations)
+
+        TestBase.deleteEventSets(['roma_dump', 'roma_MNF00001'],
+                                 TestROMA._locations)
 
 
     """
@@ -188,3 +191,21 @@ class TestROMA(TestBase):
         except ApiException as error:
             self.fail("test_no_roma_individual : Exception when download_sampling_events_by_os_attr{}"
                         .format(error))
+
+
+    """
+    """
+    def test_roma_event_set(self):
+
+        try:
+            looked_up = self._dao.download_sampling_events_by_os_attr('roma_id', 'TST00001')
+            looked_up = looked_up.sampling_events[0]
+
+            assert 'roma_dump' in looked_up.event_sets
+
+            assert 'roma_MNF00001' in looked_up.event_sets
+
+        except ApiException as error:
+            self.fail("test_species: Exception when calling download_sampling_event_by_os_attr {}"
+                        .format(error))
+

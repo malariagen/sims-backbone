@@ -262,8 +262,9 @@ class TestMerge(TestBase):
 
         TestBase.deleteStudies(['9030','9031'], locations)
 
-        TestBase.deleteEventSets(['oxford_merge', 'pf6_merge', 'pv3_merge', 'roma_dump',
-                          'sanger-lims_merge'], locations)
+        TestBase.deleteEventSets(['oxford_merge', 'pf6_merge', 'pv3_merge',
+                                  'roma_dump', 'roma_MNF00001',
+                                  'sanger-lims_merge'], locations)
 
         TestBase.tearDownSSR(locations)
         TestBase.tearDownLocations(locations)
