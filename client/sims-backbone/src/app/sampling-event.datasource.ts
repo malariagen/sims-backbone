@@ -7,11 +7,10 @@ import { SamplingEventsService } from "./sampling-events.service";
 import { BehaviorSubject } from "rxjs/BehaviorSubject";
 import { catchError, finalize } from "rxjs/operators";
 import { of } from "rxjs/observable/of";
-import { LocationMap } from './typescript-angular-client/model/locationMap';
 
 export class SamplingEventsSource implements DataSource<SamplingEvent> {
 
-    locations: LocationMap;
+    locations: Map<string, Location>;
     samplingEventCount: number;
     attrTypes: Array<string>;
 

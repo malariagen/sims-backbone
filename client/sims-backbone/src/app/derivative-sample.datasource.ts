@@ -1,17 +1,16 @@
-import { DataSource } from "@angular/cdk/table";
-import { CollectionViewer } from "@angular/cdk/collections";
-import { Observable } from "rxjs/Observable";
-import { DerivativeSample, DerivativeSamples } from "./typescript-angular-client";
+import { DataSource } from '@angular/cdk/table';
+import { CollectionViewer } from '@angular/cdk/collections';
+import { Observable } from 'rxjs/Observable';
+import { DerivativeSample, DerivativeSamples, OriginalSample } from './typescript-angular-client';
 
-import { BehaviorSubject } from "rxjs/BehaviorSubject";
-import { catchError, finalize } from "rxjs/operators";
-import { of } from "rxjs/observable/of";
-import { DerivativeSamplesService } from "./derivative-samples.service";
-import { OriginalSampleMap } from './typescript-angular-client/model/originalSampleMap';
+import { BehaviorSubject } from 'rxjs/BehaviorSubject';
+import { catchError, finalize } from 'rxjs/operators';
+import { of } from 'rxjs/observable/of';
+import { DerivativeSamplesService } from './derivative-samples.service';
 
 export class DerivativeSamplesSource implements DataSource<DerivativeSample> {
 
-    originalSamples: OriginalSampleMap;
+    originalSamples: Map<string, OriginalSample>;
     derivativeSampleCount: number;
     attrTypes: Array<string>;
 

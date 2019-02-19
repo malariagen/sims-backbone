@@ -46,7 +46,8 @@ export class LocationEditComponent implements OnInit {
   zoom = 10;
   accuracy: string;
 
-  constructor(protected httpClient: HttpClient, private route: ActivatedRoute, private locationService: LocationService, private metadataService: MetadataService, private _fb: FormBuilder, private mapsAPILoader: MapsAPILoader, private ngZone: NgZone
+  constructor(protected httpClient: HttpClient, private route: ActivatedRoute, private locationService: LocationService,
+    private metadataService: MetadataService, private _fb: FormBuilder, private mapsAPILoader: MapsAPILoader, private ngZone: NgZone
   ) { }
 
   getPrecisionFromZoom() {
@@ -215,8 +216,8 @@ export class LocationEditComponent implements OnInit {
 
   public useOSM({ value, valid }: { value: any, valid: boolean }): void {
     console.log(value);
-    this.locationForm.controls['curated_name'].setValue(value.display_name);
-    this.locationForm.controls['curation_method'].setValue('osm');
+    this.locationForm.controls['curatedName'].setValue(value.display_name);
+    this.locationForm.controls['curationMethod'].setValue('osm');
     this.setPrecisionFromZoom();
     this.setCountry(value.country_code);
   }
@@ -306,8 +307,8 @@ export class LocationEditComponent implements OnInit {
 
   public useGoogle({ value, valid }: { value: any, valid: boolean }): void {
     console.log(value);
-    this.locationForm.controls['curated_name'].setValue(value.display_name);
-    this.locationForm.controls['curation_method'].setValue('google');
+    this.locationForm.controls['curatedName'].setValue(value.display_name);
+    this.locationForm.controls['curationMethod'].setValue('google');
     this.setPrecisionFromZoom();
     this.setCountry(value.country_code);
   }
