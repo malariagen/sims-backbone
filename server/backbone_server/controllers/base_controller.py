@@ -1,5 +1,8 @@
 import logging
 import os
+from swagger_server.encoder import JSONEncoder
+import json
+from psycopg2.extras import Json
 
 
 class BaseController():
@@ -39,7 +42,8 @@ class BaseController():
             psycopg2.extensions.register_type(register_uuid())
             psycopg2.extensions.register_type(psycopg2.extensions.UNICODE)
             psycopg2.extensions.register_type(psycopg2.extensions.UNICODEARRAY)
-            conn = psycopg2.connect(connection_factory=LoggingConnection, **config)
+            conn = psycopg2.connect(
+                connection_factory=LoggingConnection, **config)
             conn.initialize(self._logger)
     #        cur = conn.cursor()
     #        cur.execute("SET search_path TO " + 'backbone,public,contrib')
@@ -70,16 +74,23 @@ class BaseController():
         resp = list(authorizer.keys())
         return resp
 
+    def dumps(self, item):
+
+        return json.dumps(item, cls=JSONEncoder)
+
     def log_action(self, user, action, entity_id, content, result, retcode):
 
+        stmt = '''INSERT INTO archive (submitter, action_id, entity_id, input_value, output_value, result_code)
+                                       VALUES (%s, %s, %s, %s, %s, %s)'''
         try:
             # content_json = None
             # if content:
             #    content_json = json.dumps(content.to_dict())
-            # result_json = None
-            # if result:
-            #    result_json = json.dumps(content.to_dict())
-            args = (user, action, entity_id, str(content), str(result), retcode)
+            result_json = None
+            if result:
+                result_json = Json(result, dumps=self.dumps)
+            args = (user, action, entity_id, str(content),
+                    result_json, retcode)
 
             self._logger.debug("log_action {}".format(args))
 
@@ -87,10 +98,9 @@ class BaseController():
                     action.startswith('delete') or retcode != 200:
                 with self._connection:
                     with self._connection.cursor() as cursor:
-                        cursor.execute('''INSERT INTO archive (submitter, action_id, entity_id,
-                                       input_value, output_value, result_code) VALUES (%s, %s, %s, %s, %s, %s)''', args)
-        except Exception:
+                        cursor.execute(stmt, args)
+        except Exception as err:
             # Don't want to fail if it's just a logging problem
             args = (user, action, entity_id, content, result, retcode)
-            print("log_action {}".format(args))
-            self._logger.exception('Failed to log action')
+            print("failed log_action {} {}".format(err, stmt % args))
+            self._logger.exception('Failed to log action {}'.format(err))

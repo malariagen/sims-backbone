@@ -170,7 +170,7 @@ CREATE TABLE public.archive (
     action_id character varying(64),
     entity_id character varying(64),
     input_value text,
-    output_value text,
+    output_value json,
     result_code integer,
     action_date timestamp with time zone DEFAULT now() NOT NULL
 );
