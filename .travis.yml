@@ -13,7 +13,6 @@ install:
     - pip install -r server/backbone_server/REQUIREMENTS
     - pip install -r upload/requirements.txt
     - pip install python-coveralls
-    - nvm install 8
     - npm install -g @angular/cli
     - (cd client/sims-backbone;npm install)
 
@@ -30,6 +29,7 @@ services:
     - postgresql
 
 before_install:
+    - nvm install 8
     - ./generate.sh noauth
 
 before_script:
