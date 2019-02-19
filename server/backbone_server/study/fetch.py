@@ -1,6 +1,6 @@
-from swagger_server.models.study import Study
-from swagger_server.models.taxonomy import Taxonomy
-from swagger_server.models.partner_species import PartnerSpecies
+from openapi_server.models.study import Study
+from openapi_server.models.taxonomy import Taxonomy
+from openapi_server.models.partner_species import PartnerSpecies
 from backbone_server.errors.missing_key_exception import MissingKeyException
 
 from backbone_server.location.gets import LocationsGet

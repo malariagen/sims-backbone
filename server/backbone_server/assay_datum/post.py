@@ -3,7 +3,7 @@ from backbone_server.errors.duplicate_key_exception import DuplicateKeyException
 from backbone_server.assay_datum.edit import AssayDatumEdit
 from backbone_server.assay_datum.fetch import AssayDatumFetch
 
-from swagger_server.models.assay_datum import AssayDatum
+from openapi_server.models.assay_datum import AssayDatum
 
 import psycopg2
 

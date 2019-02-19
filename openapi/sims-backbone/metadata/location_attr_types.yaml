@@ -1,0 +1,15 @@
+    get:
+      tags:
+        - metadata
+      summary: fetches all the location attr types
+      description: returns all location attr types in use
+      operationId: getLocationAttrTypes
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string

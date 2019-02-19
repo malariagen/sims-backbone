@@ -13,7 +13,7 @@
     
     
     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-    <mat-row *matRowDef="let row; columns: displayedColumns;" [ngClass]="{'row-highlight': selectedEvents.has(row.sampling_event_id) }"></mat-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;" [ngClass]="{'row-highlight': selectedEvents.has(row.samplingEventId) }"></mat-row>
 
   </mat-table>
 

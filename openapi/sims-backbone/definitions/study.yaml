@@ -1,0 +1,17 @@
+components:
+  schemas:
+    Study:
+      type: object
+      required:
+          - code
+      properties:
+        code:
+          type: string
+        name:
+          type: string
+        partner_species:
+            type: array
+            items:
+              $ref: './original_sample.yaml#/components/schemas/PartnerSpecies'
+        locations:
+            $ref: './locations.yaml#/components/schemas/Locations'

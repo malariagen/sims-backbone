@@ -1,5 +1,5 @@
-from swagger_server.models.event_set import EventSet
-from swagger_server.models.event_set_note import EventSetNote
+from openapi_server.models.event_set import EventSet
+from openapi_server.models.event_set_note import EventSetNote
 from datetime import date, datetime
 from typing import List, Dict
 from six import iteritems

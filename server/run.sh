@@ -26,11 +26,11 @@ then
         fi
     fi
     cd bb_server
-    grep security: ./swagger_server/swagger/swagger.yaml
+    grep security: ./openapi_server/openapi/openapi.yaml
     if [ $? -eq 1 ]
     then
         export BB_NOAUTH=1
     fi
     echo "http://localhost:8080/v1/ui/"
-    python3 -m swagger_server
+    python3 -m openapi_server
 fi

@@ -23,7 +23,7 @@ export class TaxaOsListComponent implements OnInit {
       this.taxaId = pmap.get('taxaId');
     });
     this.filter = 'taxa:' + this.taxaId;
-    this.downloadFileName = 'original_samples_taxa_' + this.taxaId + '.csv';
-    this.jsonDownloadFileName =  'original_samples_taxa_' + this.taxaId + '.json';
+    this.downloadFileName = 'originalSamples_taxa_' + this.taxaId + '.csv';
+    this.jsonDownloadFileName =  'originalSamples_taxa_' + this.taxaId + '.json';
   }
 }

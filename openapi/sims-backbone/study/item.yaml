@@ -1,0 +1,52 @@
+    get:
+      tags:
+        - study
+      summary: fetches a study
+      description: ""
+      operationId: downloadStudy
+      parameters:
+        - name: studyName
+          in: path
+          description: ID of study to fetch
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "./sims-backbone/definitions/study.yaml#/components/schemas/Study"
+    put:
+      tags:
+        - study
+      summary: updates a study
+      description: ""
+      operationId: updateStudy
+      parameters:
+        - name: studyName
+          in: path
+          description: ID of study to update
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "./sims-backbone/definitions/study.yaml#/components/schemas/Study"
+        required: true
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "./sims-backbone/definitions/study.yaml#/components/schemas/Study"
+        "404":
+          description: study not found
+          content:
+            application/json:
+              schema:
+                type: string

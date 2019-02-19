@@ -3,8 +3,8 @@ from copy import deepcopy
 
 import logging
 
-import swagger_client
-from swagger_client.rest import ApiException
+import openapi_client
+from openapi_client.rest import ApiException
 
 from base_entity import BaseEntity
 
@@ -22,35 +22,35 @@ class OriginalSampleProcessor(BaseEntity):
         if 'study_id' in values:
             study_id = values['study_id']
 
-        o_sample = swagger_client.OriginalSample(None, study_name=study_id)
+        o_sample = openapi_client.OriginalSample(None, study_name=study_id)
 
         idents = []
         if 'sample_roma_id' in values:
-            idents.append(swagger_client.Attr ('roma_id', values['sample_roma_id'],
+            idents.append(openapi_client.Attr ('roma_id', values['sample_roma_id'],
                                                      self._event_set))
         if 'sample_partner_id' in values and values['sample_partner_id']:
-            idents.append(swagger_client.Attr ('partner_id', values['sample_partner_id'],
+            idents.append(openapi_client.Attr ('partner_id', values['sample_partner_id'],
                                                      self._event_set))
         if 'sample_partner_id_1' in values and values['sample_partner_id_1']:
-            idents.append(swagger_client.Attr ('partner_id', values['sample_partner_id_1'],
+            idents.append(openapi_client.Attr ('partner_id', values['sample_partner_id_1'],
                                                      self._event_set))
         if 'sample_oxford_id' in values and values['sample_oxford_id']:
-            idents.append(swagger_client.Attr ('oxford_id', values['sample_oxford_id'],
+            idents.append(openapi_client.Attr ('oxford_id', values['sample_oxford_id'],
                                                      self._event_set))
         if 'sample_alternate_oxford_id' in values and len(values['sample_alternate_oxford_id']) > 0:
-            idents.append(swagger_client.Attr ('alt_oxford_id',
+            idents.append(openapi_client.Attr ('alt_oxford_id',
                                                      values['sample_alternate_oxford_id'],
                                                      self._event_set))
         if 'sample_source_id' in values and values['sample_source_id'] and values['sample_source_type']:
-            idents.append(swagger_client.Attr (values['sample_source_type'],
+            idents.append(openapi_client.Attr (values['sample_source_type'],
                                                      values['sample_source_id'],
                                                      self._event_set))
         if 'sample_source_id1' in values and values['sample_source_id1'] and values['sample_source_type1']:
-            idents.append(swagger_client.Attr (values['sample_source_type1'],
+            idents.append(openapi_client.Attr (values['sample_source_type1'],
                                                      values['sample_source_id1'],
                                                      self._event_set))
         if 'sample_source_id2' in values and values['sample_source_id2'] and values['sample_source_type2']:
-            idents.append(swagger_client.Attr (values['sample_source_type2'],
+            idents.append(openapi_client.Attr (values['sample_source_type2'],
                                                      values['sample_source_id2'],
                                                      self._event_set))
 

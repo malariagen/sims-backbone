@@ -1,8 +1,8 @@
 import six
 
-from swagger_server.models.location import Location  # noqa: E501
-from swagger_server.models.locations import Locations  # noqa: E501
-from swagger_server import util
+from openapi_server.models.location import Location  # noqa: E501
+from openapi_server.models.locations import Locations  # noqa: E501
+from openapi_server import util
 
 from decimal import *
 import logging

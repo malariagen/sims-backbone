@@ -9,39 +9,39 @@ export class OriginalSampleDisplayPipe implements PipeTransform {
   transform(value: OriginalSample, key: string, studyId: string, samplingEvents: any): any {
     let ret = '';
 
-    const samplingEvent: SamplingEvent = samplingEvents[value.sampling_event_id];
+    const samplingEvent: SamplingEvent = samplingEvents[value.samplingEventId];
 
-    if (key == "original_sample_id") {
-      return value.original_sample_id
-    } else if (key == "sampling_event_id") {
-      return value.sampling_event_id
-    } else if (key == 'partner_species') {
-      ret = value.partner_species;
-    } else if (key == 'study_id') {
-      ret = value.study_name;
-    } else if (key == 'taxa') {
-      if (value.partner_taxonomies) {
-        let taxas = [];
-        value.partner_taxonomies.forEach((taxa: Taxonomy) => {
-          taxas.push(taxa.taxonomy_id);
+    if (key === 'originalSampleId') {
+      return value.originalSampleId
+    } else if (key === 'samplingEventId') {
+      return value.samplingEventId
+    } else if (key === 'partner_species') {
+      ret = value.partnerSpecies;
+    } else if (key === 'studyId') {
+      ret = value.studyName;
+    } else if (key === 'taxa') {
+      if (value.partnerTaxonomies) {
+        const taxas = [];
+        value.partnerTaxonomies.forEach((taxa: Taxonomy) => {
+          taxas.push(taxa.taxonomyId);
         })
         ret = taxas.join(';');
       }
-    } else if(key == 'doc') {
+    } else if (key === 'doc') {
       if (samplingEvent) {
         ret = samplingEvent.doc;
       }
     } else {
 
       value.attrs.forEach(ident => {
-        if (ident.attr_type == key) {
-          if (ret == '') {
-            ret = ident.attr_value;
+        if (ident.attrType === key) {
+          if (ret === '') {
+            ret = ident.attrValue;
           } else {
-            let ids: Array<String> = ret.split(';');
-            //Avoid duplicates from different sources
-            if (!ids.includes(ident.attr_value)) {
-              ret = [ret, ident.attr_value].join(';');
+            const ids: Array<String> = ret.split(';');
+            // Avoid duplicates from different sources
+            if (!ids.includes(ident.attrValue)) {
+              ret = [ret, ident.attrValue].join(';');
             }
           }
         }

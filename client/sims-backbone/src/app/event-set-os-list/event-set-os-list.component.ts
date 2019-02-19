@@ -22,8 +22,8 @@ export class EventSetOsListComponent implements OnInit {
     });
     this.filter = 'eventSet:' + this.eventSetId;
 
-    this.downloadFileName = 'original_samples_event_set_' + this.eventSetId + '.csv';
-    this.jsonDownloadFileName = 'original_samples_event_set_' + this.eventSetId + '.json';
+    this.downloadFileName = 'originalSamples_eventSet_' + this.eventSetId + '.csv';
+    this.jsonDownloadFileName = 'originalSamples_eventSet_' + this.eventSetId + '.json';
   }
 
 }

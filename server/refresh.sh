@@ -4,4 +4,4 @@ then
 fi
 (cd ../;./generate.sh)
 cp -pr overlay/* bb_server
-diff overlay/swagger_server/controllers/ ../python-flask-server/swagger_server/controllers/
+diff overlay/openapi_server/controllers/ ../python-flask-server/openapi_server/controllers/

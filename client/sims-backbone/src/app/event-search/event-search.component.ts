@@ -20,8 +20,8 @@ export class EventSearchComponent implements OnInit {
   samplingEvents: SamplingEvents;
   derivativeSamples: DerivativeSamples;
   assayData: AssayData;
-  attr_type: string;
-  attr_value: string;
+  attrType: string;
+  attrValue: string;
 
   options: string[];
 
@@ -31,13 +31,13 @@ export class EventSearchComponent implements OnInit {
 
   ngOnInit() {
 
-    this.metadataService.getAttrTypes().subscribe(attr_types => {
-      this.options = attr_types;
+    this.metadataService.getAttrTypes().subscribe(attrTypes => {
+      this.options = attrTypes;
     });
     this.warmUp();
 
-    this.attr_type = 'oxford_id';
-    //this.attr_value = 'QS0167-C';
+    this.attrType = 'oxfordId';
+    //this.attrValue = 'QS0167-C';
     this.search();
     
   }
@@ -50,17 +50,17 @@ export class EventSearchComponent implements OnInit {
   }
 
   search() {
-    if (this.attr_type && this.attr_value) {
-      this.sampleService.downloadSamplingEventsByOsAttr(this.attr_type, this.attr_value).subscribe(samplingEvents => {
+    if (this.attrType && this.attrValue) {
+      this.sampleService.downloadSamplingEventsByOsAttr(this.attrType, this.attrValue).subscribe(samplingEvents => {
         this.samplingEvents = samplingEvents;
       });
-      this.originalSampleService.downloadOriginalSamplesByAttr(this.attr_type, this.attr_value).subscribe(originalSamples => {
+      this.originalSampleService.downloadOriginalSamplesByAttr(this.attrType, this.attrValue).subscribe(originalSamples => {
         this.originalSamples = originalSamples;
 
-        this.derivativeSampleService.downloadDerivativeSamplesByOsAttr(this.attr_type, this.attr_value).subscribe(derivativeSamples => {
+        this.derivativeSampleService.downloadDerivativeSamplesByOsAttr(this.attrType, this.attrValue).subscribe(derivativeSamples => {
           this.derivativeSamples = derivativeSamples;
 
-          this.assayDataService.downloadAssayDataByOsAttr(this.attr_type, this.attr_value).subscribe(assayData => {
+          this.assayDataService.downloadAssayDataByOsAttr(this.attrType, this.attrValue).subscribe(assayData => {
             this.assayData = assayData;
           });
         });

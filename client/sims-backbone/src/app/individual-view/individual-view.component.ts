@@ -17,8 +17,8 @@ export class IndividualViewComponent implements OnInit {
   }
 
   @Input()
-  set individual_id(_individual_id) {
-    this.individualService.downloadIndividual(_individual_id).subscribe(indiv => {
+  set individualId(_individualId) {
+    this.individualService.downloadIndividual(_individualId).subscribe(indiv => {
       this.individual = indiv;
     });
   }

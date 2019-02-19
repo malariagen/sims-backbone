@@ -1,5 +1,5 @@
-import swagger_client
-from swagger_client.rest import ApiException
+import openapi_client
+from openapi_client.rest import ApiException
 
 from test_base import TestBase
 from datetime import date
@@ -19,7 +19,7 @@ class TestAssayDatum(TestBase):
 
         try:
 
-            samp = swagger_client.AssayDatum(None)
+            samp = openapi_client.AssayDatum(None)
             created = api_instance.create_assay_datum(samp)
             if not api_factory.is_authorized(None):
                 pytest.fail('Unauthorized call to create_assay_datum succeeded')
@@ -41,7 +41,7 @@ class TestAssayDatum(TestBase):
 
         try:
 
-            samp = swagger_client.AssayDatum(None)
+            samp = openapi_client.AssayDatum(None)
             created = api_instance.create_assay_datum(samp)
             api_instance.delete_assay_datum(created.assay_datum_id)
             with pytest.raises(ApiException, status=404):
@@ -77,9 +77,9 @@ class TestAssayDatum(TestBase):
 
         try:
 
-            samp = swagger_client.AssayDatum(None)
+            samp = openapi_client.AssayDatum(None)
             samp.attrs = [
-                swagger_client.Attr (attr_type='oxford', attr_value='1234',
+                openapi_client.Attr (attr_type='oxford', attr_value='1234',
                                            attr_source='same')
             ]
             created = api_instance.create_assay_datum(samp)
@@ -102,12 +102,12 @@ class TestAssayDatum(TestBase):
 
         try:
 
-            samp1 = swagger_client.DerivativeSample(None)
+            samp1 = openapi_client.DerivativeSample(None)
             created1 = ds_api_instance.create_derivative_sample(samp1)
 
-            samp = swagger_client.AssayDatum(None)
+            samp = openapi_client.AssayDatum(None)
             samp.attrs = [
-                swagger_client.Attr(attr_type='oxford', attr_value='123456')
+                openapi_client.Attr(attr_type='oxford', attr_value='123456')
             ]
             samp.derivative_sample_id = created1.derivative_sample_id
 
@@ -161,20 +161,20 @@ class TestAssayDatum(TestBase):
         try:
 
 
-            samp = swagger_client.OriginalSample(None, study_name='5000-MD-UP')
+            samp = openapi_client.OriginalSample(None, study_name='5000-MD-UP')
             samp.attrs = [
-                swagger_client.Attr (attr_type='ds_os_attr', attr_value='ad123456')
+                openapi_client.Attr (attr_type='ds_os_attr', attr_value='ad123456')
             ]
             created = os_api_instance.create_original_sample(samp)
-            samp1 = swagger_client.DerivativeSample(None)
-            samp2 = swagger_client.DerivativeSample(None)
+            samp1 = openapi_client.DerivativeSample(None)
+            samp2 = openapi_client.DerivativeSample(None)
 
             samp1.attrs = [
-                swagger_client.Attr (attr_type='test1', attr_value='test1',
+                openapi_client.Attr (attr_type='test1', attr_value='test1',
                                           attr_source='ds_os_attr')
             ]
             samp2.attrs = [
-                swagger_client.Attr (attr_type='test2', attr_value='test2',
+                openapi_client.Attr (attr_type='test2', attr_value='test2',
                                           attr_source='ds_os_attr')
             ]
             samp1.original_sample_id = created.original_sample_id
@@ -182,9 +182,9 @@ class TestAssayDatum(TestBase):
             created1 = ds_api_instance.create_derivative_sample(samp1)
             created2 = ds_api_instance.create_derivative_sample(samp2)
 
-            ad_samp = swagger_client.AssayDatum(None)
+            ad_samp = openapi_client.AssayDatum(None)
             ad_samp.attrs = [
-                swagger_client.Attr (attr_type='oxford', attr_value='123456')
+                openapi_client.Attr (attr_type='oxford', attr_value='123456')
             ]
             ad_samp.derivative_sample_id = created1.derivative_sample_id
             ad_created = api_instance.create_assay_datum(ad_samp)
@@ -220,23 +220,23 @@ class TestAssayDatum(TestBase):
 
         try:
 
-            ident1 = swagger_client.Attr(attr_type='oxford_id', attr_value='1234')
-            ident2 = swagger_client.Attr(attr_type='roma_id', attr_value='12345')
-            ident3 = swagger_client.Attr(attr_type='lims_id', attr_value='123456')
-            samp1 = swagger_client.AssayDatum(None)
+            ident1 = openapi_client.Attr(attr_type='oxford_id', attr_value='1234')
+            ident2 = openapi_client.Attr(attr_type='roma_id', attr_value='12345')
+            ident3 = openapi_client.Attr(attr_type='lims_id', attr_value='123456')
+            samp1 = openapi_client.AssayDatum(None)
             samp1.attrs = [
                 ident1
             ]
             created1 = api_instance.create_assay_datum(samp1)
 
-            samp2 = swagger_client.AssayDatum(None)
+            samp2 = openapi_client.AssayDatum(None)
             samp2.attrs = [
                 ident2
             ]
             created2 = api_instance.create_assay_datum(samp2)
 
 
-            samp3 = swagger_client.AssayDatum(None)
+            samp3 = openapi_client.AssayDatum(None)
             samp3.attrs = [
                 ident1,
                 ident2,
@@ -260,14 +260,14 @@ class TestAssayDatum(TestBase):
 
         try:
 
-            samp = swagger_client.AssayDatum(None)
+            samp = openapi_client.AssayDatum(None)
             samp.attrs = [
-                swagger_client.Attr (attr_type='oxford', attr_value='1234567')
+                openapi_client.Attr (attr_type='oxford', attr_value='1234567')
             ]
             created = api_instance.create_assay_datum(samp)
             looked_up = api_instance.download_assay_data_by_attr('oxford', '1234567')
             looked_up = looked_up.assay_data[0]
-            new_samp = swagger_client.AssayDatum(None)
+            new_samp = openapi_client.AssayDatum(None)
             updated = api_instance.update_assay_datum(looked_up.assay_datum_id, new_samp)
             fetched = api_instance.download_assay_datum(looked_up.assay_datum_id)
             assert updated == fetched, "update response != download response"
@@ -286,17 +286,17 @@ class TestAssayDatum(TestBase):
 
         try:
 
-            samp = swagger_client.AssayDatum(None)
+            samp = openapi_client.AssayDatum(None)
             samp.attrs = [
-                swagger_client.Attr (attr_type='oxford', attr_value='12345678',
+                openapi_client.Attr (attr_type='oxford', attr_value='12345678',
                                            attr_source='upd')
             ]
             created = api_instance.create_assay_datum(samp)
             looked_up = api_instance.download_assay_data_by_attr('oxford', '12345678')
             looked_up = looked_up.assay_data[0]
-            new_samp = swagger_client.AssayDatum(None)
+            new_samp = openapi_client.AssayDatum(None)
             new_samp.attrs = [
-                swagger_client.Attr (attr_type='oxford', attr_value='123456789',
+                openapi_client.Attr (attr_type='oxford', attr_value='123456789',
                                           attr_source='upd')
             ]
             new_created = api_instance.create_assay_datum(new_samp)
@@ -317,7 +317,7 @@ class TestAssayDatum(TestBase):
 
         try:
 
-            new_samp = swagger_client.AssayDatum(None)
+            new_samp = openapi_client.AssayDatum(None)
             fake_id = uuid.uuid4()
             new_samp.assay_datum_id = str(fake_id)
 
@@ -341,9 +341,9 @@ class TestAssayDatum(TestBase):
         try:
 
             test_id = 'MDG/DK_0005'
-            samp = swagger_client.AssayDatum(None)
+            samp = openapi_client.AssayDatum(None)
             samp.attrs = [
-                swagger_client.Attr (attr_type='partner_id', attr_value=test_id,
+                openapi_client.Attr (attr_type='partner_id', attr_value=test_id,
                                           attr_source='encode')
             ]
             created = api_instance.create_assay_datum(samp)

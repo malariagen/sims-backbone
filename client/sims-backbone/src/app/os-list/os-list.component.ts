@@ -74,8 +74,8 @@ export class OsListComponent implements OnInit, AfterViewInit {
   @Input()
   set studyName(studyName: string) {
     this._studyName = studyName;
-    this.downloadFileName = studyName + '_original_samples.csv';
-    this.jsonDownloadFileName = studyName + '_original_samples.json';
+    this.downloadFileName = studyName + '_originalSamples.csv';
+    this.jsonDownloadFileName = studyName + '_originalSamples.json';
   }
 
   loadOriginalSamplesPage() {
@@ -87,15 +87,15 @@ export class OsListComponent implements OnInit, AfterViewInit {
 
   }
 
-  defineColumnHeaders(sampling_events) {
+  defineColumnHeaders(samplingEvents) {
 
-    if (sampling_events == undefined) {
+    if (samplingEvents == undefined) {
       return;
     }
 
-    let columnsForDisplay = ['original_sample_id', 'study_id', 'partner_species', 'taxa', 'doc'];
+    let columnsForDisplay = ['originalSampleId', 'studyId', 'partner_species', 'taxa', 'doc'];
     columnsForDisplay = columnsForDisplay.concat(this._dataSource.attrTypes);
-    columnsForDisplay = columnsForDisplay.concat(['sampling_event_id']);
+    columnsForDisplay = columnsForDisplay.concat(['samplingEventId']);
 
     if (columnsForDisplay != this.displayedColumns) {
       this.displayedColumns = columnsForDisplay;

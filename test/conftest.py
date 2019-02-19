@@ -6,7 +6,7 @@ import requests
 import pytest
 from api_factory import ApiFactory
 
-import swagger_client
+import openapi_client
 @pytest.fixture(params=['user1'])
 def user(request):
     yield request.param
@@ -30,7 +30,7 @@ def method(request):
 @pytest.fixture()
 def api_factory(request, user, auths, method):
 
-    configuration = swagger_client.Configuration()
+    configuration = openapi_client.Configuration()
 
     #Not allowed to be None
     configuration.access_token = 'abcd'
@@ -47,6 +47,6 @@ def api_factory(request, user, auths, method):
 
     configuration.host = "http://localhost:8080/v1"
 
-    api_client = swagger_client.ApiClient(configuration)
+    api_client = openapi_client.ApiClient(configuration)
 
     yield ApiFactory(user, auths, method, api_client)

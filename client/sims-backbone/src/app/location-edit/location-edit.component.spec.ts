@@ -3,8 +3,8 @@ import { async, ComponentFixture, TestBed, inject } from '@angular/core/testing'
 import { LocationEditComponent } from './location-edit.component';
 import { Component, Input } from '@angular/core';
 import { Location, Locations, LocationService, Attr } from '../typescript-angular-client';
-import { FormsModule, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { createAuthServiceSpy, asyncData, createOAuthServiceSpy, ActivatedRouteStub } from '../../testing/index.spec';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { createAuthServiceSpy, createOAuthServiceSpy, ActivatedRouteStub } from '../../testing/index.spec';
 import { RouterModule, ActivatedRoute } from '@angular/router';
 import { MatFormField } from '@angular/material';
 import { HttpTestingController } from '@angular/common/http/testing';
@@ -12,7 +12,7 @@ import { OAuthService } from 'angular-oauth2-oidc';
 import { MapsAPILoader } from '@agm/core';
 import {ObserversModule} from '@angular/cdk/observers';
 
-import { HttpBackend, HttpClient, HttpClientModule } from '@angular/common/http';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 
@@ -53,15 +53,6 @@ describe('LocationEditComponent', () => {
 
   let activatedRoute: ActivatedRouteStub;
 
-  let httpClientSpy: { get: jasmine.Spy };
-
-  let locationService: LocationService;
-
-  let authService;
-
-  let httpClient: HttpClient;
-  let httpTestingController: HttpTestingController;
-
   beforeEach(async(() => {
 
     activatedRoute = new ActivatedRouteStub();
@@ -70,7 +61,6 @@ describe('LocationEditComponent', () => {
       locationId: 0
     });
 
-    authService = createAuthServiceSpy();
 
 
     TestBed.configureTestingModule({
@@ -104,9 +94,6 @@ describe('LocationEditComponent', () => {
 
   beforeEach(() => {
 
-    // Inject the http service and test controller for each test
-    httpClient = TestBed.get(HttpClient);
-    httpTestingController = TestBed.get(HttpTestingController);
 
     fixture = TestBed.createComponent(LocationEditComponent);
     component = fixture.componentInstance;
@@ -117,7 +104,7 @@ describe('LocationEditComponent', () => {
   it('should be created', async(inject([HttpClient, HttpTestingController],
     (http: HttpClient, backend: HttpTestingController) => {
 
-      let req = backend.expectOne({
+      const req = backend.expectOne({
         url: 'http://localhost/v1/location/0',
         method: 'GET'
       });
@@ -141,30 +128,30 @@ describe('LocationEditComponent', () => {
   it('should populate edit form', async(inject([HttpClient, HttpTestingController],
     (http: HttpClient, backend: HttpTestingController) => {
 
-      let req = backend.expectOne({
+      const req = backend.expectOne({
         url: 'http://localhost/v1/location/0',
         method: 'GET'
       });
 
       const testData: Location = <Location>{
-        location_id: '1234',
-        curated_name: 'UK',
-        curation_method: 'by hand',
+        locationId: '1234',
+        curatedName: 'UK',
+        curationMethod: 'by hand',
         notes: 'notes',
         country: 'GBR',
         accuracy: 'region',
         latitude: 1,
         longitude: 2,
         attrs: [<Attr>{
-          attr_source: 'test_src',
-          attr_type: 'partner_name',
-          attr_value: 'test_val',
-          study_name: '9999'
+          attrSource: 'test_src',
+          attrType: 'partner_name',
+          attrValue: 'test_val',
+          studyName: '9999'
         }, <Attr>{
-          attr_source: 'test_src',
-          attr_type: 'partner_name',
-          attr_value: 'test_val',
-          study_name: '9998'
+          attrSource: 'test_src',
+          attrType: 'partner_name',
+          attrValue: 'test_val',
+          studyName: '9998'
         }]
       };
 
@@ -172,23 +159,23 @@ describe('LocationEditComponent', () => {
 
       // Finally, assert that there are no outstanding requests.
       backend.verify();
-      expect(component.locationForm.controls['location_id'].value).toBe(testData.location_id);
-      expect(component.locationForm.controls['curated_name'].value).toBe(testData.curated_name);
-      expect(component.locationForm.controls['curation_method'].value).toBe(testData.curation_method);
+      expect(component.locationForm.controls['locationId'].value).toBe(testData.locationId);
+      expect(component.locationForm.controls['curatedName'].value).toBe(testData.curatedName);
+      expect(component.locationForm.controls['curationMethod'].value).toBe(testData.curationMethod);
       expect(component.locationForm.controls['notes'].value).toBe(testData.notes);
       expect(component.locationForm.controls['country'].value).toBe(testData.country);
       expect(component.locationForm.controls['accuracy'].value).toBe(testData.accuracy);
       expect(component.locationForm.controls['latitude'].value).toBe(testData.latitude);
       expect(component.locationForm.controls['longitude'].value).toBe(testData.longitude);
       const arrayControls = component.locationForm.controls['attrs'].value;
-      expect(arrayControls[0].attr_source).toBe(testData.attrs[0].attr_source);
-      expect(arrayControls[0].attr_type).toBe(testData.attrs[0].attr_type);
-      expect(arrayControls[0].attr_value).toBe(testData.attrs[0].attr_value);
-      expect(arrayControls[0].study_name).toBe(testData.attrs[0].study_name);
-      expect(arrayControls[1].attr_source).toBe(testData.attrs[1].attr_source);
-      expect(arrayControls[1].attr_type).toBe(testData.attrs[1].attr_type);
-      expect(arrayControls[1].attr_value).toBe(testData.attrs[1].attr_value);
-      expect(arrayControls[1].study_name).toBe(testData.attrs[1].study_name);
+      expect(arrayControls[0].attrSource).toBe(testData.attrs[0].attrSource);
+      expect(arrayControls[0].attrType).toBe(testData.attrs[0].attrType);
+      expect(arrayControls[0].attrValue).toBe(testData.attrs[0].attrValue);
+      expect(arrayControls[0].studyName).toBe(testData.attrs[0].studyName);
+      expect(arrayControls[1].attrSource).toBe(testData.attrs[1].attrSource);
+      expect(arrayControls[1].attrType).toBe(testData.attrs[1].attrType);
+      expect(arrayControls[1].attrValue).toBe(testData.attrs[1].attrValue);
+      expect(arrayControls[1].studyName).toBe(testData.attrs[1].studyName);
     })
   )
   );
@@ -196,30 +183,30 @@ describe('LocationEditComponent', () => {
   it('should save edit form', async(inject([HttpClient, HttpTestingController],
     (http: HttpClient, backend: HttpTestingController) => {
 
-      let req = backend.expectOne({
+      const req = backend.expectOne({
         url: 'http://localhost/v1/location/0',
         method: 'GET'
       });
 
       const testData: Location = <Location>{
-        location_id: '1234',
-        curated_name: 'UK',
-        curation_method: 'by hand',
+        locationId: '1234',
+        curatedName: 'UK',
+        curationMethod: 'by hand',
         notes: 'notes',
         country: 'GBR',
         accuracy: 'region',
         latitude: 1,
         longitude: 2,
         attrs: [<Attr>{
-          attr_source: 'test_src',
-          attr_type: 'partner_name',
-          attr_value: 'test_val',
-          study_name: '9999'
+          attrSource: 'test_src',
+          attrType: 'partner_name',
+          attrValue: 'test_val',
+          studyName: '9999'
         }, <Attr>{
-          attr_source: 'test_src',
-          attr_type: 'partner_name',
-          attr_value: 'test_val',
-          study_name: '9998'
+          attrSource: 'test_src',
+          attrType: 'partner_name',
+          attrValue: 'test_val',
+          studyName: '9998'
         }]
       };
 
@@ -227,13 +214,13 @@ describe('LocationEditComponent', () => {
 
       backend.verify();
 
-      testData.curated_name = 'updated name';
-      testData.curation_method = 'for test';
+      testData.curatedName = 'updated name';
+      testData.curationMethod = 'for test';
       testData.accuracy = 'city';
       testData.country = 'MLI';
       testData.notes = 'updated';
-      component.locationForm.controls['curated_name'].setValue(testData.curated_name);
-      component.locationForm.controls['curation_method'].setValue(testData.curation_method);
+      component.locationForm.controls['curatedName'].setValue(testData.curatedName);
+      component.locationForm.controls['curationMethod'].setValue(testData.curationMethod);
       component.locationForm.controls['notes'].setValue(testData.notes);
       component.locationForm.controls['country'].setValue(testData.country);
       component.locationForm.controls['accuracy'].setValue(testData.accuracy);
@@ -246,29 +233,29 @@ describe('LocationEditComponent', () => {
       });
 
       const put = backend.expectOne({
-        url: 'http://localhost/v1/location/' + testData.location_id,
+        url: 'http://localhost/v1/location/' + testData.locationId,
         method: 'PUT'
       });
 
       put.flush(testData);
 
-      expect(put.request.body.location_id).toBe(testData.location_id);
-      expect(put.request.body.curated_name).toBe(testData.curated_name);
-      expect(put.request.body.curation_method).toBe(testData.curation_method);
+      expect(put.request.body.locationId).toBe(testData.locationId);
+      expect(put.request.body.curatedName).toBe(testData.curatedName);
+      expect(put.request.body.curationMethod).toBe(testData.curationMethod);
       expect(put.request.body.notes).toBe(testData.notes);
       expect(put.request.body.country).toBe(testData.country);
       expect(put.request.body.accuracy).toBe(testData.accuracy);
       expect(put.request.body.latitude).toBe(testData.latitude);
       expect(put.request.body.longitude).toBe(testData.longitude);
       const arrayControls = put.request.body.attrs;
-      expect(arrayControls[0].attr_source).toBe(testData.attrs[0].attr_source);
-      expect(arrayControls[0].attr_type).toBe(testData.attrs[0].attr_type);
-      expect(arrayControls[0].attr_value).toBe(testData.attrs[0].attr_value);
-      expect(arrayControls[0].study_name).toBe(testData.attrs[0].study_name);
-      expect(arrayControls[1].attr_source).toBe(testData.attrs[1].attr_source);
-      expect(arrayControls[1].attr_type).toBe(testData.attrs[1].attr_type);
-      expect(arrayControls[1].attr_value).toBe(testData.attrs[1].attr_value);
-      expect(arrayControls[1].study_name).toBe(testData.attrs[1].study_name);
+      expect(arrayControls[0].attrSource).toBe(testData.attrs[0].attrSource);
+      expect(arrayControls[0].attrType).toBe(testData.attrs[0].attrType);
+      expect(arrayControls[0].attrValue).toBe(testData.attrs[0].attrValue);
+      expect(arrayControls[0].studyName).toBe(testData.attrs[0].studyName);
+      expect(arrayControls[1].attrSource).toBe(testData.attrs[1].attrSource);
+      expect(arrayControls[1].attrType).toBe(testData.attrs[1].attrType);
+      expect(arrayControls[1].attrValue).toBe(testData.attrs[1].attrValue);
+      expect(arrayControls[1].studyName).toBe(testData.attrs[1].studyName);
 
       backend.verify();
     })
@@ -278,7 +265,7 @@ describe('LocationEditComponent', () => {
   it('should set zoom for country accuracy', async(inject([HttpClient, HttpTestingController],
     (http: HttpClient, backend: HttpTestingController) => {
 
-      let req = backend.expectOne({
+      const req = backend.expectOne({
         url: 'http://localhost/v1/location/0',
         method: 'GET'
       });
@@ -305,13 +292,13 @@ describe('LocationEditComponent', () => {
   it('should set zoom for region accuracy', async(inject([HttpClient, HttpTestingController],
     (http: HttpClient, backend: HttpTestingController) => {
 
-      let req = backend.expectOne({
+      const req = backend.expectOne({
         url: 'http://localhost/v1/location/0',
         method: 'GET'
       });
 
       const testData: Location = <Location>{
-        location_id: '',
+        locationId: '',
         latitude: 0,
         longitude: 0,
         accuracy: 'region'
@@ -332,13 +319,13 @@ describe('LocationEditComponent', () => {
   it('should set zoom for city accuracy', async(inject([HttpClient, HttpTestingController],
     (http: HttpClient, backend: HttpTestingController) => {
 
-      let req = backend.expectOne({
+      const req = backend.expectOne({
         url: 'http://localhost/v1/location/0',
         method: 'GET'
       });
 
       const testData: Location = <Location>{
-        location_id: '',
+        locationId: '',
         latitude: 0,
         longitude: 0,
         accuracy: 'city'
@@ -359,13 +346,13 @@ describe('LocationEditComponent', () => {
   it('should set zoom for building accuracy', async(inject([HttpClient, HttpTestingController],
     (http: HttpClient, backend: HttpTestingController) => {
 
-      let req = backend.expectOne({
+      const req = backend.expectOne({
         url: 'http://localhost/v1/location/0',
         method: 'GET'
       });
 
       const testData: Location = <Location>{
-        location_id: '',
+        locationId: '',
         latitude: 0,
         longitude: 0,
         accuracy: 'building'

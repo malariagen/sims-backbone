@@ -1,0 +1,11 @@
+components:
+  schemas:
+    Country:
+      type: object
+      properties:
+        english:
+          type: string
+        alpha2:
+          type: string
+        alpha3:
+          type: string

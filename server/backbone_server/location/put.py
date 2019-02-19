@@ -4,8 +4,8 @@ from backbone_server.errors.missing_key_exception import MissingKeyException
 from backbone_server.location.edit import LocationEdit
 from backbone_server.location.fetch import LocationFetch
 
-from swagger_server.models.location import Location
-from swagger_server.models.attr import Attr
+from openapi_server.models.location import Location
+from openapi_server.models.attr import Attr
 
 import psycopg2
 

@@ -1,0 +1,12 @@
+components:
+  schemas:
+    Locations:
+      type: object
+      properties:
+        locations:
+          type: array
+          items:
+            $ref: "./location.yaml#/components/schemas/Location"
+        count:
+          type: integer
+          description: Used when pagination is applied to return the number of results

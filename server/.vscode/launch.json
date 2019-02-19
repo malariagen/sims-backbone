@@ -20,7 +20,7 @@
             "name": "Python Experimental: Swagger",
             "type": "pythonExperimental",
             "request": "launch",
-            "module": "swagger_server",
+            "module": "openapi_server",
             "cwd": "${workspaceFolder}/bb_server",
             "args": [
                 "--no-debugger",

@@ -7,8 +7,8 @@ import datetime
 import logging
 import sys
 
-import swagger_client
-from swagger_client.rest import ApiException
+import openapi_client
+from openapi_client.rest import ApiException
 
 from decimal import *
 

@@ -1,8 +1,8 @@
 import six
 
-from swagger_server.models.individual import Individual  # noqa: E501
-from swagger_server.models.individuals import Individuals  # noqa: E501
-from swagger_server import util
+from openapi_server.models.individual import Individual  # noqa: E501
+from openapi_server.models.individuals import Individuals  # noqa: E501
+from openapi_server import util
 
 import logging
 

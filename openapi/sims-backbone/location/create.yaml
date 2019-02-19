@@ -1,0 +1,14 @@
+    post:
+      tags:
+        - location
+      description: Create a location
+      operationId: createLocation
+      requestBody:
+        $ref: "#/components/requestBodies/Location"
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "./sims-backbone/definitions/location.yaml#/components/schemas/Location"

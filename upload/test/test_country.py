@@ -10,8 +10,8 @@ from uploader import Uploader
 from set_country import SetCountry
 from upload_ssr import Upload_SSR
 
-import swagger_client
-from swagger_client.rest import ApiException
+import openapi_client
+from openapi_client.rest import ApiException
 
 class TestCountry(TestBase):
 

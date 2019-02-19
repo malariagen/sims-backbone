@@ -17,9 +17,7 @@ import { StudyService } from '../typescript-angular-client/api/study.service';
 })
 export class StudyEditComponent implements OnInit {
 
-  constructor(private studyService: StudyService, private metadataService: MetadataService, private route: ActivatedRoute, private _fb: FormBuilder) { }
-
-  public studyEvents: string = '/study/events';
+  public studyEvents = '/study/events';
 
   taxonomies: Taxonomy[];
 
@@ -28,6 +26,15 @@ export class StudyEditComponent implements OnInit {
   study: Study;
 
   public studyForm: FormGroup;
+
+  static initTaxaControl(taxaId) {
+    return new FormGroup({
+      taxonomyId: new FormControl(taxaId, Validators.required)
+    });
+  }
+
+  constructor(private studyService: StudyService, private metadataService: MetadataService,
+    private route: ActivatedRoute, private _fb: FormBuilder) { }
 
   ngOnInit() {
 
@@ -54,16 +61,16 @@ export class StudyEditComponent implements OnInit {
         );
         const formIdents = <FormArray>this.studyForm.controls['partner_species'];
 
-        this.study.partner_species.forEach(ident => {
-          let identControl = new FormGroup({
-            partner_species: new FormControl(ident.partner_species, Validators.required),
+        this.study.partnerSpecies.forEach(ident => {
+          const identControl = new FormGroup({
+            partner_species: new FormControl(ident.partnerSpecies, Validators.required),
             taxa: this._fb.array([])
           });
 
           const taxasControl = <FormArray>identControl.controls['taxa'];
 
           ident.taxa.forEach(taxa => {
-            let taxaControl = StudyEditComponent.initTaxaControl(taxa.taxonomy_id);
+            const taxaControl = StudyEditComponent.initTaxaControl(taxa.taxonomyId);
             taxasControl.push(taxaControl);
           });
           formIdents.push(identControl);
@@ -74,18 +81,12 @@ export class StudyEditComponent implements OnInit {
 
   }
 
-  static initTaxaControl(taxa_id) {
-    return new FormGroup({
-      taxonomy_id: new FormControl(taxa_id, Validators.required)
-    });
-  }
-
   public onSubmit({ value, valid }: { value: Study, valid: boolean }): void {
 
     this.studyService.updateStudy(value.code, value)
       .subscribe(
         (x) => {
-          console.log("Submitted");
+          console.log('Submitted');
         },
         (e) => { console.log('onError: %o', e); },
         () => {

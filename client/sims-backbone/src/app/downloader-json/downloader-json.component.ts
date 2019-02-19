@@ -18,18 +18,18 @@ import * as FileSaver from 'file-saver';
 export class DownloaderJsonComponent implements CollectionViewer {
 
   samplingEvents: SamplingEvents;
-  pageSize: number = 1000;
-  pageNumber: number = 0;
+  pageSize = 1000;
+  pageNumber = 0;
 
   _dataSource: SamplingEventsSource;
   viewChange = new BehaviorSubject<{ start: number, end: number }>({ start: 0, end: Number.MAX_VALUE });
 
   @Input()
-  fileName: string = 'data.json';
+  fileName = 'data.json';
   @Input()
   filter: string;
   @Input()
-  downloaderName: string = 'Download JSON';
+  downloaderName = 'Download JSON';
   @Input()
   headers: string[] = [];
 
@@ -37,7 +37,7 @@ export class DownloaderJsonComponent implements CollectionViewer {
 
     this._dataSource = new SamplingEventsSource(this.samplingEventsService);
 
-    let obs: Observable<SamplingEvent[]> = this._dataSource.connect(this);
+    const obs: Observable<SamplingEvent[]> = this._dataSource.connect(this);
 
     obs.subscribe({
       next: sevent => this.extractEvents(sevent),
@@ -60,23 +60,23 @@ export class DownloaderJsonComponent implements CollectionViewer {
 
   extractEvents(d: Array<SamplingEvent>) {
 
-    if (d.length == 0) {
+    if (d.length === 0) {
       return;
     }
 
-    if (this.pageNumber == 0) {
+    if (this.pageNumber === 0) {
       this.samplingEvents = <SamplingEvents>{};
-      this.samplingEvents.sampling_events = [];
+      this.samplingEvents.samplingEvents = [];
     }
 
-    this.samplingEvents.sampling_events = this.samplingEvents.sampling_events.concat(d);
+    this.samplingEvents.samplingEvents = this.samplingEvents.samplingEvents.concat(d);
 
 
     if ((this.pageNumber + 1) * this.pageSize < this._dataSource.samplingEventCount) {
       this.pageNumber++;
       this._dataSource.loadEvents(this.filter, 'asc', this.pageNumber, this.pageSize);
     } else {
-      this.samplingEvents.attr_types = this._dataSource.attrTypes;
+      this.samplingEvents.attrTypes = this._dataSource.attrTypes;
       this.samplingEvents.count = this._dataSource.samplingEventCount;
       this.samplingEvents.locations = this._dataSource.locations;
       this.buildDownloader(JSON.stringify(this.samplingEvents));
@@ -85,7 +85,7 @@ export class DownloaderJsonComponent implements CollectionViewer {
   }
   private buildDownloader(data) {
 
-    var blob = new Blob([data], { type: 'application/json;charset=utf-8' });
+    const blob = new Blob([data], { type: 'application/json;charset=utf-8' });
 
     FileSaver.saveAs(blob, this.fileName);
 

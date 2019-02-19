@@ -1,0 +1,19 @@
+    post:
+      tags:
+        - derivativeSample
+      description: Create a DerivativeSample
+      operationId: createDerivativeSample
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "./sims-backbone/definitions/derivative_sample.yaml#/components/schemas/DerivativeSample"
+        description: The original sample to create
+        required: true
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "./sims-backbone/definitions/derivative_sample.yaml#/components/schemas/DerivativeSample"

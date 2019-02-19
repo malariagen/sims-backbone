@@ -1,0 +1,40 @@
+    get:
+      tags:
+        - location
+      summary: fetches location(s) by GPS
+      description: Params must be string as negative numbers not handled -
+        https://github.com/pallets/werkzeug/issues/729 - also want to avoid
+        using float
+      operationId: downloadGPSLocation
+      parameters:
+        - name: latitude
+          in: path
+          description: Latitude of location to fetch
+          required: true
+          schema:
+            type: string
+        - name: longitude
+          in: path
+          description: Longitude of location to fetch
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "./sims-backbone/definitions/locations.yaml#/components/schemas/Locations"
+        "404":
+          description: location not found
+          content:
+            application/json:
+              schema:
+                type: string
+        "422":
+          description: bad parameters
+          content:
+            application/json:
+              schema:
+                type: string

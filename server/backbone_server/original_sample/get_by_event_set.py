@@ -1,7 +1,7 @@
-from swagger_server.models.original_sample import OriginalSample
-from swagger_server.models.original_samples import OriginalSamples
-from swagger_server.models.location import Location
-from swagger_server.models.attr import Attr
+from openapi_server.models.original_sample import OriginalSample
+from openapi_server.models.original_samples import OriginalSamples
+from openapi_server.models.location import Location
+from openapi_server.models.attr import Attr
 from backbone_server.errors.missing_key_exception import MissingKeyException
 
 from backbone_server.original_sample.fetch import OriginalSampleFetch

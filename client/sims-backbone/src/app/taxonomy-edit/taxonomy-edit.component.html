@@ -3,11 +3,11 @@
   <div formArrayName="taxa">
     <div *ngFor="let taxonomy of getTaxas(); let i=index">
       <mat-form-field [formGroup]="taxaGroup.controls.taxa.controls[i]" style="width:30%">
-        <input matInput placeholder="Taxonomy ID:" type="text" formControlName="taxonomy_id" [matAutocomplete]="taxonomyList">
+        <input matInput placeholder="Taxonomy ID:" type="text" formControlName="taxonomyId" [matAutocomplete]="taxonomyList">
       </mat-form-field>
       <mat-autocomplete #taxonomyList="matAutocomplete" [displayWith]="displayFn.bind(this)">
-        <mat-option *ngFor="let t of taxonomies" [value]="t.taxonomy_id">
-          {{t.taxonomy_id}} {{t.rank}} {{t.name}}
+        <mat-option *ngFor="let t of taxonomies" [value]="t.taxonomyId">
+          {{t.taxonomyId}} {{t.rank}} {{t.name}}
         </mat-option>
       </mat-autocomplete>
       <span mat-button (click)="removeClassification(i)">Remove Classification</span>

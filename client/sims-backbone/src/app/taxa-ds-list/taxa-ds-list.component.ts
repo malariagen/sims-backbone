@@ -23,7 +23,7 @@ export class TaxaDsListComponent implements OnInit {
       this.taxaId = pmap.get('taxaId');
     });
     this.filter = 'taxa:' + this.taxaId;
-    this.downloadFileName = 'derivative_samples_taxa_' + this.taxaId + '.csv';
-    this.jsonDownloadFileName = 'derivative_samples_taxa_' + this.taxaId + '.json';
+    this.downloadFileName = 'derivativeSamples_taxa_' + this.taxaId + '.csv';
+    this.jsonDownloadFileName = 'derivativeSamples_taxa_' + this.taxaId + '.json';
   }
 }

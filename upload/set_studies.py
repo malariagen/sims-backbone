@@ -7,7 +7,7 @@ import logging
 import requests
 
 from cmislib import CmisClient
-import swagger_client
+import openapi_client
 
 from remote_backbone_dao import RemoteBackboneDAO
 from local_backbone_dao import LocalBackboneDAO

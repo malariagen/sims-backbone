@@ -1,0 +1,45 @@
+components:
+  schemas:
+    Location:
+      type: object
+      properties:
+        location_id:
+          type: string
+        latitude:
+          type: number
+        longitude:
+          type: number
+        accuracy:
+          type: string
+          enum:
+              - location
+              - building
+              - city
+              - region
+              - country
+        curated_name:
+          type: string
+        curation_method:
+          type: string
+        country:
+          type: string
+        notes:
+          type: string
+          nullable: true
+        attrs:
+          type: array
+          items:
+              $ref: './attr.yaml#/components/schemas/Attr'
+    LocationMap:
+      type: object
+      description: 'A dictionary of location id and values'
+      additionalProperties:
+        type: object
+        properties:
+          location_id:
+            type: string
+            description: 'A location id in uuid format'
+          location:
+            description: 'Location properties'
+            type: object
+            $ref: '#/components/schemas/Location'

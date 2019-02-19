@@ -17,29 +17,29 @@ import { SamplingEventsSource } from '../sampling-event.datasource';
 })
 export class DownloaderCsvComponent implements CollectionViewer {
 
-  header: boolean = false;
-  separator: string = '\t';
-  csvString: string = '';
-  pageSize: number = 1000;
-  pageNumber: number = 0;
+  header = false;
+  separator = '\t';
+  csvString = '';
+  pageSize = 1000;
+  pageNumber = 0;
 
   _dataSource: SamplingEventsSource;
   viewChange = new BehaviorSubject<{ start: number, end: number }>({ start: 0, end: Number.MAX_VALUE });
 
   @Input()
-  fileName: string = 'data.csv';
+  fileName = 'data.csv';
   @Input()
   filter: string;
   @Input()
-  downloaderName: string = 'Download CSV';
+  downloaderName = 'Download CSV';
   @Input()
   headers: string[] = [];
 
   constructor(private displayPipe: SamplingEventDisplayPipe, private samplingEventsService: SamplingEventsService) {
 
     this._dataSource = new SamplingEventsSource(this.samplingEventsService);
-    
-    let obs: Observable<SamplingEvent[]> = this._dataSource.connect(this);
+
+    const obs: Observable<SamplingEvent[]> = this._dataSource.connect(this);
 
 
     obs.subscribe({
@@ -57,7 +57,7 @@ export class DownloaderCsvComponent implements CollectionViewer {
   build() {
 
     this.pageNumber = 0;
- 
+
     this._dataSource.loadEvents(this.filter, 'asc', this.pageNumber, this.pageSize);
 
 
@@ -65,7 +65,7 @@ export class DownloaderCsvComponent implements CollectionViewer {
 
   extractEventsToString(d: Array<SamplingEvent>) {
 
-    if (d.length == 0) {
+    if (d.length === 0) {
       return;
     }
 
@@ -88,13 +88,13 @@ export class DownloaderCsvComponent implements CollectionViewer {
         let text: string = this.displayPipe.transform(k, field, null, this._dataSource.locations);
         if (text) {
           if (text.startsWith('<a href="location/')) {
-            let res = text.match(/(>)([0-9,.-\s]*)(<)/);
+            const res = text.match(/(>)([0-9,.-\s]*)(<)/);
             if (res) {
               if (res.length > 2) {
                 text = res[2];
               }
             } else {
-              text = "";
+              text = '';
             }
           }
           tabText += '"' + text + '"' + this.separator;
@@ -106,7 +106,7 @@ export class DownloaderCsvComponent implements CollectionViewer {
       tabText += '\r\n';
     });
 
-    if (tabText != '') {
+    if (tabText !== '') {
 
       this.csvString += tabText;
       if ((this.pageNumber + 1) * this.pageSize < this._dataSource.samplingEventCount) {
@@ -121,7 +121,7 @@ export class DownloaderCsvComponent implements CollectionViewer {
   }
   private buildDownloader(data) {
 
-    var blob = new Blob([data], { type: 'text/csv;charset=utf-8' });
+    const blob = new Blob([data], { type: 'text/csv;charset=utf-8' });
 
     FileSaver.saveAs(blob, this.fileName);
 

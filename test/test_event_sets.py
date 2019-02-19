@@ -1,5 +1,5 @@
-import swagger_client
-from swagger_client.rest import ApiException
+import openapi_client
+from openapi_client.rest import ApiException
 from test_base import TestBase
 from datetime import date
 
@@ -45,7 +45,7 @@ class TestEventSets(TestBase):
             event_set = 'EventSet2'
             created = api_instance.create_event_set(event_set)
 
-            samp = swagger_client.SamplingEvent(None, date(2017, 10, 10))
+            samp = openapi_client.SamplingEvent(None, date(2017, 10, 10))
             created = event_api_instance.create_sampling_event(samp)
 
             created_set = api_instance.create_event_set_item(event_set, created.sampling_event_id)
@@ -116,15 +116,15 @@ class TestEventSets(TestBase):
 #    """
 #    def test_create_member_implicit(self, api_factory):
 #
-#        api_instance = swagger_client.EventSetApi(api_client)
-#        event_api_instance = swagger_client.SamplingEventApi(api_client)
+#        api_instance = openapi_client.EventSetApi(api_client)
+#        event_api_instance = openapi_client.SamplingEventApi(api_client)
 #
 #        try:
 #
 #            event_set = 'EventSet6'
 #            created = api_instance.create_event_set(event_set)
 #
-#            samp = swagger_client.SamplingEvent(None, '4000-MD-UP', date(2017, 10, 10))
+#            samp = openapi_client.SamplingEvent(None, '4000-MD-UP', date(2017, 10, 10))
 #            samp.event_sets = [ event_set ]
 #            created = event_api_instance.create_sampling_event(samp)
 #
@@ -142,15 +142,15 @@ class TestEventSets(TestBase):
 #    """
 #    def test_update_member_implicit(self, api_factory):
 #
-#        api_instance = swagger_client.EventSetApi(api_client)
-#        event_api_instance = swagger_client.SamplingEventApi(api_client)
+#        api_instance = openapi_client.EventSetApi(api_client)
+#        event_api_instance = openapi_client.SamplingEventApi(api_client)
 #
 #        try:
 #
 #            event_set = 'EventSet7'
 #            created = api_instance.create_event_set(event_set)
 #
-#            samp = swagger_client.SamplingEvent(None, '4000-MD-UP', date(2017, 10, 10))
+#            samp = openapi_client.SamplingEvent(None, '4000-MD-UP', date(2017, 10, 10))
 #            created = event_api_instance.create_sampling_event(samp)
 #
 #            created.event_sets = [ event_set ]
@@ -186,8 +186,8 @@ class TestEventSets(TestBase):
         try:
 
             event_set = 'EventSet3'
-            evsn = swagger_client.EventSetNote('note3', 'note3text')
-            evs = swagger_client.EventSet()
+            evsn = openapi_client.EventSetNote('note3', 'note3text')
+            evs = openapi_client.EventSet()
             created = api_instance.create_event_set(event_set)
 
             created_set = api_instance.create_event_set_note(event_set, evsn.note_name, evsn)
@@ -215,8 +215,8 @@ class TestEventSets(TestBase):
         try:
 
             event_set = 'EventSet4'
-            evsn = swagger_client.EventSetNote('note4', 'note4text')
-            evs = swagger_client.EventSet()
+            evsn = openapi_client.EventSetNote('note4', 'note4text')
+            evs = openapi_client.EventSet()
             created = api_instance.create_event_set(event_set)
 
             created_set = api_instance.create_event_set_note(event_set, evsn.note_name, evsn)
@@ -249,7 +249,7 @@ class TestEventSets(TestBase):
                 api_instance.update_event_set_note(event_set, '404', note)
 
             #Can't change the name of a note to be the same as another note
-            evsna = swagger_client.EventSetNote('note4a', 'note4atext')
+            evsna = openapi_client.EventSetNote('note4a', 'note4atext')
             created_set = api_instance.create_event_set_note(event_set, evsna.note_name, evsna)
 
             with pytest.raises(ApiException, status=422):
@@ -271,8 +271,8 @@ class TestEventSets(TestBase):
         try:
 
             event_set = 'EventSet5'
-            evsn = swagger_client.EventSetNote('note5', 'note5text')
-            evs = swagger_client.EventSet()
+            evsn = openapi_client.EventSetNote('note5', 'note5text')
+            evs = openapi_client.EventSet()
             created = api_instance.create_event_set(event_set)
 
             created_set = api_instance.create_event_set_note(event_set, evsn.note_name, evsn)
@@ -337,10 +337,10 @@ class TestEventSets(TestBase):
             event_set = 'EventSet8'
             created = api_instance.create_event_set(event_set)
 
-            samp = swagger_client.SamplingEvent(None, date(2017, 10, 10))
+            samp = openapi_client.SamplingEvent(None, date(2017, 10, 10))
             created = event_api_instance.create_sampling_event(samp)
 
-            samp2 = swagger_client.SamplingEvent(None, date(2017, 10, 11))
+            samp2 = openapi_client.SamplingEvent(None, date(2017, 10, 11))
             created2 = event_api_instance.create_sampling_event(samp2)
 
             created_set = api_instance.create_event_set_item(event_set, created.sampling_event_id)
@@ -350,7 +350,7 @@ class TestEventSets(TestBase):
             assert fetched_set1.members.count == 1
             assert fetched_set1.notes is None
 
-            evsn = swagger_client.EventSetNote('note8', 'note8text')
+            evsn = openapi_client.EventSetNote('note8', 'note8text')
 
             fetched_set1.notes = [ evsn ]
             fetched_set1.members.sampling_events.append(created2)
@@ -397,7 +397,7 @@ class TestEventSets(TestBase):
         try:
 
             event_set = 'EventSet9'
-            evs = swagger_client.EventSet()
+            evs = openapi_client.EventSet()
 
             created = api_instance.create_event_set(event_set)
 
@@ -419,8 +419,8 @@ class TestEventSets(TestBase):
         try:
 
             event_set = 'EventSet10'
-            evsn = swagger_client.EventSetNote('note10', 'note10text')
-            evs = swagger_client.EventSet()
+            evsn = openapi_client.EventSetNote('note10', 'note10text')
+            evs = openapi_client.EventSet()
             created = api_instance.create_event_set(event_set)
 
             created_set = api_instance.create_event_set_note(event_set, evsn.note_name, evsn)
@@ -444,7 +444,7 @@ class TestEventSets(TestBase):
             event_set = 'EventSet11'
             created = api_instance.create_event_set(event_set)
 
-            samp = swagger_client.SamplingEvent(None, date(2017, 10, 10))
+            samp = openapi_client.SamplingEvent(None, date(2017, 10, 10))
             created = event_api_instance.create_sampling_event(samp)
 
             created_set = api_instance.create_event_set_item(event_set, created.sampling_event_id)
@@ -472,7 +472,7 @@ class TestEventSets(TestBase):
             event_set = 'EventSet12'
             created = api_instance.create_event_set(event_set)
 
-            samp = swagger_client.SamplingEvent(None, date(2017, 10, 10))
+            samp = openapi_client.SamplingEvent(None, date(2017, 10, 10))
             created = event_api_instance.create_sampling_event(samp)
 
             created_set = api_instance.create_event_set_item(event_set, created.sampling_event_id)
@@ -497,7 +497,7 @@ class TestEventSets(TestBase):
 
         try:
 
-            evsn = swagger_client.EventSetNote('note404', 'note404text')
+            evsn = openapi_client.EventSetNote('note404', 'note404text')
 
             if api_factory.is_authorized(None):
                 with pytest.raises(ApiException, status=404):
@@ -538,7 +538,7 @@ class TestEventSets(TestBase):
 
         try:
 
-            event_set = swagger_client.EventSet('404')
+            event_set = openapi_client.EventSet('404')
 
             if api_factory.is_authorized(None):
                 with pytest.raises(ApiException, status=404):

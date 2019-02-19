@@ -1,0 +1,42 @@
+    get:
+      tags:
+        - Individual
+      summary: fetches individuals
+      description: ""
+      operationId: downloadIndividuals
+      parameters:
+        - name: studyName
+          in: query
+          description: restrict to a particular study
+          required: false
+          schema:
+            type: string
+        - name: start
+          in: query
+          description: for pagination start the result set at a record x
+          required: false
+          schema:
+            type: integer
+        - name: count
+          in: query
+          description: for pagination the number of entries to return
+          required: false
+          schema:
+            type: integer
+        - name: orderby
+          in: query
+          description: how to order the result set
+          required: false
+          schema:
+            type: string
+            enum:
+              - individual
+              - study_name
+            default: individual
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "./sims-backbone/definitions/individual.yaml#/components/schemas/Individuals"

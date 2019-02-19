@@ -5,8 +5,8 @@ import json
 
 from uploader import Uploader
 
-import swagger_client
-from swagger_client.rest import ApiException
+import openapi_client
+from openapi_client.rest import ApiException
 
 class TestIndividual(TestBase):
 

@@ -2,17 +2,17 @@
   <div *ngFor="let t of taxonomies">
     <div fxLayout="row">
       <div fxFlex="10%">
-        <a [routerLink]="['/taxa/events', t.taxonomy_id]">
+        <a [routerLink]="['/taxa/events', t.taxonomyId]">
           Sampling Events
         </a>
       </div>
       <div fxFlex="10%">
-        <a [routerLink]="['/taxa/os', t.taxonomy_id]">
+        <a [routerLink]="['/taxa/os', t.taxonomyId]">
           Original Samples
         </a>
       </div>
       <div fxFlex="10%">
-        <a [routerLink]="['/taxa/ds', t.taxonomy_id]">
+        <a [routerLink]="['/taxa/ds', t.taxonomyId]">
           Derivative Samples
         </a>
       </div>
@@ -20,7 +20,7 @@
         {{t.rank}}
       </div>
       <div fxFlex="60%">
-        {{t.taxonomy_id}} {{t.name}}
+        {{t.taxonomyId}} {{t.name}}
       </div>
     </div>
   </div>

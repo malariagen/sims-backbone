@@ -1,8 +1,8 @@
 from __future__ import print_function
 import sys
 
-import swagger_client
-from swagger_client.rest import ApiException
+import openapi_client
+from openapi_client.rest import ApiException
 import uploader
 import json
 import datetime

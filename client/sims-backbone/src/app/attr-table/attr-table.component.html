@@ -15,9 +15,9 @@
       <mat-cell *matCellDef="let element"> {{element.attr_value}} </mat-cell>
     </ng-container>
 
-    <ng-container matColumnDef="study_name">
+    <ng-container matColumnDef="studyName">
         <mat-header-cell *matHeaderCellDef>Study</mat-header-cell>
-        <mat-cell *matCellDef="let element"> <a mat-raised-button color="accent" [routerLink]="[studyEvents,element.study_name]">{{element.study_name}}</a> </mat-cell>
+        <mat-cell *matCellDef="let element"> <a mat-raised-button color="accent" [routerLink]="[studyEvents,element.studyName]">{{element.study_name}}</a> </mat-cell>
       </ng-container>
   
     <mat-header-row *matHeaderRowDef="attrColumns"></mat-header-row>

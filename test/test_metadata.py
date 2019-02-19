@@ -1,5 +1,5 @@
-import swagger_client
-from swagger_client.rest import ApiException
+import openapi_client
+from openapi_client.rest import ApiException
 
 from test_base import TestBase
 from datetime import date

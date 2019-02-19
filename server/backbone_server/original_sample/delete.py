@@ -1,4 +1,4 @@
-from swagger_server.models.original_sample import OriginalSample
+from openapi_server.models.original_sample import OriginalSample
 
 from backbone_server.errors.missing_key_exception import MissingKeyException
 

@@ -1,8 +1,8 @@
 import six
 import logging
 
-from swagger_server.models.studies import Studies  # noqa: E501
-from swagger_server import util
+from openapi_server.models.studies import Studies  # noqa: E501
+from openapi_server import util
 
 from backbone_server.controllers.report_controller import ReportController
 

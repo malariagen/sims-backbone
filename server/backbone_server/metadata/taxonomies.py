@@ -1,5 +1,5 @@
-from swagger_server.models.taxonomies import Taxonomies
-from swagger_server.models.taxonomy import Taxonomy
+from openapi_server.models.taxonomies import Taxonomies
+from openapi_server.models.taxonomy import Taxonomy
 from backbone_server.errors.missing_key_exception import MissingKeyException
 
 

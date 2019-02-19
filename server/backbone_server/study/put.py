@@ -5,8 +5,8 @@ from backbone_server.study.fetch import StudyFetch
 
 import uuid
 
-from swagger_server.models.study import Study
-from swagger_server.models.partner_species import PartnerSpecies
+from openapi_server.models.study import Study
+from openapi_server.models.partner_species import PartnerSpecies
 
 import psycopg2
 

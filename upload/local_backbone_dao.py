@@ -19,7 +19,7 @@ from backbone_server.controllers.derivative_sample_controller import DerivativeS
 from backbone_server.controllers.assay_datum_controller import AssayDatumController
 from backbone_server.controllers.individual_controller import IndividualController
 
-from swagger_client.rest import ApiException
+from openapi_client.rest import ApiException
 
 
 class LocalBackboneDAO(AbstractBackboneDAO):

@@ -3,7 +3,7 @@ from backbone_server.errors.duplicate_key_exception import DuplicateKeyException
 from backbone_server.event_set.edit import EventSetEdit
 from backbone_server.event_set.fetch import EventSetFetch
 
-from swagger_server.models.sampling_event import SamplingEvent
+from openapi_server.models.sampling_event import SamplingEvent
 
 import psycopg2
 

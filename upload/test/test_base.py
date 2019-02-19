@@ -6,12 +6,12 @@ import os
 
 from upload_ssr import Upload_SSR
 
-import swagger_client
-from swagger_client.rest import ApiException
+import openapi_client
+from openapi_client.rest import ApiException
 
-from swagger_client.rest import RESTResponse
+from openapi_client.rest import RESTResponse
 
-from swagger_client.api_client import ApiClient
+from openapi_client.api_client import ApiClient
 
 from remote_backbone_dao import RemoteBackboneDAO
 from local_backbone_dao import LocalBackboneDAO
@@ -36,7 +36,7 @@ class TestBase(unittest.TestCase):
     @classmethod
     def getApiClient(self):
         auth_token = None
-        configuration = swagger_client.Configuration()
+        configuration = openapi_client.Configuration()
 
         if os.getenv('TOKEN_URL') and not os.getenv('BB_NOAUTH'):
             try:
@@ -54,7 +54,7 @@ class TestBase(unittest.TestCase):
         if os.getenv('REMOTE_HOST_URL'):
           configuration.host = "http://localhost:8080/v1"
 
-        api_client = swagger_client.ApiClient(configuration)
+        api_client = openapi_client.ApiClient(configuration)
 
         return api_client
 
@@ -96,7 +96,7 @@ class TestBase(unittest.TestCase):
     """
     @classmethod
     def deleteSamplingEvent(self, event, locations):
-        event_api_instance = swagger_client.SamplingEventApi(TestBase.getApiClient())
+        event_api_instance = openapi_client.SamplingEventApi(TestBase.getApiClient())
         if event.location_id and event.location_id not in locations:
             locations.append(event.location_id)
         if event.proxy_location_id and event.proxy_location_id not in locations:
@@ -108,8 +108,8 @@ class TestBase(unittest.TestCase):
     @classmethod
     def deleteEventSets(self, event_sets, locations):
 
-        api_instance = swagger_client.EventSetApi(TestBase.getApiClient())
-        event_api_instance = swagger_client.SamplingEventApi(TestBase.getApiClient())
+        api_instance = openapi_client.EventSetApi(TestBase.getApiClient())
+        event_api_instance = openapi_client.SamplingEventApi(TestBase.getApiClient())
 
         for event_set in event_sets:
             test_events = TestBase.getDAO().download_sampling_events_by_event_set(event_set)
@@ -124,7 +124,7 @@ class TestBase(unittest.TestCase):
     @classmethod
     def deleteStudies(self, studies, locations):
 
-        event_api_instance = swagger_client.SamplingEventApi(TestBase.getApiClient())
+        event_api_instance = openapi_client.SamplingEventApi(TestBase.getApiClient())
 
         for study in studies:
             test_events = TestBase.getDAO().download_sampling_events_by_study(study)
@@ -145,7 +145,7 @@ class TestBase(unittest.TestCase):
     """
     @classmethod
     def tearDownLocations(self, locations):
-        location_api_instance = swagger_client.LocationApi(TestBase.getApiClient())
+        location_api_instance = openapi_client.LocationApi(TestBase.getApiClient())
 
         for loc in locations:
             if loc:

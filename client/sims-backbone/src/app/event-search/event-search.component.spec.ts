@@ -34,7 +34,7 @@ describe('EventSearchComponent', () => {
 
     httpClientSpy = jasmine.createSpyObj('HttpClient', ['get']);
 
-    httpClientSpy.get.and.returnValue(asyncData(['oxford_id']));
+    httpClientSpy.get.and.returnValue(asyncData(['oxfordId']));
 
     TestBed.configureTestingModule({
       imports: [

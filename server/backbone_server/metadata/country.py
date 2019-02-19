@@ -1,4 +1,4 @@
-from swagger_server.models.country import Country
+from openapi_server.models.country import Country
 from backbone_server.errors.missing_key_exception import MissingKeyException
 
 

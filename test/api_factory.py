@@ -1,6 +1,6 @@
 import os
 
-import swagger_client
+import openapi_client
 
 from local.event_set_api import LocalEventSetApi
 from local.location_api import LocalLocationApi
@@ -60,7 +60,7 @@ class ApiFactory():
         if self.isLocal():
             ret = LocalEventSetApi(self._api_client, self._user, self._auths, self._method)
         else:
-            ret = swagger_client.EventSetApi(self._api_client)
+            ret = openapi_client.EventSetApi(self._api_client)
 
         return ret
 
@@ -72,7 +72,7 @@ class ApiFactory():
         if self.isLocal():
             ret = LocalLocationApi(self._api_client, self._user, self._auths, self._method)
         else:
-            ret = swagger_client.LocationApi(self._api_client)
+            ret = openapi_client.LocationApi(self._api_client)
 
         return ret
 
@@ -84,7 +84,7 @@ class ApiFactory():
         if self.isLocal():
             ret = LocalMetadataApi(self._api_client, self._user, self._auths, self._method)
         else:
-            ret = swagger_client.MetadataApi(self._api_client)
+            ret = openapi_client.MetadataApi(self._api_client)
 
         return ret
 
@@ -96,7 +96,7 @@ class ApiFactory():
         if self.isLocal():
             ret = LocalSamplingEventApi(self._api_client, self._user, self._auths, self._method)
         else:
-            ret = swagger_client.SamplingEventApi(self._api_client)
+            ret = openapi_client.SamplingEventApi(self._api_client)
 
         return ret
 
@@ -107,7 +107,7 @@ class ApiFactory():
         if self.isLocal():
             ret = LocalOriginalSampleApi(self._api_client, self._user, self._auths, self._method)
         else:
-            ret = swagger_client.OriginalSampleApi(self._api_client)
+            ret = openapi_client.OriginalSampleApi(self._api_client)
 
         return ret
 
@@ -119,7 +119,7 @@ class ApiFactory():
         if self.isLocal():
             ret = LocalDerivativeSampleApi(self._api_client, self._user, self._auths, self._method)
         else:
-            ret = swagger_client.DerivativeSampleApi(self._api_client)
+            ret = openapi_client.DerivativeSampleApi(self._api_client)
 
         return ret
 
@@ -130,7 +130,7 @@ class ApiFactory():
         if self.isLocal():
             ret = LocalAssayDataApi(self._api_client, self._user, self._auths, self._method)
         else:
-            ret = swagger_client.AssayDataApi(self._api_client)
+            ret = openapi_client.AssayDataApi(self._api_client)
 
         return ret
 
@@ -141,7 +141,7 @@ class ApiFactory():
         if self.isLocal():
             ret = LocalStudyApi(self._api_client, self._user, self._auths, self._method)
         else:
-            ret = swagger_client.StudyApi(self._api_client)
+            ret = openapi_client.StudyApi(self._api_client)
 
         return ret
 
@@ -152,6 +152,6 @@ class ApiFactory():
         if self.isLocal():
             ret = LocalIndividualApi(self._api_client, self._user, self._auths, self._method)
         else:
-            ret = swagger_client.IndividualApi(self._api_client)
+            ret = openapi_client.IndividualApi(self._api_client)
 
         return ret

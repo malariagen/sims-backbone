@@ -1,0 +1,66 @@
+    get:
+      tags:
+        - samplingEvent
+      summary: fetches an samplingEvent
+      description: ""
+      operationId: downloadSamplingEvent
+      parameters:
+        - name: samplingEventId
+          in: path
+          description: ID of samplingEvent to fetch
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "./sims-backbone/definitions/sampling_event.yaml#/components/schemas/SamplingEvent"
+    put:
+      tags:
+        - samplingEvent
+      summary: updates an samplingEvent
+      description: ""
+      operationId: updateSamplingEvent
+      parameters:
+        - name: samplingEventId
+          in: path
+          description: ID of samplingEvent to update
+          required: true
+          schema:
+            type: string
+      requestBody:
+        $ref: "#/components/requestBodies/SamplingEvent"
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "./sims-backbone/definitions/sampling_event.yaml#/components/schemas/SamplingEvent"
+        "404":
+          description: SamplingEvent not found
+          content:
+            application/json:
+              schema:
+                type: string
+    delete:
+      tags:
+        - samplingEvent
+      summary: deletes an samplingEvent
+      description: ""
+      operationId: deleteSamplingEvent
+      parameters:
+        - name: samplingEventId
+          in: path
+          description: ID of samplingEvent to fetch
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: successful operation
+        "404":
+          description: SamplingEvent not found

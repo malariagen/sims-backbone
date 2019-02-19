@@ -1,0 +1,20 @@
+    get:
+      tags:
+        - metadata
+      summary: fetches all the names for a country
+      description: guesses the search criteria
+      operationId: getCountryMetadata
+      parameters:
+        - name: countryId
+          in: path
+          description: location
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: './sims-backbone/definitions/country.yaml#/components/schemas/Country'

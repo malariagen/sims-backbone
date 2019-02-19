@@ -1,0 +1,32 @@
+    get:
+      tags:
+        - location
+      summary: fetches location(s) by partner name
+      description: ""
+      operationId: downloadPartnerLocation
+      parameters:
+        - name: partnerId
+          in: path
+          description: ID of location to fetch
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "./sims-backbone/definitions/locations.yaml#/components/schemas/Locations"
+        "404":
+          description: location not found
+          content:
+            application/json:
+              schema:
+                type: string
+        "422":
+          description: invalid key in location
+          content:
+            application/json:
+              schema:
+                type: string

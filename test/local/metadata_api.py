@@ -1,9 +1,9 @@
 import six
 
-from swagger_server.models.country import Country  # noqa: E501
-from swagger_server.models.taxonomies import Taxonomies  # noqa: E501
-from swagger_server.models.taxonomy import Taxonomy  # noqa: E501
-from swagger_server import util
+from openapi_server.models.country import Country  # noqa: E501
+from openapi_server.models.taxonomies import Taxonomies  # noqa: E501
+from openapi_server.models.taxonomy import Taxonomy  # noqa: E501
+from openapi_server import util
 
 from backbone_server.controllers.metadata_controller import MetadataController
 import logging

@@ -46,15 +46,15 @@ export class EventListComponent implements OnInit, AfterViewInit {
   @Input()
   set eventSetName(eventSetName) {
     this._eventSetName = eventSetName;
-    this.downloadFileName = eventSetName + '_sampling_events.csv';
-    this.jsonDownloadFileName = eventSetName + '_sampling_events.json';
+    this.downloadFileName = eventSetName + '_samplingEvents.csv';
+    this.jsonDownloadFileName = eventSetName + '_samplingEvents.json';
   }
 
   @Input()
   set studyName(studyName: string) {
     this._studyName = studyName;
-    this.downloadFileName = studyName + '_sampling_events.csv';
-    this.jsonDownloadFileName = studyName + '_sampling_events.json';
+    this.downloadFileName = studyName + '_samplingEvents.csv';
+    this.jsonDownloadFileName = studyName + '_samplingEvents.json';
   }
 
   constructor(private changeDetector: ChangeDetectorRef, public dialog: MatDialog, private samplingEventsService: SamplingEventsService) { }
@@ -101,9 +101,9 @@ export class EventListComponent implements OnInit, AfterViewInit {
     
   }
 
-  defineColumnHeaders(sampling_events) {
+  defineColumnHeaders(samplingEvents) {
 
-    if(sampling_events == undefined) {
+    if(samplingEvents == undefined) {
       return;
     }
 
@@ -120,18 +120,18 @@ export class EventListComponent implements OnInit, AfterViewInit {
 
 
   select(row) {
-    if (this.selectedEvents.has(row.sampling_event_id)) {
-      this.selectedEvents.delete(row.sampling_event_id);
+    if (this.selectedEvents.has(row.samplingEventId)) {
+      this.selectedEvents.delete(row.samplingEventId);
     } else {
-      this.selectedEvents.add(row.sampling_event_id);
+      this.selectedEvents.add(row.samplingEventId);
     }
   }
 
   selectAll() {
 
     this.table._data.forEach(data => {
-      if (!this.selectedEvents.has(data.sampling_event_id)) {
-        this.selectedEvents.add(data.sampling_event_id);
+      if (!this.selectedEvents.has(data.samplingEventId)) {
+        this.selectedEvents.add(data.samplingEventId);
       }
     });
   }

@@ -4,7 +4,7 @@ from backbone_server.original_sample.edit import OriginalSampleEdit
 from backbone_server.sampling_event.edit import SamplingEventEdit
 from backbone_server.original_sample.fetch import OriginalSampleFetch
 
-from swagger_server.models.original_sample import OriginalSample
+from openapi_server.models.original_sample import OriginalSample
 
 import psycopg2
 

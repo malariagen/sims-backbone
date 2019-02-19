@@ -1,8 +1,8 @@
 import six
 
-from swagger_server.models.assay_datum import AssayDatum  # noqa: E501
-from swagger_server.models.assay_data import AssayData  # noqa: E501
-from swagger_server import util
+from openapi_server.models.assay_datum import AssayDatum  # noqa: E501
+from openapi_server.models.assay_data import AssayData  # noqa: E501
+from openapi_server import util
 
 import logging
 

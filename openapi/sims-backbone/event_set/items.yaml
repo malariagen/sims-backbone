@@ -1,0 +1,14 @@
+    get:
+      tags:
+        - eventSet
+      summary: fetches eventSets
+      description: ""
+      operationId: downloadEventSets
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: './sims-backbone/definitions/sampling_event.yaml#/components/schemas/EventSets'
+

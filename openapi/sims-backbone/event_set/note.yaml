@@ -1,0 +1,76 @@
+    post:
+      tags:
+        - eventSet
+      summary: Adds a note to an eventSet
+      description: ""
+      operationId: createEventSetNote
+      parameters:
+        - name: eventSetId
+          in: path
+          description: ID of eventSet to modify
+          required: true
+          schema:
+            type: string
+        - name: noteId
+          in: path
+          description: ID of note to modify in the set
+          required: true
+          schema:
+            type: string
+      requestBody:
+        $ref: "#/components/requestBodies/EventSetNote"
+      responses:
+        "201":
+          description: successful operation
+        "401":
+          description: EventSet or samplingEvent not found
+    put:
+      tags:
+        - eventSet
+      summary: Adds a note to an eventSet
+      description: ""
+      operationId: updateEventSetNote
+      parameters:
+        - name: eventSetId
+          in: path
+          description: ID of eventSet to modify
+          required: true
+          schema:
+            type: string
+        - name: noteId
+          in: path
+          description: ID of note to modify in the set
+          required: true
+          schema:
+            type: string
+      requestBody:
+        $ref: "#/components/requestBodies/EventSetNote"
+      responses:
+        "200":
+          description: successful operation
+        "404":
+          description: EventSet or samplingEvent not found
+    delete:
+      tags:
+        - eventSet
+      summary: deletes an eventSet note
+      description: ""
+      operationId: deleteEventSetNote
+      parameters:
+        - name: eventSetId
+          in: path
+          description: ID of eventSet to modify
+          required: true
+          schema:
+            type: string
+        - name: noteId
+          in: path
+          description: ID of note to remove from the set
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: successful operation
+        "404":
+          description: EventSet or samplingEvent not found

@@ -3,8 +3,8 @@ from copy import deepcopy
 
 import logging
 
-import swagger_client
-from swagger_client.rest import ApiException
+import openapi_client
+from openapi_client.rest import ApiException
 
 from base_entity import BaseEntity
 
@@ -20,25 +20,25 @@ class DerivativeSampleProcessor(BaseEntity):
 
     def create_derivative_sample_from_values(self, values):
 
-        d_sample = swagger_client.DerivativeSample(None)
+        d_sample = openapi_client.DerivativeSample(None)
 
         idents = []
         if 'derivative_sample_id' in values:
-            idents.append(swagger_client.Attr('derivative_sample_id', values['derivative_sample_id'],
+            idents.append(openapi_client.Attr('derivative_sample_id', values['derivative_sample_id'],
                                               self._event_set))
 
         if 'derivative_sample_source' in values:
-            idents.append(swagger_client.Attr('derivative_sample_source',
+            idents.append(openapi_client.Attr('derivative_sample_source',
                                               values['derivative_sample_source'],
                                               self._event_set))
 
         if 'sanger_sample_id' in values:
-            idents.append(swagger_client.Attr('sanger_sample_id',
+            idents.append(openapi_client.Attr('sanger_sample_id',
                                               values['sanger_sample_id'],
                                               self._event_set))
 
         if 'sample_lims_id' in values and values['sample_lims_id']:
-            idents.append(swagger_client.Attr ('sanger_lims_id', values['sample_lims_id'],
+            idents.append(openapi_client.Attr ('sanger_lims_id', values['sample_lims_id'],
                                                      self._event_set))
 
         if 'dna_prep' in values:

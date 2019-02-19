@@ -1,12 +1,13 @@
 import { DataSource } from "@angular/cdk/table";
 import { CollectionViewer } from "@angular/cdk/collections";
 import { Observable } from "rxjs/Observable";
-import { SamplingEvent, SamplingEvents, LocationMap } from "./typescript-angular-client";
+import { SamplingEvent, SamplingEvents } from "./typescript-angular-client";
 
 import { SamplingEventsService } from "./sampling-events.service";
 import { BehaviorSubject } from "rxjs/BehaviorSubject";
 import { catchError, finalize } from "rxjs/operators";
 import { of } from "rxjs/observable/of";
+import { LocationMap } from './typescript-angular-client/model/locationMap';
 
 export class SamplingEventsSource implements DataSource<SamplingEvent> {
 
@@ -44,11 +45,11 @@ export class SamplingEventsSource implements DataSource<SamplingEvent> {
             .subscribe(result => {
                 let samplingEvents = <SamplingEvents>result;
                 this.samplingEventCount = samplingEvents.count;
-                this.attrTypes = samplingEvents.attr_types;
+                this.attrTypes = samplingEvents.attrTypes;
                 
                 this.locations = { ...this.locations, ...samplingEvents.locations };
 
-                this.samplingEventsSubject.next(samplingEvents.sampling_events);
+                this.samplingEventsSubject.next(samplingEvents.samplingEvents);
             },
                 error => { console.log(error); }
             );

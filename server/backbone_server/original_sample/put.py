@@ -7,7 +7,7 @@ from backbone_server.sampling_event.fetch import SamplingEventFetch
 from backbone_server.location.edit import LocationEdit
 from backbone_server.individual.edit import IndividualEdit
 
-from swagger_server.models.original_sample import OriginalSample
+from openapi_server.models.original_sample import OriginalSample
 
 import psycopg2
 

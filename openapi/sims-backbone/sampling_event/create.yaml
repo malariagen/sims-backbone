@@ -1,0 +1,14 @@
+    post:
+      tags:
+        - samplingEvent
+      description: Create a samplingEvent
+      operationId: createSamplingEvent
+      requestBody:
+        $ref: "#/components/requestBodies/SamplingEvent"
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "./sims-backbone/definitions/sampling_event.yaml#/components/schemas/SamplingEvent"

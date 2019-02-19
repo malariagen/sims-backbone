@@ -1,0 +1,14 @@
+    post:
+      tags:
+        - Individual
+      description: Create a individual
+      operationId: createIndividual
+      requestBody:
+        $ref: "#/components/requestBodies/Individual"
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "./sims-backbone/definitions/individual.yaml#/components/schemas/Individual"

@@ -3,8 +3,8 @@ from __future__ import print_function
 import pandas as pd
 import sys
 
-import swagger_client
-from swagger_client.rest import ApiException
+import openapi_client
+from openapi_client.rest import ApiException
 import uploader
 
 class Upload_SSR(uploader.Uploader):

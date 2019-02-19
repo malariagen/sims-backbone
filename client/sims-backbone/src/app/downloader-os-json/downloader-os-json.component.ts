@@ -70,17 +70,17 @@ export class DownloaderOsJsonComponent implements CollectionViewer {
 
     if (this.pageNumber == 0) {
       this.originalSamples = <OriginalSamples>{};
-      this.originalSamples.original_samples = [];
+      this.originalSamples.originalSamples = [];
     }
 
-    this.originalSamples.original_samples = this.originalSamples.original_samples.concat(d);
+    this.originalSamples.originalSamples = this.originalSamples.originalSamples.concat(d);
 
 
     if ((this.pageNumber + 1) * this.pageSize < this._dataSource.originalSampleCount) {
       this.pageNumber++;
       this._dataSource.loadOriginalSamples(this.filter, 'asc', this.pageNumber, this.pageSize);
     } else {
-      this.originalSamples.attr_types = this._dataSource.attrTypes;
+      this.originalSamples.attrTypes = this._dataSource.attrTypes;
       this.originalSamples.count = this._dataSource.originalSampleCount;
       this.buildDownloader(JSON.stringify(this.originalSamples));
     }

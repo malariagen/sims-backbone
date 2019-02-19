@@ -67,19 +67,19 @@ describe('DownloaderJsonComponent', () => {
 
       spyOn(FileSaver, 'saveAs').and.callFake(function (blob: Blob, fileName) {
 
-        //toHaveBeenCalledWith isn't clever enough to compare Blobs so doing
-        //in fake function
-        //Also fake function stops the actual saveAs being called and generating a download
+        // toHaveBeenCalledWith isn't clever enough to compare Blobs so doing
+        // in fake function
+        // Also fake function stops the actual saveAs being called and generating a download
 
         expect(fileName).toBe(component.fileName);
-        let resultString = JSON.stringify(test_entries);
+        const resultString = JSON.stringify(test_entries);
         expect(blob.size).toBe(resultString.length);
         expect(blob.type).toBe('application/json;charset=utf-8');
-        var reader = new FileReader();
-        reader.addEventListener("loadend", function () {
+        const reader = new FileReader();
+        reader.addEventListener('loadend', function () {
           if (typeof reader.result === 'string') {
-            let content: string = reader.result;
-            let resultEvents = <SamplingEvents>JSON.parse(content);
+            const content: string = reader.result;
+            const resultEvents = <SamplingEvents>JSON.parse(content);
             expect(resultEvents).toEqual(test_entries);
           }
         });
@@ -87,7 +87,7 @@ describe('DownloaderJsonComponent', () => {
 
       });
 
-      let button = fixture.debugElement.nativeElement.querySelector('button');
+      const button = fixture.debugElement.nativeElement.querySelector('button');
       button.click();
       expect(component.build).toHaveBeenCalled();
 
@@ -97,7 +97,7 @@ describe('DownloaderJsonComponent', () => {
         url: 'http://localhost/v1/samplingEvents?search_filter=' + component.filter + '&start=0&count=' + component.pageSize,
         method: 'GET'
       };
-      let req = backend.expectOne(result);
+      const req = backend.expectOne(result);
 
       req.flush(test_entries);
 
@@ -117,19 +117,19 @@ describe('DownloaderJsonComponent', () => {
 
       spyOn(FileSaver, 'saveAs').and.callFake(function (blob: Blob, fileName) {
 
-        //toHaveBeenCalledWith isn't clever enough to compare Blobs so doing
-        //in fake function
-        //Also fake function stops the actual saveAs being called and generating a download
+        // toHaveBeenCalledWith isn't clever enough to compare Blobs so doing
+        // in fake function
+        // Also fake function stops the actual saveAs being called and generating a download
 
         expect(fileName).toBe(component.fileName);
-        let resultString = JSON.stringify(test_entries);
+        const resultString = JSON.stringify(test_entries);
         expect(blob.size).toBe(resultString.length);
         expect(blob.type).toBe('application/json;charset=utf-8');
-        var reader = new FileReader();
-        reader.addEventListener("loadend", function () {
+        const reader = new FileReader();
+        reader.addEventListener('loadend', function () {
           if (typeof reader.result === 'string') {
-            let content: string = reader.result;
-            let resultEvents = <SamplingEvents>JSON.parse(content);
+            const content: string = reader.result;
+            const resultEvents = <SamplingEvents>JSON.parse(content);
             expect(resultEvents).toEqual(test_entries);
           }
         });
@@ -137,7 +137,7 @@ describe('DownloaderJsonComponent', () => {
 
       });
 
-      let button = fixture.debugElement.nativeElement.querySelector('button');
+      const button = fixture.debugElement.nativeElement.querySelector('button');
       button.click();
       expect(component.build).toHaveBeenCalled();
 
@@ -147,10 +147,10 @@ describe('DownloaderJsonComponent', () => {
         url: 'http://localhost/v1/samplingEvents?search_filter=' + component.filter + '&start=' + component.pageNumber * component.pageSize + '&count=' + component.pageSize,
         method: 'GET'
       };
-      let req = backend.expectOne(result);
+      const req = backend.expectOne(result);
 
-      let firstEntry = getTestSamplingEvents();
-      firstEntry.sampling_events.pop();
+      const firstEntry = getTestSamplingEvents();
+      firstEntry.samplingEvents.pop();
       req.flush(firstEntry);
 
       expect(component.pageNumber).toBe(1);
@@ -159,10 +159,10 @@ describe('DownloaderJsonComponent', () => {
         url: 'http://localhost/v1/samplingEvents?search_filter=' + component.filter + '&start=' + component.pageNumber * component.pageSize + '&count=' + component.pageSize,
         method: 'GET'
       };
-      let req1 = backend.expectOne(result1);
+      const req1 = backend.expectOne(result1);
 
-      let secondEntry = getTestSamplingEvents();
-      secondEntry.sampling_events = [secondEntry.sampling_events[1]];
+      const secondEntry = getTestSamplingEvents();
+      secondEntry.samplingEvents = [secondEntry.samplingEvents[1]];
       req1.flush(secondEntry);
 
       // Finally, assert that there are no outstanding requests.

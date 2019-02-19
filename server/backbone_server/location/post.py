@@ -3,7 +3,7 @@ from backbone_server.errors.duplicate_key_exception import DuplicateKeyException
 from backbone_server.location.edit import LocationEdit
 from backbone_server.location.fetch import LocationFetch
 
-from swagger_server.models.location import Location
+from openapi_server.models.location import Location
 
 import psycopg2
 

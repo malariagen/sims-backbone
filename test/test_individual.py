@@ -1,5 +1,5 @@
-import swagger_client
-from swagger_client.rest import ApiException
+import openapi_client
+from openapi_client.rest import ApiException
 
 from test_base import TestBase
 
@@ -14,9 +14,9 @@ class TestIndividual(TestBase):
 
     def get_next_individual(self):
 
-        indiv = swagger_client.Individual(None)
+        indiv = openapi_client.Individual(None)
 
-        ident = swagger_client.Attr(attr_type='patient_id',
+        ident = openapi_client.Attr(attr_type='patient_id',
                                     attr_value=f'Patient{self._individual_number}',
                                     attr_source='TestIndividual',
                                     study_name='6003-PF-MR-ANON')
@@ -238,7 +238,7 @@ class TestIndividual(TestBase):
             created = api_instance.create_individual(indiv)
             newindiv = copy.deepcopy(indiv)
             newindiv.attrs = [
-                swagger_client.Attr(attr_type='individual_id',
+                openapi_client.Attr(attr_type='individual_id',
                                     attr_value='indiv', study_name='1235-PV')
             ]
             updated = api_instance.update_individual(created.individual_id, newindiv)

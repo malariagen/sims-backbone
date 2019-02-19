@@ -1,8 +1,8 @@
 import six
 
-from swagger_server.models.sampling_event import SamplingEvent  # noqa: E501
-from swagger_server.models.sampling_events import SamplingEvents  # noqa: E501
-from swagger_server import util
+from openapi_server.models.sampling_event import SamplingEvent  # noqa: E501
+from openapi_server.models.sampling_events import SamplingEvents  # noqa: E501
+from openapi_server import util
 
 import logging
 

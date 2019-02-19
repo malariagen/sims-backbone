@@ -42,8 +42,8 @@ describe('StudyEditComponent', () => {
       studyCode: '0000'
     });
 
-    let authService = createAuthServiceSpy();
-    
+    const authService = createAuthServiceSpy();
+
     TestBed.configureTestingModule({
       imports: [
         ReactiveFormsModule,
@@ -85,22 +85,22 @@ describe('StudyEditComponent', () => {
     (http: HttpClient, backend: HttpTestingController) => {
 
       const taxas: Taxonomies = <Taxonomies>{
-        "count": 2,
-        "taxonomies": [
+        'count': 2,
+        'taxonomies': [
           {
-            "name": "gambiae species complex",
-            "rank": "None",
-            "taxonomy_id": 44542
+            'name': 'gambiae species complex',
+            'rank': 'None',
+            'taxonomyId': 44542
           },
           {
-            "name": "Anopheles gambiae",
-            "rank": "species",
-            "taxonomy_id": 7165
+            'name': 'Anopheles gambiae',
+            'rank': 'species',
+            'taxonomyId': 7165
           }
         ]
       };
 
-      let req_taxas = backend.expectOne({
+      const req_taxas = backend.expectOne({
         url: 'http://localhost/v1/metadata/taxonomy',
         method: 'GET'
       });
@@ -110,17 +110,17 @@ describe('StudyEditComponent', () => {
       const testData: Study = <Study>{
         name: '0000 TestStudy',
         code: '0000',
-        partner_species: [<PartnerSpecies>{
-          partner_species: 'AG',
+        partnerSpecies: [<PartnerSpecies>{
+          partnerSpecies: 'AG',
           taxa: [<Taxonomy>{
-            taxonomy_id: 1234,
+            taxonomyId: 1234,
             name: 'Anonpheles',
             rank: ''
           }]
         }]
       };
 
-      let req = backend.expectOne({
+      const req = backend.expectOne({
         url: 'http://localhost/v1/study/' + testData.code,
         method: 'GET'
       });
@@ -128,7 +128,7 @@ describe('StudyEditComponent', () => {
       req.flush(testData);
 
       // Finally, assert that there are no outstanding requests.
-      //backend.verify();
+      // backend.verify();
       expect(component.studyForm.controls['name'].value).toBe(testData.name);
     })
   )
@@ -138,22 +138,22 @@ describe('StudyEditComponent', () => {
     (http: HttpClient, backend: HttpTestingController) => {
 
       const taxas: Taxonomies = <Taxonomies>{
-        "count": 2,
-        "taxonomies": [
+        'count': 2,
+        'taxonomies': [
           {
-            "name": "gambiae species complex",
-            "rank": "None",
-            "taxonomy_id": 44542
+            'name': 'gambiae species complex',
+            'rank': 'None',
+            'taxonomyId': 44542
           },
           {
-            "name": "Anopheles gambiae",
-            "rank": "species",
-            "taxonomy_id": 7165
+            'name': 'Anopheles gambiae',
+            'rank': 'species',
+            'taxonomyId': 7165
           }
         ]
       };
 
-      let req_taxas = backend.expectOne({
+      const req_taxas = backend.expectOne({
         url: 'http://localhost/v1/metadata/taxonomy',
         method: 'GET'
       });
@@ -163,17 +163,17 @@ describe('StudyEditComponent', () => {
       const testData: Study = <Study>{
         name: '0000 TestStudy',
         code: '0000',
-        partner_species: [<PartnerSpecies>{
-          partner_species: 'AG',
+        partnerSpecies: [<PartnerSpecies>{
+          partnerSpecies: 'AG',
           taxa: [<Taxonomy>{
-            taxonomy_id: 1234,
+            taxonomyId: 1234,
             name: 'Anonpheles',
             rank: ''
           }]
         }]
       };
 
-      let req = backend.expectOne({
+      const req = backend.expectOne({
         url: 'http://localhost/v1/study/' + testData.code,
         method: 'GET'
       });
@@ -201,14 +201,14 @@ describe('StudyEditComponent', () => {
         method: 'PUT'
       });
 
-      //The response to the put request
+      // The response to the put request
       put.flush(testData);
 
       expect(put.request.body.name).toBe(testData.name);
       expect(put.request.body.code).toBe(testData.code);
 
       const arrayControls = put.request.body.partner_species[0].taxa;
-      expect(arrayControls[0].taxonomy_id).toBe(testData.partner_species[0].taxa[0].taxonomy_id);
+      expect(arrayControls[0].taxonomyId).toBe(testData.partnerSpecies[0].taxa[0].taxonomyId);
 
       backend.verify();
     })

@@ -1,5 +1,5 @@
-import swagger_client
-from swagger_client.rest import ApiException
+import openapi_client
+from openapi_client.rest import ApiException
 
 from test_base import TestBase
 
@@ -14,7 +14,7 @@ class TestLocation(TestBase):
 
     def get_next_location(self):
     
-        loc = swagger_client.Location(None)
+        loc = openapi_client.Location(None)
 
         loc.latitude = self._location_number
         loc.longitude = self._location_number
@@ -117,7 +117,7 @@ class TestLocation(TestBase):
         try:
 
             loc = self.get_next_location()
-            ident = swagger_client.Attr(attr_type='partner_name', attr_value='Kobeni', study_name='5003-PF-MR-ANON')
+            ident = openapi_client.Attr(attr_type='partner_name', attr_value='Kobeni', study_name='5003-PF-MR-ANON')
             loc.attrs = [
                 ident,
                 ident
@@ -142,13 +142,13 @@ class TestLocation(TestBase):
 
             loc = self.get_next_location()
             loc.attrs = [
-                swagger_client.Attr(attr_type='partner_name', attr_value='Kobeni', study_name='5002-PF-MR-ANON'),
+                openapi_client.Attr(attr_type='partner_name', attr_value='Kobeni', study_name='5002-PF-MR-ANON'),
             ]
 
-            loc1 = swagger_client.Location(None, 28.46362, 91.49542, 'country',
+            loc1 = openapi_client.Location(None, 28.46362, 91.49542, 'country',
                                           'Trongsa, Trongsa, Bhutan', 'pv_3_locations.txt', 'BTN')
             loc1.attrs = [
-                swagger_client.Attr(attr_type='partner_name', attr_value='Kobeni', study_name='5002-PF-MR-ANON'),
+                openapi_client.Attr(attr_type='partner_name', attr_value='Kobeni', study_name='5002-PF-MR-ANON'),
             ]
 
             created = api_instance.create_location(loc)
@@ -174,8 +174,8 @@ class TestLocation(TestBase):
 
             loc = self.get_next_location()
             loc.attrs = [
-                swagger_client.Attr(attr_type='partner_name', attr_value='Kobeni', study_name='5002-PF-MR-ANON'),
-                swagger_client.Attr(attr_type='partner_name', attr_value='location name', study_name='5002')
+                openapi_client.Attr(attr_type='partner_name', attr_value='Kobeni', study_name='5002-PF-MR-ANON'),
+                openapi_client.Attr(attr_type='partner_name', attr_value='location name', study_name='5002')
             ]
 
             with pytest.raises(ApiException, status=422):
@@ -193,9 +193,9 @@ class TestLocation(TestBase):
 
         try:
 
-            loc = swagger_client.Location(None, 15.82083, -9.4145, None, None, None, None)
+            loc = openapi_client.Location(None, 15.82083, -9.4145, None, None, None, None)
             loc.attrs = [
-                swagger_client.Attr(attr_type='partner_name', attr_value='Kobeni', study_name='5002-PF-MR-ANON')
+                openapi_client.Attr(attr_type='partner_name', attr_value='Kobeni', study_name='5002-PF-MR-ANON')
             ]
             created = api_instance.create_location(loc)
 
@@ -221,7 +221,7 @@ class TestLocation(TestBase):
 
             loc = self.get_next_location()
             loc.attrs = [
-                swagger_client.Attr(attr_type='partner_name', attr_value='bhutan', study_name='1234-PV')
+                openapi_client.Attr(attr_type='partner_name', attr_value='bhutan', study_name='1234-PV')
             ]
             created = api_instance.create_location(loc)
             looked_up = api_instance.download_gps_location(loc.latitude, loc.longitude)
@@ -279,7 +279,7 @@ class TestLocation(TestBase):
 
             loc = self.get_next_location()
             loc.attrs = [
-                swagger_client.Attr(attr_type='partner_name', attr_value='bhutan', study_name='1234-PV')
+                openapi_client.Attr(attr_type='partner_name', attr_value='bhutan', study_name='1234-PV')
             ]
             created = api_instance.create_location(loc)
             looked_up_locs = api_instance.download_partner_location(loc.attrs[0].attr_value)
@@ -322,12 +322,12 @@ class TestLocation(TestBase):
 
             loc = self.get_next_location()
             loc.attrs = [
-                swagger_client.Attr(attr_type='partner_name', attr_value='bhutan', study_name='5000-PV')
+                openapi_client.Attr(attr_type='partner_name', attr_value='bhutan', study_name='5000-PV')
             ]
             created = api_instance.create_location(loc)
             loc1 = self.get_next_location()
             loc1.attrs = [
-                swagger_client.Attr(attr_type='partner_name', attr_value='bhutan', study_name='5001-PV')
+                openapi_client.Attr(attr_type='partner_name', attr_value='bhutan', study_name='5001-PV')
             ]
             created1 = api_instance.create_location(loc1)
             looked_up_locs = api_instance.download_locations()
@@ -388,12 +388,12 @@ class TestLocation(TestBase):
 
             loc = self.get_next_location()
             loc.attrs = [
-                swagger_client.Attr(attr_type='partner_name', attr_value='bhutan', study_name='5000-PV')
+                openapi_client.Attr(attr_type='partner_name', attr_value='bhutan', study_name='5000-PV')
             ]
             created = api_instance.create_location(loc)
             loc1 = self.get_next_location()
             loc1.attrs = [
-                swagger_client.Attr(attr_type='partner_name', attr_value='bhutan', study_name='5001-PV')
+                openapi_client.Attr(attr_type='partner_name', attr_value='bhutan', study_name='5001-PV')
             ]
             created1 = api_instance.create_location(loc1)
             looked_up_locs = api_instance.download_partner_location(loc.attrs[0].attr_value)
@@ -416,7 +416,7 @@ class TestLocation(TestBase):
 
             loc = self.get_next_location()
             loc.attrs = [
-                swagger_client.Attr(attr_type='partner_name', attr_value='bhutan', study_name='1234-PV')
+                openapi_client.Attr(attr_type='partner_name', attr_value='bhutan', study_name='1234-PV')
             ]
             created = api_instance.create_location(loc)
             looked_up_locs = api_instance.download_partner_location(loc.attrs[0].attr_value)
@@ -425,7 +425,7 @@ class TestLocation(TestBase):
             newloc.country = 'IND'
             newloc.accuracy = 'region'
             newloc.attrs = [
-                swagger_client.Attr(attr_type='partner_name', attr_value='nepal', study_name='1235-PV')
+                openapi_client.Attr(attr_type='partner_name', attr_value='nepal', study_name='1235-PV')
             ]
             updated = api_instance.update_location(looked_up.location_id, newloc)
             fetched = api_instance.download_location(looked_up.location_id)
@@ -447,14 +447,14 @@ class TestLocation(TestBase):
 
             loc = self.get_next_location()
             loc.attrs = [
-                swagger_client.Attr(attr_type='partner_name', attr_value='bhutan', study_name='1234-PV')
+                openapi_client.Attr(attr_type='partner_name', attr_value='bhutan', study_name='1234-PV')
             ]
             created = api_instance.create_location(loc)
             looked_up_locs = api_instance.download_partner_location(loc.attrs[0].attr_value)
             looked_up = looked_up_locs.locations[0]
             newloc = copy.deepcopy(loc)
             newloc.attrs = [
-                swagger_client.Attr(attr_type='partner_name', attr_value='nepal', study_name='1235-PV')
+                openapi_client.Attr(attr_type='partner_name', attr_value='nepal', study_name='1235-PV')
             ]
             updated = api_instance.update_location(looked_up.location_id, newloc)
             fetched = api_instance.download_location(looked_up.location_id)
@@ -475,15 +475,15 @@ class TestLocation(TestBase):
         try:
 
             loc = self.get_next_location()
-            loc = swagger_client.Location(None, 27.46362, 90.49542, 'country',
+            loc = openapi_client.Location(None, 27.46362, 90.49542, 'country',
                                           'Trongsa, Trongsa, Bhutan', 'pv_3_locations.txt', 'BTN')
             loc.attrs = [
-                swagger_client.Attr(attr_type='partner_name', attr_value='bhutan', study_name='1234-PV')
+                openapi_client.Attr(attr_type='partner_name', attr_value='bhutan', study_name='1234-PV')
             ]
             created = api_instance.create_location(loc)
             looked_up_locs = api_instance.download_partner_location(loc.attrs[0].attr_value)
             looked_up = looked_up_locs.locations[0]
-            newloc = swagger_client.Location(None, 28.46362, 91.49542, 'location',
+            newloc = openapi_client.Location(None, 28.46362, 91.49542, 'location',
                                         'new_Trongsa, Trongsa, Bhutan', 'new_pv_3_locations.txt', 'IND')
             new_created = api_instance.create_location(newloc)
             with pytest.raises(ApiException, status=422):
@@ -506,7 +506,7 @@ class TestLocation(TestBase):
         try:
 
             loc = self.get_next_location()
-            newloc = swagger_client.Location(None, 28.46362, 91.49542, 'location',
+            newloc = openapi_client.Location(None, 28.46362, 91.49542, 'location',
                                         'new_Trongsa, Trongsa, Bhutan', 'new_pv_3_locations.txt', 'IND')
             fake_id = uuid.uuid4()
             newloc.location_id = str(fake_id)
@@ -530,10 +530,10 @@ class TestLocation(TestBase):
 
         try:
             loc = self.get_next_location()
-            loc = swagger_client.Location(None, 27.46362, 90.49542, 'country',
+            loc = openapi_client.Location(None, 27.46362, 90.49542, 'country',
                                           'Trongsa, Trongsa, Bhutan', 'pv_3_locations.txt', 'BTN')
             loc.attrs = [
-                swagger_client.Attr(attr_type='partner_name', attr_value='bhutan', study_name='1234-PV')
+                openapi_client.Attr(attr_type='partner_name', attr_value='bhutan', study_name='1234-PV')
             ]
             created = api_instance.create_location(loc)
 

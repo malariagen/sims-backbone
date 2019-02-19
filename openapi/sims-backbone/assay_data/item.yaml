@@ -1,0 +1,70 @@
+    get:
+      tags:
+        - assayData
+      summary: fetches an AssayDatum
+      description: ""
+      operationId: downloadAssayDatum
+      parameters:
+        - name: assayDatumId
+          in: path
+          description: ID of AssayDatum to fetch
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "./sims-backbone/definitions/assay_data.yaml#/components/schemas/AssayDatum"
+    put:
+      tags:
+        - assayData
+      summary: updates an AssayDatum
+      description: ""
+      operationId: updateAssayDatum
+      parameters:
+        - name: assayDatumId
+          in: path
+          description: ID of AssayDatum to update
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "./sims-backbone/definitions/assay_data.yaml#/components/schemas/AssayDatum"
+        required: true
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "./sims-backbone/definitions/assay_data.yaml#/components/schemas/AssayDatum"
+        "404":
+          description: AssayDatum not found
+          content:
+            application/json:
+              schema:
+                type: string
+    delete:
+      tags:
+        - assayData
+      summary: deletes an AssayDatum
+      description: ""
+      operationId: deleteAssayDatum
+      parameters:
+        - name: assayDatumId
+          in: path
+          description: ID of AssayDatum to fetch
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: successful operation
+        "404":
+          description: AssayDatum not found

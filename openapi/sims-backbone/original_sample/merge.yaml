@@ -1,0 +1,27 @@
+    put:
+      tags:
+        - OriginalSample
+      summary: merges two OriginalSamples
+      description: merges original samples with compatible properties updating references
+        and merging sampling events
+      operationId: mergeOriginalSamples
+      parameters:
+        - name: into
+          in: path
+          description: name of property to search
+          required: true
+          schema:
+            type: string
+        - name: merged
+          in: path
+          description: matching value of property to search
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "./sims-backbone/definitions/original_sample.yaml#/components/schemas/OriginalSample"

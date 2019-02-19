@@ -1,0 +1,241 @@
+openapi: 3.0.0
+info:
+  description: ""
+  version: 1.0.0
+  title: Backbone
+  termsOfService: http://swagger.io/terms/
+  contact:
+    email: sysadmin@malariagen.net
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+security:
+  - OauthSecurity: []
+tags:
+  - name: source
+    description: Everything about your sources
+    externalDocs:
+      description: Find out more
+      url: http://swagger.io
+  - name: samplingEvent
+    description: Access to Backbone samplingEvents
+  - name: report
+    description: Reports
+paths:
+  '/location':
+    $ref: './sims-backbone/location/create.yaml'
+  '/location/{locationId}':
+    $ref: './sims-backbone/location/item.yaml'
+  '/location/gps/{latitude}/{longitude}':
+    $ref: './sims-backbone/location/gps.yaml'
+  '/location/partner/{partnerId}':
+    $ref: './sims-backbone/location/partner.yaml'
+  '/locations':
+    $ref: './sims-backbone/location/locations.yaml'
+  '/samplingEvent':
+    $ref: './sims-backbone/sampling_event/create.yaml'
+  '/samplingEvent/{samplingEventId}':
+    $ref: './sims-backbone/sampling_event/item.yaml'
+  '/samplingEvents':
+    $ref: './sims-backbone/sampling_event/items.yaml'
+  '/samplingEvents/merge/{into}/{merged}':
+    $ref: './sims-backbone/sampling_event/merge.yaml'
+  '/samplingEvents/attr/{propName}/{propValue}':
+    $ref: './sims-backbone/sampling_event/by_attr.yaml'
+  '/samplingEvents/os/attr/{propName}/{propValue}':
+    $ref: './sims-backbone/sampling_event/by_os_attr.yaml'
+  '/samplingEvents/location/{locationId}':
+    $ref: './sims-backbone/sampling_event/by_location.yaml'
+  '/samplingEvents/study/{studyName}':
+    $ref: './sims-backbone/sampling_event/by_study.yaml'
+  '/samplingEvents/taxa/{taxaId}':
+    $ref: './sims-backbone/sampling_event/by_taxa.yaml'
+  '/samplingEvents/eventSet/{eventSetId}':
+    $ref: './sims-backbone/sampling_event/by_set.yaml'
+  '/individual':
+    $ref: './sims-backbone/individual/create.yaml'
+  '/individual/{individualId}':
+    $ref: './sims-backbone/individual/item.yaml'
+  '/individuals/attr/{propName}/{propValue}':
+    $ref: './sims-backbone/individual/by_attr.yaml'
+  '/individuals/merge/{into}/{merged}':
+    $ref: './sims-backbone/individual/merge.yaml'
+  '/individuals':
+    $ref: './sims-backbone/individual/items.yaml'
+  '/originalSample':
+    $ref: './sims-backbone/original_sample/create.yaml'
+  '/originalSample/{originalSampleId}':
+    $ref: './sims-backbone/original_sample/item.yaml'
+  '/originalSamples':
+    $ref: './sims-backbone/original_sample/items.yaml'
+  '/originalSamples/merge/{into}/{merged}':
+    $ref: './sims-backbone/original_sample/merge.yaml'
+  '/originalSamples/attr/{propName}/{propValue}':
+    $ref: './sims-backbone/original_sample/by_attr.yaml'
+  '/originalSamples/location/{locationId}':
+    $ref: './sims-backbone/original_sample/by_location.yaml'
+  '/originalSamples/study/{studyName}':
+    $ref: './sims-backbone/original_sample/by_study.yaml'
+  '/originalSamples/taxa/{taxaId}':
+    $ref: './sims-backbone/original_sample/by_taxa.yaml'
+  '/originalSamples/eventSet/{eventSetId}':
+    $ref: './sims-backbone/original_sample/by_set.yaml'
+  '/derivativeSample':
+    $ref: './sims-backbone/derivative_sample/create.yaml'
+  '/derivativeSamples':
+    $ref: './sims-backbone/derivative_sample/items.yaml'
+  '/derivativeSample/{derivativeSampleId}':
+    $ref: './sims-backbone/derivative_sample/item.yaml'
+  '/derivativeSamples/attr/{propName}/{propValue}':
+    $ref: './sims-backbone/derivative_sample/by_attr.yaml'
+  '/derivativeSamples/os/attr/{propName}/{propValue}':
+    $ref: './sims-backbone/derivative_sample/by_os_attr.yaml'
+  '/derivativeSamples/taxa/{taxaId}':
+    $ref: './sims-backbone/derivative_sample/by_taxa.yaml'
+  '/derivativeSamples/eventSet/{eventSetId}':
+    $ref: './sims-backbone/derivative_sample/by_set.yaml'
+  '/derivativeSamples/study/{studyName}':
+    $ref: './sims-backbone/derivative_sample/by_study.yaml'
+  '/assayDatum':
+    $ref: './sims-backbone/assay_data/create.yaml'
+  '/assayDatum/{assayDatumId}':
+    $ref: './sims-backbone/assay_data/item.yaml'
+  '/assayData/attr/{propName}/{propValue}':
+    $ref: './sims-backbone/assay_data/by_attr.yaml'
+  '/assayData/os/attr/{propName}/{propValue}':
+    $ref: './sims-backbone/assay_data/by_os_attr.yaml'
+  '/metadata/country/{countryId}':
+    $ref: './sims-backbone/metadata/country.yaml'
+  '/metadata/taxonomy':
+    $ref: './sims-backbone/metadata/taxonomy.yaml'
+  '/metadata/attr_types':
+    $ref: './sims-backbone/metadata/attr_types.yaml'
+  '/metadata/location_attr_types':
+    $ref: './sims-backbone/metadata/location_attr_types.yaml'
+  '/studies':
+    $ref: './sims-backbone/study/items.yaml'
+  '/study/{studyName}':
+    $ref: './sims-backbone/study/item.yaml'
+  '/eventSet/{eventSetId}':
+    $ref: './sims-backbone/event_set/item.yaml'
+  '/eventSet/{eventSetId}/{samplingEventId}':
+    $ref: './sims-backbone/event_set/sampling_event.yaml'
+  '/eventSet/{eventSetId}/notes/{noteId}':
+    $ref: './sims-backbone/event_set/note.yaml'
+  '/eventSets':
+    $ref: './sims-backbone/event_set/items.yaml'
+  '/missingTaxon':
+    get:
+      tags:
+        - report
+      summary: fetches studies with uncurated taxon
+      description: ''
+      operationId: missingTaxon
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "./sims-backbone/definitions/studies.yaml#/components/schemas/Studies"
+  /missingLocations:
+    get:
+      tags:
+        - report
+      summary: fetches studies with sampling events with missing locations
+      description: ""
+      operationId: missingLocations
+      parameters:
+        - name: include_country
+          in: query
+          description: include studies where only a country level location is set
+          required: false
+          schema:
+            type: boolean
+            default: false
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "./sims-backbone/definitions/studies.yaml#/components/schemas/Studies"
+  /uncuratedLocations:
+    get:
+      tags:
+        - report
+      summary: fetches studies with uncurated locations
+      description: ""
+      operationId: uncuratedLocations
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "./sims-backbone/definitions/studies.yaml#/components/schemas/Studies"
+  /multipleLocationNames:
+    get:
+      tags:
+        - report
+      summary: fetches studies with multiple locations with the same name
+      description: ""
+      operationId: multipleLocationNames
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "./sims-backbone/definitions/studies.yaml#/components/schemas/Studies"
+  /multipleLocationGPS:
+    get:
+      tags:
+        - report
+      summary: fetches studies with multiple locations with the same GPS
+      description: ""
+      operationId: multipleLocationGPS
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "./sims-backbone/definitions/studies.yaml#/components/schemas/Studies"
+servers:
+  - url: http://localhost/v1
+components:
+  requestBodies:
+    SamplingEvent:
+      content:
+        application/json:
+          schema:
+            $ref: "./sims-backbone/definitions/sampling_event.yaml#/components/schemas/SamplingEvent"
+      required: true
+    Location:
+      content:
+        application/json:
+          schema:
+            $ref: "./sims-backbone/definitions/location.yaml#/components/schemas/Location"
+      required: true
+    Individual:
+      content:
+        application/json:
+          schema:
+            $ref: "./sims-backbone/definitions/individual.yaml#/components/schemas/Individual"
+      required: true
+    EventSetNote:
+      content:
+        application/json:
+          schema:
+            $ref: "./sims-backbone/definitions/sampling_event.yaml#/components/schemas/EventSetNote"
+      required: true
+  securitySchemes:
+    OauthSecurity:
+      type: oauth2
+      x-tokenInfoUrl: https://www.malariagen.net/sso/oauth2.0/profile
+      flows:
+        authorizationCode:
+          authorizationUrl: https://www.malariagen.net/sso/oauth2.0/authorize
+          tokenUrl: https://www.malariagen.net/sso/oauth2.0/accessToken
+          scopes: {}

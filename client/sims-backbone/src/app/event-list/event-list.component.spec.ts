@@ -37,7 +37,7 @@ describe('EventListComponent', () => {
   let component: EventListComponent;
   let fixture: ComponentFixture<EventListComponent>;
 
-  let test_entries = getTestSamplingEvents();
+  const test_entries = getTestSamplingEvents();
 
   let httpClientSpy: { get: jasmine.Spy };
 
@@ -93,7 +93,7 @@ describe('EventListComponent', () => {
   it('should be created', async(inject([HttpClient, HttpTestingController],
     (http: HttpClient, backend: HttpTestingController) => {
 
-      let req = backend.expectOne({
+      const req = backend.expectOne({
         url: 'http://localhost/v1/samplingEvents?search_filter=' + component.filter + '&start=0&count=50',
         method: 'GET'
       });
@@ -111,7 +111,7 @@ describe('EventListComponent', () => {
   it('should create rows', async(inject([HttpClient, HttpTestingController],
     (http: HttpClient, backend: HttpTestingController) => {
 
-      let req = backend.expectOne({
+      const req = backend.expectOne({
         url: 'http://localhost/v1/samplingEvents?search_filter=' + component.filter + '&start=0&count=50',
         method: 'GET'
       });
@@ -121,16 +121,16 @@ describe('EventListComponent', () => {
       // Finally, assert that there are no outstanding requests.
       backend.verify();
 
-      expect(component.table._data.length).toBe(test_entries.sampling_events.length);
+      expect(component.table._data.length).toBe(test_entries.samplingEvents.length);
 
-      expect(component.table._data).toBe(test_entries.sampling_events);
+      expect(component.table._data).toBe(test_entries.samplingEvents);
 
     })));
 
   it('should set headers', async(inject([HttpClient, HttpTestingController],
     (http: HttpClient, backend: HttpTestingController) => {
 
-      let req = backend.expectOne({
+      const req = backend.expectOne({
         url: 'http://localhost/v1/samplingEvents?search_filter=' + component.filter + '&start=0&count=50',
         method: 'GET'
       });
@@ -140,7 +140,7 @@ describe('EventListComponent', () => {
       // Finally, assert that there are no outstanding requests.
       backend.verify();
 
-      let expectedHeaders = ["sampling_event_id", "individual_id", "partner_id", "roma_id", "doc", "partner_location_name", "location_curated_name", "location"];
+      const expectedHeaders = ['sampling_event_id', 'individual_id', 'partner_id', 'roma_id', 'doc', 'partner_location_name', 'location_curated_name', 'location'];
 
       expect(component.displayedColumns.length).toBe(expectedHeaders.length);
 

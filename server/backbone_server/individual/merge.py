@@ -9,7 +9,7 @@ from backbone_server.individual.delete import IndividualDelete
 from backbone_server.individual.fetch import IndividualFetch
 from backbone_server.location.edit import LocationEdit
 
-from swagger_server.models.individual import Individual
+from openapi_server.models.individual import Individual
 
 import psycopg2
 

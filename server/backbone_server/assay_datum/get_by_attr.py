@@ -1,5 +1,5 @@
-from swagger_server.models.assay_datum import AssayDatum
-from swagger_server.models.assay_data import AssayData
+from openapi_server.models.assay_datum import AssayDatum
+from openapi_server.models.assay_data import AssayData
 
 from backbone_server.errors.missing_key_exception import MissingKeyException
 

@@ -35,18 +35,18 @@ export class TaxonomyEditComponent implements OnInit {
     taxasControl.removeAt(i);
   }
 
-  displayFn(taxonomy_id: number): string {
+  displayFn(taxonomyId: number): string {
     
-    let ret = String(taxonomy_id);
+    let ret = String(taxonomyId);
 
     if (this.taxonomies) {
       this.taxonomies.forEach(taxa => {
-        if (taxa.taxonomy_id == taxonomy_id) {
-          ret = taxa.taxonomy_id + " " + taxa.rank + " " + taxa.name;
+        if (taxa.taxonomyId == taxonomyId) {
+          ret = taxa.taxonomyId + " " + taxa.rank + " " + taxa.name;
         }
       });
     }
-    if (taxonomy_id) {
+    if (taxonomyId) {
       return ret;
     } else {
       return '';

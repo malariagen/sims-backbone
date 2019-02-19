@@ -1,0 +1,12 @@
+components:
+  schemas:
+    Studies:
+      type: object
+      properties:
+        studies:
+          type: array
+          items:
+            $ref: './study.yaml#/components/schemas/Study'
+        count:
+          type: integer
+          description: Used when pagination is applied to return the number of results

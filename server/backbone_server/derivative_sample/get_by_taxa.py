@@ -1,5 +1,5 @@
-from swagger_server.models.derivative_sample import DerivativeSample
-from swagger_server.models.derivative_samples import DerivativeSamples
+from openapi_server.models.derivative_sample import DerivativeSample
+from openapi_server.models.derivative_samples import DerivativeSamples
 
 from backbone_server.errors.missing_key_exception import MissingKeyException
 

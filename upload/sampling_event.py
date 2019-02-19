@@ -7,8 +7,8 @@ import logging
 
 from decimal import *
 
-import swagger_client
-from swagger_client.rest import ApiException
+import openapi_client
+from openapi_client.rest import ApiException
 
 from base_entity import BaseEntity
 
@@ -47,7 +47,7 @@ class SamplingEventProcessor(BaseEntity):
             #print("values: {} {}".format(study_id, partner_name))
             if study_id and partner_name:
 #                print("adding attr {}".format(looked_up.attrs))
-                new_ident = swagger_client.Attr( attr_type = 'partner_name',
+                new_ident = openapi_client.Attr( attr_type = 'partner_name',
                                                       attr_value = partner_name,
                                                       attr_source = self._event_set,
                                                       study_name = study_id)
@@ -124,15 +124,15 @@ class SamplingEventProcessor(BaseEntity):
         if 'study_id' in values:
             study_id = values['study_id'][:4]
 
-        loc = swagger_client.Location(None)
+        loc = openapi_client.Location(None)
 
         loc.attrs = [
-            swagger_client.Attr(attr_type='partner_name',
+            openapi_client.Attr(attr_type='partner_name',
                                       attr_value=partner_name,
                                       attr_source=self._event_set, study_name=study_id)
         ]
         if prefix + "src_location_id" in values:
-            src_lid = swagger_client.Attr(attr_type='src_location_id',
+            src_lid = openapi_client.Attr(attr_type='src_location_id',
                                       attr_value=values[prefix + 'src_location_id'],
                                       attr_source=self._event_set, study_name=study_id)
             loc.attrs.append(src_lid)
@@ -287,10 +287,10 @@ class SamplingEventProcessor(BaseEntity):
 
         idents = []
         if 'sample_individual_id' in values:
-            idents.append(swagger_client.Attr ('individual_id', values['sample_individual_id'],
+            idents.append(openapi_client.Attr ('individual_id', values['sample_individual_id'],
                                                      self._event_set))
         if 'roma_pk_id' in values:
-            idents.append(swagger_client.Attr ('roma_pk_id', values['roma_pk_id'],
+            idents.append(openapi_client.Attr ('roma_pk_id', values['roma_pk_id'],
                                                      self._event_set))
 
 
@@ -309,7 +309,7 @@ class SamplingEventProcessor(BaseEntity):
         if 'study_id' in values:
             study_id = values['study_id']
 
-        samp = swagger_client.SamplingEvent(None, doc = doc)
+        samp = openapi_client.SamplingEvent(None, doc = doc)
 
         if doc_accuracy:
             samp.doc_accuracy = doc_accuracy

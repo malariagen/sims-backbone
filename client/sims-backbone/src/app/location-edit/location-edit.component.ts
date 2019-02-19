@@ -41,9 +41,9 @@ export class LocationEditComponent implements OnInit {
   public osmForm: FormGroup;
   public googleForm: FormGroup;
   public gPolygon: Array<LatLngLiteral> = [];
-  public locationEvents: string = '/location/events';
+  public locationEvents = '/location/events';
 
-  zoom: number = 10;
+  zoom = 10;
   accuracy: string;
 
   constructor(protected httpClient: HttpClient, private route: ActivatedRoute, private locationService: LocationService, private metadataService: MetadataService, private _fb: FormBuilder, private mapsAPILoader: MapsAPILoader, private ngZone: NgZone
@@ -74,16 +74,16 @@ export class LocationEditComponent implements OnInit {
   setZoomFromPrecision() {
     this.zoom = 4;
     if (this.location && this.location.accuracy) {
-      if (this.location.accuracy == 'country') {
+      if (this.location.accuracy === 'country') {
         this.zoom = 4;
       }
-      if (this.location.accuracy == 'region') {
+      if (this.location.accuracy === 'region') {
         this.zoom = 7;
       }
-      if (this.location.accuracy == 'city') {
+      if (this.location.accuracy === 'city') {
         this.zoom = 11;
       }
-      if (this.location.accuracy == 'building') {
+      if (this.location.accuracy === 'building') {
         this.zoom = 16;
       }
     }
@@ -102,8 +102,8 @@ export class LocationEditComponent implements OnInit {
 
     this.locationService.downloadLocation(this.locationId).subscribe(
       (location) => {
-        //console.log("Downloaded location via GPS");
-        let locs = <Locations>{
+        // console.log("Downloaded location via GPS");
+        const locs = <Locations>{
           count: 0,
           locations: []
         };
@@ -116,11 +116,11 @@ export class LocationEditComponent implements OnInit {
 
         this.locationForm = this._fb.group(
           {
-            location_id: [this.location.location_id, [Validators.required]],
+            locationId: [this.location.locationId, [Validators.required]],
             latitude: [this.location.latitude, [Validators.required]],
             longitude: [this.location.longitude, [Validators.required]],
-            curated_name: [this.location.curated_name, [Validators.required]],
-            curation_method: [this.location.curation_method, [Validators.required]],
+            curatedName: [this.location.curatedName, [Validators.required]],
+            curationMethod: [this.location.curationMethod, [Validators.required]],
             notes: [this.location.notes, []],
             country: [this.location.country, [Validators.required, Validators.minLength(3)]],
             accuracy: [this.location.accuracy, [Validators.required]],
@@ -131,23 +131,23 @@ export class LocationEditComponent implements OnInit {
 
         if (this.location.attrs) {
           this.location.attrs.forEach(ident => {
-            let identControl = new FormGroup({
-              attr_source: new FormControl(ident.attr_source, Validators.required),
-              attr_type: new FormControl(ident.attr_type, Validators.required),
-              attr_value: new FormControl(ident.attr_value, Validators.required),
-              study_name: new FormControl(ident.study_name, Validators.required),
+            const identControl = new FormGroup({
+              attrSource: new FormControl(ident.attrSource, Validators.required),
+              attrType: new FormControl(ident.attrType, Validators.required),
+              attrValue: new FormControl(ident.attrValue, Validators.required),
+              studyName: new FormControl(ident.studyName, Validators.required),
             });
             formIdents.push(identControl);
           });
         }
-        //console.log(this.locationForm);
-        //console.log(this.locations);
+        // console.log(this.locationForm);
+        // console.log(this.locations);
 
 
       },
       (err) => console.error(err),
-      () => { 
-        //console.log("Downloaded locations") 
+      () => {
+        // console.log("Downloaded locations")
       }
     );
 
@@ -155,13 +155,13 @@ export class LocationEditComponent implements OnInit {
 
   public onSubmit({ value, valid }: { value: Location, valid: boolean }): void {
 
-    //console.log("Submitting:" + JSON.stringify(value));
-    //Should be solved by the nullable property but isn't
+    // console.log("Submitting:" + JSON.stringify(value));
+    // Should be solved by the nullable property but isn't
     if (!value.notes) {
       value.notes = '';
     }
-    this.locationService.updateLocation(value.location_id, value).subscribe((result) => {
-      //console.log(result);
+    this.locationService.updateLocation(value.locationId, value).subscribe((result) => {
+      // console.log(result);
     },
       (err) => {
         console.log(err); alert('Failed to save');
@@ -176,8 +176,8 @@ export class LocationEditComponent implements OnInit {
 
     this.ngZone.run(() => {
       this.getOSM().subscribe((resp) => {
-        //console.log("OSM response:");
-        //console.log(resp);
+        // console.log("OSM response:");
+        // console.log(resp);
         this.osmForm = this._fb.group(
           {
             'display_name': [resp.display_name],
@@ -192,7 +192,7 @@ export class LocationEditComponent implements OnInit {
         }
       },
         err => {
-          console.log("Request to OSM failed");
+          console.log('Request to OSM failed');
           alert('OSM request failed please try again later');
         });
     });
@@ -200,13 +200,13 @@ export class LocationEditComponent implements OnInit {
 
   public getOSM() {
 
-    let headers = new HttpHeaders();
+    const headers = new HttpHeaders();
 
     headers.set('Content-Type', 'application/json');
     headers.set('User-Agent', 'wrighting test app');
 
 
-    let path = 'http://nominatim.openstreetmap.org/reverse?format=json&polygon_geojson=1&lat=' + this.location.latitude + '&lon=' + this.location.longitude + '&zoom=' + this.zoom;
+    const path = 'http://nominatim.openstreetmap.org/reverse?format=json&polygon_geojson=1&lat=' + this.location.latitude + '&lon=' + this.location.longitude + '&zoom=' + this.zoom;
     return this.httpClient.get<any>(path, {
       headers: headers
     });
@@ -244,21 +244,21 @@ export class LocationEditComponent implements OnInit {
     };
     this.gPolygon.push(point);
     this.gPolygon.push(geometry.bounds.getSouthWest());
-    //console.log(geometry);
+    // console.log(geometry);
   }
 
   public fetchGoogleMaps(location): void {
 
     this.mapsAPILoader.load().then(() => {
       this.ngZone.run(() => {
-        let geocoder = new google.maps.Geocoder();
-        let latlng = new google.maps.LatLng(this.location.latitude, this.location.longitude);
-        let request = {
+        const geocoder = new google.maps.Geocoder();
+        const latlng = new google.maps.LatLng(this.location.latitude, this.location.longitude);
+        const request = {
           location: latlng
         };
         geocoder.geocode(request, (results, status) => {
-          //console.log('Google geocoded');
-          //console.log(results);
+          // console.log('Google geocoded');
+          // console.log(results);
 
           this.googleForm = this._fb.group(
             {
@@ -271,27 +271,27 @@ export class LocationEditComponent implements OnInit {
           results.forEach(result => {
             result.address_components.forEach(addr_component => {
               addr_component.types.forEach(type => {
-                //console.log(this.zoom + ":" + display_name + ":" + type + ":" + result.formatted_address);
-                if (this.zoom < 10 && type == 'administrative_area_level_1') {
+                // console.log(this.zoom + ":" + display_name + ":" + type + ":" + result.formatted_address);
+                if (this.zoom < 10 && type === 'administrative_area_level_1') {
                   display_name = result.formatted_address;
                   this.setGooglePolygon(result.geometry);
                 } else
-                  if (this.zoom < 15 && (type == 'administrative_area_level_2' || type == 'sublocality')) {
+                  if (this.zoom < 15 && (type === 'administrative_area_level_2' || type === 'sublocality')) {
                     display_name = result.formatted_address;
                     this.setGooglePolygon(result.geometry);
                   } else
-                    if (this.zoom > 16 && (type == 'locality' || type == 'sublocality')) {
+                    if (this.zoom > 16 && (type === 'locality' || type === 'sublocality')) {
                       display_name = result.formatted_address;
                       this.setGooglePolygon(result.geometry);
                     } else
-                      if (this.zoom > 16 && type == 'sublocality') {
+                      if (this.zoom > 16 && type === 'sublocality') {
                         display_name = result.formatted_address;
                         this.setGooglePolygon(result.geometry);
                       } else
-                        if (type == 'country' && !country_code) {
+                        if (type === 'country' && !country_code) {
                           country_code = true;
                           this.googleForm.controls['country_code'].setValue(addr_component.short_name);
-                          //console.log(addr_component.long_name);
+                          // console.log(addr_component.long_name);
                         }
 
               });

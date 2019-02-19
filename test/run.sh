@@ -12,7 +12,7 @@ then
 fi
 source client-env/bin/activate
 export POSTGRES_DB=backbone_test
-grep security: ../server/bb_server/swagger_server/swagger/swagger.yaml
+grep security: ../server/bb_server/openapi_server/openapi/openapi.yaml
 if [ $? -eq 1 ]
 then
     export LOCAL_TEST=1

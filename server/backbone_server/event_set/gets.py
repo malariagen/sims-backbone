@@ -1,5 +1,5 @@
-from swagger_server.models.event_set import EventSet
-from swagger_server.models.event_sets import EventSets
+from openapi_server.models.event_set import EventSet
+from openapi_server.models.event_sets import EventSets
 
 import logging
 

@@ -1,0 +1,70 @@
+    get:
+      tags:
+        - location
+      summary: fetches an location
+      description: ""
+      operationId: downloadLocation
+      parameters:
+        - name: locationId
+          in: path
+          description: ID of location to fetch
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "./sims-backbone/definitions/location.yaml#/components/schemas/Location"
+    put:
+      tags:
+        - location
+      summary: updates an location
+      description: ""
+      operationId: updateLocation
+      parameters:
+        - name: locationId
+          in: path
+          description: ID of location to update
+          required: true
+          schema:
+            type: string
+      requestBody:
+        $ref: "#/components/requestBodies/Location"
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "./sims-backbone/definitions/location.yaml#/components/schemas/Location"
+        "404":
+          description: Location not found
+          content:
+            application/json:
+              schema:
+                type: string
+    delete:
+      tags:
+        - location
+      summary: deletes an location
+      description: ""
+      operationId: deleteLocation
+      parameters:
+        - name: locationId
+          in: path
+          description: ID of location to fetch
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: successful operation
+        "404":
+          description: Location not found
+          content:
+            application/json:
+              schema:
+                type: string

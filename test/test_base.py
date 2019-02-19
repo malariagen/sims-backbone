@@ -1,5 +1,5 @@
 from __future__ import print_function
-import swagger_client
+import openapi_client
 import json
 import requests
 import os

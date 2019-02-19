@@ -15,7 +15,7 @@ class LocationViewStubComponent {
 }
 @Component({ selector: 'app-individual-view', template: '' })
 class IndividualViewStubComponent {
-  @Input() individual_id;
+  @Input() individualId;
 }
 
 describe('EventDetailComponent', () => {

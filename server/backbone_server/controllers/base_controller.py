@@ -1,6 +1,6 @@
 import logging
 import os
-from swagger_server.encoder import JSONEncoder
+from openapi_server.encoder import JSONEncoder
 import json
 from psycopg2.extras import Json
 

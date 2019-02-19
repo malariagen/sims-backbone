@@ -1,5 +1,5 @@
-from swagger_server.models.studies import Studies
-from swagger_server.models.study import Study
+from openapi_server.models.studies import Studies
+from openapi_server.models.study import Study
 from backbone_server.errors.missing_key_exception import MissingKeyException
 
 

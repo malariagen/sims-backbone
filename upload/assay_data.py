@@ -3,8 +3,8 @@ from copy import deepcopy
 
 import logging
 
-import swagger_client
-from swagger_client.rest import ApiException
+import openapi_client
+from openapi_client.rest import ApiException
 
 from base_entity import BaseEntity
 
@@ -18,15 +18,15 @@ class AssayDataProcessor(BaseEntity):
 
     def create_assay_datum_from_values(self, values):
 
-        d_sample = swagger_client.AssayDatum(None)
+        d_sample = openapi_client.AssayDatum(None)
 
         idents = []
         if 'assay_datum_id' in values:
-            idents.append(swagger_client.Attr('assay_datum_id', values['assay_datum_id'],
+            idents.append(openapi_client.Attr('assay_datum_id', values['assay_datum_id'],
                                               self._event_set))
 
         if 'assay_datum_source' in values:
-            idents.append(swagger_client.Attr('assay_datum_source',
+            idents.append(openapi_client.Attr('assay_datum_source',
                                               values['assay_datum_source'],
                                               self._event_set))
 

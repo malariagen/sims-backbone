@@ -1,13 +1,13 @@
 import json
 
-from swagger_client.rest import ApiException
-from swagger_client.rest import RESTResponse
+from openapi_client.rest import ApiException
+from openapi_client.rest import RESTResponse
 
-from swagger_client.api_client import ApiClient
+from openapi_client.api_client import ApiClient
 
-from swagger_server.encoder import JSONEncoder
+from openapi_server.encoder import JSONEncoder
 
-from swagger_server.models.base_model_ import Model
+from openapi_server.models.base_model_ import Model
 
 class MockResponse:
     def __init__(self, json_data, status_code):

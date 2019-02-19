@@ -6,8 +6,8 @@ import json
 from uploader import Uploader
 from upload_roma import Upload_ROMA
 
-import swagger_client
-from swagger_client.rest import ApiException
+import openapi_client
+from openapi_client.rest import ApiException
 
 class TestMerge(TestBase):
 

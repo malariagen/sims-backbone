@@ -1,5 +1,5 @@
-import swagger_client
-from swagger_client.rest import ApiException
+import openapi_client
+from openapi_client.rest import ApiException
 from test_base import TestBase
 from datetime import date
 
@@ -17,7 +17,7 @@ class TestStudies(TestBase):
         api_instance = api_factory.OriginalSampleApi()
         study_api = api_factory.StudyApi()
 
-        samp = swagger_client.OriginalSample(None,
+        samp = openapi_client.OriginalSample(None,
                                              study_name='2000-MD-UP')
         try:
             created = api_instance.create_original_sample(samp)
@@ -65,10 +65,10 @@ class TestStudies(TestBase):
         api_instance = api_factory.LocationApi()
         study_api = api_factory.StudyApi()
 
-        loc = swagger_client.Location(None, 27.46362, 90.49542, 'country',
+        loc = openapi_client.Location(None, 27.46362, 90.49542, 'country',
                                       'Trongsa, Trongsa, Bhutan', 'pv_3_locations.txt', 'BTN')
         loc.attrs = [
-            swagger_client.Attr(attr_type='partner_name',
+            openapi_client.Attr(attr_type='partner_name',
                                 attr_value='bhutan', study_name='2001-MD-UP')
         ]
         try:
@@ -95,7 +95,7 @@ class TestStudies(TestBase):
         api_instance = api_factory.OriginalSampleApi()
         study_api = api_factory.StudyApi()
 
-        samp = swagger_client.OriginalSample(None, study_name='2002-MD-UP',
+        samp = openapi_client.OriginalSample(None, study_name='2002-MD-UP',
                                              partner_species='P. falciparum')
 
         try:
@@ -142,7 +142,7 @@ class TestStudies(TestBase):
 
         try:
 
-            samp = swagger_client.OriginalSample(None, study_name='2004-MD-UP',
+            samp = openapi_client.OriginalSample(None, study_name='2004-MD-UP',
                                                 partner_species='P. falciparum')
             created = api_instance.create_original_sample(samp)
 
@@ -152,7 +152,7 @@ class TestStudies(TestBase):
             # Taxa or study name are the only things you can update
             # partner_species belong to the sampling event
             study1.name = '2004-PF-MD-UP'
-            taxa = swagger_client.Taxonomy(5833)
+            taxa = openapi_client.Taxonomy(5833)
 
             study1.partner_species[0].taxa = [taxa]
             study2 = study_api.update_study('2004-MD-UP', study1)
@@ -173,7 +173,7 @@ class TestStudies(TestBase):
         study_api = api_factory.StudyApi()
 
         try:
-            study = swagger_client.Study('404')
+            study = openapi_client.Study('404')
 
             if api_factory.is_authorized(None):
                 with pytest.raises(ApiException, status=404):
@@ -196,7 +196,7 @@ class TestStudies(TestBase):
 
         try:
 
-            samp = swagger_client.OriginalSample(None, study_name='2005-MD-UP',
+            samp = openapi_client.OriginalSample(None, study_name='2005-MD-UP',
                                                 partner_species='P. falciparum')
             created = api_instance.create_original_sample(samp)
 
@@ -205,7 +205,7 @@ class TestStudies(TestBase):
             assert study1.partner_species[0].partner_species == 'P. falciparum', 'Species not set'
             # Taxa or study name are the only things you can update
             # partner_species belong to the sampling event
-            taxa = swagger_client.Taxonomy(999999)
+            taxa = openapi_client.Taxonomy(999999)
 
             study1.partner_species[0].taxa = [taxa]
             with pytest.raises(ApiException, status=422):
@@ -229,10 +229,10 @@ class TestStudies(TestBase):
 
         try:
 
-            samp = swagger_client.SamplingEvent(None,
+            samp = openapi_client.SamplingEvent(None,
                                                 doc_accuracy='month')
             created = api_instance.create_sampling_event(samp)
-            osamp = swagger_client.OriginalSample(None,
+            osamp = openapi_client.OriginalSample(None,
                                                   study_name='2006-MD-UP')
             osamp.sampling_event_id = created.sampling_event_id
             os_created = os_api_instance.create_original_sample(osamp)

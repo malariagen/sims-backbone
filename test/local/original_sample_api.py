@@ -1,8 +1,8 @@
 import six
 
-from swagger_server.models.original_sample import OriginalSample  # noqa: E501
-from swagger_server.models.original_samples import OriginalSamples  # noqa: E501
-from swagger_server import util
+from openapi_server.models.original_sample import OriginalSample  # noqa: E501
+from openapi_server.models.original_samples import OriginalSamples  # noqa: E501
+from openapi_server import util
 
 import logging
 

@@ -1,0 +1,32 @@
+    get:
+      tags:
+        - Individual
+      summary: fetches one or more individuals by property value
+      description: ""
+      operationId: downloadIndividualsByAttr
+      parameters:
+        - name: propName
+          in: path
+          description: name of property to search
+          required: true
+          schema:
+            type: string
+        - name: propValue
+          in: path
+          description: matching value of property to search
+          required: true
+          schema:
+            type: string
+        - name: studyName
+          in: query
+          description: if you want to restrict the search to a study e.g. for patient_id
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "./sims-backbone/definitions/individual.yaml#/components/schemas/Individuals"

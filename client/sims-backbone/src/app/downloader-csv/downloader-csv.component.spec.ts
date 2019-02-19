@@ -13,7 +13,7 @@ import * as FileSaver from 'file-saver';
 describe('DownloaderCsvComponent', () => {
   let component: DownloaderCsvComponent;
   let fixture: ComponentFixture<DownloaderCsvComponent>;
-  let test_entries = getTestSamplingEvents();
+  const test_entries = getTestSamplingEvents();
 
   let httpClientSpy: { get: jasmine.Spy };
 
@@ -63,35 +63,35 @@ describe('DownloaderCsvComponent', () => {
       component.filter = 'studyId:0001';
       component.pageSize = 2;
       component.headers = [
-        "partner_id",
-        "roma_id",
-        "doc",
-        "partner_location_name",
-        "location_curated_name",
-        "location"
+        'partner_id',
+        'roma_id',
+        'doc',
+        'partner_location_name',
+        'location_curated_name',
+        'location'
       ]
 
       spyOn(component, 'build').and.callThrough();
 
       spyOn(FileSaver, 'saveAs').and.callFake(function (blob: Blob, fileName) {
 
-        //toHaveBeenCalledWith isn't clever enough to compare Blobs so doing
-        //in fake function
-        //Also fake function stops the actual saveAs being called and generating a download
+        // toHaveBeenCalledWith isn't clever enough to compare Blobs so doing
+        // in fake function
+        // Also fake function stops the actual saveAs being called and generating a download
 
         expect(fileName).toBe(component.fileName);
-        let resultString = '"partner_id"	"roma_id"	"doc"	"partner_location_name"	"location_curated_name"	"location"\r\n'
+        const resultString = '"partner_id"	"roma_id"	"doc"	"partner_location_name"	"location_curated_name"	"location"\r\n'
           + '"9999_1"	"9999_1R"	"2003-06-01"	"Cambodia(9999);"	""	"12.565679, 104.990963"\r\n'
           + '"9999_2"	"9999_2R"	"2003-06-01"	"Cambodia(9999);"	""	"12.565679, 104.990963"\r\n';
 
         //        expect(blob.size).toBe(resultString.length);
         expect(blob.type).toBe('text/csv;charset=utf-8');
-        var reader = new FileReader();
+        const reader = new FileReader();
         reader.readAsText(blob);
-        reader.addEventListener("loadend", function () {
+        reader.addEventListener('loadend', function () {
           if (typeof reader.result === 'string') {
-            let content: string = reader.result;
-            let cells = content.split(/\t|\r\n/);
+            const content: string = reader.result;
+            const cells = content.split(/\t|\r\n/);
             let i = 0;
 
             component.headers.forEach(header => {
@@ -104,7 +104,7 @@ describe('DownloaderCsvComponent', () => {
 
       });
 
-      let button = fixture.debugElement.nativeElement.querySelector('button');
+      const button = fixture.debugElement.nativeElement.querySelector('button');
       button.click();
       expect(component.build).toHaveBeenCalled();
 
@@ -114,7 +114,7 @@ describe('DownloaderCsvComponent', () => {
         url: 'http://localhost/v1/samplingEvents?search_filter=' + component.filter + '&start=0&count=' + component.pageSize,
         method: 'GET'
       };
-      let req = backend.expectOne(result);
+      const req = backend.expectOne(result);
 
       req.flush(test_entries);
 
@@ -130,35 +130,35 @@ describe('DownloaderCsvComponent', () => {
       component.filter = 'studyId:0001';
       component.pageSize = 1;
       component.headers = [
-        "partner_id",
-        "roma_id",
-        "doc",
-        "partner_location_name",
-        "location_curated_name",
-        "location"
+        'partner_id',
+        'roma_id',
+        'doc',
+        'partner_location_name',
+        'location_curated_name',
+        'location'
       ]
 
       spyOn(component, 'build').and.callThrough();
 
       spyOn(FileSaver, 'saveAs').and.callFake(function (blob: Blob, fileName) {
 
-        //toHaveBeenCalledWith isn't clever enough to compare Blobs so doing
-        //in fake function
-        //Also fake function stops the actual saveAs being called and generating a download
+        // toHaveBeenCalledWith isn't clever enough to compare Blobs so doing
+        // in fake function
+        // Also fake function stops the actual saveAs being called and generating a download
 
         expect(fileName).toBe(component.fileName);
-        let resultString = '"partner_id"	"roma_id"	"doc"	"partner_location_name"	"location_curated_name"	"location"\r\n'
+        const resultString = '"partner_id"	"roma_id"	"doc"	"partner_location_name"	"location_curated_name"	"location"\r\n'
           + '"9999_1"	"9999_1R"	"2003-06-01"	"Cambodia(9999);"	""	"12.565679, 104.990963"\r\n'
           + '"9999_2"	"9999_2R"	"2003-06-01"	"Cambodia(9999);"	""	"12.565679, 104.990963"\r\n';
 
         //        expect(blob.size).toBe(resultString.length);
         expect(blob.type).toBe('text/csv;charset=utf-8');
-        var reader = new FileReader();
-        reader.addEventListener("loadend", function () {
+        const reader = new FileReader();
+        reader.addEventListener('loadend', function () {
           if (typeof reader.result === 'string') {
 
-            let content: string = reader.result;
-            let cells = content.split(/\t|\r\n/);
+            const content: string = reader.result;
+            const cells = content.split(/\t|\r\n/);
             let i = 0;
 
             component.headers.forEach(header => {
@@ -171,7 +171,7 @@ describe('DownloaderCsvComponent', () => {
 
       });
 
-      let button = fixture.debugElement.nativeElement.querySelector('button');
+      const button = fixture.debugElement.nativeElement.querySelector('button');
       button.click();
       expect(component.build).toHaveBeenCalled();
 
@@ -181,10 +181,10 @@ describe('DownloaderCsvComponent', () => {
         url: 'http://localhost/v1/samplingEvents?search_filter=' + component.filter + '&start=' + component.pageNumber * component.pageSize + '&count=' + component.pageSize,
         method: 'GET'
       };
-      let req = backend.expectOne(result);
+      const req = backend.expectOne(result);
 
-      let firstEntry = getTestSamplingEvents();
-      firstEntry.sampling_events.pop();
+      const firstEntry = getTestSamplingEvents();
+      firstEntry.samplingEvents.pop();
       req.flush(firstEntry);
 
       expect(component.pageNumber).toBe(1);
@@ -193,10 +193,10 @@ describe('DownloaderCsvComponent', () => {
         url: 'http://localhost/v1/samplingEvents?search_filter=' + component.filter + '&start=' + component.pageNumber * component.pageSize + '&count=' + component.pageSize,
         method: 'GET'
       };
-      let req1 = backend.expectOne(result1);
+      const req1 = backend.expectOne(result1);
 
-      let secondEntry = getTestSamplingEvents();
-      secondEntry.sampling_events = [secondEntry.sampling_events[1]];
+      const secondEntry = getTestSamplingEvents();
+      secondEntry.samplingEvents = [secondEntry.samplingEvents[1]];
       req1.flush(secondEntry);
 
       // Finally, assert that there are no outstanding requests.

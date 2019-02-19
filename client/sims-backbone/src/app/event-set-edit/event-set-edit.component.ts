@@ -32,13 +32,13 @@ export class EventSetEditComponent implements OnInit {
 
     this.route.paramMap.subscribe(pmap => this.eventSetId = pmap.get('eventSetId'));
 
-    this.eventSetService.downloadEventSet(this.eventSetId,0,0).subscribe(
+    this.eventSetService.downloadEventSet(this.eventSetId, 0, 0).subscribe(
       (eventSet: EventSet) => {
         this.eventSet = eventSet;
 
         this.eventSetForm = this._fb.group(
           {
-            event_set_name: [this.eventSet.event_set_name, [Validators.required]],
+            eventSet_name: [this.eventSet.eventSetName, [Validators.required]],
             notes: this._fb.array([]),
           }
         );
@@ -46,7 +46,7 @@ export class EventSetEditComponent implements OnInit {
 
         if (this.eventSet.notes) {
           this.eventSet.notes.forEach(note => {
-            let noteControl = this.initNoteControl(note);
+            const noteControl = this.initNoteControl(note);
 
             formIdents.push(noteControl);
           });
@@ -59,8 +59,8 @@ export class EventSetEditComponent implements OnInit {
     let note_name = '';
     let note_text = '';
     if (note) {
-      note_name = note.note_name;
-      note_text = note.note_text;
+      note_name = note.noteName;
+      note_text = note.noteText;
     }
     return new FormGroup({
       note_name: new FormControl(note_name, Validators.required),
@@ -69,32 +69,32 @@ export class EventSetEditComponent implements OnInit {
   }
   public onSubmit({ value, valid }: { value: EventSet, valid: boolean }): void {
 
-    //console.log("Submitting:" + JSON.stringify(value));
-    this.eventSetService.updateEventSet(value.event_set_name, value)
+    // console.log("Submitting:" + JSON.stringify(value));
+    this.eventSetService.updateEventSet(value.eventSetName, value)
       .subscribe(
       (x) => {
-        //console.log("Submitted");
+        // console.log("Submitted");
       },
       (e) => {
-        //console.log(e);
-        let dialogRef = this.dialog.open(ErrorDialogComponent, {
+        // console.log(e);
+        const dialogRef = this.dialog.open(ErrorDialogComponent, {
           width: '250px',
           data: { name: 'Error on save', message: e.message }
         });
 
         dialogRef.afterClosed().subscribe(result => {
-          //console.log('The dialog was closed');
+          // console.log('The dialog was closed');
         });
       },
       () => {
-        //console.log('Completed update.');
+        // console.log('Completed update.');
       }
       );
   }
 
   addNote() {
     const notesControl = <FormArray>this.eventSetForm.controls['notes'];
-    let newNoteControl = this.initNoteControl(null);
+    const newNoteControl = this.initNoteControl(null);
     notesControl.push(newNoteControl);
 
   }

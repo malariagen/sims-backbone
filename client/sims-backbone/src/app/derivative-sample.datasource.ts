@@ -1,12 +1,13 @@
 import { DataSource } from "@angular/cdk/table";
 import { CollectionViewer } from "@angular/cdk/collections";
 import { Observable } from "rxjs/Observable";
-import { DerivativeSample, DerivativeSamples, OriginalSampleMap } from "./typescript-angular-client";
+import { DerivativeSample, DerivativeSamples } from "./typescript-angular-client";
 
 import { BehaviorSubject } from "rxjs/BehaviorSubject";
 import { catchError, finalize } from "rxjs/operators";
 import { of } from "rxjs/observable/of";
 import { DerivativeSamplesService } from "./derivative-samples.service";
+import { OriginalSampleMap } from './typescript-angular-client/model/originalSampleMap';
 
 export class DerivativeSamplesSource implements DataSource<DerivativeSample> {
 
@@ -43,11 +44,11 @@ export class DerivativeSamplesSource implements DataSource<DerivativeSample> {
             .subscribe(result => {
                 const derivativeSamples = <DerivativeSamples>result;
                 this.derivativeSampleCount = derivativeSamples.count;
-                this.attrTypes = derivativeSamples.attr_types;
+                this.attrTypes = derivativeSamples.attrTypes;
 
-                this.originalSamples = { ...this.originalSamples, ...derivativeSamples.original_samples };
+                this.originalSamples = { ...this.originalSamples, ...derivativeSamples.originalSamples };
 
-                this.derivativeSamplesSubject.next(derivativeSamples.derivative_samples);
+                this.derivativeSamplesSubject.next(derivativeSamples.derivativeSamples);
             },
                 error => { console.log(error); }
             );

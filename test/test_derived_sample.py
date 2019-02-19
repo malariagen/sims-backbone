@@ -1,5 +1,5 @@
-import swagger_client
-from swagger_client.rest import ApiException
+import openapi_client
+from openapi_client.rest import ApiException
 
 from test_base import TestBase
 from datetime import date
@@ -19,7 +19,7 @@ class TestDerivativeSample(TestBase):
 
         try:
 
-            samp = swagger_client.DerivativeSample(None)
+            samp = openapi_client.DerivativeSample(None)
             created = api_instance.create_derivative_sample(samp)
             if not api_factory.is_authorized(None):
                 pytest.fail('Unauthorized call to create_derivative_sample succeeded')
@@ -41,7 +41,7 @@ class TestDerivativeSample(TestBase):
 
         try:
 
-            samp = swagger_client.DerivativeSample(None)
+            samp = openapi_client.DerivativeSample(None)
             created = api_instance.create_derivative_sample(samp)
             api_instance.delete_derivative_sample(created.derivative_sample_id)
             with pytest.raises(ApiException, status=404):
@@ -77,9 +77,9 @@ class TestDerivativeSample(TestBase):
 
         try:
 
-            samp = swagger_client.DerivativeSample(None)
+            samp = openapi_client.DerivativeSample(None)
             samp.attrs = [
-                swagger_client.Attr (attr_type='oxford', attr_value='1234',
+                openapi_client.Attr (attr_type='oxford', attr_value='1234',
                                      attr_source='same')
             ]
             created = api_instance.create_derivative_sample(samp)
@@ -101,9 +101,9 @@ class TestDerivativeSample(TestBase):
 
         try:
 
-            samp = swagger_client.DerivativeSample(None)
+            samp = openapi_client.DerivativeSample(None)
             samp.attrs = [
-                swagger_client.Attr (attr_type='oxford', attr_value='123456')
+                openapi_client.Attr (attr_type='oxford', attr_value='123456')
             ]
             created = api_instance.create_derivative_sample(samp)
             results = api_instance.download_derivative_samples_by_attr('oxford', '123456')
@@ -131,23 +131,23 @@ class TestDerivativeSample(TestBase):
 
         try:
 
-            ident1 = swagger_client.Attr(attr_type='oxford_id', attr_value='1234')
-            ident2 = swagger_client.Attr(attr_type='roma_id', attr_value='12345')
-            ident3 = swagger_client.Attr(attr_type='lims_id', attr_value='123456')
-            samp1 = swagger_client.DerivativeSample(None)
+            ident1 = openapi_client.Attr(attr_type='oxford_id', attr_value='1234')
+            ident2 = openapi_client.Attr(attr_type='roma_id', attr_value='12345')
+            ident3 = openapi_client.Attr(attr_type='lims_id', attr_value='123456')
+            samp1 = openapi_client.DerivativeSample(None)
             samp1.attrs = [
                 ident1
             ]
             created1 = api_instance.create_derivative_sample(samp1)
 
-            samp2 = swagger_client.DerivativeSample(None)
+            samp2 = openapi_client.DerivativeSample(None)
             samp2.attrs = [
                 ident2
             ]
             created2 = api_instance.create_derivative_sample(samp2)
 
 
-            samp3 = swagger_client.DerivativeSample(None)
+            samp3 = openapi_client.DerivativeSample(None)
             samp3.attrs = [
                 ident1,
                 ident2,
@@ -171,14 +171,14 @@ class TestDerivativeSample(TestBase):
 
         try:
 
-            samp = swagger_client.DerivativeSample(None)
+            samp = openapi_client.DerivativeSample(None)
             samp.attrs = [
-                swagger_client.Attr (attr_type='oxford', attr_value='1234567')
+                openapi_client.Attr (attr_type='oxford', attr_value='1234567')
             ]
             created = api_instance.create_derivative_sample(samp)
             looked_up = api_instance.download_derivative_samples_by_attr('oxford', '1234567')
             looked_up = looked_up.derivative_samples[0]
-            new_samp = swagger_client.DerivativeSample(None)
+            new_samp = openapi_client.DerivativeSample(None)
             updated = api_instance.update_derivative_sample(looked_up.derivative_sample_id, new_samp)
             fetched = api_instance.download_derivative_sample(looked_up.derivative_sample_id)
             assert updated == fetched, "update response != download response"
@@ -197,17 +197,17 @@ class TestDerivativeSample(TestBase):
 
         try:
 
-            samp = swagger_client.DerivativeSample(None)
+            samp = openapi_client.DerivativeSample(None)
             samp.attrs = [
-                swagger_client.Attr (attr_type='oxford', attr_value='12345678',
+                openapi_client.Attr (attr_type='oxford', attr_value='12345678',
                                      attr_source='upd')
             ]
             created = api_instance.create_derivative_sample(samp)
             looked_up = api_instance.download_derivative_samples_by_attr('oxford', '12345678')
             looked_up = looked_up.derivative_samples[0]
-            new_samp = swagger_client.DerivativeSample(None)
+            new_samp = openapi_client.DerivativeSample(None)
             new_samp.attrs = [
-                swagger_client.Attr (attr_type='oxford', attr_value='123456789',
+                openapi_client.Attr (attr_type='oxford', attr_value='123456789',
                                      attr_source='upd')
             ]
             new_created = api_instance.create_derivative_sample(new_samp)
@@ -228,7 +228,7 @@ class TestDerivativeSample(TestBase):
 
         try:
 
-            new_samp = swagger_client.DerivativeSample(None)
+            new_samp = openapi_client.DerivativeSample(None)
             fake_id = uuid.uuid4()
             new_samp.derivative_sample_id = str(fake_id)
 
@@ -252,9 +252,9 @@ class TestDerivativeSample(TestBase):
         try:
 
             test_id = 'MDG/DK_0005'
-            samp = swagger_client.DerivativeSample(None)
+            samp = openapi_client.DerivativeSample(None)
             samp.attrs = [
-                swagger_client.Attr (attr_type='partner_id', attr_value=test_id,
+                openapi_client.Attr (attr_type='partner_id', attr_value=test_id,
                                      attr_source='encode')
             ]
             created = api_instance.create_derivative_sample(samp)
@@ -318,20 +318,20 @@ class TestDerivativeSample(TestBase):
 
         try:
 
-            samp = swagger_client.OriginalSample(None, study_name='7000-MD-UP')
+            samp = openapi_client.OriginalSample(None, study_name='7000-MD-UP')
             samp.attrs = [
-                swagger_client.Attr (attr_type='ds_os_attr', attr_value='123456')
+                openapi_client.Attr (attr_type='ds_os_attr', attr_value='123456')
             ]
             created = api_instance.create_original_sample(samp)
-            samp1 = swagger_client.DerivativeSample(None)
-            samp2 = swagger_client.DerivativeSample(None)
+            samp1 = openapi_client.DerivativeSample(None)
+            samp2 = openapi_client.DerivativeSample(None)
 
             samp1.attrs = [
-                swagger_client.Attr (attr_type='test1', attr_value='test1',
+                openapi_client.Attr (attr_type='test1', attr_value='test1',
                                      attr_source='ds_os_attr')
             ]
             samp2.attrs = [
-                swagger_client.Attr (attr_type='test2', attr_value='test2',
+                openapi_client.Attr (attr_type='test2', attr_value='test2',
                                      attr_source='ds_os_attr')
             ]
             samp1.original_sample_id = created.original_sample_id
@@ -369,25 +369,25 @@ class TestDerivativeSample(TestBase):
         ds_api_instance = api_factory.DerivativeSampleApi()
         study_api = api_factory.StudyApi()
 
-        samp = swagger_client.OriginalSample(None, study_name=study_name,
+        samp = openapi_client.OriginalSample(None, study_name=study_name,
                                              partner_species='PF')
         samp.attrs = [
-            swagger_client.Attr (attr_type='ds_os_attr', attr_value='123456')
+            openapi_client.Attr (attr_type='ds_os_attr', attr_value='123456')
         ]
         created = api_instance.create_original_sample(samp)
         study_detail = study_api.download_study(study_name)
-        study_detail.partner_species[0].taxa = [ swagger_client.Taxonomy(taxonomy_id=5833) ]
+        study_detail.partner_species[0].taxa = [ openapi_client.Taxonomy(taxonomy_id=5833) ]
         study_api.update_study(study_name, study_detail)
 
-        samp1 = swagger_client.DerivativeSample(None)
-        samp2 = swagger_client.DerivativeSample(None)
+        samp1 = openapi_client.DerivativeSample(None)
+        samp2 = openapi_client.DerivativeSample(None)
 
         samp1.attrs = [
-            swagger_client.Attr (attr_type='test1', attr_value='test1',
+            openapi_client.Attr (attr_type='test1', attr_value='test1',
                                  attr_source='ds_os_attr')
         ]
         samp2.attrs = [
-            swagger_client.Attr (attr_type='test2', attr_value='test2',
+            openapi_client.Attr (attr_type='test2', attr_value='test2',
                                  attr_source='ds_os_attr')
         ]
         samp1.original_sample_id = created.original_sample_id
@@ -524,10 +524,10 @@ class TestDerivativeSample(TestBase):
         try:
             study_code = '7003-MD-UP'
 
-            os_samp = swagger_client.OriginalSample(None, study_name=study_code)
+            os_samp = openapi_client.OriginalSample(None, study_name=study_code)
             os_created = api_instance.create_original_sample(os_samp)
             for i in range(5):
-                samp = swagger_client.DerivativeSample(None)
+                samp = openapi_client.DerivativeSample(None)
                 samp.original_sample_id = os_created.original_sample_id
                 created = ds_api_instance.create_derivative_sample(samp)
 
@@ -582,7 +582,7 @@ class TestDerivativeSample(TestBase):
 
             created_es = es_api_instance.create_event_set(event_set_name)
 
-            sampling_event = swagger_client.SamplingEvent(None, date(2017, 10, 10),
+            sampling_event = openapi_client.SamplingEvent(None, date(2017, 10, 10),
                                                           doc_accuracy='month')
 
             created_se = se_api_instance.create_sampling_event(sampling_event)
@@ -636,7 +636,7 @@ class TestDerivativeSample(TestBase):
 
             created_es = es_api_instance.create_event_set(event_set_name)
 
-            sampling_event = swagger_client.SamplingEvent(None, date(2017, 10, 10),
+            sampling_event = openapi_client.SamplingEvent(None, date(2017, 10, 10),
                                                           doc_accuracy='month')
 
             created_se = se_api_instance.create_sampling_event(sampling_event)
@@ -694,7 +694,7 @@ class TestDerivativeSample(TestBase):
 
             created_es = es_api_instance.create_event_set(event_set_name)
 
-            sampling_event = swagger_client.SamplingEvent(None, date(2017, 10, 10),
+            sampling_event = openapi_client.SamplingEvent(None, date(2017, 10, 10),
                                                           doc_accuracy='month')
 
             created_se = se_api_instance.create_sampling_event(sampling_event)
@@ -734,10 +734,10 @@ class TestDerivativeSample(TestBase):
 
         try:
 
-            parent_samp = swagger_client.DerivativeSample(None)
+            parent_samp = openapi_client.DerivativeSample(None)
             parent_created = api_instance.create_derivative_sample(parent_samp)
 
-            samp = swagger_client.DerivativeSample(None)
+            samp = openapi_client.DerivativeSample(None)
 
             samp.parent_derivative_sample_id = parent_created.derivative_sample_id
 
@@ -763,17 +763,17 @@ class TestDerivativeSample(TestBase):
 
         try:
 
-            parent_samp = swagger_client.DerivativeSample(None)
+            parent_samp = openapi_client.DerivativeSample(None)
             parent_created = api_instance.create_derivative_sample(parent_samp)
 
-            samp = swagger_client.DerivativeSample(None)
+            samp = openapi_client.DerivativeSample(None)
             samp.attrs = [
-                swagger_client.Attr (attr_type='oxford', attr_value='1234567')
+                openapi_client.Attr (attr_type='oxford', attr_value='1234567')
             ]
             created = api_instance.create_derivative_sample(samp)
             looked_up = api_instance.download_derivative_samples_by_attr('oxford', '1234567')
             looked_up = looked_up.derivative_samples[0]
-            new_samp = swagger_client.DerivativeSample(None)
+            new_samp = openapi_client.DerivativeSample(None)
             new_samp.parent_derivative_sample_id = parent_created.derivative_sample_id
             updated = api_instance.update_derivative_sample(looked_up.derivative_sample_id, new_samp)
             fetched = api_instance.download_derivative_sample(looked_up.derivative_sample_id)
@@ -797,16 +797,16 @@ class TestDerivativeSample(TestBase):
 
         try:
 
-            parent_samp = swagger_client.DerivativeSample(None)
+            parent_samp = openapi_client.DerivativeSample(None)
             parent_created = api_instance.create_derivative_sample(parent_samp)
 
-            samp = swagger_client.DerivativeSample(None)
+            samp = openapi_client.DerivativeSample(None)
 
             samp.parent_derivative_sample_id = parent_created.derivative_sample_id
 
             created = api_instance.create_derivative_sample(samp)
 
-            child_samp = swagger_client.DerivativeSample(None)
+            child_samp = openapi_client.DerivativeSample(None)
 
             child_samp.parent_derivative_sample_id = created.derivative_sample_id
 
@@ -833,16 +833,16 @@ class TestDerivativeSample(TestBase):
 
         try:
 
-            parent_samp = swagger_client.OriginalSample(None)
+            parent_samp = openapi_client.OriginalSample(None)
             parent_created = os_api_instance.create_original_sample(parent_samp)
 
-            samp = swagger_client.DerivativeSample(None)
+            samp = openapi_client.DerivativeSample(None)
 
             samp.original_sample_id = parent_created.original_sample_id
 
             created = api_instance.create_derivative_sample(samp)
 
-            child_samp = swagger_client.DerivativeSample(None)
+            child_samp = openapi_client.DerivativeSample(None)
 
             child_samp.parent_derivative_sample_id = created.derivative_sample_id
 

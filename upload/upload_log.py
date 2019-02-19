@@ -7,7 +7,7 @@ import logging
 import requests
 
 from cmislib import CmisClient
-import swagger_client
+import openapi_client
 
 class UploadLog():
 

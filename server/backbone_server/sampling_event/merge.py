@@ -8,7 +8,7 @@ from backbone_server.sampling_event.delete import SamplingEventDelete
 from backbone_server.sampling_event.fetch import SamplingEventFetch
 from backbone_server.location.edit import LocationEdit
 
-from swagger_server.models.sampling_event import SamplingEvent
+from openapi_server.models.sampling_event import SamplingEvent
 
 import psycopg2
 

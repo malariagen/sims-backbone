@@ -8,8 +8,8 @@ import logging
 
 from abstract_backbone_dao import AbstractBackboneDAO
 
-import swagger_client
-from swagger_client.rest import ApiException
+import openapi_client
+from openapi_client.rest import ApiException
 
 class RemoteBackboneDAO(AbstractBackboneDAO):
 
@@ -22,22 +22,22 @@ class RemoteBackboneDAO(AbstractBackboneDAO):
         # Configure OAuth2 access token for authorization: OauthSecurity
         auth_token = self.get_access_token(config_file)
 
-        configuration = swagger_client.Configuration()
+        configuration = openapi_client.Configuration()
         if auth_token:
             configuration.access_token = auth_token
 
         if os.getenv('REMOTE_HOST_URL'):
           configuration.host = "http://localhost:8080/v1"
 
-        self.es_api_instance = swagger_client.EventSetApi(swagger_client.ApiClient(configuration))
-        self.location_api_instance = swagger_client.LocationApi(swagger_client.ApiClient(configuration))
-        self.se_api_instance = swagger_client.SamplingEventApi(swagger_client.ApiClient(configuration))
-        self.os_api_instance = swagger_client.OriginalSampleApi(swagger_client.ApiClient(configuration))
-        self.ds_api_instance = swagger_client.DerivativeSampleApi(swagger_client.ApiClient(configuration))
-        self.ad_api_instance = swagger_client.AssayDataApi(swagger_client.ApiClient(configuration))
-        self.metadata_api_instance = swagger_client.MetadataApi(swagger_client.ApiClient(configuration))
-        self.study_api_instance = swagger_client.StudyApi(swagger_client.ApiClient(configuration))
-        self.i_api_instance = swagger_client.IndividualApi(swagger_client.ApiClient(configuration))
+        self.es_api_instance = openapi_client.EventSetApi(openapi_client.ApiClient(configuration))
+        self.location_api_instance = openapi_client.LocationApi(openapi_client.ApiClient(configuration))
+        self.se_api_instance = openapi_client.SamplingEventApi(openapi_client.ApiClient(configuration))
+        self.os_api_instance = openapi_client.OriginalSampleApi(openapi_client.ApiClient(configuration))
+        self.ds_api_instance = openapi_client.DerivativeSampleApi(openapi_client.ApiClient(configuration))
+        self.ad_api_instance = openapi_client.AssayDataApi(openapi_client.ApiClient(configuration))
+        self.metadata_api_instance = openapi_client.MetadataApi(openapi_client.ApiClient(configuration))
+        self.study_api_instance = openapi_client.StudyApi(openapi_client.ApiClient(configuration))
+        self.i_api_instance = openapi_client.IndividualApi(openapi_client.ApiClient(configuration))
 
     def get_access_token(self, config_file):
 

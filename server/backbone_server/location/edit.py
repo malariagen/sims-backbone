@@ -1,7 +1,7 @@
 from backbone_server.errors.duplicate_key_exception import DuplicateKeyException
 
-from swagger_server.models.location import Location
-from swagger_server.models.attr import Attr
+from openapi_server.models.location import Location
+from openapi_server.models.attr import Attr
 
 from backbone_server.location.fetch import LocationFetch
 from backbone_server.sampling_event.edit import SamplingEventEdit

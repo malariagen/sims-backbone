@@ -4,7 +4,7 @@ from backbone_server.derivative_sample.edit import DerivativeSampleEdit
 from backbone_server.sampling_event.edit import SamplingEventEdit
 from backbone_server.derivative_sample.fetch import DerivativeSampleFetch
 
-from swagger_server.models.derivative_sample import DerivativeSample
+from openapi_server.models.derivative_sample import DerivativeSample
 
 import psycopg2
 

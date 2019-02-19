@@ -38,7 +38,7 @@ describe('TaxonomyEditComponent', () => {
     });
 
     component.taxonomies = [ <Taxonomy>{
-      taxonomy_id: 1234,
+      taxonomyId: 1234,
       rank: 'species',
       name: 'Made up'
     }];

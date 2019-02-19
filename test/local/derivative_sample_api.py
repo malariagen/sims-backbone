@@ -1,8 +1,8 @@
 import six
 
-from swagger_server.models.derivative_sample import DerivativeSample  # noqa: E501
-from swagger_server.models.derivative_samples import DerivativeSamples  # noqa: E501
-from swagger_server import util
+from openapi_server.models.derivative_sample import DerivativeSample  # noqa: E501
+from openapi_server.models.derivative_samples import DerivativeSamples  # noqa: E501
+from openapi_server import util
 
 import logging
 

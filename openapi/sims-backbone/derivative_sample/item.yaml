@@ -1,0 +1,70 @@
+    get:
+      tags:
+        - derivativeSample
+      summary: fetches an DerivativeSample
+      description: ""
+      operationId: downloadDerivativeSample
+      parameters:
+        - name: derivativeSampleId
+          in: path
+          description: ID of DerivativeSample to fetch
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "./sims-backbone/definitions/derivative_sample.yaml#/components/schemas/DerivativeSample"
+    put:
+      tags:
+        - derivativeSample
+      summary: updates an DerivativeSample
+      description: ""
+      operationId: updateDerivativeSample
+      parameters:
+        - name: derivativeSampleId
+          in: path
+          description: ID of DerivativeSample to update
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "./sims-backbone/definitions/derivative_sample.yaml#/components/schemas/DerivativeSample"
+        required: true
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "./sims-backbone/definitions/derivative_sample.yaml#/components/schemas/DerivativeSample"
+        "404":
+          description: DerivativeSample not found
+          content:
+            application/json:
+              schema:
+                type: string
+    delete:
+      tags:
+        - derivativeSample
+      summary: deletes an DerivativeSample
+      description: ""
+      operationId: deleteDerivativeSample
+      parameters:
+        - name: derivativeSampleId
+          in: path
+          description: ID of DerivativeSample to fetch
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: successful operation
+        "404":
+          description: DerivativeSample not found

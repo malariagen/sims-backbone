@@ -15,7 +15,7 @@ export class AttrTableComponent {
 
   dataSource: MatTableDataSource<Attr[]>;
 
-  public studyEvents: string = '/study/events';
+  public studyEvents = '/study/events';
 
   constructor() { }
 
@@ -29,7 +29,7 @@ export class AttrTableComponent {
   @Input()
   set studies(studies) {
     if (studies == 'true') {
-      this.attrColumns.push('study_name');
+      this.attrColumns.push('studyName');
     }
   }
 }

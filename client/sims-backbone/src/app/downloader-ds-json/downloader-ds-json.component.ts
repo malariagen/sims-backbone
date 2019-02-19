@@ -70,17 +70,17 @@ export class DownloaderDsJsonComponent implements CollectionViewer {
 
     if (this.pageNumber == 0) {
       this.derivativeSamples = <DerivativeSamples>{};
-      this.derivativeSamples.derivative_samples = [];
+      this.derivativeSamples.derivativeSamples = [];
     }
 
-    this.derivativeSamples.derivative_samples = this.derivativeSamples.derivative_samples.concat(d);
+    this.derivativeSamples.derivativeSamples = this.derivativeSamples.derivativeSamples.concat(d);
 
 
     if ((this.pageNumber + 1) * this.pageSize < this._dataSource.derivativeSampleCount) {
       this.pageNumber++;
       this._dataSource.loadDerivativeSamples(this.filter, 'asc', this.pageNumber, this.pageSize);
     } else {
-      //this.derivativeSamples.attr_types = this._dataSource.attrTypes;
+      //this.derivativeSamples.attrTypes = this._dataSource.attrTypes;
       this.derivativeSamples.count = this._dataSource.derivativeSampleCount;
       this.buildDownloader(JSON.stringify(this.derivativeSamples));
     }

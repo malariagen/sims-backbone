@@ -4,7 +4,7 @@ from backbone_server.errors.missing_key_exception import MissingKeyException
 from backbone_server.derivative_sample.edit import DerivativeSampleEdit
 from backbone_server.derivative_sample.fetch import DerivativeSampleFetch
 
-from swagger_server.models.derivative_sample import DerivativeSample
+from openapi_server.models.derivative_sample import DerivativeSample
 
 import psycopg2
 

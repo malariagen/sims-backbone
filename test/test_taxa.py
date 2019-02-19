@@ -1,5 +1,5 @@
-import swagger_client
-from swagger_client.rest import ApiException
+import openapi_client
+from openapi_client.rest import ApiException
 from test_base import TestBase
 from datetime import date
 
@@ -19,7 +19,7 @@ class TestTaxa(TestBase):
 
         try:
 
-            samp = swagger_client.OriginalSample(None, study_name='3000-MD-UP',
+            samp = openapi_client.OriginalSample(None, study_name='3000-MD-UP',
                                                  partner_species='P. falciparum')
             created = api_instance.create_original_sample(samp)
             fetched = api_instance.download_original_sample(
@@ -41,10 +41,10 @@ class TestTaxa(TestBase):
 
         try:
 
-            samp = swagger_client.OriginalSample(None, study_name='3001-MD-UP',
+            samp = openapi_client.OriginalSample(None, study_name='3001-MD-UP',
                                                  partner_species='P. falciparum')
             created = api_instance.create_original_sample(samp)
-            new_samp = swagger_client.OriginalSample(None, study_name='3001-MD-UP',
+            new_samp = openapi_client.OriginalSample(None, study_name='3001-MD-UP',
                                                      partner_species='P. vivax')
             updated = api_instance.update_original_sample(
                 created.original_sample_id, new_samp)
@@ -85,7 +85,7 @@ class TestTaxa(TestBase):
         api_instance = api_factory.MetadataApi()
 
         try:
-            taxa = swagger_client.Taxonomy(taxonomy_id=7227, name='Drosophila melanogaster',
+            taxa = openapi_client.Taxonomy(taxonomy_id=7227, name='Drosophila melanogaster',
                                            rank='species')
             if api_factory.is_authorized(None):
 
@@ -131,7 +131,7 @@ class TestTaxa(TestBase):
         study_ident = '3000-MD-UP'
         try:
 
-            samp1 = swagger_client.OriginalSample(None, study_name=study_ident,
+            samp1 = openapi_client.OriginalSample(None, study_name=study_ident,
                                                   partner_species='P. falciparum')
             created1 = api_instance.create_original_sample(samp1)
             fetched1 = api_instance.download_original_sample(created1.original_sample_id)
@@ -139,7 +139,7 @@ class TestTaxa(TestBase):
             fetched1.original_sample_id = None
             assert samp1 == fetched1, "upload != download response"
 
-            samp2 = swagger_client.OriginalSample(None, study_name=study_ident,
+            samp2 = openapi_client.OriginalSample(None, study_name=study_ident,
                                                   partner_species='P. falciparum')
             created2 = api_instance.create_original_sample(samp2)
             fetched2 = api_instance.download_original_sample(created2.original_sample_id)
@@ -147,7 +147,7 @@ class TestTaxa(TestBase):
             fetched2.original_sample_id = None
             assert samp2 == fetched2, "upload != download response"
 
-            samp3 = swagger_client.OriginalSample(None, study_name=study_ident,
+            samp3 = openapi_client.OriginalSample(None, study_name=study_ident,
                                                   partner_species='P. falciparum + P. vivax')
             created3 = api_instance.create_original_sample(samp3)
             fetched3 = api_instance.download_original_sample(created3.original_sample_id)
@@ -155,7 +155,7 @@ class TestTaxa(TestBase):
             fetched3.original_sample_id = None
             assert samp3 == fetched3, "upload != download response"
 
-            samp4 = swagger_client.OriginalSample(None, study_name=study_ident,
+            samp4 = openapi_client.OriginalSample(None, study_name=study_ident,
                                                   partner_species='P. falciparum + P. vivax')
             created4 = api_instance.create_original_sample(samp4)
             fetched4 = api_instance.download_original_sample(created4.original_sample_id)
@@ -167,10 +167,10 @@ class TestTaxa(TestBase):
 
             for species in study_detail.partner_species:
                 if species.partner_species == 'P. falciparum':
-                    species.taxa = [swagger_client.Taxonomy(taxonomy_id=5833)]
+                    species.taxa = [openapi_client.Taxonomy(taxonomy_id=5833)]
                 else:
-                    species.taxa = [swagger_client.Taxonomy(taxonomy_id=5833),
-                                    swagger_client.Taxonomy(taxonomy_id=5855)]
+                    species.taxa = [openapi_client.Taxonomy(taxonomy_id=5833),
+                                    openapi_client.Taxonomy(taxonomy_id=5855)]
 
             study_api_instance.update_study(study_ident, study_detail)
 

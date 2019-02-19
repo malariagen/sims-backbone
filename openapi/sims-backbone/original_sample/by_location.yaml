@@ -1,0 +1,32 @@
+    get:
+      tags:
+        - OriginalSample
+      summary: fetches OriginalSamples for a location
+      description: ""
+      operationId: downloadOriginalSamplesByLocation
+      parameters:
+        - name: locationId
+          in: path
+          description: location
+          required: true
+          schema:
+            type: string
+        - name: start
+          in: query
+          description: for pagination start the result set at a record x
+          required: false
+          schema:
+            type: integer
+        - name: count
+          in: query
+          description: for pagination the number of entries to return
+          required: false
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "./sims-backbone/definitions/original_sample.yaml#/components/schemas/OriginalSamples"

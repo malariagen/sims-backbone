@@ -1,5 +1,5 @@
-from swagger_server.models.location import Location
-from swagger_server.models.attr import Attr
+from openapi_server.models.location import Location
+from openapi_server.models.attr import Attr
 from backbone_server.errors.missing_key_exception import MissingKeyException
 
 import logging

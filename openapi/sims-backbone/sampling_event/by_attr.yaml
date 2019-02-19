@@ -1,0 +1,32 @@
+    get:
+      tags:
+        - samplingEvent
+      summary: fetches one or more samplingEvents by property value
+      description: ""
+      operationId: downloadSamplingEventsByAttr
+      parameters:
+        - name: propName
+          in: path
+          description: name of property to search
+          required: true
+          schema:
+            type: string
+        - name: propValue
+          in: path
+          description: matching value of property to search
+          required: true
+          schema:
+            type: string
+        - name: studyName
+          in: query
+          description: if you want to restrict the search to a study e.g. for partner_id
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "./sims-backbone/definitions/sampling_event.yaml#/components/schemas/SamplingEvents"

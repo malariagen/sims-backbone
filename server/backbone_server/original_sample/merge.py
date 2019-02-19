@@ -9,7 +9,7 @@ from backbone_server.original_sample.delete import OriginalSampleDelete
 from backbone_server.original_sample.fetch import OriginalSampleFetch
 from backbone_server.location.edit import LocationEdit
 
-from swagger_server.models.original_sample import OriginalSample
+from openapi_server.models.original_sample import OriginalSample
 
 import psycopg2
 

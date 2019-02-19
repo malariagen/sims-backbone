@@ -1,5 +1,5 @@
-from swagger_server.models.original_sample import OriginalSample
-from swagger_server.models.location import Location
+from openapi_server.models.original_sample import OriginalSample
+from openapi_server.models.location import Location
 from backbone_server.errors.missing_key_exception import MissingKeyException
 
 from backbone_server.location.fetch import LocationFetch

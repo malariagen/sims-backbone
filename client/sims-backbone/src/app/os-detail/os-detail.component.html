@@ -1,11 +1,11 @@
 <div *ngIf="originalSamples">
   {{ originalSamples.count }} matching original samples
-  <div fxLayout="column" *ngFor="let originalSample of originalSamples.original_samples">
+  <div fxLayout="column" *ngFor="let originalSample of originalSamples.originalSamples">
     <div fxLayout="row">
       <div [fxFlex]="grow">
         <h3>Original Sample Details</h3>
-        <div>ID: {{originalSample.original_sample_id}}</div>
-        <div>Study: {{originalSample.study_name}}</div>
+        <div>ID: {{originalSample.original_sampleId}}</div>
+        <div>Study: {{originalSample.studyName}}</div>
         <div>Partner Species: {{originalSample.partner_species}}</div>
       </div>
     </div>

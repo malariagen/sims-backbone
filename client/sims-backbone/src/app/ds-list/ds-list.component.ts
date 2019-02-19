@@ -74,8 +74,8 @@ export class DsListComponent implements OnInit, AfterViewInit {
   @Input()
   set studyName(studyName: string) {
     this._studyName = studyName;
-    this.downloadFileName = studyName + '_sampling_events.csv';
-    this.jsonDownloadFileName = studyName + '_sampling_events.json';
+    this.downloadFileName = studyName + '_samplingEvents.csv';
+    this.jsonDownloadFileName = studyName + '_samplingEvents.json';
   }
 
   loadOriginalSamplesPage() {
@@ -87,15 +87,15 @@ export class DsListComponent implements OnInit, AfterViewInit {
 
   }
 
-  defineColumnHeaders(sampling_events) {
+  defineColumnHeaders(samplingEvents) {
 
-    if (sampling_events == undefined) {
+    if (samplingEvents == undefined) {
       return;
     }
 
-    let columnsForDisplay = ['derivative_sample_id', 'dna_prep', 'partner_species'];
+    let columnsForDisplay = ['derivativeSampleId', 'dna_prep', 'partner_species'];
     columnsForDisplay = columnsForDisplay.concat(this._dataSource.attrTypes);
-    columnsForDisplay = columnsForDisplay.concat(['original_sample_id']);
+    columnsForDisplay = columnsForDisplay.concat(['originalSampleId']);
 
     if (columnsForDisplay != this.displayedColumns) {
       this.displayedColumns = columnsForDisplay;

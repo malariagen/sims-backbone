@@ -1,8 +1,8 @@
 import six
 
-from swagger_server.models.studies import Studies  # noqa: E501
-from swagger_server.models.study import Study  # noqa: E501
-from swagger_server import util
+from openapi_server.models.studies import Studies  # noqa: E501
+from openapi_server.models.study import Study  # noqa: E501
+from openapi_server import util
 
 from backbone_server.controllers.study_controller import StudyController
 

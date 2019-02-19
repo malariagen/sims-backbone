@@ -1,7 +1,7 @@
 
 import logging
 
-from swagger_server.models.studies import Studies
+from openapi_server.models.studies import Studies
 from backbone_server.study.fetch import StudyFetch
 
 

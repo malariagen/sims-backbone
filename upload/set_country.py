@@ -6,8 +6,8 @@ import time
 import datetime
 import logging
 import sys
-import swagger_client
-from swagger_client.rest import ApiException
+import openapi_client
+from openapi_client.rest import ApiException
 
 from decimal import *
 
@@ -137,7 +137,7 @@ class SetCountry(upload_ssr.Upload_SSR):
                 except ApiException as exp:
                     lat = round(float(Decimal(cached_country['latitude'])), 7)
                     lng = round(float(Decimal(cached_country['longitude'])), 7)
-                    loc = swagger_client.Location(None, lat,
+                    loc = openapi_client.Location(None, lat,
                                                   lng,
                                                   accuracy='country',
                                                   country=self._country_cache[country_value].alpha3)
@@ -172,7 +172,7 @@ class SetCountry(upload_ssr.Upload_SSR):
                                                                                  found), None)
                 return found
 
-        ident = swagger_client.Attr('partner_name',
+        ident = openapi_client.Attr('partner_name',
                                           attr_value=self._country_cache[country_value].english,
                                           attr_source='set_country {}'.format(filename),
                                           study_name=original_sample.study_name)

@@ -23,7 +23,7 @@ export class EventSetDsListComponent implements OnInit {
       this.eventSetId = pmap.get('eventSetId');
     });
     this.filter = 'eventSet:' + this.eventSetId;
-    this.downloadFileName = 'derivative_samples_event_set_' + this.eventSetId + '.csv';
-    this.jsonDownloadFileName = 'derivative_samples_event_set_' + this.eventSetId + '.json';
+    this.downloadFileName = 'derivativeSamples_eventSet_' + this.eventSetId + '.csv';
+    this.jsonDownloadFileName = 'derivativeSamples_eventSet_' + this.eventSetId + '.json';
   }
 }

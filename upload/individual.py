@@ -3,8 +3,8 @@ from copy import deepcopy
 
 import logging
 
-import swagger_client
-from swagger_client.rest import ApiException
+import openapi_client
+from openapi_client.rest import ApiException
 
 from base_entity import BaseEntity
 
@@ -22,17 +22,17 @@ class IndividualProcessor(BaseEntity):
         if 'study_id' in values:
             study_id = values['study_id']
 
-        o_sample = swagger_client.Individual(None)
+        o_sample = openapi_client.Individual(None)
 
         idents = []
         if 'patient_id' in values and values['patient_id']:
-            idents.append(swagger_client.Attr('patient_id',
+            idents.append(openapi_client.Attr('patient_id',
                                               str(values['patient_id']),
                                               study_name=study_id,
                                               attr_source=self._event_set))
 
         if 'donor_source_code' in values and values['donor_source_code']:
-            idents.append(swagger_client.Attr('donor_source_code',
+            idents.append(openapi_client.Attr('donor_source_code',
                                               str(values['donor_source_code']),
                                               study_name=study_id,
                                               attr_source=self._event_set))

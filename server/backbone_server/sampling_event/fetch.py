@@ -1,7 +1,7 @@
-from swagger_server.models.location import Location
-from swagger_server.models.attr import Attr
-from swagger_server.models.taxonomy import Taxonomy
-from swagger_server.models.sampling_event import SamplingEvent
+from openapi_server.models.location import Location
+from openapi_server.models.attr import Attr
+from openapi_server.models.taxonomy import Taxonomy
+from openapi_server.models.sampling_event import SamplingEvent
 from backbone_server.errors.missing_key_exception import MissingKeyException
 
 import logging

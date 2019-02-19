@@ -3,7 +3,7 @@ from backbone_server.errors.duplicate_key_exception import DuplicateKeyException
 from backbone_server.individual.edit import IndividualEdit
 from backbone_server.individual.fetch import IndividualFetch
 
-from swagger_server.models.individual import Individual
+from openapi_server.models.individual import Individual
 
 import psycopg2
 
