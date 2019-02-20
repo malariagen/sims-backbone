@@ -126,9 +126,10 @@ class Upload_ROMA(uploader.Uploader):
                 self._dao.create_event_set(values['manifest'])
                 event_sets.append(values['manifest'])
 
-            if not sampling_event.event_sets or values['manifest'] not in sampling_event.event_sets:
-                self._dao.create_event_set_item(values['manifest'],
-                                                sampling_event.sampling_event_id)
+            if sampling_event:
+                if not sampling_event.event_sets or values['manifest'] not in sampling_event.event_sets:
+                    self._dao.create_event_set_item(values['manifest'],
+                                                    sampling_event.sampling_event_id)
             #print(values)
             #print(sampling_event)
 
