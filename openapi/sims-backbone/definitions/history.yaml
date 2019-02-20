@@ -1,0 +1,29 @@
+components:
+  schemas:
+    LogItems:
+      type: object
+      properties:
+        log_items:
+          type: array
+          items:
+            $ref: "#/components/schemas/LogItem"
+    LogItem:
+      type: object
+      properties:
+        submitter:
+          type: string
+        action:
+          type: string
+        action_date:
+          type: string
+          format: date
+        input_values:
+          type: string
+        output_value:
+          type: string
+          # Doesn't work yet...
+          # oneOf:
+          #   - $ref: './sims-backbone/definitions/sampling_event.yaml#/components/schemas/SamplingEvent'
+          #   - $ref: './sims-backbone/definitions/original_sample.yaml#/components/schemas/OriginalSample'
+        result:
+          type: integer

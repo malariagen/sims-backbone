@@ -1,0 +1,41 @@
+    get:
+      tags:
+        - metadata
+      summary: fetches the history of a record
+      description: ""
+      operationId: downloadHistory
+      parameters:
+        - name: recordType
+          in: path
+          description: type
+          required: true
+          schema:
+            type: string
+            enum:
+              - location
+              - sampling_event
+              - original_sample
+              - derivative_sample
+        - name: recordId
+          in: path
+          description: the id (uuid) of the record for which you want the history
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: recordTypes
+          in: query
+          description: if you want to restrict the search to a type of record
+          required: false
+          schema:
+            type: string
+            enum:
+              - mods
+              - all
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "./sims-backbone/definitions/history.yaml#/components/schemas/LogItems"
