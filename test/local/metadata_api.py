@@ -3,6 +3,7 @@ import six
 from openapi_server.models.country import Country  # noqa: E501
 from openapi_server.models.taxonomies import Taxonomies  # noqa: E501
 from openapi_server.models.taxonomy import Taxonomy  # noqa: E501
+from openapi_server.models.log_items import LogItems  # noqa: E501
 from openapi_server import util
 
 from backbone_server.controllers.metadata_controller import MetadataController
@@ -22,7 +23,7 @@ class LocalMetadataApi(BaseLocalApi):
         """create_taxonomy
 
         Create a Taxonomy # noqa: E501
-        :param taxonomy: 
+        :param taxonomy:
         :type taxonomy: dict | bytes
 
         :rtype: Taxonomy
@@ -31,6 +32,15 @@ class LocalMetadataApi(BaseLocalApi):
         (ret, retcode) = self.metadata_controller.create_taxonomy(taxonomy, self._user, self.auth_tokens())
 
         return self.create_response(ret, retcode, 'Taxonomy')
+
+    def download_history(self, record_type, record_id, record_types=None):  # noqa: E501
+
+        (ret, retcode) = self.metadata_controller.download_history(record_type,
+                                                                   record_id,
+                                                                   record_types,
+                                                                   self._user,
+                                                                   self.auth_tokens())
+        return self.create_response(ret, retcode, 'LogItems')
 
     def get_country_metadata(self, countryId):
         """

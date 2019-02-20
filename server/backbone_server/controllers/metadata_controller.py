@@ -2,6 +2,7 @@ from backbone_server.metadata.country import CountryGet
 from backbone_server.metadata.taxonomies import TaxonomiesGet
 from backbone_server.metadata.taxonomy_post import TaxonomyPost
 from backbone_server.metadata.attr_types import AttrTypesGet
+from backbone_server.metadata.history import History
 
 from backbone_server.controllers.base_controller import BaseController
 
@@ -33,6 +34,37 @@ class MetadataController(BaseController):
         taxa = post.post(taxonomy)
 
         return taxa, retcode
+
+
+    def download_history(self, record_type, record_id, record_types=None, user=None,
+                         auths=None):  # noqa: E501
+        """fetches the history of a record
+
+         # noqa: E501
+
+        :param record_type: type
+        :type record_type: str
+        :param record_id: the id (uuid) of the record for which you want the history
+        :type record_id:
+        :param record_types: if you want to restrict the search to a type of record
+        :type record_types: str
+
+        :rtype: LogItems
+        """
+
+        retcode = 200
+        log_items = None
+
+        get = History(self.get_connection())
+
+        try:
+            log_items = get.get(record_type, record_id, record_types)
+        except MissingKeyException as dme:
+            logging.getLogger(__name__).debug("download_history: {}".format(repr(dme)))
+            log_items = str(dme)
+            retcode = 404
+
+        return log_items, retcode
 
     def get_country_metadata(self, countryId, user=None, auths=None):
         """

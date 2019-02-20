@@ -112,6 +112,8 @@ paths:
     $ref: './sims-backbone/metadata/attr_types.yaml'
   '/metadata/location_attr_types':
     $ref: './sims-backbone/metadata/location_attr_types.yaml'
+  '/metadata/history/{recordType}/{recordId}':
+    $ref: './sims-backbone/metadata/history.yaml'
   '/studies':
     $ref: './sims-backbone/study/items.yaml'
   '/study/{studyName}':

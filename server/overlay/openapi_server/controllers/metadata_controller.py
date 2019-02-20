@@ -2,6 +2,7 @@ import connexion
 import six
 
 from openapi_server.models.country import Country  # noqa: E501
+from openapi_server.models.log_items import LogItems  # noqa: E501
 from openapi_server.models.taxonomies import Taxonomies  # noqa: E501
 from openapi_server.models.taxonomy import Taxonomy  # noqa: E501
 from openapi_server import util
@@ -15,7 +16,7 @@ def create_taxonomy(taxonomy, user=None, token_info=None):
     """create_taxonomy
 
     Create a Taxonomy # noqa: E501
-    :param taxonomy: 
+    :param taxonomy:
     :type taxonomy: dict | bytes
 
     :rtype: Taxonomy
@@ -25,6 +26,24 @@ def create_taxonomy(taxonomy, user=None, token_info=None):
 
     return metadata_controller.create_taxonomy(taxonomy, user,
                                                metadata_controller.token_info(token_info))
+
+def download_history(record_type, record_id, record_types=None, user=None,
+                     token_info=None):  # noqa: E501
+    """fetches the history of a record
+
+     # noqa: E501
+
+    :param record_type: type
+    :type record_type: str
+    :param record_id: the id (uuid) of the record for which you want the history
+    :type record_id:
+    :param record_types: if you want to restrict the search to a type of record
+    :type record_types: str
+
+    :rtype: LogItems
+    """
+    return metadata_controller.download_history(record_type, record_id, record_types, user,
+                                                metadata_controller.token_info(token_info))
 
 def get_country_metadata(countryId, user=None, token_info=None):
     """
