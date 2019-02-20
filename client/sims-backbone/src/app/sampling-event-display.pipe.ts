@@ -10,34 +10,34 @@ export class SamplingEventDisplayPipe implements PipeTransform {
   transform(value: SamplingEvent, key: string, studyId: string, locations: any): any {
     let ret = '';
 
-    if (key === 'samplingEventId') {
-      return value.samplingEventId
+    if (key === 'sampling_event_id') {
+      return value.sampling_event_id
     } else if (key === 'doc') {
       ret = value.doc;
     } else if (key === 'location') {
-      if (value.locationId) {
-        const loc = locations[value.locationId];
+      if (value.location_id) {
+        const loc: Location = locations[value.location_id];
         if (loc && loc.latitude) {
-          ret = '<a href="location/' + loc.locationId + '">' + loc.latitude + ', ' + loc.longitude + '</a>';
+          ret = '<a href="location/' + loc.location_id + '">' + loc.latitude + ', ' + loc.longitude + '</a>';
         }
       }
     } else if (key === 'location_curated_name') {
-      if (value.locationId) {
-        const loc: Location = locations[value.locationId];
-        ret = loc.curatedName;
+      if (value.location_id) {
+        const loc: Location = locations[value.location_id];
+        ret = loc.curated_name;
       }
     } else if (key === 'partner_location_name') {
-      if (value.locationId) {
-        const location: Location = locations[value.locationId];
+      if (value.location_id) {
+        const location: Location = locations[value.location_id];
         if (location.attrs) {
           location.attrs.forEach(ident => {
-            const ident_value = ident.attrValue;
+            const ident_value = ident.attr_value;
             if (studyId) {
-              if ((studyId && (ident.studyName === studyId))) {
+              if ((studyId && (ident.study_name === studyId))) {
                 ret = ident_value;
               }
             } else {
-              ret = ret + ident_value + '(' + ident.studyName + ');';
+              ret = ret + ident_value + '(' + ident.study_name + ');';
             }
           });
         }
@@ -45,14 +45,14 @@ export class SamplingEventDisplayPipe implements PipeTransform {
     } else {
 
       value.attrs.forEach(ident => {
-        if (ident.attrType === key) {
+        if (ident.attr_type === key) {
           if (ret === '') {
-            ret = ident.attrValue;
+            ret = ident.attr_value;
           } else {
             const ids: Array<String> = ret.split(';');
             // Avoid duplicates from different sources
-            if (!ids.includes(ident.attrValue)) {
-              ret = [ret, ident.attrValue].join(';');
+            if (!ids.includes(ident.attr_value)) {
+              ret = [ret, ident.attr_value].join(';');
             }
           }
         }

@@ -25,7 +25,7 @@ export class TaxonomyEditComponent implements OnInit {
 
   addClassification() {
     const taxasControl = <FormArray>this.taxaGroup.controls['taxa'];
-    let newTaxaControl = StudyEditComponent.initTaxaControl(null);
+    const newTaxaControl = StudyEditComponent.initTaxaControl(null);
     taxasControl.push(newTaxaControl);
 
   }
@@ -36,13 +36,13 @@ export class TaxonomyEditComponent implements OnInit {
   }
 
   displayFn(taxonomyId: number): string {
-    
+
     let ret = String(taxonomyId);
 
     if (this.taxonomies) {
       this.taxonomies.forEach(taxa => {
-        if (taxa.taxonomyId == taxonomyId) {
-          ret = taxa.taxonomyId + " " + taxa.rank + " " + taxa.name;
+        if (taxa.taxonomy_id === taxonomyId) {
+          ret = taxa.taxonomy_id + ' ' + taxa.rank + ' ' + taxa.name;
         }
       });
     }

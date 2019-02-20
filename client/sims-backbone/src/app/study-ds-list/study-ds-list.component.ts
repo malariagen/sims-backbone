@@ -23,8 +23,8 @@ export class StudyDsListComponent implements OnInit {
       this.studyName = pmap.get('studyName');
     });
     this.filter = 'studyId:' + this.studyName;
-    this.downloadFileName = 'derivativeSamples_study_' + this.studyName + '.csv';
-    this.jsonDownloadFileName = 'derivativeSamples_study_' + this.studyName + '.json';
+    this.downloadFileName = 'derivative_samples_study_' + this.studyName + '.csv';
+    this.jsonDownloadFileName = 'derivative_samples_study_' + this.studyName + '.json';
   }
 
 }

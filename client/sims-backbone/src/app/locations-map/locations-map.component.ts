@@ -46,7 +46,7 @@ export class LocationsMapComponent {
     ]
   };
 
-  leaflet_zoom: number = 5;
+  leaflet_zoom = 5;
   // Marker cluster stuff
 
   markers = new Map<string, L.Layer[]>();
@@ -56,13 +56,13 @@ export class LocationsMapComponent {
 
   @Input()
   set polygon(geojson) {
-    if (geojson && geojson.type == 'Polygon') {
+    if (geojson && geojson.type === 'Polygon') {
       if (this.polygonLayer) {
         this.polygonLayer.clearLayers();
       }
       this.polygonLayer = L.geoJSON().addTo(this.map);
       this.polygonLayer.addData(geojson);
-      if (this._locations.count == 1) {
+      if (this._locations.count === 1) {
         this.map.panTo(L.latLng([this._locations.locations[0].latitude, this._locations.locations[0].longitude]));
       }
     }
@@ -70,7 +70,7 @@ export class LocationsMapComponent {
 
   @Input()
   set zoom(zoom: number) {
-    //console.log("Setting zoom:" + zoom);
+    // console.log("Setting zoom:" + zoom);
     this.leaflet_zoom = zoom
     this.centerMap();
   }
@@ -80,14 +80,14 @@ export class LocationsMapComponent {
       return;
     }
     let center = null;
-    if (this._locations && this._locations.count == 1) {
+    if (this._locations && this._locations.count === 1) {
       center = L.latLng([this._locations.locations[0].latitude, this._locations.locations[0].longitude]);
-      //Seems to be needed as well as setView
+      // Seems to be needed as well as setView
       this.map.panTo(center);
     } else {
       center = this.map.getCenter();
     }
-    //Can't use panTo
+    // Can't use panTo
     this.map.setView(center, this.leaflet_zoom);
 
   }
@@ -101,7 +101,7 @@ export class LocationsMapComponent {
 
   showLocations() {
 
-    if(!this.map) {
+    if (!this.map) {
       return;
     }
 
@@ -114,37 +114,37 @@ export class LocationsMapComponent {
       });
       this.centerMap();
 
-      let locationsArray: Array<Location> = this._locations.locations;
+      const locationsArray: Array<Location> = this._locations.locations;
 
       locationsArray.forEach(location => {
 
-        let layer_name: string = 'Unknown';
-        let loc: string = '';
+        let layer_name = 'Unknown';
+        let loc = '';
 
         if (location.country) {
           layer_name = location.country;
         }
         if (location.attrs) {
           location.attrs.forEach(ident => {
-            loc = location.country + " " + ident.studyName + ' ' + ident.attrValue;
+            loc = location.country + ' ' + ident.study_name + ' ' + ident.attr_value;
 
             if (location.latitude && location.longitude) {
-              this.addMarker(location.locationId, ident.studyName, location.latitude, location.longitude, loc);
+              this.addMarker(location.location_id, ident.study_name, location.latitude, location.longitude, loc);
             }
           });
         } else {
           if (location.latitude && location.longitude) {
-            this.addMarker(location.locationId, location.country, location.latitude, location.longitude, layer_name);
+            this.addMarker(location.location_id, location.country, location.latitude, location.longitude, layer_name);
           }
         }
       });
 
       this.markers.forEach((value: L.Layer[], key: string) => {
-        let mcg = L.markerClusterGroup();
+        const mcg = L.markerClusterGroup();
         mcg.clearLayers();
         mcg.addLayers(value);
         this.leaflet_layersControl['overlays'][key] = mcg;
-        //So that the layer is visible by default
+        // So that the layer is visible by default
         if (this.map) {
           mcg.addTo(this.map);
         }
@@ -160,7 +160,7 @@ export class LocationsMapComponent {
   }
 
   addMarker(locationId, country, lat, lng, marker_title) {
-    let marker = L.marker(
+    const marker = L.marker(
       [lat, lng],
       {
         title: marker_title,

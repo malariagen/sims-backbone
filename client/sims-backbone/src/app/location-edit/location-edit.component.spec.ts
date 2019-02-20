@@ -134,24 +134,24 @@ describe('LocationEditComponent', () => {
       });
 
       const testData: Location = <Location>{
-        locationId: '1234',
-        curatedName: 'UK',
-        curationMethod: 'by hand',
+        location_id: '1234',
+        curated_name: 'UK',
+        curation_method: 'by hand',
         notes: 'notes',
         country: 'GBR',
         accuracy: 'region',
         latitude: 1,
         longitude: 2,
         attrs: [<Attr>{
-          attrSource: 'test_src',
-          attrType: 'partner_name',
-          attrValue: 'test_val',
-          studyName: '9999'
+          attr_source: 'test_src',
+          attr_type: 'partner_name',
+          attr_value: 'test_val',
+          study_name: '9999'
         }, <Attr>{
-          attrSource: 'test_src',
-          attrType: 'partner_name',
-          attrValue: 'test_val',
-          studyName: '9998'
+          attr_source: 'test_src',
+          attr_type: 'partner_name',
+          attr_value: 'test_val',
+          study_name: '9998'
         }]
       };
 
@@ -159,23 +159,23 @@ describe('LocationEditComponent', () => {
 
       // Finally, assert that there are no outstanding requests.
       backend.verify();
-      expect(component.locationForm.controls['locationId'].value).toBe(testData.locationId);
-      expect(component.locationForm.controls['curatedName'].value).toBe(testData.curatedName);
-      expect(component.locationForm.controls['curationMethod'].value).toBe(testData.curationMethod);
+      expect(component.locationForm.controls['location_id'].value).toBe(testData.location_id);
+      expect(component.locationForm.controls['curated_name'].value).toBe(testData.curated_name);
+      expect(component.locationForm.controls['curation_method'].value).toBe(testData.curation_method);
       expect(component.locationForm.controls['notes'].value).toBe(testData.notes);
       expect(component.locationForm.controls['country'].value).toBe(testData.country);
       expect(component.locationForm.controls['accuracy'].value).toBe(testData.accuracy);
       expect(component.locationForm.controls['latitude'].value).toBe(testData.latitude);
       expect(component.locationForm.controls['longitude'].value).toBe(testData.longitude);
       const arrayControls = component.locationForm.controls['attrs'].value;
-      expect(arrayControls[0].attrSource).toBe(testData.attrs[0].attrSource);
-      expect(arrayControls[0].attrType).toBe(testData.attrs[0].attrType);
-      expect(arrayControls[0].attrValue).toBe(testData.attrs[0].attrValue);
-      expect(arrayControls[0].studyName).toBe(testData.attrs[0].studyName);
-      expect(arrayControls[1].attrSource).toBe(testData.attrs[1].attrSource);
-      expect(arrayControls[1].attrType).toBe(testData.attrs[1].attrType);
-      expect(arrayControls[1].attrValue).toBe(testData.attrs[1].attrValue);
-      expect(arrayControls[1].studyName).toBe(testData.attrs[1].studyName);
+      expect(arrayControls[0].attr_source).toBe(testData.attrs[0].attr_source);
+      expect(arrayControls[0].attr_type).toBe(testData.attrs[0].attr_type);
+      expect(arrayControls[0].attr_value).toBe(testData.attrs[0].attr_value);
+      expect(arrayControls[0].study_name).toBe(testData.attrs[0].study_name);
+      expect(arrayControls[1].attr_source).toBe(testData.attrs[1].attr_source);
+      expect(arrayControls[1].attr_type).toBe(testData.attrs[1].attr_type);
+      expect(arrayControls[1].attr_value).toBe(testData.attrs[1].attr_value);
+      expect(arrayControls[1].study_name).toBe(testData.attrs[1].study_name);
     })
   )
   );
@@ -189,24 +189,24 @@ describe('LocationEditComponent', () => {
       });
 
       const testData: Location = <Location>{
-        locationId: '1234',
-        curatedName: 'UK',
-        curationMethod: 'by hand',
+        location_id: '1234',
+        curated_name: 'UK',
+        curation_method: 'by hand',
         notes: 'notes',
         country: 'GBR',
         accuracy: 'region',
         latitude: 1,
         longitude: 2,
         attrs: [<Attr>{
-          attrSource: 'test_src',
-          attrType: 'partner_name',
-          attrValue: 'test_val',
-          studyName: '9999'
+          attr_source: 'test_src',
+          attr_type: 'partner_name',
+          attr_value: 'test_val',
+          study_name: '9999'
         }, <Attr>{
-          attrSource: 'test_src',
-          attrType: 'partner_name',
-          attrValue: 'test_val',
-          studyName: '9998'
+          attr_source: 'test_src',
+          attr_type: 'partner_name',
+          attr_value: 'test_val',
+          study_name: '9998'
         }]
       };
 
@@ -214,13 +214,13 @@ describe('LocationEditComponent', () => {
 
       backend.verify();
 
-      testData.curatedName = 'updated name';
-      testData.curationMethod = 'for test';
+      testData.curated_name = 'updated name';
+      testData.curation_method = 'for test';
       testData.accuracy = 'city';
       testData.country = 'MLI';
       testData.notes = 'updated';
-      component.locationForm.controls['curatedName'].setValue(testData.curatedName);
-      component.locationForm.controls['curationMethod'].setValue(testData.curationMethod);
+      component.locationForm.controls['curated_name'].setValue(testData.curated_name);
+      component.locationForm.controls['curation_method'].setValue(testData.curation_method);
       component.locationForm.controls['notes'].setValue(testData.notes);
       component.locationForm.controls['country'].setValue(testData.country);
       component.locationForm.controls['accuracy'].setValue(testData.accuracy);
@@ -233,29 +233,29 @@ describe('LocationEditComponent', () => {
       });
 
       const put = backend.expectOne({
-        url: 'http://localhost/v1/location/' + testData.locationId,
+        url: 'http://localhost/v1/location/' + testData.location_id,
         method: 'PUT'
       });
 
       put.flush(testData);
 
-      expect(put.request.body.locationId).toBe(testData.locationId);
-      expect(put.request.body.curatedName).toBe(testData.curatedName);
-      expect(put.request.body.curationMethod).toBe(testData.curationMethod);
+      expect(put.request.body.location_id).toBe(testData.location_id);
+      expect(put.request.body.curated_name).toBe(testData.curated_name);
+      expect(put.request.body.curation_method).toBe(testData.curation_method);
       expect(put.request.body.notes).toBe(testData.notes);
       expect(put.request.body.country).toBe(testData.country);
       expect(put.request.body.accuracy).toBe(testData.accuracy);
       expect(put.request.body.latitude).toBe(testData.latitude);
       expect(put.request.body.longitude).toBe(testData.longitude);
       const arrayControls = put.request.body.attrs;
-      expect(arrayControls[0].attrSource).toBe(testData.attrs[0].attrSource);
-      expect(arrayControls[0].attrType).toBe(testData.attrs[0].attrType);
-      expect(arrayControls[0].attrValue).toBe(testData.attrs[0].attrValue);
-      expect(arrayControls[0].studyName).toBe(testData.attrs[0].studyName);
-      expect(arrayControls[1].attrSource).toBe(testData.attrs[1].attrSource);
-      expect(arrayControls[1].attrType).toBe(testData.attrs[1].attrType);
-      expect(arrayControls[1].attrValue).toBe(testData.attrs[1].attrValue);
-      expect(arrayControls[1].studyName).toBe(testData.attrs[1].studyName);
+      expect(arrayControls[0].attr_source).toBe(testData.attrs[0].attr_source);
+      expect(arrayControls[0].attr_type).toBe(testData.attrs[0].attr_type);
+      expect(arrayControls[0].attr_value).toBe(testData.attrs[0].attr_value);
+      expect(arrayControls[0].study_name).toBe(testData.attrs[0].study_name);
+      expect(arrayControls[1].attr_source).toBe(testData.attrs[1].attr_source);
+      expect(arrayControls[1].attr_type).toBe(testData.attrs[1].attr_type);
+      expect(arrayControls[1].attr_value).toBe(testData.attrs[1].attr_value);
+      expect(arrayControls[1].study_name).toBe(testData.attrs[1].study_name);
 
       backend.verify();
     })
@@ -298,7 +298,7 @@ describe('LocationEditComponent', () => {
       });
 
       const testData: Location = <Location>{
-        locationId: '',
+        location_id: '',
         latitude: 0,
         longitude: 0,
         accuracy: 'region'
@@ -325,7 +325,7 @@ describe('LocationEditComponent', () => {
       });
 
       const testData: Location = <Location>{
-        locationId: '',
+        location_id: '',
         latitude: 0,
         longitude: 0,
         accuracy: 'city'
@@ -352,7 +352,7 @@ describe('LocationEditComponent', () => {
       });
 
       const testData: Location = <Location>{
-        locationId: '',
+        location_id: '',
         latitude: 0,
         longitude: 0,
         accuracy: 'building'

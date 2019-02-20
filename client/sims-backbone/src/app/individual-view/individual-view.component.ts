@@ -9,17 +9,17 @@ import { IndividualService, Individual } from '../typescript-angular-client';
 })
 export class IndividualViewComponent implements OnInit {
 
-  constructor(private individualService: IndividualService) { }
-
-  individual: Individual;
-
-  ngOnInit() {
-  }
-
   @Input()
   set individualId(_individualId) {
     this.individualService.downloadIndividual(_individualId).subscribe(indiv => {
       this.individual = indiv;
     });
+  }
+
+  individual: Individual;
+
+  constructor(private individualService: IndividualService) { }
+
+  ngOnInit() {
   }
 }

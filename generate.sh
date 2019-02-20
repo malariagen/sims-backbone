@@ -26,7 +26,7 @@ then
 fi
 if [ -n "$CLIENT_ONLY" -o -z "$SERVER_ONLY" ]
 then
-    (cd openapi && npx openapi-generator generate -i sims-backbone.yaml -g typescript-angular -o ../client/sims-backbone/src/app/typescript-angular-client)
+    (cd openapi && npx openapi-generator generate -i sims-backbone.yaml -g typescript-angular -o ../client/sims-backbone/src/app/typescript-angular-client  -c client.config.json)
     rm -rf python_client
     (cd openapi && npx openapi-generator generate -i sims-backbone.yaml -g python -o ../python_client)
 fi

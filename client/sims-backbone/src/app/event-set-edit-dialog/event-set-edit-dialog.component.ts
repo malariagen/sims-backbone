@@ -29,7 +29,7 @@ export class EventSetEditDialogComponent {
 
     this.eventSetService.downloadEventSets().subscribe(
       (eventSets: EventSets) => {
-        this.eventSets = eventSets.eventSets;
+        this.eventSets = eventSets.event_sets;
       }
     );
   }

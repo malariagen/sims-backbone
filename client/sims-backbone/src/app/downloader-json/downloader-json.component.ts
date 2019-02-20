@@ -66,17 +66,17 @@ export class DownloaderJsonComponent implements CollectionViewer {
 
     if (this.pageNumber === 0) {
       this.samplingEvents = <SamplingEvents>{};
-      this.samplingEvents.samplingEvents = [];
+      this.samplingEvents.sampling_events = [];
     }
 
-    this.samplingEvents.samplingEvents = this.samplingEvents.samplingEvents.concat(d);
+    this.samplingEvents.sampling_events = this.samplingEvents.sampling_events.concat(d);
 
 
     if ((this.pageNumber + 1) * this.pageSize < this._dataSource.samplingEventCount) {
       this.pageNumber++;
       this._dataSource.loadEvents(this.filter, 'asc', this.pageNumber, this.pageSize);
     } else {
-      this.samplingEvents.attrTypes = this._dataSource.attrTypes;
+      this.samplingEvents.attr_types = this._dataSource.attrTypes;
       this.samplingEvents.count = this._dataSource.samplingEventCount;
       this.samplingEvents.locations = this._dataSource.locations;
       this.buildDownloader(JSON.stringify(this.samplingEvents));

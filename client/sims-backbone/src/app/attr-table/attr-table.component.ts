@@ -28,8 +28,8 @@ export class AttrTableComponent {
 
   @Input()
   set studies(studies) {
-    if (studies == 'true') {
-      this.attrColumns.push('studyName');
+    if (studies === 'true') {
+      this.attrColumns.push('study_name');
     }
   }
 }

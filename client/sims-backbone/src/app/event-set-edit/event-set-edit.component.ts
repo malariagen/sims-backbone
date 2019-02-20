@@ -38,7 +38,7 @@ export class EventSetEditComponent implements OnInit {
 
         this.eventSetForm = this._fb.group(
           {
-            eventSet_name: [this.eventSet.eventSetName, [Validators.required]],
+            event_set_name: [this.eventSet.event_set_name, [Validators.required]],
             notes: this._fb.array([]),
           }
         );
@@ -59,8 +59,8 @@ export class EventSetEditComponent implements OnInit {
     let note_name = '';
     let note_text = '';
     if (note) {
-      note_name = note.noteName;
-      note_text = note.noteText;
+      note_name = note.note_name;
+      note_text = note.note_text;
     }
     return new FormGroup({
       note_name: new FormControl(note_name, Validators.required),
@@ -70,7 +70,7 @@ export class EventSetEditComponent implements OnInit {
   public onSubmit({ value, valid }: { value: EventSet, valid: boolean }): void {
 
     // console.log("Submitting:" + JSON.stringify(value));
-    this.eventSetService.updateEventSet(value.eventSetName, value)
+    this.eventSetService.updateEventSet(value.event_set_name, value)
       .subscribe(
       (x) => {
         // console.log("Submitted");

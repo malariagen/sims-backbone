@@ -31,10 +31,10 @@ export class DsListComponent implements OnInit, AfterViewInit {
   selectedEvents = new Set<string>();
 
   @Input()
-  downloadFileName: string = 'data.csv';
+  downloadFileName = 'data.csv';
 
   @Input()
-  jsonDownloadFileName: string = 'data.json';
+  jsonDownloadFileName = 'data.json';
 
   constructor(private changeDetector: ChangeDetectorRef, private derivativeSamplesService: DerivativeSamplesService) { }
 
@@ -42,8 +42,8 @@ export class DsListComponent implements OnInit, AfterViewInit {
 
     this._dataSource = new DerivativeSamplesSource(this.derivativeSamplesService);
 
-    //Recalcuate the column headers when the data changes
-    let obs: Observable<DerivativeSample[]> = this._dataSource.connect(this.table);
+    // Recalcuate the column headers when the data changes
+    const obs: Observable<DerivativeSample[]> = this._dataSource.connect(this.table);
 
     obs.subscribe({
       next: sevents => this.defineColumnHeaders(sevents),
@@ -74,8 +74,8 @@ export class DsListComponent implements OnInit, AfterViewInit {
   @Input()
   set studyName(studyName: string) {
     this._studyName = studyName;
-    this.downloadFileName = studyName + '_samplingEvents.csv';
-    this.jsonDownloadFileName = studyName + '_samplingEvents.json';
+    this.downloadFileName = studyName + '_sampling_events.csv';
+    this.jsonDownloadFileName = studyName + '_sampling_events.json';
   }
 
   loadOriginalSamplesPage() {
@@ -87,17 +87,17 @@ export class DsListComponent implements OnInit, AfterViewInit {
 
   }
 
-  defineColumnHeaders(samplingEvents) {
+  defineColumnHeaders(derivativeSamples) {
 
-    if (samplingEvents == undefined) {
+    if (derivativeSamples === undefined) {
       return;
     }
 
-    let columnsForDisplay = ['derivativeSampleId', 'dna_prep', 'partner_species'];
+    let columnsForDisplay = ['derivative_sample_id', 'dna_prep', 'partner_species'];
     columnsForDisplay = columnsForDisplay.concat(this._dataSource.attrTypes);
-    columnsForDisplay = columnsForDisplay.concat(['originalSampleId']);
+    columnsForDisplay = columnsForDisplay.concat(['original_sample_id']);
 
-    if (columnsForDisplay != this.displayedColumns) {
+    if (columnsForDisplay !== this.displayedColumns) {
       this.displayedColumns = columnsForDisplay;
       this.changeDetector.markForCheck();
     }

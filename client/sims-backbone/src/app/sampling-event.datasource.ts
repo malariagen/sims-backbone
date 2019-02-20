@@ -42,13 +42,13 @@ export class SamplingEventsSource implements DataSource<SamplingEvent> {
                 finalize(() => this.loadingSubject.next(false))
             )
             .subscribe(result => {
-                let samplingEvents = <SamplingEvents>result;
+                const samplingEvents = <SamplingEvents>result;
                 this.samplingEventCount = samplingEvents.count;
-                this.attrTypes = samplingEvents.attrTypes;
-                
+                this.attrTypes = samplingEvents.attr_types;
+
                 this.locations = { ...this.locations, ...samplingEvents.locations };
 
-                this.samplingEventsSubject.next(samplingEvents.samplingEvents);
+                this.samplingEventsSubject.next(samplingEvents.sampling_events);
             },
                 error => { console.log(error); }
             );

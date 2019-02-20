@@ -8,27 +8,27 @@ export class DerivativeSampleDisplayPipe implements PipeTransform {
 
   transform(value: DerivativeSample, key: string, studyId: string, originalSamples: any): any {
     let ret = '';
-    let originalSample : OriginalSample = originalSamples[value.originalSampleId];
+    const originalSample: OriginalSample = originalSamples[value.original_sample_id];
 
-    if (key === 'derivativeSampleId') {
-      return value.derivativeSampleId
-    } else if (key === 'originalSampleId') {
-      return value.originalSampleId
+    if (key === 'derivative_sample_id') {
+      return value.derivative_sample_id
+    } else if (key === 'original_sample_id') {
+      return value.original_sample_id
     } else if (key === 'partner_species') {
-      ret = originalSample.partnerSpecies;
+      ret = originalSample.partner_species;
     } else if (key === 'dna_prep') {
-      ret = value.dnaPrep
+      ret = value.dna_prep
     } else {
 
       value.attrs.forEach(ident => {
-        if (ident.attrType === key) {
+        if (ident.attr_type === key) {
           if (ret === '') {
-            ret = ident.attrValue;
+            ret = ident.attr_value;
           } else {
             const ids: Array<String> = ret.split(';');
             // Avoid duplicates from different sources
-            if (!ids.includes(ident.attrValue)) {
-              ret = [ret, ident.attrValue].join(';');
+            if (!ids.includes(ident.attr_value)) {
+              ret = [ret, ident.attr_value].join(';');
             }
           }
         }

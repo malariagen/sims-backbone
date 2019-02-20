@@ -22,7 +22,7 @@ export class EventSetListComponent implements OnInit {
   ngOnInit() {
     this.eventSetService.downloadEventSets().subscribe(
       (eventSets: EventSets) => {
-        this.eventSets = eventSets.eventSets;
+        this.eventSets = eventSets.event_sets;
       }
     );
   }

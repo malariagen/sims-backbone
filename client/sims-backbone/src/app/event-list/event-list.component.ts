@@ -35,9 +35,9 @@ export class EventListComponent implements OnInit, AfterViewInit {
 
   selectedEvents = new Set<string>();
 
-  downloadFileName: string = 'data.csv';
+  downloadFileName = 'data.csv';
 
-  jsonDownloadFileName: string = 'data.json';
+  jsonDownloadFileName = 'data.json';
 
 
   @Input()
@@ -98,12 +98,12 @@ export class EventListComponent implements OnInit, AfterViewInit {
       this.paginator.pageIndex,
       this.paginator.pageSize
     );
-    
+
   }
 
   defineColumnHeaders(samplingEvents) {
 
-    if(samplingEvents == undefined) {
+    if (samplingEvents === undefined) {
       return;
     }
 
@@ -111,27 +111,27 @@ export class EventListComponent implements OnInit, AfterViewInit {
     columnsForDisplay = columnsForDisplay.concat(this._dataSource.attrTypes);
     columnsForDisplay = columnsForDisplay.concat(['doc', 'partner_location_name', 'location_curated_name', 'location']);
 
-    if (columnsForDisplay != this.displayedColumns) {
+    if (columnsForDisplay !== this.displayedColumns) {
       this.displayedColumns = columnsForDisplay;
       this.changeDetector.markForCheck();
     }
-    
+
   }
 
 
   select(row) {
-    if (this.selectedEvents.has(row.samplingEventId)) {
-      this.selectedEvents.delete(row.samplingEventId);
+    if (this.selectedEvents.has(row.sampling_event_id)) {
+      this.selectedEvents.delete(row.sampling_event_id);
     } else {
-      this.selectedEvents.add(row.samplingEventId);
+      this.selectedEvents.add(row.sampling_event_id);
     }
   }
 
   selectAll() {
 
     this.table._data.forEach(data => {
-      if (!this.selectedEvents.has(data.samplingEventId)) {
-        this.selectedEvents.add(data.samplingEventId);
+      if (!this.selectedEvents.has(data.sampling_event_id)) {
+        this.selectedEvents.add(data.sampling_event_id);
       }
     });
   }
@@ -141,19 +141,19 @@ export class EventListComponent implements OnInit, AfterViewInit {
   }
 
   editEventSet(action) {
-    let dialogData = {
+    const dialogData = {
       action: action,
       items: this.selectedEvents,
       eventSet: this._eventSetName
     };
 
-    let dialogRef = this.dialog.open(EventSetEditDialogComponent, {
+    const dialogRef = this.dialog.open(EventSetEditDialogComponent, {
       width: '400px',
       data: dialogData
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      if (action == 'Remove') {
+      if (action === 'Remove') {
         this.loadEventsPage();
         this.changeDetector.markForCheck();
       }

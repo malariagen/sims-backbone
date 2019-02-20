@@ -5,25 +5,25 @@
   <div *ngFor="let es of eventSets">
     <div fxLayout="row">
       <div fxFlex="50%">
-        {{es.eventSet_name}}
+        {{es.event_set_name}}
       </div>
       <div fxFlex="10%">
-        <a [routerLink]="['/eventSet/events', es.eventSet_name]">
+        <a [routerLink]="['/eventSet/events', es.event_set_name]">
           Events
         </a>
       </div>
       <div fxFlex="10%">
-        <a [routerLink]="['/eventSet/os', es.eventSet_name]">
+        <a [routerLink]="['/eventSet/os', es.event_set_name]">
           Original Samples
         </a>
       </div>
       <div fxFlex="10%">
-        <a [routerLink]="['/eventSet/ds', es.eventSet_name]">
+        <a [routerLink]="['/eventSet/ds', es.event_set_name]">
           Derivative Samples
         </a>
       </div>
       <div fxFlex="20%">
-          <a [routerLink]="['/eventSet/', es.eventSet_name]">
+          <a [routerLink]="['/eventSet/', es.event_set_name]">
             Notes
           </a>
         </div>

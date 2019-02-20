@@ -121,9 +121,9 @@ describe('EventListComponent', () => {
       // Finally, assert that there are no outstanding requests.
       backend.verify();
 
-      expect(component.table._data.length).toBe(test_entries.samplingEvents.length);
+      expect(component.table._data.length).toBe(test_entries.sampling_events.length);
 
-      expect(component.table._data).toBe(test_entries.samplingEvents);
+      expect(component.table._data).toBe(test_entries.sampling_events);
 
     })));
 

@@ -117,11 +117,11 @@ export class LocationEditComponent implements OnInit {
 
         this.locationForm = this._fb.group(
           {
-            locationId: [this.location.locationId, [Validators.required]],
+            location_id: [this.location.location_id, [Validators.required]],
             latitude: [this.location.latitude, [Validators.required]],
             longitude: [this.location.longitude, [Validators.required]],
-            curatedName: [this.location.curatedName, [Validators.required]],
-            curationMethod: [this.location.curationMethod, [Validators.required]],
+            curated_name: [this.location.curated_name, [Validators.required]],
+            curation_method: [this.location.curation_method, [Validators.required]],
             notes: [this.location.notes, []],
             country: [this.location.country, [Validators.required, Validators.minLength(3)]],
             accuracy: [this.location.accuracy, [Validators.required]],
@@ -133,10 +133,10 @@ export class LocationEditComponent implements OnInit {
         if (this.location.attrs) {
           this.location.attrs.forEach(ident => {
             const identControl = new FormGroup({
-              attrSource: new FormControl(ident.attrSource, Validators.required),
-              attrType: new FormControl(ident.attrType, Validators.required),
-              attrValue: new FormControl(ident.attrValue, Validators.required),
-              studyName: new FormControl(ident.studyName, Validators.required),
+              attr_source: new FormControl(ident.attr_source, Validators.required),
+              attr_type: new FormControl(ident.attr_type, Validators.required),
+              attr_value: new FormControl(ident.attr_value, Validators.required),
+              study_name: new FormControl(ident.study_name, Validators.required),
             });
             formIdents.push(identControl);
           });
@@ -161,7 +161,7 @@ export class LocationEditComponent implements OnInit {
     if (!value.notes) {
       value.notes = '';
     }
-    this.locationService.updateLocation(value.locationId, value).subscribe((result) => {
+    this.locationService.updateLocation(value.location_id, value).subscribe((result) => {
       // console.log(result);
     },
       (err) => {
@@ -216,8 +216,8 @@ export class LocationEditComponent implements OnInit {
 
   public useOSM({ value, valid }: { value: any, valid: boolean }): void {
     console.log(value);
-    this.locationForm.controls['curatedName'].setValue(value.display_name);
-    this.locationForm.controls['curationMethod'].setValue('osm');
+    this.locationForm.controls['curated_name'].setValue(value.display_name);
+    this.locationForm.controls['curation_method'].setValue('osm');
     this.setPrecisionFromZoom();
     this.setCountry(value.country_code);
   }
@@ -307,8 +307,8 @@ export class LocationEditComponent implements OnInit {
 
   public useGoogle({ value, valid }: { value: any, valid: boolean }): void {
     console.log(value);
-    this.locationForm.controls['curatedName'].setValue(value.display_name);
-    this.locationForm.controls['curationMethod'].setValue('google');
+    this.locationForm.controls['curated_name'].setValue(value.display_name);
+    this.locationForm.controls['curation_method'].setValue('google');
     this.setPrecisionFromZoom();
     this.setCountry(value.country_code);
   }

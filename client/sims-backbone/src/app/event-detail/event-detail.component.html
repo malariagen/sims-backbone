@@ -1,17 +1,17 @@
 <div *ngIf="_samplingEvents">
   {{ _samplingEvents.count }} matching events
-  <div fxLayout="column" *ngFor="let _samplingEvent of _samplingEvents.samplingEvents">
+  <div fxLayout="column" *ngFor="let _samplingEvent of _samplingEvents.sampling_events">
     <div fxLayout="row">
       <div [fxFlex]="grow">
         <h3>Event Details</h3>
-        <div>Event ID:        {{_samplingEvent.samplingEventId}}</div>
-        <div>Study Name:      {{_samplingEvent.studyName}}</div>
+        <div>Event ID:        {{_samplingEvent.sampling_event_id}}</div>
+        <div>Study Name:      {{_samplingEvent.study_name}}</div>
         <div>Collection Date: {{_samplingEvent.doc}} {{_samplingEvent.doc_accuracy}}</div>
       </div>
       <div [fxFlex]="grow">
-        <div *ngIf="_samplingEvent.eventSets">
+        <div *ngIf="_samplingEvent.event_sets">
           <h3>Event Sets</h3>
-          <div *ngFor="let es of _samplingEvent.eventSets">
+          <div *ngFor="let es of _samplingEvent.event_sets">
             {{es}}
           </div>
         </div>
@@ -24,9 +24,9 @@
     </div>
     <div fxLayout="row">
       <div [fxFlex]="grow">
-        <div *ngIf="_samplingEvent.individualId">
+        <div *ngIf="_samplingEvent.individual_id">
           <h3>Individual</h3>
-          <app-individual-view [individualId]="_samplingEvent.individualId"></app-individual-view>
+          <app-individual-view [individualId]="_samplingEvent.individual_id"></app-individual-view>
         </div>
       </div>
     </div>

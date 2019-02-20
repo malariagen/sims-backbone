@@ -40,8 +40,8 @@
           <div fxLayout="row">
             <span fxFlex="40%">
               <span *ngFor="let ident of s.attrs">
-                <span *ngIf="ident.studyName.startsWith(studyCode)">
-                  <a mat-raised-button color="accent" [routerLink]="['/location',s.locationId]">
+                <span *ngIf="ident.study_name.startsWith(studyCode)">
+                  <a mat-raised-button color="accent" [routerLink]="['/location',s.location_id]">
                     {{ ident.attr_value}}
                   </a>
                   {{s.latitude}},{{s.longitude}}

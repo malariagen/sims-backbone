@@ -48,16 +48,16 @@ export class SampleOverviewComponent implements AfterContentInit, OnChanges {
     const links_data = [];
 
     if (this.originalSamples) {
-      this.originalSamples.originalSamples.forEach(element => {
+      this.originalSamples.original_samples.forEach(element => {
         let label: string;
         element.attrs.forEach(attr => {
-          if (attr.attrType === 'oxfordId') {
-            label = attr.attrValue;
+          if (attr.attr_type === 'oxford_id') {
+            label = attr.attr_value;
           }
 
         });
         nodes_data.push({
-          'name': element.originalSampleId,
+          'name': element.original_sample_id,
           'type': 'original',
           'label': label
         });
@@ -68,22 +68,22 @@ export class SampleOverviewComponent implements AfterContentInit, OnChanges {
     }
 
     if (this.derivativeSamples) {
-      this.derivativeSamples.derivativeSamples.forEach(element => {
+      this.derivativeSamples.derivative_samples.forEach(element => {
         let label: string;
         element.attrs.forEach(attr => {
-          if (attr.attrType === 'derivativeSample_source') {
-            label = attr.attrValue;
+          if (attr.attr_type === 'derivative_sample_source') {
+            label = attr.attr_value;
           }
 
         });
         nodes_data.push({
-          'name': element.derivativeSampleId,
+          'name': element.derivative_sample_id,
           'type': 'derivative',
           'label': label
         });
         links_data.push({
-          'source': element.originalSampleId,
-          'target': element.derivativeSampleId,
+          'source': element.original_sample_id,
+          'target': element.derivative_sample_id,
           'type': 'original'
         })
       });
@@ -91,22 +91,22 @@ export class SampleOverviewComponent implements AfterContentInit, OnChanges {
 
     if (this.assayData) {
 
-      this.assayData.assayData.forEach(element => {
-        let label: string = element.assayDatumId;
+      this.assayData.assay_data.forEach(element => {
+        let label: string = element.assay_datum_id;
         element.attrs.forEach(attr => {
-          if (attr.attrType === 'assayDatumId') {
-            label = attr.attrValue;
+          if (attr.attr_type === 'assay_datum_id') {
+            label = attr.attr_value;
           }
 
         });
         nodes_data.push({
-          'name': element.assayDatumId,
+          'name': element.assay_datum_id,
           'type': 'assay',
           'label': label
         });
         links_data.push({
-          'source': element.derivativeSampleId,
-          'target': element.assayDatumId
+          'source': element.derivative_sample_id,
+          'target': element.assay_datum_id
         })
       })
     }

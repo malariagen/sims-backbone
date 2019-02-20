@@ -90,12 +90,12 @@ describe('StudyEditComponent', () => {
           {
             'name': 'gambiae species complex',
             'rank': 'None',
-            'taxonomyId': 44542
+            'taxonomy_id': 44542
           },
           {
             'name': 'Anopheles gambiae',
             'rank': 'species',
-            'taxonomyId': 7165
+            'taxonomy_id': 7165
           }
         ]
       };
@@ -110,10 +110,10 @@ describe('StudyEditComponent', () => {
       const testData: Study = <Study>{
         name: '0000 TestStudy',
         code: '0000',
-        partnerSpecies: [<PartnerSpecies>{
-          partnerSpecies: 'AG',
+        partner_species: [<PartnerSpecies>{
+          partner_species: 'AG',
           taxa: [<Taxonomy>{
-            taxonomyId: 1234,
+            taxonomy_id: 1234,
             name: 'Anonpheles',
             rank: ''
           }]
@@ -143,12 +143,12 @@ describe('StudyEditComponent', () => {
           {
             'name': 'gambiae species complex',
             'rank': 'None',
-            'taxonomyId': 44542
+            'taxonomy_id': 44542
           },
           {
             'name': 'Anopheles gambiae',
             'rank': 'species',
-            'taxonomyId': 7165
+            'taxonomy_id': 7165
           }
         ]
       };
@@ -163,10 +163,10 @@ describe('StudyEditComponent', () => {
       const testData: Study = <Study>{
         name: '0000 TestStudy',
         code: '0000',
-        partnerSpecies: [<PartnerSpecies>{
-          partnerSpecies: 'AG',
+        partner_species: [<PartnerSpecies>{
+          partner_species: 'AG',
           taxa: [<Taxonomy>{
-            taxonomyId: 1234,
+            taxonomy_id: 1234,
             name: 'Anonpheles',
             rank: ''
           }]
@@ -208,7 +208,7 @@ describe('StudyEditComponent', () => {
       expect(put.request.body.code).toBe(testData.code);
 
       const arrayControls = put.request.body.partner_species[0].taxa;
-      expect(arrayControls[0].taxonomyId).toBe(testData.partnerSpecies[0].taxa[0].taxonomyId);
+      expect(arrayControls[0].taxonomy_id).toBe(testData.partner_species[0].taxa[0].taxonomy_id);
 
       backend.verify();
     })

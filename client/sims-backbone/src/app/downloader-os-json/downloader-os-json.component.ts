@@ -17,21 +17,21 @@ import * as FileSaver from 'file-saver';
 export class DownloaderOsJsonComponent implements CollectionViewer {
 
   originalSamples: OriginalSamples;
-  header: boolean = false;
-  separator: string = '\t';
-  csvString: string = '';
-  pageSize: number = 1000;
-  pageNumber: number = 0;
+  header = false;
+  separator = '\t';
+  csvString = '';
+  pageSize = 1000;
+  pageNumber = 0;
 
   _dataSource: OriginalSamplesSource;
   viewChange = new BehaviorSubject<{ start: number, end: number }>({ start: 0, end: Number.MAX_VALUE });
 
   @Input()
-  fileName: string = 'data.csv';
+  fileName = 'data.csv';
   @Input()
   filter: string;
   @Input()
-  downloaderName: string = 'Download JSON';
+  downloaderName = 'Download JSON';
   @Input()
   headers: string[] = [];
 
@@ -39,7 +39,7 @@ export class DownloaderOsJsonComponent implements CollectionViewer {
 
     this._dataSource = new OriginalSamplesSource(this.originalSamplesService);
 
-    let obs: Observable<OriginalSample[]> = this._dataSource.connect(this);
+    const obs: Observable<OriginalSample[]> = this._dataSource.connect(this);
 
 
     obs.subscribe({
@@ -64,23 +64,23 @@ export class DownloaderOsJsonComponent implements CollectionViewer {
 
   extractEvents(d: Array<OriginalSample>) {
 
-    if (d.length == 0) {
+    if (d.length === 0) {
       return;
     }
 
-    if (this.pageNumber == 0) {
+    if (this.pageNumber === 0) {
       this.originalSamples = <OriginalSamples>{};
-      this.originalSamples.originalSamples = [];
+      this.originalSamples.original_samples = [];
     }
 
-    this.originalSamples.originalSamples = this.originalSamples.originalSamples.concat(d);
+    this.originalSamples.original_samples = this.originalSamples.original_samples.concat(d);
 
 
     if ((this.pageNumber + 1) * this.pageSize < this._dataSource.originalSampleCount) {
       this.pageNumber++;
       this._dataSource.loadOriginalSamples(this.filter, 'asc', this.pageNumber, this.pageSize);
     } else {
-      this.originalSamples.attrTypes = this._dataSource.attrTypes;
+      this.originalSamples.attr_types = this._dataSource.attrTypes;
       this.originalSamples.count = this._dataSource.originalSampleCount;
       this.buildDownloader(JSON.stringify(this.originalSamples));
     }
@@ -88,7 +88,7 @@ export class DownloaderOsJsonComponent implements CollectionViewer {
   }
   private buildDownloader(data) {
 
-    var blob = new Blob([data], { type: 'application/json;charset=utf-8' });
+    const blob = new Blob([data], { type: 'application/json;charset=utf-8' });
 
     FileSaver.saveAs(blob, this.fileName);
 

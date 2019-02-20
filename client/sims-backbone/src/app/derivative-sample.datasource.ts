@@ -43,11 +43,11 @@ export class DerivativeSamplesSource implements DataSource<DerivativeSample> {
             .subscribe(result => {
                 const derivativeSamples = <DerivativeSamples>result;
                 this.derivativeSampleCount = derivativeSamples.count;
-                this.attrTypes = derivativeSamples.attrTypes;
+                this.attrTypes = derivativeSamples.attr_types;
 
-                this.originalSamples = { ...this.originalSamples, ...derivativeSamples.originalSamples };
+                this.originalSamples = { ...this.originalSamples, ...derivativeSamples.original_samples };
 
-                this.derivativeSamplesSubject.next(derivativeSamples.derivativeSamples);
+                this.derivativeSamplesSubject.next(derivativeSamples.derivative_samples);
             },
                 error => { console.log(error); }
             );

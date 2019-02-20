@@ -184,7 +184,7 @@ describe('DownloaderCsvComponent', () => {
       const req = backend.expectOne(result);
 
       const firstEntry = getTestSamplingEvents();
-      firstEntry.samplingEvents.pop();
+      firstEntry.sampling_events.pop();
       req.flush(firstEntry);
 
       expect(component.pageNumber).toBe(1);
@@ -196,7 +196,7 @@ describe('DownloaderCsvComponent', () => {
       const req1 = backend.expectOne(result1);
 
       const secondEntry = getTestSamplingEvents();
-      secondEntry.samplingEvents = [secondEntry.samplingEvents[1]];
+      secondEntry.sampling_events = [secondEntry.sampling_events[1]];
       req1.flush(secondEntry);
 
       // Finally, assert that there are no outstanding requests.

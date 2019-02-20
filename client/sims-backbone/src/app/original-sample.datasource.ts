@@ -43,11 +43,11 @@ export class OriginalSamplesSource implements DataSource<OriginalSample> {
             .subscribe(result => {
                 const originalSamples = <OriginalSamples>result;
                 this.originalSampleCount = originalSamples.count;
-                this.attrTypes = originalSamples.attrTypes;
+                this.attrTypes = originalSamples.attr_types;
 
-                this.samplingEvents = { ...this.samplingEvents, ...originalSamples.samplingEvents };
+                this.samplingEvents = { ...this.samplingEvents, ...originalSamples.sampling_events };
 
-                this.originalSamplesSubject.next(originalSamples.originalSamples);
+                this.originalSamplesSubject.next(originalSamples.original_samples);
             },
                 error => { console.log(error); }
             );

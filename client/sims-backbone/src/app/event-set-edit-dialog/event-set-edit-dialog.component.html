@@ -8,8 +8,8 @@
           [matAutocomplete]="eventSetList">
       </mat-form-field>
       <mat-autocomplete #eventSetList="matAutocomplete">
-        <mat-option *ngFor="let es of eventSets" [value]="es.eventSet_name">
-          {{es.eventSet_name}}
+        <mat-option *ngFor="let es of eventSets" [value]="es.event_set_name">
+          {{es.event_set_name}}
         </mat-option>
       </mat-autocomplete>
     </form>

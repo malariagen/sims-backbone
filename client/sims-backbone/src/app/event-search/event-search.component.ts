@@ -20,8 +20,8 @@ export class EventSearchComponent implements OnInit {
   samplingEvents: SamplingEvents;
   derivativeSamples: DerivativeSamples;
   assayData: AssayData;
-  attrType: string;
-  attrValue: string;
+  attr_type: string;
+  attr_value: string;
 
   options: string[];
 
@@ -36,7 +36,7 @@ export class EventSearchComponent implements OnInit {
     });
     this.warmUp();
 
-    this.attrType = 'oxfordId';
+    this.attr_type = 'roma_id';
     //this.attrValue = 'QS0167-C';
     this.search();
     
@@ -50,17 +50,17 @@ export class EventSearchComponent implements OnInit {
   }
 
   search() {
-    if (this.attrType && this.attrValue) {
-      this.sampleService.downloadSamplingEventsByOsAttr(this.attrType, this.attrValue).subscribe(samplingEvents => {
+    if (this.attr_type && this.attr_value) {
+      this.sampleService.downloadSamplingEventsByOsAttr(this.attr_type, this.attr_value).subscribe(samplingEvents => {
         this.samplingEvents = samplingEvents;
       });
-      this.originalSampleService.downloadOriginalSamplesByAttr(this.attrType, this.attrValue).subscribe(originalSamples => {
+      this.originalSampleService.downloadOriginalSamplesByAttr(this.attr_type, this.attr_value).subscribe(originalSamples => {
         this.originalSamples = originalSamples;
 
-        this.derivativeSampleService.downloadDerivativeSamplesByOsAttr(this.attrType, this.attrValue).subscribe(derivativeSamples => {
+        this.derivativeSampleService.downloadDerivativeSamplesByOsAttr(this.attr_type, this.attr_value).subscribe(derivativeSamples => {
           this.derivativeSamples = derivativeSamples;
 
-          this.assayDataService.downloadAssayDataByOsAttr(this.attrType, this.attrValue).subscribe(assayData => {
+          this.assayDataService.downloadAssayDataByOsAttr(this.attr_type, this.attr_value).subscribe(assayData => {
             this.assayData = assayData;
           });
         });

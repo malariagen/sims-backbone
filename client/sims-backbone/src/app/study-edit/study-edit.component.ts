@@ -29,7 +29,7 @@ export class StudyEditComponent implements OnInit {
 
   static initTaxaControl(taxaId) {
     return new FormGroup({
-      taxonomyId: new FormControl(taxaId, Validators.required)
+      taxonomy_id: new FormControl(taxaId, Validators.required)
     });
   }
 
@@ -61,16 +61,16 @@ export class StudyEditComponent implements OnInit {
         );
         const formIdents = <FormArray>this.studyForm.controls['partner_species'];
 
-        this.study.partnerSpecies.forEach(ident => {
+        this.study.partner_species.forEach(ident => {
           const identControl = new FormGroup({
-            partner_species: new FormControl(ident.partnerSpecies, Validators.required),
+            partner_species: new FormControl(ident.partner_species, Validators.required),
             taxa: this._fb.array([])
           });
 
           const taxasControl = <FormArray>identControl.controls['taxa'];
 
           ident.taxa.forEach(taxa => {
-            const taxaControl = StudyEditComponent.initTaxaControl(taxa.taxonomyId);
+            const taxaControl = StudyEditComponent.initTaxaControl(taxa.taxonomy_id);
             taxasControl.push(taxaControl);
           });
           formIdents.push(identControl);
