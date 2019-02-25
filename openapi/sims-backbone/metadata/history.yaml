@@ -23,9 +23,9 @@
           schema:
             type: string
             format: uuid
-        - name: recordTypes
+        - name: actionTypes
           in: query
-          description: if you want to restrict the search to a type of record
+          description: if you want to restrict the search to a type of record - downloads not usually recorded
           required: false
           schema:
             type: string

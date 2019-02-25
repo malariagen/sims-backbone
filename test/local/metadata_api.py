@@ -33,11 +33,11 @@ class LocalMetadataApi(BaseLocalApi):
 
         return self.create_response(ret, retcode, 'Taxonomy')
 
-    def download_history(self, record_type, record_id, record_types=None):  # noqa: E501
+    def download_history(self, record_type, record_id, action_types=None):  # noqa: E501
 
         (ret, retcode) = self.metadata_controller.download_history(record_type,
                                                                    record_id,
-                                                                   record_types,
+                                                                   action_types,
                                                                    self._user,
                                                                    self.auth_tokens())
         return self.create_response(ret, retcode, 'LogItems')

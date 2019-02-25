@@ -31,7 +31,7 @@ class LocationController(BaseController):
         :rtype: Location
         """
 
-        retcode = 200
+        retcode = 201
         loc = None
 
         try:

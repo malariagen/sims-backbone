@@ -36,7 +36,7 @@ class MetadataController(BaseController):
         return taxa, retcode
 
 
-    def download_history(self, record_type, record_id, record_types=None, user=None,
+    def download_history(self, record_type, record_id, action_types=None, user=None,
                          auths=None):  # noqa: E501
         """fetches the history of a record
 
@@ -58,7 +58,7 @@ class MetadataController(BaseController):
         get = History(self.get_connection())
 
         try:
-            log_items = get.get(record_type, record_id, record_types)
+            log_items = get.get(record_type, record_id, action_types)
         except MissingKeyException as dme:
             logging.getLogger(__name__).debug("download_history: {}".format(repr(dme)))
             log_items = str(dme)

@@ -27,7 +27,7 @@ def create_taxonomy(taxonomy, user=None, token_info=None):
     return metadata_controller.create_taxonomy(taxonomy, user,
                                                metadata_controller.token_info(token_info))
 
-def download_history(record_type, record_id, record_types=None, user=None,
+def download_history(record_type, record_id, action_types=None, user=None,
                      token_info=None):  # noqa: E501
     """fetches the history of a record
 
@@ -42,7 +42,7 @@ def download_history(record_type, record_id, record_types=None, user=None,
 
     :rtype: LogItems
     """
-    return metadata_controller.download_history(record_type, record_id, record_types, user,
+    return metadata_controller.download_history(record_type, record_id, action_types, user,
                                                 metadata_controller.token_info(token_info))
 
 def get_country_metadata(countryId, user=None, token_info=None):
