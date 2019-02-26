@@ -56,10 +56,6 @@ class SamplingEventGetByAttr():
 
                 sampling_events.attr_types = [attr_type]
 
-        #partner_name has a unique key
-        if sampling_events.count == 0:
-            raise MissingKeyException("SamplingEvent not found {} {}".format(attr_type,
-                                                                      attr_value))
 #Allow for when partner ident is used in different studies
 #        if sampling_events.count > 1:
 #            raise MissingKeyException("Too many sampling_events not found {} {}".format(attr_type,

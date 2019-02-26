@@ -34,7 +34,4 @@ class LocationGetByPartnerName():
                     locations.locations.append(location)
                     locations.count = locations.count + 1
 
-        if len(locations.locations) == 0:
-            raise MissingKeyException("Partner location not found {}".format(partner_id))
-
         return locations

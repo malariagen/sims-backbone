@@ -325,8 +325,14 @@ class TestIndividual(TestBase):
 
         try:
 
-            with pytest.raises(ApiException, status=404):
+            if api_factory.is_authorized(None):
                 fetched = api_instance.download_individuals_by_attr('','')
+
+                assert not fetched.individuals
+                assert fetched.count == 0
+            else:
+                with pytest.raises(ApiException, status=403):
+                    fetched = api_instance.download_individuals_by_attr('','')
 
         except ApiException as error:
             self.check_api_exception(api_factory, "IndividualApi->create_individual", error)

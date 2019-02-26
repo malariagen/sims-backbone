@@ -67,7 +67,6 @@ class IndividualProcessor(BaseEntity):
 
                     for found in found_events.individuals:
 
-                        #Only here if found - otherwise 404 exception
                         if existing and existing.individual_id != found.individual_id:
                             msg = ("Merging into {} using {}".format(existing.sampling_event_id,
                                                                      ident.attr_type), values)

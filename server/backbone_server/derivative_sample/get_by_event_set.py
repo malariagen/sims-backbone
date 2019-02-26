@@ -81,9 +81,5 @@ class DerivativeSamplesGetByEventSet():
                 for (attr_type,) in cursor:
                     derivative_samples.attr_types.append(attr_type)
 
-        if derivative_samples.count == 0:
-            msg = "DerivativeSamples not found for event set {}".format(
-                event_set_id)
-            raise MissingKeyException(msg)
 
         return derivative_samples

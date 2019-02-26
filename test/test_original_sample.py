@@ -232,9 +232,11 @@ class TestOriginalSample(TestBase):
             assert looked_up.count == 1
 
 
-            with pytest.raises(ApiException, status=404):
-                looked_up = api_instance.download_original_samples_by_attr('oxford', '123456',
-                                                                           study_name='9999')
+            looked_up = api_instance.download_original_samples_by_attr('oxford', '123456',
+                                                                       study_name='9999')
+
+            assert not looked_up.original_samples
+            assert looked_up.count == 0
 
             created1 = api_instance.create_original_sample(samp)
 

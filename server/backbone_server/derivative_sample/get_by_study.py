@@ -70,8 +70,4 @@ class DerivativeSamplesGetByStudy():
                     derivative_samples.attr_types.append(attr_type)
 
 
-        if derivative_samples.count == 0:
-            msg = "DerivativeSamples not found for study_name {}".format(study_name)
-            raise MissingKeyException(msg)
-
         return derivative_samples

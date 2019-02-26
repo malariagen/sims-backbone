@@ -1,8 +1,6 @@
 from openapi_server.models.original_sample import OriginalSample
 from openapi_server.models.original_samples import OriginalSamples
 
-from backbone_server.errors.missing_key_exception import MissingKeyException
-
 from backbone_server.original_sample.fetch import OriginalSampleFetch
 
 import logging
@@ -51,10 +49,6 @@ class OriginalSampleGetByAttr():
 
                 original_samples.attr_types = [attr_type]
 
-        #partner_name has a unique key
-        if original_samples.count == 0:
-            raise MissingKeyException("OriginalSample not found {} {}".format(attr_type,
-                                                                      attr_value))
 #Allow for when partner ident is used in different studies
 #        if original_samples.count > 1:
 #            raise MissingKeyException("Too many original_samples not found {} {}".format(attr_type,

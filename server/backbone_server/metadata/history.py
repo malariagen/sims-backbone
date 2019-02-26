@@ -1,6 +1,5 @@
 from openapi_server.models.log_items import LogItems
 from openapi_server.models.log_item import LogItem
-from backbone_server.errors.missing_key_exception import MissingKeyException
 from openapi_server.models.sampling_event import SamplingEvent  # noqa: E501
 from openapi_server.models.sampling_events import SamplingEvents  # noqa: E501
 from openapi_server import util

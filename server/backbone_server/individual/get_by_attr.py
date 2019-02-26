@@ -50,10 +50,6 @@ class IndividualGetByAttr():
 
                 individuals.attr_types = [attr_type]
 
-        #partner_name has a unique key
-        if individuals.count == 0:
-            raise MissingKeyException("Individual not found {} {}".format(attr_type,
-                                                                      attr_value))
 #Allow for when partner ident is used in different studies
 #        if individuals.count > 1:
 #            raise MissingKeyException("Too many individuals not found {} {}".format(attr_type,

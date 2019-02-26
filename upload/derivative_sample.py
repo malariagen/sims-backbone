@@ -69,12 +69,11 @@ class DerivativeSampleProcessor(BaseEntity):
                                                                               ident.attr_value)
 
                     for found in found_events.derivative_samples:
-                        #Only here if found - otherwise 404 exception
                         if existing and existing.derivative_sample_id != found.derivative_sample_id:
                             msg = ("Merging into {} using {}"
                                    .format(existing.sampling_event_id,
                                            ident.attr_type), values)
-                            print(msg)
+                            #print(msg)
                             found = self.merge_derivative_samples(existing, found, values)
                         existing = found
                         #print ("found: {} {}".format(samp, found))

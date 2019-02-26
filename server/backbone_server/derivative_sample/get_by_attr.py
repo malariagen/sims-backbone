@@ -43,10 +43,6 @@ class DerivativeSampleGetByAttr():
 
                 derivative_samples.attr_types = [attr_type]
 
-        #partner_name has a unique key
-        if derivative_samples.count == 0:
-            raise MissingKeyException("DerivativeSample not found {} {}".format(attr_type,
-                                                                      attr_value))
 #Allow for when partner ident is used in different studies
 #        if derivative_samples.count > 1:
 #            raise MissingKeyException("Too many derivative_samples not found {} {}".format(attr_type,

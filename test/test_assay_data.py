@@ -138,9 +138,9 @@ class TestAssayDatum(TestBase):
         try:
 
             if api_factory.is_authorized(None):
-                with pytest.raises(ApiException, status=404):
-                    results = api_instance.download_assay_data_by_os_attr('ds_os_attr',
-                                                                          'ad123456_404')
+                results = api_instance.download_assay_data_by_os_attr('ds_os_attr',
+                                                                      'ad123456_404')
+                assert not results.assay_data
             else:
                 with pytest.raises(ApiException, status=403):
                     results = api_instance.download_assay_data_by_os_attr('ds_os_attr',

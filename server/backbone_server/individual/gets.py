@@ -1,7 +1,6 @@
 from openapi_server.models.individual import Individual
 from openapi_server.models.individuals import Individuals
 from openapi_server.models.attr import Attr
-from backbone_server.errors.missing_key_exception import MissingKeyException
 
 from backbone_server.individual.fetch import IndividualFetch
 

@@ -42,10 +42,6 @@ class AssayDatumGetByOsAttr():
 
                 assay_data.attr_types = [attr_type]
 
-        #partner_name has a unique key
-        if assay_data.count == 0:
-            raise MissingKeyException("AssayDatum not found {} {}".format(attr_type,
-                                                                      attr_value))
 #Allow for when partner ident is used in different studies
 #        if assay_data.count > 1:
 #            raise MissingKeyException("Too many assay_data not found {} {}".format(attr_type,

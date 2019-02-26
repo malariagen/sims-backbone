@@ -182,12 +182,8 @@ class DerivativeSampleController(BaseController):
         retcode = 200
         samp = None
 
-        try:
-            propValue = urllib.parse.unquote_plus(propValue)
-            samp = get.get(propName, propValue)
-        except MissingKeyException as dme:
-            logging.getLogger(__name__).debug("download_derivativeSample: {}".format(repr(dme)))
-            retcode = 404
+        propValue = urllib.parse.unquote_plus(propValue)
+        samp = get.get(propName, propValue)
 
         return samp, retcode
 
@@ -211,12 +207,8 @@ class DerivativeSampleController(BaseController):
         retcode = 200
         samp = None
 
-        try:
-            propValue = urllib.parse.unquote_plus(propValue)
-            samp = get.get(propName, propValue)
-        except MissingKeyException as dme:
-            logging.getLogger(__name__).debug("download_derivativeSample: {}".format(repr(dme)))
-            retcode = 404
+        propValue = urllib.parse.unquote_plus(propValue)
+        samp = get.get(propName, propValue)
 
         return samp, retcode
 

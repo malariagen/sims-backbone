@@ -1,6 +1,5 @@
 from openapi_server.models.attr import Attr
 from openapi_server.models.assay_datum import AssayDatum
-from backbone_server.errors.missing_key_exception import MissingKeyException
 
 from backbone_server.derivative_sample.fetch import DerivativeSampleFetch
 

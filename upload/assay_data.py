@@ -59,12 +59,11 @@ class AssayDataProcessor(BaseEntity):
                                                                               ident.attr_value)
 
                     for found in found_events.assay_data:
-                        #Only here if found - otherwise 404 exception
                         if existing and existing.assay_datum_id != found.assay_datum_id:
                             msg = ("Merging into {} using {}"
                                    .format(existing.sampling_event_id,
                                            ident.attr_type), values)
-                            print(msg)
+                            #print(msg)
                             found = self.merge_assay_data(existing, found, values)
                         existing = found
                         #print ("found: {} {}".format(samp, found))

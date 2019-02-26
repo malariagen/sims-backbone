@@ -181,12 +181,8 @@ class OriginalSampleController(BaseController):
         retcode = 200
         samp = None
 
-        try:
-            propValue = urllib.parse.unquote_plus(propValue)
-            samp = get.get(propName, propValue, study_name)
-        except MissingKeyException as dme:
-            logging.getLogger(__name__).debug("download_originalSample: {}".format(repr(dme)))
-            retcode = 404
+        propValue = urllib.parse.unquote_plus(propValue)
+        samp = get.get(propName, propValue, study_name)
 
         return samp, retcode
 

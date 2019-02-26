@@ -195,9 +195,11 @@ class TestSample(TestBase):
             assert looked_up.count == 1
 
 
-            with pytest.raises(ApiException, status=404):
-                looked_up = api_instance.download_sampling_events_by_attr('oxford', '123456',
-                                                                          study_name='9999')
+            looked_up = api_instance.download_sampling_events_by_attr('oxford', '123456',
+                                                                      study_name='9999')
+
+            assert not looked_up.sampling_events
+            assert looked_up.count == 0
 
             created1 = api_instance.create_sampling_event(samp)
 
@@ -1045,10 +1047,11 @@ class TestSample(TestBase):
 
             assert ffetched == results1
 
-            with pytest.raises(ApiException, status=404):
-                results2 = se_api_instance.download_sampling_events_by_os_attr('oxford', '12345678',
-                                                                               study_name='1027-MD-UP')
+            results2 = se_api_instance.download_sampling_events_by_os_attr('oxford', '12345678',
+                                                                           study_name='1027-MD-UP')
 
+            assert not results2.sampling_events
+            assert results2.count == 0
 
             se_api_instance.delete_sampling_event(created_se.sampling_event_id)
 

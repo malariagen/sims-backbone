@@ -113,8 +113,6 @@ class OriginalSampleProcessor(BaseEntity):
                                 else:
                                     continue
 
-
-                        #Only here if found - otherwise 404 exception
                         if existing and existing.original_sample_id != found.original_sample_id:
                             msg = ("Merging into {} using {}"
                                             .format(existing.sampling_event_id,

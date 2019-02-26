@@ -75,7 +75,4 @@ class DerivativeSamplesGetByTaxa():
                     derivative_samples.attr_types.append(attr_type)
 
 
-        if derivative_samples.count == 0:
-            raise MissingKeyException("DerivativeSamples not found for taxa {}".format(taxa_id))
-
         return derivative_samples

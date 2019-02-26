@@ -13,7 +13,7 @@ class TestLocation(TestBase):
     _location_number = 0.1234
 
     def get_next_location(self):
-    
+
         loc = openapi_client.Location(None)
 
         loc.latitude = self._location_number
@@ -303,8 +303,9 @@ class TestLocation(TestBase):
         try:
 
             if api_factory.is_authorized(None):
-                with pytest.raises(ApiException, status=404):
-                    looked_up_locs = api_instance.download_partner_location('404')
+                looked_up_locs = api_instance.download_partner_location('404')
+
+                assert not looked_up_locs.locations
             else:
                 with pytest.raises(ApiException, status=403):
                     looked_up_locs = api_instance.download_partner_location('404')

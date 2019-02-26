@@ -1,7 +1,6 @@
 from openapi_server.models.attr import Attr
 from openapi_server.models.taxonomy import Taxonomy
 from openapi_server.models.original_sample import OriginalSample
-from backbone_server.errors.missing_key_exception import MissingKeyException
 
 from backbone_server.sampling_event.fetch import SamplingEventFetch
 
