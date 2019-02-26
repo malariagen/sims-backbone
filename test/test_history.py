@@ -121,8 +121,7 @@ class TestHistory(TestBase):
             assert len(location_history.log_items) == 1
 
             for log_item in location_history.log_items:
-                loc = Location.from_dict(json.loads(log_item.output_value,
-                                                        cls=JSONDecoder))
+                loc = log_item.output_value
                 assert loc.location_id == created_se.location_id
                 assert log_item.action == 'create_location'
                 assert log_item.result == 201
@@ -147,8 +146,7 @@ class TestHistory(TestBase):
             assert len(se_history.log_items) == 1
 
             for log_item in se_history.log_items:
-                se = SamplingEvent.from_dict(json.loads(log_item.output_value,
-                                                        cls=JSONDecoder))
+                se = log_item.output_value
                 assert se.sampling_event_id == created_se.sampling_event_id
                 assert log_item.action == 'create_sampling_event'
                 assert log_item.result == 201
@@ -173,8 +171,7 @@ class TestHistory(TestBase):
             assert len(os_history.log_items) == 2
 
             for log_item in os_history.log_items:
-                se = OriginalSample.from_dict(json.loads(log_item.output_value,
-                                                        cls=JSONDecoder))
+                se = log_item.output_value
                 assert se.original_sample_id == created_os.original_sample_id
                 assert log_item.action_date == date.today()
 
@@ -204,8 +201,7 @@ class TestHistory(TestBase):
             samples = []
 
             for log_item in ds_history.log_items:
-                ds = DerivativeSample.from_dict(json.loads(log_item.output_value,
-                                                        cls=JSONDecoder))
+                ds = log_item.output_value
                 samples.append(ds)
                 assert log_item.action == 'create_derivative_sample'
                 assert log_item.result == 201
@@ -304,8 +300,7 @@ class TestHistory(TestBase):
             assert len(location_history.log_items) == 1
 
             for log_item in location_history.log_items:
-                loc = Location.from_dict(json.loads(log_item.output_value,
-                                                    cls=JSONDecoder))
+                loc = log_item.output_value
                 assert loc.location_id == created_se.location_id
                 assert log_item.action == 'create_location'
                 assert log_item.result == 201
@@ -336,8 +331,7 @@ class TestHistory(TestBase):
             assert len(se_history.log_items) == 1
 
             for log_item in se_history.log_items:
-                se = SamplingEvent.from_dict(json.loads(log_item.output_value,
-                                                        cls=JSONDecoder))
+                se = log_item.output_value
                 assert se.sampling_event_id == created_se.sampling_event_id
                 assert log_item.action == 'create_sampling_event'
                 assert log_item.result == 201
@@ -368,8 +362,7 @@ class TestHistory(TestBase):
             assert len(os_history.log_items) == 2
 
             for log_item in os_history.log_items:
-                se = OriginalSample.from_dict(json.loads(log_item.output_value,
-                                                         cls=JSONDecoder))
+                se = log_item.output_value
                 assert se.original_sample_id == created_os.original_sample_id
                 assert log_item.action_date == date.today()
 
@@ -405,8 +398,7 @@ class TestHistory(TestBase):
             samples = []
 
             for log_item in ds_history.log_items:
-                ds = DerivativeSample.from_dict(json.loads(log_item.output_value,
-                                                           cls=JSONDecoder))
+                ds = log_item.output_value
                 samples.append(ds)
                 assert log_item.action == 'create_derivative_sample'
                 assert log_item.result == 201

@@ -37,10 +37,7 @@ class History():
                     log_item = LogItem()
                     log_item.action = action_id
                     log_item.input_value = str(input_value)
-                    log_item.output_value = json.dumps(output_value,
-                                                       cls=JSONEncoder)
-#                    if record_type == 'sampling_event':
-#                        log_item.output_value = SamplingEvent.from_dict(output_value)
+                    log_item.output_value = output_value
                     log_item.action_date = action_date
                     log_item.result = result_code
                     resp.log_items.append(log_item)
@@ -58,10 +55,7 @@ class History():
                     log_item = LogItem()
                     log_item.action = action_id
                     log_item.input_value = str(input_value)
-                    log_item.output_value = json.dumps(output_value,
-                                                       cls=JSONEncoder)
-#                    if record_type == 'sampling_event':
-#                        log_item.output_value = SamplingEvent.from_dict(output_value)
+                    log_item.output_value = output_value
                     log_item.action_date = action_date
                     log_item.result = result_code
                     resp.log_items.append(log_item)

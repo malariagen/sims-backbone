@@ -7,6 +7,12 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/LogItem"
+    OutputValue:
+      oneOf:
+        - $ref: './sampling_event.yaml#/components/schemas/SamplingEvent'
+        - $ref: './original_sample.yaml#/components/schemas/OriginalSample'
+        - $ref: './derivative_sample.yaml#/components/schemas/DerivativeSample'
+        - $ref: './location.yaml#/components/schemas/Location'
     LogItem:
       type: object
       properties:
@@ -20,10 +26,6 @@ components:
         input_values:
           type: string
         output_value:
-          type: string
-          # Doesn't work yet...
-          # oneOf:
-          #   - $ref: './sims-backbone/definitions/sampling_event.yaml#/components/schemas/SamplingEvent'
-          #   - $ref: './sims-backbone/definitions/original_sample.yaml#/components/schemas/OriginalSample'
+          $ref: '#/components/schemas/OutputValue'
         result:
           type: integer
