@@ -26,12 +26,12 @@ from backbone_server.controllers.decorators import apply_decorators
 @apply_decorators
 class OriginalSampleController(BaseController):
 
-    def create_original_sample(self, originalSample, user=None, auths=None):
+    def create_original_sample(self, original_sample, user=None, auths=None):
         """
         create_original_sample
         Create a originalSample
-        :param originalSample:
-        :type originalSample: dict | bytes
+        :param original_sample:
+        :type original_sample: dict | bytes
 
         :rtype: OriginalSample
         """
@@ -42,19 +42,21 @@ class OriginalSampleController(BaseController):
         try:
             post = OriginalSamplePost(self.get_connection())
 
-            samp = post.post(originalSample)
+            samp = post.post(original_sample)
         except DuplicateKeyException as dke:
-            logging.getLogger(__name__).debug("create_originalSample: {}".format(repr(dke)))
+            logging.getLogger(__name__).debug(
+                "create_originalSample: {}".format(repr(dke)))
             retcode = 422
+            samp = str(dke)
 
         return samp, retcode
 
-    def delete_original_sample(self, originalSampleId, user=None, auths=None):
+    def delete_original_sample(self, original_sample_id, user=None, auths=None):
         """
         deletes an originalSample
 
-        :param originalSampleId: ID of originalSample to fetch
-        :type originalSampleId: str
+        :param original_sample_id: ID of originalSample to fetch
+        :type original_sample_id: str
 
         :rtype: None
         """
@@ -64,19 +66,20 @@ class OriginalSampleController(BaseController):
         retcode = 200
 
         try:
-            delete.delete(originalSampleId)
+            delete.delete(original_sample_id)
         except MissingKeyException as dme:
-            logging.getLogger(__name__).debug("delete_originalSample: {}".format(repr(dme)))
+            logging.getLogger(__name__).debug(
+                "delete_originalSample: {}".format(repr(dme)))
             retcode = 404
 
         return None, retcode
 
-    def download_original_sample(self, originalSampleId, user=None, auths=None):
+    def download_original_sample(self, original_sample_id, user=None, auths=None):
         """
         fetches an originalSample
 
-        :param originalSampleId: ID of originalSample to fetch
-        :type originalSampleId: str
+        :param original_sample_id: ID of originalSample to fetch
+        :type original_sample_id: str
 
         :rtype: OriginalSample
         """
@@ -87,10 +90,12 @@ class OriginalSampleController(BaseController):
         samp = None
 
         try:
-            samp = get.get(originalSampleId)
+            samp = get.get(original_sample_id)
         except MissingKeyException as dme:
-            logging.getLogger(__name__).debug("download_originalSample: {}".format(repr(dme)))
+            logging.getLogger(__name__).debug(
+                "download_originalSample: {}".format(repr(dme)))
             retcode = 404
+            samp = str(dme)
 
         return samp, retcode
 
@@ -164,14 +169,14 @@ class OriginalSampleController(BaseController):
 
         return samp, retcode
 
-    def download_original_samples_by_attr(self, propName, propValue, study_name=None, user=None, auths=None):
+    def download_original_samples_by_attr(self, prop_name, prop_value, study_name=None, user=None, auths=None):
         """
         fetches a originalSample by property value
 
-        :param propName: name of property to search
-        :type propName: str
-        :param propValue: matching value of property to search
-        :type propValue: str
+        :param prop_name: name of property to search
+        :type prop_name: str
+        :param prop_value: matching value of property to search
+        :type prop_value: str
 
         :rtype: OriginalSample
         """
@@ -181,17 +186,17 @@ class OriginalSampleController(BaseController):
         retcode = 200
         samp = None
 
-        propValue = urllib.parse.unquote_plus(propValue)
-        samp = get.get(propName, propValue, study_name)
+        prop_value = urllib.parse.unquote_plus(prop_value)
+        samp = get.get(prop_name, prop_value, study_name)
 
         return samp, retcode
 
-    def download_original_samples_by_location(self, locationId, start, count, user=None, auths=None):
+    def download_original_samples_by_location(self, location_id, start, count, user=None, auths=None):
         """
         fetches originalSamples for a location
 
-        :param locationId: location
-        :type locationId: str
+        :param location_id: location
+        :type location_id: str
 
         :rtype: OriginalSamples
         """
@@ -202,19 +207,21 @@ class OriginalSampleController(BaseController):
         samp = None
 
         try:
-            samp = get.get(locationId, start, count)
+            samp = get.get(location_id, start, count)
         except MissingKeyException as dme:
-            logging.getLogger(__name__).debug("download_originalSample: {}".format(repr(dme)))
+            logging.getLogger(__name__).debug(
+                "download_originalSample: {}".format(repr(dme)))
             retcode = 404
+            samp = str(dme)
 
         return samp, retcode
 
-    def download_original_samples_by_study(self, studyName, start, count, user=None, auths=None):
+    def download_original_samples_by_study(self, study_name, start, count, user=None, auths=None):
         """
         fetches originalSamples for a study
 
-        :param studyName: location
-        :type studyName: str
+        :param study_name: location
+        :type study_name: str
 
         :rtype: OriginalSamples
         """
@@ -225,19 +232,21 @@ class OriginalSampleController(BaseController):
         samp = None
 
         try:
-            samp = get.get(studyName, start, count)
+            samp = get.get(study_name, start, count)
         except MissingKeyException as dme:
-            logging.getLogger(__name__).debug("download_originalSample: {}".format(repr(dme)))
+            logging.getLogger(__name__).debug(
+                "download_originalSample: {}".format(repr(dme)))
             retcode = 404
+            samp = str(dme)
 
         return samp, retcode
 
-    def download_original_samples_by_taxa(self, taxaId, start, count, user=None, auths=None):
+    def download_original_samples_by_taxa(self, taxa_id, start, count, user=None, auths=None):
         """
         fetches originalSamples for a taxa
 
-        :param taxaId: taxa
-        :type taxaId: str
+        :param taxa_id: taxa
+        :type taxa_id: str
 
         :rtype: OriginalSamples
         """
@@ -248,11 +257,12 @@ class OriginalSampleController(BaseController):
         samp = None
 
         try:
-            samp = get.get(taxaId, start, count)
+            samp = get.get(taxa_id, start, count)
         except MissingKeyException as dme:
             logging.getLogger(__name__).debug(
                 "download_original_samples_by_taxa: {}".format(repr(dme)))
             retcode = 404
+            samp = str(dme)
 
         return samp, retcode
 
@@ -277,22 +287,26 @@ class OriginalSampleController(BaseController):
 
             samp = merge.merge(into, merged)
         except IncompatibleException as dke:
-            logging.getLogger(__name__).debug("merge_originalSample: {}".format(repr(dke)))
+            logging.getLogger(__name__).debug(
+                "merge_originalSample: {}".format(repr(dke)))
             retcode = 422
+            samp = str(dke)
         except MissingKeyException as dme:
-            logging.getLogger(__name__).debug("merge_originalSample: {}".format(repr(dme)))
+            logging.getLogger(__name__).debug(
+                "merge_originalSample: {}".format(repr(dme)))
             retcode = 404
+            samp = str(dme)
 
         return samp, retcode
 
-    def update_original_sample(self, originalSampleId, originalSample, user=None, auths=None):
+    def update_original_sample(self, original_sample_id, original_sample, user=None, auths=None):
         """
         updates an originalSample
 
-        :param originalSampleId: ID of originalSample to update
-        :type originalSampleId: str
-        :param originalSample:
-        :type originalSample: dict | bytes
+        :param original_sample_id: ID of originalSample to update
+        :type original_sample_id: str
+        :param original_sample:
+        :type original_sample: dict | bytes
 
         :rtype: OriginalSample
         """
@@ -303,12 +317,16 @@ class OriginalSampleController(BaseController):
         try:
             put = OriginalSamplePut(self.get_connection())
 
-            samp = put.put(originalSampleId, originalSample)
+            samp = put.put(original_sample_id, original_sample)
         except DuplicateKeyException as dke:
-            logging.getLogger(__name__).debug("update_originalSample: {}".format(repr(dke)))
+            logging.getLogger(__name__).debug(
+                "update_originalSample: {}".format(repr(dke)))
             retcode = 422
+            samp = str(dke)
         except MissingKeyException as dme:
-            logging.getLogger(__name__).debug("update_originalSample: {}".format(repr(dme)))
+            logging.getLogger(__name__).debug(
+                "update_originalSample: {}".format(repr(dme)))
             retcode = 404
+            samp = str(dme)
 
         return samp, retcode

@@ -5,13 +5,13 @@
       description: ""
       operationId: createEventSetNote
       parameters:
-        - name: eventSetId
+        - name: event_set_id
           in: path
           description: ID of eventSet to modify
           required: true
           schema:
             type: string
-        - name: noteId
+        - name: note_id
           in: path
           description: ID of note to modify in the set
           required: true
@@ -31,13 +31,13 @@
       description: ""
       operationId: updateEventSetNote
       parameters:
-        - name: eventSetId
+        - name: event_set_id
           in: path
           description: ID of eventSet to modify
           required: true
           schema:
             type: string
-        - name: noteId
+        - name: note_id
           in: path
           description: ID of note to modify in the set
           required: true
@@ -57,13 +57,13 @@
       description: ""
       operationId: deleteEventSetNote
       parameters:
-        - name: eventSetId
+        - name: event_set_id
           in: path
           description: ID of eventSet to modify
           required: true
           schema:
             type: string
-        - name: noteId
+        - name: note_id
           in: path
           description: ID of note to remove from the set
           required: true

@@ -5,7 +5,7 @@
       description: ""
       operationId: downloadHistory
       parameters:
-        - name: recordType
+        - name: record_type
           in: path
           description: type
           required: true
@@ -16,14 +16,14 @@
               - sampling_event
               - original_sample
               - derivative_sample
-        - name: recordId
+        - name: record_id
           in: path
           description: the id (uuid) of the record for which you want the history
           required: true
           schema:
             type: string
             format: uuid
-        - name: actionTypes
+        - name: action_types
           in: query
           description: if you want to restrict the search to a type of record - downloads not usually recorded
           required: false

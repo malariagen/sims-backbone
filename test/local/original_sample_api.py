@@ -6,9 +6,10 @@ from openapi_server import util
 
 import logging
 
-from backbone_server.controllers.original_sample_controller  import OriginalSampleController
+from backbone_server.controllers.original_sample_controller import OriginalSampleController
 
 from local.base_local_api import BaseLocalApi
+
 
 class LocalOriginalSampleApi(BaseLocalApi):
 
@@ -18,72 +19,70 @@ class LocalOriginalSampleApi(BaseLocalApi):
 
         self.original_sample_controller = OriginalSampleController()
 
-    def create_original_sample(self, samplingEvent):
+    def create_original_sample(self, original_sample):
         """
         create_original_sample
         Create a samplingEvent
-        :param samplingEvent: 
-        :type samplingEvent: dict | bytes
+        :param original_sample:
+        :type original_sample: dict | bytes
 
         :rtype: OriginalSample
         """
 
-        (ret, retcode) = self.original_sample_controller.create_original_sample(samplingEvent, self._user,
-                                                               self.auth_tokens())
+        (ret, retcode) = self.original_sample_controller.create_original_sample(original_sample, self._user,
+                                                                                self.auth_tokens())
 
         return self.create_response(ret, retcode, 'OriginalSample')
 
-    def delete_original_sample(self, samplingEventId):
+    def delete_original_sample(self, original_sample_id):
         """
-        deletes an samplingEvent
-        
-        :param samplingEventId: ID of samplingEvent to fetch
-        :type samplingEventId: str
+        deletes an original_sample_id
+
+        :param original_sample_id: ID of samplingEvent to fetch
+        :type original_sample_id: str
 
         :rtype: None
         """
-        (ret, retcode) = self.original_sample_controller.delete_original_sample(samplingEventId, self._user,
-                                                               self.auth_tokens())
+        (ret, retcode) = self.original_sample_controller.delete_original_sample(original_sample_id, self._user,
+                                                                                self.auth_tokens())
 
         return self.create_response(ret, retcode)
 
-
-    def download_original_sample(self, samplingEventId):
+    def download_original_sample(self, original_sample_id):
         """
         fetches an samplingEvent
-        
-        :param samplingEventId: ID of samplingEvent to fetch
-        :type samplingEventId: str
+
+        :param original_sample_id: ID of samplingEvent to fetch
+        :type original_sample_id: str
 
         :rtype: OriginalSample
         """
-        (ret, retcode) = self.original_sample_controller.download_original_sample(samplingEventId, self._user,
-                                                                 self.auth_tokens())
+        (ret, retcode) = self.original_sample_controller.download_original_sample(original_sample_id, self._user,
+                                                                                  self.auth_tokens())
 
         return self.create_response(ret, retcode, 'OriginalSample')
 
     def download_original_samples(self, search_filter=None, start=None, count=None):
         """
         fetches an samplingEvent
-        
+
         :param samplingEventId: ID of samplingEvent to fetch
         :type samplingEventId: str
 
         :rtype: OriginalSample
         """
         (ret, retcode) = self.original_sample_controller.download_original_samples(search_filter, start,
-                                                                                 count, self._user,
-                                                                                 self.auth_tokens())
+                                                                                   count, self._user,
+                                                                                   self.auth_tokens())
 
         return self.create_response(ret, retcode, 'OriginalSamples')
 
-
-    def download_original_samples_by_event_set(self, eventSetId, start=None, count=None):
+    def download_original_samples_by_event_set(self, event_set_id, start=None, count=None):
         """
         fetches samplingEvents in a given event set
-        
-        :param eventSetId: Event Set name
-        :type eventSetId: str
+
+        :param event_set_id: Event Set name
+        :type event_set_id: str
         :param start: for pagination start the result set at a record x
         :type start: int
         :param count: for pagination the number of entries to return
@@ -91,36 +90,36 @@ class LocalOriginalSampleApi(BaseLocalApi):
 
         :rtype: OriginalSamples
         """
-        (ret, retcode) = self.original_sample_controller.download_original_samples_by_event_set(eventSetId,start,
-                                                                               count, self._user,
-                                                                           self.auth_tokens())
+        (ret, retcode) = self.original_sample_controller.download_original_samples_by_event_set(event_set_id, start,
+                                                                                                count, self._user,
+                                                                                                self.auth_tokens())
 
         return self.create_response(ret, retcode, 'OriginalSamples')
 
-    def download_original_samples_by_attr(self, propName, propValue, study_name=None):
+    def download_original_samples_by_attr(self, prop_name, prop_value, study_name=None):
         """
         fetches a samplingEvent by property value
-        
-        :param propName: name of property to search
-        :type propName: str
-        :param propValue: matching value of property to search
-        :type propValue: str
+
+        :param prop_name: name of property to search
+        :type prop_name: str
+        :param prop_value: matching value of property to search
+        :type prop_value: str
 
         :rtype: OriginalSamples
         """
-        (ret, retcode) = self.original_sample_controller.download_original_samples_by_attr(propName, propValue,
-                                                                               study_name,
-                                                                               self._user,
-                                                                               self.auth_tokens())
+        (ret, retcode) = self.original_sample_controller.download_original_samples_by_attr(prop_name, prop_value,
+                                                                                           study_name,
+                                                                                           self._user,
+                                                                                           self.auth_tokens())
 
         return self.create_response(ret, retcode, 'OriginalSamples')
 
-    def download_original_samples_by_location(self, locationId, start=None, count=None):
+    def download_original_samples_by_location(self, location_id, start=None, count=None):
         """
         fetches samplingEvents for a location
-        
-        :param locationId: location
-        :type locationId: str
+
+        :param location_id: location
+        :type location_id: str
         :param start: for pagination start the result set at a record x
         :type start: int
         :param count: for pagination the number of entries to return
@@ -128,18 +127,18 @@ class LocalOriginalSampleApi(BaseLocalApi):
 
         :rtype: OriginalSamples
         """
-        (ret, retcode) = self.original_sample_controller.download_original_samples_by_location(locationId, start,
-                                                                              count, self._user,
-                                                                              self.auth_tokens())
+        (ret, retcode) = self.original_sample_controller.download_original_samples_by_location(location_id, start,
+                                                                                               count, self._user,
+                                                                                               self.auth_tokens())
 
         return self.create_response(ret, retcode, 'OriginalSamples')
 
-    def download_original_samples_by_study(self, studyName, start=None, count=None):
+    def download_original_samples_by_study(self, study_name, start=None, count=None):
         """
         fetches samplingEvents for a study
-        
-        :param studyName: 4 digit study code
-        :type studyName: str
+
+        :param study_name: 4 digit study code
+        :type study_name: str
         :param start: for pagination start the result set at a record x
         :type start: int
         :param count: for pagination the number of entries to return
@@ -147,18 +146,18 @@ class LocalOriginalSampleApi(BaseLocalApi):
 
         :rtype: OriginalSamples
         """
-        (ret, retcode) = self.original_sample_controller.download_original_samples_by_study(studyName, start,
-                                                                           count, self._user,
-                                                                           self.auth_tokens())
+        (ret, retcode) = self.original_sample_controller.download_original_samples_by_study(study_name, start,
+                                                                                            count, self._user,
+                                                                                            self.auth_tokens())
 
         return self.create_response(ret, retcode, 'OriginalSamples')
 
-    def download_original_samples_by_taxa(self, taxaId, start=None, count=None):
+    def download_original_samples_by_taxa(self, taxa_id, start=None, count=None):
         """
         fetches samplingEvents for a given taxonomy classification code
-        
-        :param taxaId: NCBI taxonomy code
-        :type taxaId: str
+
+        :param taxa_id: NCBI taxonomy code
+        :type taxa_id: str
         :param start: for pagination start the result set at a record x
         :type start: int
         :param count: for pagination the number of entries to return
@@ -166,26 +165,25 @@ class LocalOriginalSampleApi(BaseLocalApi):
 
         :rtype: OriginalSamples
         """
-        (ret, retcode) = self.original_sample_controller.download_original_samples_by_taxa(taxaId, start,
-                                                                          count, self._user,
-                                                                           self.auth_tokens())
+        (ret, retcode) = self.original_sample_controller.download_original_samples_by_taxa(taxa_id, start,
+                                                                                           count, self._user,
+                                                                                           self.auth_tokens())
 
         return self.create_response(ret, retcode, 'OriginalSamples')
 
-
-    def update_original_sample(self, samplingEventId, samplingEvent):
+    def update_original_sample(self, sampling_event_id, sampling_event):
         """
         updates an samplingEvent
-        
-        :param samplingEventId: ID of samplingEvent to update
-        :type samplingEventId: str
-        :param samplingEvent: 
-        :type samplingEvent: dict | bytes
+
+        :param sampling_event_id: ID of samplingEvent to update
+        :type sampling_event_id: str
+        :param sampling_event:
+        :type sampling_event: dict | bytes
 
         :rtype: OriginalSample
         """
-        (ret, retcode) = self.original_sample_controller.update_original_sample(samplingEventId,
-                                                                                samplingEvent,
+        (ret, retcode) = self.original_sample_controller.update_original_sample(sampling_event_id,
+                                                                                sampling_event,
                                                                                 self._user,
                                                                                 self.auth_tokens())
 
@@ -194,7 +192,7 @@ class LocalOriginalSampleApi(BaseLocalApi):
     def merge_original_samples(self, samplingEventId, samplingEventId2):
         """
         merges OriginalSamples
-        
+
         :param samplingEventId1: ID of samplingEvent to update
         :type samplingEventId1: str
         :param samplingEventId2: ID of samplingEvent to update
@@ -208,4 +206,3 @@ class LocalOriginalSampleApi(BaseLocalApi):
                                                                                 self.auth_tokens())
 
         return self.create_response(ret, retcode, 'OriginalSample')
-

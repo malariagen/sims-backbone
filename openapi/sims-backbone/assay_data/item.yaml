@@ -5,7 +5,7 @@
       description: ""
       operationId: downloadAssayDatum
       parameters:
-        - name: assayDatumId
+        - name: assay_datum_id
           in: path
           description: ID of AssayDatum to fetch
           required: true
@@ -25,7 +25,7 @@
       description: ""
       operationId: updateAssayDatum
       parameters:
-        - name: assayDatumId
+        - name: assay_datum_id
           in: path
           description: ID of AssayDatum to update
           required: true
@@ -57,7 +57,7 @@
       description: ""
       operationId: deleteAssayDatum
       parameters:
-        - name: assayDatumId
+        - name: assay_datum_id
           in: path
           description: ID of AssayDatum to fetch
           required: true

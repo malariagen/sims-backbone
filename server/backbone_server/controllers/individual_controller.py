@@ -41,13 +41,14 @@ class IndividualController(BaseController):
 
             loc = post.post(individual)
         except DuplicateKeyException as dke:
-            logging.getLogger(__name__).debug("create_individual: {}".format(repr(dke)))
+            logging.getLogger(__name__).debug(
+                "create_individual: {}".format(repr(dke)))
             retcode = 422
             loc = str(dke)
 
         return loc, retcode
 
-    def delete_individual(self, individualId, user=None, auths=None):
+    def delete_individual(self, individual_id, user=None, auths=None):
         """
         deletes an individual
 
@@ -62,14 +63,15 @@ class IndividualController(BaseController):
         retcode = 200
 
         try:
-            delete.delete(individualId)
+            delete.delete(individual_id)
         except MissingKeyException as dme:
-            logging.getLogger(__name__).debug("delete_individual: {}".format(repr(dme)))
+            logging.getLogger(__name__).debug(
+                "delete_individual: {}".format(repr(dme)))
             retcode = 404
 
         return None, retcode
 
-    def download_individual(self, individualId, user=None, auths=None):
+    def download_individual(self, individual_id, user=None, auths=None):
         """
         fetches an individual
 
@@ -85,21 +87,22 @@ class IndividualController(BaseController):
         loc = None
 
         try:
-            loc = get.get(individualId)
+            loc = get.get(individual_id)
         except MissingKeyException as dme:
-            logging.getLogger(__name__).debug("download_individual: {}".format(repr(dme)))
+            logging.getLogger(__name__).debug(
+                "download_individual: {}".format(repr(dme)))
             retcode = 404
             loc = str(dme)
 
         return loc, retcode
 
-    def download_individuals(self, studyName=None, start=None, count=None, orderby=None, user=None,
-                           auths=None):
+    def download_individuals(self, study_name=None, start=None, count=None, orderby=None, user=None,
+                             auths=None):
         """
         fetches individuals
 
-        :param studyName: restrict to a particular study
-        :type studyName: str
+        :param study_name: restrict to a particular study
+        :type study_name: str
         :param start: for pagination start the result set at a record x
         :type start: int
         :param count: for pagination the number of entries to return
@@ -115,11 +118,11 @@ class IndividualController(BaseController):
         retcode = 200
         loc = None
 
-        loc = get.get(studyName, start, count, orderby)
+        loc = get.get(study_name, start, count, orderby)
 
         return loc, retcode
 
-    def download_individuals_by_attr(self, propName, propValue, studyName=None, user=None, auths=None):
+    def download_individuals_by_attr(self, prop_name, prop_value, study_name=None, user=None, auths=None):
         """
         fetches a individual by property value
 
@@ -137,12 +140,13 @@ class IndividualController(BaseController):
         samp = None
 
         try:
-            propValue = urllib.parse.unquote_plus(propValue)
-            samp = get.get(propName, propValue, studyName)
+            prop_value = urllib.parse.unquote_plus(prop_value)
+            samp = get.get(prop_name, prop_value, study_name)
         except MissingKeyException as dme:
-            logging.getLogger(__name__).debug("download_individual_by_attr: {}".format(repr(dme)))
+            logging.getLogger(__name__).debug(
+                "download_individual_by_attr: {}".format(repr(dme)))
             retcode = 404
-            loc = str(dme)
+            samp = str(dme)
 
         return samp, retcode
 
@@ -167,18 +171,19 @@ class IndividualController(BaseController):
 
             samp = merge.merge(into, merged)
         except IncompatibleException as dke:
-            logging.getLogger(__name__).debug("merge_individual: {}".format(repr(dke)))
+            logging.getLogger(__name__).debug(
+                "merge_individual: {}".format(repr(dke)))
             retcode = 422
-            loc = str(dke)
+            samp = str(dke)
         except MissingKeyException as dme:
-            logging.getLogger(__name__).debug("merge_individual: {}".format(repr(dme)))
+            logging.getLogger(__name__).debug(
+                "merge_individual: {}".format(repr(dme)))
             retcode = 404
-            loc = str(dme)
+            samp = str(dme)
 
         return samp, retcode
 
-
-    def update_individual(self, individualId, individual, user=None, auths=None):
+    def update_individual(self, individual_id, individual, user=None, auths=None):
         """
         updates an individual
 
@@ -196,13 +201,15 @@ class IndividualController(BaseController):
         try:
             put = IndividualPut(self.get_connection())
 
-            loc = put.put(individualId, individual)
+            loc = put.put(individual_id, individual)
         except DuplicateKeyException as dke:
-            logging.getLogger(__name__).debug("update_individual: {}".format(repr(dke)))
+            logging.getLogger(__name__).debug(
+                "update_individual: {}".format(repr(dke)))
             retcode = 422
             loc = str(dke)
         except MissingKeyException as dme:
-            logging.getLogger(__name__).debug("update_individual: {}".format(repr(dme)))
+            logging.getLogger(__name__).debug(
+                "update_individual: {}".format(repr(dme)))
             retcode = 404
             loc = str(dme)
 

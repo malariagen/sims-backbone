@@ -32,12 +32,12 @@ class StudyController(BaseController):
 
         return studies, 200
 
-    def download_study(self, studyName, user=None, auths=None):
+    def download_study(self, study_name, user=None, auths=None):
         """
         fetches a study
 
-        :param studyName: ID of study to fetch
-        :type studyName: str
+        :param study_name: ID of study to fetch
+        :type study_name: str
 
         :rtype: Study
         """
@@ -47,19 +47,21 @@ class StudyController(BaseController):
         study = None
         retcode = 200
         try:
-            study = get.get(studyName)
+            study = get.get(study_name)
         except MissingKeyException as dme:
-            logging.getLogger(__name__).debug("update_study: {}".format(repr(dme)))
+            logging.getLogger(__name__).debug(
+                "update_study: {}".format(repr(dme)))
             retcode = 404
+            study = str(dme)
 
         return study, retcode
 
-    def update_study(self, studyName, study, user=None, auths=None):
+    def update_study(self, study_name, study, user=None, auths=None):
         """
         updates a study
 
-        :param studyName: ID of study to update
-        :type studyName: str
+        :param study_name: ID of study to update
+        :type study_name: str
         :param study:
         :type study: dict | bytes
 
@@ -72,12 +74,16 @@ class StudyController(BaseController):
         try:
             put = StudyPut(self.get_connection())
 
-            updated_study = put.put(studyName, study)
+            updated_study = put.put(study_name, study)
         except IntegrityException as dme:
-            logging.getLogger(__name__).debug("update_study: {}".format(repr(dme)))
+            logging.getLogger(__name__).debug(
+                "update_study: {}".format(repr(dme)))
             retcode = 422
+            updated_study = str(dme)
         except MissingKeyException as dme:
-            logging.getLogger(__name__).debug("update_study: {}".format(repr(dme)))
+            logging.getLogger(__name__).debug(
+                "update_study: {}".format(repr(dme)))
             retcode = 404
+            updated_study = str(dme)
 
         return updated_study, retcode

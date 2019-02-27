@@ -21,7 +21,7 @@ from backbone_server.controllers.decorators import apply_decorators
 @apply_decorators
 class AssayDatumController(BaseController):
 
-    def create_assay_datum(self, assayDatum, user=None, auths=None):  # noqa: E501
+    def create_assay_datum(self, assay_datum, user=None, auths=None):  # noqa: E501
         """create_assay_datum
 
         Create a AssayDatum # noqa: E501
@@ -37,14 +37,16 @@ class AssayDatumController(BaseController):
         try:
             post = AssayDatumPost(self.get_connection())
 
-            samp = post.post(assayDatum)
+            samp = post.post(assay_datum)
         except DuplicateKeyException as dke:
-            logging.getLogger(__name__).debug("create_assayDatum: {}".format(repr(dke)))
+            logging.getLogger(__name__).debug(
+                "create_assayDatum: {}".format(repr(dke)))
             retcode = 422
+            samp = str(dke)
 
         return samp, retcode
 
-    def delete_assay_datum(self, assayDatumId, user=None, auths=None):  # noqa: E501
+    def delete_assay_datum(self, assay_datum_id, user=None, auths=None):  # noqa: E501
         """deletes an AssayDatum
 
          # noqa: E501
@@ -59,14 +61,15 @@ class AssayDatumController(BaseController):
         retcode = 200
 
         try:
-            delete.delete(assayDatumId)
+            delete.delete(assay_datum_id)
         except MissingKeyException as dme:
-            logging.getLogger(__name__).debug("delete_assayDatum: {}".format(repr(dme)))
+            logging.getLogger(__name__).debug(
+                "delete_assayDatum: {}".format(repr(dme)))
             retcode = 404
 
         return None, retcode
 
-    def download_assay_datum(self, assayDatumId, user=None, auths=None):  # noqa: E501
+    def download_assay_datum(self, assay_datum_id, user=None, auths=None):  # noqa: E501
         """fetches an AssayDatum
 
          # noqa: E501
@@ -83,14 +86,16 @@ class AssayDatumController(BaseController):
         samp = None
 
         try:
-            samp = get.get(assayDatumId)
+            samp = get.get(assay_datum_id)
         except MissingKeyException as dme:
-            logging.getLogger(__name__).debug("download_assayDatum: {}".format(repr(dme)))
+            logging.getLogger(__name__).debug(
+                "download_assayDatum: {}".format(repr(dme)))
             retcode = 404
+            samp = str(dme)
 
         return samp, retcode
 
-    def download_assay_data_by_attr(self, propName, propValue, studyName=None, user=None, auths=None):  # noqa: E501
+    def download_assay_data_by_attr(self, prop_name, prop_value, study_name=None, user=None, auths=None):  # noqa: E501
         """fetches one or more AssayDatum by property value
 
          # noqa: E501
@@ -110,12 +115,12 @@ class AssayDatumController(BaseController):
         retcode = 200
         samp = None
 
-        propValue = urllib.parse.unquote_plus(propValue)
-        samp = get.get(propName, propValue)
+        prop_value = urllib.parse.unquote_plus(prop_value)
+        samp = get.get(prop_name, prop_value)
 
         return samp, retcode
 
-    def download_assay_data_by_os_attr(self, propName, propValue, studyName=None, user=None, auths=None):  # noqa: E501
+    def download_assay_data_by_os_attr(self, prop_name, prop_value, study_name=None, user=None, auths=None):  # noqa: E501
         """fetches one or more assayData by property value of associated original samples
 
          # noqa: E501
@@ -135,12 +140,12 @@ class AssayDatumController(BaseController):
         retcode = 200
         samp = None
 
-        propValue = urllib.parse.unquote_plus(propValue)
-        samp = get.get(propName, propValue)
+        prop_value = urllib.parse.unquote_plus(prop_value)
+        samp = get.get(prop_name, prop_value)
 
         return samp, retcode
 
-    def update_assay_datum(self, assayDatumId, assayDatum, user=None, auths=None):  # noqa: E501
+    def update_assay_datum(self, assay_datum_id, assay_datum, user=None, auths=None):  # noqa: E501
         """updates an AssayDatum
 
          # noqa: E501
@@ -159,12 +164,16 @@ class AssayDatumController(BaseController):
         try:
             put = AssayDatumPut(self.get_connection())
 
-            samp = put.put(assayDatumId, assayDatum)
+            samp = put.put(assay_datum_id, assay_datum)
         except DuplicateKeyException as dke:
-            logging.getLogger(__name__).debug("update_assayDatum: {}".format(repr(dke)))
+            logging.getLogger(__name__).debug(
+                "update_assayDatum: {}".format(repr(dke)))
             retcode = 422
+            samp = str(dke)
         except MissingKeyException as dme:
-            logging.getLogger(__name__).debug("update_assayDatum: {}".format(repr(dme)))
+            logging.getLogger(__name__).debug(
+                "update_assayDatum: {}".format(repr(dme)))
             retcode = 404
+            samp = str(dme)
 
         return samp, retcode

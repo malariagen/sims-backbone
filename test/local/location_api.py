@@ -9,7 +9,8 @@ import logging
 
 from local.base_local_api import BaseLocalApi
 
-from backbone_server.controllers.location_controller  import LocationController
+from backbone_server.controllers.location_controller import LocationController
+
 
 class LocalLocationApi(BaseLocalApi):
 
@@ -23,28 +24,28 @@ class LocalLocationApi(BaseLocalApi):
         """
         create_location
         Create a location
-        :param location: 
+        :param location:
         :type location: dict | bytes
 
         :rtype: Location
         """
 
         (ret, retcode) = self.location_controller.create_location(location, self._user,
-                                                   self.auth_tokens())
+                                                                  self.auth_tokens())
 
         return self.create_response(ret, retcode, 'Location')
 
-    def delete_location(self, locationId):
+    def delete_location(self, location_id):
         """
         deletes an location
-        
+
         :param locationId: ID of location to fetch
         :type locationId: str
 
         :rtype: None
         """
-        (ret, retcode) = self.location_controller.delete_location(locationId, self._user,
-                                                   self.auth_tokens())
+        (ret, retcode) = self.location_controller.delete_location(location_id, self._user,
+                                                                  self.auth_tokens())
 
         return self.create_response(ret, retcode)
 
@@ -60,29 +61,29 @@ class LocalLocationApi(BaseLocalApi):
         :rtype: Location
         """
         (ret, retcode) = self.location_controller.download_gps_location(latitude, longitude, self._user,
-                                                         self.auth_tokens())
+                                                                        self.auth_tokens())
         return self.create_response(ret, retcode, 'Locations')
 
-    def download_location(self, locationId):
+    def download_location(self, location_id):
         """
         fetches an location
-        
-        :param locationId: ID of location to fetch
-        :type locationId: str
+
+        :param location_id: ID of location to fetch
+        :type location_id: str
 
         :rtype: Location
         """
-        (ret, retcode) = self.location_controller.download_location(locationId, self._user,
-                                                     self.auth_tokens())
+        (ret, retcode) = self.location_controller.download_location(location_id, self._user,
+                                                                    self.auth_tokens())
 
         return self.create_response(ret, retcode, 'Location')
 
-    def download_locations(self, studyName=None, start=None, count=None, orderby=None):
+    def download_locations(self, study_name=None, start=None, count=None, orderby=None):
         """
         fetches locations
-        
-        :param studyName: restrict to a particular study
-        :type studyName: str
+
+        :param study_name: restrict to a particular study
+        :type study_name: str
         :param start: for pagination start the result set at a record x
         :type start: int
         :param count: for pagination the number of entries to return
@@ -92,38 +93,37 @@ class LocalLocationApi(BaseLocalApi):
 
         :rtype: Locations
         """
-        (ret, retcode) = self.location_controller.download_locations(studyName, start, count, orderby, self._user,
-                                                      self.auth_tokens())
+        (ret, retcode) = self.location_controller.download_locations(study_name, start, count, orderby, self._user,
+                                                                     self.auth_tokens())
 
         return self.create_response(ret, retcode, 'Locations')
 
-    def download_partner_location(self, partnerId):
+    def download_partner_location(self, partner_id):
         """
         fetches location(s) by partner name
-        
+
         :param partnerId: ID of location to fetch
         :type partnerId: str
 
         :rtype: Locations
         """
-        (ret, retcode) = self.location_controller.download_partner_location(partnerId, self._user,
-                                                             self.auth_tokens())
+        (ret, retcode) = self.location_controller.download_partner_location(partner_id, self._user,
+                                                                            self.auth_tokens())
         return self.create_response(ret, retcode, 'Locations')
 
-
-    def update_location(self, locationId, location):
+    def update_location(self, location_id, location):
         """
         updates an location
-        
-        :param locationId: ID of location to update
-        :type locationId: str
-        :param location: 
+
+        :param location_id: ID of location to update
+        :type location_id: str
+        :param location:
         :type location: dict | bytes
 
         :rtype: Location
         """
 
-        (ret, retcode) = self.location_controller.update_location(locationId, location, self._user,
-                                                   self.auth_tokens())
+        (ret, retcode) = self.location_controller.update_location(location_id, location, self._user,
+                                                                  self.auth_tokens())
 
         return self.create_response(ret, retcode, 'Location')

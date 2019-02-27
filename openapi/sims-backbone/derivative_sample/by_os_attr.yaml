@@ -6,19 +6,19 @@
       description: ""
       operationId: downloadDerivativeSamplesByOsAttr
       parameters:
-        - name: propName
+        - name: prop_name
           in: path
           description: name of property to search
           required: true
           schema:
             type: string
-        - name: propValue
+        - name: prop_value
           in: path
           description: matching value of property to search
           required: true
           schema:
             type: string
-        - name: studyName
+        - name: study_name
           in: query
           description: if you want to restrict the search to a study e.g. for partner_id
           required: false

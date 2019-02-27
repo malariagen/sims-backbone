@@ -30,12 +30,12 @@ from backbone_server.controllers.decorators import apply_decorators
 @apply_decorators
 class SamplingEventController(BaseController):
 
-    def create_sampling_event(self, samplingEvent, user=None, auths=None):
+    def create_sampling_event(self, sampling_event, user=None, auths=None):
         """
         create_sampling_event
         Create a samplingEvent
-        :param samplingEvent:
-        :type samplingEvent: dict | bytes
+        :param sampling_event:
+        :type sampling_event: dict | bytes
 
         :rtype: SamplingEvent
         """
@@ -46,28 +46,31 @@ class SamplingEventController(BaseController):
         try:
             post = SamplingEventPost(self.get_connection())
 
-            samp = post.post(samplingEvent)
+            samp = post.post(sampling_event)
         except DuplicateKeyException as dke:
-            logging.getLogger(__name__).debug("create_samplingEvent: {}".format(repr(dke)))
+            logging.getLogger(__name__).debug(
+                "create_samplingEvent: {}".format(repr(dke)))
             samp = str(dke)
             retcode = 422
         except NestedEditException as nee:
-            logging.getLogger(__name__).debug("create_samplingEvent: {}".format(repr(nee)))
+            logging.getLogger(__name__).debug(
+                "create_samplingEvent: {}".format(repr(nee)))
             samp = str(nee)
             retcode = 422
         except InvalidDateException as ide:
-            logging.getLogger(__name__).debug("create_samplingEvent: {}".format(repr(ide)))
+            logging.getLogger(__name__).debug(
+                "create_samplingEvent: {}".format(repr(ide)))
             samp = str(ide)
             retcode = 422
 
         return samp, retcode
 
-    def delete_sampling_event(self, samplingEventId, user=None, auths=None):
+    def delete_sampling_event(self, sampling_event_id, user=None, auths=None):
         """
         deletes an samplingEvent
 
-        :param samplingEventId: ID of samplingEvent to fetch
-        :type samplingEventId: str
+        :param sampling_event_id: ID of samplingEvent to fetch
+        :type sampling_event_id: str
 
         :rtype: None
         """
@@ -77,19 +80,20 @@ class SamplingEventController(BaseController):
         retcode = 200
 
         try:
-            delete.delete(samplingEventId)
+            delete.delete(sampling_event_id)
         except MissingKeyException as dme:
-            logging.getLogger(__name__).debug("delete_samplingEvent: {}".format(repr(dme)))
+            logging.getLogger(__name__).debug(
+                "delete_samplingEvent: {}".format(repr(dme)))
             retcode = 404
 
         return None, retcode
 
-    def download_sampling_event(self, samplingEventId, user=None, auths=None):
+    def download_sampling_event(self, sampling_event_id, user=None, auths=None):
         """
         fetches an samplingEvent
 
-        :param samplingEventId: ID of samplingEvent to fetch
-        :type samplingEventId: str
+        :param sampling_event_id: ID of samplingEvent to fetch
+        :type sampling_event_id: str
 
         :rtype: SamplingEvent
         """
@@ -100,10 +104,12 @@ class SamplingEventController(BaseController):
         samp = None
 
         try:
-            samp = get.get(samplingEventId)
+            samp = get.get(sampling_event_id)
         except MissingKeyException as dme:
-            logging.getLogger(__name__).debug("download_samplingEvent: {}".format(repr(dme)))
+            logging.getLogger(__name__).debug(
+                "download_samplingEvent: {}".format(repr(dme)))
             retcode = 404
+            samp = str(dme)
 
         return samp, retcode
 
@@ -179,9 +185,9 @@ class SamplingEventController(BaseController):
         try:
             get = EventSetGetById(self.get_connection())
             event_set_id = urllib.parse.unquote_plus(event_set_id)
-            evntSt = get.get(event_set_id, start, count)
+            evnt_st = get.get(event_set_id, start, count)
 
-            samp = evntSt.members
+            samp = evnt_st.members
 
         except MissingKeyException as dme:
             logging.getLogger(__name__).debug(
@@ -190,14 +196,14 @@ class SamplingEventController(BaseController):
 
         return samp, retcode
 
-    def download_sampling_events_by_attr(self, propName, propValue, study_name=None, user=None, auths=None):
+    def download_sampling_events_by_attr(self, prop_name, prop_value, study_name=None, user=None, auths=None):
         """
         fetches a samplingEvent by property value
 
-        :param propName: name of property to search
-        :type propName: str
-        :param propValue: matching value of property to search
-        :type propValue: str
+        :param prop_name: name of property to search
+        :type prop_name: str
+        :param prop_value: matching value of property to search
+        :type prop_value: str
 
         :rtype: SamplingEvent
         """
@@ -207,19 +213,19 @@ class SamplingEventController(BaseController):
         retcode = 200
         samp = None
 
-        propValue = urllib.parse.unquote_plus(propValue)
-        samp = get.get(propName, propValue, study_name)
+        prop_value = urllib.parse.unquote_plus(prop_value)
+        samp = get.get(prop_name, prop_value, study_name)
 
         return samp, retcode
 
-    def download_sampling_events_by_os_attr(self, propName, propValue, study_name=None, user=None, auths=None):
+    def download_sampling_events_by_os_attr(self, prop_name, prop_value, study_name=None, user=None, auths=None):
         """
         fetches a samplingEvent by property value of associated original sample
 
-        :param propName: name of property to search
-        :type propName: str
-        :param propValue: matching value of property to search
-        :type propValue: str
+        :param prop_name: name of property to search
+        :type prop_name: str
+        :param prop_value: matching value of property to search
+        :type prop_value: str
 
         :rtype: SamplingEvent
         """
@@ -229,17 +235,17 @@ class SamplingEventController(BaseController):
         retcode = 200
         samp = None
 
-        propValue = urllib.parse.unquote_plus(propValue)
-        samp = get.get(propName, propValue, study_name)
+        prop_value = urllib.parse.unquote_plus(prop_value)
+        samp = get.get(prop_name, prop_value, study_name)
 
         return samp, retcode
 
-    def download_sampling_events_by_location(self, locationId, start, count, user=None, auths=None):
+    def download_sampling_events_by_location(self, location_id, start, count, user=None, auths=None):
         """
         fetches samplingEvents for a location
 
-        :param locationId: location
-        :type locationId: str
+        :param location_id: location
+        :type location_id: str
 
         :rtype: SamplingEvents
         """
@@ -250,19 +256,21 @@ class SamplingEventController(BaseController):
         samp = None
 
         try:
-            samp = get.get(locationId, start, count)
+            samp = get.get(location_id, start, count)
         except MissingKeyException as dme:
-            logging.getLogger(__name__).debug("download_samplingEvent: {}".format(repr(dme)))
+            logging.getLogger(__name__).debug(
+                "download_samplingEvent: {}".format(repr(dme)))
             retcode = 404
+            samp = str(dme)
 
         return samp, retcode
 
-    def download_sampling_events_by_study(self, studyName, start, count, user=None, auths=None):
+    def download_sampling_events_by_study(self, study_name, start, count, user=None, auths=None):
         """
         fetches samplingEvents for a study
 
-        :param studyName: location
-        :type studyName: str
+        :param study_name: location
+        :type study_name: str
 
         :rtype: SamplingEvents
         """
@@ -273,19 +281,21 @@ class SamplingEventController(BaseController):
         samp = None
 
         try:
-            samp = get.get(studyName, start, count)
+            samp = get.get(study_name, start, count)
         except MissingKeyException as dme:
-            logging.getLogger(__name__).debug("download_samplingEvent: {}".format(repr(dme)))
+            logging.getLogger(__name__).debug(
+                "download_samplingEvent: {}".format(repr(dme)))
             retcode = 404
+            samp = str(dme)
 
         return samp, retcode
 
-    def download_sampling_events_by_taxa(self, taxaId, start, count, user=None, auths=None):
+    def download_sampling_events_by_taxa(self, taxa_id, start, count, user=None, auths=None):
         """
         fetches samplingEvents for a taxa
 
-        :param taxaId: taxa
-        :type taxaId: str
+        :param taxa_id: taxa
+        :type taxa_id: str
 
         :rtype: SamplingEvents
         """
@@ -296,11 +306,12 @@ class SamplingEventController(BaseController):
         samp = None
 
         try:
-            samp = get.get(taxaId, start, count)
+            samp = get.get(taxa_id, start, count)
         except MissingKeyException as dme:
             logging.getLogger(__name__).debug(
                 "download_sampling_events_by_taxa: {}".format(repr(dme)))
             retcode = 404
+            samp = str(dme)
 
         return samp, retcode
 
@@ -324,24 +335,26 @@ class SamplingEventController(BaseController):
 
             samp = merge.merge(into, merged)
         except IncompatibleException as dke:
-            logging.getLogger(__name__).debug("merge_samplingEvent: {}".format(repr(dke)))
+            logging.getLogger(__name__).debug(
+                "merge_samplingEvent: {}".format(repr(dke)))
             samp = str(dke)
             retcode = 422
         except MissingKeyException as dme:
-            logging.getLogger(__name__).debug("merge_samplingEvent: {}".format(repr(dme)))
+            logging.getLogger(__name__).debug(
+                "merge_samplingEvent: {}".format(repr(dme)))
             samp = str(dme)
             retcode = 404
 
         return samp, retcode
 
-    def update_sampling_event(self, samplingEventId, samplingEvent, user=None, auths=None):
+    def update_sampling_event(self, sampling_event_id, sampling_event, user=None, auths=None):
         """
         updates an samplingEvent
 
-        :param samplingEventId: ID of samplingEvent to update
-        :type samplingEventId: str
-        :param samplingEvent:
-        :type samplingEvent: dict | bytes
+        :param sampling_event_id: ID of samplingEvent to update
+        :type sampling_event_id: str
+        :param sampling_event:
+        :type sampling_event: dict | bytes
 
         :rtype: SamplingEvent
         """
@@ -352,20 +365,24 @@ class SamplingEventController(BaseController):
         try:
             put = SamplingEventPut(self.get_connection())
 
-            samp = put.put(samplingEventId, samplingEvent)
+            samp = put.put(sampling_event_id, sampling_event)
         except DuplicateKeyException as dke:
-            logging.getLogger(__name__).debug("update_samplingEvent: {}".format(repr(dke)))
+            logging.getLogger(__name__).debug(
+                "update_samplingEvent: {}".format(repr(dke)))
             samp = str(dke)
             retcode = 422
         except MissingKeyException as dme:
-            logging.getLogger(__name__).debug("update_samplingEvent: {}".format(repr(dme)))
+            logging.getLogger(__name__).debug(
+                "update_samplingEvent: {}".format(repr(dme)))
             retcode = 404
         except NestedEditException as nee:
-            logging.getLogger(__name__).debug("update_samplingEvent: {}".format(repr(nee)))
+            logging.getLogger(__name__).debug(
+                "update_samplingEvent: {}".format(repr(nee)))
             samp = str(nee)
             retcode = 422
         except InvalidDateException as ide:
-            logging.getLogger(__name__).debug("create_samplingEvent: {}".format(repr(ide)))
+            logging.getLogger(__name__).debug(
+                "create_samplingEvent: {}".format(repr(ide)))
             samp = str(ide)
             retcode = 422
 

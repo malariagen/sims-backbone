@@ -9,6 +9,7 @@ from backbone_server.controllers.report_controller import ReportController
 
 report_controller = ReportController()
 
+
 def missing_locations(include_country=False, user=None, token_info=None):  # noqa: E501
     """fetches studies with sampling events with missing locations
 
@@ -32,7 +33,7 @@ def missing_taxon(user=None, token_info=None):  # noqa: E501
     :rtype: Studies
     """
     return report_controller.missing_taxon(user,
-                                               report_controller.token_info(token_info))
+                                           report_controller.token_info(token_info))
 
 
 def multiple_location_gps(user=None, token_info=None):  # noqa: E501
@@ -44,7 +45,7 @@ def multiple_location_gps(user=None, token_info=None):  # noqa: E501
     :rtype: Studies
     """
     return report_controller.multiple_location_gps(user,
-                                               report_controller.token_info(token_info))
+                                                   report_controller.token_info(token_info))
 
 
 def multiple_location_names(user=None, token_info=None):  # noqa: E501
@@ -56,7 +57,7 @@ def multiple_location_names(user=None, token_info=None):  # noqa: E501
     :rtype: Studies
     """
     return report_controller.multiple_location_names(user,
-                                               report_controller.token_info(token_info))
+                                                     report_controller.token_info(token_info))
 
 
 def uncurated_locations(user=None, token_info=None):  # noqa: E501
@@ -68,4 +69,4 @@ def uncurated_locations(user=None, token_info=None):  # noqa: E501
     :rtype: Studies
     """
     return report_controller.uncurated_locations(user,
-                                               report_controller.token_info(token_info))
+                                                 report_controller.token_info(token_info))

@@ -5,7 +5,7 @@
       description: ""
       operationId: downloadOriginalSamplesByLocation
       parameters:
-        - name: locationId
+        - name: location_id
           in: path
           description: location
           required: true

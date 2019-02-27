@@ -5,7 +5,7 @@
       description: ""
       operationId: downloadSamplingEventsByEventSet
       parameters:
-        - name: eventSetId
+        - name: event_set_id
           in: path
           description: Event Set name
           required: true

@@ -35,7 +35,6 @@ class MetadataController(BaseController):
 
         return taxa, retcode
 
-
     def download_history(self, record_type, record_id, action_types=None, user=None,
                          auths=None):  # noqa: E501
         """fetches the history of a record
@@ -60,18 +59,19 @@ class MetadataController(BaseController):
         try:
             log_items = get.get(record_type, record_id, action_types)
         except MissingKeyException as dme:
-            logging.getLogger(__name__).debug("download_history: {}".format(repr(dme)))
+            logging.getLogger(__name__).debug(
+                "download_history: {}".format(repr(dme)))
             log_items = str(dme)
             retcode = 404
 
         return log_items, retcode
 
-    def get_country_metadata(self, countryId, user=None, auths=None):
+    def get_country_metadata(self, country_id, user=None, auths=None):
         """
         fetches all the names for a country
         guesses the search criteria
-        :param countryId: location
-        :type countryId: str
+        :param country_id: location
+        :type country_id: str
 
         :rtype: Country
         """
@@ -81,13 +81,15 @@ class MetadataController(BaseController):
         retcode = 200
         country = None
 
-        countryId = urllib.parse.unquote_plus(countryId)
+        country_id = urllib.parse.unquote_plus(country_id)
 
         try:
-            country = get.get(countryId)
+            country = get.get(country_id)
         except MissingKeyException as dme:
-            logging.getLogger(__name__).debug("get_country_metadata: {}".format(repr(dme)))
+            logging.getLogger(__name__).debug(
+                "get_country_metadata: {}".format(repr(dme)))
             retcode = 404
+            country = str(dme)
 
         return country, retcode
 

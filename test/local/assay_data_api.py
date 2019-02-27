@@ -6,9 +6,10 @@ from openapi_server import util
 
 import logging
 
-from backbone_server.controllers.assay_datum_controller  import AssayDatumController
+from backbone_server.controllers.assay_datum_controller import AssayDatumController
 
 from local.base_local_api import BaseLocalApi
+
 
 class LocalAssayDataApi(BaseLocalApi):
 
@@ -18,117 +19,113 @@ class LocalAssayDataApi(BaseLocalApi):
 
         self.assay_datum_controller = AssayDatumController()
 
-    def create_assay_datum(self, assayDatum):
+    def create_assay_datum(self, assay_datum):
         """
         create_assay_datum
         Create a assayDatum
-        :param assayDatum: 
-        :type assayDatum: dict | bytes
+        :param assay_datum:
+        :type assay_datum: dict | bytes
 
         :rtype: assayDatum
         """
 
-        (ret, retcode) = self.assay_datum_controller.create_assay_datum(assayDatum, self._user,
-                                                               self.auth_tokens())
+        (ret, retcode) = self.assay_datum_controller.create_assay_datum(assay_datum, self._user,
+                                                                        self.auth_tokens())
 
         return self.create_response(ret, retcode, 'AssayDatum')
 
-    def delete_assay_datum(self, assayDatumId):
+    def delete_assay_datum(self, assay_datum_id):
         """
         deletes an assayDatum
-        
-        :param assayDatumId: ID of assayDatum to fetch
-        :type assayDatumId: str
+
+        :param assay_datum_id: ID of assayDatum to fetch
+        :type assay_datum_id: str
 
         :rtype: None
         """
-        (ret, retcode) = self.assay_datum_controller.delete_assay_datum(assayDatumId, self._user,
-                                                               self.auth_tokens())
+        (ret, retcode) = self.assay_datum_controller.delete_assay_datum(assay_datum_id, self._user,
+                                                                        self.auth_tokens())
 
         return self.create_response(ret, retcode)
 
-
-    def download_assay_datum(self, assayDatumId):
+    def download_assay_datum(self, assay_datum_id):
         """
         fetches an assayDatum
-        
-        :param assayDatumId: ID of assayDatum to fetch
-        :type assayDatumId: str
+
+        :param assay_datum_id: ID of assayDatum to fetch
+        :type assay_datum_id: str
 
         :rtype: AssayDatum
         """
-        (ret, retcode) = self.assay_datum_controller.download_assay_datum(assayDatumId, self._user,
-                                                                 self.auth_tokens())
+        (ret, retcode) = self.assay_datum_controller.download_assay_datum(assay_datum_id, self._user,
+                                                                          self.auth_tokens())
 
         return self.create_response(ret, retcode, 'AssayDatum')
 
     def download_assay_data(self, filter=None, start=None, count=None):
         """
         fetches an assayDatum
-        
+
         :param assayDatumId: ID of assayDatum to fetch
         :type assayDatumId: str
 
         :rtype: AssayDatum
         """
         (ret, retcode) = self.assay_datum_controller.download_assay_data(filter, start,
-                                                                                 count, self._user,
-                                                                                 self.auth_tokens())
+                                                                         count, self._user,
+                                                                         self.auth_tokens())
 
         return self.create_response(ret, retcode, 'AssayData')
 
-
-    def download_assay_data_by_attr(self, propName, propValue, study_name=None):
+    def download_assay_data_by_attr(self, prop_name, prop_value, study_name=None):
         """
         fetches a assayDatum by property value
-        
-        :param propName: name of property to search
-        :type propName: str
-        :param propValue: matching value of property to search
-        :type propValue: str
+
+        :param prop_name: name of property to search
+        :type prop_name: str
+        :param prop_value: matching value of property to search
+        :type prop_value: str
 
         :rtype: AssayData
         """
-        (ret, retcode) = self.assay_datum_controller.download_assay_data_by_attr(propName, propValue,
+        (ret, retcode) = self.assay_datum_controller.download_assay_data_by_attr(prop_name, prop_value,
                                                                                  study_name,
                                                                                  self._user,
                                                                                  self.auth_tokens())
 
         return self.create_response(ret, retcode, 'AssayData')
 
-    def download_assay_data_by_os_attr(self, propName, propValue, study_name=None):
+    def download_assay_data_by_os_attr(self, prop_name, prop_value, study_name=None):
         """
         fetches a assayDatum by property value
-        
-        :param propName: name of property to search
-        :type propName: str
-        :param propValue: matching value of property to search
-        :type propValue: str
+
+        :param prop_name: name of property to search
+        :type prop_name: str
+        :param prop_value: matching value of property to search
+        :type prop_value: str
 
         :rtype: AssayData
         """
-        (ret, retcode) = self.assay_datum_controller.download_assay_data_by_os_attr(propName, propValue,
+        (ret, retcode) = self.assay_datum_controller.download_assay_data_by_os_attr(prop_name, prop_value,
                                                                                     study_name,
                                                                                     self._user,
                                                                                     self.auth_tokens())
 
         return self.create_response(ret, retcode, 'AssayData')
 
-
-    def update_assay_datum(self, assayDatumId, assayDatum):
+    def update_assay_datum(self, assay_datum_id, assay_datum):
         """
         updates an assayDatum
-        
-        :param assayDatumId: ID of assayDatum to update
-        :type assayDatumId: str
-        :param assayDatum: 
-        :type assayDatum: dict | bytes
+
+        :param assay_datum_id: ID of assayDatum to update
+        :type assay_datum_id: str
+        :param assay_datum:
+        :type assay_datum: dict | bytes
 
         :rtype: AssayDatum
         """
-        (ret, retcode) = self.assay_datum_controller.update_assay_datum(assayDatumId,
-                                                                              assayDatum, self._user,
-                                                               self.auth_tokens())
+        (ret, retcode) = self.assay_datum_controller.update_assay_datum(assay_datum_id,
+                                                                        assay_datum, self._user,
+                                                                        self.auth_tokens())
 
         return self.create_response(ret, retcode, 'AssayDatum')
-

@@ -150,7 +150,7 @@ class TestIndividual(TestBase):
             assert looked_up_indivs.count == 2, 'Wrong number of individuals'
             assert len(looked_up_indivs.individuals) == 1, 'Wrong number of individuals'
 
-            looked_up_indivs = api_instance.download_individuals(studyName=indiv1.attrs[0].study_name)
+            looked_up_indivs = api_instance.download_individuals(study_name=indiv1.attrs[0].study_name)
             assert looked_up_indivs.count == 2, 'Wrong number of individuals'
             assert len(looked_up_indivs.individuals) == 2, 'Wrong number of individuals'
 
@@ -158,7 +158,7 @@ class TestIndividual(TestBase):
             assert looked_up_indivs.count == 2, 'Wrong number of individuals'
             assert len(looked_up_indivs.individuals) == 2, 'Wrong number of individuals'
 
-            looked_up_indivs = api_instance.download_individuals(studyName='XXXXX')
+            looked_up_indivs = api_instance.download_individuals(study_name='XXXXX')
             assert looked_up_indivs.count == 0, 'Wrong number of individuals'
             assert len(looked_up_indivs.individuals) == 0, 'Wrong number of individuals'
 

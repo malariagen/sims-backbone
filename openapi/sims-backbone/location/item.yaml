@@ -5,7 +5,7 @@
       description: ""
       operationId: downloadLocation
       parameters:
-        - name: locationId
+        - name: location_id
           in: path
           description: ID of location to fetch
           required: true
@@ -25,7 +25,7 @@
       description: ""
       operationId: updateLocation
       parameters:
-        - name: locationId
+        - name: location_id
           in: path
           description: ID of location to update
           required: true
@@ -53,7 +53,7 @@
       description: ""
       operationId: deleteLocation
       parameters:
-        - name: locationId
+        - name: location_id
           in: path
           description: ID of location to fetch
           required: true

@@ -9,7 +9,8 @@ from backbone_server.controllers.study_controller import StudyController
 
 study_controller = StudyController()
 
-def download_studies(start=None, count=None, user=None, token_info = None):  # noqa: E501
+
+def download_studies(start=None, count=None, user=None, token_info=None):  # noqa: E501
     """fetches studies
 
      # noqa: E501
@@ -25,7 +26,7 @@ def download_studies(start=None, count=None, user=None, token_info = None):  # n
                                              study_controller.token_info(token_info))
 
 
-def download_study(studyName, user=None, token_info = None):  # noqa: E501
+def download_study(study_name, user=None, token_info=None):  # noqa: E501
     """fetches a study
 
      # noqa: E501
@@ -35,23 +36,23 @@ def download_study(studyName, user=None, token_info = None):  # noqa: E501
 
     :rtype: Study
     """
-    return study_controller.download_study(studyName, user,
+    return study_controller.download_study(study_name, user,
                                            study_controller.token_info(token_info))
 
 
-def update_study(studyName, study, user=None, token_info = None):
+def update_study(study_name, body, user=None, token_info=None):
     """updates a study
 
      # noqa: E501
 
     :param studyName: ID of study to update
     :type studyName: str
-    :param study: 
+    :param study:
     :type study: dict | bytes
 
     :rtype: Study
     """
     if connexion.request.is_json:
         study = Study.from_dict(connexion.request.get_json())
-    return study_controller.update_study(studyName, study, user,
+    return study_controller.update_study(study_name, study, user,
                                          study_controller.token_info(token_info))

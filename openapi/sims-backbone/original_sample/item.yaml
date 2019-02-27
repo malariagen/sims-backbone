@@ -5,7 +5,7 @@
       description: ""
       operationId: downloadOriginalSample
       parameters:
-        - name: originalSampleId
+        - name: original_sample_id
           in: path
           description: ID of OriginalSample to fetch
           required: true
@@ -25,7 +25,7 @@
       description: ""
       operationId: updateOriginalSample
       parameters:
-        - name: originalSampleId
+        - name: original_sample_id
           in: path
           description: ID of OriginalSample to update
           required: true
@@ -57,7 +57,7 @@
       description: ""
       operationId: deleteOriginalSample
       parameters:
-        - name: originalSampleId
+        - name: original_sample_id
           in: path
           description: ID of OriginalSample to fetch
           required: true

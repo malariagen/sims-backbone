@@ -5,7 +5,7 @@
       description: ""
       operationId: downloadDerivativeSample
       parameters:
-        - name: derivativeSampleId
+        - name: derivative_sample_id
           in: path
           description: ID of DerivativeSample to fetch
           required: true
@@ -25,7 +25,7 @@
       description: ""
       operationId: updateDerivativeSample
       parameters:
-        - name: derivativeSampleId
+        - name: derivative_sample_id
           in: path
           description: ID of DerivativeSample to update
           required: true
@@ -57,7 +57,7 @@
       description: ""
       operationId: deleteDerivativeSample
       parameters:
-        - name: derivativeSampleId
+        - name: derivative_sample_id
           in: path
           description: ID of DerivativeSample to fetch
           required: true

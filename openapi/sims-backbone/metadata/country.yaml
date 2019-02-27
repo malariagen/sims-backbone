@@ -5,7 +5,7 @@
       description: guesses the search criteria
       operationId: getCountryMetadata
       parameters:
-        - name: countryId
+        - name: country_id
           in: path
           description: location
           required: true

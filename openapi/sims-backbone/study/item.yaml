@@ -5,7 +5,7 @@
       description: ""
       operationId: downloadStudy
       parameters:
-        - name: studyName
+        - name: study_name
           in: path
           description: ID of study to fetch
           required: true
@@ -25,7 +25,7 @@
       description: ""
       operationId: updateStudy
       parameters:
-        - name: studyName
+        - name: study_name
           in: path
           description: ID of study to update
           required: true

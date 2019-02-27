@@ -4,12 +4,8 @@
       description: Create a AssayData
       operationId: createAssayDatum
       requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "./sims-backbone/definitions/assay_data.yaml#/components/schemas/AssayDatum"
-        description: The original sample to create
-        required: true
+        $ref: "#/components/requestBodies/AssayDatum"
+        description: The assay data to create
       responses:
         "200":
           description: successful operation

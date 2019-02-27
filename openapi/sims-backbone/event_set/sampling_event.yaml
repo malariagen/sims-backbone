@@ -5,13 +5,13 @@
       description: ""
       operationId: createEventSetItem
       parameters:
-        - name: eventSetId
+        - name: event_set_id
           in: path
           description: ID of eventSet to modify
           required: true
           schema:
             type: string
-        - name: samplingEventId
+        - name: sampling_event_id
           in: path
           description: ID of samplingEvent to add to the set
           required: true
@@ -29,13 +29,13 @@
       description: ""
       operationId: deleteEventSetItem
       parameters:
-        - name: eventSetId
+        - name: event_set_id
           in: path
           description: ID of eventSet to modify
           required: true
           schema:
             type: string
-        - name: samplingEventId
+        - name: sampling_event_id
           in: path
           description: ID of samplingEvent to remove from the set
           required: true

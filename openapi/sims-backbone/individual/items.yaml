@@ -5,7 +5,7 @@
       description: ""
       operationId: downloadIndividuals
       parameters:
-        - name: studyName
+        - name: study_name
           in: query
           description: restrict to a particular study
           required: false

@@ -5,7 +5,7 @@
       description: ""
       operationId: createEventSet
       parameters:
-        - name: eventSetId
+        - name: event_set_id
           in: path
           description: ID of eventSet to create
           required: true
@@ -25,7 +25,7 @@
       description: ""
       operationId: downloadEventSet
       parameters:
-        - name: eventSetId
+        - name: event_set_id
           in: path
           description: ID of eventSet to fetch
           required: true
@@ -57,7 +57,7 @@
       description: ""
       operationId: updateEventSet
       parameters:
-        - name: eventSetId
+        - name: event_set_id
           in: path
           description: ID of eventSet to update
           required: true
@@ -89,7 +89,7 @@
       description: ""
       operationId: deleteEventSet
       parameters:
-        - name: eventSetId
+        - name: event_set_id
           in: path
           description: ID of eventSet to delete
           required: true

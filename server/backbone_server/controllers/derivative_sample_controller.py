@@ -24,7 +24,7 @@ from backbone_server.controllers.decorators import apply_decorators
 @apply_decorators
 class DerivativeSampleController(BaseController):
 
-    def create_derivative_sample(self, derivativeSample, user=None, auths=None):  # noqa: E501
+    def create_derivative_sample(self, derivative_sample, user=None, auths=None):  # noqa: E501
         """create_derivative_sample
 
         Create a DerivativeSample # noqa: E501
@@ -40,14 +40,15 @@ class DerivativeSampleController(BaseController):
         try:
             post = DerivativeSamplePost(self.get_connection())
 
-            samp = post.post(derivativeSample)
+            samp = post.post(derivative_sample)
         except DuplicateKeyException as dke:
-            logging.getLogger(__name__).debug("create_derivativeSample: {}".format(repr(dke)))
+            logging.getLogger(__name__).debug(
+                "create_derivativeSample: {}".format(repr(dke)))
             retcode = 422
 
         return samp, retcode
 
-    def delete_derivative_sample(self, derivativeSampleId, user=None, auths=None):  # noqa: E501
+    def delete_derivative_sample(self, derivative_sample_id, user=None, auths=None):  # noqa: E501
         """deletes an DerivativeSample
 
          # noqa: E501
@@ -62,14 +63,15 @@ class DerivativeSampleController(BaseController):
         retcode = 200
 
         try:
-            delete.delete(derivativeSampleId)
+            delete.delete(derivative_sample_id)
         except MissingKeyException as dme:
-            logging.getLogger(__name__).debug("delete_derivativeSample: {}".format(repr(dme)))
+            logging.getLogger(__name__).debug(
+                "delete_derivativeSample: {}".format(repr(dme)))
             retcode = 404
 
         return None, retcode
 
-    def download_derivative_sample(self, derivativeSampleId, user=None, auths=None):  # noqa: E501
+    def download_derivative_sample(self, derivative_sample_id, user=None, auths=None):  # noqa: E501
         """fetches an DerivativeSample
 
          # noqa: E501
@@ -86,9 +88,10 @@ class DerivativeSampleController(BaseController):
         samp = None
 
         try:
-            samp = get.get(derivativeSampleId)
+            samp = get.get(derivative_sample_id)
         except MissingKeyException as dme:
-            logging.getLogger(__name__).debug("download_derivativeSample: {}".format(repr(dme)))
+            logging.getLogger(__name__).debug(
+                "download_derivativeSample: {}".format(repr(dme)))
             retcode = 404
 
         return samp, retcode
@@ -162,7 +165,7 @@ class DerivativeSampleController(BaseController):
 
         return samp, retcode
 
-    def download_derivative_samples_by_attr(self, propName, propValue, studyName=None, user=None, auths=None):  # noqa: E501
+    def download_derivative_samples_by_attr(self, prop_name, prop_value, study_name=None, user=None, auths=None):  # noqa: E501
         """fetches one or more DerivativeSample by property value
 
          # noqa: E501
@@ -182,12 +185,12 @@ class DerivativeSampleController(BaseController):
         retcode = 200
         samp = None
 
-        propValue = urllib.parse.unquote_plus(propValue)
-        samp = get.get(propName, propValue)
+        prop_value = urllib.parse.unquote_plus(prop_value)
+        samp = get.get(prop_name, prop_value)
 
         return samp, retcode
 
-    def download_derivative_samples_by_os_attr(self, propName, propValue, studyName=None, user=None, auths=None):  # noqa: E501
+    def download_derivative_samples_by_os_attr(self, prop_name, prop_value, study_name=None, user=None, auths=None):  # noqa: E501
         """fetches one or more derivativeSamples by property value of associated derivative samples
 
          # noqa: E501
@@ -207,12 +210,12 @@ class DerivativeSampleController(BaseController):
         retcode = 200
         samp = None
 
-        propValue = urllib.parse.unquote_plus(propValue)
-        samp = get.get(propName, propValue)
+        prop_value = urllib.parse.unquote_plus(prop_value)
+        samp = get.get(prop_name, prop_value)
 
         return samp, retcode
 
-    def download_derivative_samples_by_study(self, studyName, start, count, user=None, auths=None):
+    def download_derivative_samples_by_study(self, study_name, start, count, user=None, auths=None):
         """
         fetches derivativeSamples for a study
 
@@ -228,14 +231,15 @@ class DerivativeSampleController(BaseController):
         samp = None
 
         try:
-            samp = get.get(studyName, start, count)
+            samp = get.get(study_name, start, count)
         except MissingKeyException as dme:
-            logging.getLogger(__name__).debug("download_derivativeSample: {}".format(repr(dme)))
+            logging.getLogger(__name__).debug(
+                "download_derivativeSample: {}".format(repr(dme)))
             retcode = 404
 
         return samp, retcode
 
-    def download_derivative_samples_by_taxa(self, taxaId, start, count, user=None, auths=None):
+    def download_derivative_samples_by_taxa(self, taxa_id, start, count, user=None, auths=None):
         """
         fetches derivativeSamples for a taxa
 
@@ -251,7 +255,7 @@ class DerivativeSampleController(BaseController):
         samp = None
 
         try:
-            samp = get.get(taxaId, start, count)
+            samp = get.get(taxa_id, start, count)
         except MissingKeyException as dme:
             logging.getLogger(__name__).debug(
                 "download_derivative_samples_by_taxa: {}".format(repr(dme)))
@@ -259,7 +263,7 @@ class DerivativeSampleController(BaseController):
 
         return samp, retcode
 
-    def update_derivative_sample(self, derivativeSampleId, derivativeSample, user=None, auths=None):  # noqa: E501
+    def update_derivative_sample(self, derivative_sample_id, derivative_sample, user=None, auths=None):  # noqa: E501
         """updates an DerivativeSample
 
          # noqa: E501
@@ -278,12 +282,14 @@ class DerivativeSampleController(BaseController):
         try:
             put = DerivativeSamplePut(self.get_connection())
 
-            samp = put.put(derivativeSampleId, derivativeSample)
+            samp = put.put(derivative_sample_id, derivative_sample)
         except DuplicateKeyException as dke:
-            logging.getLogger(__name__).debug("update_derivativeSample: {}".format(repr(dke)))
+            logging.getLogger(__name__).debug(
+                "update_derivativeSample: {}".format(repr(dke)))
             retcode = 422
         except MissingKeyException as dme:
-            logging.getLogger(__name__).debug("update_derivativeSample: {}".format(repr(dme)))
+            logging.getLogger(__name__).debug(
+                "update_derivativeSample: {}".format(repr(dme)))
             retcode = 404
 
         return samp, retcode

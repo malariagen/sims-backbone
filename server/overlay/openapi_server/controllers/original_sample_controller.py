@@ -7,49 +7,52 @@ from openapi_server import util
 
 import logging
 
-from backbone_server.controllers.original_sample_controller  import OriginalSampleController
+from backbone_server.controllers.original_sample_controller import OriginalSampleController
 
 original_sample_controller = OriginalSampleController()
 
-def create_original_sample(originalSample, user=None, token_info=None):
+
+def create_original_sample(body, user=None, token_info=None):
     """
     create_original_sample
     Create a originalSample
-    :param originalSample: 
+    :param originalSample:
     :type originalSample: dict | bytes
 
     :rtype: OriginalSample
     """
     if connexion.request.is_json:
-        originalSample = OriginalSample.from_dict(connexion.request.get_json())
+        original_sample = OriginalSample.from_dict(
+            connexion.request.get_json())
 
-    return original_sample_controller.create_original_sample(originalSample, user,
-                                                           original_sample_controller.token_info(token_info))
+    return original_sample_controller.create_original_sample(original_sample, user,
+                                                             original_sample_controller.token_info(token_info))
 
-def delete_original_sample(originalSampleId, user=None, token_info=None):
+
+def delete_original_sample(original_sample_id, user=None, token_info=None):
     """
     deletes an originalSample
-    
+
     :param originalSampleId: ID of originalSample to fetch
     :type originalSampleId: str
 
     :rtype: None
     """
-    return original_sample_controller.delete_original_sample(originalSampleId, user,
-                                                           original_sample_controller.token_info(token_info))
+    return original_sample_controller.delete_original_sample(original_sample_id, user,
+                                                             original_sample_controller.token_info(token_info))
 
 
-def download_original_sample(originalSampleId, user=None, token_info=None):
+def download_original_sample(original_sample_id, user=None, token_info=None):
     """
     fetches an originalSample
-    
+
     :param originalSampleId: ID of originalSample to fetch
     :type originalSampleId: str
 
     :rtype: OriginalSample
     """
-    return original_sample_controller.download_original_sample(originalSampleId, user,
-                                                             original_sample_controller.token_info(token_info))
+    return original_sample_controller.download_original_sample(original_sample_id, user,
+                                                               original_sample_controller.token_info(token_info))
 
 
 def download_original_samples(search_filter=None, start=None, count=None, user=None, token_info=None):  # noqa: E501
@@ -67,13 +70,14 @@ def download_original_samples(search_filter=None, start=None, count=None, user=N
     :rtype: OriginalSamples
     """
     return original_sample_controller.download_original_samples(search_filter, start,
-                                                              count, user,
-                                                              original_sample_controller.token_info(token_info))
+                                                                count, user,
+                                                                original_sample_controller.token_info(token_info))
 
-def download_original_samples_by_event_set(eventSetId, start=None, count=None, user=None, token_info=None):
+
+def download_original_samples_by_event_set(event_set_id, start=None, count=None, user=None, token_info=None):
     """
     fetches originalSamples in a given event set
-    
+
     :param eventSetId: Event Set name
     :type eventSetId: str
     :param start: for pagination start the result set at a record x
@@ -83,14 +87,15 @@ def download_original_samples_by_event_set(eventSetId, start=None, count=None, u
 
     :rtype: OriginalSamples
     """
-    return original_sample_controller.download_original_samples_by_event_set(eventSetId,start,
-                                                                           count, user,
-                                                                       original_sample_controller.token_info(token_info))
+    return original_sample_controller.download_original_samples_by_event_set(event_set_id, start,
+                                                                             count, user,
+                                                                             original_sample_controller.token_info(token_info))
 
-def download_original_samples_by_attr(propName, propValue, studyName=None, user=None, token_info=None):
+
+def download_original_samples_by_attr(prop_name, prop_value, study_name=None, user=None, token_info=None):
     """
     fetches a originalSample by property value
-    
+
     :param propName: name of property to search
     :type propName: str
     :param propValue: matching value of property to search
@@ -98,15 +103,16 @@ def download_original_samples_by_attr(propName, propValue, studyName=None, user=
 
     :rtype: OriginalSample
     """
-    return original_sample_controller.download_original_samples_by_attr(propName, propValue,
-                                                                           studyName,
-                                                                           user,
-                                                                           original_sample_controller.token_info(token_info))
+    return original_sample_controller.download_original_samples_by_attr(prop_name, prop_value,
+                                                                        study_name,
+                                                                        user,
+                                                                        original_sample_controller.token_info(token_info))
 
-def download_original_samples_by_location(locationId, start=None, count=None, user=None, token_info=None):
+
+def download_original_samples_by_location(location_id, start=None, count=None, user=None, token_info=None):
     """
     fetches originalSamples for a location
-    
+
     :param locationId: location
     :type locationId: str
     :param start: for pagination start the result set at a record x
@@ -116,14 +122,15 @@ def download_original_samples_by_location(locationId, start=None, count=None, us
 
     :rtype: OriginalSamples
     """
-    return original_sample_controller.download_original_samples_by_location(locationId, start,
-                                                                          count, user,
-                                                                          original_sample_controller.token_info(token_info))
+    return original_sample_controller.download_original_samples_by_location(location_id, start,
+                                                                            count, user,
+                                                                            original_sample_controller.token_info(token_info))
 
-def download_original_samples_by_study(studyName, start=None, count=None, user=None, token_info=None):
+
+def download_original_samples_by_study(study_name, start=None, count=None, user=None, token_info=None):
     """
     fetches originalSamples for a study
-    
+
     :param studyName: 4 digit study code
     :type studyName: str
     :param start: for pagination start the result set at a record x
@@ -133,14 +140,15 @@ def download_original_samples_by_study(studyName, start=None, count=None, user=N
 
     :rtype: OriginalSamples
     """
-    return original_sample_controller.download_original_samples_by_study(studyName, start,
-                                                                       count, user,
-                                                                       original_sample_controller.token_info(token_info))
+    return original_sample_controller.download_original_samples_by_study(study_name, start,
+                                                                         count, user,
+                                                                         original_sample_controller.token_info(token_info))
 
-def download_original_samples_by_taxa(taxaId, start=None, count=None, user=None, token_info=None):
+
+def download_original_samples_by_taxa(taxa_id, start=None, count=None, user=None, token_info=None):
     """
     fetches originalSamples for a given taxonomy classification code
-    
+
     :param taxaId: NCBI taxonomy code
     :type taxaId: str
     :param start: for pagination start the result set at a record x
@@ -150,9 +158,10 @@ def download_original_samples_by_taxa(taxaId, start=None, count=None, user=None,
 
     :rtype: OriginalSamples
     """
-    return original_sample_controller.download_original_samples_by_taxa(taxaId, start,
-                                                                      count, user,
-                                                                       original_sample_controller.token_info(token_info))
+    return original_sample_controller.download_original_samples_by_taxa(taxa_id, start,
+                                                                        count, user,
+                                                                        original_sample_controller.token_info(token_info))
+
 
 def merge_original_samples(into, merged, user=None, token_info=None):  # noqa: E501
     """merges two OriginalSamples
@@ -167,22 +176,22 @@ def merge_original_samples(into, merged, user=None, token_info=None):  # noqa: E
     :rtype: OriginalSample
     """
     return original_sample_controller.merge_original_samples(into, merged,
-                                                                       original_sample_controller.token_info(token_info))
+                                                             original_sample_controller.token_info(token_info))
 
 
-def update_original_sample(originalSampleId, originalSample, user=None, token_info=None):
+def update_original_sample(original_sample_id, body, user=None, token_info=None):
     """
     updates an originalSample
-    
+
     :param originalSampleId: ID of originalSample to update
     :type originalSampleId: str
-    :param originalSample: 
+    :param originalSample:
     :type originalSample: dict | bytes
 
     :rtype: OriginalSample
     """
     if connexion.request.is_json:
-        originalSample = OriginalSample.from_dict(connexion.request.get_json())
-    return original_sample_controller.update_original_sample(originalSampleId, originalSample, user,
-                                                           original_sample_controller.token_info(token_info))
-
+        original_sample = OriginalSample.from_dict(
+            connexion.request.get_json())
+    return original_sample_controller.update_original_sample(original_sample_id, original_sample, user,
+                                                             original_sample_controller.token_info(token_info))

@@ -4,10 +4,7 @@
       description: Create a OriginalSample
       operationId: createOriginalSample
       requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "./sims-backbone/definitions/original_sample.yaml#/components/schemas/OriginalSample"
+        $ref: "#/components/requestBodies/OriginalSample"
         description: The original sample to create
         required: true
       responses:

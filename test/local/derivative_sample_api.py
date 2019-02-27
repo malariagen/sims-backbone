@@ -6,9 +6,10 @@ from openapi_server import util
 
 import logging
 
-from backbone_server.controllers.derivative_sample_controller  import DerivativeSampleController
+from backbone_server.controllers.derivative_sample_controller import DerivativeSampleController
 
 from local.base_local_api import BaseLocalApi
+
 
 class LocalDerivativeSampleApi(BaseLocalApi):
 
@@ -18,51 +19,50 @@ class LocalDerivativeSampleApi(BaseLocalApi):
 
         self.derivative_sample_controller = DerivativeSampleController()
 
-    def create_derivative_sample(self, samplingEvent):
+    def create_derivative_sample(self, sampling_event):
         """
         create_derivative_sample
         Create a samplingEvent
-        :param samplingEvent:
-        :type samplingEvent: dict | bytes
+        :param sampling_event:
+        :type sampling_event: dict | bytes
 
         :rtype: DerivativeSample
         """
 
-        (ret, retcode) = self.derivative_sample_controller.create_derivative_sample(samplingEvent, self._user,
-                                                               self.auth_tokens())
+        (ret, retcode) = self.derivative_sample_controller.create_derivative_sample(sampling_event, self._user,
+                                                                                    self.auth_tokens())
 
         return self.create_response(ret, retcode, 'DerivativeSample')
 
-    def delete_derivative_sample(self, samplingEventId):
+    def delete_derivative_sample(self, sampling_event_id):
         """
         deletes an samplingEvent
 
-        :param samplingEventId: ID of samplingEvent to fetch
-        :type samplingEventId: str
+        :param sampling_event_id: ID of samplingEvent to fetch
+        :type sampling_event_id: str
 
         :rtype: None
         """
-        (ret, retcode) = self.derivative_sample_controller.delete_derivative_sample(samplingEventId, self._user,
-                                                               self.auth_tokens())
+        (ret, retcode) = self.derivative_sample_controller.delete_derivative_sample(sampling_event_id, self._user,
+                                                                                    self.auth_tokens())
 
         return self.create_response(ret, retcode)
 
-
-    def download_derivative_sample(self, derivativeSampleId):
+    def download_derivative_sample(self, derivative_sample_id):
         """
         fetches an samplingEvent
 
-        :param samplingEventId: ID of samplingEvent to fetch
-        :type samplingEventId: str
+        :param sampling_event_id: ID of samplingEvent to fetch
+        :type sampling_event_id: str
 
         :rtype: DerivativeSample
         """
-        (ret, retcode) = self.derivative_sample_controller.download_derivative_sample(derivativeSampleId, self._user,
-                                                                 self.auth_tokens())
+        (ret, retcode) = self.derivative_sample_controller.download_derivative_sample(derivative_sample_id, self._user,
+                                                                                      self.auth_tokens())
 
         return self.create_response(ret, retcode, 'DerivativeSample')
 
-    def download_derivative_samples(self, filter=None, start=None, count=None):
+    def download_derivative_samples(self, search_filter=None, start=None, count=None):
         """
         fetches an samplingEvent
 
@@ -71,14 +71,13 @@ class LocalDerivativeSampleApi(BaseLocalApi):
 
         :rtype: DerivativeSample
         """
-        (ret, retcode) = self.derivative_sample_controller.download_derivative_samples(filter, start,
-                                                                                 count, self._user,
-                                                                                 self.auth_tokens())
+        (ret, retcode) = self.derivative_sample_controller.download_derivative_samples(search_filter, start,
+                                                                                       count, self._user,
+                                                                                       self.auth_tokens())
 
         return self.create_response(ret, retcode, 'DerivativeSamples')
 
-
-    def download_derivative_samples_by_attr(self, propName, propValue, study_name=None):
+    def download_derivative_samples_by_attr(self, prop_name, prop_value, study_name=None):
         """
         fetches a samplingEvent by property value
 
@@ -89,29 +88,28 @@ class LocalDerivativeSampleApi(BaseLocalApi):
 
         :rtype: DerivativeSamples
         """
-        (ret, retcode) = self.derivative_sample_controller.download_derivative_samples_by_attr(propName, propValue,
-                                                                               self._user,
-                                                                               self.auth_tokens())
+        (ret, retcode) = self.derivative_sample_controller.download_derivative_samples_by_attr(prop_name, prop_value,
+                                                                                               self._user,
+                                                                                               self.auth_tokens())
 
         return self.create_response(ret, retcode, 'DerivativeSamples')
 
-    def download_derivative_samples_by_os_attr(self, propName, propValue, study_name=None):
+    def download_derivative_samples_by_os_attr(self, prop_name, prop_value, study_name=None):
         """
         fetches a samplingEvent by property value
 
-        :param propName: name of property to search
-        :type propName: str
-        :param propValue: matching value of property to search
-        :type propValue: str
+        :param prop_name: name of property to search
+        :type prop_name: str
+        :param prop_value: matching value of property to search
+        :type prop_value: str
 
         :rtype: DerivativeSamples
         """
-        (ret, retcode) = self.derivative_sample_controller.download_derivative_samples_by_os_attr(propName, propValue,
-                                                                               self._user,
-                                                                               self.auth_tokens())
+        (ret, retcode) = self.derivative_sample_controller.download_derivative_samples_by_os_attr(prop_name, prop_value,
+                                                                                                  self._user,
+                                                                                                  self.auth_tokens())
 
         return self.create_response(ret, retcode, 'DerivativeSamples')
-
 
     def download_derivative_samples(self, search_filter, start=None, count=None):
         """
@@ -131,7 +129,7 @@ class LocalDerivativeSampleApi(BaseLocalApi):
 
         return self.create_response(ret, retcode, 'DerivativeSamples')
 
-    def download_derivative_samples_by_study(self, studyName, start=None, count=None):
+    def download_derivative_samples_by_study(self, study_name, start=None, count=None):
         """
         fetches samplingEvents for a study
 
@@ -144,18 +142,18 @@ class LocalDerivativeSampleApi(BaseLocalApi):
 
         :rtype: DerivativeSamples
         """
-        (ret, retcode) = self.derivative_sample_controller.download_derivative_samples_by_study(studyName, start,
-                                                                           count, self._user,
-                                                                           self.auth_tokens())
+        (ret, retcode) = self.derivative_sample_controller.download_derivative_samples_by_study(study_name, start,
+                                                                                                count, self._user,
+                                                                                                self.auth_tokens())
 
         return self.create_response(ret, retcode, 'DerivativeSamples')
 
-    def download_derivative_samples_by_event_set(self, eventSetId, start=None, count=None):
+    def download_derivative_samples_by_event_set(self, event_set_id, start=None, count=None):
         """
         fetches samplingEvents in a given event set
 
-        :param eventSetId: Event Set name
-        :type eventSetId: str
+        :param event_set_id: Event Set name
+        :type event_set_id: str
         :param start: for pagination start the result set at a record x
         :type start: int
         :param count: for pagination the number of entries to return
@@ -163,13 +161,13 @@ class LocalDerivativeSampleApi(BaseLocalApi):
 
         :rtype: DerivativeSamples
         """
-        (ret, retcode) = self.derivative_sample_controller.download_derivative_samples_by_event_set(eventSetId,start,
-                                                                               count, self._user,
-                                                                           self.auth_tokens())
+        (ret, retcode) = self.derivative_sample_controller.download_derivative_samples_by_event_set(event_set_id, start,
+                                                                                                    count, self._user,
+                                                                                                    self.auth_tokens())
 
         return self.create_response(ret, retcode, 'DerivativeSamples')
 
-    def download_derivative_samples_by_taxa(self, taxaId, start=None, count=None):
+    def download_derivative_samples_by_taxa(self, taxa_id, start=None, count=None):
         """
         fetches a samplingEvent by property value
 
@@ -180,14 +178,14 @@ class LocalDerivativeSampleApi(BaseLocalApi):
 
         :rtype: DerivativeSamples
         """
-        (ret, retcode) = self.derivative_sample_controller.download_derivative_samples_by_taxa(taxaId,
+        (ret, retcode) = self.derivative_sample_controller.download_derivative_samples_by_taxa(taxa_id,
                                                                                                start, count,
                                                                                                self._user,
                                                                                                self.auth_tokens())
 
         return self.create_response(ret, retcode, 'DerivativeSamples')
 
-    def update_derivative_sample(self, derivativeSampleId, derivativeSample):
+    def update_derivative_sample(self, derivative_sample_id, derivative_sample):
         """
         updates an samplingEvent
 
@@ -198,9 +196,8 @@ class LocalDerivativeSampleApi(BaseLocalApi):
 
         :rtype: DerivativeSample
         """
-        (ret, retcode) = self.derivative_sample_controller.update_derivative_sample(derivativeSampleId,
-                                                                              derivativeSample, self._user,
-                                                               self.auth_tokens())
+        (ret, retcode) = self.derivative_sample_controller.update_derivative_sample(derivative_sample_id,
+                                                                                    derivative_sample, self._user,
+                                                                                    self.auth_tokens())
 
         return self.create_response(ret, retcode, 'DerivativeSample')
-

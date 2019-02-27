@@ -6,9 +6,10 @@ from openapi_server import util
 
 import logging
 
-from backbone_server.controllers.sampling_event_controller  import SamplingEventController
+from backbone_server.controllers.sampling_event_controller import SamplingEventController
 
 from local.base_local_api import BaseLocalApi
+
 
 class LocalSamplingEventApi(BaseLocalApi):
 
@@ -18,54 +19,53 @@ class LocalSamplingEventApi(BaseLocalApi):
 
         self.sampling_event_controller = SamplingEventController()
 
-    def create_sampling_event(self, samplingEvent):
+    def create_sampling_event(self, sampling_event):
         """
         create_sampling_event
         Create a samplingEvent
-        :param samplingEvent: 
-        :type samplingEvent: dict | bytes
+        :param sampling_event:
+        :type sampling_event: dict | bytes
 
         :rtype: SamplingEvent
         """
 
-        (ret, retcode) = self.sampling_event_controller.create_sampling_event(samplingEvent, self._user,
-                                                               self.auth_tokens())
+        (ret, retcode) = self.sampling_event_controller.create_sampling_event(sampling_event, self._user,
+                                                                              self.auth_tokens())
 
         return self.create_response(ret, retcode, 'SamplingEvent')
 
-    def delete_sampling_event(self, samplingEventId):
+    def delete_sampling_event(self, sampling_event_id):
         """
         deletes an samplingEvent
-        
-        :param samplingEventId: ID of samplingEvent to fetch
-        :type samplingEventId: str
+
+        :param sampling_event_id: ID of samplingEvent to fetch
+        :type sampling_event_id: str
 
         :rtype: None
         """
-        (ret, retcode) = self.sampling_event_controller.delete_sampling_event(samplingEventId, self._user,
-                                                               self.auth_tokens())
+        (ret, retcode) = self.sampling_event_controller.delete_sampling_event(sampling_event_id, self._user,
+                                                                              self.auth_tokens())
 
         return self.create_response(ret, retcode)
 
-
-    def download_sampling_event(self, samplingEventId):
+    def download_sampling_event(self, sampling_event_id):
         """
         fetches an samplingEvent
-        
+
         :param samplingEventId: ID of samplingEvent to fetch
         :type samplingEventId: str
 
         :rtype: SamplingEvent
         """
-        (ret, retcode) = self.sampling_event_controller.download_sampling_event(samplingEventId, self._user,
-                                                                 self.auth_tokens())
+        (ret, retcode) = self.sampling_event_controller.download_sampling_event(sampling_event_id, self._user,
+                                                                                self.auth_tokens())
 
         return self.create_response(ret, retcode, 'SamplingEvent')
 
     def download_sampling_events(self, search_filter=None, start=None, count=None):
         """
         fetches an samplingEvent
-        
+
         :param samplingEventId: ID of samplingEvent to fetch
         :type samplingEventId: str
 
@@ -77,13 +77,12 @@ class LocalSamplingEventApi(BaseLocalApi):
 
         return self.create_response(ret, retcode, 'SamplingEvents')
 
-
-    def download_sampling_events_by_event_set(self, eventSetId, start=None, count=None):
+    def download_sampling_events_by_event_set(self, event_set_id, start=None, count=None):
         """
         fetches samplingEvents in a given event set
-        
-        :param eventSetId: Event Set name
-        :type eventSetId: str
+
+        :param event_set_id: Event Set name
+        :type event_set_id: str
         :param start: for pagination start the result set at a record x
         :type start: int
         :param count: for pagination the number of entries to return
@@ -91,54 +90,54 @@ class LocalSamplingEventApi(BaseLocalApi):
 
         :rtype: SamplingEvents
         """
-        (ret, retcode) = self.sampling_event_controller.download_sampling_events_by_event_set(eventSetId,start,
-                                                                               count, self._user,
-                                                                           self.auth_tokens())
+        (ret, retcode) = self.sampling_event_controller.download_sampling_events_by_event_set(event_set_id, start,
+                                                                                              count, self._user,
+                                                                                              self.auth_tokens())
 
         return self.create_response(ret, retcode, 'SamplingEvents')
 
-    def download_sampling_events_by_attr(self, propName, propValue, study_name=None):
+    def download_sampling_events_by_attr(self, prop_name, prop_value, study_name=None):
         """
         fetches a samplingEvent by property value
-        
-        :param propName: name of property to search
-        :type propName: str
-        :param propValue: matching value of property to search
-        :type propValue: str
+
+        :param prop_name: name of property to search
+        :type prop_name: str
+        :param prop_value: matching value of property to search
+        :type prop_value: str
 
         :rtype: SamplingEvents
         """
-        (ret, retcode) = self.sampling_event_controller.download_sampling_events_by_attr(propName, propValue,
-                                                                               study_name,
-                                                                               self._user,
-                                                                               self.auth_tokens())
+        (ret, retcode) = self.sampling_event_controller.download_sampling_events_by_attr(prop_name, prop_value,
+                                                                                         study_name,
+                                                                                         self._user,
+                                                                                         self.auth_tokens())
 
         return self.create_response(ret, retcode, 'SamplingEvents')
 
-    def download_sampling_events_by_os_attr(self, propName, propValue, study_name=None):
+    def download_sampling_events_by_os_attr(self, prop_name, prop_value, study_name=None):
         """
         fetches a samplingEvent by property value
-        
-        :param propName: name of property to search
-        :type propName: str
-        :param propValue: matching value of property to search
-        :type propValue: str
+
+        :param prop_name: name of property to search
+        :type prop_name: str
+        :param prop_value: matching value of property to search
+        :type prop_value: str
 
         :rtype: SamplingEvents
         """
-        (ret, retcode) = self.sampling_event_controller.download_sampling_events_by_os_attr(propName, propValue,
-                                                                               study_name,
-                                                                               self._user,
-                                                                               self.auth_tokens())
+        (ret, retcode) = self.sampling_event_controller.download_sampling_events_by_os_attr(prop_name, prop_value,
+                                                                                            study_name,
+                                                                                            self._user,
+                                                                                            self.auth_tokens())
 
         return self.create_response(ret, retcode, 'SamplingEvents')
 
-    def download_sampling_events_by_location(self, locationId, start=None, count=None):
+    def download_sampling_events_by_location(self, location_id, start=None, count=None):
         """
         fetches samplingEvents for a location
-        
-        :param locationId: location
-        :type locationId: str
+
+        :param location_id: location
+        :type location_id: str
         :param start: for pagination start the result set at a record x
         :type start: int
         :param count: for pagination the number of entries to return
@@ -146,18 +145,18 @@ class LocalSamplingEventApi(BaseLocalApi):
 
         :rtype: SamplingEvents
         """
-        (ret, retcode) = self.sampling_event_controller.download_sampling_events_by_location(locationId, start,
-                                                                              count, self._user,
-                                                                              self.auth_tokens())
+        (ret, retcode) = self.sampling_event_controller.download_sampling_events_by_location(location_id, start,
+                                                                                             count, self._user,
+                                                                                             self.auth_tokens())
 
         return self.create_response(ret, retcode, 'SamplingEvents')
 
-    def download_sampling_events_by_study(self, studyName, start=None, count=None):
+    def download_sampling_events_by_study(self, study_name, start=None, count=None):
         """
         fetches samplingEvents for a study
-        
-        :param studyName: 4 digit study code
-        :type studyName: str
+
+        :param study_name: 4 digit study code
+        :type study_name: str
         :param start: for pagination start the result set at a record x
         :type start: int
         :param count: for pagination the number of entries to return
@@ -165,18 +164,18 @@ class LocalSamplingEventApi(BaseLocalApi):
 
         :rtype: SamplingEvents
         """
-        (ret, retcode) = self.sampling_event_controller.download_sampling_events_by_study(studyName, start,
-                                                                           count, self._user,
-                                                                           self.auth_tokens())
+        (ret, retcode) = self.sampling_event_controller.download_sampling_events_by_study(study_name, start,
+                                                                                          count, self._user,
+                                                                                          self.auth_tokens())
 
         return self.create_response(ret, retcode, 'SamplingEvents')
 
-    def download_sampling_events_by_taxa(self, taxaId, start=None, count=None):
+    def download_sampling_events_by_taxa(self, taxa_id, start=None, count=None):
         """
         fetches samplingEvents for a given taxonomy classification code
-        
-        :param taxaId: NCBI taxonomy code
-        :type taxaId: str
+
+        :param taxa_id: NCBI taxonomy code
+        :type taxa_id: str
         :param start: for pagination start the result set at a record x
         :type start: int
         :param count: for pagination the number of entries to return
@@ -184,34 +183,32 @@ class LocalSamplingEventApi(BaseLocalApi):
 
         :rtype: SamplingEvents
         """
-        (ret, retcode) = self.sampling_event_controller.download_sampling_events_by_taxa(taxaId, start,
-                                                                          count, self._user,
-                                                                           self.auth_tokens())
+        (ret, retcode) = self.sampling_event_controller.download_sampling_events_by_taxa(taxa_id, start,
+                                                                                         count, self._user,
+                                                                                         self.auth_tokens())
 
         return self.create_response(ret, retcode, 'SamplingEvents')
 
-
-    def update_sampling_event(self, samplingEventId, samplingEvent):
+    def update_sampling_event(self, sampling_event_id, sampling_event):
         """
         updates an samplingEvent
-        
-        :param samplingEventId: ID of samplingEvent to update
-        :type samplingEventId: str
-        :param samplingEvent: 
-        :type samplingEvent: dict | bytes
+
+        :param sampling_event_id: ID of samplingEvent to update
+        :type sampling_event_id: str
+        :param sampling_event:
+        :type sampling_event: dict | bytes
 
         :rtype: SamplingEvent
         """
-        (ret, retcode) = self.sampling_event_controller.update_sampling_event(samplingEventId, samplingEvent, self._user,
-                                                               self.auth_tokens())
+        (ret, retcode) = self.sampling_event_controller.update_sampling_event(sampling_event_id, sampling_event, self._user,
+                                                                              self.auth_tokens())
 
         return self.create_response(ret, retcode, 'SamplingEvent')
-
 
     def merge_sampling_events(self, samplingEventId1, samplingEventId2):
         """
         merges samplingEvents
-        
+
         :param samplingEventId1: ID of samplingEvent to update
         :type samplingEventId1: str
         :param samplingEventId2: ID of samplingEvent to update
@@ -225,4 +222,3 @@ class LocalSamplingEventApi(BaseLocalApi):
                                                                               self.auth_tokens())
 
         return self.create_response(ret, retcode, 'SamplingEvent')
-

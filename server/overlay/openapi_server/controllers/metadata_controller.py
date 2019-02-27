@@ -12,7 +12,8 @@ import logging
 
 metadata_controller = MetadataController()
 
-def create_taxonomy(taxonomy, user=None, token_info=None):
+
+def create_taxonomy(body, user=None, token_info=None):
     """create_taxonomy
 
     Create a Taxonomy # noqa: E501
@@ -26,6 +27,7 @@ def create_taxonomy(taxonomy, user=None, token_info=None):
 
     return metadata_controller.create_taxonomy(taxonomy, user,
                                                metadata_controller.token_info(token_info))
+
 
 def download_history(record_type, record_id, action_types=None, user=None,
                      token_info=None):  # noqa: E501
@@ -45,7 +47,8 @@ def download_history(record_type, record_id, action_types=None, user=None,
     return metadata_controller.download_history(record_type, record_id, action_types, user,
                                                 metadata_controller.token_info(token_info))
 
-def get_country_metadata(countryId, user=None, token_info=None):
+
+def get_country_metadata(country_id, user=None, token_info=None):
     """
     fetches all the names for a country
     guesses the search criteria
@@ -55,8 +58,9 @@ def get_country_metadata(countryId, user=None, token_info=None):
     :rtype: Country
     """
 
-    return metadata_controller.get_country_metadata(countryId, user,
+    return metadata_controller.get_country_metadata(country_id, user,
                                                     metadata_controller.token_info(token_info))
+
 
 def get_attr_types(user=None, token_info=None):  # noqa: E501
     """fetches all the attr types
@@ -67,7 +71,7 @@ def get_attr_types(user=None, token_info=None):  # noqa: E501
     :rtype: List[str]
     """
     return metadata_controller.get_attr_types(user,
-                                                    metadata_controller.token_info(token_info))
+                                              metadata_controller.token_info(token_info))
 
 
 def get_location_attr_types(user=None, token_info=None):  # noqa: E501
@@ -79,7 +83,8 @@ def get_location_attr_types(user=None, token_info=None):  # noqa: E501
     :rtype: List[str]
     """
     return metadata_controller.get_location_attr_types(user,
-                                                             metadata_controller.token_info(token_info))
+                                                       metadata_controller.token_info(token_info))
+
 
 def get_taxonomy_metadata(user=None, token_info=None):  # noqa: E501
     """fetches all the registered taxa

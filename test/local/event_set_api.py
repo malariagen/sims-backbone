@@ -10,6 +10,7 @@ from backbone_server.controllers.event_set_controller import EventSetController
 
 from local.base_local_api import BaseLocalApi
 
+
 class LocalEventSetApi(BaseLocalApi):
 
     def __init__(self, api_client, user, auths, method):
@@ -18,75 +19,71 @@ class LocalEventSetApi(BaseLocalApi):
 
         self.event_set_controller = EventSetController()
 
-    def create_event_set(self, eventSetId):
+    def create_event_set(self, event_set_id):
         """
         creates an eventSet
-        
-        :param eventSetId: ID of eventSet to create
-        :type eventSetId: str
-        :param eventSet: 
-        :type eventSet: dict | bytes
+
+        :param event_set:
+        :type event_set: dict | bytes
 
         :rtype: EventSet
         """
-        logging.basicConfig(level=logging.DEBUG)
-
-        (ret, retcode) = self.event_set_controller.create_event_set(eventSetId, self._user,
-                                                     self.auth_tokens())
+        (ret, retcode) = self.event_set_controller.create_event_set(event_set_id, self._user,
+                                                                    self.auth_tokens())
 
         return self.create_response(ret, retcode, 'EventSet')
 
-    def create_event_set_item(self, eventSetId, samplingEventId):
+    def create_event_set_item(self, event_set_id, sampling_event_id):
         """
         Adds a samplingEvent to an eventSet
-        
-        :param eventSetId: ID of eventSet to modify
-        :type eventSetId: str
-        :param samplingEventId: ID of samplingEvent to add to the set
-        :type samplingEventId: str
+
+        :param event_set_id: ID of eventSet to modify
+        :type event_set_id: str
+        :param sampling_event_id: ID of samplingEvent to add to the set
+        :type sampling_event_id: str
 
         :rtype: EventSet
         """
-        (ret, retcode) = self.event_set_controller.create_event_set_item(eventSetId, samplingEventId, self._user,
-                                                      self.auth_tokens())
+        (ret, retcode) = self.event_set_controller.create_event_set_item(event_set_id, sampling_event_id, self._user,
+                                                                         self.auth_tokens())
         return self.create_response(ret, retcode, 'EventSet')
 
-
-    def create_event_set_note(self, eventSetId, noteId, note):
+    def create_event_set_note(self, event_set_id, note_id, note):
         """
         Adds a note to an eventSet
-        
-        :param eventSetId: ID of eventSet to modify
-        :type eventSetId: str
-        :param noteId: ID of note to modify in the set
-        :type noteId: str
-        :param note: 
+
+        :param event_set_id: ID of eventSet to modify
+        :type event_set_id: str
+        :param note_id: ID of note to modify in the set
+        :type note_id: str
+        :param note:
         :type note: dict | bytes
 
         :rtype: None
         """
-        (ret, retcode) = self.event_set_controller.create_event_set_note(eventSetId, noteId, note, self._user,
-                                                      self.auth_tokens())
+        (ret, retcode) = self.event_set_controller.create_event_set_note(event_set_id, note_id, note, self._user,
+                                                                         self.auth_tokens())
 
         return self.create_response(ret, retcode)
 
-    def delete_event_set(self, eventSetId):
+    def delete_event_set(self, event_set_id):
         """
         deletes an eventSet
-        
+
         :param eventSetId: ID of eventSet to delete
         :type eventSetId: str
 
         :rtype: None
         """
-        (ret, retcode) = self.event_set_controller.delete_event_set(eventSetId, self._user, self.auth_tokens())
+        (ret, retcode) = self.event_set_controller.delete_event_set(
+            event_set_id, self._user, self.auth_tokens())
 
         return self.create_response(ret, retcode)
 
-    def delete_event_set_item(self, eventSetId, samplingEventId):
+    def delete_event_set_item(self, event_set_id, sampling_event_id):
         """
         deletes a samplingEvent from an eventSet
-        
+
         :param eventSetId: ID of eventSet to modify
         :type eventSetId: str
         :param samplingEventId: ID of samplingEvent to remove from the set
@@ -94,82 +91,80 @@ class LocalEventSetApi(BaseLocalApi):
 
         :rtype: None
         """
-        (ret, retcode) = self.event_set_controller.delete_event_set_item(eventSetId, samplingEventId, self._user,
-                                                      self.auth_tokens())
+        (ret, retcode) = self.event_set_controller.delete_event_set_item(event_set_id, sampling_event_id, self._user,
+                                                                         self.auth_tokens())
         return self.create_response(ret, retcode)
 
-
-    def delete_event_set_note(self, eventSetId, noteId):
+    def delete_event_set_note(self, event_set_id, note_id):
         """
         deletes an eventSet note
-        
-        :param eventSetId: ID of eventSet to modify
-        :type eventSetId: str
-        :param noteId: ID of note to remove from the set
-        :type noteId: str
+
+        :param event_set_id: ID of eventSet to modify
+        :type event_set_id: str
+        :param note_id: ID of note to remove from the set
+        :type note_id: str
 
         :rtype: None
         """
-        (ret, retcode) = self.event_set_controller.delete_event_set_note(eventSetId, noteId, self._user,
-                                                      self.auth_tokens())
+        (ret, retcode) = self.event_set_controller.delete_event_set_note(event_set_id, note_id, self._user,
+                                                                         self.auth_tokens())
 
         return self.create_response(ret, retcode)
 
-    def download_event_set(self, eventSetId, start=None, count=None):
+    def download_event_set(self, event_set_id, start=None, count=None):
         """
         fetches an eventSet
-        
+
         :param eventSetId: ID of eventSet to fetch
         :type eventSetId: str
 
         :rtype: EventSet
         """
-        (ret, retcode) = self.event_set_controller.download_event_set(eventSetId, start, count, self._user,
-                                                      self.auth_tokens())
+        (ret, retcode) = self.event_set_controller.download_event_set(event_set_id, start, count, self._user,
+                                                                      self.auth_tokens())
 
         return self.create_response(ret, retcode, 'EventSet')
 
     def download_event_sets(self):
         """
         fetches eventSets
-        
+
 
         :rtype: EventSets
         """
         (ret, retcode) = self.event_set_controller.download_event_sets(self._user,
-                                                      self.auth_tokens())
+                                                                       self.auth_tokens())
         return self.create_response(ret, retcode, 'EventSets')
 
-    def update_event_set(self, eventSetId, eventSet):
+    def update_event_set(self, event_set_id, event_set):
         """
         updates an eventSet
-        
-        :param eventSetId: ID of eventSet to update
-        :type eventSetId: str
-        :param eventSet: 
-        :type eventSet: dict | bytes
+
+        :param event_set_id: ID of eventSet to update
+        :type event_set_id: str
+        :param event_set:
+        :type event_set: dict | bytes
 
         :rtype: EventSet
         """
-        (ret, retcode) = self.event_set_controller.update_event_set(eventSetId, eventSet, self._user,
-                                                      self.auth_tokens())
+        (ret, retcode) = self.event_set_controller.update_event_set(event_set_id, event_set, self._user,
+                                                                    self.auth_tokens())
         return self.create_response(ret, retcode, 'EventSet')
 
-
-    def update_event_set_note(self, eventSetId, noteId, note):
+    def update_event_set_note(self, event_set_id, note_id, note):
         """
         Adds a note to an eventSet
-        
-        :param eventSetId: ID of eventSet to modify
-        :type eventSetId: str
-        :param noteId: ID of note to modify in the set
-        :type noteId: str
-        :param note: 
+
+        :param event_set_id: ID of eventSet to modify
+        :type event_set_id: str
+        :param note_id: ID of note to modify in the set
+        :type note_id: str
+        :param note:
         :type note: dict | bytes
 
         :rtype: None
         """
 
-        (ret, retcode) = self.event_set_controller.update_event_set_note(eventSetId, noteId, note, self._user,
-                                                      self.auth_tokens())
+        (ret, retcode) = self.event_set_controller.update_event_set_note(event_set_id, note_id, note, self._user,
+                                                                         self.auth_tokens())
         return self.create_response(ret, retcode)

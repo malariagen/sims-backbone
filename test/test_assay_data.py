@@ -20,7 +20,7 @@ class TestAssayDatum(TestBase):
         try:
 
             samp = openapi_client.AssayDatum(None)
-            created = api_instance.create_assay_datum(samp)
+            created = api_instance.create_assay_datum(assay_datum=samp)
             if not api_factory.is_authorized(None):
                 pytest.fail('Unauthorized call to create_assay_datum succeeded')
 

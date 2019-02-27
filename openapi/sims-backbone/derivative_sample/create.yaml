@@ -4,11 +4,8 @@
       description: Create a DerivativeSample
       operationId: createDerivativeSample
       requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "./sims-backbone/definitions/derivative_sample.yaml#/components/schemas/DerivativeSample"
-        description: The original sample to create
+        $ref: "#/components/requestBodies/AssayDatum"
+        description: The derivative sample to create
         required: true
       responses:
         "200":

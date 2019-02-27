@@ -23,6 +23,6 @@ then
     python3 -m pytest --cov=backbone_server --cov-report html -v -s -x -k $2
     #Or -k to run a specific test instead of just failing fast
 else
-    python3 -m pytest -s -x --cov=backbone_server --cov-report html -v
+    python3 -m pytest -s -x --cov=backbone_server --cov-report html -v -v -v
 fi
 psql -c "DELETE FROM taxonomies WHERE id=7227;" backbone_test

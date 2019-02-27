@@ -8,12 +8,13 @@ from openapi_server import util
 import logging
 
 
-from backbone_server.controllers.individual_controller  import IndividualController
+from backbone_server.controllers.individual_controller import IndividualController
 
 
 individual_controller = IndividualController()
 
-def create_individual(individual, user = None, token_info = None):
+
+def create_individual(body, user=None, token_info=None):
     """
     create_individual
     Create a individual
@@ -26,10 +27,10 @@ def create_individual(individual, user = None, token_info = None):
         individual = Individual.from_dict(connexion.request.get_json())
 
     return individual_controller.create_individual(individual, user,
-                                               individual_controller.token_info(token_info))
+                                                   individual_controller.token_info(token_info))
 
 
-def delete_individual(individualId, user = None, token_info = None):
+def delete_individual(individual_id, user=None, token_info=None):
     """
     deletes an individual
 
@@ -38,12 +39,11 @@ def delete_individual(individualId, user = None, token_info = None):
 
     :rtype: None
     """
-    return individual_controller.delete_individual(individualId, user,
-                                               individual_controller.token_info(token_info))
+    return individual_controller.delete_individual(individual_id, user,
+                                                   individual_controller.token_info(token_info))
 
 
-
-def download_individual(individualId, user = None, token_info = None):
+def download_individual(individual_id, user=None, token_info=None):
     """
     fetches an individual
 
@@ -52,12 +52,12 @@ def download_individual(individualId, user = None, token_info = None):
 
     :rtype: Individual
     """
-    return individual_controller.download_individual(individualId, user,
-                                                 individual_controller.token_info(token_info))
+    return individual_controller.download_individual(individual_id, user,
+                                                     individual_controller.token_info(token_info))
 
 
-def download_individuals(studyName=None, start=None, count=None, orderby=None, user = None,
-                       token_info = None):
+def download_individuals(study_name=None, start=None, count=None, orderby=None, user=None,
+                         token_info=None):
     """
     fetches individuals
 
@@ -72,11 +72,11 @@ def download_individuals(studyName=None, start=None, count=None, orderby=None, u
 
     :rtype: Individuals
     """
-    return individual_controller.download_individuals(studyName, start, count, orderby, user,
-                                                  individual_controller.token_info(token_info))
+    return individual_controller.download_individuals(study_name, start, count, orderby, user,
+                                                      individual_controller.token_info(token_info))
 
 
-def download_individuals_by_attr(propName, propValue, studyName, user = None, token_info = None): # noqa: E501
+def download_individuals_by_attr(prop_name, prop_value, study_name, user=None, token_info=None):  # noqa: E501
     """fetches one or more individuals by property value
 
      # noqa: E501
@@ -90,12 +90,12 @@ def download_individuals_by_attr(propName, propValue, studyName, user = None, to
 
     :rtype: Individuals
     """
-    return individual_controller.download_individuals_by_attr(propName,
-                                                              propValue, studyName, user,
+    return individual_controller.download_individuals_by_attr(prop_name,
+                                                              prop_value, study_name, user,
                                                               individual_controller.token_info(token_info))
 
 
-def merge_individuals(into, merged, user = None, token_info = None):
+def merge_individuals(into, merged, user=None, token_info=None):
     """merges two Individuals
 
     merges individuals # noqa: E501
@@ -108,11 +108,10 @@ def merge_individuals(into, merged, user = None, token_info = None):
     :rtype: Individual
     """
     return individual_controller.merge_individuals(into, merged, user,
-                                               individual_controller.token_info(token_info))
+                                                   individual_controller.token_info(token_info))
 
 
-
-def update_individual(individualId, individual, user = None, token_info = None):
+def update_individual(individual_id, body, user=None, token_info=None):
     """
     updates an individual
 
@@ -126,6 +125,5 @@ def update_individual(individualId, individual, user = None, token_info = None):
     if connexion.request.is_json:
         individual = Individual.from_dict(connexion.request.get_json())
 
-    return individual_controller.update_individual(individualId, individual, user,
-                                               individual_controller.token_info(token_info))
-
+    return individual_controller.update_individual(individual_id, individual, user,
+                                                   individual_controller.token_info(token_info))

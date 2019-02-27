@@ -5,7 +5,7 @@
       description: ""
       operationId: downloadSamplingEventsByTaxa
       parameters:
-        - name: taxaId
+        - name: taxa_id
           in: path
           description: NCBI taxonomy code
           required: true

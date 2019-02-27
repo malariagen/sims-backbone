@@ -5,7 +5,7 @@
       description: ""
       operationId: downloadIndividual
       parameters:
-        - name: individualId
+        - name: individual_id
           in: path
           description: ID of individual to fetch
           required: true
@@ -25,7 +25,7 @@
       description: ""
       operationId: updateIndividual
       parameters:
-        - name: individualId
+        - name: individual_id
           in: path
           description: ID of individual to update
           required: true
@@ -53,7 +53,7 @@
       description: ""
       operationId: deleteIndividual
       parameters:
-        - name: individualId
+        - name: individual_id
           in: path
           description: ID of individual to fetch
           required: true
