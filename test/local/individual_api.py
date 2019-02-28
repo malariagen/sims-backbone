@@ -30,7 +30,7 @@ class LocalIndividualApi(BaseLocalApi):
         """
 
         (ret, retcode) = self.individual_controller.create_individual(individual, self._user,
-                                                                      self.auth_tokens())
+                                                                      self.individual_controller.token_info(self.auth_tokens()))
 
         return self.create_response(ret, retcode, 'Individual')
 
@@ -44,7 +44,7 @@ class LocalIndividualApi(BaseLocalApi):
         :rtype: None
         """
         (ret, retcode) = self.individual_controller.delete_individual(individual_id, self._user,
-                                                                      self.auth_tokens())
+                                                                      self.individual_controller.token_info(self.auth_tokens()))
 
         return self.create_response(ret, retcode)
 
@@ -58,7 +58,7 @@ class LocalIndividualApi(BaseLocalApi):
         :rtype: Individual
         """
         (ret, retcode) = self.individual_controller.download_individual(individual_id, self._user,
-                                                                        self.auth_tokens())
+                                                                        self.individual_controller.token_info(self.auth_tokens()))
 
         return self.create_response(ret, retcode, 'Individual')
 
@@ -78,7 +78,7 @@ class LocalIndividualApi(BaseLocalApi):
         :rtype: Individuals
         """
         (ret, retcode) = self.individual_controller.download_individuals(study_name, start, count, orderby, self._user,
-                                                                         self.auth_tokens())
+                                                                         self.individual_controller.token_info(self.auth_tokens()))
 
         return self.create_response(ret, retcode, 'Individuals')
 
@@ -101,14 +101,14 @@ class LocalIndividualApi(BaseLocalApi):
                                                                                  attr_value,
                                                                                  study_name,
                                                                                  self._user,
-                                                                                 self.auth_tokens())
+                                                                                 self.individual_controller.token_info(self.auth_tokens()))
 
         return self.create_response(ret, retcode, 'Individuals')
 
     def merge_individuals(self, individual1, individual2):
 
         (ret, retcode) = self.individual_controller.merge_individuals(individual1, individual2, self._user,
-                                                                      self.auth_tokens())
+                                                                      self.individual_controller.token_info(self.auth_tokens()))
 
         return self.create_response(ret, retcode, 'Individual')
 
@@ -125,6 +125,6 @@ class LocalIndividualApi(BaseLocalApi):
         """
 
         (ret, retcode) = self.individual_controller.update_individual(individual_id, individual, self._user,
-                                                                      self.auth_tokens())
+                                                                      self.individual_controller.token_info(self.auth_tokens()))
 
         return self.create_response(ret, retcode, 'Individual')

@@ -76,7 +76,7 @@ def download_individuals(study_name=None, start=None, count=None, orderby=None, 
                                                       individual_controller.token_info(token_info))
 
 
-def download_individuals_by_attr(prop_name, prop_value, study_name, user=None, token_info=None):  # noqa: E501
+def download_individuals_by_attr(prop_name, prop_value, study_name=None, user=None, token_info=None):  # noqa: E501
     """fetches one or more individuals by property value
 
      # noqa: E501

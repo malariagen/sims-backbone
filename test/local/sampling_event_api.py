@@ -30,7 +30,7 @@ class LocalSamplingEventApi(BaseLocalApi):
         """
 
         (ret, retcode) = self.sampling_event_controller.create_sampling_event(sampling_event, self._user,
-                                                                              self.auth_tokens())
+                                                                              self.sampling_event_controller.token_info(self.auth_tokens()))
 
         return self.create_response(ret, retcode, 'SamplingEvent')
 
@@ -44,7 +44,7 @@ class LocalSamplingEventApi(BaseLocalApi):
         :rtype: None
         """
         (ret, retcode) = self.sampling_event_controller.delete_sampling_event(sampling_event_id, self._user,
-                                                                              self.auth_tokens())
+                                                                              self.sampling_event_controller.token_info(self.auth_tokens()))
 
         return self.create_response(ret, retcode)
 
@@ -58,7 +58,7 @@ class LocalSamplingEventApi(BaseLocalApi):
         :rtype: SamplingEvent
         """
         (ret, retcode) = self.sampling_event_controller.download_sampling_event(sampling_event_id, self._user,
-                                                                                self.auth_tokens())
+                                                                                self.sampling_event_controller.token_info(self.auth_tokens()))
 
         return self.create_response(ret, retcode, 'SamplingEvent')
 
@@ -73,7 +73,7 @@ class LocalSamplingEventApi(BaseLocalApi):
         """
         (ret, retcode) = self.sampling_event_controller.download_sampling_events(search_filter, start,
                                                                                  count, self._user,
-                                                                                 self.auth_tokens())
+                                                                                 self.sampling_event_controller.token_info(self.auth_tokens()))
 
         return self.create_response(ret, retcode, 'SamplingEvents')
 
@@ -92,7 +92,7 @@ class LocalSamplingEventApi(BaseLocalApi):
         """
         (ret, retcode) = self.sampling_event_controller.download_sampling_events_by_event_set(event_set_id, start,
                                                                                               count, self._user,
-                                                                                              self.auth_tokens())
+                                                                                              self.sampling_event_controller.token_info(self.auth_tokens()))
 
         return self.create_response(ret, retcode, 'SamplingEvents')
 
@@ -110,7 +110,7 @@ class LocalSamplingEventApi(BaseLocalApi):
         (ret, retcode) = self.sampling_event_controller.download_sampling_events_by_attr(prop_name, prop_value,
                                                                                          study_name,
                                                                                          self._user,
-                                                                                         self.auth_tokens())
+                                                                                         self.sampling_event_controller.token_info(self.auth_tokens()))
 
         return self.create_response(ret, retcode, 'SamplingEvents')
 
@@ -128,7 +128,7 @@ class LocalSamplingEventApi(BaseLocalApi):
         (ret, retcode) = self.sampling_event_controller.download_sampling_events_by_os_attr(prop_name, prop_value,
                                                                                             study_name,
                                                                                             self._user,
-                                                                                            self.auth_tokens())
+                                                                                            self.sampling_event_controller.token_info(self.auth_tokens()))
 
         return self.create_response(ret, retcode, 'SamplingEvents')
 
@@ -147,7 +147,7 @@ class LocalSamplingEventApi(BaseLocalApi):
         """
         (ret, retcode) = self.sampling_event_controller.download_sampling_events_by_location(location_id, start,
                                                                                              count, self._user,
-                                                                                             self.auth_tokens())
+                                                                                             self.sampling_event_controller.token_info(self.auth_tokens()))
 
         return self.create_response(ret, retcode, 'SamplingEvents')
 
@@ -166,7 +166,7 @@ class LocalSamplingEventApi(BaseLocalApi):
         """
         (ret, retcode) = self.sampling_event_controller.download_sampling_events_by_study(study_name, start,
                                                                                           count, self._user,
-                                                                                          self.auth_tokens())
+                                                                                          self.sampling_event_controller.token_info(self.auth_tokens()))
 
         return self.create_response(ret, retcode, 'SamplingEvents')
 
@@ -185,7 +185,7 @@ class LocalSamplingEventApi(BaseLocalApi):
         """
         (ret, retcode) = self.sampling_event_controller.download_sampling_events_by_taxa(taxa_id, start,
                                                                                          count, self._user,
-                                                                                         self.auth_tokens())
+                                                                                         self.sampling_event_controller.token_info(self.auth_tokens()))
 
         return self.create_response(ret, retcode, 'SamplingEvents')
 
@@ -201,7 +201,7 @@ class LocalSamplingEventApi(BaseLocalApi):
         :rtype: SamplingEvent
         """
         (ret, retcode) = self.sampling_event_controller.update_sampling_event(sampling_event_id, sampling_event, self._user,
-                                                                              self.auth_tokens())
+                                                                              self.sampling_event_controller.token_info(self.auth_tokens()))
 
         return self.create_response(ret, retcode, 'SamplingEvent')
 
@@ -219,6 +219,6 @@ class LocalSamplingEventApi(BaseLocalApi):
         (ret, retcode) = self.sampling_event_controller.merge_sampling_events(samplingEventId1,
                                                                               samplingEventId2,
                                                                               self._user,
-                                                                              self.auth_tokens())
+                                                                              self.sampling_event_controller.token_info(self.auth_tokens()))
 
         return self.create_response(ret, retcode, 'SamplingEvent')

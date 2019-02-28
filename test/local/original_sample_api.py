@@ -30,7 +30,7 @@ class LocalOriginalSampleApi(BaseLocalApi):
         """
 
         (ret, retcode) = self.original_sample_controller.create_original_sample(original_sample, self._user,
-                                                                                self.auth_tokens())
+                                                                                self.original_sample_controller.token_info(self.auth_tokens()))
 
         return self.create_response(ret, retcode, 'OriginalSample')
 
@@ -44,7 +44,7 @@ class LocalOriginalSampleApi(BaseLocalApi):
         :rtype: None
         """
         (ret, retcode) = self.original_sample_controller.delete_original_sample(original_sample_id, self._user,
-                                                                                self.auth_tokens())
+                                                                                self.original_sample_controller.token_info(self.auth_tokens()))
 
         return self.create_response(ret, retcode)
 
@@ -58,7 +58,7 @@ class LocalOriginalSampleApi(BaseLocalApi):
         :rtype: OriginalSample
         """
         (ret, retcode) = self.original_sample_controller.download_original_sample(original_sample_id, self._user,
-                                                                                  self.auth_tokens())
+                                                                                  self.original_sample_controller.token_info(self.auth_tokens()))
 
         return self.create_response(ret, retcode, 'OriginalSample')
 
@@ -73,7 +73,7 @@ class LocalOriginalSampleApi(BaseLocalApi):
         """
         (ret, retcode) = self.original_sample_controller.download_original_samples(search_filter, start,
                                                                                    count, self._user,
-                                                                                   self.auth_tokens())
+                                                                                   self.original_sample_controller.token_info(self.auth_tokens()))
 
         return self.create_response(ret, retcode, 'OriginalSamples')
 
@@ -92,7 +92,7 @@ class LocalOriginalSampleApi(BaseLocalApi):
         """
         (ret, retcode) = self.original_sample_controller.download_original_samples_by_event_set(event_set_id, start,
                                                                                                 count, self._user,
-                                                                                                self.auth_tokens())
+                                                                                                self.original_sample_controller.token_info(self.auth_tokens()))
 
         return self.create_response(ret, retcode, 'OriginalSamples')
 
@@ -110,7 +110,7 @@ class LocalOriginalSampleApi(BaseLocalApi):
         (ret, retcode) = self.original_sample_controller.download_original_samples_by_attr(prop_name, prop_value,
                                                                                            study_name,
                                                                                            self._user,
-                                                                                           self.auth_tokens())
+                                                                                           self.original_sample_controller.token_info(self.auth_tokens()))
 
         return self.create_response(ret, retcode, 'OriginalSamples')
 
@@ -129,7 +129,7 @@ class LocalOriginalSampleApi(BaseLocalApi):
         """
         (ret, retcode) = self.original_sample_controller.download_original_samples_by_location(location_id, start,
                                                                                                count, self._user,
-                                                                                               self.auth_tokens())
+                                                                                               self.original_sample_controller.token_info(self.auth_tokens()))
 
         return self.create_response(ret, retcode, 'OriginalSamples')
 
@@ -148,7 +148,7 @@ class LocalOriginalSampleApi(BaseLocalApi):
         """
         (ret, retcode) = self.original_sample_controller.download_original_samples_by_study(study_name, start,
                                                                                             count, self._user,
-                                                                                            self.auth_tokens())
+                                                                                            self.original_sample_controller.token_info(self.auth_tokens()))
 
         return self.create_response(ret, retcode, 'OriginalSamples')
 
@@ -167,7 +167,7 @@ class LocalOriginalSampleApi(BaseLocalApi):
         """
         (ret, retcode) = self.original_sample_controller.download_original_samples_by_taxa(taxa_id, start,
                                                                                            count, self._user,
-                                                                                           self.auth_tokens())
+                                                                                           self.original_sample_controller.token_info(self.auth_tokens()))
 
         return self.create_response(ret, retcode, 'OriginalSamples')
 
@@ -185,7 +185,7 @@ class LocalOriginalSampleApi(BaseLocalApi):
         (ret, retcode) = self.original_sample_controller.update_original_sample(sampling_event_id,
                                                                                 sampling_event,
                                                                                 self._user,
-                                                                                self.auth_tokens())
+                                                                                self.original_sample_controller.token_info(self.auth_tokens()))
 
         return self.create_response(ret, retcode, 'OriginalSample')
 
@@ -203,6 +203,6 @@ class LocalOriginalSampleApi(BaseLocalApi):
         (ret, retcode) = self.original_sample_controller.merge_original_samples(samplingEventId,
                                                                                 samplingEventId2,
                                                                                 self._user,
-                                                                                self.auth_tokens())
+                                                                                self.original_sample_controller.token_info(self.auth_tokens()))
 
         return self.create_response(ret, retcode, 'OriginalSample')

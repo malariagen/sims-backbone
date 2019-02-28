@@ -13,7 +13,7 @@ class IndividualsGet():
         self._connection = conn
 
 
-    def get(self, study_code=None, start=None, count=None, orderby='individual'):
+    def get(self, study_code=None, start=None, count=None, orderby='id'):
 
         result = Individuals()
 
@@ -34,6 +34,8 @@ class IndividualsGet():
                 count_query = 'SELECT COUNT(DISTINCT l.id) ' + query_body
 
                 if orderby:
+                    if orderby == 'id':
+                        orderby = 'l.id'
                     query_body = query_body + " ORDER BY " + orderby + ", l.id"
 
                 if not (start is None and count is None):

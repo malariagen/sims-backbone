@@ -27,7 +27,7 @@ class LocalReportApi(BaseLocalApi):
         :rtype: Studies
         """
         (ret, retcode) = self.report_controller.missing_locations(include_country, self._user,
-                                                   self.auth_tokens())
+                                                   self.report_controller.token_info(self.auth_tokens()))
 
         return self.create_response(ret, retcode, 'Studies')
 
@@ -41,7 +41,7 @@ class LocalReportApi(BaseLocalApi):
         :rtype: Studies
         """
         (ret, retcode) = self.report_controller.missing_taxon(self._user,
-                                                   self.auth_tokens())
+                                                   self.report_controller.token_info(self.auth_tokens()))
 
         return self.create_response(ret, retcode, 'Studies')
 
@@ -55,7 +55,7 @@ class LocalReportApi(BaseLocalApi):
         :rtype: Studies
         """
         (ret, retcode) = self.report_controller.uncurated_locations(self._user,
-                                                   self.auth_tokens())
+                                                   self.report_controller.token_info(self.auth_tokens()))
 
         return self.create_response(ret, retcode, 'Studies')
 

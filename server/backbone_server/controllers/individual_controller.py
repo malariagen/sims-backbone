@@ -139,14 +139,8 @@ class IndividualController(BaseController):
         retcode = 200
         samp = None
 
-        try:
-            prop_value = urllib.parse.unquote_plus(prop_value)
-            samp = get.get(prop_name, prop_value, study_name)
-        except MissingKeyException as dme:
-            logging.getLogger(__name__).debug(
-                "download_individual_by_attr: {}".format(repr(dme)))
-            retcode = 404
-            samp = str(dme)
+        prop_value = urllib.parse.unquote_plus(prop_value)
+        samp = get.get(prop_name, prop_value, study_name)
 
         return samp, retcode
 

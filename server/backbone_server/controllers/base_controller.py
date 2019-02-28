@@ -56,13 +56,12 @@ class BaseController():
     """
 
     def token_info(self, tok_info):
-        print(tok_info)
         resp = []
-        if tok_info and 'memberOf' in tok_info:
-            for auth_grp in tok_info['memberOf']:
-                dns = auth_grp.split(',')
-                cn = dns[0].split('=')[1]
-                resp.append(auth_grp)
+        if tok_info and 'scope' in tok_info:
+            #resp = tok_info['scope']
+            if 'memberOf' in tok_info and tok_info['memberOf']:
+                for auth_grp in tok_info['memberOf']:
+                    resp.append(auth_grp)
 
         return resp
 
@@ -71,7 +70,6 @@ class BaseController():
     """
 
     def authorizer(self, authorizer):
-        print(authorizer)
         resp = []
         resp = list(authorizer.keys())
         return resp

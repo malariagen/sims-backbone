@@ -30,7 +30,7 @@ class LocalAssayDataApi(BaseLocalApi):
         """
 
         (ret, retcode) = self.assay_datum_controller.create_assay_datum(assay_datum, self._user,
-                                                                        self.auth_tokens())
+                                                                        self.assay_datum_controller.token_info(self.auth_tokens()))
 
         return self.create_response(ret, retcode, 'AssayDatum')
 
@@ -44,7 +44,7 @@ class LocalAssayDataApi(BaseLocalApi):
         :rtype: None
         """
         (ret, retcode) = self.assay_datum_controller.delete_assay_datum(assay_datum_id, self._user,
-                                                                        self.auth_tokens())
+                                                                        self.assay_datum_controller.token_info(self.auth_tokens()))
 
         return self.create_response(ret, retcode)
 
@@ -58,7 +58,7 @@ class LocalAssayDataApi(BaseLocalApi):
         :rtype: AssayDatum
         """
         (ret, retcode) = self.assay_datum_controller.download_assay_datum(assay_datum_id, self._user,
-                                                                          self.auth_tokens())
+                                                                          self.assay_datum_controller.token_info(self.auth_tokens()))
 
         return self.create_response(ret, retcode, 'AssayDatum')
 
@@ -73,7 +73,7 @@ class LocalAssayDataApi(BaseLocalApi):
         """
         (ret, retcode) = self.assay_datum_controller.download_assay_data(filter, start,
                                                                          count, self._user,
-                                                                         self.auth_tokens())
+                                                                         self.assay_datum_controller.token_info(self.auth_tokens()))
 
         return self.create_response(ret, retcode, 'AssayData')
 
@@ -91,7 +91,7 @@ class LocalAssayDataApi(BaseLocalApi):
         (ret, retcode) = self.assay_datum_controller.download_assay_data_by_attr(prop_name, prop_value,
                                                                                  study_name,
                                                                                  self._user,
-                                                                                 self.auth_tokens())
+                                                                                 self.assay_datum_controller.token_info(self.auth_tokens()))
 
         return self.create_response(ret, retcode, 'AssayData')
 
@@ -109,7 +109,7 @@ class LocalAssayDataApi(BaseLocalApi):
         (ret, retcode) = self.assay_datum_controller.download_assay_data_by_os_attr(prop_name, prop_value,
                                                                                     study_name,
                                                                                     self._user,
-                                                                                    self.auth_tokens())
+                                                                                    self.assay_datum_controller.token_info(self.auth_tokens()))
 
         return self.create_response(ret, retcode, 'AssayData')
 
@@ -126,6 +126,6 @@ class LocalAssayDataApi(BaseLocalApi):
         """
         (ret, retcode) = self.assay_datum_controller.update_assay_datum(assay_datum_id,
                                                                         assay_datum, self._user,
-                                                                        self.auth_tokens())
+                                                                        self.assay_datum_controller.token_info(self.auth_tokens()))
 
         return self.create_response(ret, retcode, 'AssayDatum')

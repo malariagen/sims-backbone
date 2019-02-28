@@ -29,7 +29,7 @@ class LocalEventSetApi(BaseLocalApi):
         :rtype: EventSet
         """
         (ret, retcode) = self.event_set_controller.create_event_set(event_set_id, self._user,
-                                                                    self.auth_tokens())
+                                                                    self.event_set_controller.token_info(self.auth_tokens()))
 
         return self.create_response(ret, retcode, 'EventSet')
 
@@ -45,7 +45,7 @@ class LocalEventSetApi(BaseLocalApi):
         :rtype: EventSet
         """
         (ret, retcode) = self.event_set_controller.create_event_set_item(event_set_id, sampling_event_id, self._user,
-                                                                         self.auth_tokens())
+                                                                         self.event_set_controller.token_info(self.auth_tokens()))
         return self.create_response(ret, retcode, 'EventSet')
 
     def create_event_set_note(self, event_set_id, note_id, note):
@@ -62,7 +62,7 @@ class LocalEventSetApi(BaseLocalApi):
         :rtype: None
         """
         (ret, retcode) = self.event_set_controller.create_event_set_note(event_set_id, note_id, note, self._user,
-                                                                         self.auth_tokens())
+                                                                         self.event_set_controller.token_info(self.auth_tokens()))
 
         return self.create_response(ret, retcode)
 
@@ -76,7 +76,7 @@ class LocalEventSetApi(BaseLocalApi):
         :rtype: None
         """
         (ret, retcode) = self.event_set_controller.delete_event_set(
-            event_set_id, self._user, self.auth_tokens())
+            event_set_id, self._user, self.event_set_controller.token_info(self.auth_tokens()))
 
         return self.create_response(ret, retcode)
 
@@ -92,7 +92,7 @@ class LocalEventSetApi(BaseLocalApi):
         :rtype: None
         """
         (ret, retcode) = self.event_set_controller.delete_event_set_item(event_set_id, sampling_event_id, self._user,
-                                                                         self.auth_tokens())
+                                                                         self.event_set_controller.token_info(self.auth_tokens()))
         return self.create_response(ret, retcode)
 
     def delete_event_set_note(self, event_set_id, note_id):
@@ -107,7 +107,7 @@ class LocalEventSetApi(BaseLocalApi):
         :rtype: None
         """
         (ret, retcode) = self.event_set_controller.delete_event_set_note(event_set_id, note_id, self._user,
-                                                                         self.auth_tokens())
+                                                                         self.event_set_controller.token_info(self.auth_tokens()))
 
         return self.create_response(ret, retcode)
 
@@ -121,7 +121,7 @@ class LocalEventSetApi(BaseLocalApi):
         :rtype: EventSet
         """
         (ret, retcode) = self.event_set_controller.download_event_set(event_set_id, start, count, self._user,
-                                                                      self.auth_tokens())
+                                                                      self.event_set_controller.token_info(self.auth_tokens()))
 
         return self.create_response(ret, retcode, 'EventSet')
 
@@ -133,7 +133,7 @@ class LocalEventSetApi(BaseLocalApi):
         :rtype: EventSets
         """
         (ret, retcode) = self.event_set_controller.download_event_sets(self._user,
-                                                                       self.auth_tokens())
+                                                                       self.event_set_controller.token_info(self.auth_tokens()))
         return self.create_response(ret, retcode, 'EventSets')
 
     def update_event_set(self, event_set_id, event_set):
@@ -148,7 +148,7 @@ class LocalEventSetApi(BaseLocalApi):
         :rtype: EventSet
         """
         (ret, retcode) = self.event_set_controller.update_event_set(event_set_id, event_set, self._user,
-                                                                    self.auth_tokens())
+                                                                    self.event_set_controller.token_info(self.auth_tokens()))
         return self.create_response(ret, retcode, 'EventSet')
 
     def update_event_set_note(self, event_set_id, note_id, note):
@@ -166,5 +166,5 @@ class LocalEventSetApi(BaseLocalApi):
         """
 
         (ret, retcode) = self.event_set_controller.update_event_set_note(event_set_id, note_id, note, self._user,
-                                                                         self.auth_tokens())
+                                                                         self.event_set_controller.token_info(self.auth_tokens()))
         return self.create_response(ret, retcode)

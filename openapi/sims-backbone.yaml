@@ -214,6 +214,7 @@ components:
         application/json:
           schema:
             $ref: "./sims-backbone/definitions/assay_data.yaml#/components/schemas/AssayDatum"
+      required: true
     DerivativeSample:
       content:
         application/json:
@@ -248,6 +249,7 @@ components:
         application/json:
           schema:
             $ref: "./sims-backbone/definitions/original_sample.yaml#/components/schemas/OriginalSample"
+      required: true
   securitySchemes:
     OAuthSecurity:
       type: oauth2

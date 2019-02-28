@@ -14,6 +14,7 @@ from local.assay_data_api import LocalAssayDataApi
 
 from backbone_server.controllers.base_controller  import BaseController
 
+import logging
 
 class ApiFactory():
 
@@ -38,14 +39,15 @@ class ApiFactory():
 
         if self.isLocal():
 
-            if self._auths:
-                return 'cn=editor,ou=sims,ou=projects,ou=groups,dc=malariagen,dc=net' in self._auths
+            if self._auths and self._auths['memberOf']:
+                return 'cn=editor,ou=sims,ou=projects,ou=groups,dc=malariagen,dc=net' in self._auths['memberOf']
             else:
                 return True
 
         else:
             #Assumes if authenticated then authorized
             #Local test does this better
+            logging.getLogger().error(dir(self._api_client))
             if self._api_client.configuration.access_token and not \
             self._api_client.configuration.access_token == 'abcd':
                 return True

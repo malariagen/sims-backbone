@@ -31,7 +31,7 @@ class LocalLocationApi(BaseLocalApi):
         """
 
         (ret, retcode) = self.location_controller.create_location(location, self._user,
-                                                                  self.auth_tokens())
+                                                                  self.location_controller.token_info(self.auth_tokens()))
 
         return self.create_response(ret, retcode, 'Location')
 
@@ -45,7 +45,7 @@ class LocalLocationApi(BaseLocalApi):
         :rtype: None
         """
         (ret, retcode) = self.location_controller.delete_location(location_id, self._user,
-                                                                  self.auth_tokens())
+                                                                  self.location_controller.token_info(self.auth_tokens()))
 
         return self.create_response(ret, retcode)
 
@@ -61,7 +61,7 @@ class LocalLocationApi(BaseLocalApi):
         :rtype: Location
         """
         (ret, retcode) = self.location_controller.download_gps_location(latitude, longitude, self._user,
-                                                                        self.auth_tokens())
+                                                                        self.location_controller.token_info(self.auth_tokens()))
         return self.create_response(ret, retcode, 'Locations')
 
     def download_location(self, location_id):
@@ -74,7 +74,7 @@ class LocalLocationApi(BaseLocalApi):
         :rtype: Location
         """
         (ret, retcode) = self.location_controller.download_location(location_id, self._user,
-                                                                    self.auth_tokens())
+                                                                    self.location_controller.token_info(self.auth_tokens()))
 
         return self.create_response(ret, retcode, 'Location')
 
@@ -94,7 +94,7 @@ class LocalLocationApi(BaseLocalApi):
         :rtype: Locations
         """
         (ret, retcode) = self.location_controller.download_locations(study_name, start, count, orderby, self._user,
-                                                                     self.auth_tokens())
+                                                                     self.location_controller.token_info(self.auth_tokens()))
 
         return self.create_response(ret, retcode, 'Locations')
 
@@ -108,7 +108,7 @@ class LocalLocationApi(BaseLocalApi):
         :rtype: Locations
         """
         (ret, retcode) = self.location_controller.download_partner_location(partner_id, self._user,
-                                                                            self.auth_tokens())
+                                                                            self.location_controller.token_info(self.auth_tokens()))
         return self.create_response(ret, retcode, 'Locations')
 
     def update_location(self, location_id, location):
@@ -124,6 +124,6 @@ class LocalLocationApi(BaseLocalApi):
         """
 
         (ret, retcode) = self.location_controller.update_location(location_id, location, self._user,
-                                                                  self.auth_tokens())
+                                                                  self.location_controller.token_info(self.auth_tokens()))
 
         return self.create_response(ret, retcode, 'Location')

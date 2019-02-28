@@ -31,7 +31,7 @@ class LocalMetadataApi(BaseLocalApi):
         """
 
         (ret, retcode) = self.metadata_controller.create_taxonomy(
-            taxonomy, self._user, self.auth_tokens())
+            taxonomy, self._user, self.metadata_controller.token_info(self.auth_tokens()))
 
         return self.create_response(ret, retcode, 'Taxonomy')
 
@@ -41,7 +41,7 @@ class LocalMetadataApi(BaseLocalApi):
                                                                    record_id,
                                                                    action_types,
                                                                    self._user,
-                                                                   self.auth_tokens())
+                                                                   self.metadata_controller.token_info(self.auth_tokens()))
         return self.create_response(ret, retcode, 'LogItems')
 
     def get_country_metadata(self, country_id):
@@ -55,7 +55,7 @@ class LocalMetadataApi(BaseLocalApi):
         """
 
         (ret, retcode) = self.metadata_controller.get_country_metadata(country_id, self._user,
-                                                                       self.auth_tokens())
+                                                                       self.metadata_controller.token_info(self.auth_tokens()))
 
         return self.create_response(ret, retcode, 'Country')
 
@@ -68,7 +68,7 @@ class LocalMetadataApi(BaseLocalApi):
         :rtype: List[str]
         """
         (ret, retcode) = self.metadata_controller.get_attr_types(self._user,
-                                                                 self.auth_tokens())
+                                                                 self.metadata_controller.token_info(self.auth_tokens()))
 
         return self.create_response(ret, retcode)
 
@@ -81,7 +81,7 @@ class LocalMetadataApi(BaseLocalApi):
         :rtype: List[str]
         """
         (ret, retcode) = self.metadata_controller.get_location_attr_types(self._user,
-                                                                          self.auth_tokens())
+                                                                          self.metadata_controller.token_info(self.auth_tokens()))
 
         return self.create_response(ret, retcode)
 
@@ -94,6 +94,6 @@ class LocalMetadataApi(BaseLocalApi):
         :rtype: Taxonomies
         """
         (ret, retcode) = self.metadata_controller.get_taxonomy_metadata(self._user,
-                                                                        self.auth_tokens())
+                                                                        self.metadata_controller.token_info(self.auth_tokens()))
 
         return self.create_response(ret, retcode, 'Taxonomies')

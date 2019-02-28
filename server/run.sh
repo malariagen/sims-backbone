@@ -12,7 +12,7 @@ then
     then
         pip3 install -r bb_server/requirements.txt
         pip3 install -r backbone_server/REQUIREMENTS
-        exit
+        shift
     fi
     cp -pr overlay/* bb_server
     export PYTHONPATH=$(pwd):$(pwd)/bb_server:${PYTHONPATH}

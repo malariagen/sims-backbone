@@ -8,6 +8,7 @@ import uuid
 
 import pytest
 
+
 class TestIndividual(TestBase):
 
     _individual_number = 1
@@ -30,6 +31,7 @@ class TestIndividual(TestBase):
 
     """
     """
+
     def test_create(self, api_factory):
 
         api_instance = api_factory.IndividualApi()
@@ -49,11 +51,12 @@ class TestIndividual(TestBase):
             api_instance.delete_individual(created.individual_id)
 
         except ApiException as error:
-            self.check_api_exception(api_factory, "IndividualApi->create_individual", error)
-
+            self.check_api_exception(
+                api_factory, "IndividualApi->create_individual", error)
 
     """
     """
+
     def test_delete(self, api_factory):
 
         api_instance = api_factory.IndividualApi()
@@ -64,14 +67,16 @@ class TestIndividual(TestBase):
             created = api_instance.create_individual(indiv)
             api_instance.delete_individual(created.individual_id)
             with pytest.raises(ApiException, status=404):
-                fetched = api_instance.download_individual(created.individual_id)
+                fetched = api_instance.download_individual(
+                    created.individual_id)
 
         except ApiException as error:
-            self.check_api_exception(api_factory, "IndividualApi->create_individual", error)
-
+            self.check_api_exception(
+                api_factory, "IndividualApi->create_individual", error)
 
     """
     """
+
     def test_delete_missing(self, api_factory):
 
         api_instance = api_factory.IndividualApi()
@@ -86,10 +91,12 @@ class TestIndividual(TestBase):
                     api_instance.delete_individual(str(uuid.uuid4()))
 
         except ApiException as error:
-            self.check_api_exception(api_factory, "IndividualApi->delete_individual", error)
+            self.check_api_exception(
+                api_factory, "IndividualApi->delete_individual", error)
 
     """
     """
+
     def test_duplicate_key(self, api_factory):
 
         api_instance = api_factory.IndividualApi()
@@ -109,11 +116,12 @@ class TestIndividual(TestBase):
             api_instance.delete_individual(created1.individual_id)
 
         except ApiException as error:
-            self.check_api_exception(api_factory, "IndividualApi->create_individual", error)
-
+            self.check_api_exception(
+                api_factory, "IndividualApi->create_individual", error)
 
     """
     """
+
     def test_create_duplicate_ident(self, api_factory):
 
         api_instance = api_factory.IndividualApi()
@@ -127,11 +135,12 @@ class TestIndividual(TestBase):
                 created1 = api_instance.create_individual(indiv)
 
         except ApiException as error:
-            self.check_api_exception(api_factory, "IndividualApi->create_individual", error)
-
+            self.check_api_exception(
+                api_factory, "IndividualApi->create_individual", error)
 
     """
     """
+
     def test_download_individuals(self, api_factory):
 
         api_instance = api_factory.IndividualApi()
@@ -146,34 +155,46 @@ class TestIndividual(TestBase):
             assert looked_up_indivs.count == 2, 'Wrong number of individuals'
             looked_up = looked_up_indivs.individuals[0]
 
-            looked_up_indivs = api_instance.download_individuals(start=0, count=1)
+            looked_up_indivs = api_instance.download_individuals(
+                start=0, count=1)
             assert looked_up_indivs.count == 2, 'Wrong number of individuals'
-            assert len(looked_up_indivs.individuals) == 1, 'Wrong number of individuals'
+            assert len(
+                looked_up_indivs.individuals) == 1, 'Wrong number of individuals'
 
-            looked_up_indivs = api_instance.download_individuals(study_name=indiv1.attrs[0].study_name)
+            looked_up_indivs = api_instance.download_individuals(
+                study_name=indiv1.attrs[0].study_name)
             assert looked_up_indivs.count == 2, 'Wrong number of individuals'
-            assert len(looked_up_indivs.individuals) == 2, 'Wrong number of individuals'
+            assert len(
+                looked_up_indivs.individuals) == 2, 'Wrong number of individuals'
 
-            looked_up_indivs = api_instance.download_individuals(orderby='study_name')
+            looked_up_indivs = api_instance.download_individuals(
+                orderby='study_name')
             assert looked_up_indivs.count == 2, 'Wrong number of individuals'
-            assert len(looked_up_indivs.individuals) == 2, 'Wrong number of individuals'
+            assert len(
+                looked_up_indivs.individuals) == 2, 'Wrong number of individuals'
 
-            looked_up_indivs = api_instance.download_individuals(study_name='XXXXX')
+            looked_up_indivs = api_instance.download_individuals(
+                study_name='XXXXX')
             assert looked_up_indivs.count == 0, 'Wrong number of individuals'
-            assert len(looked_up_indivs.individuals) == 0, 'Wrong number of individuals'
+            assert len(
+                looked_up_indivs.individuals) == 0, 'Wrong number of individuals'
 
-            looked_up_indivs = api_instance.download_individuals(start=10, count=2)
+            looked_up_indivs = api_instance.download_individuals(
+                start=10, count=2)
             assert looked_up_indivs.count == 2, 'Wrong number of individuals'
-            assert len(looked_up_indivs.individuals) == 0, 'Wrong number of individuals'
+            assert len(
+                looked_up_indivs.individuals) == 0, 'Wrong number of individuals'
 
             api_instance.delete_individual(created.individual_id)
             api_instance.delete_individual(created1.individual_id)
 
         except ApiException as error:
-            self.check_api_exception(api_factory, "IndividualApi->create_individual", error)
+            self.check_api_exception(
+                api_factory, "IndividualApi->create_individual", error)
 
     """
     """
+
     def test_download_individual_permission(self, api_factory):
 
         api_instance = api_factory.IndividualApi()
@@ -182,13 +203,16 @@ class TestIndividual(TestBase):
 
             if not api_factory.is_authorized(None):
                 with pytest.raises(ApiException, status=403):
-                    looked_up_indivs = api_instance.download_individual(str(uuid.uuid4()))
+                    looked_up_indivs = api_instance.download_individual(
+                        str(uuid.uuid4()))
 
         except ApiException as error:
-            self.check_api_exception(api_factory, "IndividualApi->download_individual", error)
+            self.check_api_exception(
+                api_factory, "IndividualApi->download_individual", error)
 
     """
     """
+
     def test_download_individuals_permission(self, api_factory):
 
         api_instance = api_factory.IndividualApi()
@@ -200,11 +224,12 @@ class TestIndividual(TestBase):
                     looked_up_indivs = api_instance.download_individuals()
 
         except ApiException as error:
-            self.check_api_exception(api_factory, "IndividualApi->download_individual", error)
-
+            self.check_api_exception(
+                api_factory, "IndividualApi->download_individual", error)
 
     """
     """
+
     def test_update(self, api_factory):
 
         api_instance = api_factory.IndividualApi()
@@ -216,7 +241,8 @@ class TestIndividual(TestBase):
 
             newindiv = self.get_next_individual()
 
-            updated = api_instance.update_individual(created.individual_id, newindiv)
+            updated = api_instance.update_individual(
+                created.individual_id, newindiv)
             fetched = api_instance.download_individual(created.individual_id)
             assert updated == fetched, "update response != download response"
             fetched.individual_id = None
@@ -224,10 +250,12 @@ class TestIndividual(TestBase):
             api_instance.delete_individual(created.individual_id)
 
         except ApiException as error:
-            self.check_api_exception(api_factory, "IndividualApi->create_individual", error)
+            self.check_api_exception(
+                api_factory, "IndividualApi->create_individual", error)
 
     """
     """
+
     def test_update_attrs(self, api_factory):
 
         api_instance = api_factory.IndividualApi()
@@ -241,7 +269,8 @@ class TestIndividual(TestBase):
                 openapi_client.Attr(attr_type='individual_id',
                                     attr_value='indiv', study_name='1235-PV')
             ]
-            updated = api_instance.update_individual(created.individual_id, newindiv)
+            updated = api_instance.update_individual(
+                created.individual_id, newindiv)
             fetched = api_instance.download_individual(created.individual_id)
             assert updated == fetched, "update response != download response"
             fetched.individual_id = None
@@ -249,10 +278,12 @@ class TestIndividual(TestBase):
             api_instance.delete_individual(created.individual_id)
 
         except ApiException as error:
-            self.check_api_exception(api_factory, "IndividualApi->create_individual", error)
+            self.check_api_exception(
+                api_factory, "IndividualApi->create_individual", error)
 
     """
     """
+
     def test_update_duplicate(self, api_factory):
 
         api_instance = api_factory.IndividualApi()
@@ -266,17 +297,19 @@ class TestIndividual(TestBase):
             new_created = api_instance.create_individual(newindiv)
             with pytest.raises(ApiException, status=422):
                 created.individual_id = new_created.individual_id
-                updated = api_instance.update_individual(new_created.individual_id, created)
-
+                updated = api_instance.update_individual(
+                    new_created.individual_id, created)
 
             api_instance.delete_individual(original_id)
             api_instance.delete_individual(new_created.individual_id)
 
         except ApiException as error:
-            self.check_api_exception(api_factory, "IndividualApi->create_individual", error)
+            self.check_api_exception(
+                api_factory, "IndividualApi->create_individual", error)
 
     """
     """
+
     def test_update_missing(self, api_factory):
 
         api_instance = api_factory.IndividualApi()
@@ -289,16 +322,20 @@ class TestIndividual(TestBase):
 
             if api_factory.is_authorized(None):
                 with pytest.raises(ApiException, status=404):
-                    updated = api_instance.update_individual(indiv.individual_id, indiv)
+                    updated = api_instance.update_individual(
+                        indiv.individual_id, indiv)
             else:
                 with pytest.raises(ApiException, status=403):
-                    updated = api_instance.update_individual(indiv.individual_id, indiv)
+                    updated = api_instance.update_individual(
+                        indiv.individual_id, indiv)
 
         except ApiException as error:
-            self.check_api_exception(api_factory, "IndividualApi->update_individual", error)
+            self.check_api_exception(
+                api_factory, "IndividualApi->update_individual", error)
 
     """
     """
+
     def test_get_by_attr(self, api_factory):
 
         api_instance = api_factory.IndividualApi()
@@ -307,7 +344,8 @@ class TestIndividual(TestBase):
             indiv = self.get_next_individual()
             created = api_instance.create_individual(indiv)
 
-            fetched = api_instance.download_individuals_by_attr(indiv.attrs[0].attr_type,indiv.attrs[0].attr_value,indiv.attrs[0].study_name)
+            fetched = api_instance.download_individuals_by_attr(
+                indiv.attrs[0].attr_type, indiv.attrs[0].attr_value, study_name=indiv.attrs[0].study_name)
 
             assert len(fetched.individuals) == 1
             assert fetched.individuals[0].individual_id == created.individual_id
@@ -315,10 +353,12 @@ class TestIndividual(TestBase):
             api_instance.delete_individual(created.individual_id)
 
         except ApiException as error:
-            self.check_api_exception(api_factory, "IndividualApi->create_individual", error)
+            self.check_api_exception(
+                api_factory, "IndividualApi->create_individual", error)
 
     """
     """
+
     def test_get_by_attr_missing(self, api_factory):
 
         api_instance = api_factory.IndividualApi()
@@ -326,19 +366,22 @@ class TestIndividual(TestBase):
         try:
 
             if api_factory.is_authorized(None):
-                fetched = api_instance.download_individuals_by_attr('','')
+                fetched = api_instance.download_individuals_by_attr('404', '404')
 
                 assert not fetched.individuals
                 assert fetched.count == 0
             else:
                 with pytest.raises(ApiException, status=403):
-                    fetched = api_instance.download_individuals_by_attr('','')
+                    fetched = api_instance.download_individuals_by_attr('404',
+                                                                        '404')
 
         except ApiException as error:
-            self.check_api_exception(api_factory, "IndividualApi->create_individual", error)
+            self.check_api_exception(
+                api_factory, "IndividualApi->create_individual", error)
 
     """
     """
+
     def test_merge_individual(self, api_factory):
 
         api_instance = api_factory.IndividualApi()
@@ -350,7 +393,7 @@ class TestIndividual(TestBase):
             created1 = api_instance.create_individual(indiv1)
 
             merged_res = api_instance.merge_individuals(created.individual_id,
-                                                    created1.individual_id)
+                                                        created1.individual_id)
 
             merged = api_instance.download_individual(merged_res.individual_id)
 
@@ -365,10 +408,12 @@ class TestIndividual(TestBase):
             api_instance.delete_individual(created.individual_id)
 
         except ApiException as error:
-            self.check_api_exception(api_factory, "IndividualApi->create_individual", error)
+            self.check_api_exception(
+                api_factory, "IndividualApi->create_individual", error)
 
     """
     """
+
     def test_merge_individual_missing(self, api_factory):
 
         api_instance = api_factory.IndividualApi()
@@ -379,7 +424,7 @@ class TestIndividual(TestBase):
 
             with pytest.raises(ApiException, status=404):
                 merged_res = api_instance.merge_individuals(str(uuid.uuid4()),
-                                                        created.individual_id)
+                                                            created.individual_id)
 
             with pytest.raises(ApiException, status=404):
                 merged_res = api_instance.merge_individuals(created.individual_id,
@@ -388,11 +433,11 @@ class TestIndividual(TestBase):
                 merged_res = api_instance.merge_individuals(str(uuid.uuid4()),
                                                             str(uuid.uuid4()))
 
-
             api_instance.delete_individual(created.individual_id)
 
         except ApiException as error:
-            self.check_api_exception(api_factory, "IndividualApi->create_individual", error)
+            self.check_api_exception(
+                api_factory, "IndividualApi->create_individual", error)
 #
 #    """
 #    Used to check permissions

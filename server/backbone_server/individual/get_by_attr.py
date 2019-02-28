@@ -1,8 +1,6 @@
 from openapi_server.models.individual import Individual
 from openapi_server.models.individuals import Individuals
 
-from backbone_server.errors.missing_key_exception import MissingKeyException
-
 from backbone_server.individual.fetch import IndividualFetch
 
 import logging
@@ -49,10 +47,5 @@ class IndividualGetByAttr():
                 individuals.sampling_events = sampling_events
 
                 individuals.attr_types = [attr_type]
-
-#Allow for when partner ident is used in different studies
-#        if individuals.count > 1:
-#            raise MissingKeyException("Too many individuals not found {} {}".format(attr_type,
-#                                                                      attr_value))
 
         return individuals

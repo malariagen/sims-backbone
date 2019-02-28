@@ -521,8 +521,6 @@ class TestEventSets(TestBase):
             if api_factory.is_authorized(None):
                 with pytest.raises(ApiException, status=404):
                     api_instance.download_event_set('404')
-                with pytest.raises(ApiException, status=404):
-                    api_instance.download_event_set(None)
             else:
                 with pytest.raises(ApiException, status=403):
                     api_instance.download_event_set('404')

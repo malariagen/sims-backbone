@@ -30,9 +30,9 @@
           schema:
             type: string
             enum:
-              - individual
+              - id
               - study_name
-            default: individual
+            default: id
       responses:
         "200":
           description: successful operation

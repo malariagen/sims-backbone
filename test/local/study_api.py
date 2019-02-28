@@ -30,7 +30,7 @@ class LocalStudyApi(BaseLocalApi):
         :rtype: Studies
         """
         (ret, retcode) = self.study_controller.download_studies(
-            start, count, self._user, self.auth_tokens())
+            start, count, self._user, self.study_controller.token_info(self.auth_tokens()))
 
         return self.create_response(ret, retcode, 'Studies')
 
@@ -45,7 +45,7 @@ class LocalStudyApi(BaseLocalApi):
         :rtype: Study
         """
         (ret, retcode) = self.study_controller.download_study(
-            study_name, self._user, self.auth_tokens())
+            study_name, self._user, self.study_controller.token_info(self.auth_tokens()))
 
         return self.create_response(ret, retcode, 'Study')
 
@@ -62,5 +62,5 @@ class LocalStudyApi(BaseLocalApi):
         :rtype: Study
         """
         (ret, retcode) = self.study_controller.update_study(study_name, study, self._user,
-                                                            self.auth_tokens())
+                                                            self.study_controller.token_info(self.auth_tokens()))
         return self.create_response(ret, retcode, 'Study')
