@@ -2,10 +2,6 @@ npm install @openapitools/openapi-generator-cli@cli-4.0.0-beta2 -D
 for i in "$@"
 do
 case $i in
-    noauth)
-    NO_AUTH=true
-    sed -i -e 's/^security:/#&/' -e '/^#security:/{n;s/.*/#&/}' openapi/sims-backbone.yaml
-    ;;
     server)
     SERVER_ONLY=true
     ;;
@@ -31,8 +27,4 @@ then
     (cd openapi && npx openapi-generator generate -i sims-backbone.yaml -g typescript-angular -o ../client/sims-backbone/src/app/typescript-angular-client  -c client.config.json)
     rm -rf python_client
     (cd openapi && npx openapi-generator generate -i sims-backbone.yaml -g python -o ../python_client --enable-post-process-file)
-fi
-if [ -n "$NO_AUTH" ]
-then
-    sed -i -e '/^#security:/{s/^#//}' -e '/^security:/{n;s/^#//}' openapi/sims-backbone.yaml
 fi
