@@ -18,7 +18,7 @@ if [ -n "$SERVER_ONLY" -o -z "$CLIENT_ONLY" ]
 then
     rm -rf python-flask-server
     (cd openapi && npx openapi-generator generate -i sims-backbone.yaml -g python-flask -o ../python-flask-server --enable-post-process-file)
-    sed -i -e 's/write:pets/editor/' -e 's/user_id/malariagenUID/' python-flask-server/openapi_server/controllers/security_controller_.py
+    sed -i  -e '/x-tokenInfoFunc/d' -e '/x-scopeValidateFunc/d' python-flask-server/openapi_server/openapi/openapi.yaml
     rm -rf server/bb_server
     cp -pr python-flask-server server/bb_server
 fi
