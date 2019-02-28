@@ -429,6 +429,88 @@ class TestSample(TestBase):
         except ApiException as error:
             self.check_api_exception(api_factory, "LocationApi->create_location", error)
 
+    """
+    """
+    def test_se_get_by_location_paged(self, api_factory):
+
+        api_instance = api_factory.SamplingEventApi()
+        location_api_instance = api_factory.LocationApi()
+
+        try:
+
+            samp = openapi_client.SamplingEvent(None, date(2017, 10, 10),
+                                                doc_accuracy='month')
+            samp.attrs = [
+                openapi_client.Attr(attr_type='attr1',
+                                    attr_value='attr1val'),
+                openapi_client.Attr(attr_type='attr2',
+                                    attr_value='attr2val'),
+            ]
+            samp1 = openapi_client.SamplingEvent(None, date(2017, 11, 11),
+                                                doc_accuracy='month')
+            samp2 = openapi_client.SamplingEvent(None, date(2017, 12, 12),
+                                                doc_accuracy='month')
+            loc = openapi_client.Location(None, 27.463, 90.495, 'city',
+                                          'Trongsa, Trongsa, Bhutan', 'test_create_with_locations', 'BTN')
+            ident = openapi_client.Attr(attr_type='partner_name', attr_value='Trongsa',
+                                        study_name='1009-MD-UP')
+            loc.attrs = [
+                ident
+            ]
+            loc = location_api_instance.create_location(loc)
+
+            samp.location_id = loc.location_id
+            created = api_instance.create_sampling_event(samp)
+            samp1.location_id = loc.location_id
+            created1 = api_instance.create_sampling_event(samp1)
+            samp2.proxy_location_id = loc.location_id
+            created2 = api_instance.create_sampling_event(samp2)
+
+            looked_up = api_instance.download_sampling_events_by_location(loc.location_id)
+
+            assert looked_up.count == 3
+
+            event_ids = []
+            for sampling_event in looked_up.sampling_events:
+                event_ids.append(sampling_event.sampling_event_id)
+            assert created.sampling_event_id in event_ids
+            assert created1.sampling_event_id in event_ids
+            assert created2.sampling_event_id in event_ids
+
+
+            looked_up = api_instance.download_sampling_events_by_location(loc.location_id,
+                                                             start=0,
+                                                             count=1)
+            looked_up1 = api_instance.download_sampling_events_by_location(loc.location_id,
+                                                             start=1,
+                                                             count=1)
+            looked_up2 = api_instance.download_sampling_events_by_location(loc.location_id,
+                                                             start=2,
+                                                             count=1)
+            assert looked_up.count == 3
+            assert len(looked_up.sampling_events) == 1
+            assert looked_up1.count == 3
+            assert len(looked_up1.sampling_events) == 1
+            assert looked_up2.count == 3
+            assert len(looked_up2.sampling_events) == 1
+
+            assert looked_up.sampling_events[0].sampling_event_id != looked_up1.sampling_events[0].sampling_event_id
+            assert looked_up.sampling_events[0].sampling_event_id != looked_up2.sampling_events[0].sampling_event_id
+            assert looked_up1.sampling_events[0].sampling_event_id != looked_up2.sampling_events[0].sampling_event_id
+
+            assert samp.attrs[0].attr_type in looked_up.attr_types
+            assert samp.attrs[1].attr_type in looked_up.attr_types
+
+            api_instance.delete_sampling_event(created.sampling_event_id)
+            api_instance.delete_sampling_event(created1.sampling_event_id)
+            api_instance.delete_sampling_event(created2.sampling_event_id)
+
+            location_api_instance.delete_location(loc.location_id)
+
+
+        except ApiException as error:
+            self.check_api_exception(api_factory, "LocationApi->create_location", error)
+
 
     """
     """
@@ -1459,6 +1541,130 @@ class TestSample(TestBase):
             api_instance.delete_sampling_event(created2.sampling_event_id)
             location_api_instance.delete_location(loc1.location_id)
             location_api_instance.delete_location(loc2.location_id)
+
+        except ApiException as error:
+            self.check_api_exception(api_factory, "SamplingEventApi->create_sampling_event", error)
+
+    """
+    """
+    def test_merge_sampling_events_proxy_location1_none(self, api_factory):
+
+        api_instance = api_factory.SamplingEventApi()
+        proxy_location_api_instance = api_factory.LocationApi()
+
+        try:
+
+            loc = openapi_client.Location(None, 27.463, 90.495, 'city',
+                                          'Trongsa, Trongsa, Bhutan', 'test_create_with_proxy_locations', 'BTN')
+            loc = proxy_location_api_instance.create_location(loc)
+
+
+            samp1, samp2 = self.get_merge_events()
+
+            samp2.proxy_location_id = loc.location_id
+
+            created1 = api_instance.create_sampling_event(samp1)
+            created2 = api_instance.create_sampling_event(samp2)
+
+            api_instance.merge_sampling_events(created1.sampling_event_id,
+                                               created2.sampling_event_id)
+
+            fetched = api_instance.download_sampling_event(created1.sampling_event_id)
+
+            for attr in samp1.attrs:
+                assert attr in fetched.attrs
+                for attr in samp2.attrs:
+                    assert attr in fetched.attrs
+
+            assert fetched.proxy_location_id == samp2.proxy_location_id
+
+            api_instance.delete_sampling_event(created1.sampling_event_id)
+            proxy_location_api_instance.delete_location(loc.location_id)
+
+            with pytest.raises(ApiException, status=404):
+                fetched = api_instance.download_sampling_event(created2.sampling_event_id)
+        except ApiException as error:
+            self.check_api_exception(api_factory, "SamplingEventApi->create_sampling_event", error)
+
+    """
+    """
+    def test_merge_sampling_events_proxy_location2_none(self, api_factory):
+
+        api_instance = api_factory.SamplingEventApi()
+        proxy_location_api_instance = api_factory.LocationApi()
+
+        try:
+
+            loc = openapi_client.Location(None, 27.463, 90.495, 'city',
+                                          'Trongsa, Trongsa, Bhutan', 'test_create_with_proxy_locations', 'BTN')
+            loc = proxy_location_api_instance.create_location(loc)
+
+            samp1, samp2 = self.get_merge_events()
+
+            samp1.proxy_location_id = loc.location_id
+
+            created1 = api_instance.create_sampling_event(samp1)
+            created2 = api_instance.create_sampling_event(samp2)
+
+            api_instance.merge_sampling_events(created1.sampling_event_id,
+                                               created2.sampling_event_id)
+
+            fetched = api_instance.download_sampling_event(created1.sampling_event_id)
+
+            for attr in samp1.attrs:
+                assert attr in fetched.attrs
+                for attr in samp2.attrs:
+                    assert attr in fetched.attrs
+
+            assert fetched.proxy_location_id == samp1.proxy_location_id
+
+            api_instance.delete_sampling_event(created1.sampling_event_id)
+            proxy_location_api_instance.delete_location(loc.location_id)
+
+            with pytest.raises(ApiException, status=404):
+                fetched = api_instance.download_sampling_event(created2.sampling_event_id)
+        except ApiException as error:
+            self.check_api_exception(api_factory, "SamplingEventApi->create_sampling_event", error)
+
+
+
+    """
+    """
+    def test_merge_sampling_events_proxy_location_fail(self, api_factory):
+
+        api_instance = api_factory.SamplingEventApi()
+        proxy_location_api_instance = api_factory.LocationApi()
+
+        try:
+
+            loc1 = openapi_client.Location(None, 27.463, 90.495, 'city',
+                                           'Trongsa, Trongsa, Bhutan', 'test_create_with_proxy_locations', 'BTN')
+            loc1 = proxy_location_api_instance.create_location(loc1)
+
+            loc2 = openapi_client.Location(None, 27.46, 90.49, 'city',
+                                           'Trongsa, Bhutan', 'test_create_with_proxy_locations', 'BTN')
+            loc2 = proxy_location_api_instance.create_location(loc2)
+
+            samp1, samp2 = self.get_merge_events()
+
+            samp1.proxy_location_id = loc1.location_id
+            samp2.proxy_location_id = loc2.location_id
+
+            created1 = api_instance.create_sampling_event(samp1)
+            created2 = api_instance.create_sampling_event(samp2)
+
+            with pytest.raises(ApiException, status=422):
+                api_instance.merge_sampling_events(created1.sampling_event_id,
+                                                   created2.sampling_event_id)
+
+            fetched = api_instance.download_sampling_event(created1.sampling_event_id)
+
+            assert fetched == created1
+
+            api_instance.delete_sampling_event(created1.sampling_event_id)
+            api_instance.delete_sampling_event(created2.sampling_event_id)
+            proxy_location_api_instance.delete_location(loc1.location_id)
+            proxy_location_api_instance.delete_location(loc2.location_id)
 
         except ApiException as error:
             self.check_api_exception(api_factory, "SamplingEventApi->create_sampling_event", error)

@@ -51,35 +51,6 @@ class LocationEdit():
         return uuid_val,study_id
 
 
-
-
-    @staticmethod
-    def clean_up_attrs(cursor, location_id, old_study_id):
-
-        if not location_id:
-            return
-
-        if not old_study_id:
-            return
-
-        stmt = '''select a.id, a.study_id, li.location_id FROM location_attrs li
-        JOIN attrs a ON a.id = li.attr_id
-        LEFT JOIN sampling_events se ON
-            (se.location_id = li.location_id OR se.proxy_location_id = li.location_id)
-        WHERE se.id IS NULL AND li.location_id = %s AND a.study_id = %s group by a.study_id, li.location_id, a.id;'''
-
-        cursor.execute(stmt, (location_id, old_study_id,))
-
-        obsolete_idents = []
-        for (attr_id, study_id, location_id) in cursor:
-            obsolete_idents.append({ 'study_id': study_id, 'attr_id': attr_id})
-
-        delete_stmt = 'DELETE FROM location_attrs WHERE location_id = %s AND attr_id = %s'
-
-        for obsolete_ident in obsolete_idents:
-            if obsolete_ident['study_id'] == old_study_id:
-                cursor.execute(delete_stmt, (location_id, obsolete_ident['attr_id']))
-
     @staticmethod
     def add_attrs(cursor, uuid_val, location):
 
@@ -103,8 +74,6 @@ class LocationEdit():
                                    (uuid_val, attr_id))
 
         except psycopg2.IntegrityError as err:
-            print(err.pgcode)
-            print(err.pgerror)
             raise DuplicateKeyException("Error inserting location {}".format(location)) from err
 
 

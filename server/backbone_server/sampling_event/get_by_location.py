@@ -69,12 +69,15 @@ class SamplingEventsGetByLocation():
 
                 sampling_events.attr_types = []
 
-                col_query = '''select distinct attr_type from location_attrs se
-                JOIN attrs a ON se.location_id=a.id
-                WHERE location_id = %s'''
 
-                cursor.execute(col_query, (location_id,))
-                for (attr_type,) in cursor:
-                    sampling_events.attr_types.append(attr_type)
+                for samp_id in samp_ids:
+                    col_query = '''select distinct attr_type from sampling_event_attrs se
+                    JOIN attrs a ON se.attr_id=a.id
+                    WHERE sampling_event_id = %s'''
+
+                    cursor.execute(col_query, (samp_id,))
+                    for (attr_type,) in cursor:
+                        if attr_type not in sampling_events.attr_types:
+                            sampling_events.attr_types.append(attr_type)
 
         return sampling_events

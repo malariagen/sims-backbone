@@ -1636,6 +1636,9 @@ class TestOriginalSample(TestBase):
 
         try:
 
+            old_study = '4037-MD-UP'
+            new_study = '4038-MD-UP'
+
             sampling_event = openapi_client.SamplingEvent(None, date(2017, 10, 10),
                                                           doc_accuracy='month')
             loc = openapi_client.Location(None, 27.463, 90.495, 'city',
@@ -1645,7 +1648,7 @@ class TestOriginalSample(TestBase):
                 openapi_client.Attr(attr_type='partner_name',
                                     attr_value='Trongsa',
                                     attr_source='upd_s',
-                                    study_name='4037-MD-UP')
+                                    study_name=old_study)
             ]
             loc = location_api_instance.create_location(loc)
             sampling_event.location_id = loc.location_id
@@ -1654,19 +1657,23 @@ class TestOriginalSample(TestBase):
                 openapi_client.Attr(attr_type='individual_id',
                                     attr_value='patient0',
                                     attr_source='upd_s',
-                                    study_name='4037-MD-UP')
+                                    study_name=old_study),
+                openapi_client.Attr(attr_type='individual_id',
+                                    attr_value='patient1',
+                                    attr_source='upd_s',
+                                    study_name=new_study)
             ]
             individual = indiv_api_instance.create_individual(indiv)
             sampling_event.individual_id = individual.individual_id
 
             created_se = se_api_instance.create_sampling_event(sampling_event)
 
-            samp = openapi_client.OriginalSample(None, study_name='4037-MD-UP')
+            samp = openapi_client.OriginalSample(None, study_name=old_study)
             samp.sampling_event_id = created_se.sampling_event_id
 
             created = api_instance.create_original_sample(samp)
             looked_up = api_instance.download_original_sample(created.original_sample_id)
-            looked_up.study_name = '4038-MD-UP'
+            looked_up.study_name = new_study
             updated = api_instance.update_original_sample(looked_up.original_sample_id, looked_up)
             fetched = api_instance.download_original_sample(looked_up.original_sample_id)
 
@@ -1676,6 +1683,7 @@ class TestOriginalSample(TestBase):
 
             fetched_i = indiv_api_instance.download_individual(individual.individual_id)
             assert fetched_i.attrs[0].study_name == looked_up.study_name
+            assert fetched_i.attrs[1].study_name == looked_up.study_name
 
             se_api_instance.delete_sampling_event(created_se.sampling_event_id)
             with pytest.raises(ApiException, status=404):
