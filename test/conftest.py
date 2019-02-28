@@ -7,6 +7,8 @@ import pytest
 from api_factory import ApiFactory
 
 import openapi_client
+import logging
+
 @pytest.fixture(params=['user1'])
 def user(request):
     yield request.param
@@ -14,7 +16,7 @@ def user(request):
 """
 """
 @pytest.fixture(params=[
-    ['cn=editor,ou=sims,ou=projects,ou=groups,dc=malariagen,dc=net'],
+    ['editor'],
     [],
     None,
     ['group1', 'group2']
@@ -27,6 +29,8 @@ def auths(request):
 def method(request):
     yield 'custom'
 
+access_token_cache = {}
+
 @pytest.fixture()
 def api_factory(request, user, auths, method):
 
@@ -34,16 +38,22 @@ def api_factory(request, user, auths, method):
 
     #Not allowed to be None
     configuration.access_token = 'abcd'
-    if not auths or 'cn=editor,ou=sims,ou=projects,ou=groups,dc=malariagen,dc=net' in auths:
+    if not auths or 'editor' in auths:
         if os.getenv('TOKEN_URL') and not os.getenv('LOCAL_TEST'):
-            with open('../upload/config_dev.json') as json_file:
-                args = json.load(json_file)
-                token_request = requests.get(os.getenv('TOKEN_URL'),
-                                             args,
-                                             headers={'service': 'http://localhost/'})
-                token_response = token_request.text.split('=')
-                token = token_response[1].split('&')[0]
-                configuration.access_token = token
+            #Could be str(auths) if want separate tokens
+            cache_key = 'cache_key'
+            if cache_key in access_token_cache:
+                configuration.access_token = access_token_cache[cache_key]
+            else:
+                with open('../upload/config_dev.json') as json_file:
+                    args = json.load(json_file)
+                    token_request = requests.get(os.getenv('TOKEN_URL'),
+                                                 args,
+                                                 headers={'service': 'http://localhost/'})
+                    token_response = token_request.text.split('=')
+                    token = token_response[1].split('&')[0]
+                    configuration.access_token = token
+                    access_token_cache[cache_key] = token
 
     configuration.host = "http://localhost:8080/v1"
 
