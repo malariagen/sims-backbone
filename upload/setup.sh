@@ -4,7 +4,14 @@ INSTALL_CMD=yum
 ${INSTALL_CMD} install -y sudo
 test -x /usr/bin/sudo && export SUDO=/usr/bin/sudo
 #${SUDO} ${INSTALL_CMD} upgrade -y
-${SUDO} ${INSTALL_CMD} install -y git python36 python36-pip
+curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.34.0/install.sh | bash
+source ~/.nvm/nvm.sh
+nvm install 8
+${SUDO} pip install yapf
+java -version
+${SUDO} ${INSTALL_CMD} install -y git python36 python36-pip java-1.8.0
+${SUDO} ${INSTALL_CMD} remove -y java-1.7.0-openjdk
+java -version
 git clone https://github.com/malariagen/sims-backbone.git
 cd sims-backbone
 ./generate.sh
