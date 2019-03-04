@@ -438,19 +438,3 @@ class TestIndividual(TestBase):
         except ApiException as error:
             self.check_api_exception(
                 api_factory, "IndividualApi->create_individual", error)
-#
-#    """
-#    Used to check permissions
-#    """
-#    def test_get_individual_attr_types(self, api_factory):
-#
-#        metadata_api_instance = api_factory.MetadataApi()
-#
-#        try:
-#
-#            idents = metadata_api_instance.get_individual_attr_types()
-#
-#        except ApiException as error:
-#            self.check_api_exception(api_factory,
-#                                     "IndividualApi->create_individual", error)
-#

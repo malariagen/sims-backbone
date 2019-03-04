@@ -11,12 +11,12 @@ import psycopg2
 import logging
 import uuid
 
+
 class OriginalSamplePost():
 
     def __init__(self, conn):
         self._logger = logging.getLogger(__name__)
         self._connection = conn
-
 
     def post(self, original_sample):
 
@@ -25,28 +25,21 @@ class OriginalSamplePost():
 
                 uuid_val = uuid.uuid4()
 
-                study_id = SamplingEventEdit.fetch_study_id(cursor, original_sample.study_name, True)
+                study_id = SamplingEventEdit.fetch_study_id(
+                    cursor, original_sample.study_name, True)
 
-                partner_species = OriginalSampleEdit.fetch_partner_species(cursor, original_sample, study_id)
-                stmt = '''INSERT INTO original_samples 
+                partner_species = OriginalSampleEdit.fetch_partner_species(
+                    cursor, original_sample, study_id)
+                stmt = '''INSERT INTO original_samples
                             (id, study_id, sampling_event_id, days_in_culture, partner_species_id)
                             VALUES (%s, %s, %s, %s, %s)'''
-                args = (uuid_val,study_id, original_sample.sampling_event_id,
+                args = (uuid_val, study_id, original_sample.sampling_event_id,
                         original_sample.days_in_culture, partner_species)
 
-                try:
-                    cursor.execute(stmt, args)
+                cursor.execute(stmt, args)
 
-                    OriginalSampleEdit.add_attrs(cursor, uuid_val, original_sample)
-
-                except psycopg2.IntegrityError as err:
-                    print(err.pgcode)
-                    print(err.pgerror)
-                    raise DuplicateKeyException("Error inserting original_sample {}".format(original_sample)) from err
-                except DuplicateKeyException as err:
-                    raise err
+                OriginalSampleEdit.add_attrs(cursor, uuid_val, original_sample)
 
                 original_sample = OriginalSampleFetch.fetch(cursor, uuid_val)
 
         return original_sample
-

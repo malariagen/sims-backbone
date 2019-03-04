@@ -38,10 +38,6 @@ class DerivativeSamplePost():
 
                     DerivativeSampleEdit.add_attrs(cursor, uuid_val, derivative_sample)
 
-                except psycopg2.IntegrityError as err:
-                    print(err.pgcode)
-                    print(err.pgerror)
-                    raise DuplicateKeyException("Error inserting derivative_sample {}".format(derivative_sample)) from err
                 except DuplicateKeyException as err:
                     raise err
 

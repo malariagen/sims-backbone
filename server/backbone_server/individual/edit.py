@@ -74,32 +74,6 @@ class IndividualEdit():
 
 
     @staticmethod
-    def clean_up_attrs(cursor, individual_id, old_study_id):
-
-        if not individual_id:
-            return
-
-        if not old_study_id:
-            return
-
-        stmt = '''select a.id, a.study_id, li.individual_id FROM individual_attrs li
-        JOIN attrs a ON a.id = li.attr_id
-        LEFT JOIN sampling_events se ON se.individual_id = li.individual_id
-        WHERE se.id IS NULL AND li.individual_id = %s AND a.study_id = %s group by a.study_id, li.individual_id, a.id;'''
-
-        cursor.execute(stmt, (individual_id, old_study_id,))
-
-        obsolete_idents = []
-        for (attr_id, study_id, individual_id) in cursor:
-            obsolete_idents.append({ 'study_id': study_id, 'attr_id': attr_id})
-
-        delete_stmt = 'DELETE FROM individual_attrs WHERE individual_id = %s AND attr_id = %s'
-
-        for obsolete_ident in obsolete_idents:
-            if obsolete_ident['study_id'] == old_study_id:
-                cursor.execute(delete_stmt, (individual_id, obsolete_ident['attr_id']))
-
-    @staticmethod
     def add_attrs(cursor, uuid_val, individual):
 
         studies = []
@@ -119,9 +93,6 @@ class IndividualEdit():
 
     @staticmethod
     def update_attr_study(cursor, individual_id, old_study_id, new_study_id):
-
-        if not individual_id:
-            return
 
         old_attrs = []
 
@@ -148,12 +119,11 @@ class IndividualEdit():
                                           attr_source=attr_source,
                                              study_name=study_name))
 
-        if len(new_attrs) == 0:
-            if len(old_attrs) == 1:
-                attr_id, study_id = IndividualEdit.get_or_create_individual_attr_id(cursor, old_attrs[0])
-                cursor.execute('INSERT INTO individual_attrs(individual_id, attr_id) VALUES (%s, %s)',
-                                   (individual_id, attr_id))
-                cursor.execute('UPDATE attrs SET study_id=%s WHERE id=%s',(new_study_id, attr_id))
+        for old_attr in old_attrs:
+            attr_id, study_id = IndividualEdit.get_or_create_individual_attr_id(cursor, old_attr)
+            cursor.execute('INSERT INTO individual_attrs(individual_id, attr_id) VALUES (%s, %s)',
+                               (individual_id, attr_id))
+            cursor.execute('UPDATE attrs SET study_id=%s WHERE id=%s',(new_study_id, attr_id))
 
     @staticmethod
     def check_for_duplicate(cursor, individual, individual_id):

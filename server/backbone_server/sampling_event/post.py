@@ -10,12 +10,12 @@ import psycopg2
 import logging
 import uuid
 
+
 class SamplingEventPost():
 
     def __init__(self, conn):
         self._logger = logging.getLogger(__name__)
         self._connection = conn
-
 
     def post(self, sampling_event):
 
@@ -40,19 +40,10 @@ class SamplingEventPost():
                         sampling_event.proxy_location_id,
                         sampling_event.individual_id)
 
-                try:
-                    cursor.execute(stmt, args)
+                cursor.execute(stmt, args)
 
-                    SamplingEventEdit.add_attrs(cursor, uuid_val, sampling_event)
-
-                except psycopg2.IntegrityError as err:
-                    print(err.pgcode)
-                    print(err.pgerror)
-                    raise DuplicateKeyException("Error inserting sampling_event {}".format(sampling_event)) from err
-                except DuplicateKeyException as err:
-                    raise err
+                SamplingEventEdit.add_attrs(cursor, uuid_val, sampling_event)
 
                 sampling_event = SamplingEventFetch.fetch(cursor, uuid_val)
 
         return sampling_event
-
