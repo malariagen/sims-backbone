@@ -168,7 +168,7 @@ export function getConfiguration(authService: AuthService) {
     BrowserAnimationsModule,
     LeafletModule,
     AgmCoreModule.forRoot({
-      apiKey: 'AIzaSyAXqsQD-9Gthal2ZU6cHIzNoggzMX3hi4o',
+      apiKey: environment.gmapsKey,
       libraries: ["places"]
     }),
     OAuthModule.forRoot()
