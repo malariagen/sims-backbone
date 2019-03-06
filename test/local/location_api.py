@@ -98,6 +98,27 @@ class LocalLocationApi(BaseLocalApi):
 
         return self.create_response(ret, retcode, 'Locations')
 
+    def download_locations_by_attr(self, attr_type, attr_value, study_name=None):
+        """
+        fetches locations
+
+        :param study_name: restrict to a particular study
+        :type study_name: str
+        :param start: for pagination start the result set at a record x
+        :type start: int
+        :param count: for pagination the number of entries to return
+        :type count: int
+        :param orderby: how to order the result set
+        :type orderby: str
+
+        :rtype: Locations
+        """
+        (ret, retcode) = self.location_controller.download_locations_by_attr(attr_type,
+                                                                             attr_value, study_name,
+                                                                             self.location_controller.token_info(self.auth_tokens()))
+
+        return self.create_response(ret, retcode, 'Locations')
+
     def download_partner_location(self, partner_id):
         """
         fetches location(s) by partner name

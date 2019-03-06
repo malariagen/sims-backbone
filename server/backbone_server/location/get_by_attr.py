@@ -22,7 +22,7 @@ class LocationGetByAttr():
                            JOIN attrs ON attrs.id = location_attrs.attr_id'''
 
                 if study_code:
-                    query += ''' LEFT JOIN studies s ON s.id = a.study_id'''
+                    query += ''' LEFT JOIN studies s ON s.id = attrs.study_id'''
 
                 query += ''' WHERE attr_type = %s AND attr_value = %s'''
                 args = (attr_type, attr_value,)
