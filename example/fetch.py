@@ -6,7 +6,7 @@ import requests
 import argparse
 import urllib
 
-import swagger_client
+import openapi_client
 
 
 class Fetch():
@@ -18,13 +18,13 @@ class Fetch():
         # Configure OAuth2 access token for authorization: OauthSecurity
         auth_token = self.get_access_token(config_file)
 
-        configuration = swagger_client.Configuration()
+        configuration = openapi_client.Configuration()
         if auth_token:
             configuration.access_token = auth_token
 
         configuration.host = self.remote_host_url
 
-        self._api_client = swagger_client.ApiClient(configuration)
+        self._api_client = openapi_client.ApiClient(configuration)
 
     def get_access_token(self, config_file):
 
@@ -47,7 +47,7 @@ class Fetch():
 
     def get_study_details(self):
 
-        study_api = swagger_client.StudyApi(self._api_client)
+        study_api = openapi_client.StudyApi(self._api_client)
 
         studies = study_api.download_studies()
 
@@ -56,7 +56,7 @@ class Fetch():
 
     def get_sampling_event_details_by_study(self, study_code):
 
-        sampling_event_api = swagger_client.SamplingEventApi(self._api_client)
+        sampling_event_api = openapi_client.SamplingEventApi(self._api_client)
 
         # start and count are not necessary for small result sets but you will need to use
         # them for larger results sets as the API will time out if you try and retrieve too many
@@ -90,7 +90,7 @@ class Fetch():
 
     def get_original_samples_by_study(self, study_code):
 
-        os_api = swagger_client.OriginalSampleApi(self._api_client)
+        os_api = openapi_client.OriginalSampleApi(self._api_client)
 
         # start and count are not necessary for small result sets but you will need to use
         # them for larger results sets as the API will time out if you try and retrieve too many
@@ -118,7 +118,7 @@ class Fetch():
 
     def get_derivative_samples_by_study(self, study_code):
 
-        ds_api = swagger_client.DerivativeSampleApi(self._api_client)
+        ds_api = openapi_client.DerivativeSampleApi(self._api_client)
 
         # start and count are not necessary for small result sets but you will need to use
         # them for larger results sets as the API will time out if you try and retrieve too many
@@ -126,7 +126,7 @@ class Fetch():
         try:
             fetched = ds_api.download_derivative_samples_by_study(
                 study_code, start=0, count=0)
-        except swagger_client.rest.ApiException as api_e:
+        except openapi_client.rest.ApiException as api_e:
             if api_e.status == 404:
                 return {}, {}
             else:
@@ -160,7 +160,7 @@ class Fetch():
 
     def get_sampling_event_details_by_event_set(self, event_set):
 
-        sampling_event_api = swagger_client.SamplingEventApi(self._api_client)
+        sampling_event_api = openapi_client.SamplingEventApi(self._api_client)
 
         fetched = sampling_event_api.download_sampling_events_by_event_set(
             event_set, start=0, count=0)
@@ -187,7 +187,7 @@ class Fetch():
 
     def get_original_samples_by_event_set(self, event_set_code):
 
-        os_api = swagger_client.OriginalSampleApi(self._api_client)
+        os_api = openapi_client.OriginalSampleApi(self._api_client)
 
         fetched = os_api.download_original_samples_by_event_set(
             event_set_code, start=0, count=0)
@@ -207,12 +207,12 @@ class Fetch():
 
     def get_derivative_samples_by_event_set(self, event_set_code):
 
-        ds_api = swagger_client.DerivativeSampleApi(self._api_client)
+        ds_api = openapi_client.DerivativeSampleApi(self._api_client)
 
         try:
             fetched = ds_api.download_derivative_samples_by_event_set(
                 event_set_code, start=0, count=0)
-        except swagger_client.rest.ApiException as api_e:
+        except openapi_client.rest.ApiException as api_e:
             if api_e.status == 404:
                 return {}, {}
             else:
