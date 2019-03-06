@@ -5,6 +5,7 @@ from decimal import Decimal, InvalidOperation
 from backbone_server.location.post import LocationPost
 from backbone_server.location.put import LocationPut
 from backbone_server.location.get import LocationGetById
+from backbone_server.location.get_by_attr import LocationGetByAttr
 from backbone_server.location.gets import LocationsGet
 from backbone_server.location.delete import LocationDelete
 from backbone_server.location.get_by_name import LocationGetByPartnerName
@@ -124,6 +125,26 @@ class LocationController(BaseController):
                 "download_location: {}".format(repr(dme)))
             retcode = 404
             loc = str(dme)
+
+        return loc, retcode
+
+    def download_locations_by_attr(self, attr_type, attr_value, study_code,
+                                  user=None, auths=None):
+        """
+        fetches an location
+
+        :param locationId: ID of location to fetch
+        :type locationId: str
+
+        :rtype: Location
+        """
+
+        get = LocationGetByAttr(self.get_connection())
+
+        retcode = 200
+        loc = None
+
+        loc = get.get(attr_type, attr_value, study_code)
 
         return loc, retcode
 

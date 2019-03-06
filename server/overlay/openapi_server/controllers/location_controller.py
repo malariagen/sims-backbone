@@ -92,6 +92,27 @@ def download_locations(study_name=None, start=None, count=None, orderby=None, us
                                                   location_controller.token_info(token_info))
 
 
+def download_locations_by_attr(prop_name, prop_value,
+                               study_name=None, user=None,
+                               token_info=None):  # noqa: E501
+    """fetches one or more location by property value
+
+     # noqa: E501
+
+    :param prop_name: name of property to search
+    :type prop_name: str
+    :param prop_value: matching value of property to search
+    :type prop_value: str
+    :param study_name: if you want to restrict the search to a study e.g. for partner_id
+    :type study_name: str
+
+    :rtype: Locations
+    """
+    return location_controller.download_locations_by_attr(prop_name,
+                                                          prop_value, study_name, user,
+                                                          location_controller.token_info(token_info))
+
+
 def download_partner_location(partner_id, user=None, token_info=None):
     """
     fetches location(s) by partner name

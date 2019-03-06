@@ -140,7 +140,7 @@ class TestROMA(TestBase):
             self.assertEqual(looked_up.proxy_location.longitude, 103.91)
             self.assertEqual(looked_up.proxy_location.country, 'KHM')
             self.assertEqual(looked_up.proxy_location.attrs[0].attr_value,
-                             ' Test name with spaces ')
+                             'Test name with spaces')
             self.assertEqual(looked_up.proxy_location.attrs[0].attr_source,
                              'roma_dump')
             self.assertEqual(looked_up.proxy_location.attrs[0].study_name,

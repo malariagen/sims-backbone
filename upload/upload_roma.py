@@ -21,11 +21,45 @@ class Upload_ROMA(uploader.Uploader):
 
         items = {}
         event_sets = []
+        max_manifest = 1
+        max_location = 1
 
         for item in data:
             if not item['model'] in items:
                 items[item['model']] = {}
             items[item['model']][item['pk']] = item
+            if item['model'] == 'samples.manifest':
+                if item['pk'] > max_manifest:
+                    max_manifest = item['pk']
+            if item['model'] == 'locations.location':
+                if item['pk'] > max_location:
+                    max_location = item['pk']
+
+
+        for manifest_id in range(1, max_manifest + 1):
+            if manifest_id not in items['samples.manifest']:
+                event_set_name = f'{instance}_MNF{str(manifest_id).zfill(5)}'
+                try:
+                    samples = self._dao.download_original_samples_by_event_set(event_set_name)
+                    for sample in samples.original_samples:
+                        self._dao.delete_original_sample(sample.original_sample_id)
+                    samples = self._dao.download_sampling_events_by_event_set(event_set_name)
+                    for sample in samples.sampling_events:
+                        self._dao.delete_sampling_event(sample.sampling_event_id)
+                    self._dao.delete_event_set(event_set_name)
+                except ApiException as e:
+                    pass #Already gone
+
+        for location_id in range(1, max_location + 1):
+            if location_id not in items['locations.location']:
+                location_name = f'{instance}_loc_{location_id}'
+                try:
+                    locations = self._dao.download_locations_by_attr('src_location_id',
+                                                                    location_name)
+                    for location in locations.locations:
+                        self._dao.delete_location(location.location_id)
+                except ApiException as e:
+                    pass #Already gone
 
         proxy_locations = {}
 
@@ -63,6 +97,7 @@ class Upload_ROMA(uploader.Uploader):
                 proxy_latitude = proxy_loc['fields']['latitude']
                 proxy_longitude = proxy_loc['fields']['longitude']
                 proxy_loc_name = proxy_loc['fields']['location_name']
+                proxy_loc_name = proxy_loc_name.strip()
                 proxy_country = items['locations.country'][proxy_loc['fields']['country']]['fields']['iso3']
 
             roma_manifest_id = fields['manifest']

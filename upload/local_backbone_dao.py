@@ -48,7 +48,8 @@ class LocalBackboneDAO(AbstractBackboneDAO):
 
         if retcode >= 400:
             if retcode != 422:  # Already exists
-                self._logger.debug("Exception when calling EventSetApi->create_event_set: \n")
+                self._logger.debug(
+                    "Exception when calling EventSetApi->create_event_set: \n")
                 raise ApiException(http_resp=HTTPResponse(
                     body=api_response, status=retcode))
 
@@ -61,7 +62,8 @@ class LocalBackboneDAO(AbstractBackboneDAO):
 
         if retcode >= 400:
             if retcode != 422:  # Already exists
-                self._logger.debug("Exception when calling EventSetApi->delete_event_set: \n")
+                self._logger.debug(
+                    "Exception when calling EventSetApi->delete_event_set: \n")
                 raise ApiException(http_resp=HTTPResponse(
                     body=api_response, status=retcode))
 
@@ -74,7 +76,8 @@ class LocalBackboneDAO(AbstractBackboneDAO):
 
         if retcode >= 400:
             if retcode != 422:  # Already exists
-                self._logger.debug("Exception when calling EventSetApi->download_event_set: \n")
+                self._logger.debug(
+                    "Exception when calling EventSetApi->download_event_set: \n")
                 raise ApiException(http_resp=HTTPResponse(
                     body=api_response, status=retcode))
 
@@ -149,6 +152,22 @@ class LocalBackboneDAO(AbstractBackboneDAO):
 
         return ret
 
+    def download_locations_by_attr(self, attr_type, attr_value,
+                                   study_name=None):
+
+        ret, retcode = self.location_api_instance.download_locations_by_attr(
+            attr_type, attr_value, study_name,
+            user=self._user, auths=self._auths)
+
+        self._logger.debug("GET /v1/locations/attr/{}/{} {}".format(attr_type,
+                                                                    attr_value,
+                                                                    retcode))
+        if retcode >= 400:
+            raise ApiException(http_resp=HTTPResponse(
+                body=ret, status=retcode))
+
+        return ret
+
     def download_partner_location(self, partner_name):
 
         ret, retcode = self.location_api_instance.download_partner_location(
@@ -172,7 +191,7 @@ class LocalBackboneDAO(AbstractBackboneDAO):
         return existing
 
     def download_sampling_events_by_event_set(self, event_set_name, start=None,
-                                          count=None):
+                                              count=None):
 
         found_events, retcode = self.se_api_instance.download_sampling_events_by_event_set(urllib.parse.quote_plus(event_set_name),
                                                                                            start,
@@ -180,7 +199,8 @@ class LocalBackboneDAO(AbstractBackboneDAO):
                                                                                            user=self._user,
                                                                                            auths=self._auths)
 
-        self._logger.debug("GET /v1/samplingEvents/event_set/{} {}".format(event_set_name, retcode))
+        self._logger.debug(
+            "GET /v1/samplingEvents/event_set/{} {}".format(event_set_name, retcode))
         if retcode >= 400:
             raise ApiException(http_resp=HTTPResponse(
                 body=found_events, status=retcode))
@@ -211,7 +231,7 @@ class LocalBackboneDAO(AbstractBackboneDAO):
                                                                                        user=self._user, auths=self._auths)
 
         self._logger.debug("GET /v1/samplingEvents/study/{} {}".format(study_name,
-                                                                         retcode))
+                                                                       retcode))
         if retcode >= 400:
             raise ApiException(http_resp=HTTPResponse(
                 body=found_events, status=retcode))
@@ -367,6 +387,22 @@ class LocalBackboneDAO(AbstractBackboneDAO):
 
         self._logger.debug("GET /v1/originalSamples/attr/{}/{} {}".format(attr_type,
                                                                           attr_value, retcode))
+        if retcode >= 400:
+            raise ApiException(http_resp=HTTPResponse(
+                body=found_events, status=retcode))
+
+        return found_events
+
+    def download_original_samples_by_event_set(self, event_set_id, start=None,
+                                               count=None):
+
+        found_events, retcode = self.os_api_instance.download_original_samples_by_event_set(urllib.parse.quote_plus(event_set_id),
+                                                                                            start,
+                                                                                            count,
+                                                                                            user=self._user, auths=self._auths)
+
+        self._logger.debug(
+            "GET /v1/originalSamples/eventSetId/{} {}".format(event_set_id, retcode))
         if retcode >= 400:
             raise ApiException(http_resp=HTTPResponse(
                 body=found_events, status=retcode))
@@ -540,7 +576,7 @@ class LocalBackboneDAO(AbstractBackboneDAO):
 
     def download_study(self, study_code):
         ret_data, retcode = self.study_api_instance.download_study(study_code, user=self._user,
-                                                        auths=self._auths)
+                                                                   auths=self._auths)
         if retcode >= 400:
             raise ApiException(http_resp=HTTPResponse(
                 body=ret_data, status=retcode))
@@ -549,24 +585,22 @@ class LocalBackboneDAO(AbstractBackboneDAO):
 
     def download_studies(self):
         ret_data, retcode = self.study_api_instance.download_studies(user=self._user,
-                                                        auths=self._auths)
+                                                                     auths=self._auths)
         if retcode >= 400:
             raise ApiException(http_resp=HTTPResponse(
                 body=ret_data, status=retcode))
 
         return ret_data
-
 
     def update_study(self, study_code, study_detail):
         ret_data, retcode = self.study_api_instance.update_study(study_code,
-                                                    study_detail, user=self._user,
-                                                    auths=self._auths)
+                                                                 study_detail, user=self._user,
+                                                                 auths=self._auths)
         if retcode >= 400:
             raise ApiException(http_resp=HTTPResponse(
                 body=ret_data, status=retcode))
 
         return ret_data
-
 
     def create_individual(self, individual):
 
@@ -627,7 +661,7 @@ class LocalBackboneDAO(AbstractBackboneDAO):
                                                                         user=self._user, auths=self._auths)
 
         self._logger.debug("GET /v1/individual/{} {}".format(individual_id,
-                                                                 retcode))
+                                                             retcode))
         if retcode >= 400:
             raise ApiException(http_resp=HTTPResponse(
                 body=found_events, status=retcode))
@@ -637,7 +671,8 @@ class LocalBackboneDAO(AbstractBackboneDAO):
     def download_individuals_by_attr(self, prop_name, prop_value, study_name):
 
         found_events, retcode = self.i_api_instance.download_individuals_by_attr(prop_name,
-                                                                                 urllib.parse.quote_plus(prop_value),
+                                                                                 urllib.parse.quote_plus(
+                                                                                     prop_value),
                                                                                  study_name,
                                                                                  user=self._user, auths=self._auths)
 
@@ -648,4 +683,3 @@ class LocalBackboneDAO(AbstractBackboneDAO):
                 body=found_events, status=retcode))
 
         return found_events
-

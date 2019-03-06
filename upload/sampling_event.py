@@ -174,51 +174,62 @@ class SamplingEventProcessor(BaseEntity):
             if attr.attr_type == 'src_location_id':
                 #print(attr)
                 try:
-                    looked_up = self._dao.download_location_by_attr('src_location_id',
+                    looked_up = self._dao.download_locations_by_attr('src_location_id',
                                                                     attr.attr_value)
+                    #print(looked_up)
+                    if looked_up.count == 1:
+                        looked_up_location = looked_up.locations[0]
+                    if looked_up.count == 0:
+                        looked_up = None
                 except Exception as err:
-                    #print(repr(err))
-                    #print("Failed to find location {}".format(loc))
+                    print(repr(err))
+                    print("Failed to find location {}".format(loc))
                     pass
 
         #print(looked_up)
-        if not looked_up:
+        if not looked_up or not looked_up.locations:
             try:
                 looked_up = self._dao.download_gps_location(str(loc.latitude), str(loc.longitude))
+                if looked_up.count == 0:
+                    looked_up = None
             except Exception as err:
                 #print(repr(err))
                 #print("Failed to find location {}".format(loc))
                 return looked_up_location, conflict
 
-        if not looked_up and not partner_name == "##Unknown":
-            try:
-                named_locations = self._dao.download_partner_location(partner_name)
-                for named_loc in named_locations.locations:
-                    for ident in named_loc.attrs:
-                        if ident.study_name[:4] == study_id[:4]:
-                            if loc.latitude and loc.longitude:
-                                self.report_conflict(None, "Location name", loc,
-                                                     named_loc,
-                                                     partner_name, values)
-                                conflict = True
-                            else:
-                                looked_up_location = named_loc
-            except ApiException as err:
-                #Can't be found by name either
-                pass
-        elif looked_up.count > 0:
-            name_match = False
-            for loc in looked_up.locations:
-                for ident in loc.attrs:
-                    if ident.attr_type == 'partner_name' and \
-                       ident.attr_value == partner_name and \
-                       ident.study_name[:4] == study_id[:4]:
-                        name_match = True
-                        looked_up_location = loc
-            if not name_match:
-                looked_up = None
+            if not looked_up and not partner_name == "##Unknown":
+                try:
+                    named_locations = self._dao.download_partner_location(partner_name)
+                    for named_loc in named_locations.locations:
+                        for ident in named_loc.attrs:
+                            if ident.study_name[:4] == study_id[:4]:
+                                if loc.latitude and loc.longitude:
+                                    self.report_conflict(None, "Location name", loc,
+                                                         named_loc,
+                                                         partner_name, values)
+                                    conflict = True
+                                else:
+                                    looked_up_location = named_loc
+                except ApiException as err:
+                    #Can't be found by name either
+                    pass
+            elif looked_up.count > 0:
+                name_match = False
+                for loc in looked_up.locations:
+                    for ident in loc.attrs:
+                        if ident.attr_type == 'partner_name' and \
+                           ident.attr_value == partner_name and \
+                           ident.study_name[:4] == study_id[:4]:
+                            name_match = True
+                            looked_up_location = loc
+                if not name_match:
+                    looked_up = None
 
 
+        #print(loc)
+        #print(values)
+        #print('looked_up_location')
+        #print(looked_up_location)
         return looked_up_location, conflict
 
     def process_location(self, values, prefix):
@@ -235,6 +246,8 @@ class SamplingEventProcessor(BaseEntity):
 
         looked_up, conflict = self.lookup_location(study_id, loc, partner_name, values)
 
+        #print('looked_up location')
+        #print(looked_up)
         return self.merge_locations(loc, looked_up, study_id, prefix, partner_name, values)
 
     def merge_locations(self, loc, looked_up, study_id, prefix, partner_name, values):
@@ -245,6 +258,7 @@ class SamplingEventProcessor(BaseEntity):
                 #print("Found location {}".format(looked_up))
                 loc.location_id = looked_up.location_id
                 added_id = self.add_location_attr(study_id, looked_up, prefix, partner_name, values)
+                ret = looked_up
 
                 if added_id:
                     try:
@@ -266,9 +280,15 @@ class SamplingEventProcessor(BaseEntity):
         else:
 
             try:
+                #print('Creating location')
                 created = self._dao.create_location(loc)
+                #print('Created location')
+                #print(created)
                 ret = created
             except ApiException as err:
+                #print('Error creating location')
+                #print(loc)
+                #print(err)
                 if err.status == 422:
                     self.report_conflict(None, "Location name", None,
                                          loc, 'Error creating location', values)
@@ -589,6 +609,9 @@ class SamplingEventProcessor(BaseEntity):
 
             try:
                 created = self._dao.create_sampling_event(samp)
+                #print("Sampling event created")
+                #print(values)
+                #print(created)
 
                 ret = created
 

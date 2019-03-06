@@ -1,0 +1,178 @@
+[
+    {
+        "pk": 29,
+        "fields": {
+            "short_name": "Cambodia",
+            "name": "the Kingdom of Cambodia",
+            "iso2": "KH",
+            "iso3": "KHM"
+        },
+        "model": "locations.country"
+    },
+    {
+        "pk": 1,
+        "fields": {
+            "study": 1,
+            "location_name": "Cambodia(Country)",
+            "updated_by": [
+                "person3@example.org"
+            ],
+            "created_by": [
+                "person1@example.org"
+            ],
+            "inferred": false,
+            "country": 29,
+            "longitude": "103.9",
+            "latitude": "12.5"
+        },
+        "model": "locations.location"
+    },
+    {
+        "pk": 2,
+        "fields": {
+            "study": 1,
+            "location_name": " Test name with spaces ",
+            "updated_by": [
+                "person3@example.org"
+            ],
+            "created_by": [
+                "person1@example.org"
+            ],
+            "inferred": false,
+            "country": 29,
+            "longitude": "103.91",
+            "latitude": "12.51"
+        },
+        "model": "locations.location"
+    },
+    {
+        "model": "locations.proxylocation",
+        "fields": {
+            "updated_by": 1,
+            "location": 1,
+            "study": 1,
+            "created_by": 1,
+            "proxy_location": 2
+        },
+        "pk": 1
+    },
+    {
+        "pk": 1,
+        "fields": {
+            "created_by": [
+                "person1@example.org"
+            ],
+            "manifest": 2,
+            "tags": {
+                "Patient Id": 103335
+            },
+            "note": "",
+            "external_id": "EXTST000001",
+            "sample_name": "TST00001",
+            "location": 1,
+            "creation_date": "2015-09-07",
+            "collection_date": "2012-10-09",
+            "updated_by": [
+                "person1@example.org"
+            ]
+        },
+        "model": "samples.sample"
+    },
+    {
+        "pk": 2,
+        "fields": {
+            "created_by": [
+                "person1@example.org"
+            ],
+            "manifest": 2,
+            "tags": {
+                "14. Time spent in culture (days)": "0",
+                "18. DNA concentration (ng/uL)": 87,
+                "28. Previous_sanger_supplier_id": 1,
+                "Species": "Plasmodium falciparum",
+                "24. Patient Id": "PI0001-C",
+                "23. Related sample": "PI0001-Cx",
+                "21. WBC Depletion Method": "none",
+                "20. DNA quantification method": "picogreen",
+                "27. original_oxford_code": "OX0001-C",
+                "16. Sample Type": "sWGA",
+                "15. Sample Volume (uL)": "40",
+                "26. Sequenom Pass Rate": 0.9,
+                "22. Relationship to other sample": "duplicate",
+                "12. Parasitaemia (p/ul)": 53460,
+                "13. Clinical Severity": "SMA",
+                "19. Total DNA (ng)": 3480
+            },
+            "note": "",
+            "external_id": "EXTST000002",
+            "sample_name": "TST00002",
+            "location": 1,
+            "creation_date": "2015-09-07",
+            "collection_date": "2012-11-22",
+            "updated_by": [
+                "person1@example.org"
+            ]
+        },
+        "model": "samples.sample"
+    },
+    {
+        "pk": 3,
+        "fields": {
+            "created_by": [
+                "person1@example.org"
+            ],
+            "manifest": 2,
+            "tags": null,
+            "note": "",
+            "external_id": "EXTST000003",
+            "sample_name": "TST00003",
+            "location": 2,
+            "creation_date": "2015-09-07",
+            "collection_date": "2012-12-04",
+            "updated_by": [
+                "person1@example.org"
+            ]
+        },
+        "model": "samples.sample"
+    },
+    {
+        "pk": 2,
+        "fields": {
+            "study": 1,
+            "name": "MNF00002",
+            "updated_by": [
+                "person1@example.org"
+            ],
+            "created_by": [
+                "person1@example.org"
+            ],
+            "collector": null,
+            "approval_code": null,
+            "object_id": 6,
+            "content_type": [
+                "auth",
+                "user"
+            ],
+            "creation_date": "2018-09-07"
+        },
+        "model": "samples.manifest"
+    },
+    {
+        "pk": 1,
+        "fields": {
+            "title": "GenRe: Test",
+            "team": "",
+            "description": "Test field samples",
+            "project_code": "09030",
+            "created_by": [
+                "person1@example.org"
+            ],
+            "active": false,
+            "estimated_samples": 56,
+            "updated_by": [
+                "person2@example.org"
+            ]
+        },
+        "model": "managements.study"
+    }
+]

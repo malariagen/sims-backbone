@@ -50,6 +50,15 @@ class AbstractBackboneDAO(abc.ABC):
 
         return ret
 
+    def download_locations_by_attr(self, attr_type, attr_value,
+                                   study_name=None):
+
+        ret = self.location_api_instance.download_location_by_attr(attr_type,
+                                                                   attr_value,
+                                                                   study_name)
+
+        return ret
+
     def delete_location(self, location_id):
         ret = self.location_api_instance.delete_location(location_id)
 
@@ -136,6 +145,12 @@ class AbstractBackboneDAO(abc.ABC):
     def download_original_samples_by_attr(self, attr_type, attr_value):
 
         return self.os_api_instance.download_original_samples_by_attr(attr_type, attr_value)
+
+    def download_original_samples_by_event_set(self, event_set_id, start=None,
+                                               count=None):
+
+        return self.os_api_instance.download_original_samples_by_event_set(event_set_id,
+                                                                start, count)
 
 
     def create_derivative_sample(self, derivative_sample):

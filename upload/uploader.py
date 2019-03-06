@@ -265,11 +265,13 @@ class Uploader():
 
         samp = self.se_processor.create_sampling_event_from_values(values)
 
+        #print(values)
+        #print(samp)
+
         location_name, location = self.se_processor.process_location(values, '')
         proxy_location_name, proxy_location = self.se_processor.process_location(values, 'proxy_')
 
-        #print(samp)
-
+        #print(location)
         existing = self.se_processor.lookup_sampling_event(o_existing, samp, location, proxy_location, values)
 
         if location:
@@ -277,6 +279,9 @@ class Uploader():
 
         if proxy_location:
             samp.proxy_location_id = proxy_location.location_id
+
+        #print('SAMP')
+        #print(samp)
 
         indiv = self.i_processor.create_individual_from_values(values)
         existing_indiv = None

@@ -27,6 +27,8 @@ paths:
     $ref: './sims-backbone/location/create.yaml'
   '/location/{location_id}':
     $ref: './sims-backbone/location/item.yaml'
+  '/location/attr/{prop_name}/{prop_value}':
+    $ref: './sims-backbone/location/by_attr.yaml'
   '/location/gps/{latitude}/{longitude}':
     $ref: './sims-backbone/location/gps.yaml'
   '/location/partner/{partner_id}':
