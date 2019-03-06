@@ -52,6 +52,35 @@ class TestLocation(TestBase):
 
     """
     """
+    def test_create_loc_with_attrs(self, api_factory):
+
+        api_instance = api_factory.LocationApi()
+
+        try:
+
+            loc = self.get_next_location()
+            loc.attrs = [
+                openapi_client.Attr(attr_type='partner_name', attr_value='Kobeni', study_name='5002-PF-MR-ANON'),
+                openapi_client.Attr(attr_type='src_location_id',
+                                    attr_value='roma_loc_1',
+                                    study_name='5002-PF-MR-ANON'),
+            ]
+
+            created = api_instance.create_location(loc)
+            if not api_factory.is_authorized(None):
+                pytest.fail('Unauthorized call to create_location succeeded')
+
+            fetched = api_instance.download_location(created.location_id)
+            assert created == fetched, "create response != download response"
+            fetched.location_id = None
+            assert loc == fetched, "upload != download response"
+            api_instance.delete_location(created.location_id)
+
+        except ApiException as error:
+            self.check_api_exception(api_factory, "LocationApi->create_location", error)
+
+    """
+    """
     def test_delete(self, api_factory):
 
         api_instance = api_factory.LocationApi()

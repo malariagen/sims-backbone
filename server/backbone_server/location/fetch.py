@@ -29,16 +29,16 @@ class LocationFetch():
                 FROM location_attrs
                 JOIN attrs a ON a.id = location_attrs.attr_id
                 LEFT JOIN studies ON a.study_id = studies.id
-                WHERE location_id = %s AND attr_type = %s'''
+                WHERE location_id = %s'''
 
-        cursor.execute(stmt, (location_id, 'partner_name'))
+        cursor.execute(stmt, (location_id, ))
 
         if not location:
             raise MissingKeyException("No location {}".format(location_id))
 
         location.attrs = []
         for (name, value, source, study) in cursor:
-            ident = Attr(attr_type = name, 
+            ident = Attr(attr_type = name,
                                attr_value = value,
                                attr_source = source,
                                study_name = study)
