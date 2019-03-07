@@ -12,7 +12,7 @@ install:
     - pip install -r test/requirements.txt
     - pip install -r server/backbone_server/REQUIREMENTS
     - pip install -r upload/requirements.txt
-    - pip install python-coveralls
+    - pip install coveralls
     - npm install -g @angular/cli
     - (cd client/sims-backbone;npm install)
 
