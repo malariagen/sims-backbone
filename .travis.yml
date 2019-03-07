@@ -46,8 +46,7 @@ before_script:
     - export REMOTE_HOST_URL=http://localhost:8080/v1
 
 after_success:
-  - coveralls --data_file=test/.coverage
-  - coveralls --data_file=upload/test/.coverage
+  - COVERALLS_PARALLEL=true coveralls
 
 addons:
     postgresql: "9.6"
