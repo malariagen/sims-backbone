@@ -30,7 +30,7 @@ class TestROMA(TestBase):
     @classmethod
     def tearDownClass(self):
 
-        TestBase.deleteStudies(['9030'], TestROMA._locations)
+        TestBase.deleteStudies(['9030','9032','9033'], TestROMA._locations)
 
         TestBase.tearDownLocations(TestROMA._locations)
 

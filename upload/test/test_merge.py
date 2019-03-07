@@ -260,7 +260,7 @@ class TestMerge(TestBase):
                 print(err)
                 pass
 
-        TestBase.deleteStudies(['9030','9031'], locations)
+        TestBase.deleteStudies(['9030','9031','9032','9033'], locations)
 
         TestBase.deleteEventSets(['oxford_merge', 'pf6_merge', 'pv3_merge',
                                   'roma_dump', 'roma_MNF00001',
