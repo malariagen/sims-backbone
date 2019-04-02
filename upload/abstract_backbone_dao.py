@@ -175,6 +175,10 @@ class AbstractBackboneDAO(abc.ABC):
 
         return self.ds_api_instance.download_derivative_samples_by_attr(attr_type, attr_value)
 
+    def download_derivative_samples_by_attr(self, attr_type, attr_value):
+
+        return self.ds_api_instance.download_derivative_samples_by_os_attr(attr_type, attr_value)
+
 
     def create_assay_datum(self, assay_datum):
 

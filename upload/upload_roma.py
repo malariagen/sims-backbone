@@ -34,6 +34,14 @@ class Upload_ROMA(uploader.Uploader):
             if item['model'] == 'locations.location':
                 if item['pk'] > max_location:
                     max_location = item['pk']
+            if item['model'] == 'samples.well':
+                if 'sample_well' not in items:
+                    items['sample_well'] = {}
+                sample_id = item['fields']['sample']
+                if sample_id in items['sample_well']:
+                    print(f'{sample_id} in multiple wells')
+                items['sample_well'][sample_id] = item
+
 
 
         for manifest_id in range(1, max_manifest + 1):
@@ -133,6 +141,16 @@ class Upload_ROMA(uploader.Uploader):
                 elif filename.startswith('vivax'):
                     taxon = 'Plasmodium'
 
+            well_pk_id = None
+            plate_name = None
+            plate_position = None
+            if 'sample_well' in items and item['pk'] in items['sample_well']:
+                well = items['sample_well'][item['pk']]
+                well_pk_id = instance + '_well_' + str(well['pk'])
+                plate = items['samples.plate'][well['fields']['plate']]
+                plate_name = plate['fields']['name']
+                plate_position = well['fields']['position']
+
             values = {
                 'study_id': study_id.strip(),
                 'sample_roma_id': roma_id.strip(),
@@ -152,7 +170,10 @@ class Upload_ROMA(uploader.Uploader):
                 'proxy_longitude': proxy_longitude,
                 'proxy_location_name': proxy_loc_name,
                 'proxy_country': proxy_country,
-                'manifest': manifest
+                'manifest': manifest,
+                'unique_ds_id': well_pk_id,
+                'plate_name': plate_name,
+                'plate_position': plate_position
             }
 
             sampling_event = self.process_item(values)

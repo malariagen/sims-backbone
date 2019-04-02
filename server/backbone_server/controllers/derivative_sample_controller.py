@@ -45,6 +45,7 @@ class DerivativeSampleController(BaseController):
             logging.getLogger(__name__).debug(
                 "create_derivativeSample: {}".format(repr(dke)))
             retcode = 422
+            samp = str(dke)
 
         return samp, retcode
 
@@ -93,6 +94,7 @@ class DerivativeSampleController(BaseController):
             logging.getLogger(__name__).debug(
                 "download_derivativeSample: {}".format(repr(dme)))
             retcode = 404
+            samp = str(dme)
 
         return samp, retcode
 
@@ -162,6 +164,7 @@ class DerivativeSampleController(BaseController):
             logging.getLogger(__name__).debug(
                 "download_derivative_samples_by_event_set: {}".format(repr(dme)))
             retcode = 404
+            samp = str(dme)
 
         return samp, retcode
 
@@ -236,6 +239,7 @@ class DerivativeSampleController(BaseController):
             logging.getLogger(__name__).debug(
                 "download_derivativeSample: {}".format(repr(dme)))
             retcode = 404
+            samp = str(dme)
 
         return samp, retcode
 
@@ -260,6 +264,7 @@ class DerivativeSampleController(BaseController):
             logging.getLogger(__name__).debug(
                 "download_derivative_samples_by_taxa: {}".format(repr(dme)))
             retcode = 404
+            samp = str(dme)
 
         return samp, retcode
 
@@ -287,9 +292,11 @@ class DerivativeSampleController(BaseController):
             logging.getLogger(__name__).debug(
                 "update_derivativeSample: {}".format(repr(dke)))
             retcode = 422
+            samp = str(dke)
         except MissingKeyException as dme:
             logging.getLogger(__name__).debug(
                 "update_derivativeSample: {}".format(repr(dme)))
             retcode = 404
+            samp = str(dme)
 
         return samp, retcode

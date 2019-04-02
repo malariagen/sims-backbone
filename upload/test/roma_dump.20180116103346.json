@@ -174,5 +174,80 @@
             ]
         },
         "model": "managements.study"
+    },
+    {
+        "pk": 1,
+        "fields": {
+            "name": "PLATE_ROM_00001",
+            "updated_by": [
+                "person3@example.org"
+            ],
+            "created_at": "2017-07-31T05:51:56Z",
+            "created_by": [
+                "person3@example.org"
+            ],
+            "note": ""
+        },
+        "model": "samples.plate"
+    },
+    {
+        "pk": 1,
+        "fields": {
+            "plate": 1,
+            "updated_by": [
+                "person3@example.org"
+            ],
+            "sample": 1,
+            "created_by": [
+                "person3@example.org"
+            ],
+            "position": "A01"
+        },
+        "model": "samples.well"
+    },
+    {
+        "pk": 2,
+        "fields": {
+            "plate": 1,
+            "updated_by": [
+                "person3@example.org"
+            ],
+            "sample": 2,
+            "created_by": [
+                "person3@example.org"
+            ],
+            "position": "B02"
+        },
+        "model": "samples.well"
+    },
+    {
+        "pk": 3,
+        "fields": {
+            "plate": 1,
+            "updated_by": [
+                "person3@example.org"
+            ],
+            "sample": 3,
+            "created_by": [
+                "person3@example.org"
+            ],
+            "position": "C03"
+        },
+        "model": "samples.well"
+    },
+    {
+        "pk": 1,
+        "fields": {
+            "plate": 1,
+            "plate_control_name": "ING00001",
+            "updated_by": [
+                "person3@example.org"
+            ],
+            "position": "E12",
+            "created_by": [
+                "person3@example.org"
+            ]
+        },
+        "model": "samples.platecontrol"
     }
 ]

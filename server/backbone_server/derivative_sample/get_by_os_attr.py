@@ -40,7 +40,20 @@ class DerivativeSampleGetByOsAttr():
                     derivative_samples.count = derivative_samples.count + 1
 
 
-                derivative_samples.attr_types = [attr_type]
+                derivative_samples.attr_types = []
+
+                stmt = '''SELECT DISTINCT da.attr_type FROM derivative_samples ds
+                JOIN original_sample_attrs osa ON osa.original_sample_id=ds.original_sample_id
+                JOIN attrs oa ON oa.id = osa.attr_id
+                JOIN derivative_sample_attrs dsa ON dsa.derivative_sample_id = ds.id
+                JOIN attrs da ON da.id = dsa.attr_id
+                WHERE oa.attr_type = %s AND oa.attr_value = %s'''
+                args = (attr_type, attr_value)
+
+                cursor.execute(stmt, args)
+
+                for (attr,) in cursor:
+                    derivative_samples.attr_types.append(attr)
 
 #Allow for when partner ident is used in different studies
 #        if derivative_samples.count > 1:

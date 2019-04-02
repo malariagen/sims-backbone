@@ -209,3 +209,41 @@ class TestROMA(TestBase):
             self.fail("test_species: Exception when calling download_sampling_event_by_os_attr {}"
                         .format(error))
 
+    """
+    """
+    def test_roma_well(self):
+
+
+        try:
+            looked_up = self._dao.download_derivative_samples_by_os_attr('roma_id', 'TST00001')
+
+            ds_looked_up = looked_up.derivative_samples[0]
+
+            assert looked_up.count == 1
+
+            assert len(ds_looked_up.attrs) == 2
+
+            if ds_looked_up.attrs[0].attr_type == 'plate_position':
+                pl_attr = ds_looked_up.attrs[0]
+                pn_attr = ds_looked_up.attrs[1]
+            else:
+                pl_attr = ds_looked_up.attrs[1]
+                pn_attr = ds_looked_up.attrs[0]
+
+            assert pn_attr.attr_type == 'plate_name'
+            assert pn_attr.attr_value == 'PLATE_ROM_00001'
+            assert pn_attr.attr_source == 'roma_dump'
+            assert pn_attr.study_name  is None
+
+            assert pl_attr.attr_type == 'plate_position'
+            assert pl_attr.attr_value == 'A01'
+            assert pl_attr.attr_source == 'roma_dump'
+            assert pl_attr.study_name is None
+
+            assert 'plate_position' in looked_up.attr_types
+            assert 'plate_name' in looked_up.attr_types
+
+        except ApiException as error:
+            self.fail("test_roma_individual : Exception when download_derivative_samples_by_os_attr{}"
+                        .format(error))
+

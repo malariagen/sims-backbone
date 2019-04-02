@@ -506,6 +506,21 @@ class LocalBackboneDAO(AbstractBackboneDAO):
 
         return found_events
 
+    def download_derivative_samples_by_os_attr(self, attr_type, attr_value):
+
+        found_events, retcode = self.ds_api_instance.download_derivative_samples_by_os_attr(attr_type,
+                                                                                            urllib.parse.quote_plus(
+                                                                                                attr_value),
+                                                                                            user=self._user, auths=self._auths)
+
+        self._logger.debug("GET /v1/derivativeSamples/os/attr/{}/{} {}".format(attr_type,
+                                                                               attr_value, retcode))
+        if retcode >= 400:
+            raise ApiException(http_resp=HTTPResponse(
+                body=found_events, status=retcode))
+
+        return found_events
+
     def create_assay_datum(self, assay_datum):
 
         found_events, retcode = self.ad_api_instance.create_assay_datum(assay_datum,
