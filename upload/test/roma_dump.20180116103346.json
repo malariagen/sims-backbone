@@ -136,10 +136,98 @@
         "model": "samples.sample"
     },
     {
+        "pk": 4,
+        "fields": {
+            "created_by": [
+                "person1@example.org"
+            ],
+            "manifest": 2,
+            "tags": {
+                "Species": "Plasmodium falciparum/vivax mixture"
+            },
+            "note": "",
+            "external_id": "EXTST000004",
+            "sample_name": "TST00004",
+            "location": 2,
+            "creation_date": "2015-09-07",
+            "collection_date": "2012-12-04",
+            "updated_by": [
+                "person1@example.org"
+            ]
+        },
+        "model": "samples.sample"
+    },
+    {
+        "pk": 5,
+        "fields": {
+            "created_by": [
+                "person1@example.org"
+            ],
+            "manifest": 3,
+            "tags": {
+                "Species": "Plasmodium non existent"
+            },
+            "note": "",
+            "external_id": "EXTST000005",
+            "sample_name": "TST00005",
+            "location": 2,
+            "creation_date": "2015-09-07",
+            "collection_date": "2012-12-04",
+            "updated_by": [
+                "person1@example.org"
+            ]
+        },
+        "model": "samples.sample"
+    },
+    {
         "pk": 1,
         "fields": {
             "study": 1,
             "name": "MNF00001",
+            "updated_by": [
+                "person1@example.org"
+            ],
+            "created_by": [
+                "person1@example.org"
+            ],
+            "collector": null,
+            "approval_code": null,
+            "object_id": 5,
+            "content_type": [
+                "auth",
+                "user"
+            ],
+            "creation_date": "2015-09-07"
+        },
+        "model": "samples.manifest"
+    },
+    {
+        "pk": 2,
+        "fields": {
+            "study": 2,
+            "name": "MNF00002",
+            "updated_by": [
+                "person1@example.org"
+            ],
+            "created_by": [
+                "person1@example.org"
+            ],
+            "collector": null,
+            "approval_code": null,
+            "object_id": 5,
+            "content_type": [
+                "auth",
+                "user"
+            ],
+            "creation_date": "2015-09-07"
+        },
+        "model": "samples.manifest"
+    },
+    {
+        "pk": 3,
+        "fields": {
+            "study": 3,
+            "name": "MNF00003",
             "updated_by": [
                 "person1@example.org"
             ],
@@ -164,6 +252,42 @@
             "team": "",
             "description": "Test field samples",
             "project_code": "09030",
+            "created_by": [
+                "person1@example.org"
+            ],
+            "active": false,
+            "estimated_samples": 56,
+            "updated_by": [
+                "person2@example.org"
+            ]
+        },
+        "model": "managements.study"
+    },
+    {
+        "pk": 2,
+        "fields": {
+            "title": "GenRe: Test",
+            "team": "",
+            "description": "Test field samples",
+            "project_code": "09032",
+            "created_by": [
+                "person1@example.org"
+            ],
+            "active": false,
+            "estimated_samples": 56,
+            "updated_by": [
+                "person2@example.org"
+            ]
+        },
+        "model": "managements.study"
+    },
+    {
+        "pk": 3,
+        "fields": {
+            "title": "GenRe: Test",
+            "team": "",
+            "description": "Test field samples",
+            "project_code": "09033",
             "created_by": [
                 "person1@example.org"
             ],

@@ -74,6 +74,19 @@ class TestLocation(TestBase):
             assert created == fetched, "create response != download response"
             fetched.location_id = None
             assert loc == fetched, "upload != download response"
+
+            downloaded = api_instance.download_locations_by_attr(loc.attrs[1].attr_type,
+                                                    loc.attrs[1].attr_value)
+
+            assert downloaded.count == 1
+            assert downloaded.locations[0] == created
+
+            downloaded = api_instance.download_locations_by_attr(loc.attrs[1].attr_type,
+                                                    loc.attrs[1].attr_value,
+                                                    loc.attrs[1].study_name)
+
+            assert downloaded.count == 1
+            assert downloaded.locations[0] == created
             api_instance.delete_location(created.location_id)
 
         except ApiException as error:

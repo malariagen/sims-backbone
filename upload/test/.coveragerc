@@ -1,0 +1,45 @@
+# .coveragerc to control coverage.py
+[run]
+branch = True
+include =
+    ..
+omit =
+    */set_studies.py
+    */upload_log.py
+    */remote_backbone_dao.py
+    */abstract_backbone_dao.py
+    *test*.py
+
+[report]
+# Regexes for lines to exclude from consideration
+exclude_lines =
+    # Have to re-enable the standard pragma
+    pragma: no cover
+
+    # Don't complain about missing debug-only code:
+    def __repr__
+    if self\.debug
+
+    # Don't complain if tests don't hit defensive assertion code:
+    raise AssertionError
+    raise NotImplementedError
+
+    # Don't complain if non-runnable code isn't run:
+    if 0:
+    if __name__ == .__main__.:
+
+    if 'debug' in args:
+    if 'dao_type' in args:
+
+    if self\._logger\.isEnabledFor\(logging\.DEBUG\):
+
+    #Interested in the handling of exceptions rather than how they are raised
+    if retcode >= 400:
+
+    #A bit marginal
+    except ApiException as err:
+
+ignore_errors = True
+
+#[html]
+#directory = coverage_html_report
