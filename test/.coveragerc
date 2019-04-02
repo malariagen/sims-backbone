@@ -1,14 +1,9 @@
 # .coveragerc to control coverage.py
 [run]
 branch = True
-include =
-    ..
-    ../../server/backbone_server
+source =
+    ../server/backbone_server
 omit =
-    */set_studies.py
-    */upload_log.py
-    */remote_backbone_dao.py
-    */abstract_backbone_dao.py
     *test*.py
 
 [report]
@@ -30,15 +25,11 @@ exclude_lines =
     if __name__ == .__main__.:
 
     if 'debug' in args:
-    if 'dao_type' in args:
 
     if self\._logger\.isEnabledFor\(logging\.DEBUG\):
 
     #Interested in the handling of exceptions rather than how they are raised
     if retcode >= 400:
-
-    #A bit marginal
-    except ApiException as err:
 
 ignore_errors = True
 
