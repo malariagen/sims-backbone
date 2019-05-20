@@ -25,6 +25,10 @@ then
             (cd ../database;./rebuild.sh test)
         fi
     fi
+    set -o allexport
+    source ../.envs/.local/.postgres
+    set +o allexport
+    export POSTGRES_HOST=localhost
     cd bb_server
     grep security: ./openapi_server/openapi/openapi.yaml
     if [ $? -eq 1 ]
@@ -33,4 +37,6 @@ then
     fi
     echo "http://localhost:8080/v1/ui/"
     python3 -m openapi_server
+else
+    echo "You need to run build first"
 fi

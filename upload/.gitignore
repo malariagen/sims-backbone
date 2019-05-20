@@ -14,3 +14,4 @@ upload-env/
 Sanger_LIMS/
 environment
 data/
+input/import/roma/*.json

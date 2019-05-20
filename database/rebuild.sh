@@ -33,8 +33,8 @@ psql ${POSTGRES_NAME} << +++EOF
 \i ${REBUILD_FILE};
 \connect ${POSTGRES_NAME};
 SELECT postgis_full_version();
-\copy countries (English, French, alpha2, alpha3, numeric_code) FROM './country_codes.tsv' DELIMITER E'\t'  HEADER CSV;
-\copy taxonomies (id, rank, name) FROM './taxa.tsv' DELIMITER E'\t'  HEADER CSV;
+\copy countries (English, French, alpha2, alpha3, numeric_code) FROM '../compose/local/postgres/initdb/country_codes.tsv' DELIMITER E'\t'  HEADER CSV;
+\copy taxonomies (id, rank, name) FROM '../compose/local/postgres/initdb/taxa.tsv' DELIMITER E'\t'  HEADER CSV;
 +++EOF
 if [ ${TMP_REBUILD} -eq 1 ]
 then

@@ -16,3 +16,4 @@ typescript-angular-client/
 **/.pytest_cache
 ?
 ?.*
+.env

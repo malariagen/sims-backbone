@@ -1,0 +1,69 @@
+version: '2.4'
+
+volumes:
+  local_postgres_data: {}
+
+services:
+  backbone_server: &backbone_server
+    build:
+      context: .
+      dockerfile: ./compose/local/backbone_server/Dockerfile
+    image: local_backbone_server
+    volumes:
+      - .:/app
+    depends_on:
+      - postgres
+    env_file:
+      - ./.envs/.local/.backbone_server
+      - ./.envs/.local/.postgres
+    ports:
+      - "8100:8080"
+    command: /start
+
+  import: &import
+    build:
+      context: .
+      dockerfile: ./compose/local/import/Dockerfile
+    image: local_import
+    volumes:
+      - .:/app
+    depends_on:
+      - postgres
+    env_file:
+      - ./.envs/.local/.backbone_server
+      - ./.envs/.local/.postgres
+    command: /start
+
+  sims_client: &sims_client
+    build:
+      context: .
+      dockerfile: ./compose/local/sims_client/Dockerfile
+    image: local_sims_client
+    volumes:
+      - .:/app
+    depends_on:
+      - postgres
+    env_file:
+      - ./.envs/.local/.backbone_server
+      - ./.envs/.local/.postgres
+      - .env
+    command: /start
+
+  nginx: &nginx
+    build:
+      context: .
+      dockerfile: ./compose/local/nginx/Dockerfile
+    image: local_nginx
+    ports:
+      - "4200:80"
+
+  postgres:
+    image: mdillon/postgis:10
+    volumes:
+      - local_postgres_data:/var/lib/postgresql/data
+      - ./compose/local/postgres/initdb:/docker-entrypoint-initdb.d/
+    ports:
+      - 5432:5432
+    env_file:
+      - ./.envs/.local/.postgres
+
