@@ -39,8 +39,10 @@ class Upload_ROMA(uploader.Uploader):
                     items['sample_well'] = {}
                 sample_id = item['fields']['sample']
                 if sample_id in items['sample_well']:
+                    items['sample_well'][sample_id].append(item)
                     print(f'{sample_id} in multiple wells')
-                items['sample_well'][sample_id] = item
+                else:
+                    items['sample_well'][sample_id] = [item]
 
 
 
@@ -141,55 +143,63 @@ class Upload_ROMA(uploader.Uploader):
                 elif filename.startswith('vivax'):
                     taxon = 'Plasmodium'
 
-            well_pk_id = None
-            plate_name = None
-            plate_position = None
-            if 'sample_well' in items and item['pk'] in items['sample_well']:
-                well = items['sample_well'][item['pk']]
-                well_pk_id = instance + '_well_' + str(well['pk'])
-                plate = items['samples.plate'][well['fields']['plate']]
-                plate_name = plate['fields']['name']
-                plate_position = well['fields']['position']
-
-            values = {
-                'study_id': study_id.strip(),
-                'sample_roma_id': roma_id.strip(),
-                'roma_pk_id': roma_pk_id,
-                'sample_oxford_id': oxford_code,
-                'sample_partner_id': source_code,
-                'patient_id': patient_id,
-                'species': taxon,
-                'doc': doc,
-                'src_location_id': src_location_id,
-                'proxy_src_location_id': proxy_src_location_id,
-                'location_name': loc_name.strip(),
-                'country': country.strip(),
-                'latitude': latitude,
-                'longitude': longitude,
-                'proxy_latitude': proxy_latitude,
-                'proxy_longitude': proxy_longitude,
-                'proxy_location_name': proxy_loc_name,
-                'proxy_country': proxy_country,
-                'manifest': manifest,
-                'unique_ds_id': well_pk_id,
-                'plate_name': plate_name,
-                'plate_position': plate_position
+            well = {
+                'well_pk_id': None,
+                'plate_name': None,
+                'plate_position': None
             }
+            wells = [ well ]
+            if 'sample_well' in items and item['pk'] in items['sample_well']:
+                sample_wells = items['sample_well'][item['pk']]
+                wells = []
+                for well in sample_wells:
+                    plate = items['samples.plate'][well['fields']['plate']]
+                    wells.append({
+                        'well_pk_id': instance + '_well_' + str(well['pk']),
+                        'plate_name': plate['fields']['name'],
+                        'plate_position': well['fields']['position']
+                    })
 
-            sampling_event = self.process_item(values)
+            for well in wells:
+                values = {
+                    'study_id': study_id.strip(),
+                    'sample_roma_id': roma_id.strip(),
+                    'roma_pk_id': roma_pk_id,
+                    'sample_oxford_id': oxford_code,
+                    'sample_partner_id': source_code,
+                    'patient_id': patient_id,
+                    'species': taxon,
+                    'doc': doc,
+                    'src_location_id': src_location_id,
+                    'proxy_src_location_id': proxy_src_location_id,
+                    'location_name': loc_name.strip(),
+                    'country': country.strip(),
+                    'latitude': latitude,
+                    'longitude': longitude,
+                    'proxy_latitude': proxy_latitude,
+                    'proxy_longitude': proxy_longitude,
+                    'proxy_location_name': proxy_loc_name,
+                    'proxy_country': proxy_country,
+                    'manifest': manifest,
+                    'unique_ds_id': well['well_pk_id'],
+                    'plate_name': well['plate_name'],
+                    'plate_position': well['plate_position']
+                }
 
-            if values['manifest'] not in event_sets:
-                self._dao.create_event_set(values['manifest'])
-                event_sets.append(values['manifest'])
+                sampling_event = self.process_item(values)
 
-            if sampling_event:
-                if not sampling_event.event_sets or values['manifest'] not in sampling_event.event_sets:
-                    self._dao.create_event_set_item(values['manifest'],
-                                                    sampling_event.sampling_event_id)
-            #print(values)
-            #print(sampling_event)
+                if values['manifest'] not in event_sets:
+                    self._dao.create_event_set(values['manifest'])
+                    event_sets.append(values['manifest'])
 
-            self.validate(values, sampling_event)
+                if sampling_event:
+                    if not sampling_event.event_sets or values['manifest'] not in sampling_event.event_sets:
+                        self._dao.create_event_set_item(values['manifest'],
+                                                        sampling_event.sampling_event_id)
+                #print(values)
+                #print(sampling_event)
+
+                self.validate(values, sampling_event)
 
 
     def validate(self, input_values, output_values):

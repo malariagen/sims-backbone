@@ -9,7 +9,7 @@ class DerivativeSampleEdit():
     def add_attrs(cursor, uuid_val, derivative_sample):
         if derivative_sample.attrs:
 
-            not_unique = [ 'plate_name', 'plate_location' ]
+            not_unique = [ 'plate_name', 'plate_position' ]
             for ident in derivative_sample.attrs:
 
                 if ident.attr_type not in not_unique:
