@@ -26,15 +26,9 @@ do
         then
             python3 upload_log.py ${CMIS_CONFIG} ${ENVIRON} ${ROMA_LOG}
         fi
+        mv $i ${ARCHIVE_DIR}/roma/$(basename ${i})
     fi
 done
 METADATA_LOG=${OUTPUT1_STAGING_DIR}/metadata_$(date +%Y-%m-%d-%H%M%S).log
 python3 set_taxa.py ${IMPORT_CONFIG} | tee -i ${METADATA_LOG}
 python3 set_studies.py ${IMPORT_CONFIG} ${CMIS_CONFIG} | tee -i ${METADATA_LOG}
-if [ -s ${METADATA_LOG} ]
-then
-    python3 upload_log.py ${CMIS_CONFIG} ${ENVIRON} ${METADATA_LOG}
-fi
-#Could upload the overall log but just keeping in S3 and uploading individual logs instead
-#Not uploading set_taxa and set_studies
-#python3 upload_log.py ${CMIS_CONFIG} ${ENVIRON} ${OUTFILE}
