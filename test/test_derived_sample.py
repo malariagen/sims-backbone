@@ -391,9 +391,9 @@ class TestDerivativeSample(TestBase):
 
         samp = openapi_client.OriginalSample(None, study_name=study_name,
                                              partner_species='PF')
-        samp.attrs = [
-            openapi_client.Attr (attr_type='ds_os_attr', attr_value='123456')
-        ]
+        #samp.attrs = [
+        #    openapi_client.Attr (attr_type='ds_os_attr', attr_value='123456')
+        #]
         created = api_instance.create_original_sample(samp)
         study_detail = study_api.download_study(study_name)
         study_detail.partner_species[0].taxa = [ openapi_client.Taxonomy(taxonomy_id=5833) ]
@@ -456,7 +456,7 @@ class TestDerivativeSample(TestBase):
             api_instance.delete_original_sample(created.original_sample_id)
 
         except ApiException as error:
-            self.check_api_exception(api_factory, "OriginalSampleApi->create_original_sample", error)
+            self.check_api_exception(api_factory, "DerivativeSampleApi->create_derivative_sample", error)
 
 
     """
