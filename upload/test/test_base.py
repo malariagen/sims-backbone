@@ -112,6 +112,11 @@ class TestBase(unittest.TestCase):
         event_api_instance = openapi_client.SamplingEventApi(TestBase.getApiClient())
 
         for event_set in event_sets:
+            test_os = TestBase.getDAO().download_original_samples_by_event_set(event_set)
+
+            for os in test_os.original_samples:
+                TestBase.getDAO().delete_original_sample(os.original_sample_id)
+
             test_events = TestBase.getDAO().download_sampling_events_by_event_set(event_set)
 
             for event in test_events.sampling_events:
