@@ -38,6 +38,8 @@ after_success:
   - coverage combine test/.coverage upload/test/.coverage
   - coveralls
 
+dist: xenial
+
 addons:
     postgresql: "10.7"
     apt:
