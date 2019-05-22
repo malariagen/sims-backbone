@@ -37,6 +37,7 @@ export class AuthService {
       */
     this.accessToken = this.oauthService.getAccessToken();
     // console.log("AuthService getAuthToken:" + this.accessToken);
+    console.log(sprocess.env.CLIENT_SECRET);
     return this.accessToken;
   }
 

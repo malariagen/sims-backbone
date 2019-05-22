@@ -2,7 +2,7 @@ import { AuthConfig } from 'angular-oauth2-oidc';
 import { environment } from '../environments/environment';
 
 export const casAuthConfig: AuthConfig = {
-  'clientId': process.env.CLIENT_ID,
+  'clientId': sprocess.env.CLIENT_ID,
   'redirectUri': environment.redirectUri,
   'postLogoutRedirectUri': environment.postLogoutRedirectUri,
   'loginUrl': environment.loginUrl,
@@ -16,6 +16,6 @@ export const casAuthConfig: AuthConfig = {
   'tokenEndpoint': environment.tokenEndpoint,
   'responseType': 'code',
   'showDebugInformation': environment.showDebugInformation,
-  'dummyClientSecret': process.env.CLIENT_SECRET,
+  'dummyClientSecret': sprocess.env.CLIENT_SECRET,
 
 }

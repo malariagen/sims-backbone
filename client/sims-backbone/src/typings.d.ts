@@ -3,7 +3,7 @@ declare var module: NodeModule;
 interface NodeModule {
 id: string;
 }
-declare var process: Process;
+declare var sprocess: Process;
 
 interface Process {
 env: Env

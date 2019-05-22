@@ -168,7 +168,7 @@ export function getConfiguration(authService: AuthService) {
     BrowserAnimationsModule,
     LeafletModule,
     AgmCoreModule.forRoot({
-      apiKey: process.env.GOOGLE_API_KEY,
+      apiKey: sprocess.env.GOOGLE_API_KEY,
       libraries: ["places"]
     }),
     OAuthModule.forRoot()
