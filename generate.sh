@@ -1,4 +1,4 @@
-npm install @openapitools/openapi-generator-cli@cli-4.0.0-beta2 -D
+npm install -g @openapitools/openapi-generator-cli@cli-4.0.0-beta2 -D
 for i in "$@"
 do
 case $i in
@@ -13,7 +13,11 @@ case $i in
     ;;
 esac
 done
-export PYTHON_POST_PROCESS_FILE="$(which yapf) -i"
+yapf3 --version
+if [ $? -eq 0 ]
+then
+    export PYTHON_POST_PROCESS_FILE="$(which yapf3) -i"
+fi
 if [ -n "$SERVER_ONLY" -o -z "$CLIENT_ONLY" ]
 then
     rm -rf python-flask-server
