@@ -24,7 +24,10 @@ if [ "${TRAVIS}" != "true" ]
         pip3 install -r ${DIR}/requirements.txt
     fi
 fi
-source client-env/bin/activate
+if [ "${TRAVIS}" != "true" ]
+then
+    source client-env/bin/activate
+fi
 grep security: ${DIR}/../server/bb_server/openapi_server/openapi/openapi.yaml
 if [ $? -eq 1 ]
 then

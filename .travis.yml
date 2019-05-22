@@ -44,5 +44,5 @@ addons:
     postgresql: "10"
     apt:
       packages:
-        - postgresql-10-postgis-2.5
+        - postgresql-10-postgis-2.4
     chrome: stable
