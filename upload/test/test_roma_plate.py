@@ -2,40 +2,18 @@ from test_base import TestBase
 
 import datetime
 import json
+import pytest
 
 from upload_roma import Upload_ROMA
 
 import openapi_client
 from openapi_client.rest import ApiException
 
+@pytest.mark.usefixtures("roma_03")
 class TestROMAPlate(TestBase):
 
 
     _locations = []
-
-    """
-    """
-    @classmethod
-    def setUpClass(self):
-
-        super(TestROMAPlate, self).setUpClass()
-
-        el = Upload_ROMA(self._config_file)
-        el.use_message_buffer = True
-        el.load_data_file('roma_dump.201903.json')
-        self._messages = el.message_buffer
-
-    """
-    """
-    @classmethod
-    def tearDownClass(self):
-
-        TestBase.deleteStudies(['3030'], TestROMAPlate._locations)
-
-        TestBase.tearDownLocations(TestROMAPlate._locations)
-
-        TestBase.deleteEventSets(['roma_MNF00004'],
-                                 TestROMAPlate._locations)
 
 
 
@@ -44,6 +22,7 @@ class TestROMAPlate(TestBase):
     def test_roma_plate(self):
 
         try:
+
 
             looked_up = self._dao.download_derivative_samples_by_os_attr('roma_id', 'TST30001')
             looked_up = looked_up.derivative_samples[0]
@@ -62,8 +41,7 @@ class TestROMAPlate(TestBase):
             assert name, 'Plate name not set'
 
         except ApiException as error:
-            self.fail("test_species: Exception when calling download_sampling_event_by_os_attr {}"
-                        .format(error))
+            self.fail("test_roma_plate {}".format(error))
 
 
     """
@@ -74,6 +52,7 @@ class TestROMAPlate(TestBase):
 
             samples = self._dao.download_derivative_samples_by_os_attr('roma_id', 'TST30003')
 
+            assert len(samples.derivative_samples) > 0
             for looked_up in samples.derivative_samples:
                 plate_pos = None
                 plate_name = None
@@ -92,8 +71,7 @@ class TestROMAPlate(TestBase):
 
 
         except ApiException as error:
-            self.fail("test_species: Exception when calling download_sampling_event_by_os_attr {}"
-                        .format(error))
+            self.fail("test_roma_plate_2_plates_2_wells {}".format(error))
 
 
     """
@@ -121,7 +99,6 @@ class TestROMAPlate(TestBase):
 
 
         except ApiException as error:
-            self.fail("test_species: Exception when calling download_sampling_event_by_os_attr {}"
-                        .format(error))
+            self.fail("test_roma_plate_2_wells {}".format(error))
 
 

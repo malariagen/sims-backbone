@@ -35,7 +35,6 @@
             ],
             "manifest": 4,
             "tags": {
-                "Patient Id": 2103335
             },
             "note": "",
             "external_id": "EXTST300001",
@@ -135,7 +134,7 @@
     },
     {
         "model": "samples.plate",
-        "pk": 1,
+        "pk": 3,
         "fields": {
             "name": "PLATE_PLT_00001",
             "note": "note plate1",
@@ -150,7 +149,7 @@
     },
     {
         "model": "samples.plate",
-        "pk": 2,
+        "pk": 4,
         "fields": {
             "name": "PLATE_PLT_00002",
             "note": "note plate2",
@@ -168,7 +167,7 @@
         "pk": 1,
         "fields": {
             "sample": 1,
-            "plate": 1,
+            "plate": 3,
             "position": "A01",
             "created_by": [
                 "person4@example.org"
@@ -183,7 +182,7 @@
         "pk": 2,
         "fields": {
             "sample": 2,
-            "plate": 1,
+            "plate": 3,
             "position": "A02",
             "created_by": [
                 "person4@example.org"
@@ -198,7 +197,7 @@
         "pk": 3,
         "fields": {
             "sample": 2,
-            "plate": 1,
+            "plate": 3,
             "position": "A03",
             "created_by": [
                 "person4@example.org"
@@ -213,7 +212,7 @@
         "pk": 4,
         "fields": {
             "sample": 3,
-            "plate": 1,
+            "plate": 3,
             "position": "A04",
             "created_by": [
                 "person4@example.org"
@@ -228,7 +227,7 @@
         "pk": 5,
         "fields": {
             "sample": 3,
-            "plate": 2,
+            "plate": 4,
             "position": "A01",
             "created_by": [
                 "person4@example.org"
