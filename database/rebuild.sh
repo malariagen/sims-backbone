@@ -4,6 +4,10 @@ set -o allexport
 source ${DIR}/../.envs/.local/.postgres
 set +o allexport
 export POSTGRES_HOST=localhost
+if [ "${TRAVIS}" == "true" ]
+then
+    export POSTGRES_USER=postgres
+fi
 POSTGRES_NAME=backbone_service
 if [ "${1}" = "test" ]
 then

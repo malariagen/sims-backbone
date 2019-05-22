@@ -6,9 +6,12 @@ set -o allexport
 source ${DIR}/../../.envs/.local/.postgres
 set +o allexport
 export POSTGRES_HOST=localhost
+export POSTGRES_DB=backbone_test
 if [ "${TRAVIS}" != "true" ]
 then
   export TOKEN_URL=https://www.malariagen.net/sso/oauth2.0/accessToken
+else
+    POSTGRES_USER=postgres
 fi
 export PYTHONPATH=${DIR}/..:${DIR}/../../python_client:${DIR}/../../server:${DIR}/../../server/bb_server
 if [ ! -d client-env ]
@@ -18,11 +21,11 @@ then
     then
         virtualenv client-env -p /usr/bin/python
         source client-env/bin/activate
+        pip3 install -r ../../test/requirements.txt
+        pip3 install -r ../requirements.txt
+        pip3 install -r ../../python_client/requirements.txt
+        pip3 install -r $(pwd)/../../server/backbone_server/REQUIREMENTS
     fi
-    pip3 install -r ../../test/requirements.txt
-    pip3 install -r ../requirements.txt
-    pip3 install -r ../../python_client/requirements.txt
-    pip3 install -r $(pwd)/../../server/backbone_server/REQUIREMENTS
 fi
 if [ "${TRAVIS}" != "true" ]
 then
@@ -35,8 +38,6 @@ then
         export BB_NOAUTH=1
     fi
 fi
-POSTGRES_DB=backbone_test
-export POSTGRES_DB
 if [ "$1" = "one" ]
 then
     python3 -m pytest -s -x -k $2

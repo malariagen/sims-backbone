@@ -6,16 +6,23 @@ source ${DIR}/../.envs/.local/.postgres
 set +o allexport
 export POSTGRES_HOST=localhost
 export POSTGRES_DB=backbone_test
+if [ "${TRAVIS}" == "true" ]
+then
+    export POSTGRES_USER=postgres
+fi
 export TOKEN_URL=https://www.malariagen.net/sso/oauth2.0/accessToken
 export PYTHONPATH=${DIR}/../python_client:${DIR}/../server:${DIR}/../server/bb_server
 if [ ! -d client-env ]
 then
-    virtualenv client-env -p /usr/bin/python3
-    source client-env/bin/activate
-    pip3 install -r ${DIR}/../python_client/requirements.txt
-    pip3 install -r ${DIR}/../upload/requirements.txt
-    pip3 install -r ${DIR}/../server/backbone_server/REQUIREMENTS
-    pip3 install -r ${DIR}/requirements.txt
+if [ "${TRAVIS}" != "true" ]
+    then
+        virtualenv client-env -p /usr/bin/python3
+        source client-env/bin/activate
+        pip3 install -r ${DIR}/../python_client/requirements.txt
+        pip3 install -r ${DIR}/../upload/requirements.txt
+        pip3 install -r ${DIR}/../server/backbone_server/REQUIREMENTS
+        pip3 install -r ${DIR}/requirements.txt
+    fi
 fi
 source client-env/bin/activate
 grep security: ${DIR}/../server/bb_server/openapi_server/openapi/openapi.yaml
