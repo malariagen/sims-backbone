@@ -1,0 +1,9 @@
+@import '~@angular/material/theming';
+
+@mixin attr-table-edit-theme($theme) {
+
+    .mat-cell {
+        width : 400px;
+    }
+
+}
