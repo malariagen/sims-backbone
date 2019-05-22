@@ -41,8 +41,8 @@ after_success:
 dist: xenial
 
 addons:
-    postgresql: "10.7"
+    postgresql: "10"
     apt:
       packages:
-        - postgresql-10.7-postgis-2.5
+        - postgresql-10-postgis-2.5
     chrome: stable
