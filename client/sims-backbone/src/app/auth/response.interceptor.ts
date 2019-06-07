@@ -4,6 +4,7 @@ import { AuthService } from 'app/auth.service';
 import { Observable } from 'rxjs';
 import { OAuthService } from 'angular-oauth2-oidc';
 import { Injectable } from '@angular/core';
+import { casAuthConfig } from '../auth.config';
 
 @Injectable()
 export class ResponseInterceptor implements HttpInterceptor {
@@ -17,7 +18,12 @@ export class ResponseInterceptor implements HttpInterceptor {
         }, (err: any) => {
             if (err instanceof HttpErrorResponse) {
                 if (err.status === 401) {
-                    this.oauthService.initImplicitFlow();
+                    if (sprocess.env.CLIENT_SECRET == null) {
+                        console.log('Please check authentication configuration');
+                        console.log(casAuthConfig);
+                    } else {
+                        this.oauthService.initImplicitFlow();
+                    }
                 } else {
                     console.error(err);
                 }
