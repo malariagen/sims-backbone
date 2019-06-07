@@ -1,0 +1,58 @@
+version: '2.4'
+
+volumes:
+  production_postgres_data: {}
+
+services:
+  production_backbone_server: &production_backbone_server
+    build:
+      context: .
+      dockerfile: ./compose/production/backbone_server/Dockerfile
+    image: production_backbone_server
+    volumes:
+      - .:/app
+    depends_on:
+      - production_postgres
+    env_file:
+      - ./.envs/.production/.backbone_server
+      - ./.envs/.production/.postgres
+    ports:
+      - "8100:8080"
+    command: /start
+
+  production_import: &production_import
+    build:
+      context: .
+      dockerfile: ./compose/production/import/Dockerfile
+    image: production_import
+    volumes:
+      - .:/app
+    depends_on:
+      - production_postgres
+    env_file:
+      - ./.envs/.production/.backbone_server
+      - ./.envs/.production/.postgres
+    command: /start
+
+  production_nginx: &production_nginx
+    build:
+      context: .
+      dockerfile: ./compose/production/nginx/Dockerfile
+      args:
+        BUILD_AS: prod
+    image: production_nginx
+    env_file:
+      - ./.env
+    ports:
+      - "4200:80"
+
+  production_postgres:
+    image: mdillon/postgis:10
+    volumes:
+      - production_postgres_data:/var/lib/postgresql/data
+      - ./compose/production/postgres/initdb:/docker-entrypoint-initdb.d/
+    ports:
+      - 5432:5432
+    env_file:
+      - ./.envs/.production/.postgres
+
