@@ -126,10 +126,12 @@ export class LocationsMapComponent {
         }
         if (location.attrs) {
           location.attrs.forEach(ident => {
-            loc = location.country + ' ' + ident.study_name + ' ' + ident.attr_value;
+            if (ident.attr_type == 'partner_name') {
+              loc = location.country + ' ' + ident.study_name + ' ' + ident.attr_value;
 
-            if (location.latitude && location.longitude) {
-              this.addMarker(location.location_id, ident.study_name, location.latitude, location.longitude, loc);
+              if (location.latitude && location.longitude) {
+                this.addMarker(location.location_id, ident.study_name, location.latitude, location.longitude, loc);
+              }
             }
           });
         } else {
