@@ -5,13 +5,11 @@
 
 export const environment = {
   production: false,
-  clientId: '',
-  redirectUri: '',
+  redirectUri: 'http://localhost:4200/',
   postLogoutRedirectUri: 'https://www.malariagen.net',
-  loginUrl: '',
-  scope: '',
-  tokenEndpoint: '',
-  showDebugInformation: false,
-  dummyClientSecret: '',
-  apiLocation: ''
+  loginUrl: 'https://www.malariagen.net/sso/oauth2.0/authorize',
+  scope: 'editor',
+  tokenEndpoint: 'https://www.malariagen.net/sso/oauth2.0/accessToken',
+  showDebugInformation: true,
+  apiLocation: 'http://localhost:4200/v1'
 }
