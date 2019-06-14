@@ -1,0 +1,23 @@
+
+<sims-downloader-os-json [fileName]="jsonDownloadFileName" [filter]="filter"></sims-downloader-os-json>
+<sims-downloader-os-csv [fileName]="downloadFileName" [headers]="displayedColumns" [filter]="filter"></sims-downloader-os-csv>
+{{_dataSource.originalSampleCount}}
+
+<div  class="example-container mat-elevation-z8">
+  <mat-table #table [dataSource]="_dataSource" matSort>
+
+    <ng-container *ngFor="let col of displayedColumns" matColumnDef= {{col}}>
+      <mat-header-cell *matHeaderCellDef md-sort-header > {{ col }} </mat-header-cell>
+      <mat-cell  *matCellDef="let row" [innerHTML]="row | originalSampleDisplay : col : _studyName : _dataSource.samplingEvents"></mat-cell>
+    </ng-container>
+    
+    
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;" [ngClass]="{'row-highlight': selectedEvents.has(row.sampling_event_id) }"></mat-row>
+
+  </mat-table>
+
+  <mat-paginator *ngIf="_dataSource" [length]="_dataSource.originalSampleCount" [pageSize]="this._pageSize"
+                   [pageSizeOptions]="[50, 100, 250, 1000]"></mat-paginator>
+
+</div>

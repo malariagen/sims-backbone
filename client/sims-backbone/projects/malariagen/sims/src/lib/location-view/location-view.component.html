@@ -1,0 +1,19 @@
+<p>
+  Curated Name: {{_location.curated_name}} Curation Method: {{_location.curation_method}}
+</p>
+
+<p>
+  Accuracy: {{_location.accuracy}} Country: {{_location.country}}
+</p>
+<p>
+
+  <a mat-raised-button color="accent" [routerLink]="['/location',_location.location_id]">
+    Latitude: {{_location.latitude}} Longitude: {{_location.longitude}}
+  </a>
+</p>
+<p>
+  Notes: {{_location.notes}}
+</p>
+
+<sims-attr-table [attrs]="_location.attrs" studies="true"></sims-attr-table>
+<sims-locations-map [zoom]="zoom" [locations]="locations"></sims-locations-map>

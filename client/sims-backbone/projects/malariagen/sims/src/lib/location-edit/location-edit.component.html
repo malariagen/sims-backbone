@@ -1,0 +1,99 @@
+<div fxLayout="column">
+  <div fxLayout="row">
+    <div style="width: 50%">
+      <sims-locations-map [zoom]="zoom" [locations]="locations" [polygon]="polygon"></sims-locations-map>
+    </div>
+    <div style="width: 50%">
+
+      <div class="location-edit-form">
+        <form *ngIf="locationForm" [formGroup]="locationForm" (ngSubmit)="onSubmit(locationForm)">
+          <a mat-raised-button color="accent" [routerLink]="[locationEvents,locationId]">Sampling Events</a>
+
+          <p>
+            <mat-form-field>
+              <input matInput placeholder="Latitude:" type="text" formControlName="latitude" readonly>
+            </mat-form-field>
+            <mat-form-field>
+              <input matInput placeholder="Longitude:" type="text" formControlName="longitude" readonly>
+            </mat-form-field>
+          </p>
+          <p>
+            <mat-form-field class="curated_name">
+              <input matInput placeholder="Curated Name:" type="text" formControlName="curated_name">
+            </mat-form-field>
+
+            <mat-form-field>
+              <input matInput placeholder="Curation Method:" type="text" formControlName="curation_method">
+            </mat-form-field>
+          </p>
+
+          <p>
+            <mat-form-field>
+              <input matInput placeholder="Precision:" type="text" formControlName="accuracy">
+            </mat-form-field>
+
+            <mat-form-field>
+              <input matInput placeholder="Country:" type="text" formControlName="country">
+              <small [hidden]="locationForm.controls.country.valid"> Country is required (3 characters)</small>
+            </mat-form-field>
+          </p>
+
+          <p>
+            <mat-form-field>
+              <textarea matInput placeholder="Notes:" matTextareaAutosize formControlName="notes">
+              </textarea>
+            </mat-form-field>
+          </p>
+          <sims-attr-table [attrs]="location.attrs" studies="true"></sims-attr-table>
+
+          <p>
+            <button mat-raised-button type="submit" [disabled]="!locationForm.valid">Submit</button>
+          </p>
+        </form>
+        <div>
+          <button mat-raised-button (click)="onSubmitFetchOSM(locationForm)">Look up GPS using OSM</button>
+          <button *ngIf="useGMaps" mat-raised-button (click)="onSubmitFetchGoogleMaps(locationForm)">Look GPS up using Google</button>
+        </div>
+
+        <div class="zoom">
+          {{zoom}} {{accuracy}}
+          <button mat-raised-button (click)="incrementZoom()">Zoom In</button>
+          <button mat-raised-button (click)="decrementZoom()">Zoom Out</button>
+        </div>
+      </div>
+      <div>
+        <div>
+
+          <form *ngIf="osmForm" [formGroup]="osmForm" (ngSubmit)="useOSM(osmForm)">
+            <mat-form-field class="curated_name">
+              <input matInput placeholder="Display Name:" type="text" formControlName="display_name">
+            </mat-form-field>
+            <mat-form-field>
+              <input matInput placeholder="Country Code:" type="text" formControlName="country_code">
+            </mat-form-field>
+
+            <button mat-raised-button type="submit">Use OSM settings</button>
+
+          </form>
+        </div>
+        <div *ngIf="location && useGMaps">
+          <agm-map [latitude]="location.latitude" [longitude]="location.longitude" [zoom]="zoom">
+            <agm-marker [latitude]="location.latitude" [longitude]="location.longitude"></agm-marker>
+            <agm-polygon [paths]="gPolygon"></agm-polygon>
+          </agm-map>
+          <form *ngIf="googleForm" [formGroup]="googleForm" (ngSubmit)="useGoogle(googleForm)">
+            <mat-form-field class="curated_name">
+              <input matInput placeholder="Display Name:" type="text" formControlName="display_name">
+            </mat-form-field>
+            <mat-form-field>
+              <input matInput placeholder="Country Code:" type="text" formControlName="country_code">
+            </mat-form-field>
+
+            <button mat-raised-button type="submit">Use Google settings</button>
+
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

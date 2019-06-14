@@ -1,0 +1,13 @@
+{
+  "$schema": "../../../node_modules/ng-packagr/ng-package.schema.json",
+  "dest": "../../../dist/malariagen/sims",
+  "lib": {
+    "entryFile": "src/public-api.ts",
+    "styleIncludePaths": [
+      "src/sims-backbone-theme.scss",
+      "../../../node_modules/leaflet/dist/leaflet.css",
+      "../../../node_modules/leaflet.markercluster/dist/MarkerCluster.css",
+      "../../../node_modules/leaflet.markercluster/dist/MarkerCluster.Default.css"
+    ]
+  }
+}

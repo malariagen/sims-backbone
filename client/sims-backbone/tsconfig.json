@@ -16,6 +16,14 @@
     "lib": [
       "es2017",
       "dom"
-    ]
+    ],
+    "paths": {
+      "@malariagen/sims": [
+        "dist/malariagen/sims"
+      ],
+      "@malariagen/sims/*": [
+        "dist/malariagen/sims/*"
+      ]
+    }
   }
 }

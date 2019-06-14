@@ -3,6 +3,7 @@ src/app/typescript-angular2-client
 src/environments/environment.dev.ts
 src/environments/environment.test.ts
 src/environments/environment.prod.ts
+projects/malariagen/sims/node_modules
 # compiled output
 /dist
 /tmp

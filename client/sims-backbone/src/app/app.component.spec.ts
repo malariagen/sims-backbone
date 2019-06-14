@@ -1,7 +1,6 @@
 import { TestBed, async } from '@angular/core/testing';
 
 import { AppComponent } from './app.component';
-import { OAuthService } from 'angular-oauth2-oidc';
 import { MatIcon, MatMenu, MatToolbar, MatButton, MatMenuModule, MatRipple, MatDialogModule, MAT_MENU_DEFAULT_OPTIONS, MatMenuTrigger, MAT_MENU_SCROLL_STRATEGY } from '@angular/material';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 
@@ -15,7 +14,6 @@ class RouterOutletStubComponent { }
 
 
 describe('AppComponent', () => {
-  let oauthService: OAuthService;
   let dialog: MatDialog;
 
   beforeEach(async(() => {
@@ -41,7 +39,6 @@ describe('AppComponent', () => {
       ],
       providers: [
         MatIconRegistry,
-        { provide: OAuthService, useValue: authService },
         { provide: MAT_DIALOG_DATA, useValue: {} },
         { provide: MatDialogRef, useValue: {} },
         { provide: MAT_MENU_DEFAULT_OPTIONS, useValue: {} },

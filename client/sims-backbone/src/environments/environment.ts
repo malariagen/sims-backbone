@@ -5,7 +5,7 @@
 
 export const environment = {
   production: false,
-  redirectUri: 'http://localhost:4200/',
+  redirectUri: 'http://localhost:4200/studies',
   postLogoutRedirectUri: 'https://www.malariagen.net',
   loginUrl: 'https://www.malariagen.net/sso/oauth2.0/authorize',
   scope: 'editor',

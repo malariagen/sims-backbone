@@ -1,52 +1,23 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
-import { AllLocationsMapComponent } from './all-locations-map/all-locations-map.component';
-import { AllStudiesListComponent } from './all-studies-list/all-studies-list.component';
-import { LocationEditComponent } from './location-edit/location-edit.component';
-import { StudyEventListComponent } from './study-event-list/study-event-list.component';
-import { TaxaEventListComponent } from './taxa-event-list/taxa-event-list.component';
-import { EventSetEventListComponent } from './event-set-event-list/event-set-event-list.component';
-import { LocationEventListComponent } from './location-event-list/location-event-list.component';
-import { TaxaListComponent } from './taxa-list/taxa-list.component';
-import { EventSetListComponent } from './event-set-list/event-set-list.component';
-import { StudyEditComponent } from './study-edit/study-edit.component';
-import { EventSetEditComponent } from './event-set-edit/event-set-edit.component';
-import { EventSearchComponent } from './event-search/event-search.component';
+
 
 import { ReportsComponent } from './reports/reports.component';
-import { ReportMissingDetailedLocationsComponent } from './report-missing-detailed-locations/report-missing-detailed-locations.component';
-import { ReportMissingLocationsComponent } from './report-missing-locations/report-missing-locations.component';
-import { ReportMissingTaxaComponent } from './report-missing-taxa/report-missing-taxa.component';
-import { ReportUncuratedLocationsComponent } from './report-uncurated-locations/report-uncurated-locations.component';
-import { ReportMultipleLocationGpsComponent } from './report-multiple-location-gps/report-multiple-location-gps.component';
-import { ReportMultipleLocationNamesComponent } from './report-multiple-location-names/report-multiple-location-names.component';
-import { TaxaOsListComponent } from './taxa-os-list/taxa-os-list.component';
-import { TaxaDsListComponent } from './taxa-ds-list/taxa-ds-list.component';
-import { EventSetOsListComponent } from './event-set-os-list/event-set-os-list.component';
-import { EventSetDsListComponent } from './event-set-ds-list/event-set-ds-list.component';
-import { StudyOsListComponent } from './study-os-list/study-os-list.component';
-import { StudyDsListComponent } from './study-ds-list/study-ds-list.component';
+import { AllStudiesListComponent } from '@malariagen/sims';
+import { AllLocationsMapComponent, EventSetListComponent, EventSearchComponent, TaxaListComponent } from '@malariagen/sims';
+import { ReportMissingDetailedLocationsComponent, ReportMissingLocationsComponent, ReportMissingTaxaComponent, ReportUncuratedLocationsComponent, ReportMultipleLocationGpsComponent, ReportMultipleLocationNamesComponent } from '@malariagen/sims';
 
 const routes: Routes = [
   { path: '', redirectTo: '/studies', pathMatch: 'full' },
   { path: 'full-map', component: AllLocationsMapComponent },
-  { path: 'location/:locationId', component: LocationEditComponent },
-  { path: 'study/events/:studyName', component: StudyEventListComponent },
-  { path: 'study/os/:studyName', component: StudyOsListComponent },
-  { path: 'study/ds/:studyName', component: StudyDsListComponent },
-  { path: 'location/events/:locationId', component: LocationEventListComponent },
   { path: 'studies', component: AllStudiesListComponent },
-  { path: 'study/:studyCode', component: StudyEditComponent },
+  {
+    path: 'lib-experimental',
+    loadChildren: () => import('@malariagen/sims').then(m => m.SimsModule)
+  },
   { path: 'taxa', component: TaxaListComponent },
-  { path: 'taxa/events/:taxaId', component: TaxaEventListComponent },
-  { path: 'taxa/os/:taxaId', component: TaxaOsListComponent },
-  { path: 'taxa/ds/:taxaId', component: TaxaDsListComponent },
   { path: 'eventSets', component: EventSetListComponent },
-  { path: 'eventSet/events/:eventSetId', component: EventSetEventListComponent },
-  { path: 'eventSet/os/:eventSetId', component: EventSetOsListComponent },
-  { path: 'eventSet/ds/:eventSetId', component: EventSetDsListComponent },
-  { path: 'eventSet/:eventSetId', component: EventSetEditComponent },
   { path: 'search', component: EventSearchComponent },
   {
     path: 'reports', component: ReportsComponent,

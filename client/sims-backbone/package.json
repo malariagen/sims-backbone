@@ -5,8 +5,8 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build",
-    "test": "ng test",
+    "build": "(cd projects/malariagen/sims;npm run build) && ng build",
+    "test": "ng test @malariagen/sims && ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"
   },
@@ -39,18 +39,18 @@
     "dotenv": "^8.0.0",
     "file-saver": "^2.0.2",
     "hammerjs": "^2.0.8",
-    "leaflet": "^1.5.1",
+    "leaflet": "~1.3.1",
     "leaflet.markercluster": "^1.4.1",
     "material-design-icons": "^3.0.1",
     "npm": "^6.9.0",
     "rxjs": "^6.5.2",
     "rxjs-compat": "^6.5.2",
     "streamsaver": "^1.2.0",
-    "tslib": "^1.9.0",
     "zone.js": "^0.8.29"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^0.13.9",
+    "@angular-devkit/build-ng-packagr": "~0.13.0",
     "@angular/cli": "^7.3.9",
     "@angular/compiler-cli": "^7.2.15",
     "@types/d3": "^5.7.2",
@@ -67,9 +67,16 @@
     "karma-coverage-istanbul-reporter": "^2.0.5",
     "karma-jasmine": "^2.0.1",
     "karma-jasmine-html-reporter": "^1.4.2",
+    "ng-packagr": "^4.2.0",
     "protractor": "^5.4.2",
+    "scss-bundle": "^2.5.1",
     "ts-node": "^7.0.1",
+    "tsickle": ">=0.34.0",
+    "tslib": "^1.9.0",
     "tslint": "^5.16.0",
     "typescript": "^3.2.4"
+  },
+  "optionalDependencies": {
+    "@malariagen/sims": "file:dist/malariagen/sims"
   }
 }

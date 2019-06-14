@@ -1,11 +1,7 @@
 @import '~@angular/material/_theming';
 
-@import 'app/taxonomy-edit/taxonomy-edit-theme';
-@import 'app/event-set-edit/event-set-edit.component.scss';
-@import 'app/event-set-edit-dialog/event-set-edit-dialog.component.scss';
-@import 'app/event-set-add-dialog/event-set-add-dialog.component.scss';
-@import 'app/event-list/event-list.component.scss';
-@import 'app/attr-table/attr-table.component.scss';
+
+@import '~@malariagen/sims/_theme';
 
 @include mat-core();
 
@@ -14,15 +10,6 @@ $sims-backbone-theme-accent: mat-palette($mat-orange, A200, A100, A400);
 $sims-backbone-theme-warn: mat-palette($mat-red);
 
 $sims-backbone-theme: mat-light-theme($sims-backbone-theme-primary, $sims-backbone-theme-accent, $sims-backbone-theme-warn);
-
-@mixin sims-backbone-theme($theme) {
-    @include taxonomy-edit-theme($theme);    
-    @include event-set-edit-theme($theme);
-    @include event-list-theme($theme);   
-    @include event-set-edit-dialog-theme($theme); 
-    @include event-set-add-dialog-theme($theme); 
-    @include attr-table-edit-theme($theme);
-}
 
 @include angular-material-theme($sims-backbone-theme);
 @include sims-backbone-theme($sims-backbone-theme);

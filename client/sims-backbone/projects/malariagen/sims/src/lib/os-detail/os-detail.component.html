@@ -1,0 +1,18 @@
+<div *ngIf="originalSamples">
+  {{ originalSamples.count }} matching original samples
+  <div fxLayout="column" *ngFor="let originalSample of originalSamples.original_samples">
+    <div fxLayout="row">
+      <div fxFlex="grow">
+        <h3>Original Sample Details</h3>
+        <div>ID: {{originalSample.original_sample_id}}</div>
+        <div>Study: {{originalSample.study_name}}</div>
+        <div>Partner Species: {{originalSample.partner_species}}</div>
+      </div>
+    </div>
+    <div fxLayout="row">
+      <div fxFlex="grow">
+        <sims-attr-table [attrs]="originalSample.attrs"></sims-attr-table>
+      </div>
+    </div>
+  </div>
+</div>

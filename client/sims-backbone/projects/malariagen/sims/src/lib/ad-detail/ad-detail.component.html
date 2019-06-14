@@ -1,0 +1,17 @@
+<div *ngIf="assayData">
+    {{ assayData.count }} matching derivative samples
+    <div fxLayout="column" *ngFor="let assayDatum of assayData.assay_data">
+      <div fxLayout="row">
+        <div fxFlex="grow">
+          <h3>assayData Sample Details</h3>
+          <div>ID: {{assayDatum.assay_datum_id}}</div>
+          <div>EBI Run Accession Number: {{assayDatum.ebi_run_acc}}</div>
+        </div>
+      </div>
+      <div fxLayout="row">
+        <div fxFlex="grow">
+          <sims-attr-table [attrs]="assayDatum.attrs"></sims-attr-table>
+        </div>
+      </div>
+    </div>
+  </div>

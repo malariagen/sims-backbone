@@ -1,0 +1,32 @@
+
+@import 'lib/taxonomy-edit/taxonomy-edit-theme.scss';
+@import 'lib/event-set-edit/event-set-edit.component.scss';
+@import 'lib/event-set-edit-dialog/event-set-edit-dialog.component.scss';
+@import 'lib/event-set-add-dialog/event-set-add-dialog.component.scss';
+@import 'lib/event-list/event-list.component.scss';
+@import 'lib/attr-table/attr-table.component.scss';
+
+
+@mixin sims-backbone-theme($theme) {
+    @include taxonomy-edit-theme($theme);    
+    @include event-set-edit-theme($theme);
+    @include event-list-theme($theme);   
+    @include event-set-edit-dialog-theme($theme); 
+    @include event-set-add-dialog-theme($theme); 
+    @include attr-table-edit-theme($theme);
+}
+
+/*
+Example usage:
+@import '~@angular/material/_theming';
+
+@include mat-core();
+
+$sims-backbone-theme-primary: mat-palette($mat-light-blue);
+$sims-backbone-theme-accent: mat-palette($mat-orange, A200, A100, A400);
+$sims-backbone-theme-warn: mat-palette($mat-red);
+
+$sims-backbone-theme: mat-light-theme($sims-backbone-theme-primary, $sims-backbone-theme-accent, $sims-backbone-theme-warn);
+
+@include sims-backbone-theme($sims-backbone-theme);
+*/
