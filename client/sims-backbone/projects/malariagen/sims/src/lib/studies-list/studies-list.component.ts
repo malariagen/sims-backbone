@@ -1,21 +1,14 @@
 import { Component, Input } from '@angular/core';
-
-import { OAuthService } from 'angular-oauth2-oidc';
-
-import { Studies } from '../typescript-angular-client/model/studies';
-import { Study } from '../typescript-angular-client/model/study';
-import { StudyService } from '../typescript-angular-client/api/study.service';
+import { Studies } from '../typescript-angular-client';
 
 @Component({
-  selector: 'app-studies-list',
-  providers: [StudyService],
+  selector: 'sims-studies-list',
   templateUrl: './studies-list.component.html',
-  styleUrls: ['./studies-list.component.css']
+  styleUrls: ['./studies-list.component.scss']
 })
 export class StudiesListComponent {
 
+  constructor() { }
   @Input()
   studies: Studies;
-  
-
 }
