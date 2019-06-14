@@ -1,0 +1,8 @@
+{
+  "/v1": {
+    "target": "http://backbone_server:8080",
+    "secure": false,
+    "changeOrigin": true
+  },
+  "logLevel": "debug"
+}
