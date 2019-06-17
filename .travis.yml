@@ -14,6 +14,8 @@ install:
     - pip install -r upload/requirements.txt
     - pip install coveralls
     - npm install -g @angular/cli
+    - (cd client/sims-backbone;npm install --no-optional)
+    - (cd client/sims-backbone/projects/malariagen/sims;npm run build)
     - (cd client/sims-backbone;npm install)
 
 script:
