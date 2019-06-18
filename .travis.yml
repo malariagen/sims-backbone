@@ -13,20 +13,17 @@ install:
     - pip install -r server/backbone_server/REQUIREMENTS
     - pip install -r upload/requirements.txt
     - pip install coveralls
-    - npm install -g @angular/cli
-    - npm install -g @angular/compiler
-    - npm install -g @angular/compiler-cli
-    - npm install -g ng-packagr
+    - npm install --no-optional --no-package-lock
+    - npm install typescript@">=3.1.1 <3.3" --no-optional --no-package-lock
     - (cd client/sims-backbone/projects/malariagen/sims;npm install)
     - (cd client/sims-backbone/projects/malariagen/sims;npm run build)
     - (cd client/sims-backbone/dist/malariagen/sims;npm link)
-    - (cd client/sims-backbone;npm install --no-optional)
     - (cd client/sims-backbone;npm install)
 
 script:
   - (cd test;LOCAL_TEST=1 ./run.sh)
   - (cd upload/test;LOCAL_TEST=1 ./run.sh)
-  - (cd client/sims-backbone;xvfb-run -a ng test --no-watch --no-progress --browsers=ChromeNoSandbox --code-coverage)
+  - (cd client/sims-backbone;xvfb-run -a npm test --no-watch --no-progress --browsers=ChromeNoSandbox --code-coverage)
     #  - (cd client/sims-backbone;xvfb-run -a ng e2e --no-progress --config=protractor-ci.conf.js)
 
 services:
