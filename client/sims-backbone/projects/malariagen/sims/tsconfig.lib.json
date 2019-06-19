@@ -11,7 +11,12 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "importHelpers": true,
-    "types": [],
+    "typeRoots": [
+      "node_modules/@types"
+    ],
+    "types": [
+        "node"
+    ],
     "lib": [
       "dom",
       "es2018"
