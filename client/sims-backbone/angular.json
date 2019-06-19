@@ -224,41 +224,6 @@
           }
         }
       }
-    },
-    "@malariagen/sims-client": {
-      "root": "projects/malariagen/sims-client",
-      "sourceRoot": "projects/malariagen/sims-client/src",
-      "projectType": "library",
-      "prefix": "sims-client",
-      "architect": {
-        "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
-          "options": {
-            "tsConfig": "projects/malariagen/sims-client/tsconfig.lib.json",
-            "project": "projects/malariagen/sims-client/ng-package.json"
-          }
-        },
-        "test": {
-          "builder": "@angular-devkit/build-angular:karma",
-          "options": {
-            "main": "projects/malariagen/sims-client/src/test.ts",
-            "tsConfig": "projects/malariagen/sims-client/tsconfig.spec.json",
-            "karmaConfig": "projects/malariagen/sims-client/karma.conf.js"
-          }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "projects/malariagen/sims-client/tsconfig.lib.json",
-              "projects/malariagen/sims-client/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
-          }
-        }
-      }
     }
   },
   "defaultProject": "sims-backbone"
