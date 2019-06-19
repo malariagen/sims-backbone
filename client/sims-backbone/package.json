@@ -5,8 +5,8 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "(cd projects/malariagen/sims;npm run build) && ng build",
-    "test": "ng test @malariagen/sims && ng test",
+    "build": "ng build",
+    "test": "ng test @malariagen/sims",
     "lint": "ng lint",
     "e2e": "ng e2e"
   },
