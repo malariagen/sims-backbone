@@ -17,6 +17,7 @@ install:
     - npm install typescript@">=3.1.1 <3.3" --no-optional --no-package-lock
     - npm install "@angular/compiler"@"^7.2.15" --no-optional --no-package-lock
     - npm install "@angular/compiler-cli"@"^7.2.15" --no-optional --no-package-lock
+    - npm install "@types/node"@"^10.14.6" --no-optional --no-package-lock
     - (cd client/sims-backbone/projects/malariagen/sims;rm package-lock.json)
     - (cd client/sims-backbone/projects/malariagen/sims;npm install)
     - (cd client/sims-backbone/projects/malariagen/sims;npm install typescript@">=3.1.1 <3.3" --no-optional --no-package-lock)
