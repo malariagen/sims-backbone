@@ -1,4 +1,4 @@
-import { NgModule, ModuleWithProviders, Optional, SkipSelf, Inject, Injectable } from '@angular/core';
+import { NgModule, ModuleWithProviders, Optional, SkipSelf, Injectable } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 
@@ -12,7 +12,7 @@ import { SimsAuthService } from './sims-auth.service';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { SimsResponseInterceptor, SIMS_AUTH_HTTP_CONFIG } from './auth/response.interceptor';
 import { SimsModuleConfig } from './sims.module.config';
-import { Configuration } from './typescript-angular-client';
+import { Configuration, ApiModule } from './typescript-angular-client';
 import { TaxonomyEditComponent } from './taxonomy-edit/taxonomy-edit.component';
 import { MatAutocompleteModule, MatFormFieldModule, MatInputModule, MatButtonModule, MatSelectModule, MatPaginatorModule, MatTableModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -50,7 +50,7 @@ import { EventSetListComponent } from './event-set-list/event-set-list.component
 import { EventSearchComponent } from './event-search/event-search.component';
 import { LocationsMapComponent } from './locations-map/locations-map.component';
 import { LeafletModule } from '@asymmetrik/ngx-leaflet';
-import { AgmCoreModule, MapsAPILoader, LazyMapsAPILoaderConfigLiteral } from '@agm/core';
+import { AgmCoreModule, LazyMapsAPILoaderConfigLiteral } from '@agm/core';
 import { SampleOverviewComponent } from './sample-overview/sample-overview.component';
 
 import { DsDetailComponent } from './ds-detail/ds-detail.component';
@@ -175,6 +175,7 @@ export function getConfiguration(authService: SimsAuthService) {
     LeafletModule,
     OAuthModule.forRoot(),
     AgmCoreModule.forRoot(),
+    ApiModule
   ],
   providers: [
     SimsAuthService,
@@ -208,6 +209,7 @@ export function getConfiguration(authService: SimsAuthService) {
     ReportMissingTaxaComponent,
     ReportMultipleLocationGpsComponent,
     ReportMultipleLocationNamesComponent,
+    ApiModule
   ],
   entryComponents: [
     ErrorDialogComponent,
