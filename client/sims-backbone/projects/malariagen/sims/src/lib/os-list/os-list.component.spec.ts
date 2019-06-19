@@ -6,7 +6,7 @@ import { OriginalSampleDisplayPipe } from '../original-sample-display.pipe';
 import { OriginalSamplesService } from '../original-samples.service';
 import { OriginalSampleService } from '../typescript-angular-client';
 import { OAuthService } from 'angular-oauth2-oidc';
-import { createOAuthServiceSpy } from 'testing/index.spec';
+import { createOAuthServiceSpy } from '../../testing/index.spec';
 import { OverlayModule } from '@angular/cdk/overlay';
 import { MatTableModule, MatOptionModule, MatPaginatorModule, MatFormFieldModule, MatTooltipModule } from '@angular/material';
 import { HttpClientModule } from '@angular/common/http';

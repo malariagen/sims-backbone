@@ -1,7 +1,7 @@
 import { async, ComponentFixture, TestBed, inject } from '@angular/core/testing';
 
 import { DownloaderJsonComponent } from './downloader-json.component';
-import { createOAuthServiceSpy, getTestSamplingEvents } from 'testing/index.spec';
+import { createOAuthServiceSpy, getTestSamplingEvents } from '../../testing/index.spec';
 import { SamplingEventsService } from '../sampling-events.service';
 import { SamplingEventService, SamplingEvent, SamplingEvents } from '../typescript-angular-client';
 import { OAuthService } from 'angular-oauth2-oidc';

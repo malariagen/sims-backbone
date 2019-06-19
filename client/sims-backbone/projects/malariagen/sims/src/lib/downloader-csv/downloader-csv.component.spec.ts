@@ -1,7 +1,7 @@
 import { async, ComponentFixture, TestBed, inject } from '@angular/core/testing';
 
 import { DownloaderCsvComponent } from './downloader-csv.component';
-import { createOAuthServiceSpy, getTestSamplingEvents } from 'testing/index.spec';
+import { createOAuthServiceSpy, getTestSamplingEvents } from '../../testing/index.spec';
 import { OAuthService } from 'angular-oauth2-oidc';
 import { SamplingEventsService } from '../sampling-events.service';
 import { SamplingEventService, SamplingEvents } from '../typescript-angular-client';

@@ -2,7 +2,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { EventSetDsListComponent } from './event-set-ds-list.component';
 import { Input, Component } from '@angular/core';
-import { ActivatedRouteStub, createOAuthServiceSpy } from 'testing/index.spec';
+import { ActivatedRouteStub, createOAuthServiceSpy } from '../../testing/index.spec';
 import { RouterModule, ActivatedRoute } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
 import { HttpClientTestingModule } from '@angular/common/http/testing';

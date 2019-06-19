@@ -6,7 +6,7 @@ import { DerivativeSamplesService } from '../derivative-samples.service';
 import { DerivativeSampleService } from '../typescript-angular-client';
 import { HttpClientModule } from '@angular/common/http';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { createOAuthServiceSpy } from 'testing/index.spec';
+import { createOAuthServiceSpy } from '../../testing/index.spec';
 
 describe('DownloaderDsCsvComponent', () => {
   let component: DownloaderDsCsvComponent;

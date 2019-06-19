@@ -8,7 +8,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { DerivativeSampleDisplayPipe } from '../derivative-sample-display.pipe';
-import { createOAuthServiceSpy } from 'testing/index.spec';
+import { createOAuthServiceSpy } from '../../testing/index.spec';
 import { DerivativeSampleService } from '../typescript-angular-client';
 import { OAuthService } from 'angular-oauth2-oidc';
 import { DerivativeSamplesService } from '../derivative-samples.service';

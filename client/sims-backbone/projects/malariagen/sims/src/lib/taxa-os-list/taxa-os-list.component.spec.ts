@@ -5,7 +5,7 @@ import { RouterModule, ActivatedRoute } from '@angular/router';
 import { OAuthService } from 'angular-oauth2-oidc';
 import { HttpClientModule } from '@angular/common/http';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { createOAuthServiceSpy, ActivatedRouteStub } from 'testing/index.spec';
+import { createOAuthServiceSpy, ActivatedRouteStub } from '../../testing/index.spec';
 import { Input, Component } from '@angular/core';
 
 @Component({

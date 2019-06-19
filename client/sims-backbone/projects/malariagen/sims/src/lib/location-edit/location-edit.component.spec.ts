@@ -14,6 +14,7 @@ import {ObserversModule} from '@angular/cdk/observers';
 
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { SimsModuleConfig } from '../sims.module.config';
 
 
 @Component({ selector: 'sims-locations-map', template: '' })
@@ -86,7 +87,7 @@ describe('LocationEditComponent', () => {
         { provide: LocationService },
         { provide: ActivatedRoute, useValue: activatedRoute },
         MapsAPILoader,
-
+        SimsModuleConfig,
       ]
     })
       .compileComponents();
