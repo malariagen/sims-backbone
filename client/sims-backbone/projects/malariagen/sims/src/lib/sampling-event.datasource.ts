@@ -10,7 +10,7 @@ import { of } from "rxjs/observable/of";
 
 export class SamplingEventsSource implements DataSource<SamplingEvent> {
 
-    locations: Map<string, Location>;
+    locations: { [key: string]: object; };
     samplingEventCount: number;
     attrTypes: Array<string>;
 
