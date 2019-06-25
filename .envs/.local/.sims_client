@@ -1,0 +1,2 @@
+BACKBONE_API_LOCATION=http://localhost:4200/v1
+SIMS_REDIRECT_URI=http://localhost:4200/studies

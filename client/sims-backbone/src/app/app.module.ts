@@ -36,11 +36,11 @@ import { SimsModule } from '@malariagen/sims';
     AppRoutingModule,
     BrowserAnimationsModule,
     SimsModule.forRoot({ 
-      apiLocation: environment.apiLocation,
+      apiLocation: sprocess.env.BACKBONE_API_LOCATION,
       mapsApiKey: sprocess.env.GOOGLE_API_KEY,
       OAuthConfig: {
         'clientId': sprocess.env.CLIENT_ID,
-        'redirectUri': environment.redirectUri,
+        'redirectUri': sprocess.env.SIMS_REDIRECT_URI,
         'postLogoutRedirectUri': environment.postLogoutRedirectUri,
         'loginUrl': environment.loginUrl,
         'scope': environment.scope,

@@ -41,10 +41,12 @@ services:
       args:
         BUILD_AS: prod
     image: production_nginx
+    depends_on:
+      - production_backbone_server
     env_file:
       - ./.env
     ports:
-      - "4200:80"
+      - "80:80"
 
   production_postgres:
     image: mdillon/postgis:10

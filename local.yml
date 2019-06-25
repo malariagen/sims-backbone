@@ -46,6 +46,7 @@ services:
     env_file:
       - ./.envs/.local/.backbone_server
       - ./.envs/.local/.postgres
+      - ./.envs/.local/.sims_client
       - .env
     command: /start
     ports:
