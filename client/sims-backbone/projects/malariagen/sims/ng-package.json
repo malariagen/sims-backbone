@@ -1,13 +1,21 @@
 {
-  "$schema": "../../../node_modules/ng-packagr/ng-package.schema.json",
-  "dest": "../../../dist/malariagen/sims",
-  "lib": {
-    "entryFile": "src/public-api.ts",
-    "styleIncludePaths": [
-      "src/sims-backbone-theme.scss",
-      "../../../node_modules/leaflet/dist/leaflet.css",
-      "../../../node_modules/leaflet.markercluster/dist/MarkerCluster.css",
-      "../../../node_modules/leaflet.markercluster/dist/MarkerCluster.Default.css"
-    ]
-  }
+    "$schema": "../../../node_modules/ng-packagr/ng-package.schema.json",
+    "dest": "../../../dist/malariagen/sims",
+    "lib": {
+        "entryFile": "src/public-api.ts",
+        "umdModuleIds": {
+            "file-saver":"FileSaver",
+            "leaflet":"L",
+            "@asymmetrik/ngx-leaflet":"ngxLeaflet",
+            "@agm/core":"core",
+            "d3":"d3",
+            "angular-oauth2-oidc":"angularOauth2Oidc"
+        },
+        "styleIncludePaths": [
+            "src/sims-backbone-theme.scss",
+            "../../../node_modules/leaflet/dist/leaflet.css",
+            "../../../node_modules/leaflet.markercluster/dist/MarkerCluster.css",
+            "../../../node_modules/leaflet.markercluster/dist/MarkerCluster.Default.css"
+        ]
+    }
 }

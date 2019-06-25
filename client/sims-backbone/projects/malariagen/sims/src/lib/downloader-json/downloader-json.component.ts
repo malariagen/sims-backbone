@@ -1,6 +1,5 @@
-import { Component, OnInit, Input, ViewChild } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { SamplingEventsService } from '../sampling-events.service';
-import { SamplingEventDisplayPipe } from '../sampling-event-display.pipe';
 import { CollectionViewer } from '@angular/cdk/collections';
 import { SamplingEventsSource } from '../sampling-event.datasource';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
