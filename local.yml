@@ -48,6 +48,8 @@ services:
       - ./.envs/.local/.postgres
       - .env
     command: /start
+    ports:
+      - "4200:4200"
 
   nginx: &nginx
     build:
@@ -55,7 +57,7 @@ services:
       dockerfile: ./compose/local/nginx/Dockerfile
     image: local_nginx
     ports:
-      - "4200:80"
+      - "80:80"
 
   postgres:
     image: mdillon/postgis:10
