@@ -24,6 +24,7 @@ then
     (cd openapi && npx openapi-generator generate -i sims-backbone.yaml -g python-flask -o ../python-flask-server --enable-post-process-file)
     sed -i  -e '/x-tokenInfoFunc/d' -e '/x-scopeValidateFunc/d' python-flask-server/openapi_server/openapi/openapi.yaml
     rm -rf server/bb_server
+    mkdir -p server/bb_server
     cp -pr python-flask-server/* server/bb_server
 fi
 if [ -n "$CLIENT_ONLY" -o -z "$SERVER_ONLY" ]

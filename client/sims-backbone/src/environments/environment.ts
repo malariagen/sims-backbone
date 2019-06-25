@@ -5,11 +5,14 @@
 
 export const environment = {
   production: false,
-  redirectUri: 'http://localhost:4200/studies',
+  redirectUri: sprocess.env.SIMS_REDIRECT_URI,
   postLogoutRedirectUri: 'https://www.malariagen.net',
   loginUrl: 'https://www.malariagen.net/sso/oauth2.0/authorize',
   scope: 'editor',
   tokenEndpoint: 'https://www.malariagen.net/sso/oauth2.0/accessToken',
   showDebugInformation: true,
-  apiLocation: 'http://localhost:4200/v1'
+  apiLocation: sprocess.env.BACKBONE_API_LOCATION,
+  clientId: sprocess.env.CLIENT_ID,
+  dummyClientSecret: sprocess.env.CLIENT_SECRET,
+  mapsApiKey: sprocess.env.GOOGLE_API_KEY
 }
