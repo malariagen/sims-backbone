@@ -14,8 +14,7 @@ import { MetadataService } from '../typescript-angular-client/api/metadata.servi
 
 import { MapsAPILoader } from '@agm/core';
 import { LatLngLiteral } from '@agm/core';
-import { SimsModuleConfig } from '../sims.module.config';
-import { SIMS_AUTH_HTTP_CONFIG } from '../auth/response.interceptor';
+import { SimsModuleConfig, SIMS_MODULE_CONFIG } from '../sims.module.config';
 
 @Component({
   selector: 'sims-location-edit',
@@ -53,7 +52,7 @@ export class LocationEditComponent implements OnInit {
   constructor(protected httpClient: HttpClient, private route: ActivatedRoute, private locationService: LocationService,
     private metadataService: MetadataService, private _fb: FormBuilder,
     private mapsAPILoader: MapsAPILoader, private ngZone: NgZone,
-    @Inject(SIMS_AUTH_HTTP_CONFIG) moduleConf?: SimsModuleConfig,
+    @Inject(SIMS_MODULE_CONFIG) moduleConf?: SimsModuleConfig,
   ) {
     if (!moduleConf.mapsApiKey) {
       this.useGMaps = false;

@@ -1,8 +1,7 @@
 import { Injectable, Optional, Inject, InjectionToken } from '@angular/core';
 import { OAuthService, JwksValidationHandler } from 'angular-oauth2-oidc';
 import { Configuration } from './typescript-angular-client';
-import { SimsModuleConfig } from './sims.module.config';
-import { SIMS_AUTH_HTTP_CONFIG } from './auth/response.interceptor';
+import { SimsModuleConfig, SIMS_MODULE_CONFIG } from './sims.module.config';
 
 export const SIMS_AUTH_SERVICE = new InjectionToken<SimsAuthService>('simsAuthService');
 
@@ -14,7 +13,7 @@ export class SimsAuthService {
   apiLocation: string;
 
   constructor(private oauthService: OAuthService, 
-    @Inject(SIMS_AUTH_HTTP_CONFIG) moduleConf?: SimsModuleConfig,
+    @Inject(SIMS_MODULE_CONFIG) moduleConf?: SimsModuleConfig,
     ) {
     if (moduleConf) {
       this.apiLocation = moduleConf.apiLocation;

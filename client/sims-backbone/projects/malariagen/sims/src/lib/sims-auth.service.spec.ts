@@ -4,8 +4,7 @@ import { SimsAuthService } from './sims-auth.service';
 import { OAuthService, UrlHelperService } from 'angular-oauth2-oidc';
 import { HttpClientModule } from '@angular/common/http';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { SIMS_AUTH_HTTP_CONFIG } from './auth/response.interceptor';
-import { SimsModuleConfig } from './sims.module.config';
+import { SimsModuleConfig, SIMS_MODULE_CONFIG } from './sims.module.config';
 
 describe('SimsAuthService', () => {
   beforeEach(() => TestBed.configureTestingModule({
@@ -17,7 +16,7 @@ describe('SimsAuthService', () => {
       OAuthService,
       UrlHelperService,
       {
-        provide: SIMS_AUTH_HTTP_CONFIG,
+        provide: SIMS_MODULE_CONFIG,
         useClass: SimsModuleConfig
       }     
     ]

@@ -4,9 +4,8 @@ import { HttpInterceptor, HttpRequest, HttpHandler, HttpEvent, HttpResponse, Htt
 import { Observable } from 'rxjs';
 import { OAuthService, AuthConfig } from 'angular-oauth2-oidc';
 import { Injectable, InjectionToken, Inject, Optional } from '@angular/core';
-import { SimsModuleConfig } from '../sims.module.config';
+import { SimsModuleConfig, SIMS_MODULE_CONFIG } from '../sims.module.config';
 
-export const SIMS_AUTH_HTTP_CONFIG = new InjectionToken<SimsModuleConfig>('simsAuthHttpConfig');
 
 @Injectable()
 export class SimsResponseInterceptor implements HttpInterceptor {
@@ -14,7 +13,7 @@ export class SimsResponseInterceptor implements HttpInterceptor {
     apiLocation: string;
 
     constructor(private oauthService: OAuthService,
-        @Optional() @Inject(SIMS_AUTH_HTTP_CONFIG) config?: SimsModuleConfig) {
+        @Optional() @Inject(SIMS_MODULE_CONFIG) config?: SimsModuleConfig) {
 
         this.apiLocation = config.apiLocation;
     }

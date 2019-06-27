@@ -10,8 +10,8 @@ import { StudyEditComponent } from './study-edit/study-edit.component';
 import { SimsAuthService, SIMS_AUTH_SERVICE } from './sims-auth.service';
 
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
-import { SimsResponseInterceptor, SIMS_AUTH_HTTP_CONFIG } from './auth/response.interceptor';
-import { SimsModuleConfig } from './sims.module.config';
+import { SimsResponseInterceptor } from './auth/response.interceptor';
+import { SimsModuleConfig, SIMS_MODULE_CONFIG } from './sims.module.config';
 
 import { TaxonomyEditComponent } from './taxonomy-edit/taxonomy-edit.component';
 import { MatAutocompleteModule, MatFormFieldModule, MatInputModule, MatButtonModule, MatSelectModule, MatPaginatorModule, MatTableModule } from '@angular/material';
@@ -91,10 +91,6 @@ const routes: Routes = [
 ];
 
 export const API_CONFIG = new InjectionToken<Configuration>('sims-api-config');
-
-export let configFactory = (authService: SimsAuthService): Configuration => {
-  return authService.getConfiguration();
-};
 
 export function getConfiguration(authService: SimsAuthService): Configuration {
   return authService.getConfiguration();
@@ -193,7 +189,7 @@ export function getConfiguration(authService: SimsAuthService): Configuration {
       useClass: CustomMapsConfig
     },
     {
-      provide: SIMS_AUTH_HTTP_CONFIG,
+      provide: SIMS_MODULE_CONFIG,
       useClass: SimsModuleConfig
     }
   ],

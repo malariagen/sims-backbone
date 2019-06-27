@@ -14,9 +14,7 @@ import {ObserversModule} from '@angular/cdk/observers';
 
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { SimsModuleConfig } from '../sims.module.config';
-import { SIMS_AUTH_HTTP_CONFIG } from '../auth/response.interceptor';
-
+import { SimsModuleConfig, SIMS_MODULE_CONFIG } from '../sims.module.config';
 
 @Component({ selector: 'sims-locations-map', template: '' })
 class LocationsMapStubComponent {
@@ -89,7 +87,7 @@ describe('LocationEditComponent', () => {
         { provide: ActivatedRoute, useValue: activatedRoute },
         MapsAPILoader,
         {
-          provide: SIMS_AUTH_HTTP_CONFIG,
+          provide: SIMS_MODULE_CONFIG,
           useClass: SimsModuleConfig
         }
       ]
