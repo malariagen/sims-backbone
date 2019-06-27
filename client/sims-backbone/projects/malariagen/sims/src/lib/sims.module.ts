@@ -13,10 +13,6 @@ import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { SimsResponseInterceptor, SIMS_AUTH_HTTP_CONFIG } from './auth/response.interceptor';
 import { SimsModuleConfig } from './sims.module.config';
 
-import { Configuration, ApiModule, ConfigurationParameters } from './typescript-angular-client';
-import { LocationService } from './typescript-angular-client/api/location.service';
-import { StudyService } from './typescript-angular-client/api/study.service';
-
 import { TaxonomyEditComponent } from './taxonomy-edit/taxonomy-edit.component';
 import { MatAutocompleteModule, MatFormFieldModule, MatInputModule, MatButtonModule, MatSelectModule, MatPaginatorModule, MatTableModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -74,6 +70,7 @@ import { OAuthModule } from 'angular-oauth2-oidc';
 
 import { LAZY_MAPS_API_CONFIG } from '@agm/core';
 import { CustomMapsConfig } from './CustomMapsConfig';
+import { Configuration } from './typescript-angular-client/configuration';
 
 const routes: Routes = [
   { path: 'study/:studyCode', component: StudyEditComponent },
@@ -101,14 +98,6 @@ export let configFactory = (authService: SimsAuthService): Configuration => {
 
 export function getConfiguration(authService: SimsAuthService): Configuration {
   return authService.getConfiguration();
-}
-
-
-export function apiConfigFactory (): Configuration {
-  const params: ConfigurationParameters = {
-    // set configuration parameters here.
-  }
-  return new Configuration(params);
 }
 
 @NgModule({
@@ -181,7 +170,6 @@ export function apiConfigFactory (): Configuration {
     LeafletModule,
     OAuthModule.forRoot(),
     AgmCoreModule.forRoot(),
-    //ApiModule.forRoot(apiConfigFactory)
   ],
   providers: [
     SimsAuthService,
