@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
-import { DerivativeSamples, DerivativeSampleService } from './typescript-angular-client';
+import { DerivativeSamples } from './typescript-angular-client';
 import { Observable } from 'rxjs';
+import { DerivativeSampleService } from './typescript-angular-client/api/derivativeSample.service';
 
 @Injectable({
   providedIn: 'root'

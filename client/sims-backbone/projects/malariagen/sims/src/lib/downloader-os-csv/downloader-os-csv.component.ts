@@ -1,12 +1,13 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { OriginalSamplesService } from '../original-samples.service';
-import { OriginalSampleService, OriginalSample } from '../typescript-angular-client';
+import { OriginalSample } from '../typescript-angular-client';
 import { OriginalSampleDisplayPipe } from '../original-sample-display.pipe';
 
 import * as FileSaver from 'file-saver';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { OriginalSamplesSource } from '../original-sample.datasource';
 import { CollectionViewer } from '@angular/cdk/collections';
+import { OriginalSampleService } from '../typescript-angular-client/api/originalSample.service';
 
 @Component({
   selector: 'sims-downloader-os-csv',

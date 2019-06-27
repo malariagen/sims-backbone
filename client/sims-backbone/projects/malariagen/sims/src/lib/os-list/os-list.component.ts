@@ -2,9 +2,10 @@ import { Component, OnInit, ViewChild, ChangeDetectorRef, Input, AfterViewInit, 
 import { OriginalSamplesService } from '../original-samples.service';
 import { MatPaginator, MatTable, MatDialog } from '@angular/material';
 import { Observable } from 'rxjs';
-import { OriginalSample, OriginalSampleService } from '../typescript-angular-client';
+import { OriginalSample } from '../typescript-angular-client';
 import { tap } from 'rxjs/operators';
 import { OriginalSamplesSource } from '../original-sample.datasource';
+import { OriginalSampleService } from '../typescript-angular-client/api/originalSample.service';
 
 @Component({
   selector: 'sims-os-list',

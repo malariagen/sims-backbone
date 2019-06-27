@@ -1,5 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { IndividualService, Individual } from '../typescript-angular-client';
+import { Individual } from '../typescript-angular-client';
+import { IndividualService } from '../typescript-angular-client/api/individual.service';
 
 @Component({
   selector: 'sims-individual-view',

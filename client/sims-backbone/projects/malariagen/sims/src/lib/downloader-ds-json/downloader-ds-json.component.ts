@@ -3,10 +3,11 @@ import { DerivativeSamplesSource } from '../derivative-sample.datasource';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { DerivativeSampleDisplayPipe } from '../derivative-sample-display.pipe';
 import { DerivativeSamplesService } from '../derivative-samples.service';
-import { DerivativeSample, DerivativeSamples, DerivativeSampleService } from '../typescript-angular-client';
+import { DerivativeSample, DerivativeSamples } from '../typescript-angular-client';
 import { CollectionViewer } from '@angular/cdk/collections';
 
 import * as FileSaver from 'file-saver';
+import { DerivativeSampleService } from '../typescript-angular-client/api/derivativeSample.service';
 
 @Component({
   selector: 'sims-downloader-ds-json',

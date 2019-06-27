@@ -1,6 +1,6 @@
 /// <reference types="@types/googlemaps" />
 
-import { Component, NgZone, OnInit } from '@angular/core';
+import { Component, NgZone, OnInit, Inject } from '@angular/core';
 import { ActivatedRoute, Params } from '@angular/router';
 import { FormGroup, FormArray, FormControl, FormBuilder, Validators } from '@angular/forms';
 
@@ -15,6 +15,7 @@ import { MetadataService } from '../typescript-angular-client/api/metadata.servi
 import { MapsAPILoader } from '@agm/core';
 import { LatLngLiteral } from '@agm/core';
 import { SimsModuleConfig } from '../sims.module.config';
+import { SIMS_AUTH_HTTP_CONFIG } from '../auth/response.interceptor';
 
 @Component({
   selector: 'sims-location-edit',
@@ -51,8 +52,8 @@ export class LocationEditComponent implements OnInit {
 
   constructor(protected httpClient: HttpClient, private route: ActivatedRoute, private locationService: LocationService,
     private metadataService: MetadataService, private _fb: FormBuilder,
-    private moduleConf: SimsModuleConfig,
-    private mapsAPILoader: MapsAPILoader, private ngZone: NgZone
+    private mapsAPILoader: MapsAPILoader, private ngZone: NgZone,
+    @Inject(SIMS_AUTH_HTTP_CONFIG) moduleConf?: SimsModuleConfig,
   ) {
     if (!moduleConf.mapsApiKey) {
       this.useGMaps = false;

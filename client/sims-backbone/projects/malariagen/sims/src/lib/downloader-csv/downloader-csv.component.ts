@@ -6,8 +6,9 @@ import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 
 import * as FileSaver from 'file-saver';
 import { Observable } from 'rxjs/Observable';
-import { SamplingEvent, SamplingEventService } from '../typescript-angular-client';
+import { SamplingEvent } from '../typescript-angular-client';
 import { SamplingEventsSource } from '../sampling-event.datasource';
+import { SamplingEventService } from '../typescript-angular-client/api/samplingEvent.service';
 
 @Component({
   selector: 'sims-downloader-csv',

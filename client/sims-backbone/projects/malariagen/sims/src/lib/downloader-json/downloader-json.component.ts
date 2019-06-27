@@ -4,9 +4,10 @@ import { CollectionViewer } from '@angular/cdk/collections';
 import { SamplingEventsSource } from '../sampling-event.datasource';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
-import { SamplingEvent, SamplingEvents, SamplingEventService } from '../typescript-angular-client';
+import { SamplingEvent, SamplingEvents } from '../typescript-angular-client';
 
 import * as FileSaver from 'file-saver';
+import { SamplingEventService } from '../typescript-angular-client/api/samplingEvent.service';
 
 @Component({
   selector: 'sims-downloader-json',

@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { StudyService, MetadataService, Studies } from '../typescript-angular-client';
+import { StudyService } from '../typescript-angular-client/api/study.service';
+import { Studies } from '../typescript-angular-client/model/studies';
 
 
 @Component({
   selector: 'sims-all-studies-list',
-  providers: [StudyService, MetadataService],
+  providers: [StudyService],
   templateUrl: './all-studies-list.component.html',
   styleUrls: ['./all-studies-list.component.scss']
 })
@@ -12,7 +13,7 @@ export class AllStudiesListComponent implements OnInit {
 
   studies: Studies;
 
-  constructor(private studyService: StudyService, private metadataService: MetadataService) { }
+  constructor(private studyService: StudyService) { }
 
   ngOnInit() {
 
@@ -21,12 +22,6 @@ export class AllStudiesListComponent implements OnInit {
         this.studies = studies;
       }
     );
-    this.warmUp();
   }
 
-  warmUp() {
-    this.metadataService.getAttrTypes().subscribe();
-    this.metadataService.getTaxonomyMetadata().subscribe();
-    this.studyService.downloadStudy("9999").subscribe();
-  }
 }

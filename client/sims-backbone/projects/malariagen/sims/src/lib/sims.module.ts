@@ -1,4 +1,4 @@
-import { NgModule, ModuleWithProviders, Optional, SkipSelf, Injectable } from '@angular/core';
+import { NgModule, ModuleWithProviders, Optional, SkipSelf, Injectable, InjectionToken } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 
@@ -7,12 +7,16 @@ import { AllStudiesListComponent } from './all-studies-list/all-studies-list.com
 import { BrowserModule } from '@angular/platform-browser';
 import { StudiesListComponent } from './studies-list/studies-list.component';
 import { StudyEditComponent } from './study-edit/study-edit.component';
-import { SimsAuthService } from './sims-auth.service';
+import { SimsAuthService, SIMS_AUTH_SERVICE } from './sims-auth.service';
 
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { SimsResponseInterceptor, SIMS_AUTH_HTTP_CONFIG } from './auth/response.interceptor';
 import { SimsModuleConfig } from './sims.module.config';
-import { Configuration, ApiModule } from './typescript-angular-client';
+
+import { Configuration, ApiModule, ConfigurationParameters } from './typescript-angular-client';
+import { LocationService } from './typescript-angular-client/api/location.service';
+import { StudyService } from './typescript-angular-client/api/study.service';
+
 import { TaxonomyEditComponent } from './taxonomy-edit/taxonomy-edit.component';
 import { MatAutocompleteModule, MatFormFieldModule, MatInputModule, MatButtonModule, MatSelectModule, MatPaginatorModule, MatTableModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -50,7 +54,7 @@ import { EventSetListComponent } from './event-set-list/event-set-list.component
 import { EventSearchComponent } from './event-search/event-search.component';
 import { LocationsMapComponent } from './locations-map/locations-map.component';
 import { LeafletModule } from '@asymmetrik/ngx-leaflet';
-import { AgmCoreModule, LazyMapsAPILoaderConfigLiteral } from '@agm/core';
+import { AgmCoreModule } from '@agm/core';
 import { SampleOverviewComponent } from './sample-overview/sample-overview.component';
 
 import { DsDetailComponent } from './ds-detail/ds-detail.component';
@@ -69,20 +73,7 @@ import { ReportMultipleLocationNamesComponent } from './report-multiple-location
 import { OAuthModule } from 'angular-oauth2-oidc';
 
 import { LAZY_MAPS_API_CONFIG } from '@agm/core';
-
-@Injectable()
-export class CustomMapsConfig implements LazyMapsAPILoaderConfigLiteral {
-
-  apiKey?: string;
-  libraries: string[];
-  constructor(private moduleConf: SimsModuleConfig) {
-
-      this.apiKey = moduleConf.mapsApiKey;
-      this.libraries = ["places"];
-      //console.log('Custom Map config');
-  }
-
-}
+import { CustomMapsConfig } from './CustomMapsConfig';
 
 const routes: Routes = [
   { path: 'study/:studyCode', component: StudyEditComponent },
@@ -102,9 +93,24 @@ const routes: Routes = [
 
 ];
 
-export function getConfiguration(authService: SimsAuthService) {
+export const API_CONFIG = new InjectionToken<Configuration>('sims-api-config');
+
+export let configFactory = (authService: SimsAuthService): Configuration => {
+  return authService.getConfiguration();
+};
+
+export function getConfiguration(authService: SimsAuthService): Configuration {
   return authService.getConfiguration();
 }
+
+
+export function apiConfigFactory (): Configuration {
+  const params: ConfigurationParameters = {
+    // set configuration parameters here.
+  }
+  return new Configuration(params);
+}
+
 @NgModule({
   declarations: [
     AllStudiesListComponent,
@@ -175,10 +181,14 @@ export function getConfiguration(authService: SimsAuthService) {
     LeafletModule,
     OAuthModule.forRoot(),
     AgmCoreModule.forRoot(),
-    ApiModule
+    //ApiModule.forRoot(apiConfigFactory)
   ],
   providers: [
     SimsAuthService,
+    {
+      provide: SIMS_AUTH_SERVICE,
+      useClass: SimsAuthService
+    },
     {
       provide: Configuration,
       useFactory: getConfiguration,
@@ -193,6 +203,10 @@ export function getConfiguration(authService: SimsAuthService) {
     {
       provide: LAZY_MAPS_API_CONFIG,
       useClass: CustomMapsConfig
+    },
+    {
+      provide: SIMS_AUTH_HTTP_CONFIG,
+      useClass: SimsModuleConfig
     }
   ],
   exports: [
@@ -208,8 +222,7 @@ export function getConfiguration(authService: SimsAuthService) {
     ReportUncuratedLocationsComponent,
     ReportMissingTaxaComponent,
     ReportMultipleLocationGpsComponent,
-    ReportMultipleLocationNamesComponent,
-    ApiModule
+    ReportMultipleLocationNamesComponent
   ],
   entryComponents: [
     ErrorDialogComponent,

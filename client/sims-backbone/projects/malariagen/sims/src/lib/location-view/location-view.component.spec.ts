@@ -4,10 +4,7 @@ import { LocationViewComponent } from './location-view.component';
 import { RouterTestingModule } from '@angular/router/testing';
 
 import { Component, Input } from '@angular/core';
-import { Location, Locations, LocationService } from '../typescript-angular-client';
-import { OAuthService } from 'angular-oauth2-oidc';
-import { createOAuthServiceSpy, ActivatedRouteStub, createAuthServiceSpy, asyncData } from '../../testing/index.spec';
-import { HttpClient } from '@angular/common/http';
+import { Location, Locations } from '../typescript-angular-client';
 
 @Component({ selector: 'sims-locations-map', template: '' })
 class LocationsMapStubComponent {

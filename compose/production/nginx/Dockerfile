@@ -3,6 +3,8 @@ FROM node:11.15.0-stretch-slim as build
 WORKDIR /app
 
 ARG BUILD_AS
+ARG BACKBONE_API_LOCATION
+ARG SIMS_REDIRECT_URI
 
 ENV PATH /app/node_modules/.bin:$PATH
 
@@ -25,8 +27,10 @@ RUN rm /app/package-lock.json
 RUN npm install
 RUN npm install typescript@">=3.1.1 <3.3" --no-optional --no-package-lock
 
+COPY ./client/sims-backbone/src/environments/environment.prod.ts /app/src/environments/environment.prod.ts
+
 #RUN ng build -c $BUILD_AS
-RUN ng build sims-backbone --delete-output-path=false
+RUN ng build sims-backbone --delete-output-path=false -c $BUILD_AS
 
 
 FROM nginx:1.14.1-alpine
@@ -36,5 +40,7 @@ COPY --from=build /app/dist /usr/share/nginx/html
 COPY ./compose/production/nginx/default.conf /etc/nginx/conf.d
 
 EXPOSE 80
+
+RUN set
 
 CMD [ "nginx", "-g", "daemon off;"]

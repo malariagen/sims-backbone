@@ -1,9 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { SamplingEventService } from '../typescript-angular-client/api/samplingEvent.service';
 import { MetadataService } from '../typescript-angular-client/api/metadata.service';
+import { OriginalSampleService } from '../typescript-angular-client/api/originalSample.service';
+import { DerivativeSampleService } from '../typescript-angular-client/api/derivativeSample.service';
+import { AssayDataService } from '../typescript-angular-client/api/assayData.service';
 
 import { SamplingEvents } from '../typescript-angular-client/model/samplingEvents';
-import { DerivativeSampleService, AssayDataService, AssayData, OriginalSampleService, OriginalSamples, DerivativeSamples } from '../typescript-angular-client';
+import { AssayData, OriginalSamples, DerivativeSamples } from '../typescript-angular-client';
 
 
 @Component({
@@ -39,7 +42,7 @@ export class EventSearchComponent implements OnInit {
     this.attr_type = 'roma_id';
     //this.attrValue = 'QS0167-C';
     this.search();
-    
+
   }
 
   warmUp() {

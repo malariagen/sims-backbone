@@ -1,20 +1,26 @@
-import { Injectable, Optional } from '@angular/core';
+import { Injectable, Optional, Inject, InjectionToken } from '@angular/core';
 import { OAuthService, JwksValidationHandler } from 'angular-oauth2-oidc';
 import { Configuration } from './typescript-angular-client';
 import { SimsModuleConfig } from './sims.module.config';
+import { SIMS_AUTH_HTTP_CONFIG } from './auth/response.interceptor';
 
+export const SIMS_AUTH_SERVICE = new InjectionToken<SimsAuthService>('simsAuthService');
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class SimsAuthService {
   accessToken: string;
   apiLocation: string;
 
-  constructor(private oauthService: OAuthService, @Optional() config: SimsModuleConfig) {
-    if (config) {
-      this.apiLocation = config.apiLocation;
+  constructor(private oauthService: OAuthService, 
+    @Inject(SIMS_AUTH_HTTP_CONFIG) moduleConf?: SimsModuleConfig,
+    ) {
+    if (moduleConf) {
+      this.apiLocation = moduleConf.apiLocation;
 
       //console.log(this.apiLocation);
-      this.oauthService.configure(config.OAuthConfig);
+      this.oauthService.configure(moduleConf.OAuthConfig);
 
       this.oauthService.tokenValidationHandler = new JwksValidationHandler();
 

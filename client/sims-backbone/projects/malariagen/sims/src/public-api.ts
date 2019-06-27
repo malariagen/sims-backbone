@@ -2,7 +2,6 @@
  * Public API Surface of sims
  */
 
-export * from './lib/sims.service';
 export * from './lib/sims.module';
 export * from './lib/sims.module.config';
 
@@ -21,4 +20,4 @@ export * from './lib/report-missing-taxa/report-missing-taxa.component';
 export * from './lib/report-multiple-location-gps/report-multiple-location-gps.component';
 export * from './lib/report-multiple-location-names/report-multiple-location-names.component';
 
-export * from './lib/typescript-angular-client/index';
+//export * from './lib/typescript-angular-client/index';

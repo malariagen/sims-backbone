@@ -1,10 +1,11 @@
 import { Component, OnInit, AfterViewInit, ViewChild, ChangeDetectorRef, Input, ChangeDetectionStrategy } from '@angular/core';
 import { MatPaginator, MatTable } from '@angular/material';
-import { DerivativeSample, DerivativeSampleService } from '../typescript-angular-client';
+import { DerivativeSample } from '../typescript-angular-client';
 import { Observable } from 'rxjs';
 import { DerivativeSamplesService } from '../derivative-samples.service';
 import { DerivativeSamplesSource } from '../derivative-sample.datasource';
 import { tap } from 'rxjs/operators';
+import { DerivativeSampleService } from '../typescript-angular-client/api/derivativeSample.service';
 
 @Component({
   selector: 'sims-ds-list',

@@ -1,12 +1,13 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { DerivativeSamplesService } from '../derivative-samples.service';
-import { DerivativeSampleService, DerivativeSample } from '../typescript-angular-client';
+import { DerivativeSample } from '../typescript-angular-client';
 import { DerivativeSampleDisplayPipe } from '../derivative-sample-display.pipe';
 import { CollectionViewer } from '@angular/cdk/collections';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { DerivativeSamplesSource } from '../derivative-sample.datasource';
 
 import * as FileSaver from 'file-saver';
+import { DerivativeSampleService } from '../typescript-angular-client/api/derivativeSample.service';
 
 @Component({
   selector: 'sims-downloader-ds-csv',

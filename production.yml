@@ -39,12 +39,12 @@ services:
       context: .
       dockerfile: ./compose/production/nginx/Dockerfile
       args:
-        BUILD_AS: prod
+        BUILD_AS: production
+        BACKBONE_API_LOCATION: http://localhost/v1
+        SIMS_REDIRECT_URI: http://localhost/studies
     image: production_nginx
     depends_on:
       - production_backbone_server
-    env_file:
-      - ./.env
     ports:
       - "80:80"
 

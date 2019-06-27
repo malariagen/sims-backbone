@@ -12,7 +12,8 @@ import { AfterViewChecked, AfterViewInit } from '@angular/core';
 import { SamplingEventsSource } from '../sampling-event.datasource';
 import { SamplingEventsService } from '../sampling-events.service';
 import { tap } from 'rxjs/operators';
-import { SamplingEventService, SamplingEvent } from '../typescript-angular-client';
+import { SamplingEvent } from '../typescript-angular-client';
+import { SamplingEventService } from '../typescript-angular-client/api/samplingEvent.service';
 
 @Component({
   selector: 'sims-event-list',
