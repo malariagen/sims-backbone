@@ -229,6 +229,7 @@ export class SimsModule {
     return {
       ngModule: SimsModule,
       providers: [
+        { provide: SimsModuleConfig, useValue: config },
         { provide: SIMS_MODULE_CONFIG, useValue: config }
       ]
     };
