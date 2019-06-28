@@ -7,11 +7,13 @@ import { ReportsComponent } from './reports/reports.component';
 import { AllStudiesListComponent } from '@malariagen/sims';
 import { AllLocationsMapComponent, EventSetListComponent, EventSearchComponent, TaxaListComponent } from '@malariagen/sims';
 import { ReportMissingDetailedLocationsComponent, ReportMissingLocationsComponent, ReportMissingTaxaComponent, ReportUncuratedLocationsComponent, ReportMultipleLocationGpsComponent, ReportMultipleLocationNamesComponent } from '@malariagen/sims';
+import { AlfStudyDetailComponent } from './alf-study-detail/alf-study-detail.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/studies', pathMatch: 'full' },
   { path: 'full-map', component: AllLocationsMapComponent },
   { path: 'studies', component: AllStudiesListComponent },
+  { path: 'study/:studyCode', component: AlfStudyDetailComponent },
   {
     path: 'lib-experimental',
     loadChildren: () => import('@malariagen/sims').then(m => m.SimsModule)

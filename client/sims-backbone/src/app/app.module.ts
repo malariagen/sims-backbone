@@ -1,7 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 
 import { MatToolbarModule, MatDialogModule, MatButtonModule } from '@angular/material';
 import { MatIconModule } from '@angular/material';
@@ -19,11 +19,14 @@ import { environment } from '../environments/environment';
 import { ReportsComponent } from './reports/reports.component';
 
 import { SimsModule } from '@malariagen/sims';
+import { AlfResponseInterceptor } from './alf-interceptor/response.interceptor';
+import { AlfStudyDetailComponent } from './alf-study-detail/alf-study-detail.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     ReportsComponent,
+    AlfStudyDetailComponent,
   ],
   imports: [
     BrowserModule,
@@ -59,6 +62,11 @@ import { SimsModule } from '@malariagen/sims';
     }),
   ],
   providers: [
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AlfResponseInterceptor,
+      multi: true
+    },
   ],
   entryComponents: [  
   ],

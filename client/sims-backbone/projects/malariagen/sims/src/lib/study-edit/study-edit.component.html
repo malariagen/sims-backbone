@@ -27,6 +27,8 @@
         <a mat-raised-button color="accent" [routerLink]="[studyEvents,studyCode]">Sampling Events</a>
       </form>
     </div>
+    <!-- add the select attribute to ng-content -->
+    <ng-content select="[study-left-col]"></ng-content>
   </div>
 
   <div fxFlex="50%">
@@ -53,6 +55,7 @@
           </div>
         </div>
       </div>
+      <ng-content select="[study-right-col]"></ng-content>
     </div>
 
   </div>
