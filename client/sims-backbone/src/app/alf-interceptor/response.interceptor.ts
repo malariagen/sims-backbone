@@ -43,12 +43,12 @@ export class AlfResponseInterceptor implements HttpInterceptor {
                         this.alfrescoService.login();
                     }
                 } else {
-                    console.log('AlfResponseInterceptor err');
-                    console.error(err);
+                    //console.log('AlfResponseInterceptor err');
+                    //console.error(err);
                 }
             } else {
-                console.log('AlfResponseInterceptor Not HttpErrorResponse');
-                console.log(err);
+                //console.log('AlfResponseInterceptor Not HttpErrorResponse');
+                //console.log(err);
             }
         });
     }
