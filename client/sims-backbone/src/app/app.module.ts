@@ -1,7 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 
-import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS, HttpClient } from '@angular/common/http';
 
 import { MatToolbarModule, MatDialogModule, MatButtonModule } from '@angular/material';
 import { MatIconModule } from '@angular/material';
@@ -22,6 +22,16 @@ import { SimsModule } from '@malariagen/sims';
 import { AlfResponseInterceptor } from './alf-interceptor/response.interceptor';
 import { AlfStudyDetailComponent } from './alf-study-detail/alf-study-detail.component';
 
+import { CoreModule, TRANSLATION_PROVIDER } from '@alfresco/adf-core';
+import { ContentModule } from '@alfresco/adf-content-services';
+import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
+import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+
+// AoT requires an exported function for factories
+export function HttpLoaderFactory(http: HttpClient) {
+  return new TranslateHttpLoader(http);
+}
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -38,7 +48,7 @@ import { AlfStudyDetailComponent } from './alf-study-detail/alf-study-detail.com
     HttpClientModule,
     AppRoutingModule,
     BrowserAnimationsModule,
-    SimsModule.forRoot({ 
+    SimsModule.forRoot({
       apiLocation: environment.apiLocation,
       mapsApiKey: environment.mapsApiKey,
       OAuthConfig: {
@@ -57,9 +67,11 @@ import { AlfStudyDetailComponent } from './alf-study-detail/alf-study-detail.com
         'responseType': 'code',
         'showDebugInformation': environment.showDebugInformation,
         'dummyClientSecret': environment.dummyClientSecret,
-      
+
       }
     }),
+    CoreModule.forRoot(),
+    ContentModule.forRoot(),
   ],
   providers: [
     {
@@ -67,8 +79,16 @@ import { AlfStudyDetailComponent } from './alf-study-detail/alf-study-detail.com
       useClass: AlfResponseInterceptor,
       multi: true
     },
+    {
+      provide: TRANSLATION_PROVIDER,
+      multi: true,
+      useValue: {
+        name: 'sims-backbone',
+        source: 'assets'
+      }
+    }
   ],
-  entryComponents: [  
+  entryComponents: [
   ],
   bootstrap: [
     AppComponent

@@ -12,6 +12,7 @@ export class AlfStudyDetailComponent implements OnInit {
   studyCode: string;
 
   studyProperties: {};
+  studyNode: any;
 
   constructor(private route: ActivatedRoute, private alfrescoService: AlfApiService) { }
 
@@ -52,6 +53,7 @@ export class AlfStudyDetailComponent implements OnInit {
       console.log('API called successfully. Returned data: ' + data);
       console.log(data);
       this.studyProperties = data.entry.properties;
+      this.studyNode = data.entry;
       console.log();
     }, function (error) {
       console.error(error);

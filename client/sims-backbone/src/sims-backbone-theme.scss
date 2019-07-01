@@ -2,6 +2,8 @@
 
 
 @import '~@malariagen/sims/_theme';
+@import '~@alfresco/adf-content-services/theming';                                                                                                                                                                                                                                   
+@import '~@alfresco/adf-core/theming';                                                                                                                                                                                                                                               
 
 @include mat-core();
 
@@ -13,3 +15,11 @@ $sims-backbone-theme: mat-light-theme($sims-backbone-theme-primary, $sims-backbo
 
 @include angular-material-theme($sims-backbone-theme);
 @include sims-backbone-theme($sims-backbone-theme);
+
+$primary: mat-palette($alfresco-accent-orange);                                                                                                                                                                                                                                      
+$accent:  mat-palette($alfresco-accent-purple);                                                                                                                                                                                                                                      
+$warn:    mat-palette($alfresco-warn);                                                                                                                                                                                                                                               
+$theme:   mat-light-theme($primary, $accent, $warn);                                
+
+@include adf-content-services-theme($sims-backbone-theme);                                                                                                                                                                                                                                         
+@include adf-core-theme($sims-backbone-theme);                             

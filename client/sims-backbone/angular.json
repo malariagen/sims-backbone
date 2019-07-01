@@ -49,11 +49,47 @@
             "outputPath": "dist",
             "index": "src/index.html",
             "main": "src/main.ts",
-            "polyfills": "src/polyfills.ts",
             "tsConfig": "src/tsconfig.app.json",
+            "polyfills": "src/polyfills.ts",
+            "stylePreprocessorOptions": {
+              "includePaths": [
+                "node_modules"
+              ]
+            },
             "assets": [
-              "src/favicon.ico",
               "src/assets",
+              "src/favicon.ico",
+              "src/app.config.json",
+              {
+                "glob": "**/*",
+                "input": "resources",
+                "output": "/resources"
+              },
+              {
+                "glob": "**/*",
+                "input": "node_modules/@alfresco/adf-core/prebuilt-themes",
+                "output": "/assets/prebuilt-themes"
+              },
+              {
+                "glob": "**/*",
+                "input": "node_modules/@alfresco/adf-core/bundles/assets",
+                "output": "/assets"
+              },
+              {
+                "glob": "**/*",
+                "input": "node_modules/@alfresco/adf-content-services/bundles/assets",
+                "output": "/assets"
+              },
+              {
+                "glob": "pdf.worker.js",
+                "input": "node_modules/pdfjs-dist/build",
+                "output": "/"
+              },
+              {
+                "glob": "pdf.worker.min.js",
+                "input": "node_modules/pdfjs-dist/build",
+                "output": "/"
+              },
               {
                 "glob": "**/*",
                 "input": "node_modules/leaflet/dist/images",
@@ -69,7 +105,11 @@
               "node_modules/leaflet.markercluster/dist/MarkerCluster.Default.css",
               "node_modules/material-design-icons/iconfont/material-icons.css"
             ],
-            "scripts": []
+            "scripts": [
+              "node_modules/pdfjs-dist/build/pdf.js",
+              "node_modules/pdfjs-dist/web/pdf_viewer.js",
+              "node_modules/moment/min/moment.min.js"
+            ]
           },
           "configurations": {
             "production": {
@@ -156,7 +196,11 @@
             "karmaConfig": "./karma.conf.js",
             "polyfills": "src/polyfills.ts",
             "tsConfig": "src/tsconfig.spec.json",
-            "scripts": [],
+            "scripts": [
+              "node_modules/pdfjs-dist/build/pdf.js",
+              "node_modules/pdfjs-dist/web/pdf_viewer.js",
+              "node_modules/moment/min/moment.min.js"
+            ],
             "styles": [
               "src/styles.css",
               "src/sims-backbone-theme.scss",
@@ -166,8 +210,35 @@
               "node_modules/material-design-icons/iconfont/material-icons.css"
             ],
             "assets": [
-              "src/favicon.ico",
               "src/assets",
+              "src/favicon.ico",
+              "src/app.config.json",
+              "src/versions.json",
+              {
+                "glob": "**/*",
+                "input": "resources",
+                "output": "/resources"
+              },
+              {
+                "glob": "**/*",
+                "input": "node_modules/@alfresco/adf-core/prebuilt-themes",
+                "output": "/assets/prebuilt-themes"
+              },
+              {
+                "glob": "**/*",
+                "input": "node_modules/@alfresco/adf-core/bundles/assets",
+                "output": "/assets"
+              },
+              {
+                "glob": "**/*",
+                "input": "node_modules/@alfresco/adf-content-services/bundles/assets",
+                "output": "/assets"
+              },
+              {
+                "glob": "pdf.worker.js",
+                "input": "node_modules/pdfjs-dist/build",
+                "output": "/"
+              },
               {
                 "glob": "**/*",
                 "input": "node_modules/leaflet/dist/images",
