@@ -5,5 +5,7 @@ set -o errexit
 set -o nounset
 set -o xtrace
 
+export PYTHONPATH=/app/bb_server:/app
 
-python -m openapi_server
+#python -m openapi_server
+gunicorn openapi_server --bind 0.0.0.0:5000

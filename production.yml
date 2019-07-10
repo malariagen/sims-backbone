@@ -9,8 +9,6 @@ services:
       context: .
       dockerfile: ./compose/production/backbone_server/Dockerfile
     image: production_backbone_server
-    volumes:
-      - .:/app
     depends_on:
       - production_postgres
     env_file:
