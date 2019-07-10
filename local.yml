@@ -70,3 +70,6 @@ services:
     env_file:
       - ./.envs/.local/.postgres
 
+networks:
+  default:
+    name: local_sims_backbone
