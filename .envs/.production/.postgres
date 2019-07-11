@@ -1,6 +1,6 @@
 # PostgreSQL
 # ------------------------------------------------------------------------------
-POSTGRES_HOST=production_postgres
+POSTGRES_HOST=production-postgres
 POSTGRES_PORT=5432
 POSTGRES_DB=backbone_service
 POSTGRES_USER=backbone_user

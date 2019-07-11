@@ -1,16 +1,16 @@
 version: '2.4'
 
 volumes:
-  production_postgres_data: {}
+  production-postgres-data: {}
 
 services:
-  production_backbone_server: &production_backbone_server
+  production-backbone-server: &production-backbone-server
     build:
       context: .
       dockerfile: ./compose/production/backbone_server/Dockerfile
-    image: production_backbone_server
+    image: production-backbone-server
     depends_on:
-      - production_postgres
+      - production-postgres
     env_file:
       - ./.envs/.production/.backbone_server
       - ./.envs/.production/.postgres
@@ -18,38 +18,36 @@ services:
       - "8100:8080"
     command: /start
 
-  production_import: &production_import
+  production-import: &production-import
     build:
       context: .
       dockerfile: ./compose/production/import/Dockerfile
-    image: production_import
-    volumes:
-      - .:/app
+    image: production-import
     depends_on:
-      - production_postgres
+      - production-postgres
     env_file:
       - ./.envs/.production/.backbone_server
       - ./.envs/.production/.postgres
     command: /start
 
-  production_nginx: &production_nginx
+  production-nginx: &production-nginx
     build:
       context: .
       dockerfile: ./compose/production/nginx/Dockerfile
       args:
         BUILD_AS: production
-        BACKBONE_API_LOCATION: http://localhost/v1
-        SIMS_REDIRECT_URI: http://localhost/studies
-    image: production_nginx
+        BACKBONE_API_LOCATION: http://192.168.99.240/v1
+        SIMS_REDIRECT_URI: http://192.168.99.240/studies
+    image: production-nginx
     depends_on:
-      - production_backbone_server
+      - production-backbone-server
     ports:
       - "80:80"
 
-  production_postgres:
+  production-postgres:
     image: mdillon/postgis:10
     volumes:
-      - production_postgres_data:/var/lib/postgresql/data
+      - production-postgres-data:/var/lib/postgresql/data
       - ./compose/production/postgres/initdb:/docker-entrypoint-initdb.d/
     ports:
       - 5432:5432
