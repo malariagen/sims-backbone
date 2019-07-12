@@ -41,6 +41,4 @@ COPY ./compose/production/nginx/default.conf /etc/nginx/conf.d
 
 EXPOSE 80
 
-RUN set
-
 CMD [ "nginx", "-g", "daemon off;"]
