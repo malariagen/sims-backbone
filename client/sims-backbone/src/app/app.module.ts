@@ -19,6 +19,11 @@ import { environment } from '../environments/environment';
 import { ReportsComponent } from './reports/reports.component';
 
 import { SimsModule } from '@malariagen/sims';
+import { OAuthStorage } from 'angular-oauth2-oidc';
+
+export function storageFactory() : OAuthStorage {
+  return localStorage
+}
 
 @NgModule({
   declarations: [
@@ -51,14 +56,15 @@ import { SimsModule } from '@malariagen/sims';
         'options': null,
         'clearHashAfterLogin': true,
         'tokenEndpoint': environment.tokenEndpoint,
-        'responseType': 'code',
+        'responseType': 'token',
         'showDebugInformation': environment.showDebugInformation,
-        'dummyClientSecret': environment.dummyClientSecret,
-      
+        'dummyClientSecret': environment.dummyClientSecret
       }
     }),
   ],
   providers: [
+    //{ provide: OAuthModuleConfig, useValue: authModuleConfig },
+    { provide: OAuthStorage, useFactory: storageFactory },
   ],
   entryComponents: [  
   ],
