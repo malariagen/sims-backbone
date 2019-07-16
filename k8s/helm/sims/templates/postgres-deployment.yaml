@@ -1,0 +1,41 @@
+{{- if .Values.postgres.enabled }}
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert -f production.yml -c
+    kompose.version: 1.13.0 (84fa826)
+    checksum/config: {{ include (print $.Template.BasePath "/postgres-env-configmap.yaml") . | sha256sum }}
+    checksum/config: {{ include (print $.Template.BasePath "/postgres-secret-env-configmap.yaml") . | sha256sum }}
+  creationTimestamp: null
+  labels:
+    io.kompose.service: production-postgres-deployment
+  name: production-postgres-deployment
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        io.kompose.service: production-postgres-deployment
+    spec:
+      containers:
+      - env:
+          {{- template "backbone_env" . }}
+        image: {{ .Values.image.registry }}{{ .Values.image.postgres }}
+        name: {{ .Release.Name }}-postgres
+        ports:
+        - containerPort: 5432
+        resources: {}
+        volumeMounts:
+        - mountPath: /var/lib/postgresql/data
+          name: postgres-data
+      restartPolicy: Always
+      volumes:
+      - name: postgres-data
+        persistentVolumeClaim:
+          claimName: postgres-data
+status: {}
+{{- end }}

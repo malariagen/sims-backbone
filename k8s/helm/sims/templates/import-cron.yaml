@@ -1,0 +1,51 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: {{ .Release.Name }}-import-cron
+  annotations:
+    checksum/config: {{ include (print $.Template.BasePath "/postgres-env-configmap.yaml") . | sha256sum }}
+    checksum/config: {{ include (print $.Template.BasePath "/postgres-secret-env-configmap.yaml") . | sha256sum }}
+    checksum/config: {{ include (print $.Template.BasePath "/import-env-configmap.yaml") . | sha256sum }}
+    checksum/config: {{ include (print $.Template.BasePath "/import-secret-env-configmap.yaml") . | sha256sum }}
+spec:
+  schedule: {{ .Values.importCron | quote }}
+  concurrencyPolicy: "Forbid"
+  successfulJobsHistoryLimit: 5
+  suspend: false
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - image: {{ .Values.importImage | quote }}
+            name: {{ .Release.Name }}-import
+            args:
+              - /start
+            env:
+              {{- include "backbone_env" . | nindent 8 }}
+                - name: AWS_ACCESS_KEY_ID
+                  valueFrom:
+                    secretKeyRef:
+                      key: AWS_ACCESS_KEY_ID
+                      name: {{ .Release.Name }}-import-secret-env
+                - name: AWS_SECRET_ACCESS_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      key: AWS_SECRET_ACCESS_KEY
+                      name: {{ .Release.Name }}-import-secret-env
+                - name: IMPORT_SOURCE
+                  valueFrom:
+                    configMapKeyRef:
+                      key: IMPORT_SOURCE
+                      name: {{ .Release.Name }}-import-env
+                - name: IMPORT_DEST
+                  valueFrom:
+                    configMapKeyRef:
+                      key: IMPORT_DEST
+                      name: {{ .Release.Name }}-import-env
+                - name: ENVIRON
+                  valueFrom:
+                    configMapKeyRef:
+                      key: ENVIRON
+                      name: {{ .Release.Name }}-import-env
+          restartPolicy: OnFailure

@@ -1,0 +1,21 @@
+loadBalancerIP: 192.168.99.245
+importCron: 0 11 * * *
+
+postgres:
+  enabled: true
+  db: backbone_server
+  host: production-postgres
+  password: password
+
+import:
+  source: s3://malariagen-sims-import-local/import
+  dest: s3://malariagen-sims-import-local/output
+  environ: local
+
+image:
+  registry: localhost:32000/
+  import: production-import:latest
+  backbone: production-backbone-server:latest
+  ngnix: production-nginx:latest
+  postgres: malariagen/sims-postgres:latest
+importImage: localhost:32000/production-import:latest

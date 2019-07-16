@@ -1,0 +1,21 @@
+{{- if .Values.postgres.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kompose.cmd: kompose convert -f production.yml -c
+    kompose.version: 1.13.0 (84fa826)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: production-postgres
+  name: production-postgres
+spec:
+  ports:
+  - name: "postgresql"
+    port: 5432
+    targetPort: 5432
+  selector:
+    io.kompose.service: production-postgres-deployment
+status:
+  loadBalancer: {}
+{{- end }}

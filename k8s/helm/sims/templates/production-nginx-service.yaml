@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kompose.cmd: kompose convert -f production.yml -c
+    kompose.version: 1.13.0 (84fa826)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: production-nginx
+  name: production-nginx
+spec:
+  ports:
+  - name: "80"
+    port: 80
+    targetPort: 80
+  selector:
+    io.kompose.service: {{ .Release.Name }}-nginx-deployment
+  type: LoadBalancer
+  loadBalancerIP: {{ .Values.loadBalancerIP }}  
+status:
+  loadBalancer: {}

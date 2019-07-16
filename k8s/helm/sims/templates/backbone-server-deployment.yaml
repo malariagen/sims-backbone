@@ -1,0 +1,34 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert -c -f production.yml
+    kompose.version: 1.13.0 (84fa826)
+    checksum/config: {{ include (print $.Template.BasePath "/postgres-env-configmap.yaml") . | sha256sum }}
+    checksum/config: {{ include (print $.Template.BasePath "/postgres-secret-env-configmap.yaml") . | sha256sum }}
+  creationTimestamp: null
+  labels:
+    io.kompose.service: {{ .Release.Name }}-backbone-server-deployment
+    app: {{ .Release.Name }}-backbone-server-deployment
+  name: {{ .Release.Name }}-backbone-server-deployment
+spec:
+  replicas: 1
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        io.kompose.service: {{ .Release.Name }}-backbone-server-deployment
+    spec:
+      containers:
+      - args:
+        - /start
+        env:
+          {{- template "backbone_env" . }}
+        image: {{ .Values.image.registry }}{{ .Values.image.backbone }}
+        name: {{ .Release.Name }}
+        ports:
+        - containerPort: 5000
+        resources: {}
+      restartPolicy: Always
+status: {}
