@@ -9,5 +9,8 @@ RUN chmod +x /start
 
 WORKDIR /app/client/sims-backbone
 
-RUN npm install
+RUN npm install -g @angular/cli@7
+RUN npm install "@types/node"@"^10.14.6" --no-optional --no-package-lock
+RUN npm install typescript@">=3.1.1 <3.3" --no-optional --no-package-lock
+
 ENTRYPOINT ["/entrypoint"]
