@@ -1,18 +1,25 @@
 #!/bin/bash
 
-test -f environment_local && source environment_local
-test -f ${INPUT1_STAGING_DIR}/import/environment && source ${INPUT1_STAGING_DIR}/import/environment
+export INPUT1_STAGING_DIR=/app/upload/input
+export OUTPUT1_STAGING_DIR=/app/upload/output
+
+IMPORT_CONFIG=import_config.json
+aws s3 cp ${IMPORT_SOURCE}/config.json ${IMPORT_CONFIG}
+
+CMIS_CONFIG=cmis_config.json
+aws s3 cp ${IMPORT_SOURCE}/cmis_config.json ${CMIS_CONFIG}
 
 OUTFILE=${OUTPUT1_STAGING_DIR}/import_$(date +%Y-%m-%d-%H%M%S).log
-export PYTHONPATH=$(pwd)/../python_client:$(pwd)/../server:$(pwd)/../server/bb_server
+export PYTHONPATH=/app/upload:/app/python_client:/app/server:/app/server/bb_server
+
+mkdir -p $(dirname ${OUTFILE})
 # Redirect stdout ( > ) into a named pipe ( >() ) running "tee"
 exec &> >(tee -i ${OUTFILE})
 
-echo ${INPUT1_STAGING_DIR}
-echo ${ARCHIVE_DIR}
-
 ARCHIVE_DIR=${OUTPUT1_STAGING_DIR}/archive
+test -d ${ARCHIVE_DIR} || mkdir -p ${ARCHIVE_DIR}
 
+aws s3 sync ${IMPORT_SOURCE} ${INPUT1_STAGING_DIR}/import
 shopt -s nullglob
 for i in ${INPUT1_STAGING_DIR}/import/roma/*
 do
@@ -32,3 +39,5 @@ done
 METADATA_LOG=${OUTPUT1_STAGING_DIR}/metadata_$(date +%Y-%m-%d-%H%M%S).log
 python3 set_taxa.py ${IMPORT_CONFIG} | tee -i ${METADATA_LOG}
 python3 set_studies.py ${IMPORT_CONFIG} ${CMIS_CONFIG} | tee -i ${METADATA_LOG}
+aws s3 sync --delete ${INPUT1_STAGING_DIR}/import ${IMPORT_SOURCE} 
+aws s3 sync ${OUTPUT1_STAGING_DIR} ${IMPORT_DEST}
