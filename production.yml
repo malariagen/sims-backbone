@@ -28,6 +28,7 @@ services:
     env_file:
       - ./.envs/.production/.backbone_server
       - ./.envs/.production/.postgres
+      - .env
     command: /start
 
   # Note that configuration properties need to be set in
@@ -46,10 +47,12 @@ services:
       - "80:80"
 
   production-postgres:
-    image: mdillon/postgis:10
+    build:
+      context: .
+      dockerfile: ./compose/production/postgres/Dockerfile
+    image: malariagen/sims-postgres
     volumes:
       - production-postgres-data:/var/lib/postgresql/data
-      - ./compose/production/postgres/initdb:/docker-entrypoint-initdb.d/
     ports:
       - 5432:5432
     env_file:
