@@ -24,40 +24,42 @@ class History():
         with self._connection:
             with self._connection.cursor() as cursor:
 
-                stmt = f"select action_id, input_value, output_value, action_date, result_code from archive where action_id like %s ESCAPE '' and output_value ->> '{record_type}_id' = %s"
+                stmt = f"select action_id, input_value, output_value, action_date, result_code, submitter from archive where action_id like %s ESCAPE '' and output_value ->> '{record_type}_id' = %s"
 
                 cursor.execute(stmt, ('%' + record_type + '%',
                                       record_id,))
 
                 for (action_id, input_value, output_value, action_date,
-                     result_code) in cursor:
+                     result_code, submitter) in cursor:
                     if action_types and action_types != 'all':
                         if not ('create' in action_id or 'update' in action_id):
-                                continue
+                            continue
                     log_item = LogItem()
                     log_item.action = action_id
                     log_item.input_value = str(input_value)
                     log_item.output_value = output_value
                     log_item.action_date = action_date
                     log_item.result = result_code
+                    log_item.submitter = submitter
                     resp.log_items.append(log_item)
 
-                stmt = "select action_id, input_value, output_value, action_date, result_code from archive where action_id = %s and input_value like %s AND result_code = 404"
+                stmt = "select action_id, input_value, output_value, action_date, result_code, submitter from archive where action_id = %s and input_value like %s AND result_code = 404"
 
                 cursor.execute(stmt, ('download_' + record_type,
                                       '%' + record_id + '%' ,))
 
                 for (action_id, input_value, output_value, action_date,
-                     result_code) in cursor:
+                     result_code, submitter) in cursor:
                     if action_types and action_types != 'all':
                         if not ('create' in action_id or 'update' in action_id):
-                                continue
+                            continue
                     log_item = LogItem()
                     log_item.action = action_id
                     log_item.input_value = str(input_value)
                     log_item.output_value = output_value
                     log_item.action_date = action_date
                     log_item.result = result_code
+                    log_item.submitter = submitter
                     resp.log_items.append(log_item)
 
 

@@ -237,21 +237,21 @@ class SetCountry(upload_ssr.Upload_SSR):
                     #The location is more specific than the country but does not have a name for
                     #that study - probably because it was unknown when added
                     self.os_processor.report('Unable to add country location attr name for study ',
-                                {'attr_source': ident.attr_source,
-                                 'identifer_value' : ident.attr_value,
-                                 'attr_type': ident.attr_type,
-                                 'study_id': original_sample.study_name,
-                                 'latitude': found.location.latitude,
-                                 'longitude': found.location.longitude,
-                                 'sampling_event_id': found.sampling_event_id
-                                })
+                                             {'attr_source': ident.attr_source,
+                                              'identifer_value' : ident.attr_value,
+                                              'attr_type': ident.attr_type,
+                                              'study_id': original_sample.study_name,
+                                              'latitude': found.location.latitude,
+                                              'longitude': found.location.longitude,
+                                              'sampling_event_id': found.sampling_event_id
+                                             })
 
         if found.location and found.proxy_location:
             if found.location.country != found.proxy_location.country:
                 self.os_processor.report_conflict(found, 'Country', found.location.country,
-                                     found.proxy_location.country,
-                                     'location and proxy location country mismatch',
-                                     values)
+                                                  found.proxy_location.country,
+                                                  'location and proxy location country mismatch',
+                                                  values)
         return found
 
 

@@ -80,6 +80,10 @@ class AssayDataProcessor(BaseEntity):
 
         #print('process_assay data {} {} {} {}'.format(samp, existing, derivative_sample, values))
 
+        user = None
+        if 'updated_by' in values:
+            user = values['updated_by']
+
         if existing:
             ret = self.merge_assay_data(existing, samp, values)
         else:
@@ -90,7 +94,7 @@ class AssayDataProcessor(BaseEntity):
             try:
                 if derivative_sample:
                     samp.derivative_sample_id = derivative_sample.derivative_sample_id
-                created = self._dao.create_assay_datum(samp)
+                created = self._dao.create_assay_datum(samp, user)
 
                 ret = created
 
@@ -109,12 +113,17 @@ class AssayDataProcessor(BaseEntity):
         if not parsed:
             return existing
 
+        user = None
+        if 'updated_by' in values:
+            user = values['updated_by']
+
         if parsed.assay_datum_id:
             #print('Merging via service {} {}'.format(existing, parsed))
             try:
 
                 ret = self._dao.merge_assay_data(existing.assay_datum_id,
-                                                      parsed.assay_datum_id)
+                                                 parsed.assay_datum_id,
+                                                 user)
 
             except ApiException as err:
                 msg = "Error updating merged assay data {} {} {} {}".format(values, parsed, existing, err)
@@ -124,15 +133,14 @@ class AssayDataProcessor(BaseEntity):
 
             return ret
 
-        existing, changed = self.merge_assay_datum_objects(existing, parsed,
-                                                              values)
+        existing, changed = self.merge_assay_datum_objects(existing, parsed, values)
         ret = existing
 
         if changed:
 
             #print("Updating {} to {}".format(parsed, existing))
             try:
-                existing = self._dao.update_assay_datum(existing.assay_datum_id, existing)
+                existing = self._dao.update_assay_datum(existing.assay_datum_id, existing, user)
             except ApiException as err:
                 msg = "Error updating merged assay data {} {} {} {}".format(values, parsed, existing, err)
                 print(msg)

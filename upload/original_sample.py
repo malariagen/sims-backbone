@@ -148,7 +148,11 @@ class OriginalSampleProcessor(BaseEntity):
                 return None
 
             try:
-                created = self._dao.create_original_sample(samp)
+
+                user = None
+                if 'updated_by' in values:
+                    user = values['updated_by']
+                created = self._dao.create_original_sample(samp, user)
 
                 ret = created
 
@@ -167,13 +171,18 @@ class OriginalSampleProcessor(BaseEntity):
         if not parsed:
             return existing
 
+        user = None
+        if 'updated_by' in values:
+            user = values['updated_by']
+
         if parsed.original_sample_id:
             #print('Merging via service {} {}'.format(existing, parsed))
             ret = existing
             try:
 
                 ret = self._dao.merge_original_samples(existing.original_sample_id,
-                                                   parsed.original_sample_id)
+                                                       parsed.original_sample_id,
+                                                       user)
 
             except ApiException as err:
                 msg = "Error updating merged original sample {} {} {} {}".format(values, parsed, existing, err)
@@ -184,14 +193,15 @@ class OriginalSampleProcessor(BaseEntity):
             return ret
 
         existing, changed = self.merge_original_sample_objects(existing, parsed,
-                                                              values)
+                                                               values)
         ret = existing
 
         if changed:
 
             #print("Updating {} to {}".format(parsed, existing))
             try:
-                existing = self._dao.update_original_sample(existing.original_sample_id, existing)
+                existing = self._dao.update_original_sample(existing.original_sample_id,
+                                                            existing, user)
             except ApiException as err:
                 msg = "Error updating merged original sample {} {} {} {}".format(values, parsed, existing, err)
                 print(msg)

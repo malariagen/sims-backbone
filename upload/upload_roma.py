@@ -113,6 +113,7 @@ class Upload_ROMA(uploader.Uploader):
             roma_manifest_id = fields['manifest']
             roma_study_id = items['samples.manifest'][roma_manifest_id]['fields']['study']
             manifest = instance + '_' + items['samples.manifest'][roma_manifest_id]['fields']['name']
+            updated_by = items['samples.manifest'][roma_manifest_id]['fields']['updated_by'][0]
             study_id = items['managements.study'][roma_study_id]['fields']['project_code'][1:]
 
             tags = {}
@@ -181,6 +182,7 @@ class Upload_ROMA(uploader.Uploader):
                     'proxy_location_name': proxy_loc_name,
                     'proxy_country': proxy_country,
                     'manifest': manifest,
+                    'updated_by': updated_by,
                     'unique_ds_id': well['well_pk_id'],
                     'plate_name': well['plate_name'],
                     'plate_position': well['plate_position']

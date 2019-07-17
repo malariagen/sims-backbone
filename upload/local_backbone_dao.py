@@ -28,9 +28,6 @@ class LocalBackboneDAO(AbstractBackboneDAO):
         self._logger = logging.getLogger(__name__)
         self._user = user
         self._auths = auths
-
-    def setup(self, config_file):
-
         self.es_api_instance = EventSetController()
         self.location_api_instance = LocationController()
         self.se_api_instance = SamplingEventController()
@@ -41,10 +38,16 @@ class LocalBackboneDAO(AbstractBackboneDAO):
         self.study_api_instance = StudyController()
         self.i_api_instance = IndividualController()
 
-    def create_event_set(self, event_set_id):
+    def setup(self, config):
+        pass
+
+    def create_event_set(self, event_set_id, user=None):
+
+        if not user:
+            user = self._user
 
         api_response, retcode = self.es_api_instance.create_event_set(
-            event_set_id, user=self._user, auths=self._auths)
+            event_set_id, user=user, auths=self._auths)
 
         if retcode >= 400:
             if retcode != 422:  # Already exists
@@ -55,10 +58,13 @@ class LocalBackboneDAO(AbstractBackboneDAO):
 
         return api_response
 
-    def delete_event_set(self, event_set_id):
+    def delete_event_set(self, event_set_id, user=None):
+
+        if not user:
+            user = self._user
 
         api_response, retcode = self.es_api_instance.delete_event_set(
-            event_set_id, user=self._user, auths=self._auths)
+            event_set_id, user=user, auths=self._auths)
 
         if retcode >= 400:
             if retcode != 422:  # Already exists
@@ -69,10 +75,14 @@ class LocalBackboneDAO(AbstractBackboneDAO):
 
         return api_response
 
-    def download_event_set(self, event_set_id, start=None, count=None):
+    def download_event_set(self, event_set_id, start=None, count=None,
+                           user=None):
+
+        if not user:
+            user = self._user
 
         api_response, retcode = self.es_api_instance.download_event_set(
-            event_set_id, start, count, user=self._user, auths=self._auths)
+            event_set_id, start, count, user=user, auths=self._auths)
 
         if retcode >= 400:
             if retcode != 422:  # Already exists
@@ -83,10 +93,13 @@ class LocalBackboneDAO(AbstractBackboneDAO):
 
         return api_response
 
-    def create_event_set_item(self, event_set_id, sampling_event_id):
+    def create_event_set_item(self, event_set_id, sampling_event_id, user=None):
+
+        if not user:
+            user = self._user
 
         ret, retcode = self.es_api_instance.create_event_set_item(
-            event_set_id, sampling_event_id, user=self._user, auths=self._auths)
+            event_set_id, sampling_event_id, user=user, auths=self._auths)
 
         if retcode >= 400:
             # Probably because it already exists
@@ -95,10 +108,13 @@ class LocalBackboneDAO(AbstractBackboneDAO):
 
         return ret
 
-    def create_location(self, location):
+    def create_location(self, location, user=None):
+
+        if not user:
+            user = self._user
 
         created, retcode = self.location_api_instance.create_location(
-            location, user=self._user, auths=self._auths)
+            location, user=user, auths=self._auths)
 
         if retcode >= 400:
             raise ApiException(http_resp=HTTPResponse(
@@ -106,10 +122,13 @@ class LocalBackboneDAO(AbstractBackboneDAO):
 
         return created
 
-    def create_sampling_event(self, sampling_event):
+    def create_sampling_event(self, sampling_event, user=None):
+
+        if not user:
+            user = self._user
 
         created, retcode = self.se_api_instance.create_sampling_event(
-            sampling_event, user=self._user, auths=self._auths)
+            sampling_event, user=user, auths=self._auths)
 
         if retcode >= 400:
             raise ApiException(http_resp=HTTPResponse(
@@ -117,19 +136,25 @@ class LocalBackboneDAO(AbstractBackboneDAO):
 
         return created
 
-    def delete_sampling_event(self, sampling_event_id):
+    def delete_sampling_event(self, sampling_event_id, user=None):
+
+        if not user:
+            user = self._user
 
         ret, retcode = self.se_api_instance.delete_sampling_event(
-            sampling_event_id, user=self._user, auths=self._auths)
+            sampling_event_id, user=user, auths=self._auths)
 
         if retcode >= 400:
             raise ApiException(http_resp=HTTPResponse(
                 body=ret, status=retcode))
 
-    def download_gps_location(self, latitude, longitude):
+    def download_gps_location(self, latitude, longitude, user=None):
+
+        if not user:
+            user = self._user
 
         ret, retcode = self.location_api_instance.download_gps_location(
-            latitude, longitude, user=self._user, auths=self._auths)
+            latitude, longitude, user=user, auths=self._auths)
 
         self._logger.debug("GET /v1/location/gps/{}/{} {}".format(latitude,
                                                                   longitude, retcode))
@@ -139,10 +164,13 @@ class LocalBackboneDAO(AbstractBackboneDAO):
 
         return ret
 
-    def download_location(self, location_id):
+    def download_location(self, location_id, user=None):
+
+        if not user:
+            user = self._user
 
         ret, retcode = self.location_api_instance.download_location(
-            location_id, user=self._user, auths=self._auths)
+            location_id, user=user, auths=self._auths)
 
         self._logger.debug("GET /v1/location/{} {}".format(location_id,
                                                            retcode))
@@ -153,11 +181,14 @@ class LocalBackboneDAO(AbstractBackboneDAO):
         return ret
 
     def download_locations_by_attr(self, attr_type, attr_value,
-                                   study_name=None):
+                                   study_name=None, user=None):
+
+        if not user:
+            user = self._user
 
         ret, retcode = self.location_api_instance.download_locations_by_attr(
             attr_type, attr_value, study_name,
-            user=self._user, auths=self._auths)
+            user=user, auths=self._auths)
 
         self._logger.debug("GET /v1/locations/attr/{}/{} {}".format(attr_type,
                                                                     attr_value,
@@ -168,10 +199,13 @@ class LocalBackboneDAO(AbstractBackboneDAO):
 
         return ret
 
-    def download_partner_location(self, partner_name):
+    def download_partner_location(self, partner_name, user=None):
+
+        if not user:
+            user = self._user
 
         ret, retcode = self.location_api_instance.download_partner_location(
-            partner_name, user=self._user, auths=self._auths)
+            partner_name, user=user, auths=self._auths)
 
         if retcode >= 400:
             raise ApiException(http_resp=HTTPResponse(
@@ -179,10 +213,13 @@ class LocalBackboneDAO(AbstractBackboneDAO):
 
         return ret
 
-    def download_sampling_event(self, sampling_event_id):
+    def download_sampling_event(self, sampling_event_id, user=None):
+
+        if not user:
+            user = self._user
 
         existing, retcode = self.se_api_instance.download_sampling_event(
-            sampling_event_id, user=self._user, auths=self._auths)
+            sampling_event_id, user=user, auths=self._auths)
 
         if retcode >= 400:
             raise ApiException(http_resp=HTTPResponse(
@@ -191,12 +228,15 @@ class LocalBackboneDAO(AbstractBackboneDAO):
         return existing
 
     def download_sampling_events_by_event_set(self, event_set_name, start=None,
-                                              count=None):
+                                              count=None, user=None):
+
+        if not user:
+            user = self._user
 
         found_events, retcode = self.se_api_instance.download_sampling_events_by_event_set(urllib.parse.quote_plus(event_set_name),
                                                                                            start,
                                                                                            count,
-                                                                                           user=self._user,
+                                                                                           user=user,
                                                                                            auths=self._auths)
 
         self._logger.debug(
@@ -207,12 +247,15 @@ class LocalBackboneDAO(AbstractBackboneDAO):
 
         return found_events
 
-    def download_sampling_events_by_attr(self, attr_type, attr_value):
+    def download_sampling_events_by_attr(self, attr_type, attr_value, user=None):
+
+        if not user:
+            user = self._user
 
         found_events, retcode = self.se_api_instance.download_sampling_events_by_attr(attr_type,
                                                                                       urllib.parse.quote_plus(
                                                                                           attr_value),
-                                                                                      user=self._user, auths=self._auths)
+                                                                                      user=user, auths=self._auths)
 
         self._logger.debug("GET /v1/samplingEvents/attr/{}/{} {}".format(attr_type,
                                                                          attr_value, retcode))
@@ -223,12 +266,15 @@ class LocalBackboneDAO(AbstractBackboneDAO):
         return found_events
 
     def download_sampling_events_by_study(self, study_name, start=None,
-                                          count=None):
+                                          count=None, user=None):
+
+        if not user:
+            user = self._user
 
         found_events, retcode = self.se_api_instance.download_sampling_events_by_study(study_name,
                                                                                        start,
                                                                                        count,
-                                                                                       user=self._user, auths=self._auths)
+                                                                                       user=user, auths=self._auths)
 
         self._logger.debug("GET /v1/samplingEvents/study/{} {}".format(study_name,
                                                                        retcode))
@@ -238,12 +284,16 @@ class LocalBackboneDAO(AbstractBackboneDAO):
 
         return found_events
 
-    def download_sampling_events_by_os_attr(self, attr_type, attr_value):
+    def download_sampling_events_by_os_attr(self, attr_type, attr_value,
+                                            user=None):
+
+        if not user:
+            user = self._user
 
         found_events, retcode = self.se_api_instance.download_sampling_events_by_os_attr(attr_type,
                                                                                          urllib.parse.quote_plus(
                                                                                              attr_value),
-                                                                                         user=self._user, auths=self._auths)
+                                                                                         user=user, auths=self._auths)
 
         self._logger.debug("GET /v1/samplingEvents/os/attr/{}/{} {}".format(attr_type,
                                                                             attr_value, retcode))
@@ -253,10 +303,13 @@ class LocalBackboneDAO(AbstractBackboneDAO):
 
         return found_events
 
-    def download_sampling_events_by_location(self, location_id):
+    def download_sampling_events_by_location(self, location_id, user=None):
+
+        if not user:
+            user = self._user
 
         found_events, retcode = self.se_api_instance.download_sampling_events_by_location(location_id, start=0, count=0,
-                                                                                          user=self._user, auths=self._auths)
+                                                                                          user=user, auths=self._auths)
 
         self._logger.debug("GET /v1/samplingEvents/location/{} {}".format(location_id,
                                                                           retcode))
@@ -266,10 +319,13 @@ class LocalBackboneDAO(AbstractBackboneDAO):
 
         return found_events
 
-    def update_location(self, location_id, location):
+    def update_location(self, location_id, location, user=None):
+
+        if not user:
+            user = self._user
 
         updated, retcode = self.location_api_instance.update_location(
-            location_id, location, user=self._user, auths=self._auths)
+            location_id, location, user=user, auths=self._auths)
 
         if retcode >= 400:
             raise ApiException(http_resp=HTTPResponse(
@@ -277,9 +333,13 @@ class LocalBackboneDAO(AbstractBackboneDAO):
 
         return updated
 
-    def update_sampling_event(self, sampling_event_id, sampling_event):
+    def update_sampling_event(self, sampling_event_id, sampling_event,
+                              user=None):
+
+        if not user:
+            user = self._user
         ret, retcode = self.se_api_instance.update_sampling_event(
-            sampling_event_id, sampling_event, user=self._user, auths=self._auths)
+            sampling_event_id, sampling_event, user=user, auths=self._auths)
 
         self._logger.debug("POST /v1/samplingEvent/{} {}".format(sampling_event_id,
                                                                  retcode))
@@ -289,9 +349,13 @@ class LocalBackboneDAO(AbstractBackboneDAO):
 
         return ret
 
-    def merge_sampling_events(self, sampling_event_id1, sampling_event_id2):
+    def merge_sampling_events(self, sampling_event_id1, sampling_event_id2,
+                              user=None):
+
+        if not user:
+            user = self._user
         ret, retcode = self.se_api_instance.merge_sampling_events(sampling_event_id1,
-                                                                  sampling_event_id2, user=self._user, auths=self._auths)
+                                                                  sampling_event_id2, user=user, auths=self._auths)
 
         self._logger.debug("PUT /v1/samplingEvent/merge/{}/{} {}".format(sampling_event_id1,
                                                                          sampling_event_id2,
@@ -302,9 +366,12 @@ class LocalBackboneDAO(AbstractBackboneDAO):
 
         return ret
 
-    def get_country_metadata(self, country_value):
+    def get_country_metadata(self, country_value, user=None):
+
+        if not user:
+            user = self._user
         metadata, retcode = self.metadata_api_instance.get_country_metadata(
-            country_value, user=self._user, auths=self._auths)
+            country_value, user=user, auths=self._auths)
 
         if retcode >= 400:
             raise ApiException(http_resp=HTTPResponse(
@@ -312,10 +379,13 @@ class LocalBackboneDAO(AbstractBackboneDAO):
 
         return metadata
 
-    def create_original_sample(self, original_sample):
+    def create_original_sample(self, original_sample, user=None):
+
+        if not user:
+            user = self._user
 
         found_events, retcode = self.os_api_instance.create_original_sample(original_sample,
-                                                                            user=self._user, auths=self._auths)
+                                                                            user=user, auths=self._auths)
 
         self._logger.debug(
             "POST /v1/originalSample {} {}".format(original_sample, retcode))
@@ -325,10 +395,14 @@ class LocalBackboneDAO(AbstractBackboneDAO):
 
         return found_events
 
-    def update_original_sample(self, original_sample_id, original_sample):
+    def update_original_sample(self, original_sample_id, original_sample,
+                               user=None):
+
+        if not user:
+            user = self._user
 
         found_events, retcode = self.os_api_instance.update_original_sample(original_sample_id, original_sample,
-                                                                            user=self._user, auths=self._auths)
+                                                                            user=user, auths=self._auths)
 
         self._logger.debug(
             "PUT /v1/originalSample/{} {} {}".format(original_sample_id, original_sample, retcode))
@@ -338,11 +412,15 @@ class LocalBackboneDAO(AbstractBackboneDAO):
 
         return found_events
 
-    def merge_original_samples(self, original_sample_id1, original_sample_id2):
+    def merge_original_samples(self, original_sample_id1, original_sample_id2,
+                              user=None):
+
+        if not user:
+            user = self._user
 
         found_events, retcode = self.os_api_instance.merge_original_samples(original_sample_id1,
                                                                             original_sample_id2,
-                                                                            user=self._user, auths=self._auths)
+                                                                            user=user, auths=self._auths)
 
         self._logger.debug("PUT /v1/originalSample/{}/{} {}".format(original_sample_id1,
                                                                     original_sample_id2, retcode))
@@ -352,10 +430,13 @@ class LocalBackboneDAO(AbstractBackboneDAO):
 
         return found_events
 
-    def delete_original_sample(self, original_sample_id):
+    def delete_original_sample(self, original_sample_id, user=None):
+
+        if not user:
+            user = self._user
 
         found_events, retcode = self.os_api_instance.delete_original_sample(original_sample_id,
-                                                                            user=self._user, auths=self._auths)
+                                                                            user=user, auths=self._auths)
 
         self._logger.debug(
             "DELETE /v1/originalSample/{}  {}".format(original_sample_id, retcode))
@@ -365,10 +446,13 @@ class LocalBackboneDAO(AbstractBackboneDAO):
 
         return found_events
 
-    def download_original_sample(self, original_sample_id):
+    def download_original_sample(self, original_sample_id, user=None):
+
+        if not user:
+            user = self._user
 
         found_events, retcode = self.os_api_instance.download_original_sample(original_sample_id,
-                                                                              user=self._user, auths=self._auths)
+                                                                              user=user, auths=self._auths)
 
         self._logger.debug("GET /v1/originalSample/{} {}".format(original_sample_id,
                                                                  retcode))
@@ -378,12 +462,16 @@ class LocalBackboneDAO(AbstractBackboneDAO):
 
         return found_events
 
-    def download_original_samples_by_attr(self, attr_type, attr_value):
+    def download_original_samples_by_attr(self, attr_type, attr_value,
+                                          user=None):
+
+        if not user:
+            user = self._user
 
         found_events, retcode = self.os_api_instance.download_original_samples_by_attr(attr_type,
                                                                                        urllib.parse.quote_plus(
                                                                                            attr_value),
-                                                                                       user=self._user, auths=self._auths)
+                                                                                       user=user, auths=self._auths)
 
         self._logger.debug("GET /v1/originalSamples/attr/{}/{} {}".format(attr_type,
                                                                           attr_value, retcode))
@@ -394,12 +482,15 @@ class LocalBackboneDAO(AbstractBackboneDAO):
         return found_events
 
     def download_original_samples_by_event_set(self, event_set_id, start=None,
-                                               count=None):
+                                               count=None, user=None):
+
+        if not user:
+            user = self._user
 
         found_events, retcode = self.os_api_instance.download_original_samples_by_event_set(urllib.parse.quote_plus(event_set_id),
                                                                                             start,
                                                                                             count,
-                                                                                            user=self._user, auths=self._auths)
+                                                                                            user=user, auths=self._auths)
 
         self._logger.debug(
             "GET /v1/originalSamples/eventSetId/{} {}".format(event_set_id, retcode))
@@ -409,12 +500,16 @@ class LocalBackboneDAO(AbstractBackboneDAO):
 
         return found_events
 
-    def download_original_samples_by_os_attr(self, attr_type, attr_value):
+    def download_original_samples_by_os_attr(self, attr_type, attr_value,
+                                             user=None):
+
+        if not user:
+            user = self._user
 
         found_events, retcode = self.os_api_instance.download_original_samples_by_os_attr(attr_type,
                                                                                           urllib.parse.quote_plus(
                                                                                               attr_value),
-                                                                                          user=self._user, auths=self._auths)
+                                                                                          user=user, auths=self._auths)
 
         self._logger.debug("GET /v1/originalSamples/os/attr/{}/{} {}".format(attr_type,
                                                                              attr_value, retcode))
@@ -424,10 +519,13 @@ class LocalBackboneDAO(AbstractBackboneDAO):
 
         return found_events
 
-    def create_derivative_sample(self, derivative_sample):
+    def create_derivative_sample(self, derivative_sample, user=None):
+
+        if not user:
+            user = self._user
 
         found_events, retcode = self.ds_api_instance.create_derivative_sample(derivative_sample,
-                                                                              user=self._user, auths=self._auths)
+                                                                              user=user, auths=self._auths)
 
         self._logger.debug(
             "POST /v1/derivativeSample {} {}".format(derivative_sample, retcode))
@@ -437,10 +535,14 @@ class LocalBackboneDAO(AbstractBackboneDAO):
 
         return found_events
 
-    def update_derivative_sample(self, derivative_sample_id, derivative_sample):
+    def update_derivative_sample(self, derivative_sample_id, derivative_sample,
+                                user=None):
+
+        if not user:
+            user = self._user
 
         found_events, retcode = self.ds_api_instance.update_derivative_sample(derivative_sample_id, derivative_sample,
-                                                                              user=self._user, auths=self._auths)
+                                                                              user=user, auths=self._auths)
 
         self._logger.debug("PUT /v1/derivativeSample/{} {} {}".format(
             derivative_sample_id, derivative_sample, retcode))
@@ -450,11 +552,15 @@ class LocalBackboneDAO(AbstractBackboneDAO):
 
         return found_events
 
-    def merge_derivative_samples(self, derivative_sample_id1, derivative_sample_id2):
+    def merge_derivative_samples(self, derivative_sample_id1,
+                                 derivative_sample_id2, user=None):
+
+        if not user:
+            user = self._user
 
         found_events, retcode = self.ds_api_instance.merge_derivative_samples(derivative_sample_id1,
                                                                               derivative_sample_id2,
-                                                                              user=self._user, auths=self._auths)
+                                                                              user=user, auths=self._auths)
 
         self._logger.debug("PUT /v1/derivativeSample/merge/{}/{} {}".format(derivative_sample_id1,
                                                                             derivative_sample_id2,
@@ -465,10 +571,13 @@ class LocalBackboneDAO(AbstractBackboneDAO):
 
         return found_events
 
-    def delete_derivative_sample(self, derivative_sample_id):
+    def delete_derivative_sample(self, derivative_sample_id, user=None):
+
+        if not user:
+            user = self._user
 
         found_events, retcode = self.ds_api_instance.delete_derivative_sample(derivative_sample_id,
-                                                                              user=self._user, auths=self._auths)
+                                                                              user=user, auths=self._auths)
 
         self._logger.debug(
             "DELETE /v1/derivativeSample/{}  {}".format(derivative_sample_id, retcode))
@@ -478,10 +587,13 @@ class LocalBackboneDAO(AbstractBackboneDAO):
 
         return found_events
 
-    def download_derivative_sample(self, derivative_sample_id):
+    def download_derivative_sample(self, derivative_sample_id, user=None):
+
+        if not user:
+            user = self._user
 
         found_events, retcode = self.ds_api_instance.download_derivative_sample(derivative_sample_id,
-                                                                                user=self._user, auths=self._auths)
+                                                                                user=user, auths=self._auths)
 
         self._logger.debug(
             "GET /v1/derivativeSample/{}  {}".format(derivative_sample_id, retcode))
@@ -491,12 +603,16 @@ class LocalBackboneDAO(AbstractBackboneDAO):
 
         return found_events
 
-    def download_derivative_samples_by_attr(self, attr_type, attr_value):
+    def download_derivative_samples_by_attr(self, attr_type, attr_value,
+                                            user=None):
+
+        if not user:
+            user = self._user
 
         found_events, retcode = self.ds_api_instance.download_derivative_samples_by_attr(attr_type,
                                                                                          urllib.parse.quote_plus(
                                                                                              attr_value),
-                                                                                         user=self._user, auths=self._auths)
+                                                                                         user=user, auths=self._auths)
 
         self._logger.debug("GET /v1/derivativeSamples/attr/{}/{} {}".format(attr_type,
                                                                             attr_value, retcode))
@@ -506,12 +622,16 @@ class LocalBackboneDAO(AbstractBackboneDAO):
 
         return found_events
 
-    def download_derivative_samples_by_os_attr(self, attr_type, attr_value):
+    def download_derivative_samples_by_os_attr(self, attr_type, attr_value,
+                                               user=None):
+
+        if not user:
+            user = self._user
 
         found_events, retcode = self.ds_api_instance.download_derivative_samples_by_os_attr(attr_type,
                                                                                             urllib.parse.quote_plus(
                                                                                                 attr_value),
-                                                                                            user=self._user, auths=self._auths)
+                                                                                            user=user, auths=self._auths)
 
         self._logger.debug("GET /v1/derivativeSamples/os/attr/{}/{} {}".format(attr_type,
                                                                                attr_value, retcode))
@@ -521,10 +641,13 @@ class LocalBackboneDAO(AbstractBackboneDAO):
 
         return found_events
 
-    def create_assay_datum(self, assay_datum):
+    def create_assay_datum(self, assay_datum, user=None):
+
+        if not user:
+            user = self._user
 
         found_events, retcode = self.ad_api_instance.create_assay_datum(assay_datum,
-                                                                        user=self._user, auths=self._auths)
+                                                                        user=user, auths=self._auths)
 
         self._logger.debug(
             "POST /v1/derivativeSample {} {}".format(assay_datum, retcode))
@@ -534,10 +657,13 @@ class LocalBackboneDAO(AbstractBackboneDAO):
 
         return found_events
 
-    def update_assay_datum(self, assay_datum_id, assay_datum):
+    def update_assay_datum(self, assay_datum_id, assay_datum, user=None):
+
+        if not user:
+            user = self._user
 
         found_events, retcode = self.ad_api_instance.update_assay_datum(assay_datum_id, assay_datum,
-                                                                        user=self._user, auths=self._auths)
+                                                                        user=user, auths=self._auths)
 
         self._logger.debug(
             "PUT /v1/derivativeSample/{} {} {}".format(assay_datum_id, assay_datum, retcode))
@@ -547,11 +673,14 @@ class LocalBackboneDAO(AbstractBackboneDAO):
 
         return found_events
 
-#    def merge_assay_data(self, assay_datum_id1, assay_datum_id2):
+#    def merge_assay_data(self, assay_datum_id1, assay_datum_id2, user=None):
+
+#    if not user:
+#        user = self._user
 #
 #        found_events, retcode = self.ad_api_instance.merge_assay_data(assay_datum_id1,
 #                                                                            assay_datum_id2,
-#                                                                                            user=self._user, auths=self._auths)
+#                                                                                            user=user, auths=self._auths)
 #
 #        self._logger.debug("PUT /v1/derivativeSample/{}/{} {} {}".format(assay_datum_id1,
 #                                                                    assay_datum_id2
@@ -561,10 +690,13 @@ class LocalBackboneDAO(AbstractBackboneDAO):
 #
 #        return found_events
 #
-    def delete_assay_datum(self, assay_datum_id):
+    def delete_assay_datum(self, assay_datum_id, user=None):
+
+        if not user:
+            user = self._user
 
         found_events, retcode = self.ad_api_instance.delete_assay_datum(assay_datum_id,
-                                                                        user=self._user, auths=self._auths)
+                                                                        user=user, auths=self._auths)
 
         self._logger.debug(
             "DELETE /v1/derivativeSample/{}  {}".format(assay_datum_id, retcode))
@@ -574,12 +706,15 @@ class LocalBackboneDAO(AbstractBackboneDAO):
 
         return found_events
 
-    def download_assay_data_by_attr(self, attr_type, attr_value):
+    def download_assay_data_by_attr(self, attr_type, attr_value, user=None):
+
+        if not user:
+            user = self._user
 
         found_events, retcode = self.ad_api_instance.download_assay_data_by_attr(attr_type,
                                                                                  urllib.parse.quote_plus(
                                                                                      attr_value),
-                                                                                 user=self._user, auths=self._auths)
+                                                                                 user=user, auths=self._auths)
 
         self._logger.debug("GET /v1/derivativeSamples/attr/{}/{} {}".format(attr_type,
                                                                             attr_value, retcode))
@@ -589,8 +724,11 @@ class LocalBackboneDAO(AbstractBackboneDAO):
 
         return found_events
 
-    def download_study(self, study_code):
-        ret_data, retcode = self.study_api_instance.download_study(study_code, user=self._user,
+    def download_study(self, study_code, user=None):
+
+        if not user:
+            user = self._user
+        ret_data, retcode = self.study_api_instance.download_study(study_code, user=user,
                                                                    auths=self._auths)
         if retcode >= 400:
             raise ApiException(http_resp=HTTPResponse(
@@ -598,8 +736,11 @@ class LocalBackboneDAO(AbstractBackboneDAO):
 
         return ret_data
 
-    def download_studies(self):
-        ret_data, retcode = self.study_api_instance.download_studies(user=self._user,
+    def download_studies(self, user=None):
+
+        if not user:
+            user = self._user
+        ret_data, retcode = self.study_api_instance.download_studies(user=user,
                                                                      auths=self._auths)
         if retcode >= 400:
             raise ApiException(http_resp=HTTPResponse(
@@ -607,9 +748,12 @@ class LocalBackboneDAO(AbstractBackboneDAO):
 
         return ret_data
 
-    def update_study(self, study_code, study_detail):
+    def update_study(self, study_code, study_detail, user=None):
+
+        if not user:
+            user = self._user
         ret_data, retcode = self.study_api_instance.update_study(study_code,
-                                                                 study_detail, user=self._user,
+                                                                 study_detail, user=user,
                                                                  auths=self._auths)
         if retcode >= 400:
             raise ApiException(http_resp=HTTPResponse(
@@ -617,10 +761,13 @@ class LocalBackboneDAO(AbstractBackboneDAO):
 
         return ret_data
 
-    def create_individual(self, individual):
+    def create_individual(self, individual, user=None):
+
+        if not user:
+            user = self._user
 
         found_events, retcode = self.i_api_instance.create_individual(individual,
-                                                                      user=self._user, auths=self._auths)
+                                                                      user=user, auths=self._auths)
 
         self._logger.debug(
             "POST /v1/individual {} {}".format(individual, retcode))
@@ -630,10 +777,13 @@ class LocalBackboneDAO(AbstractBackboneDAO):
 
         return found_events
 
-    def update_individual(self, individual_id, individual):
+    def update_individual(self, individual_id, individual, user=None):
+
+        if not user:
+            user = self._user
 
         found_events, retcode = self.i_api_instance.update_individual(individual_id, individual,
-                                                                      user=self._user, auths=self._auths)
+                                                                      user=user, auths=self._auths)
 
         self._logger.debug(
             "PUT /v1/individual/{} {} {}".format(individual_id, individual, retcode))
@@ -643,11 +793,14 @@ class LocalBackboneDAO(AbstractBackboneDAO):
 
         return found_events
 
-    def merge_individuals(self, individual_id1, individual_id2):
+    def merge_individuals(self, individual_id1, individual_id2, user=None):
+
+        if not user:
+            user = self._user
 
         found_events, retcode = self.i_api_instance.merge_individuals(individual_id1,
                                                                       individual_id2,
-                                                                      user=self._user, auths=self._auths)
+                                                                      user=user, auths=self._auths)
 
         self._logger.debug("PUT /v1/individual/{}/{} {}".format(individual_id1,
                                                                 individual_id2, retcode))
@@ -657,10 +810,13 @@ class LocalBackboneDAO(AbstractBackboneDAO):
 
         return found_events
 
-    def delete_individual(self, individual_id):
+    def delete_individual(self, individual_id, user=None):
+
+        if not user:
+            user = self._user
 
         found_events, retcode = self.i_api_instance.delete_individual(individual_id,
-                                                                      user=self._user, auths=self._auths)
+                                                                      user=user, auths=self._auths)
 
         self._logger.debug(
             "DELETE /v1/individual/{}  {}".format(individual_id, retcode))
@@ -670,10 +826,13 @@ class LocalBackboneDAO(AbstractBackboneDAO):
 
         return found_events
 
-    def download_individual(self, individual_id):
+    def download_individual(self, individual_id, user=None):
+
+        if not user:
+            user = self._user
 
         found_events, retcode = self.i_api_instance.download_individual(individual_id,
-                                                                        user=self._user, auths=self._auths)
+                                                                        user=user, auths=self._auths)
 
         self._logger.debug("GET /v1/individual/{} {}".format(individual_id,
                                                              retcode))
@@ -683,13 +842,17 @@ class LocalBackboneDAO(AbstractBackboneDAO):
 
         return found_events
 
-    def download_individuals_by_attr(self, prop_name, prop_value, study_name):
+    def download_individuals_by_attr(self, prop_name, prop_value, study_name,
+                                     user=None):
+
+        if not user:
+            user = self._user
 
         found_events, retcode = self.i_api_instance.download_individuals_by_attr(prop_name,
                                                                                  urllib.parse.quote_plus(
                                                                                      prop_value),
                                                                                  study_name,
-                                                                                 user=self._user, auths=self._auths)
+                                                                                 user=user, auths=self._auths)
 
         self._logger.debug("GET /v1/individuals/attr/{}/{} {}".format(prop_name,
                                                                       prop_value, retcode))
@@ -698,3 +861,17 @@ class LocalBackboneDAO(AbstractBackboneDAO):
                 body=found_events, status=retcode))
 
         return found_events
+
+    def download_history(self, record_type, record_id, user=None):
+        if not user:
+            user = self._user
+
+        history, retcode = self.metadata_api_instance.download_history(record_type,
+                                                                       str(record_id),
+                                                                       user=user)
+
+        if retcode >= 400:
+            raise ApiException(http_resp=HTTPResponse(
+                body=history, status=retcode))
+
+        return history

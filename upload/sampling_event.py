@@ -281,7 +281,10 @@ class SamplingEventProcessor(BaseEntity):
 
             try:
                 #print('Creating location')
-                created = self._dao.create_location(loc)
+                user = None
+                if 'updated_by' in values:
+                    user = values['updated_by']
+                created = self._dao.create_location(loc, user)
                 #print('Created location')
                 #print(created)
                 ret = created
@@ -463,8 +466,8 @@ class SamplingEventProcessor(BaseEntity):
 
                     if samp.doc != found.doc:
                         continue
-                    if samp.study_name[:4] != found.study_name[:4]:
-                        continue
+                    #if samp.study_name[:4] != found.study_name[:4]:
+                    #    continue
                     if samp.location_id != found.location_id:
                         continue
                     if proxy_loc:
@@ -578,12 +581,16 @@ class SamplingEventProcessor(BaseEntity):
 
         ret = existing
 
+        user = None
+        if 'updated_by' in values:
+            user = values['updated_by']
+
         if existing:
 
             #print("existing pre merge")
             #print(existing)
             existing, changed = self.merge_sampling_event_objects(existing, samp,
-                                                                 values)
+                                                                  values)
             #print("existing post merge")
             #print(existing)
             try:
@@ -593,10 +600,13 @@ class SamplingEventProcessor(BaseEntity):
                     existing.location = None
                     existing.proxy_location = None
                     #print("Updating {} to {}".format(orig, existing))
-                    ret = self._dao.update_sampling_event(existing.sampling_event_id, existing)
+                    ret = self._dao.update_sampling_event(existing.sampling_event_id,
+                                                          existing, user)
 
                 if not existing.event_sets or self._event_set not in existing.event_sets:
-                    self._dao.create_event_set_item(self._event_set, existing.sampling_event_id)
+                    self._dao.create_event_set_item(self._event_set,
+                                                    existing.sampling_event_id,
+                                                    user)
             except ApiException as err:
                 self.report("Error on update {}".format(str(err.body)), values)
 
@@ -608,14 +618,15 @@ class SamplingEventProcessor(BaseEntity):
             samp.proxy_location = None
 
             try:
-                created = self._dao.create_sampling_event(samp)
+                created = self._dao.create_sampling_event(samp, user)
                 #print("Sampling event created")
                 #print(values)
                 #print(created)
 
                 ret = created
 
-                self._dao.create_event_set_item(self._event_set, created.sampling_event_id)
+                self._dao.create_event_set_item(self._event_set,
+                                                created.sampling_event_id, user)
 
             except ApiException as err:
                 #print("Error adding sample {} {}".format(samp, err))

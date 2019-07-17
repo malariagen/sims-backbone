@@ -116,6 +116,10 @@ class DerivativeSampleProcessor(BaseEntity):
 
         #print('process_derivative_sample {} {} {}'.format(values, samp, existing))
 
+        user = None
+        if 'updated_by' in values:
+            user = values['updated_by']
+
         if 'sanger_lims_id' in values and values['sanger_lims_id']:
             if not existing:
                 self.report("Could not find not adding ", values)
@@ -131,7 +135,7 @@ class DerivativeSampleProcessor(BaseEntity):
             try:
                 if original_sample:
                     samp.original_sample_id = original_sample.original_sample_id
-                created = self._dao.create_derivative_sample(samp)
+                created = self._dao.create_derivative_sample(samp, user)
 
                 ret = created
 
@@ -151,12 +155,17 @@ class DerivativeSampleProcessor(BaseEntity):
         if not parsed:
             return existing
 
+        user = None
+        if 'updated_by' in values:
+            user = values['updated_by']
+
         if parsed.derivative_sample_id:
             #print('Merging via service {} {}'.format(existing, parsed))
             try:
 
                 ret = self._dao.merge_derivative_samples(existing.derivative_sample_id,
-                                                         parsed.derivative_sample_id)
+                                                         parsed.derivative_sample_id,
+                                                         user)
 
             except ApiException as err:
                 msg = "Error updating merged derivative sample {} {} {} {}".format(
@@ -176,7 +185,7 @@ class DerivativeSampleProcessor(BaseEntity):
             #print("Updating {} to {}".format(parsed, existing))
             try:
                 existing = self._dao.update_derivative_sample(
-                    existing.derivative_sample_id, existing)
+                    existing.derivative_sample_id, existing, user)
             except ApiException as err:
                 msg = "Error updating merged derivative sample {} {} {} {}".format(
                     values, parsed, existing, err)

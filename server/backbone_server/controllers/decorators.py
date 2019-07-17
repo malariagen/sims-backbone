@@ -22,12 +22,11 @@ def log_this(controller, original_function):
     def new_function(*args, **kwargs):
         log_args = args
         user = None
-        if not os.getenv('BB_NOAUTH'):
-            if 'user' in kwargs:
-                user = kwargs['user']
-            else:
-                user = args[-2]
-                log_args = args[:-2]
+        if 'user' in kwargs:
+            user = kwargs['user']
+        elif not os.getenv('BB_NOAUTH'):
+            user = args[-2]
+            log_args = args[:-2]
         func_name = sys._getframe(1).f_code.co_name
         # if kwargs is not None:
         #    for key, value in kwargs.items():

@@ -90,7 +90,12 @@ class Upload_SSR(uploader.Uploader):
                 item = self.process_item(values)
 
                 if not sheet[0].isdigit() and item:
-                    self._dao.create_event_set_item(sheet, item.sampling_event_id)
+                    try:
+                        self._dao.create_event_set_item(sheet, item.sampling_event_id)
+                    except ApiException as err:
+                        # 422 probably means already exists
+                        if err.status != 422:
+                            print(f'Failed to add event_set_item {err.body}')
 
 #                print(values)
 #                print(item)

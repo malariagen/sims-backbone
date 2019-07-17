@@ -89,6 +89,10 @@ class IndividualProcessor(BaseEntity):
 
         #print('process individual {} {} {}'.format(values, samp, existing))
 
+        user = None
+        if 'updated_by' in values:
+            user = values['updated_by']
+
         if existing:
 
             ret = self.merge_individuals(existing, samp, values)
@@ -99,7 +103,7 @@ class IndividualProcessor(BaseEntity):
                 return None
 
             try:
-                created = self._dao.create_individual(samp)
+                created = self._dao.create_individual(samp, user)
 
                 ret = created
 
@@ -118,13 +122,17 @@ class IndividualProcessor(BaseEntity):
         if not parsed:
             return existing
 
+        user = None
+        if 'updated_by' in values:
+            user = values['updated_by']
+
         if parsed.individual_id:
             #print('Merging via service {} {}'.format(existing, parsed))
             ret = existing
             try:
 
                 ret = self._dao.merge_individuals(existing.individual_id,
-                                                  parsed.individual_id)
+                                                  parsed.individual_id, user)
 
             except ApiException as err:
                 msg = "Error updating merged original sample {} {} {} {}".format(values, parsed, existing, err)
@@ -141,7 +149,8 @@ class IndividualProcessor(BaseEntity):
 
             #print("Updating {} to {}".format(parsed, existing))
             try:
-                existing = self._dao.update_individual(existing.individual_id, existing)
+                existing = self._dao.update_individual(existing.individual_id,
+                                                       existing, user)
             except ApiException as err:
                 msg = "Error updating merged original sample {} {} {} {}".format(values, parsed, existing, err)
                 self._logger.error(msg)
