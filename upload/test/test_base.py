@@ -27,6 +27,8 @@ class TestBase(unittest.TestCase):
 
 
     _api_client = None
+    _auth_token = None
+    _configuration = None
     _dao = None
 
     _config_file = '../config_dev.json'
@@ -39,20 +41,28 @@ class TestBase(unittest.TestCase):
         configuration = openapi_client.Configuration()
 
         if os.getenv('TOKEN_URL') and not os.getenv('BB_NOAUTH'):
-            try:
-                with open(self._config_file) as json_file:
-                    args = json.load(json_file)
-                    r = requests.get(os.getenv('TOKEN_URL'), args, headers = { 'service': 'http://localhost/' })
-                    at = r.text.split('=')
-                    token = at[1].split('&')[0]
-                    auth_token = token
-                configuration.access_token = auth_token
-            except FileNotFoundError as fnfe:
-                print('No config file found: {}'.format(TestBase._config_file))
-                pass
+            if TestBase._auth_token:
+                configuration.access_token = TestBase._auth_token
+            else:
+                try:
+                    with open(self._config_file) as json_file:
+                        args = json.load(json_file)
+                        r = requests.get(os.getenv('TOKEN_URL'), args, headers = { 'service': 'http://localhost/' })
+                        at = r.text.split('=')
+                        token = at[1].split('&')[0]
+                        auth_token = token
+                        if 'debug' in args:
+                            configuration.debug = args['debug']
+                    configuration.access_token = auth_token
+                    TestBase._auth_token = auth_token
+                except FileNotFoundError as fnfe:
+                    print('No config file found: {}'.format(TestBase._config_file))
+                    pass
 
         if os.getenv('REMOTE_HOST_URL'):
-          configuration.host = "http://localhost:8080/v1"
+            configuration.host = os.getenv('REMOTE_HOST_URL')
+
+        TestBase._configuration = configuration
 
         api_client = openapi_client.ApiClient(configuration)
 
@@ -65,8 +75,9 @@ class TestBase(unittest.TestCase):
         if os.getenv('LOCAL_TEST'):
             dao = LocalBackboneDAO('upload_test',
                                    [ 'cn=editor,ou=sims,ou=projects,ou=groups,dc=malariagen,dc=net'])
+        else:
+            dao.create_apis(TestBase._configuration)
 
-        dao.setup(self._config_file)
         return dao
 
     """
@@ -75,7 +86,6 @@ class TestBase(unittest.TestCase):
 
         self._api_client = TestBase.getApiClient()
         self._dao = TestBase.getDAO()
-        self._dao.setup(self._config_file)
 
     """
     """

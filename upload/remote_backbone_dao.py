@@ -27,7 +27,11 @@ class RemoteBackboneDAO(AbstractBackboneDAO):
             configuration.access_token = auth_token
 
         if os.getenv('REMOTE_HOST_URL'):
-          configuration.host = "http://localhost:8080/v1"
+            configuration.host = os.getenv('REMOTE_HOST_URL')
+
+        self.create_apis(configuration)
+
+    def create_apis(self, configuration):
 
         self.es_api_instance = openapi_client.EventSetApi(openapi_client.ApiClient(configuration))
         self.location_api_instance = openapi_client.LocationApi(openapi_client.ApiClient(configuration))
