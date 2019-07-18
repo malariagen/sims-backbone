@@ -1,4 +1,4 @@
-npm install -g @openapitools/openapi-generator-cli@cli-4.0.2 -D
+npm install -g @openapitools/openapi-generator-cli@cli-4.0.3 -D
 for i in "$@"
 do
 case $i in
@@ -26,6 +26,7 @@ then
     rm -rf server/bb_server
     mkdir -p server/bb_server
     cp -pr python-flask-server/* server/bb_server
+    cp -pr server/overlay/* server/bb_server
 fi
 if [ -n "$CLIENT_ONLY" -o -z "$SERVER_ONLY" ]
 then
