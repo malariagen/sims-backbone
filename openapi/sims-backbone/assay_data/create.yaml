@@ -4,7 +4,7 @@
       description: Create a AssayData
       operationId: createAssayDatum
       requestBody:
-        $ref: "#/components/requestBodies/AssayDatum"
+        $ref: "./sims-backbone.yaml#/components/requestBodies/AssayDatum"
         description: The assay data to create
       responses:
         "200":

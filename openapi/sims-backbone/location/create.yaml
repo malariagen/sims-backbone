@@ -4,7 +4,7 @@
       description: Create a location
       operationId: createLocation
       requestBody:
-        $ref: "#/components/requestBodies/Location"
+        $ref: "./sims-backbone.yaml#/components/requestBodies/Location"
       responses:
         "200":
           description: successful operation

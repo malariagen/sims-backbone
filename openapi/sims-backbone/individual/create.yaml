@@ -4,7 +4,7 @@
       description: Create a individual
       operationId: createIndividual
       requestBody:
-        $ref: "#/components/requestBodies/Individual"
+        $ref: "./sims-backbone.yaml#/components/requestBodies/Individual"
       responses:
         "200":
           description: successful operation

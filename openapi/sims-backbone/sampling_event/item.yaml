@@ -32,7 +32,7 @@
           schema:
             type: string
       requestBody:
-        $ref: "#/components/requestBodies/SamplingEvent"
+        $ref: "./sims-backbone.yaml#/components/requestBodies/SamplingEvent"
       responses:
         "200":
           description: successful operation
