@@ -15,6 +15,7 @@
           in: path
           description: matching value of property to search
           required: true
+          allowReserved: true
           schema:
             type: string
         - name: study_name
