@@ -17,3 +17,7 @@ typescript-angular-client/
 ?
 ?.*
 .env
+*.swagger
+*.orig
+**/log
+**/*.log
