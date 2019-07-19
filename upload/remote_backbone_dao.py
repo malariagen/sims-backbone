@@ -297,6 +297,11 @@ class RemoteBackboneDAO(AbstractBackboneDAO):
 
         return self.i_api_instance.download_individual(individual_id)
 
+    def download_individuals(self, search_filter, study_name=None, user=None):
+
+        return self.i_api_instance.download_individuals_by_attr(search_filter,
+                                                                study_name=study_name)
+
     def download_individuals_by_attr(self, prop_name, prop_value,
                                      study_name=None, user=None):
 

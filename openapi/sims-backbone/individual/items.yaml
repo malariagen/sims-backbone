@@ -5,6 +5,12 @@
       description: ""
       operationId: downloadIndividuals
       parameters:
+        - name: search_filter
+          in: query
+          description: search filter e.g. studyId:0000, attr:name:value,
+          required: true
+          schema:
+            type: string
         - name: study_name
           in: query
           description: restrict to a particular study

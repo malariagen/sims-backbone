@@ -56,10 +56,16 @@ def download_individual(individual_id, user=None, token_info=None):
                                                      individual_controller.token_info(token_info))
 
 
-def download_individuals(study_name=None, start=None, count=None, orderby=None, user=None,
-                         token_info=None):
-    """
-    fetches individuals
+def download_individuals(search_filter,
+                         study_name=None,
+                         start=None,
+                         count=None,
+                         orderby=None,
+                         user=None,
+                         token_info=None):  # noqa: E501
+    """fetches individuals
+
+     # noqa: E501
 
     :param studyName: restrict to a particular study
     :type studyName: str
@@ -72,7 +78,7 @@ def download_individuals(study_name=None, start=None, count=None, orderby=None, 
 
     :rtype: Individuals
     """
-    return individual_controller.download_individuals(study_name, start, count, orderby, user,
+    return individual_controller.download_individuals(search_filter, study_name, start, count, orderby, user,
                                                       individual_controller.token_info(token_info))
 
 

@@ -290,6 +290,10 @@ class AbstractBackboneDAO(abc.ABC):
         return self.i_api_instance.download_individual(individual_id, user=user)
 
     @abc.abstractmethod
+    def download_individuals(self, search_filter, study_name=None, user=None):
+        pass
+
+    @abc.abstractmethod
     def download_individuals_by_attr(self, prop_name, prop_value,
                                      study_name=None, user=None):
 

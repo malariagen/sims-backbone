@@ -61,9 +61,8 @@ class IndividualProcessor(BaseEntity):
                 try:
                     #print("Looking for {} {}".format(ident.attr_type, ident.attr_value))
 
-                    found_events = self._dao.download_individuals_by_attr(ident.attr_type,
-                                                                          ident.attr_value,
-                                                                          study_name=study_id)
+                    found_events = self._dao.download_individuals(f'attr:{ident.attr_type}:{ident.attr_value}',
+                                                                  study_name=study_id)
 
                     for found in found_events.individuals:
 

@@ -62,7 +62,7 @@ class LocalIndividualApi(BaseLocalApi):
 
         return self.create_response(ret, retcode, 'Individual')
 
-    def download_individuals(self, study_name=None, start=None, count=None, orderby=None):
+    def download_individuals(self, search_filter, study_name=None, start=None, count=None, orderby=None):
         """
         fetches individuals
 
@@ -77,7 +77,7 @@ class LocalIndividualApi(BaseLocalApi):
 
         :rtype: Individuals
         """
-        (ret, retcode) = self.individual_controller.download_individuals(study_name, start, count, orderby, self._user,
+        (ret, retcode) = self.individual_controller.download_individuals(search_filter, study_name, start, count, orderby, self._user,
                                                                          self.individual_controller.token_info(self.auth_tokens()))
 
         return self.create_response(ret, retcode, 'Individuals')

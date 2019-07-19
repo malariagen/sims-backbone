@@ -174,8 +174,7 @@ class SamplingEventProcessor(BaseEntity):
             if attr.attr_type == 'src_location_id':
                 #print(attr)
                 try:
-                    looked_up = self._dao.download_locations_by_attr('src_location_id',
-                                                                    attr.attr_value)
+                    looked_up = self._dao.download_locations_by_attr('src_location_id', attr.attr_value)
                     #print(looked_up)
                     if looked_up.count == 1:
                         looked_up_location = looked_up.locations[0]
@@ -405,8 +404,7 @@ class SamplingEventProcessor(BaseEntity):
 
         if 'individual_id' in values:
             try:
-                looked_up = self._dao.download_sampling_events_by_attr('individual_id',
-                                                                       values['individual_id'])
+                looked_up = self._dao.download_sampling_events(f'attr:individual_id:{values["individual_id"]}')
                 if looked_up.count > 0:
                     existing = looked_up.sampling_events[0]
             except ApiException as err:

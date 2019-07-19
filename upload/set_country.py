@@ -77,8 +77,7 @@ class SetCountry(upload_ssr.Upload_SSR):
                     'id_value': id_value
                 }
                 try:
-                    found_samples = self._dao.download_original_samples_by_attr(id_type,
-                                                               urllib.parse.quote_plus(id_value))
+                    found_samples = self._dao.download_original_samples(f'attr:{id_type}:{id_value}')
                     if found_samples:
                         for found_sample in found_samples.original_samples:
                             found_event = self._dao.download_sampling_event(found_sample.sampling_event_id)

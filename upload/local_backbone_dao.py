@@ -860,6 +860,23 @@ class LocalBackboneDAO(AbstractBackboneDAO):
 
         return found_events
 
+    def download_individuals(self, search_filter, study_name=None,
+                                     user=None):
+
+        if not user:
+            user = self._user
+
+        found_events, retcode = self.i_api_instance.download_individuals(search_filter,
+                                                                         study_name=study_name,
+                                                                         user=user, auths=self._auths)
+
+        self._logger.debug("GET /v1/individuals/{} {}".format(search_filter, retcode))
+        if retcode >= 400:
+            raise ApiException(http_resp=HTTPResponse(
+                body=found_events, status=retcode))
+
+        return found_events
+
     def download_individuals_by_attr(self, prop_name, prop_value, study_name,
                                      user=None):
 

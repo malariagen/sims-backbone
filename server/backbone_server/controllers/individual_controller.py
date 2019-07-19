@@ -96,8 +96,8 @@ class IndividualController(BaseController):
 
         return loc, retcode
 
-    def download_individuals(self, study_name=None, start=None, count=None, orderby=None, user=None,
-                             auths=None):
+    def download_individuals_by_study(self, study_name=None, start=None, count=None, orderby=None, user=None,
+                                     auths=None):
         """
         fetches individuals
 
@@ -121,6 +121,55 @@ class IndividualController(BaseController):
         loc = get.get(study_name, start, count, orderby)
 
         return loc, retcode
+
+    def download_individuals(self, search_filter, study_name=None, start=None, count=None, orderby=None, user=None,
+                             auths=None):
+        """
+        fetches individuals
+
+        :param study_name: restrict to a particular study
+        :type study_name: str
+        :param start: for pagination start the result set at a record x
+        :type start: int
+        :param count: for pagination the number of entries to return
+        :type count: int
+        :param orderby: how to order the result set
+        :type orderby: str
+
+        :rtype: Individuals
+        """
+
+        indiv = None
+        retcode = 200
+
+        search_filter = urllib.parse.unquote_plus(search_filter)
+        options = search_filter.split(':')
+        if len(options) < 2:
+            samp = 'Filter must be of the form type:arg(s)'
+            retcode = 422
+            return samp, retcode
+        search_funcs = {
+            "studyId": self.download_individuals_by_study
+        }
+        func = search_funcs.get(options[0])
+        if func:
+            return func(options[1], start, count, orderby, user, auths)
+        elif options[0] == 'attr':
+            return self.download_individuals_by_attr(options[1],
+                                                     options[2],
+                                                     study_name,
+                                                     user,
+                                                     auths)
+        elif not options[0]:
+            get = IndividualsGet(self.get_connection())
+
+
+            indiv = get.get(study_name, start, count, orderby)
+        else:
+            indiv = 'Invalid filter option'
+            retcode = 422
+
+        return indiv, retcode
 
     def download_individuals_by_attr(self, prop_name, prop_value, study_name=None, user=None, auths=None):
         """

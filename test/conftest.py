@@ -82,7 +82,8 @@ def api_factory(request, user, auths, method):
                     configuration.access_token = token
                     access_token_cache[cache_key] = token
 
-    configuration.host = "http://localhost:8080/v1"
+    if os.getenv('REMOTE_HOST_URL'):
+        configuration.host = os.getenv('REMOTE_HOST_URL')
 
     api_client = openapi_client.ApiClient(configuration)
 

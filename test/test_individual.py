@@ -151,36 +151,33 @@ class TestIndividual(TestBase):
             created = api_instance.create_individual(indiv)
             indiv1 = self.get_next_individual()
             created1 = api_instance.create_individual(indiv1)
-            looked_up_indivs = api_instance.download_individuals()
+            looked_up_indivs = api_instance.download_individuals('studyId:6003')
             assert looked_up_indivs.count == 2, 'Wrong number of individuals'
             looked_up = looked_up_indivs.individuals[0]
 
-            looked_up_indivs = api_instance.download_individuals(
-                start=0, count=1)
+            looked_up_indivs = api_instance.download_individuals('studyId:6003',
+                                                                 start=0, count=1)
             assert looked_up_indivs.count == 2, 'Wrong number of individuals'
-            assert len(
-                looked_up_indivs.individuals) == 1, 'Wrong number of individuals'
+            assert len(looked_up_indivs.individuals) == 1, 'Wrong number of individuals'
 
-            looked_up_indivs = api_instance.download_individuals(
-                study_name=indiv1.attrs[0].study_name)
-            assert looked_up_indivs.count == 2, 'Wrong number of individuals'
-            assert len(
-                looked_up_indivs.individuals) == 2, 'Wrong number of individuals'
-
-            looked_up_indivs = api_instance.download_individuals(
-                orderby='study_name')
+            looked_up_indivs = api_instance.download_individuals('studyId:6003', study_name=indiv1.attrs[0].study_name)
             assert looked_up_indivs.count == 2, 'Wrong number of individuals'
             assert len(
                 looked_up_indivs.individuals) == 2, 'Wrong number of individuals'
 
-            looked_up_indivs = api_instance.download_individuals(
-                study_name='XXXXX')
+            looked_up_indivs = api_instance.download_individuals('studyId:6003',
+                                                                 orderby='study_name')
+            assert looked_up_indivs.count == 2, 'Wrong number of individuals'
+            assert len(
+                looked_up_indivs.individuals) == 2, 'Wrong number of individuals'
+
+            looked_up_indivs = api_instance.download_individuals('studyId:XXXX')
             assert looked_up_indivs.count == 0, 'Wrong number of individuals'
             assert len(
                 looked_up_indivs.individuals) == 0, 'Wrong number of individuals'
 
-            looked_up_indivs = api_instance.download_individuals(
-                start=10, count=2)
+            looked_up_indivs = api_instance.download_individuals('studyId:6003',
+                                                                 start=10, count=2)
             assert looked_up_indivs.count == 2, 'Wrong number of individuals'
             assert len(
                 looked_up_indivs.individuals) == 0, 'Wrong number of individuals'
@@ -221,7 +218,7 @@ class TestIndividual(TestBase):
 
             if not api_factory.is_authorized(None):
                 with pytest.raises(ApiException, status=403):
-                    looked_up_indivs = api_instance.download_individuals()
+                    looked_up_indivs = api_instance.download_individuals('studyId:0000')
 
         except ApiException as error:
             self.check_api_exception(
@@ -409,7 +406,7 @@ class TestIndividual(TestBase):
 
         except ApiException as error:
             self.check_api_exception(
-                api_factory, "IndividualApi->create_individual", error)
+                api_factory, "test_merge_individual", error)
 
     """
     """
