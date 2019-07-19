@@ -149,7 +149,7 @@ class RemoteBackboneDAO(AbstractBackboneDAO):
 
         return found_events
 
-    def download_sampling_events_by_os_attr(self, attr_type, attr_value):
+    def download_sampling_events_by_os_attr(self, attr_type, attr_value, user=None):
 
         value = urllib.parse.quote_plus(attr_value)
         found_events = self.se_api_instance.download_sampling_events_by_os_attr(attr_type,
@@ -157,7 +157,13 @@ class RemoteBackboneDAO(AbstractBackboneDAO):
 
         return found_events
 
-    def download_original_samples_by_attr(self, attr_type, attr_value):
+    def download_original_samples(self, search_filter, user=None):
+
+        found_events = self.os_api_instance.download_original_samples(search_filter)
+
+        return found_events
+
+    def download_original_samples_by_attr(self, attr_type, attr_value, user=None):
 
         found_events = self.os_api_instance.download_original_samples_by_attr(attr_type,
                                                                               urllib.parse.quote_plus(attr_value))

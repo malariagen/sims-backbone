@@ -251,18 +251,28 @@ class TestROMA(TestBase):
     """
     def test_roma_os_history(self):
 
+        username = 'person1@example.org'
+
+        if TestBase.username:
+            username = TestBase.username
+
         try:
             looked_up = self._dao.download_original_samples_by_attr('roma_id', 'TST00002')
             looked_up = looked_up.original_samples[0]
             history = self._dao.download_history('original_sample',
                                                  looked_up.original_sample_id)
-            assert history.log_items[0].submitter == 'person1@example.org'
+            assert history.log_items[0].submitter == username
         except ApiException as error:
             self.fail("test_roma_os_history: Exception {}".format(error))
 
     """
     """
     def test_roma_ds_history(self):
+
+        username = 'person1@example.org'
+
+        if TestBase.username:
+            username = TestBase.username
 
         try:
             looked_up = self._dao.download_derivative_samples_by_os_attr('roma_id', 'TST00001')
@@ -271,7 +281,7 @@ class TestROMA(TestBase):
 
             history = self._dao.download_history('derivative_sample',
                                                  ds_looked_up.derivative_sample_id)
-            assert history.log_items[0].submitter == 'person1@example.org'
+            assert history.log_items[0].submitter == username
         except ApiException as error:
             self.fail("test_roma_ds_history: Exception {}".format(error))
 
@@ -279,6 +289,10 @@ class TestROMA(TestBase):
     """
     def test_roma_se_history(self):
 
+        username = 'person1@example.org'
+
+        if TestBase.username:
+            username = TestBase.username
 
         try:
             looked_up = self._dao.download_sampling_events_by_os_attr('roma_id', 'TST00001')
@@ -287,16 +301,16 @@ class TestROMA(TestBase):
 
             history = self._dao.download_history('sampling_event',
                                                  looked_up.sampling_event_id)
-            assert history.log_items[0].submitter == 'person1@example.org'
+            assert history.log_items[0].submitter == username
             assert looked_up.individual_id
 
             history = self._dao.download_history('individual',
                                                  looked_up.individual_id)
-            assert history.log_items[0].submitter == 'person1@example.org'
+            assert history.log_items[0].submitter == username
 
             history = self._dao.download_history('location',
                                                  looked_up.location_id)
-            assert history.log_items[0].submitter == 'person1@example.org'
+            assert history.log_items[0].submitter == username
 
         except ApiException as error:
             self.fail("test_roma_se_history : Exception {}".format(error))

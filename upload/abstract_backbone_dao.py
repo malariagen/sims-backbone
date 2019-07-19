@@ -181,6 +181,10 @@ class AbstractBackboneDAO(abc.ABC):
         return self.os_api_instance.download_original_sample(original_sample_id, user=user)
 
     @abc.abstractmethod
+    def download_original_samples(self, search_filter, user=None):
+        pass
+
+    @abc.abstractmethod
     def download_original_samples_by_attr(self, attr_type, attr_value, user=None):
 
         return self.os_api_instance.download_original_samples_by_attr(attr_type, attr_value, user=user)
@@ -221,7 +225,7 @@ class AbstractBackboneDAO(abc.ABC):
         return self.ds_api_instance.download_derivative_samples_by_attr(attr_type, attr_value, user=user)
 
     @abc.abstractmethod
-    def download_derivative_samples_by_attr(self, attr_type, attr_value, user=None):
+    def download_derivative_samples_by_os_attr(self, attr_type, attr_value, user=None):
 
         return self.ds_api_instance.download_derivative_samples_by_os_attr(attr_type, attr_value, user=user)
 

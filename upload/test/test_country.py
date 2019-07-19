@@ -168,8 +168,7 @@ class TestCountry(TestBase):
     def test_country_specific(self):
 
         try:
-            original_sample = self._dao.download_original_samples_by_attr('partner_id',
-                                                                          'MDG/TST_0001').original_samples[0]
+            original_sample = self._dao.download_original_samples('attr:partner_id:MDG/TST_0001').original_samples[0]
             looked_up = self._dao.download_sampling_event(original_sample.sampling_event_id)
 
             #print(looked_up)
@@ -238,8 +237,7 @@ class TestCountry(TestBase):
 
         try:
 
-            original_sample = self._dao.download_original_samples_by_attr('partner_id',
-                                                                          'MDG/TST_0004').original_samples[0]
+            original_sample = self._dao.download_original_samples('attr:partner_id:MDG/TST_0004').original_samples[0]
             looked_up = self._dao.download_sampling_event(original_sample.sampling_event_id)
 
             self.assertEqual(looked_up.proxy_location.country, 'MDG')

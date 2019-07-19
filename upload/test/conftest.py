@@ -15,7 +15,7 @@ from openapi_client.rest import ApiException
 @pytest.fixture(scope="module")
 def roma_03():
 
-    el = Upload_ROMA(None)
+    el = Upload_ROMA(TestBase._config_file)
     el.use_message_buffer = True
     el.load_data_file('roma3_dump.201903.json')
     yield el.message_buffer

@@ -462,6 +462,24 @@ class LocalBackboneDAO(AbstractBackboneDAO):
 
         return found_events
 
+    def download_original_samples(self, search_filter, start=None, count=None, user=None):
+
+        if not user:
+            user = self._user
+
+        found_events, retcode = self.os_api_instance.download_original_samples(search_filter,
+                                                                               start=start,
+                                                                               count=count,
+                                                                               user=user, auths=self._auths)
+
+        self._logger.debug(f"GET /v1/originalSamples/{search_filter} {retcode}")
+
+        if retcode >= 400:
+            raise ApiException(http_resp=HTTPResponse(
+                body=found_events, status=retcode))
+
+        return found_events
+
     def download_original_samples_by_attr(self, attr_type, attr_value,
                                           user=None):
 

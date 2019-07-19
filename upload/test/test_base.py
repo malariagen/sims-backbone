@@ -26,6 +26,7 @@ class MockResponse:
 class TestBase(unittest.TestCase):
 
 
+    username = None
     _api_client = None
     _auth_token = None
     _configuration = None
@@ -53,6 +54,9 @@ class TestBase(unittest.TestCase):
                         auth_token = token
                         if 'debug' in args:
                             configuration.debug = args['debug']
+                        if 'dao_type' in args:
+                            if args['dao_type'] == 'remote':
+                                TestBase.username = args['uid']
                     configuration.access_token = auth_token
                     TestBase._auth_token = auth_token
                 except FileNotFoundError as fnfe:
