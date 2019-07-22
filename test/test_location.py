@@ -83,7 +83,7 @@ class TestLocation(TestBase):
 
             downloaded = api_instance.download_locations_by_attr(loc.attrs[1].attr_type,
                                                     loc.attrs[1].attr_value,
-                                                    loc.attrs[1].study_name)
+                                                    study_name=loc.attrs[1].study_name)
 
             assert downloaded.count == 1
             assert downloaded.locations[0] == created
