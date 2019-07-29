@@ -6,18 +6,9 @@ import { OAuthService } from 'angular-oauth2-oidc';
 import { HttpClientModule } from '@angular/common/http';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { createOAuthServiceSpy, ActivatedRouteStub } from '../../testing/index.spec';
-import { Input, Component } from '@angular/core';
+import { MockComponent } from 'ng-mocks';
+import { OsListComponent } from '../os-list/os-list.component';
 
-@Component({
-  selector: 'sims-os-list',
-  template: ''
-})
-export class OsListComponentStub {
-  @Input() filter: string;
-  @Input() studyName: string;
-  @Input() downloadFileName: string;
-  @Input() jsonDownloadFileName: string;
-}
 describe('TaxaOsListComponent', () => {
   let component: TaxaOsListComponent;
   let fixture: ComponentFixture<TaxaOsListComponent>;
@@ -39,7 +30,7 @@ describe('TaxaOsListComponent', () => {
       ],
       declarations: [
         TaxaOsListComponent,
-        OsListComponentStub
+        MockComponent(OsListComponent)
       ],
       providers: [
         { provide: OAuthService, useValue: createOAuthServiceSpy() },

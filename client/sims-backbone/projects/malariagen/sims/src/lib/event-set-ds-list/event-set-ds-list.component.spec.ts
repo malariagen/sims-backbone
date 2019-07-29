@@ -1,23 +1,14 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { EventSetDsListComponent } from './event-set-ds-list.component';
-import { Input, Component } from '@angular/core';
 import { ActivatedRouteStub, createOAuthServiceSpy } from '../../testing/index.spec';
 import { RouterModule, ActivatedRoute } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { OAuthService } from 'angular-oauth2-oidc';
+import { MockComponent } from 'ng-mocks';
+import { DsListComponent } from '../ds-list/ds-list.component';
 
-@Component({
-  selector: 'sims-ds-list',
-  template: ''
-})
-export class DsListComponentStub {
-  @Input() filter: string;
-  @Input() studyName: string;
-  @Input() downloadFileName: string;
-  @Input() jsonDownloadFileName: string;
-}
 describe('EventSetDsListComponent', () => {
   let component: EventSetDsListComponent;
   let fixture: ComponentFixture<EventSetDsListComponent>;
@@ -39,7 +30,7 @@ describe('EventSetDsListComponent', () => {
       ],
       declarations: [
         EventSetDsListComponent,
-        DsListComponentStub
+        MockComponent(DsListComponent)
       ],
       providers: [
         { provide: OAuthService, useValue: createOAuthServiceSpy() },

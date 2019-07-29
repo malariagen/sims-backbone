@@ -1,16 +1,12 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ReportMultipleLocationGpsComponent } from './report-multiple-location-gps.component';
-import { Component, Input } from '@angular/core';
-import { Studies, ReportService } from '../typescript-angular-client';
+import { ReportService } from '../typescript-angular-client';
 import { createAuthServiceSpy, asyncData } from '../../testing/index.spec';
 import { OAuthService } from 'angular-oauth2-oidc';
 import { HttpClient } from '@angular/common/http';
-
-@Component({ selector: 'sims-studies-list', template: '' })
-class StudiesListStubComponent {
-  @Input() studies: Studies;
-}
+import { MockComponent } from 'ng-mocks';
+import { StudiesListComponent } from '../studies-list/studies-list.component';
 
 describe('ReportMultipleLocationGpsComponent', () => {
   let component: ReportMultipleLocationGpsComponent;
@@ -32,7 +28,7 @@ describe('ReportMultipleLocationGpsComponent', () => {
     TestBed.configureTestingModule({
       declarations: [
         ReportMultipleLocationGpsComponent,
-        StudiesListStubComponent
+        MockComponent(StudiesListComponent)
       ],
       providers: [
         { provide: OAuthService, useValue: authService },

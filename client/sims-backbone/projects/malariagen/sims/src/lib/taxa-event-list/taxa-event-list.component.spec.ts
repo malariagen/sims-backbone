@@ -1,19 +1,12 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { TaxaEventListComponent } from './taxa-event-list.component';
-import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { SamplingEvents, SamplingEventService } from '../typescript-angular-client';
+import { SamplingEventService } from '../typescript-angular-client';
 import { ActivatedRouteStub, asyncData, createAuthServiceSpy, ActivatedRoute } from '../../testing/index.spec';
 import { HttpClient } from '@angular/common/http';
+import { MockComponent } from 'ng-mocks';
+import { EventListComponent } from '../event-list/event-list.component';
 
-@Component({
-  selector: 'sims-event-list',
-  template: ''
-})
-export class EventListComponentStub {
-  @Input() filter: string;
-  @Input() studyName: string;
-}
 describe('TaxaEventListComponent', () => {
   let component: TaxaEventListComponent;
   let fixture: ComponentFixture<TaxaEventListComponent>;
@@ -44,7 +37,7 @@ describe('TaxaEventListComponent', () => {
     TestBed.configureTestingModule({
       declarations: [
         TaxaEventListComponent,
-        EventListComponentStub
+        MockComponent(EventListComponent)
       ],
       providers: [
         { provide: HttpClient, useValue: httpClientSpy },

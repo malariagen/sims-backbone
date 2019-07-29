@@ -1,20 +1,12 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { EventSetEventListComponent } from './event-set-event-list.component';
-import { SamplingEvents, SamplingEventService } from '../typescript-angular-client';
-import { EventEmitter, Output, Input, Component } from '@angular/core';
+import { SamplingEventService } from '../typescript-angular-client';
 import { ActivatedRouteStub, createAuthServiceSpy, ActivatedRoute } from '../../testing/index.spec';
 import { HttpClient } from '@angular/common/http';
+import { MockComponent } from 'ng-mocks';
+import { EventListComponent } from '../event-list/event-list.component';
 
-
-@Component({
-  selector: 'sims-event-list',
-  template: ''
-})
-export class EventListComponentStub {
-  @Input() eventSetName: string;
-  @Input() filter: string;
-}
 
 describe('EventSetEventListComponent', () => {
   let component: EventSetEventListComponent;
@@ -41,7 +33,7 @@ describe('EventSetEventListComponent', () => {
     TestBed.configureTestingModule({
       declarations: [
         EventSetEventListComponent,
-        EventListComponentStub
+        MockComponent(EventListComponent)
       ],
       providers: [
         { provide: HttpClient, useValue: httpClientSpy },

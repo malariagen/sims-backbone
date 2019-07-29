@@ -6,15 +6,9 @@ import { SamplingEventService, SamplingEvents, Locations } from '../typescript-a
 import { ActivatedRoute } from '@angular/router';
 import { createAuthServiceSpy, ActivatedRouteStub, asyncData } from '../../testing/index.spec';
 import { Input, Component, Output, EventEmitter } from '@angular/core';
+import { MockComponent } from 'ng-mocks';
+import { EventListComponent } from '../event-list/event-list.component';
 
-
-@Component({
-  selector: 'sims-event-list',
-  template: ''
-})
-export class EventListComponentStub {
-  @Input() filter: string;
-}
 
 describe('LocationEventListComponent', () => {
   let component: LocationEventListComponent;
@@ -45,7 +39,7 @@ describe('LocationEventListComponent', () => {
     TestBed.configureTestingModule({
       declarations: [
         LocationEventListComponent,
-        EventListComponentStub
+        MockComponent(EventListComponent)
       ],
       providers: [
         { provide: HttpClient, useValue: httpClientSpy },

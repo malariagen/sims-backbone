@@ -1,22 +1,12 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
+import { MockComponent } from 'ng-mocks';
+
 import { EventDetailComponent } from './event-detail.component';
 import { FlexLayoutModule } from '@angular/flex-layout';
-import { Component, Input } from '@angular/core';
-
-@Component({ selector: 'sims-attr-table', template: '' })
-class AttrsTableStubComponent {
-  @Input() attrs;
-}
-
-@Component({ selector: 'sims-location-view', template: '' })
-class LocationViewStubComponent {
-  @Input() location;
-}
-@Component({ selector: 'sims-individual-view', template: '' })
-class IndividualViewStubComponent {
-  @Input() individualId;
-}
+import { LocationViewComponent } from '../location-view/location-view.component';
+import { IndividualViewComponent } from '../individual-view/individual-view.component';
+import { AttrTableComponent } from '../attr-table/attr-table.component';
 
 describe('EventDetailComponent', () => {
   let component: EventDetailComponent;
@@ -27,9 +17,9 @@ describe('EventDetailComponent', () => {
       imports: [FlexLayoutModule],
       declarations: [
         EventDetailComponent,
-        AttrsTableStubComponent,
-        LocationViewStubComponent,
-        IndividualViewStubComponent
+        MockComponent(AttrTableComponent),
+        MockComponent(LocationViewComponent),
+        MockComponent(IndividualViewComponent)
       ]
     })
       .compileComponents();

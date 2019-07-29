@@ -1,19 +1,11 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { StudyEventListComponent } from './study-event-list.component';
-import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { ActivatedRouteStub, asyncData, createAuthServiceSpy, ActivatedRoute } from '../../testing/index.spec';
-import { SamplingEventService, SamplingEvents } from '../typescript-angular-client';
+import { SamplingEventService } from '../typescript-angular-client';
 import { HttpClient } from '@angular/common/http';
-
-@Component({
-  selector: 'sims-event-list',
-  template: ''
-})
-export class EventListComponentStub {
-  @Input() filter: string;
-  @Input() studyName: string;
-}
+import { MockComponent } from 'ng-mocks';
+import { EventListComponent } from '../event-list/event-list.component';
 
 describe('StudyEventListComponent', () => {
   let component: StudyEventListComponent;
@@ -29,15 +21,15 @@ describe('StudyEventListComponent', () => {
 
     activatedRoute = new ActivatedRouteStub();
 
-    activatedRoute.setParamMap({ 
+    activatedRoute.setParamMap({
       latitude: '0',
       longitude: '0'
-     });
+    });
 
     httpClientSpy = jasmine.createSpyObj('HttpClient', ['get']);
 
     httpClientSpy.get.and.returnValue(asyncData({ count: 0, locations: [] }));
-    
+
     samplingEventService = new SamplingEventService(<any>httpClientSpy,
       '',
       createAuthServiceSpy().getConfiguration());
@@ -45,7 +37,7 @@ describe('StudyEventListComponent', () => {
     TestBed.configureTestingModule({
       declarations: [
         StudyEventListComponent,
-        EventListComponentStub
+        MockComponent(EventListComponent)
       ],
       providers: [
         { provide: HttpClient, useValue: httpClientSpy },

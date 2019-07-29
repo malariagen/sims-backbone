@@ -2,12 +2,9 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { FlexLayoutModule } from '@angular/flex-layout';
 
 import { AdDetailComponent } from './ad-detail.component';
-import { Component, Input } from '@angular/core';
+import { MockComponent } from 'ng-mocks';
+import { AttrTableComponent } from '../attr-table/attr-table.component';
 
-@Component({ selector: 'sims-attr-table', template: '' })
-class AttrsTableStubComponent {
-  @Input() attrs;
-}
 describe('AdDetailComponent', () => {
   let component: AdDetailComponent;
   let fixture: ComponentFixture<AdDetailComponent>;
@@ -15,9 +12,12 @@ describe('AdDetailComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [FlexLayoutModule],
-      declarations: [ AdDetailComponent, AttrsTableStubComponent ]
+      declarations: [
+        AdDetailComponent,
+        MockComponent(AttrTableComponent)
+      ]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {

@@ -1,28 +1,17 @@
 import { async, ComponentFixture, TestBed, inject } from '@angular/core/testing';
 
 import { StudyEditComponent } from './study-edit.component';
-import { ReactiveFormsModule, FormGroup } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
 import { MatFormField } from '@angular/material';
-import { Input, Component } from '@angular/core';
-import { Taxonomy, StudyService, MetadataService, Study, PartnerSpecies, Taxonomies } from '../typescript-angular-client';
-import { RouterTestingModule } from '@angular/router/testing';
-import { createAuthServiceSpy, asyncData, ActivatedRouteStub, createOAuthServiceSpy, ActivatedRoute } from '../../testing/index.spec';
+import { Taxonomy, Study, PartnerSpecies, Taxonomies } from '../typescript-angular-client';
+import { createAuthServiceSpy, ActivatedRouteStub, createOAuthServiceSpy, ActivatedRoute } from '../../testing/index.spec';
 import { OAuthService } from 'angular-oauth2-oidc';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 import { HttpTestingController, HttpClientTestingModule } from '@angular/common/http/testing';
 import {ObserversModule} from '@angular/cdk/observers';
-
-@Component({
-  selector: 'sims-taxonomy-edit',
-  template: ''
-})
-export class TaxonomyEditComponentStub {
-
-  @Input('group') group: FormGroup;
-
-  @Input('taxonomies') taxonomies: Taxonomy[];
-}
+import { MockComponent } from 'ng-mocks';
+import { TaxonomyEditComponent } from '../taxonomy-edit/taxonomy-edit.component';
 
 describe('StudyEditComponent', () => {
   let component: StudyEditComponent;
@@ -54,7 +43,7 @@ describe('StudyEditComponent', () => {
       ],
       declarations: [
         StudyEditComponent,
-        TaxonomyEditComponentStub,
+        MockComponent(TaxonomyEditComponent),
         MatFormField
       ],
       providers: [

@@ -1,50 +1,23 @@
 import { async, ComponentFixture, TestBed, inject } from '@angular/core/testing';
 
 import { LocationEditComponent } from './location-edit.component';
-import { Component, Input } from '@angular/core';
-import { Location, Locations, LocationService, Attr } from '../typescript-angular-client';
+import { Location, LocationService, Attr } from '../typescript-angular-client';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { createAuthServiceSpy, createOAuthServiceSpy, ActivatedRouteStub } from '../../testing/index.spec';
+import { createOAuthServiceSpy, ActivatedRouteStub } from '../../testing/index.spec';
 import { RouterModule, ActivatedRoute } from '@angular/router';
 import { MatFormField } from '@angular/material';
 import { HttpTestingController } from '@angular/common/http/testing';
 import { OAuthService } from 'angular-oauth2-oidc';
-import { MapsAPILoader } from '@agm/core';
+import { MapsAPILoader, AgmMap, AgmMarker, AgmPolygon } from '@agm/core';
 import {ObserversModule} from '@angular/cdk/observers';
 
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { SimsModuleConfig, SIMS_MODULE_CONFIG } from '../sims.module.config';
-
-@Component({ selector: 'sims-locations-map', template: '' })
-class LocationsMapStubComponent {
-  @Input() locations: Locations;
-  @Input() polygon: any;
-  @Input() zoom: number;
-}
-
-@Component({ selector: 'sims-attr-table', template: '' })
-class AttrsTableStubComponent {
-  @Input() attrs;
-}
-
-@Component({ selector: 'agm-map', template: '' })
-class AgmMapStubComponent {
-  @Input() latitude: number;
-  @Input() longitude: number;
-  @Input() zoom: number;
-}
-
-@Component({ selector: 'agm-marker', template: '' })
-class AgmMarkerStubComponent {
-  @Input() latitude: number;
-  @Input() longitude: number;
-}
-
-@Component({ selector: 'agm-polygon', template: '' })
-class AgmPolygonStubComponent {
-  @Input() paths;
-}
+import { MockComponent } from 'ng-mocks';
+import { LocationEventListComponent } from '../location-event-list/location-event-list.component';
+import { AttrTableComponent } from '../attr-table/attr-table.component';
+import { LocationsMapComponent } from '../locations-map/locations-map.component';
 
 
 describe('LocationEditComponent', () => {
@@ -74,12 +47,13 @@ describe('LocationEditComponent', () => {
       ],
       declarations: [
         LocationEditComponent,
-        LocationsMapStubComponent,
-        AttrsTableStubComponent,
-        AgmMapStubComponent,
-        AgmMarkerStubComponent,
-        AgmPolygonStubComponent,
-        MatFormField
+        MatFormField,
+        MockComponent(LocationEventListComponent),
+        MockComponent(LocationsMapComponent),
+        MockComponent(AttrTableComponent),
+        MockComponent(AgmMap),
+        MockComponent(AgmMarker),
+        MockComponent(AgmPolygon)
       ],
       providers: [
         { provide: OAuthService, useValue: createOAuthServiceSpy() },

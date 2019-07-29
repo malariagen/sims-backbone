@@ -2,36 +2,24 @@
 import { async, ComponentFixture, TestBed, inject } from '@angular/core/testing';
 
 import { EventListComponent } from './event-list.component';
-import { Component, Input } from '@angular/core';
 import {
-  MatProgressBar, MatTable, MatColumnDef, MatHeaderCell, MatCellDef,
-  MatHeaderCellDef, MatHeaderRowDef, MatHeaderRow, MatRow, MatRowDef,
-  MatCell, MatDialogModule, MatSelect, MatTableModule, MatPaginator, MatOptionModule, MatFormFieldModule, MatTooltipModule, MatPaginatorModule
+  MatProgressBar, MatDialogModule, MatTableModule, MatOptionModule, MatFormFieldModule, MatTooltipModule, MatPaginatorModule
 } from '@angular/material';
 import { OverlayModule } from '@angular/cdk/overlay';
-import { SamplingEvents, SamplingEventService, SamplingEvent } from '../typescript-angular-client';
+import { SamplingEventService  } from '../typescript-angular-client';
 import { SamplingEventDisplayPipe } from '../sampling-event-display.pipe';
 import { SamplingEventsService } from '../sampling-events.service';
-import { HttpBackend, HttpClient, HttpClientModule } from '@angular/common/http';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { OAuthService } from 'angular-oauth2-oidc';
 
-import { createAuthServiceSpy, ActivatedRouteStub, asyncData, createOAuthServiceSpy, getTestSamplingEvents } from '../../testing/index.spec';
+import { createOAuthServiceSpy, getTestSamplingEvents } from '../../testing/index.spec';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { MockComponent } from 'ng-mocks';
+import { DownloaderCsvComponent } from '../downloader-csv/downloader-csv.component';
+import { DownloaderJsonComponent } from '../downloader-json/downloader-json.component';
 
 
-@Component({ selector: 'sims-downloader-csv', template: '' })
-class DownloaderCsvStubComponent {
-  @Input() filter;
-  @Input() fileName;
-  @Input() headers;
-}
-
-@Component({ selector: 'sims-downloader-json', template: '' })
-class DownloaderJsonStubComponent {
-  @Input() filter;
-  @Input() fileName;
-}
 
 describe('EventListComponent', () => {
   let component: EventListComponent;
@@ -61,10 +49,10 @@ describe('EventListComponent', () => {
       ],
       declarations: [
         EventListComponent,
-        DownloaderCsvStubComponent,
-        DownloaderJsonStubComponent,
         MatProgressBar,
         SamplingEventDisplayPipe,
+        MockComponent(DownloaderCsvComponent),
+        MockComponent(DownloaderJsonComponent)
 
       ],
       providers: [

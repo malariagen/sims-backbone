@@ -68,23 +68,23 @@ export class EventSetEditComponent implements OnInit {
     // console.log("Submitting:" + JSON.stringify(value));
     this.eventSetService.updateEventSet(value.event_set_name, value)
       .subscribe(
-      (x) => {
-        // console.log("Submitted");
-      },
-      (e) => {
-        // console.log(e);
-        const dialogRef = this.dialog.open(ErrorDialogComponent, {
-          width: '250px',
-          data: { name: 'Error on save', message: e.message }
-        });
+        (x) => {
+          // console.log("Submitted");
+        },
+        (e) => {
+          // console.log(e);
+          const dialogRef = this.dialog.open(ErrorDialogComponent, {
+            width: '250px',
+            data: { name: 'Error on save', message: e.message }
+          });
 
-        dialogRef.afterClosed().subscribe(result => {
-          // console.log('The dialog was closed');
-        });
-      },
-      () => {
-        // console.log('Completed update.');
-      }
+          dialogRef.afterClosed().subscribe(result => {
+            // console.log('The dialog was closed');
+          });
+        },
+        () => {
+          // console.log('Completed update.');
+        }
       );
   }
 

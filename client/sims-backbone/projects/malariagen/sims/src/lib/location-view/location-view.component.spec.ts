@@ -5,18 +5,9 @@ import { RouterTestingModule } from '@angular/router/testing';
 
 import { Component, Input } from '@angular/core';
 import { Location, Locations } from '../typescript-angular-client';
-
-@Component({ selector: 'sims-locations-map', template: '' })
-class LocationsMapStubComponent {
-  @Input() locations: Locations;
-  @Input() polygon: any;
-  @Input() zoom: number;
-}
-
-@Component({ selector: 'sims-attr-table', template: '' })
-class AttrsTableStubComponent {
-  @Input() attrs;
-}
+import { MockComponent } from 'ng-mocks';
+import { AttrTableComponent } from '../attr-table/attr-table.component';
+import { LocationsMapComponent } from '../locations-map/locations-map.component';
 
 describe('LocationViewComponent', () => {
   let component: LocationViewComponent;
@@ -30,8 +21,8 @@ describe('LocationViewComponent', () => {
       ],
       declarations: [ 
         LocationViewComponent,
-        LocationsMapStubComponent,
-        AttrsTableStubComponent
+        MockComponent(LocationsMapComponent),
+        MockComponent(AttrTableComponent)
       ],
       providers: [
       ]

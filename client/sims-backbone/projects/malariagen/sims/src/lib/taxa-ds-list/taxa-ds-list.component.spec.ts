@@ -1,23 +1,15 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { TaxaDsListComponent } from './taxa-ds-list.component';
-import { Component, Input } from '@angular/core';
 import { ActivatedRouteStub, createOAuthServiceSpy } from '../../testing/index.spec';
 import { RouterModule, ActivatedRoute } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { OAuthService } from 'angular-oauth2-oidc';
+import { DsListComponent } from '../ds-list/ds-list.component';
+import { MockComponent } from 'ng-mocks';
 
-@Component({
-  selector: 'sims-ds-list',
-  template: ''
-})
-export class DsListComponentStub {
-  @Input() filter: string;
-  @Input() studyName: string;
-  @Input() downloadFileName: string;
-  @Input() jsonDownloadFileName: string;
-}
+
 describe('TaxaDsListComponent', () => {
   let component: TaxaDsListComponent;
   let fixture: ComponentFixture<TaxaDsListComponent>;
@@ -39,7 +31,7 @@ describe('TaxaDsListComponent', () => {
       ],
       declarations: [
         TaxaDsListComponent,
-        DsListComponentStub
+        MockComponent(DsListComponent)
       ],
       providers: [
         { provide: OAuthService, useValue: createOAuthServiceSpy() },

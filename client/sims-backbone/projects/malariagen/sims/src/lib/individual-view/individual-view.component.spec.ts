@@ -3,14 +3,11 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { FlexLayoutModule } from '@angular/flex-layout';
 
 import { IndividualViewComponent } from './individual-view.component';
-import { Component, Input } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { MockComponent } from 'ng-mocks';
+import { AttrTableComponent } from '../attr-table/attr-table.component';
 
-@Component({ selector: 'sims-attr-table', template: '' })
-class AttrsTableStubComponent {
-  @Input() attrs;
-}
 describe('IndividualViewComponent', () => {
   let component: IndividualViewComponent;
   let fixture: ComponentFixture<IndividualViewComponent>;
@@ -24,7 +21,7 @@ describe('IndividualViewComponent', () => {
       ],
       declarations: [
         IndividualViewComponent,
-        AttrsTableStubComponent
+        MockComponent(AttrTableComponent)
       ]
     })
       .compileComponents();

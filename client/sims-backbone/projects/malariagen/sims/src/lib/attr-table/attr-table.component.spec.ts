@@ -1,17 +1,11 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
+import { MockComponent } from 'ng-mocks';
+
 import { AttrTableComponent } from './attr-table.component';
 import { MatTableModule } from '@angular/material';
 import { RouterModule } from '@angular/router';
-import { Component, Input } from '@angular/core';
-import { Locations } from '../typescript-angular-client';
-
-@Component({ selector: 'sims-locations-map', template: '' })
-class LocationsMapStubComponent {
-  @Input() locations: Locations;
-  @Input() polygon: any;
-  @Input() zoom: number;
-}
+import { LocationsMapComponent } from '../locations-map/locations-map.component';
 
 describe('AttrTableComponent', () => {
   let component: AttrTableComponent;
@@ -25,8 +19,7 @@ describe('AttrTableComponent', () => {
       ],
       declarations: [ 
         AttrTableComponent,
-        LocationsMapStubComponent
-        
+        MockComponent(LocationsMapComponent)
        ]
     })
     .compileComponents();

@@ -8,16 +8,10 @@ import { AllLocationsMapComponent } from './all-locations-map.component';
 import { of } from 'rxjs/observable/of';
 
 import { OAuthService } from 'angular-oauth2-oidc';
-import { LocationService, Locations } from '../typescript-angular-client';
-import { Component, Input } from '@angular/core';
+import { LocationService } from '../typescript-angular-client';
 import { HttpClient } from '@angular/common/http';
-
-@Component({ selector: 'sims-locations-map', template: '' })
-class LocationsMapStubComponent {
-  @Input() locations: Locations;
-  @Input() polygon: any;
-  @Input() zoom: number;
-}
+import { MockComponent } from 'ng-mocks';
+import { LocationsMapComponent } from '../locations-map/locations-map.component';
 
 describe('AllLocationsMapComponent', () => {
   let component: AllLocationsMapComponent;
@@ -31,10 +25,13 @@ describe('AllLocationsMapComponent', () => {
 
     httpClientSpy = jasmine.createSpyObj('HttpClient', ['get']);
     locationService = new LocationService(<any>httpClientSpy, '', authService.getConfiguration());
-    
+
 
     TestBed.configureTestingModule({
-      declarations: [AllLocationsMapComponent, LocationsMapStubComponent],
+      declarations: [
+        AllLocationsMapComponent,
+        MockComponent(LocationsMapComponent)
+      ],
       providers: [
         { provide: OAuthService, useValue: authService },
         { provide: HttpClient, useValue: httpClientSpy },
@@ -43,7 +40,7 @@ describe('AllLocationsMapComponent', () => {
     })
       .compileComponents();
 
-    httpClientSpy.get.and.returnValue(asyncData({ count: 0, locations: []}));
+    httpClientSpy.get.and.returnValue(asyncData({ count: 0, locations: [] }));
 
   }));
 

@@ -1,7 +1,6 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { OsListComponent } from './os-list.component';
-import { Component, Input } from '@angular/core';
 import { OriginalSampleDisplayPipe } from '../original-sample-display.pipe';
 import { OriginalSamplesService } from '../original-samples.service';
 import { OriginalSampleService } from '../typescript-angular-client';
@@ -12,19 +11,9 @@ import { MatTableModule, MatOptionModule, MatPaginatorModule, MatFormFieldModule
 import { HttpClientModule } from '@angular/common/http';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-
-@Component({ selector: 'sims-downloader-os-csv', template: '' })
-class DownloaderOsCsvStubComponent {
-  @Input() filter;
-  @Input() fileName;
-  @Input() headers;
-}
-
-@Component({ selector: 'sims-downloader-os-json', template: '' })
-class DownloaderOsJsonStubComponent {
-  @Input() filter;
-  @Input() fileName;
-}
+import { MockComponent } from 'ng-mocks';
+import { DownloaderOsCsvComponent } from '../downloader-os-csv/downloader-os-csv.component';
+import { DownloaderOsJsonComponent } from '../downloader-os-json/downloader-os-json.component';
 
 describe('OsListComponent', () => {
   let component: OsListComponent;
@@ -45,8 +34,8 @@ describe('OsListComponent', () => {
       ],
       declarations: [ 
         OsListComponent,
-        DownloaderOsCsvStubComponent,
-        DownloaderOsJsonStubComponent,
+        MockComponent(DownloaderOsCsvComponent),
+        MockComponent(DownloaderOsJsonComponent),
         OriginalSampleDisplayPipe, 
       ],
       providers: [

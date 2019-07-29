@@ -1,20 +1,14 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { Studies } from '../typescript-angular-client/model/studies';
-
 import { asyncData } from '../../testing/index.spec';
 
 import { AllStudiesListComponent } from './all-studies-list.component';
 import { StudyService } from '../typescript-angular-client';
-import { Component, Input } from '@angular/core';
 import { OAuthService } from 'angular-oauth2-oidc';
 import { HttpClient } from '@angular/common/http';
 import { of } from 'rxjs/observable/of';
-
-@Component({ selector: 'sims-studies-list', template: '' })
-class StudiesListStubComponent {
-  @Input() studies: Studies;
-}
+import { MockComponent } from 'ng-mocks';
+import { StudiesListComponent } from '../studies-list/studies-list.component';
 
 describe('AllStudiesListComponent', () => {
   let component: AllStudiesListComponent;
@@ -36,7 +30,7 @@ describe('AllStudiesListComponent', () => {
     TestBed.configureTestingModule({
       declarations: [
         AllStudiesListComponent,
-        StudiesListStubComponent
+        MockComponent(StudiesListComponent)
       ],
       providers: [
         { provide: OAuthService, useValue: authService },

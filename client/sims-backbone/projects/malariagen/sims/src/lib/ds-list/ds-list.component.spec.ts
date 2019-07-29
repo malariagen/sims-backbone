@@ -1,7 +1,6 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { DsListComponent } from './ds-list.component';
-import { Component, Input } from '@angular/core';
 import { OverlayModule } from '@angular/cdk/overlay';
 import { MatTableModule, MatTooltipModule, MatPaginatorModule } from '@angular/material';
 import { HttpClientModule } from '@angular/common/http';
@@ -12,19 +11,9 @@ import { createOAuthServiceSpy } from '../../testing/index.spec';
 import { DerivativeSampleService } from '../typescript-angular-client';
 import { OAuthService } from 'angular-oauth2-oidc';
 import { DerivativeSamplesService } from '../derivative-samples.service';
-
-@Component({ selector: 'sims-downloader-ds-csv', template: '' })
-class DownloaderDsCsvStubComponent {
-  @Input() filter;
-  @Input() fileName;
-  @Input() headers;
-}
-
-@Component({ selector: 'sims-downloader-ds-json', template: '' })
-class DownloaderDsJsonStubComponent {
-  @Input() filter;
-  @Input() fileName;
-}
+import { MockComponent } from 'ng-mocks';
+import { DownloaderDsCsvComponent } from '../downloader-ds-csv/downloader-ds-csv.component';
+import { DownloaderDsJsonComponent } from '../downloader-ds-json/downloader-ds-json.component';
 
 describe('DsListComponent', () => {
   let component: DsListComponent;
@@ -42,8 +31,8 @@ describe('DsListComponent', () => {
     ],
     declarations: [ 
       DsListComponent,
-      DownloaderDsCsvStubComponent,
-      DownloaderDsJsonStubComponent,
+      MockComponent(DownloaderDsCsvComponent),
+      MockComponent(DownloaderDsJsonComponent),
       DerivativeSampleDisplayPipe, 
     ],
     providers: [

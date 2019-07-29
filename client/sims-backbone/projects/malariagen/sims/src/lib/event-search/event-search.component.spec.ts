@@ -1,28 +1,13 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { EventSearchComponent } from './event-search.component';
-import { MatSelect, MatOption, MatInput, MatLabel, MatInputModule, MatSelectModule } from '@angular/material';
-import { Component, Input } from '@angular/core';
-import { SamplingEvents, OriginalSamples, DerivativeSamples, AssayData } from '../typescript-angular-client';
+import { MatInputModule, MatSelectModule } from '@angular/material';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { asyncData } from '../../testing/index.spec';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-
-@Component({ selector: 'sims-sample-overview', template: '' })
-class SampleOverviewStubComponent {
-  
-  @Input() redraw: number;
-  
-  @Input() assayData: AssayData;
-
-  @Input() derivativeSamples: DerivativeSamples;
-
-  @Input() originalSamples: OriginalSamples;
-
-  @Input() samplingEvents: SamplingEvents;
-
-}
+import { MockComponent } from 'ng-mocks';
+import { SampleOverviewComponent } from '../sample-overview/sample-overview.component';
 
 describe('EventSearchComponent', () => {
   let component: EventSearchComponent;
@@ -45,7 +30,7 @@ describe('EventSearchComponent', () => {
       ],
       declarations: [
         EventSearchComponent,
-        SampleOverviewStubComponent
+        MockComponent(SampleOverviewComponent)
       ],
       providers: [
         { provide: HttpClient, useValue: httpClientSpy },

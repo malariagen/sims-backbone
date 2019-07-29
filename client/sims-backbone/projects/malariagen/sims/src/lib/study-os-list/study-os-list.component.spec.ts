@@ -1,23 +1,14 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { StudyOsListComponent } from './study-os-list.component';
-import { Component, Input } from '@angular/core';
 import { ActivatedRouteStub, createOAuthServiceSpy } from '../../testing/index.spec';
 import { RouterModule, ActivatedRoute } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { OAuthService } from 'angular-oauth2-oidc';
+import { MockComponent } from 'ng-mocks';
+import { OsListComponent } from '../os-list/os-list.component';
 
-@Component({
-  selector: 'sims-os-list',
-  template: ''
-})
-export class OsListComponentStub {
-  @Input() filter: string;
-  @Input() studyName: string;
-  @Input() downloadFileName: string;
-  @Input() jsonDownloadFileName: string;
-}
 describe('StudyOsListComponent', () => {
   let component: StudyOsListComponent;
   let fixture: ComponentFixture<StudyOsListComponent>;
@@ -39,7 +30,7 @@ describe('StudyOsListComponent', () => {
       ],
       declarations: [
         StudyOsListComponent,
-        OsListComponentStub
+        MockComponent(OsListComponent)
       ],
       providers: [
         { provide: OAuthService, useValue: createOAuthServiceSpy() },

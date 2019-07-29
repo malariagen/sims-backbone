@@ -4,16 +4,8 @@ import { OriginalSamplesService } from './original-samples.service';
 import { OriginalSampleService } from './typescript-angular-client';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { HttpClientModule } from '@angular/common/http';
-import { Input, Component } from '@angular/core';
-
-@Component({
-  selector: 'sims-os-list',
-  template: ''
-})
-export class OriginalSampleListComponentStub {
-  @Input() filter: string;
-  @Input() studyName: string;
-}
+import { MockComponent } from 'ng-mocks';
+import { OsListComponent } from './os-list/os-list.component';
 
 describe('OriginalSamplesService', () => {
   beforeEach(() => {
@@ -27,7 +19,7 @@ describe('OriginalSamplesService', () => {
         OriginalSampleService
       ],
       declarations: [
-        OriginalSampleListComponentStub
+        MockComponent(OsListComponent)
       ]
     });
   });
