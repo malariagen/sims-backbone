@@ -49,7 +49,7 @@ export class DownloaderOsJsonComponent implements CollectionViewer {
         console.log(msg);
       },
       complete() {
-        console.log('complete');
+        //console.log('complete');
       }
     });
 

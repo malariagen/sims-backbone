@@ -15,7 +15,9 @@ export class DerivativeSampleDisplayPipe implements PipeTransform {
     } else if (key === 'original_sample_id') {
       return value.original_sample_id
     } else if (key === 'partner_species') {
-      ret = originalSample.partner_species;
+      if (originalSample) {
+        ret = originalSample.partner_species;
+      }
     } else if (key === 'dna_prep') {
       ret = value.dna_prep
     } else {

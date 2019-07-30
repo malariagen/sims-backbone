@@ -49,7 +49,7 @@ export class DownloaderDsCsvComponent implements CollectionViewer {
         console.log(msg);
       },
       complete() {
-        console.log('complete');
+       // console.log('complete');
       }
     });
 
