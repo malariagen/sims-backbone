@@ -59,3 +59,31 @@ class LocalReportApi(BaseLocalApi):
 
         return self.create_response(ret, retcode, 'Studies')
 
+
+    def multiple_location_gps(self):  # noqa: E501
+        """fetches studies with multiple_location_gps locations
+
+         # noqa: E501
+
+
+        :rtype: Studies
+        """
+        (ret, retcode) = self.report_controller.multiple_location_gps(self._user,
+                                                   self.report_controller.token_info(self.auth_tokens()))
+
+        return self.create_response(ret, retcode, 'Studies')
+
+
+    def multiple_location_names(self):  # noqa: E501
+        """fetches studies with multiple_location_names locations
+
+         # noqa: E501
+
+
+        :rtype: Studies
+        """
+        (ret, retcode) = self.report_controller.multiple_location_names(self._user,
+                                                   self.report_controller.token_info(self.auth_tokens()))
+
+        return self.create_response(ret, retcode, 'Studies')
+

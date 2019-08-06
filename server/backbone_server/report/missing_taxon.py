@@ -1,4 +1,3 @@
-
 import logging
 
 from openapi_server.models.studies import Studies
@@ -14,14 +13,14 @@ class MissingTaxon():
 
     def get(self):
 
-        response = Studies([],0)
+        response = Studies([], 0)
 
         with self._connection:
             with self._connection.cursor() as cursor:
 
-                stmt = '''select distinct study_name from partner_species_identifiers 
-                LEFT JOIN taxonomy_identifiers ON taxonomy_identifiers.partner_species_id = partner_species_identifiers.id 
-                JOIN studies ON studies.id=study_id 
+                stmt = '''select distinct study_name from partner_species_identifiers
+                LEFT JOIN taxonomy_identifiers ON taxonomy_identifiers.partner_species_id = partner_species_identifiers.id
+                JOIN studies ON studies.id=study_id
                 WHERE taxonomy_id IS NULL ORDER BY study_name'''
 
                 cursor.execute(stmt)

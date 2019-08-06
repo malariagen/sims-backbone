@@ -19,8 +19,9 @@ class MissingLocations():
         with self._connection:
             with self._connection.cursor() as cursor:
 
-                stmt = '''select distinct study_code, accuracy FROM sampling_events 
-                LEFT JOIN studies ON studies.id = study_id
+                stmt = '''select distinct study_code, accuracy FROM sampling_events se
+                LEFT JOIN original_samples os ON os.sampling_event_id = se.id
+                LEFT JOIN studies ON studies.id = os.study_id
                 LEFT JOIN locations ON locations.id = location_id
                 WHERE location_id IS NULL OR locations.accuracy = 'country';'''
 

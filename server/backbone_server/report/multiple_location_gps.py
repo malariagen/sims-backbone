@@ -21,11 +21,12 @@ class MultipleLocationGPS():
 
                 #, curated_name, accuracy, country, partner_name
                 # ST_X(location) as latitude, ST_Y(location) as longitude
-                stmt = '''select study_code from location_attrs li
-                JOIN attrs a ON a.id = li.attr_id
-                JOIN studies s ON a.study_id = s.id
-                GROUP BY attr_type, attr_value, study_code
-                having count(attr_value) > 1'''
+                stmt = '''select study_code from locations l
+                    join location_attrs li ON li.location_id = l.id
+                    JOIN attrs a ON a.id = li.attr_id
+                    JOIN studies s ON a.study_id = s.id
+                    group by location, study_code
+                    having count(location) > 1 ORDER BY study_code;'''
 
                 cursor.execute(stmt)
 

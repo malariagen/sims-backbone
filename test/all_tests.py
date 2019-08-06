@@ -6,6 +6,7 @@ from test_sample import TestSample
 from test_taxa import TestTaxa
 from test_studies import TestStudies
 from test_event_sets import TestEventSets
+from test_report import TestReport
 
 
 
@@ -18,6 +19,7 @@ def my_suite():
     suite.addTest(unittest.makeSuite(TestTaxa))
     suite.addTest(unittest.makeSuite(TestStudies))
     suite.addTest(unittest.makeSuite(TestEventSets))
+    suite.addTest(unittest.makeSuite(TestReport))
 
     runner = unittest.TextTestRunner()
     print(runner.run(suite))
