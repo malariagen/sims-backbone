@@ -1,6 +1,8 @@
 import { Component, OnInit, ViewChild, ChangeDetectorRef, Input, AfterViewInit, ChangeDetectionStrategy } from '@angular/core';
 import { OriginalSamplesService } from '../original-samples.service';
-import { MatPaginator, MatTable, MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatTable } from '@angular/material/table';
 import { Observable } from 'rxjs';
 import { OriginalSample } from '../typescript-angular-client';
 import { tap } from 'rxjs/operators';
@@ -28,8 +30,8 @@ export class OsListComponent implements OnInit, AfterViewInit {
   @Input()
   filter: string;
 
-  @ViewChild(MatPaginator) paginator: MatPaginator;
-  @ViewChild(MatTable) table;
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
+  @ViewChild(MatTable, { static: true }) table;
 
   selectedEvents = new Set<string>();
 

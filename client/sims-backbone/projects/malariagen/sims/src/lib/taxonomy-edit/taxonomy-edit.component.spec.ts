@@ -2,7 +2,9 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { TaxonomyEditComponent } from './taxonomy-edit.component';
 import { ReactiveFormsModule, FormGroup, FormControl, Validators, FormBuilder, FormArray } from '@angular/forms';
-import { MatSelectModule, MatInputModule, MatAutocompleteTrigger, MatAutocomplete } from '@angular/material';
+import { MatAutocompleteTrigger, MatAutocomplete } from '@angular/material/autocomplete';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
 import { Taxonomy } from '../typescript-angular-client';
 
 describe('TaxonomyEditComponent', () => {

@@ -1,5 +1,6 @@
 import { Component, OnInit, AfterViewInit, ViewChild, ChangeDetectorRef, Input, ChangeDetectionStrategy } from '@angular/core';
-import { MatPaginator, MatTable } from '@angular/material';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatTable } from '@angular/material/table';
 import { DerivativeSample } from '../typescript-angular-client';
 import { Observable } from 'rxjs';
 import { DerivativeSamplesService } from '../derivative-samples.service';
@@ -28,8 +29,8 @@ export class DsListComponent implements OnInit, AfterViewInit {
   @Input()
   filter: string;
 
-  @ViewChild(MatPaginator) paginator: MatPaginator;
-  @ViewChild(MatTable) table;
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
+  @ViewChild(MatTable, { static: true }) table;
 
   selectedEvents = new Set<string>();
 

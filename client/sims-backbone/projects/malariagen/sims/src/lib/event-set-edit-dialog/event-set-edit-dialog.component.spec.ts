@@ -2,7 +2,12 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { EventSetEditDialogComponent } from './event-set-edit-dialog.component';
 import { FormsModule } from '@angular/forms';
-import { MatAutocomplete, MatDialogModule, MatAutocompleteTrigger, MatFormField, MatOption, MatPseudoCheckbox, MatRippleModule, MatDialogRef, MAT_DIALOG_DATA, MAT_AUTOCOMPLETE_SCROLL_STRATEGY, MatSelectModule, MatAutocompleteModule, MatInputModule } from '@angular/material';
+import { MatAutocomplete, MatAutocompleteTrigger, MAT_AUTOCOMPLETE_SCROLL_STRATEGY, MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatOption, MatPseudoCheckbox, MatRippleModule } from '@angular/material/core';
+import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatFormField } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
 import { of } from 'rxjs/observable/of';
 import { OAuthService } from 'angular-oauth2-oidc';
 import { createAuthServiceSpy, createOAuthServiceSpy, asyncData } from '../../testing/index.spec';

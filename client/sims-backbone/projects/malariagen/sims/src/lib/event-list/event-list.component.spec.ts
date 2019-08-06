@@ -2,9 +2,13 @@
 import { async, ComponentFixture, TestBed, inject } from '@angular/core/testing';
 
 import { EventListComponent } from './event-list.component';
-import {
-  MatProgressBar, MatDialogModule, MatTableModule, MatOptionModule, MatFormFieldModule, MatTooltipModule, MatPaginatorModule
-} from '@angular/material';
+import { MatOptionModule } from '@angular/material/core';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatProgressBar } from '@angular/material/progress-bar';
+import { MatTableModule } from '@angular/material/table';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { OverlayModule } from '@angular/cdk/overlay';
 import { SamplingEventService  } from '../typescript-angular-client';
 import { SamplingEventDisplayPipe } from '../sampling-event-display.pipe';

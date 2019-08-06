@@ -2,7 +2,11 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { EventSetAddDialogComponent } from './event-set-add-dialog.component';
 import { FormsModule, FormControl, FormGroupDirective, NgForm } from '@angular/forms';
-import { MatFormField, MatDialogModule, MatDialogRef, MAT_DIALOG_DATA, MAT_MENU_DEFAULT_OPTIONS, MatInput, ErrorStateMatcher } from '@angular/material';
+import { ErrorStateMatcher } from '@angular/material/core';
+import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatFormField } from '@angular/material/form-field';
+import { MatInput } from '@angular/material/input';
+import { MAT_MENU_DEFAULT_OPTIONS } from '@angular/material/menu';
 import { HttpClient } from '@angular/common/http';
 import { OAuthService } from 'angular-oauth2-oidc';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';

@@ -2,7 +2,7 @@ import { async, ComponentFixture, TestBed, inject } from '@angular/core/testing'
 
 import { StudyEditComponent } from './study-edit.component';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatFormField } from '@angular/material';
+import { MatFormField } from '@angular/material/form-field';
 import { Taxonomy, Study, PartnerSpecies, Taxonomies } from '../typescript-angular-client';
 import { createAuthServiceSpy, ActivatedRouteStub, createOAuthServiceSpy, ActivatedRoute } from '../../testing/index.spec';
 import { OAuthService } from 'angular-oauth2-oidc';

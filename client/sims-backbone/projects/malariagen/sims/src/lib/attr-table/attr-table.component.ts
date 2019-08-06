@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { MatTableDataSource } from '@angular/material';
+import { MatTableDataSource } from '@angular/material/table';
 import { Attr } from '../typescript-angular-client/model/attr';
 
 import { ActivatedRoute, Params } from '@angular/router';

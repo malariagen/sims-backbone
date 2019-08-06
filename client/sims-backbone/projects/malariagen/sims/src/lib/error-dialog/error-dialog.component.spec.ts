@@ -1,7 +1,8 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ErrorDialogComponent } from './error-dialog.component';
-import { MatDialogModule, MAT_DIALOG_DATA, MAT_MENU_DEFAULT_OPTIONS, MatDialogRef } from '@angular/material';
+import { MatDialogModule, MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MAT_MENU_DEFAULT_OPTIONS } from '@angular/material/menu';
 
 describe('ErrorDialogComponent', () => {
   let component: ErrorDialogComponent;

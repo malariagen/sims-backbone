@@ -1,7 +1,8 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { EventSearchComponent } from './event-search.component';
-import { MatInputModule, MatSelectModule } from '@angular/material';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { asyncData } from '../../testing/index.spec';

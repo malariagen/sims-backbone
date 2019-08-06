@@ -14,7 +14,13 @@ import { SimsResponseInterceptor } from './auth/response.interceptor';
 import { SimsModuleConfig, SIMS_MODULE_CONFIG } from './sims.module.config';
 
 import { TaxonomyEditComponent } from './taxonomy-edit/taxonomy-edit.component';
-import { MatAutocompleteModule, MatFormFieldModule, MatInputModule, MatButtonModule, MatSelectModule, MatPaginatorModule, MatTableModule } from '@angular/material';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatSelectModule } from '@angular/material/select';
+import { MatTableModule } from '@angular/material/table';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { StudyEventListComponent } from './study-event-list/study-event-list.component';

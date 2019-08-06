@@ -14,10 +14,10 @@ install:
     - pip install -r upload/requirements.txt
     - pip install coveralls
     - npm install -g @angular/cli@7
-    - npm install "@types/node"@"^10.14.6" --no-optional --no-package-lock
+    - npm install "@types/node"@"^12.6.9" --no-optional --no-package-lock
     - (cd client/sims-backbone/projects/malariagen/sims;rm package-lock.json)
     - (cd client/sims-backbone/projects/malariagen/sims;npm install)
-    - (cd client/sims-backbone/projects/malariagen/sims;npm install typescript@">=3.1.1 <3.3" --no-optional --no-package-lock)
+    - (cd client/sims-backbone/projects/malariagen/sims;npm install typescript@">=3.4.0  <3.6.0" --no-optional --no-package-lock)
     - (cd client/sims-backbone/projects/malariagen/sims;npm run build)
     - (cd client/sims-backbone/projects/malariagen/sims;rm -rf node_modules)
     - (cd client/sims-backbone/dist/malariagen/sims;npm link)

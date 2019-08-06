@@ -1,7 +1,9 @@
 import { Component, Input, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, SimpleChanges, ViewChild } from '@angular/core';
 
-import { MatPaginator, MatSort, MatTableDataSource, MatTable } from '@angular/material';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
+import { MatTableDataSource, MatTable } from '@angular/material/table';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 import { DataSource } from '@angular/cdk/collections';
 import { Observable } from 'rxjs/Observable';
@@ -32,8 +34,8 @@ export class EventListComponent implements OnInit, AfterViewInit {
   _eventSetName: string;
   _pageSize: number = 20;
   
-  @ViewChild(MatPaginator) paginator: MatPaginator;
-  @ViewChild(MatTable) table;
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
+  @ViewChild(MatTable, { static: true }) table;
 
   selectedEvents = new Set<string>();
 

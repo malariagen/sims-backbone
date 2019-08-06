@@ -5,7 +5,7 @@ import { Location, LocationService, Attr } from '../typescript-angular-client';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { createOAuthServiceSpy, ActivatedRouteStub } from '../../testing/index.spec';
 import { RouterModule, ActivatedRoute } from '@angular/router';
-import { MatFormField } from '@angular/material';
+import { MatFormField } from '@angular/material/form-field';
 import { HttpTestingController } from '@angular/common/http/testing';
 import { OAuthService } from 'angular-oauth2-oidc';
 import { MapsAPILoader, AgmMap, AgmMarker, AgmPolygon } from '@agm/core';

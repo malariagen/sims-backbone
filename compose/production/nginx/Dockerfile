@@ -16,16 +16,16 @@ RUN (cd sims-backbone;./generate.sh client)
 RUN mv sims-backbone/client/sims-backbone/* .
 
 RUN npm install -g @angular/cli@7
-RUN npm install "@types/node"@"^10.14.6" --no-optional --no-package-lock
+RUN npm install "@types/node"@"^12.6.9" --no-optional --no-package-lock
 RUN rm /app/projects/malariagen/sims/package-lock.json
 RUN cd /app/projects/malariagen/sims;npm install
-RUN cd /app/projects/malariagen/sims;npm install typescript@">=3.1.1 <3.3" --no-optional --no-package-lock
+RUN cd /app/projects/malariagen/sims;npm install typescript@">=3.4.0  <3.6.0" --no-optional --no-package-lock
 RUN cd /app/projects/malariagen/sims;npm run build
 RUN rm -rf /app/projects/malariagen/sims/node_modules
 #RUN cd /app/dist/malariagen/sims;npm link
 RUN rm /app/package-lock.json
 RUN npm install
-RUN npm install typescript@">=3.1.1 <3.3" --no-optional --no-package-lock
+RUN npm install typescript@">=3.4.0  <3.6.0" --no-optional --no-package-lock
 
 COPY ./client/sims-backbone/src/environments/environment.prod.ts /app/src/environments/environment.prod.ts
 

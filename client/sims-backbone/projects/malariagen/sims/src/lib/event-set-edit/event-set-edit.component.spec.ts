@@ -10,7 +10,7 @@ import { EventSetService } from '../typescript-angular-client';
 import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
 import {ObserversModule} from '@angular/cdk/observers';
-import { MatFormField } from '@angular/material';
+import { MatFormField } from '@angular/material/form-field';
 
 
 describe('EventSetEditComponent', () => {
