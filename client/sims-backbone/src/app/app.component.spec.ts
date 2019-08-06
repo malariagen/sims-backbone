@@ -1,12 +1,10 @@
 import { TestBed, async } from '@angular/core/testing';
 
 import { AppComponent } from './app.component';
-import { MatButton } from '@angular/material/button';
-import { MatRipple } from '@angular/material/core';
 import { MatDialogModule } from '@angular/material/dialog';
-import { MatIcon } from '@angular/material/icon';
-import { MatMenu, MatMenuModule, MAT_MENU_DEFAULT_OPTIONS, MatMenuTrigger, MAT_MENU_SCROLL_STRATEGY } from '@angular/material/menu';
-import { MatToolbar } from '@angular/material/toolbar';
+import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule, MAT_MENU_DEFAULT_OPTIONS, MAT_MENU_SCROLL_STRATEGY } from '@angular/material/menu';
+import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 import { Component } from '@angular/core';
@@ -31,15 +29,14 @@ describe('AppComponent', () => {
     let tryLogin = authService.tryLogin.and.returnValue(of(undefined));
 
     TestBed.configureTestingModule({
-      imports: [MatDialogModule],
+      imports: [
+        MatMenuModule,
+        MatIconModule,
+        MatToolbarModule,
+        MatDialogModule
+      ],
       declarations: [
         AppComponent,
-        MatIcon,
-        MatMenu,
-        MatMenuTrigger,
-        MatButton,
-        MatToolbar,
-        MatRipple,
         RouterOutletStubComponent
       ],
       providers: [
