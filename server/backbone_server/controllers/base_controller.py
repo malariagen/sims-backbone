@@ -74,6 +74,19 @@ class BaseController():
         resp = list(authorizer.keys())
         return resp
 
+    @staticmethod
+    def study_filter(studies):
+
+        study_filter = None
+
+        if studies is not None:
+            study_codes = [i['study'] for i in studies if i['bucket'] == 'pi' or i['bucket'] == 'data' or i['bucket'] == 'all']
+            if 'all' not in study_codes:
+                codes = ",".join(f"'{w}'" for w in study_codes)
+                study_filter = f' study_code in ({codes})'
+
+        return study_filter
+
     def dumps(self, item):
 
         return json.dumps(item, cls=JSONEncoder)

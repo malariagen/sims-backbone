@@ -22,12 +22,23 @@ def user(request):
 @pytest.fixture(params=[
     {
         'memberOf': ['cn=editor,ou=sims,ou=projects,ou=groups,dc=malariagen,dc=net',
-                     'cn=editor,ou=otherproject,ou=projects,ou=groups,dc=malariagen,dc=net'],
+                     'cn=editor,ou=otherproject,ou=projects,ou=groups,dc=malariagen,dc=net',
+                     'cn=pi,ou=2000,ou=studies,ou=groups,dc=malariagen,dc=net',
+                     'cn=pi,ou=2001,ou=studies,ou=groups,dc=malariagen,dc=net',
+                     'cn=pi,ou=2100,ou=studies,ou=groups,dc=malariagen,dc=net',
+                    ],
         'scope': ['editor'],
         'uid': ['testuid'],
     },
     {
         'memberOf': ['group1', 'group2'],
+        'scope': ['editor'],
+        'uid': ['testuid'],
+    },
+    {
+        'memberOf': [
+            'cn=all_studies,ou=sims,ou=projects,ou=groups,dc=malariagen,dc=net'
+        ],
         'scope': ['editor'],
         'uid': ['testuid'],
     },

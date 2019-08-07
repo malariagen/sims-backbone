@@ -11,7 +11,6 @@ class TestStudies(TestBase):
 
     """
     """
-
     def test_download_studies(self, api_factory):
 
         api_instance = api_factory.OriginalSampleApi()
@@ -32,7 +31,8 @@ class TestStudies(TestBase):
                 if study.name == '2000-MD-UP' and study.code == '2000':
                     found = True
 
-            assert found, 'Study does not exist'
+            if api_factory.is_filtered('2000'):
+                assert found, 'Study does not exist'
 
             api_instance.delete_original_sample(created.original_sample_id)
 
@@ -42,7 +42,34 @@ class TestStudies(TestBase):
 
     """
     """
+    def test_download_studies_filtered(self, api_factory):
 
+        api_instance = api_factory.OriginalSampleApi()
+        study_api = api_factory.StudyApi()
+
+        samp = openapi_client.OriginalSample(None,
+                                             study_name='2008-MD-UP')
+        try:
+            created = api_instance.create_original_sample(samp)
+
+            studies = study_api.download_studies()
+
+            if not api_factory.is_authorized(None):
+                pytest.fail('Unauthorized call to download_studies succeeded')
+
+            for study in studies.studies:
+                if not api_factory.is_filtered('2008'):
+                    assert not study.code == '2008', 'No permission for study'
+
+
+            api_instance.delete_original_sample(created.original_sample_id)
+
+        except ApiException as error:
+            self.check_api_exception(
+                api_factory, "SamplingEventApi->create_sampling_event", error)
+
+    """
+    """
     def test_download_studies_permission(self, api_factory):
 
         study_api = api_factory.StudyApi()

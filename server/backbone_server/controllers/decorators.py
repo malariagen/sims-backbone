@@ -2,7 +2,7 @@ import sys
 import inspect
 import os
 import types
-
+import re
 
 def get_class_that_defined_method(meth):
     if inspect.ismethod(meth):
@@ -57,10 +57,30 @@ def authorize_this(original_function):
             func_name = original_function.__name__
 
             if not auths:
-                pass
+                message = f"No permission {func_name} {user} {auths}"
+                return message, 403
             elif 'cn=editor,ou=sims,ou=projects,ou=groups,dc=malariagen,dc=net' not in auths:
                 message = f"No permission {func_name} {user} {auths}"
                 return message, 403
+            else:
+                sig = inspect.signature(original_function)
+                if any(param for param in sig.parameters.values() if param.kind == param.POSITIONAL_OR_KEYWORD and param.name == 'studies'):
+                    studies = []
+                    if 'cn=all_studies,ou=sims,ou=projects,ou=groups,dc=malariagen,dc=net' in auths:
+                        studies.append({
+                            'bucket': 'all',
+                            'study': 'all'
+                        })
+                    else:
+                        pattern = re.compile('cn=(\w+),ou=(\d+),ou=studies,ou=groups,dc=malariagen,dc=net')
+                        for auth in auths:
+                            match = pattern.match(auth)
+                            if match:
+                                studies.append({
+                                    'bucket': match.group(1),
+                                    'study': match.group(2)
+                                })
+                    kwargs['studies'] = studies
 
         x = original_function(*args, **kwargs)
         return x

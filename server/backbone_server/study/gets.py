@@ -1,6 +1,6 @@
 from openapi_server.models.studies import Studies
 from openapi_server.models.study import Study
-from backbone_server.errors.missing_key_exception import MissingKeyException
+from backbone_server.controllers.base_controller import BaseController
 
 
 import logging
@@ -12,19 +12,28 @@ class StudiesGet():
         self._connection = conn
 
 
-    def get(self):
+    def get(self, studies):
 
         with self._connection:
             with self._connection.cursor() as cursor:
 
-                stmt = '''SELECT study_name, study_code FROM studies ORDER BY study_code'''
-                cursor.execute( stmt, )
+                ret_studies = Studies([], 0)
 
-                studies = Studies([], 0)
+                stmt = '''SELECT study_name, study_code FROM studies'''
+
+                study_filter = BaseController.study_filter(studies)
+
+                if study_filter:
+                    stmt += f' WHERE {study_filter}'
+
+                stmt += ' ORDER BY study_code'
+
+                cursor.execute(stmt, )
+
 
                 for (study_name, study_code) in cursor:
-                    study = Study(name = study_name, code = study_code)
-                    studies.studies.append(study)
-                    studies.count = studies.count + 1
+                    study = Study(name=study_name, code=study_code)
+                    ret_studies.studies.append(study)
+                    ret_studies.count = ret_studies.count + 1
 
-        return studies
+        return ret_studies

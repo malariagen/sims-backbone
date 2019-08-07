@@ -14,7 +14,7 @@ from backbone_server.controllers.decorators import apply_decorators
 @apply_decorators
 class StudyController(BaseController):
 
-    def download_studies(self, start=None, count=None, user=None, auths=None):
+    def download_studies(self, studies=None, start=None, count=None, user=None, auths=None):
         """
         fetches studies
 
@@ -28,7 +28,7 @@ class StudyController(BaseController):
 
         get = StudiesGet(self.get_connection())
 
-        studies = get.get()
+        studies = get.get(studies)
 
         return studies, 200
 

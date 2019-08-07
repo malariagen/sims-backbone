@@ -36,6 +36,17 @@ class ApiFactory():
             return False
 
 
+    def is_filtered(self, study_id):
+        if self.isLocal():
+            if 'memberOf' not in self._auths or not self._auths['memberOf']:
+                return False
+            pi = f'cn=pi,ou={study_id},ou=studies,ou=groups,dc=malariagen,dc=net' in self._auths['memberOf']
+            data = f'cn=data,ou={study_id},ou=studies,ou=groups,dc=malariagen,dc=net' in self._auths['memberOf']
+            all_studies = 'cn=all_studies,ou=sims,ou=projects,ou=groups,dc=malariagen,dc=net' in self._auths['memberOf']
+            return pi or data or all_studies
+        else:
+            return self.is_authorized(study_id)
+
     def is_authorized(self, study_id):
 
         if self.isLocal():
@@ -43,7 +54,7 @@ class ApiFactory():
             if self._auths and self._auths['memberOf']:
                 return 'cn=editor,ou=sims,ou=projects,ou=groups,dc=malariagen,dc=net' in self._auths['memberOf']
             else:
-                return True
+                return False
 
         else:
             #Assumes if authenticated then authorized
