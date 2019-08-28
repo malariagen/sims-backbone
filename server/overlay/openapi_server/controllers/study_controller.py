@@ -10,7 +10,7 @@ from backbone_server.controllers.study_controller import StudyController
 study_controller = StudyController()
 
 
-def download_studies(start=None, count=None, user=None, token_info=None):  # noqa: E501
+def download_studies(studies=None, start=None, count=None, user=None, token_info=None):  # noqa: E501
     """fetches studies
 
      # noqa: E501
@@ -22,8 +22,11 @@ def download_studies(start=None, count=None, user=None, token_info=None):  # noq
 
     :rtype: Studies
     """
-    return study_controller.download_studies(start, count, user,
-                                             study_controller.token_info(token_info))
+    return study_controller.download_studies(studies=studies,
+                                             start=start,
+                                             count=count,
+                                             user=user,
+                                             auths=study_controller.token_info(token_info))
 
 
 def download_study(study_name, user=None, token_info=None):  # noqa: E501
