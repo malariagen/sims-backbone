@@ -9,6 +9,7 @@
 .??*
 archive/
 config_dev.json
+config_remote.json
 cmis_config.json
 upload-env/
 Sanger_LIMS/
