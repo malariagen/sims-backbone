@@ -4,8 +4,6 @@ import { SearchApi, SearchRequest, AlfrescoApi, NodesApi } from '@alfresco/js-ap
 import { AlfApiService } from '../alf-api.service';
 import { FormGroup, FormBuilder } from '@angular/forms';
 
-import { CdkTextareaAutosize } from '@angular/cdk/text-field';
-
 import { marker as _ } from '@biesbjerg/ngx-translate-extract-marker';
 
 @Component({
@@ -19,10 +17,9 @@ export class AlfStudyDetailComponent implements OnInit {
   studyProperties: {};
   studyNode: any;
 
-  const description = _('sims.study.properties.description');
-  const status = _('sims.study.properties.status');
-  @ViewChild('autosize', { static: false }) autosize: CdkTextareaAutosize;
-
+  description = _('sims.study.properties.description');
+  status = _('sims.study.properties.status');
+  
   public studyForm: FormGroup;
 
   constructor(private route: ActivatedRoute, private alfrescoService: AlfApiService, private _fb: FormBuilder, private _ngZone: NgZone) {

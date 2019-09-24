@@ -14,5 +14,6 @@ export const environment = {
   apiLocation: sprocess.env.BACKBONE_API_LOCATION,
   clientId: sprocess.env.CLIENT_ID,
   dummyClientSecret: sprocess.env.CLIENT_SECRET,
-  mapsApiKey: sprocess.env.GOOGLE_API_KEY
+  mapsApiKey: sprocess.env.GOOGLE_API_KEY,
+  alfrescoLocation: sprocess.env.ALFRESCO_LOCATION
 }

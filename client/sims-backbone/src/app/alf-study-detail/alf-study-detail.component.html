@@ -9,8 +9,7 @@
     </div>
     <mat-form-field>
       <mat-label>{{ description | translate }}</mat-label>
-      <textarea matInput cdkTextareaAutosize #autosize="cdkTextareaAutosize" cdkAutosizeMinRows="1"
-        cdkAutosizeMaxRows="5" formControlName="description" readonly></textarea>
+      <textarea matInput matTextareaAutosize formControlName="description" readonly></textarea>
 
     </mat-form-field>
 
