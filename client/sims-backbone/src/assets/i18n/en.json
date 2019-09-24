@@ -1,0 +1,22 @@
+{
+	"sims": {
+		"menu": {
+			"addEventSets": "Add event set",
+			"eventSets": "Event Sets",
+			"locations": "Location map",
+			"reports": "Reports",
+			"search": "Search",
+			"studies": "Studies",
+			"taxa": "Taxa",
+			"title": "SIMS Backbone"
+		},
+		"report": {
+			"missingDetailedLocation": "Missing Detailed locations",
+			"missingLocation": "Missing Locations",
+			"missingTaxa": "Missing Taxa",
+			"multipleLocationGPS": "Multiple Location GPS",
+			"multipleLocationNames": "Multiple Location Names",
+			"uncuratedLocations": "Uncurated Locations"
+		}
+	}
+}

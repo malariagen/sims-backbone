@@ -1,13 +1,16 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HttpClient } from '@angular/common/http';
 
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
+
+import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
+import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 
 import { AppRoutingModule } from './app-routing.module';
 
@@ -28,6 +31,10 @@ export function storageFactory(): OAuthStorage {
   return localStorage
 }
 
+export function HttpLoaderFactory(http: HttpClient) {
+  return new TranslateHttpLoader(http);
+}
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -44,6 +51,13 @@ export function storageFactory(): OAuthStorage {
     HttpClientModule,
     AppRoutingModule,
     BrowserAnimationsModule,
+    TranslateModule.forRoot({
+      loader: {
+        provide: TranslateLoader,
+        useFactory: HttpLoaderFactory,
+        deps: [HttpClient]
+      }
+    }),
     SimsModule.forRoot({
       apiLocation: environment.apiLocation,
       mapsApiKey: environment.mapsApiKey,
@@ -69,6 +83,7 @@ export function storageFactory(): OAuthStorage {
   providers: [
     //{ provide: OAuthModuleConfig, useValue: authModuleConfig },
     { provide: OAuthStorage, useFactory: storageFactory },
+
   ],
   entryComponents: [
   ],
