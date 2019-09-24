@@ -9,7 +9,9 @@
             "@asymmetrik/ngx-leaflet":"ngxLeaflet",
             "@agm/core":"core",
             "d3":"d3",
-            "angular-oauth2-oidc":"angularOauth2Oidc"
+            "angular-oauth2-oidc":"angularOauth2Oidc",
+            "@ngx-translate/core": "ngx-translate.core",
+            "@ngx-translate/core/index": "ngx-translate.core.index"
         },
         "styleIncludePaths": [
             "src/sims-backbone-theme.scss",
