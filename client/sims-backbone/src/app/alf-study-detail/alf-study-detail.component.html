@@ -1,14 +1,18 @@
 <sims-study-edit>
-  <p study-edit-left-col-bottom>
-    <!--
-       *ngIf="studyProperties">
-       Extra text goes here
-    {{ studyProperties['cm:description'] }}
-    <adf-content-metadata-card 
-       [preset]="'collab-data'" 
-       [displayAspect]="'cggh:collaboration'"
-       [node]="studyNode">
-    </adf-content-metadata-card>
--->
-  </p>
+  <form study-edit-left-col-bottom *ngIf="studyProperties" [formGroup]="studyForm">
+
+    <div>
+      <mat-label>{{ status | translate }}</mat-label>
+      <mat-form-field>
+        <input matInput type="text" formControlName="status" readonly>
+      </mat-form-field>
+    </div>
+    <mat-form-field>
+      <mat-label>{{ description | translate }}</mat-label>
+      <textarea matInput cdkTextareaAutosize #autosize="cdkTextareaAutosize" cdkAutosizeMinRows="1"
+        cdkAutosizeMaxRows="5" formControlName="description" readonly></textarea>
+
+    </mat-form-field>
+
+  </form>
 </sims-study-edit>

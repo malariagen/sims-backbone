@@ -17,6 +17,12 @@
 			"multipleLocationGPS": "Multiple Location GPS",
 			"multipleLocationNames": "Multiple Location Names",
 			"uncuratedLocations": "Uncurated Locations"
+		},
+		"study": {
+			"properties": {
+				"description": "Description:",
+				"status": "Status:"
+			}
 		}
 	}
 }
