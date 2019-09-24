@@ -27,6 +27,7 @@
         <a mat-raised-button color="accent" [routerLink]="[studyEvents,studyCode]">Sampling Events</a>
       </form>
     </div>
+    <ng-content select="[study-edit-left-col-bottom]"></ng-content>
   </div>
 
   <div fxFlex="50%">
@@ -54,5 +55,5 @@
         </div>
       </div>
     </div>
-
+    <ng-content select="[study-edit-right-col-bottom]"></ng-content>
   </div>

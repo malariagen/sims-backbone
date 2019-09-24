@@ -212,7 +212,8 @@ export function getConfiguration(authService: SimsAuthService): Configuration {
     ReportUncuratedLocationsComponent,
     ReportMissingTaxaComponent,
     ReportMultipleLocationGpsComponent,
-    ReportMultipleLocationNamesComponent
+    ReportMultipleLocationNamesComponent,
+    StudyEditComponent
   ],
   entryComponents: [
     ErrorDialogComponent,

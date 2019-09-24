@@ -22,8 +22,9 @@ import { ReportsComponent } from './reports/reports.component';
 
 import { SimsModule } from '@malariagen/sims';
 import { OAuthStorage } from 'angular-oauth2-oidc';
+import { AlfStudyDetailComponent } from './alf-study-detail/alf-study-detail.component';
 
-export function storageFactory() : OAuthStorage {
+export function storageFactory(): OAuthStorage {
   return localStorage
 }
 
@@ -31,6 +32,7 @@ export function storageFactory() : OAuthStorage {
   declarations: [
     AppComponent,
     ReportsComponent,
+    AlfStudyDetailComponent
   ],
   imports: [
     BrowserModule,
@@ -42,7 +44,7 @@ export function storageFactory() : OAuthStorage {
     HttpClientModule,
     AppRoutingModule,
     BrowserAnimationsModule,
-    SimsModule.forRoot({ 
+    SimsModule.forRoot({
       apiLocation: environment.apiLocation,
       mapsApiKey: environment.mapsApiKey,
       OAuthConfig: {
@@ -68,7 +70,7 @@ export function storageFactory() : OAuthStorage {
     //{ provide: OAuthModuleConfig, useValue: authModuleConfig },
     { provide: OAuthStorage, useFactory: storageFactory },
   ],
-  entryComponents: [  
+  entryComponents: [
   ],
   bootstrap: [
     AppComponent
