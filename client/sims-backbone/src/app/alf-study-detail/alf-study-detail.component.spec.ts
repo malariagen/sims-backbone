@@ -6,8 +6,7 @@ import { RouterModule, ActivatedRoute } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ActivatedRouteStub } from 'testing/activated-route-stub';
-import { preserveWhitespacesDefault } from '@angular/compiler';
-import { nodeChildrenAsMap } from '@angular/router/src/utils/tree';
+
 
 @Component({
   selector: 'sims-study-edit',
