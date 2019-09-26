@@ -83,7 +83,7 @@ export function HttpLoaderFactory(http: HttpClient) {
         'options': null,
         'clearHashAfterLogin': true,
         'tokenEndpoint': environment.tokenEndpoint,
-        'responseType': 'code',
+        'responseType': 'token',
         'showDebugInformation': environment.showDebugInformation,
         'dummyClientSecret': environment.dummyClientSecret
       }
