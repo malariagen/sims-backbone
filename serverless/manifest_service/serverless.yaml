@@ -1,0 +1,155 @@
+service: sims-manifest-service
+
+frameworkVersion: ">=1.1.0 <2.0.0"
+
+plugins:
+  - serverless-dynamodb-local
+  - serverless-offline
+  - serverless-attach-managed-policy
+
+custom:
+  dynamodb:
+    start:
+      port: 8000
+      inMemory: true
+      migrate: true
+    migration:
+      dir: offline/migrations
+
+provider:
+  name: aws
+  runtime: python3.6
+  timeout: 300
+  region: ${opt:region, 'eu-west-1'}
+  stage: ${opt:stage, 'dev'}
+  existingBucket: 'malariagen-roma-test-vobs-media'
+  versionFunctions: false
+  networkStack: 'sims-backbone-service:'
+  environment:
+    DYNAMODB_TABLE: ${self:service}-${self:provider.stage}
+  #managedPolicyArns:
+  #    - 'arn:aws:iam::789763425617:policy/someteam/MyManagedPolicy-3QUG1777293EJ'
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource: "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.DYNAMODB_TABLE}"
+    - Effect: Allow
+      Action:
+        - s3:GetObject
+      Resource:
+        - "arn:aws:s3:::${self:provider.existingBucket}/*"
+    - Effect: Allow
+      Action:
+        - s3:ListBucket
+      Resource:
+        - "arn:aws:s3:::${self:provider.existingBucket}"
+  vpc:
+    securityGroupIds:
+      - ${cf:sims-backbone-service-${self:provider.stage}.ServerlessSecurityGroupOutput}
+    subnetIds:
+      - 'Fn::ImportValue': sims-backbone-service:PublicSubnetA-${self:provider.stage}
+      - 'Fn::ImportValue': sims-backbone-service:PublicSubnetB-${self:provider.stage}
+      - 'Fn::ImportValue': sims-backbone-service:PublicSubnetC-${self:provider.stage}
+  apiGateway:
+    restApiId: ${cf:sims-backbone-service-${self:provider.stage}.ApiGatewayRestApi}
+    restApiRootResourceId: ${cf:sims-backbone-service-${self:provider.stage}.ApiGatewayRestApiRootResource}
+
+package:
+    exclude:
+        - requirements.txt
+        - serverless.yml
+        - node_modules/**
+        - venv/**
+        - package.json
+        - package-lock.json
+        - endpoints.txt
+        - updateall.sh
+        - ../../server/backbone_server/connect.py
+    include:
+        - ../util/**
+        - manifest_service/**
+        - ../../server/bb_server/**
+        - ../../server/backbone_server/**/**
+        - ../client_secrets.${self:provider.stage}.json
+
+functions:
+  loadManifest:
+    handler: manifest/load_manifest.load_manifest
+    memorySize: 128
+    events:
+      #      - s3:
+      #          bucket: ${self:provider.existingBucket}
+      #          event: s3:ObjectCreated:*
+      #          existing: true
+      #          rules:
+      #            - suffix: .csv
+      - http:
+          path: loadManifest
+          method: post
+          cors: true
+
+
+resources:
+  Resources:
+    LoadManifestLogGroup:
+      Type: AWS::Logs::LogGroup
+      Properties:
+        RetentionInDays: "30"
+    ManifestDynamoDbTable:
+      Type: 'AWS::DynamoDB::Table'
+      #DeletionPolicy: Retain
+      Properties:
+        AttributeDefinitions:
+          -
+            AttributeName: id
+            AttributeType: S
+        KeySchema:
+          -
+            AttributeName: id
+            KeyType: HASH
+            #        BillingMode: PAY_PER_REQUEST
+        ProvisionedThroughput:
+            ReadCapacityUnits: 1
+            WriteCapacityUnits: 1
+        TableName: ${self:provider.environment.DYNAMODB_TABLE}
+    S3Access:
+      Type: AWS::EC2::VPCEndpoint
+      Properties: 
+        ServiceName: 'com.amazonaws.eu-west-1.s3'
+        RouteTableIds:
+          - 'Fn::ImportValue': sims-backbone-service:PublicRouteTableA-${self:provider.stage}
+          - 'Fn::ImportValue': sims-backbone-service:PublicRouteTableB-${self:provider.stage}
+          - 'Fn::ImportValue': sims-backbone-service:PublicRouteTableC-${self:provider.stage}
+        VpcEndpointType: Gateway
+        VpcId:
+          'Fn::ImportValue': !Sub sims-backbone-service:ServerlessVPC-${self:provider.stage}
+          #        Tags:
+          #          - Key: Name
+          #            Value: !Sub  ${self:service}-${self:provider.stage} S3Access
+    DynamoDbAccess:
+      Type: AWS::EC2::VPCEndpoint
+      Properties: 
+        ServiceName: 'com.amazonaws.eu-west-1.dynamodb'
+        RouteTableIds:
+          - 'Fn::ImportValue': sims-backbone-service:PublicRouteTableA-${self:provider.stage}
+          - 'Fn::ImportValue': sims-backbone-service:PublicRouteTableB-${self:provider.stage}
+          - 'Fn::ImportValue': sims-backbone-service:PublicRouteTableC-${self:provider.stage}
+        VpcEndpointType: Gateway
+        VpcId:
+          'Fn::ImportValue': !Sub sims-backbone-service:ServerlessVPC-${self:provider.stage}
+          #        Tags:
+          #          - Key: Name
+          #            Value: !Sub  ${self:service}-${self:provider.stage} DynamoDbAccess
+  Outputs:
+    ManifestDynamoDbTableArn:
+      Description: The ARN for the User's Table
+      Value:
+        'Fn::GetAtt': [ManifestDynamoDbTable, Arn]
+      Export:
+        Name: ${self:service}:${self:provider.stage}:ManifestDynamoDbTableArn # see Fn::ImportValue to use in other services and http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/outputs-section-structure.html for documentation on use.

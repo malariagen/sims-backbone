@@ -592,16 +592,31 @@ resources:
           Ref: PublicSubnetA
         Export:
           Name: ${self:service}:PublicSubnetA-${self:provider.stage}
+      PublicRouteTableAOutput:
+        Value:
+          Ref: PublicRouteTableA
+        Export:
+          Name: ${self:service}:PublicRouteTableA-${self:provider.stage}
       PublicSubnetBOutput:
         Value:
           Ref: PublicSubnetB
         Export:
           Name: ${self:service}:PublicSubnetB-${self:provider.stage}
+      PublicRouteTableBOutput:
+        Value:
+          Ref: PublicRouteTableB
+        Export:
+          Name: ${self:service}:PublicRouteTableB-${self:provider.stage}
       PublicSubnetCOutput:
         Value:
           Ref: PublicSubnetC
         Export:
           Name: ${self:service}:PublicSubnetC-${self:provider.stage}
+      PublicRouteTableCOutput:
+        Value:
+          Ref: PublicRouteTableC
+        Export:
+          Name: ${self:service}:PublicRouteTableC-${self:provider.stage}
       ServerlessSecurityGroupOutput:
         Value:
           Ref: ServerlessSecurityGroup
