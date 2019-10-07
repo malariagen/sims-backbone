@@ -18,12 +18,13 @@ class OriginalSamplePost():
         self._logger = logging.getLogger(__name__)
         self._connection = conn
 
-    def post(self, original_sample):
+    def post(self, original_sample, uuid_val=None):
 
         with self._connection:
             with self._connection.cursor() as cursor:
 
-                uuid_val = uuid.uuid4()
+                if not uuid_val:
+                    uuid_val = uuid.uuid4()
 
                 study_id = SamplingEventEdit.fetch_study_id(
                     cursor, original_sample.study_name, True)

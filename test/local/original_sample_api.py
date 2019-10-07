@@ -19,7 +19,7 @@ class LocalOriginalSampleApi(BaseLocalApi):
 
         self.original_sample_controller = OriginalSampleController()
 
-    def create_original_sample(self, original_sample):
+    def create_original_sample(self, original_sample, uuid_val=None):
         """
         create_original_sample
         Create a samplingEvent
@@ -29,8 +29,10 @@ class LocalOriginalSampleApi(BaseLocalApi):
         :rtype: OriginalSample
         """
 
-        (ret, retcode) = self.original_sample_controller.create_original_sample(original_sample, self._user,
-                                                                                self.original_sample_controller.token_info(self.auth_tokens()))
+        (ret, retcode) = self.original_sample_controller.create_original_sample(original_sample,
+                                                                                uuid_val=uuid_val,
+                                                                                user=self._user,
+                                                                                auths=self.original_sample_controller.token_info(self.auth_tokens()))
 
         return self.create_response(ret, retcode, 'OriginalSample')
 

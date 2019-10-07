@@ -26,7 +26,7 @@ from backbone_server.controllers.decorators import apply_decorators
 @apply_decorators
 class OriginalSampleController(BaseController):
 
-    def create_original_sample(self, original_sample, user=None, auths=None):
+    def create_original_sample(self, original_sample, uuid_val=None, user=None, auths=None):
         """
         create_original_sample
         Create a originalSample
@@ -42,7 +42,7 @@ class OriginalSampleController(BaseController):
         try:
             post = OriginalSamplePost(self.get_connection())
 
-            samp = post.post(original_sample)
+            samp = post.post(original_sample, uuid_val=uuid_val)
         except DuplicateKeyException as dke:
             logging.getLogger(__name__).debug(
                 "create_originalSample: {}".format(repr(dke)))

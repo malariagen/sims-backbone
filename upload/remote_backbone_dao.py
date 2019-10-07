@@ -183,7 +183,9 @@ class RemoteBackboneDAO(AbstractBackboneDAO):
         return updated
 
     def update_sampling_event(self, sampling_event_id, sampling_event, user=None):
-        ret = self.se_api_instance.update_sampling_event(sampling_event_id, sampling_event)
+        ret = self.se_api_instance.update_sampling_event(sampling_event_id,
+                                                         sampling_event,
+                                                         user=user)
         return ret
 
     def get_country_metadata(self, country_value, user=None):
@@ -193,13 +195,15 @@ class RemoteBackboneDAO(AbstractBackboneDAO):
 
     def create_original_sample(self, original_sample, user=None):
 
-        return self.os_api_instance.create_original_sample(original_sample)
+        return self.os_api_instance.create_original_sample(original_sample,
+                                                           user=user)
 
 
     def update_original_sample(self, original_sample_id, original_sample, user=None):
 
         return self.os_api_instance.update_original_sample(original_sample_id,
-                                                                            original_sample)
+                                                           original_sample,
+                                                           user=user)
 
     def merge_original_samples(self, original_sample_id1, original_sample_id2, user=None):
 
