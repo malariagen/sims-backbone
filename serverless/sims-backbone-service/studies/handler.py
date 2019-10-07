@@ -12,8 +12,8 @@ for include_path in paths:
 from util.response_util import create_response
 from util.request_util import get_body,get_user,get_auths
 
-from swagger_server.models.studies import Studies
-from swagger_server.models.study import Study
+from openapi_server.models.studies import Studies
+from openapi_server.models.study import Study
 
 import logging
 
@@ -39,7 +39,9 @@ def download_studies(event, context):
         if 'count' in event["queryStringParameters"]:
             count = int(event["queryStringParameters"]["count"])
 
-    value, retcode = study_controller.download_studies(start, count, user, auths)
+    value, retcode = study_controller.download_studies(start=start,
+                                                       count=count, user=user,
+                                                       auths=auths)
 
     return create_response(event, retcode, value)
 

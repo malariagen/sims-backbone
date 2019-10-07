@@ -11,8 +11,8 @@ for include_path in paths:
 from util.response_util import create_response
 from util.request_util import get_body,get_user,get_auths
 
-from swagger_server.models.event_set import EventSet
-from swagger_server.models.event_set_note import EventSetNote
+from openapi_server.models.event_set import EventSet
+from openapi_server.models.event_set_note import EventSetNote
 
 from backbone_server.controllers.event_set_controller import EventSetController
 
@@ -21,10 +21,10 @@ event_set_controller = EventSetController()
 def create_event_set(event, context):
     """
     creates an eventSet
-    
+
     :param eventSetId: ID of eventSet to create
     :type eventSetId: str
-    :param eventSet: 
+    :param eventSet:
     :type eventSet: dict | bytes
 
     :rtype: EventSet
@@ -47,7 +47,7 @@ def create_event_set(event, context):
 def create_event_set_item(event, context):
     """
     Adds a samplingEvent to an eventSet
-    
+
     :param eventSetId: ID of eventSet to modify
     :type eventSetId: str
     :param samplingEventId: ID of samplingEvent to add to the set
@@ -76,12 +76,12 @@ def create_event_set_item(event, context):
 def create_event_set_note(event, context):
     """
     Adds a note to an eventSet
-    
+
     :param eventSetId: ID of eventSet to modify
     :type eventSetId: str
     :param noteId: ID of note to modify in the set
     :type noteId: str
-    :param note: 
+    :param note:
     :type note: dict | bytes
 
     :rtype: None
@@ -108,7 +108,7 @@ def create_event_set_note(event, context):
 def delete_event_set(event, context):
     """
     deletes an eventSet
-    
+
     :param eventSetId: ID of eventSet to delete
     :type eventSetId: str
 
@@ -132,7 +132,7 @@ def delete_event_set(event, context):
 def delete_event_set_item(event, context):
     """
     deletes a samplingEvent from an eventSet
-    
+
     :param eventSetId: ID of eventSet to modify
     :type eventSetId: str
     :param samplingEventId: ID of samplingEvent to remove from the set
@@ -160,7 +160,7 @@ def delete_event_set_item(event, context):
 def delete_event_set_note(event, context):
     """
     deletes an eventSet note
-    
+
     :param eventSetId: ID of eventSet to modify
     :type eventSetId: str
     :param noteId: ID of note to remove from the set
@@ -187,7 +187,7 @@ def delete_event_set_note(event, context):
 def download_event_set(event, context):
     """
     fetches an eventSet
-    
+
     :param eventSetId: ID of eventSet to fetch
     :type eventSetId: str
 
@@ -221,7 +221,7 @@ def download_event_set(event, context):
 def download_event_sets(event, context):
     """
     fetches eventSets
-    
+
 
     :rtype: EventSets
     """
@@ -240,10 +240,10 @@ def download_event_sets(event, context):
 def update_event_set(event, context):
     """
     updates an eventSet
-    
+
     :param eventSetId: ID of eventSet to update
     :type eventSetId: str
-    :param eventSet: 
+    :param eventSet:
     :type eventSet: dict | bytes
 
     :rtype: EventSet
@@ -268,12 +268,12 @@ def update_event_set(event, context):
 def update_event_set_note(event, context):
     """
     Adds a note to an eventSet
-    
+
     :param eventSetId: ID of eventSet to modify
     :type eventSetId: str
     :param noteId: ID of note to modify in the set
     :type noteId: str
-    :param note: 
+    :param note:
     :type note: dict | bytes
 
     :rtype: None

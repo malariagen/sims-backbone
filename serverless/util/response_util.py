@@ -6,9 +6,9 @@ import ujson
 
 import logging
 
-from swagger_server.encoder import JSONEncoder
+from openapi_server.encoder import JSONEncoder
 
-from swagger_server.models.base_model_ import Model
+from openapi_server.models.base_model_ import Model
 
 def gzip_b64encode(data):
     compressed = BytesIO()
