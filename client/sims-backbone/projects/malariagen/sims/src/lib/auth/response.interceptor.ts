@@ -2,14 +2,14 @@ import 'rxjs/add/operator/do';
 import { HttpInterceptor, HttpRequest, HttpHandler, HttpEvent, HttpResponse, HttpErrorResponse } from '@angular/common/http';
 
 import { Observable } from 'rxjs';
-import { OAuthService, AuthConfig } from 'angular-oauth2-oidc';
-import { Injectable, InjectionToken, Inject, Optional } from '@angular/core';
+import { OAuthService } from 'angular-oauth2-oidc';
+import { Injectable, Inject, Optional } from '@angular/core';
 import { SimsModuleConfig, SIMS_MODULE_CONFIG } from '../sims.module.config';
 
 
 @Injectable()
 export class SimsResponseInterceptor implements HttpInterceptor {
-    
+
     apiLocation: string;
 
     constructor(private oauthService: OAuthService,
@@ -35,8 +35,10 @@ export class SimsResponseInterceptor implements HttpInterceptor {
                     if (this.oauthService.clientId == null) {
                         console.log('Please check authentication configuration');
                         //console.log(casAuthConfig);
+                    } else if (this.oauthService.redirectUri.endsWith('/')) {
+                        console.log('redirectUri must not end with a / e.g. https://sims.malariagen.net/studies is OK');
                     } else {
-                        console.log('SimsModule initImplicitFlow');
+                        //console.log('SimsModule initImplicitFlow');
                         if (err.url.startsWith(this.apiLocation)) {
                             this.oauthService.initImplicitFlow();
                         }
