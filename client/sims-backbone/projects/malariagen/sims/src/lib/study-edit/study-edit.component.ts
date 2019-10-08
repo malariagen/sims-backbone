@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Params } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { FormGroup, FormArray, FormControl, FormBuilder, Validators } from '@angular/forms';
 
 import { Study } from '../typescript-angular-client/model/study';

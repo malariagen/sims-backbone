@@ -1,9 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Params } from '@angular/router';
-
-import { Observable } from 'rxjs/Observable';
-
-import { SamplingEventsService } from '../sampling-events.service';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'sims-taxa-event-list',

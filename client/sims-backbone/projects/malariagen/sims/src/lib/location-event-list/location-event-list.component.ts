@@ -1,8 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 
-import { ActivatedRoute, Params } from '@angular/router';
-
-import { SamplingEventService } from '../typescript-angular-client/api/samplingEvent.service';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'sims-location-event-list',

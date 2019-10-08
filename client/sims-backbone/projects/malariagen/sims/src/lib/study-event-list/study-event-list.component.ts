@@ -1,9 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Params } from '@angular/router';
-
-import { Observable } from 'rxjs/Observable';
-
-import { SamplingEventService } from '../typescript-angular-client/api/samplingEvent.service';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'sims-study-event-list',

@@ -2,8 +2,6 @@ import { Component, Input } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { Attr } from '../typescript-angular-client/model/attr';
 
-import { ActivatedRoute, Params } from '@angular/router';
-
 @Component({
   selector: 'sims-attr-table',
   templateUrl: './attr-table.component.html',

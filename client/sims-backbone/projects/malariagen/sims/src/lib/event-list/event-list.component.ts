@@ -1,16 +1,14 @@
-import { Component, Input, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, SimpleChanges, ViewChild } from '@angular/core';
+import { Component, Input, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, ViewChild } from '@angular/core';
 
 import { MatPaginator } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
-import { MatTableDataSource, MatTable } from '@angular/material/table';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatTable } from '@angular/material/table';
+import { MatDialog } from '@angular/material/dialog';
 
-import { DataSource } from '@angular/cdk/collections';
 import { Observable } from 'rxjs/Observable';
 
 import { EventSetEditDialogComponent } from '../event-set-edit-dialog/event-set-edit-dialog.component';
 
-import { AfterViewChecked, AfterViewInit } from '@angular/core';
+import { AfterViewInit } from '@angular/core';
 import { SamplingEventsSource } from '../sampling-event.datasource';
 import { SamplingEventsService } from '../sampling-events.service';
 import { tap } from 'rxjs/operators';

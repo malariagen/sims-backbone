@@ -1,13 +1,12 @@
 /// <reference types="@types/googlemaps" />
 
 import { Component, NgZone, OnInit, Inject } from '@angular/core';
-import { ActivatedRoute, Params } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { FormGroup, FormArray, FormControl, FormBuilder, Validators } from '@angular/forms';
 
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 import { Location } from '../typescript-angular-client/model/location';
-import { Country } from '../typescript-angular-client/model/country';
 import { Locations } from '../typescript-angular-client/model/locations';
 import { LocationService } from '../typescript-angular-client/api/location.service';
 import { MetadataService } from '../typescript-angular-client/api/metadata.service';
