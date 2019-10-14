@@ -4,14 +4,31 @@
     <div>
       <mat-label>{{ status | translate }}</mat-label>
       <mat-form-field>
-        <input matInput type="text" formControlName="status" readonly>
+        <input matInput type="text" formControlName="status" readonly />
       </mat-form-field>
     </div>
-    <mat-form-field>
-      <mat-label>{{ description | translate }}</mat-label>
-      <textarea matInput matTextareaAutosize formControlName="description" readonly></textarea>
 
-    </mat-form-field>
+    <div>
+      <div>
+        <mat-label>{{ webTitle | translate }}</mat-label>
+        <angular-editor cdkTextareaAutosize formControlName="webTitle" readonly [config]="editorConfig">
+        </angular-editor>
+      </div>
+
+      <div>
+        <mat-checkbox type="text" formControlName="webTitleApproved" readonly>{{ webTitleApproved | translate }}
+        </mat-checkbox>
+      </div>
+    </div>
+    <div>
+      <mat-label>{{ description | translate }}</mat-label>
+      <angular-editor cdkTextareaAutosize formControlName="description" readonly [config]="editorConfig">
+      </angular-editor>
+      <div>
+        <mat-checkbox type="text" formControlName="descriptionApproved" readonly>{{ descriptionApproved | translate }}
+        </mat-checkbox>
+      </div>
+    </div>
 
   </form>
 </sims-study-edit>

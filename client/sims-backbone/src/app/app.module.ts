@@ -11,7 +11,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
-
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 
@@ -20,6 +20,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import 'hammerjs';
 
+import { AngularEditorModule } from '@kolkov/angular-editor';
 import { AppComponent } from './app.component';
 
 import { environment } from '../environments/environment';
@@ -56,6 +57,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     ReactiveFormsModule,
     MatInputModule,
     MatSelectModule,
+    MatCheckboxModule,
     MatFormFieldModule,
     HttpClientModule,
     AppRoutingModule,
@@ -88,6 +90,7 @@ export function HttpLoaderFactory(http: HttpClient) {
         'dummyClientSecret': environment.dummyClientSecret
       }
     }),
+    AngularEditorModule
   ],
   providers: [
     //{ provide: OAuthModuleConfig, useValue: authModuleConfig },

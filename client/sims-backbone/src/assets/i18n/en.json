@@ -21,7 +21,10 @@
 		"study": {
 			"properties": {
 				"description": "Description:",
-				"status": "Status:"
+				"descriptionApproved": "Description Approved",
+				"status": "Status:",
+				"webTitle": "Title:",
+				"webTitleApproved": "Title Approved"
 			}
 		}
 	}
