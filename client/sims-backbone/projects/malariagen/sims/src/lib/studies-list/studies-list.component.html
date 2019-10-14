@@ -2,22 +2,22 @@
   <div *ngFor="let study of studies.studies">
     <div fxLayout="row">
       <div fxFlex="40%">
-        <a [routerLink]="['/study', study.code]">
+        <a [routerLink]="['/study', study.name]">
           {{study.name}}
         </a>
       </div>
       <div fxFlex="10%">
-        <a [routerLink]="['/study/events', study.code]">
+        <a i18n [routerLink]="['/study/events', study.code]">
           Sampling Events
         </a>
       </div>
       <div fxFlex="10%">
-        <a [routerLink]="['/study/os', study.code]">
+        <a i18n [routerLink]="['/study/os', study.code]">
           Original Samples
         </a>
       </div>
       <div fxFlex="10%">
-        <a [routerLink]="['/study/ds', study.code]">
+        <a i18n [routerLink]="['/study/ds', study.code]">
           Derivative Samples
         </a>
       </div>
