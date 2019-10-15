@@ -34,7 +34,7 @@ export class AlfApiService {
         }
       ).toPromise().then(
         (ticket) => {
-          console.log(ticket);
+          // console.log(ticket);
           let ticketEcm: string = ticket['ticket'];
           let ticketBpm = undefined;
           this._alfrescoApi = new AlfrescoApi({
