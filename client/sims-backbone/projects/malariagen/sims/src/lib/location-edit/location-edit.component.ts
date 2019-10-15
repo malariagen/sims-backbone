@@ -215,7 +215,7 @@ export class LocationEditComponent implements OnInit {
     headers.set('User-Agent', 'wrighting test app');
 
 
-    const path = 'http://nominatim.openstreetmap.org/reverse?format=json&polygon_geojson=1&lat=' + this.location.latitude + '&lon=' + this.location.longitude + '&zoom=' + this.zoom;
+    const path = 'https://nominatim.openstreetmap.org/reverse?format=json&polygon_geojson=1&lat=' + this.location.latitude + '&lon=' + this.location.longitude + '&zoom=' + this.zoom;
     return this.httpClient.get<any>(path, {
       headers: headers
     });
