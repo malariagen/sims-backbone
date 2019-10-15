@@ -21,7 +21,7 @@ export class LocationsMapComponent {
     id: 'openstreetmap',
     name: 'Open Street Map',
     enabled: false,
-    layer: L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    layer: L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 18,
       attribution: 'Open Street Map'
     })
@@ -173,7 +173,7 @@ export class LocationsMapComponent {
           shadowUrl: 'assets/marker-shadow.png'
         })
       }
-    ).bindPopup('<a href="location/' + locationId + '">' + marker_title + '</a>');
+    ).bindPopup('<a href="/location/' + locationId + '">' + marker_title + '</a>');
 
     if (!this.markers.has(country)) {
       this.markers.set(country, []);
