@@ -15,7 +15,7 @@
               <mat-form-field>
                 <input matInput placeholder="Note Name:" type="text" formControlName="note_name">
               </mat-form-field>
-              <span mat-button i18n (click)="removeNote(i)">Remove note -</span>
+              <span mat-button i18n="@@simsRemoveNote" (click)="removeNote(i)">Remove note -</span>
               <p>
                 <mat-form-field class="event-set-note">
                   <textarea matInput placeholder="Note Text:" type="text" formControlName="note_text"></textarea>
@@ -27,15 +27,15 @@
           </div>
         </div>
         <p>
-          <a mat-button i18n (click)="addNote()" style="cursor: default">
+          <a mat-button i18n="@@simsAddNote" (click)="addNote()" style="cursor: default">
             Add another note +
           </a>
         </p>
         <p>
-          <button mat-raised-button i18n type="submit" [disabled]="!eventSetForm.valid">Save</button>
+          <button mat-raised-button i18n="@@simsSave" type="submit" [disabled]="!eventSetForm.valid">Save</button>
         </p>
 
-        <a mat-raised-button i18n color="accent" [routerLink]="['/eventSet/events/',eventSetId]">Sampling Events</a>
+        <a mat-raised-button i18n="@@simsSamplingEvents" color="accent" [routerLink]="['/eventSet/events/',eventSetId]">Sampling Events</a>
       </form>
 
 

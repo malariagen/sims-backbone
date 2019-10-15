@@ -21,10 +21,10 @@
           </div>
         </div>
         <p>
-          <button mat-raised-button i18n type="submit" [disabled]="!studyForm.valid">Submit</button>
+          <button mat-raised-button i18n="@@simsSave" type="submit" [disabled]="!studyForm.valid">Submit</button>
         </p>
 
-        <a i18n mat-raised-button color="accent" [routerLink]="[studyEvents,studyCode]">Sampling Events</a>
+        <a i18n="@@simsSamplingEvents" mat-raised-button color="accent" [routerLink]="[studyEvents,studyCode]">Sampling Events</a>
       </form>
     </div>
     <ng-content select="[study-edit-left-col-bottom]"></ng-content>

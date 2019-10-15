@@ -2,7 +2,7 @@
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
   <file source-language="en" datatype="plaintext" original="ng2.template">
     <body>
-      <trans-unit id="e7a48f88abda556274cba6622a9f44df07de014a" datatype="html">
+      <trans-unit id="simsSamplingEvents" datatype="html">
         <source>
           Sampling Events
         </source>
@@ -14,46 +14,6 @@
           <context context-type="sourcefile">../node_modules/@malariagen/sims/lib/taxa-list/taxa-list.component.d.ts</context>
           <context context-type="linenumber">5</context>
         </context-group>
-      </trans-unit>
-      <trans-unit id="79ce4cf36b3093f98a5332bb0ff047153d9b223c" datatype="html">
-        <source>
-          Original Samples
-        </source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">../node_modules/@malariagen/sims/lib/studies-list/studies-list.component.d.ts</context>
-          <context context-type="linenumber">15</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">../node_modules/@malariagen/sims/lib/taxa-list/taxa-list.component.d.ts</context>
-          <context context-type="linenumber">10</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="0267868ca68a542abb240d6a65dbe9a1eb66867b" datatype="html">
-        <source>
-          Derivative Samples
-        </source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">../node_modules/@malariagen/sims/lib/studies-list/studies-list.component.d.ts</context>
-          <context context-type="linenumber">20</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">../node_modules/@malariagen/sims/lib/taxa-list/taxa-list.component.d.ts</context>
-          <context context-type="linenumber">15</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="71c77bb8cecdf11ec3eead24dd1ba506573fa9cd" datatype="html">
-        <source>Submit</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">../node_modules/@malariagen/sims/lib/study-edit/study-edit.component.d.ts</context>
-          <context context-type="linenumber">24</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">../node_modules/@malariagen/sims/lib/location-edit/location-edit.component.d.ts</context>
-          <context context-type="linenumber">50</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="f997419b9f06952a593d8a5ded429071c3940306" datatype="html">
-        <source>Sampling Events</source>
         <context-group purpose="location">
           <context context-type="sourcefile">../node_modules/@malariagen/sims/lib/study-edit/study-edit.component.d.ts</context>
           <context context-type="linenumber">27</context>
@@ -67,14 +27,55 @@
           <context context-type="linenumber">10</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="a0dd370f83eff887a57df1ffd817c39de371c9f0" datatype="html">
+      <trans-unit id="simsOriginalSamples" datatype="html">
+        <source>
+          Original Samples
+        </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">../node_modules/@malariagen/sims/lib/studies-list/studies-list.component.d.ts</context>
+          <context context-type="linenumber">15</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">../node_modules/@malariagen/sims/lib/taxa-list/taxa-list.component.d.ts</context>
+          <context context-type="linenumber">10</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="simsDerivativeSamples" datatype="html">
+        <source>
+          Derivative Samples
+        </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">../node_modules/@malariagen/sims/lib/studies-list/studies-list.component.d.ts</context>
+          <context context-type="linenumber">20</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">../node_modules/@malariagen/sims/lib/taxa-list/taxa-list.component.d.ts</context>
+          <context context-type="linenumber">15</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="simsSave" datatype="html">
+        <source>Submit</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">../node_modules/@malariagen/sims/lib/study-edit/study-edit.component.d.ts</context>
+          <context context-type="linenumber">24</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">../node_modules/@malariagen/sims/lib/event-set-edit/event-set-edit.component.d.ts</context>
+          <context context-type="linenumber">35</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">../node_modules/@malariagen/sims/lib/location-edit/location-edit.component.d.ts</context>
+          <context context-type="linenumber">50</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="simsRemoveNote" datatype="html">
         <source>Remove note -</source>
         <context-group purpose="location">
           <context context-type="sourcefile">../node_modules/@malariagen/sims/lib/event-set-edit/event-set-edit.component.d.ts</context>
           <context context-type="linenumber">18</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="aa4246ecbc84ca16f0239ce50d7d190e84fb0fd3" datatype="html">
+      <trans-unit id="simsAddNote" datatype="html">
         <source>
             Add another note +
           </source>
@@ -83,60 +84,186 @@
           <context context-type="linenumber">30</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="52c9a103b812f258bcddc3d90a6e3f46871d25fe" datatype="html">
-        <source>Save</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">../node_modules/@malariagen/sims/lib/event-set-edit/event-set-edit.component.d.ts</context>
-          <context context-type="linenumber">35</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="f5071737a6c8652abe0bd39a2bfb165d5ed5f730" datatype="html">
+      <trans-unit id="simsCountryRequired" datatype="html">
         <source> Country is required (3 characters)</source>
         <context-group purpose="location">
           <context context-type="sourcefile">../node_modules/@malariagen/sims/lib/location-edit/location-edit.component.d.ts</context>
           <context context-type="linenumber">37</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="071ffbcf5c8c82d933dc8ef961c0e3330e4ea37a" datatype="html">
+      <trans-unit id="simsLookupOSM" datatype="html">
         <source>Look up GPS using OSM</source>
         <context-group purpose="location">
           <context context-type="sourcefile">../node_modules/@malariagen/sims/lib/location-edit/location-edit.component.d.ts</context>
           <context context-type="linenumber">54</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="213896594fb7e19897c4ed1a491a9889819269b7" datatype="html">
+      <trans-unit id="simsLookupGoogle" datatype="html">
         <source>Look GPS up using Google</source>
         <context-group purpose="location">
           <context context-type="sourcefile">../node_modules/@malariagen/sims/lib/location-edit/location-edit.component.d.ts</context>
           <context context-type="linenumber">55</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="34fb6028a6630cf3a7308084b31e86e89d057965" datatype="html">
+      <trans-unit id="simsZoomIn" datatype="html">
         <source>Zoom In</source>
         <context-group purpose="location">
           <context context-type="sourcefile">../node_modules/@malariagen/sims/lib/location-edit/location-edit.component.d.ts</context>
           <context context-type="linenumber">60</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="677ce9c57b5558cb10f0b39327d5a965bfb21dc5" datatype="html">
+      <trans-unit id="simsZoomOut" datatype="html">
         <source>Zoom Out</source>
         <context-group purpose="location">
           <context context-type="sourcefile">../node_modules/@malariagen/sims/lib/location-edit/location-edit.component.d.ts</context>
           <context context-type="linenumber">61</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="f9996945410729906d346fe73f94fbe9f240a589" datatype="html">
+      <trans-unit id="simsUseOSM" datatype="html">
         <source>Use OSM settings</source>
         <context-group purpose="location">
           <context context-type="sourcefile">../node_modules/@malariagen/sims/lib/location-edit/location-edit.component.d.ts</context>
           <context context-type="linenumber">75</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="d85e44bb135f2942cf1cb9cb8415e8ed71f1c52e" datatype="html">
+      <trans-unit id="simsUseGoogle" datatype="html">
         <source>Use Google settings</source>
         <context-group purpose="location">
           <context context-type="sourcefile">../node_modules/@malariagen/sims/lib/location-edit/location-edit.component.d.ts</context>
           <context context-type="linenumber">92</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5dab20dc388aa47f2a4d6ae8bd8c2135b1d09076" datatype="html">
+        <source>Add event set</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/app.component.html</context>
+          <context context-type="linenumber">7</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="simsTitle" datatype="html">
+        <source>SIMS Backbone</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/app.component.html</context>
+          <context context-type="linenumber">10</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="simsStudies" datatype="html">
+        <source>Studies</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/app.component.html</context>
+          <context context-type="linenumber">13</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="simsLocationMap" datatype="html">
+        <source>Location Map</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/app.component.html</context>
+          <context context-type="linenumber">14</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="simsTaxa" datatype="html">
+        <source>Taxa</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/app.component.html</context>
+          <context context-type="linenumber">15</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="simsEventSets" datatype="html">
+        <source>Event Sets</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/app.component.html</context>
+          <context context-type="linenumber">16</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="simsSearch" datatype="html">
+        <source>Search</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/app.component.html</context>
+          <context context-type="linenumber">17</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="simsReports" datatype="html">
+        <source>Reports</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/app.component.html</context>
+          <context context-type="linenumber">18</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="simsMissingDetailedLocations" datatype="html">
+        <source>Missing Detailed Locations</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/reports/reports.component.html</context>
+          <context context-type="linenumber">4</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="simsMissingLocations" datatype="html">
+        <source>Missing Locations</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/reports/reports.component.html</context>
+          <context context-type="linenumber">5</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="simsMissingTaxa" datatype="html">
+        <source>Missing Taxa</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/reports/reports.component.html</context>
+          <context context-type="linenumber">6</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="simsUncuratedLocations" datatype="html">
+        <source>Uncurated Locations</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/reports/reports.component.html</context>
+          <context context-type="linenumber">7</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="simsMultipleLocationGPS" datatype="html">
+        <source>Multiple Location GPS</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/reports/reports.component.html</context>
+          <context context-type="linenumber">8</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="simsMultipleLocationName" datatype="html">
+        <source>Multiple Location Names</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/reports/reports.component.html</context>
+          <context context-type="linenumber">9</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="simsStatus" datatype="html">
+        <source>Status</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/alf-study-detail/alf-study-detail.component.html</context>
+          <context context-type="linenumber">5</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="simsWebTitle" datatype="html">
+        <source>Web Title</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/alf-study-detail/alf-study-detail.component.html</context>
+          <context context-type="linenumber">13</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="simsWebTitleApproved" datatype="html">
+        <source>Web Title Approved</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/alf-study-detail/alf-study-detail.component.html</context>
+          <context context-type="linenumber">19</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="simsDescription" datatype="html">
+        <source>Description</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/alf-study-detail/alf-study-detail.component.html</context>
+          <context context-type="linenumber">23</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="simsDescriptionApproved" datatype="html">
+        <source>Description Approved</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/alf-study-detail/alf-study-detail.component.html</context>
+          <context context-type="linenumber">27</context>
         </context-group>
       </trans-unit>
     </body>

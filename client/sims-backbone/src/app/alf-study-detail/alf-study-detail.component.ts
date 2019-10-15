@@ -6,7 +6,6 @@ import { FormGroup, FormBuilder } from '@angular/forms';
 
 import { AngularEditorConfig } from '@kolkov/angular-editor';
 
-import { marker as _ } from '@biesbjerg/ngx-translate-extract-marker';
 
 @Component({
   selector: 'app-alf-study-detail',
@@ -18,13 +17,6 @@ export class AlfStudyDetailComponent implements OnInit {
 
   studyProperties: {};
   studyNode: any;
-
-  description = _('sims.study.properties.description');
-  descriptionApproved = _('sims.study.properties.descriptionApproved');
-
-  status = _('sims.study.properties.status');
-  webTitle = _('sims.study.properties.webTitle');
-  webTitleApproved = _('sims.study.properties.webTitleApproved');
 
   editorConfig: AngularEditorConfig = {
     editable: false,

@@ -2,7 +2,7 @@
   <form study-edit-left-col-bottom *ngIf="studyProperties" [formGroup]="studyForm">
 
     <div>
-      <mat-label>{{ status | translate }}</mat-label>
+      <mat-label i18n="@@simsStatus">Status</mat-label>
       <mat-form-field>
         <input matInput type="text" formControlName="status" readonly />
       </mat-form-field>
@@ -10,23 +10,21 @@
 
     <div>
       <div>
-        <mat-label>{{ webTitle | translate }}</mat-label>
+        <mat-label i18n="@@simsWebTitle">Web Title</mat-label>
         <angular-editor cdkTextareaAutosize formControlName="webTitle" readonly [config]="editorConfig">
         </angular-editor>
       </div>
 
       <div>
-        <mat-checkbox type="text" formControlName="webTitleApproved" readonly>{{ webTitleApproved | translate }}
-        </mat-checkbox>
+        <mat-checkbox i18n="@@simsWebTitleApproved" type="text" formControlName="webTitleApproved" readonly>Web Title Approved</mat-checkbox>
       </div>
     </div>
     <div>
-      <mat-label>{{ description | translate }}</mat-label>
+      <mat-label i18n="@@simsDescription">Description</mat-label>
       <angular-editor cdkTextareaAutosize formControlName="description" readonly [config]="editorConfig">
       </angular-editor>
       <div>
-        <mat-checkbox type="text" formControlName="descriptionApproved" readonly>{{ descriptionApproved | translate }}
-        </mat-checkbox>
+        <mat-checkbox i18n="@@simsDescriptionApproved" type="text" formControlName="descriptionApproved" readonly>Description Approved</mat-checkbox>
       </div>
     </div>
 

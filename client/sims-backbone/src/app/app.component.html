@@ -4,18 +4,18 @@
 <mat-menu #menu="matMenu">
   <button mat-menu-item (click)="addEventSet($event)">
     <mat-icon>mode_edit</mat-icon>
-    <span>{{ addEventSets| translate }}</span>
+    <span i18n >Add event set</span>
   </button>
 </mat-menu>
-<span id="title">{{ title | translate }}</span>
+<span i18n="@@simsTitle" id="title">SIMS Backbone</span>
 <mat-toolbar>
   <nav>
-    <a mat-raised-button color="primary" routerLink="/studies" routerLinkActive="active">{{ studies | translate }}</a>
-    <a mat-raised-button color="primary" routerLink="/full-map" routerLinkActive="active">{{ locations | translate }}</a>
-    <a mat-raised-button color="primary" routerLink="/taxa" routerLinkActive="active">{{ taxa | translate }}</a>
-    <a mat-raised-button color="primary" routerLink="/eventSets" routerLinkActive="active">{{ eventSets | translate }}</a>
-    <a mat-raised-button color="primary" routerLink="/search" routerLinkActive="active">{{ search | translate }}</a>
-    <a mat-raised-button color="primary" routerLink="/reports" routerLinkActive="active">{{ reports | translate }}</a>
+    <a mat-raised-button i18n="@@simsStudies" color="primary" routerLink="/studies" routerLinkActive="active">Studies</a>
+    <a mat-raised-button i18n="@@simsLocationMap" color="primary" routerLink="/full-map" routerLinkActive="active">Location Map</a>
+    <a mat-raised-button i18n="@@simsTaxa" color="primary" routerLink="/taxa" routerLinkActive="active">Taxa</a>
+    <a mat-raised-button i18n="@@simsEventSets" color="primary" routerLink="/eventSets" routerLinkActive="active">Event Sets</a>
+    <a mat-raised-button i18n="@@simsSearch" color="primary" routerLink="/search" routerLinkActive="active">Search</a>
+    <a mat-raised-button i18n="@@simsReports" color="primary" routerLink="/reports" routerLinkActive="active">Reports</a>
   </nav>
 </mat-toolbar>
 <router-outlet></router-outlet>
