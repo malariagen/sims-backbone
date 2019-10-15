@@ -98,8 +98,7 @@ class TestSetTaxa(TestBase):
 
             assert looked_up.partner_species == 'Plasmodium falciparum/vivax mixture'
             assert len(looked_up.partner_taxonomies) == 2
-            assert looked_up.partner_taxonomies[0].taxonomy_id == 5833
-            assert looked_up.partner_taxonomies[1].taxonomy_id == 5855
+            assert (looked_up.partner_taxonomies[0].taxonomy_id == 5833 and looked_up.partner_taxonomies[1].taxonomy_id == 5855) or (looked_up.partner_taxonomies[1].taxonomy_id == 5833 and looked_up.partner_taxonomies[0].taxonomy_id == 5855)
 
             looked_up = self._dao.download_original_samples_by_attr('roma_id', 'TST00005')
             looked_up = looked_up.original_samples[0]
