@@ -9,7 +9,7 @@ import { AlfApiService } from 'app/alf-api.service';
 
 @Injectable()
 export class AlfResponseInterceptor implements HttpInterceptor {
-    
+
     ecmApiLocation: string;
 
     constructor(private oauthService: OAuthService, private alfrescoService: AlfApiService) {
@@ -24,17 +24,16 @@ export class AlfResponseInterceptor implements HttpInterceptor {
 
             if (event instanceof HttpResponse) {
                 // do stuff with response if you want
-                //console.log('lib OK');
-                //console.log(event);
-                //this.alfrescoService.login();
-              
+                // console.log('lib OK');
+                // console.log(event);
+                // this.alfrescoService.login();
             }
         }, (err: any) => {
             if (err instanceof HttpErrorResponse) {
                 if (err.status === 401) {
                     if (this.oauthService.clientId == null) {
                         console.log('Please check authentication configuration');
-                        //console.log(casAuthConfig);
+                        // console.log(casAuthConfig);
                     } else {
                         console.log('AlfResponseInterceptor initImplicitFlow');
                         if (err.url.startsWith(this.ecmApiLocation)) {
@@ -43,12 +42,12 @@ export class AlfResponseInterceptor implements HttpInterceptor {
                         this.alfrescoService.login();
                     }
                 } else {
-                    //console.log('AlfResponseInterceptor err');
-                    //console.error(err);
+                    // console.log('AlfResponseInterceptor err');
+                    // console.error(err);
                 }
             } else {
-                //console.log('AlfResponseInterceptor Not HttpErrorResponse');
-                //console.log(err);
+                // console.log('AlfResponseInterceptor Not HttpErrorResponse');
+                // console.log(err);
             }
         });
     }

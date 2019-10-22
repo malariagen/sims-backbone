@@ -80,7 +80,7 @@ export function storageFactory(): OAuthStorage {
     AngularEditorModule
   ],
   providers: [
-    //{ provide: OAuthModuleConfig, useValue: authModuleConfig },
+    // { provide: OAuthModuleConfig, useValue: authModuleConfig },
     { provide: OAuthStorage, useFactory: storageFactory },
     {
       provide: HTTP_INTERCEPTORS,

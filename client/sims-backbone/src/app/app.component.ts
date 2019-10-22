@@ -12,12 +12,12 @@ import { EventSetAddDialogComponent } from '@malariagen/sims';
 export class AppComponent {
 
     constructor(public dialog: MatDialog) {
-        
+
     }
 
     addEventSet(action) {
 
-        let dialogRef = this.dialog.open(EventSetAddDialogComponent, {
+        const dialogRef = this.dialog.open(EventSetAddDialogComponent, {
             width: '600px'
         });
 

@@ -34,15 +34,15 @@ export class AlfStudyDetailComponent implements OnInit {
       this.studyCode = pmap.get('studyCode');
     });
 
-    let alfApi = this.alfrescoService.alfrescoApi().then((alfApi: AlfrescoApi) => {
+    this.alfrescoService.alfrescoApi().then((alfApi: AlfrescoApi) => {
 
-      let search = new SearchApi(alfApi);
+      const search = new SearchApi(alfApi);
 
-      let request: SearchRequest = {
-        "query":
+      const request: SearchRequest = {
+        'query':
         {
-          "query": "select * from cggh:collaboration WHERE cmis:name = \'" + this.studyCode + "\'",
-          "language": "cmis"
+          'query': 'select * from cggh:collaboration WHERE cmis:name = \'' + this.studyCode + '\'',
+          'language': 'cmis'
         }
       };
 
@@ -52,19 +52,19 @@ export class AlfStudyDetailComponent implements OnInit {
         // console.log(data);
 
         if (data.list.entries.length > 0) {
-          const nodeId = data.list.entries["0"].entry.id;
+          const nodeId = data.list.entries[0].entry.id;
 
-          let nodesApi = new NodesApi(alfApi);
+          const nodesApi = new NodesApi(alfApi);
 
-          let opts = {
+          const opts = {
             'include': ['association']
           };
 
-          nodesApi.getNode(nodeId, opts).then((data) => {
+          nodesApi.getNode(nodeId, opts).then((node) => {
             // console.log('Node API called successfully. Returned data: ');
             // console.log(data);
-            this.studyProperties = data.entry.properties;
-            this.studyNode = data.entry;
+            this.studyProperties = node.entry.properties;
+            this.studyNode = node.entry;
 
             this.studyForm = this._fb.group(
               {

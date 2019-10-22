@@ -3,7 +3,6 @@ import { HttpClient } from '@angular/common/http';
 import { AlfrescoApiCompatibility as AlfrescoApi, AlfrescoApiConfig } from '@alfresco/js-api';
 
 import { environment } from '../environments/environment';
-import { reject } from 'q';
 
 @Injectable({
   providedIn: 'root'
@@ -35,13 +34,13 @@ export class AlfApiService {
       ).toPromise().then(
         (ticket) => {
           // console.log(ticket);
-          let ticketEcm: string = ticket['ticket'];
-          let ticketBpm = undefined;
+          const ticketEcm: string = ticket['ticket'];
+          const ticketBpm = undefined;
           this._alfrescoApi = new AlfrescoApi({
             ticketEcm: ticketEcm,
             hostEcm: this.ecmApiLocation
           });
-          
+
           this._alfrescoApi.loginTicket(ticketEcm, ticketBpm).then(function (data) {
             // console.log('valid ticket you are logged in');
           }, function (error) {
@@ -51,7 +50,7 @@ export class AlfApiService {
           resolve(this._alfrescoApi);
         },
         (error) => {
-          console.log("get ticket error");
+          console.log('get ticket error');
           console.log(error);
           reject(error);
         }

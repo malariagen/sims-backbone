@@ -14,18 +14,17 @@ import { MatIconRegistry } from '@angular/material/icon';
 @Component({ selector: 'router-outlet', template: '' })
 class RouterOutletStubComponent { }
 
-
 describe('AppComponent', () => {
   let dialog: MatDialog;
 
   beforeEach(async(() => {
 
-    // Create a fake AuthService object 
+    // Create a fake AuthService object
     const authService = jasmine.createSpyObj('OAuthService', ['configure', 'setupAutomaticSilentRefresh', 'tryLogin']);
     // Make the spy return a synchronous Observable with the test data
-    let configure = authService.configure.and.returnValue(of(undefined));
-    let setupAutomaticSilentRefresh = authService.setupAutomaticSilentRefresh.and.returnValue(of(undefined));
-    let tryLogin = authService.tryLogin.and.returnValue(of(undefined));
+    const configure = authService.configure.and.returnValue(of(undefined));
+    const setupAutomaticSilentRefresh = authService.setupAutomaticSilentRefresh.and.returnValue(of(undefined));
+    const tryLogin = authService.tryLogin.and.returnValue(of(undefined));
 
     TestBed.configureTestingModule({
       imports: [

@@ -40,7 +40,7 @@ describe('AlfStudyDetailComponent', () => {
     activatedRoute.setParamMap({
       studyCode: '0000'
     });
-    
+
     TestBed.configureTestingModule({
       imports: [
         RouterModule,
@@ -52,7 +52,7 @@ describe('AlfStudyDetailComponent', () => {
         MatCheckboxModule,
         AngularEditorModule
       ],
-      declarations: [ 
+      declarations: [
         AlfStudyDetailComponent,
         StudyEditComponentStub,
         ContentMetadataComponentStub
