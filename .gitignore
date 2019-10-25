@@ -21,3 +21,4 @@ typescript-angular-client/
 *.orig
 **/log
 **/*.log
+.vscode/
