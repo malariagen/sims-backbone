@@ -271,8 +271,10 @@ class Uploader():
         #print(values)
         #print(samp)
 
-        location_name, location = self.se_processor.process_location(values, '')
         proxy_location_name, proxy_location = self.se_processor.process_location(values, 'proxy_')
+        location_name, location = self.se_processor.process_location(values,
+                                                                     '',
+                                                                     proxy_location)
 
         #print(location)
         existing = self.se_processor.lookup_sampling_event(o_existing, samp, location, proxy_location, values)
@@ -281,7 +283,10 @@ class Uploader():
             samp.location_id = location.location_id
 
         if proxy_location:
-            samp.proxy_location_id = proxy_location.location_id
+            if location:
+                samp.proxy_location_id = location.proxy_location_id
+            else:
+                self.se_processor.report(f"Proxy location without location", values)
 
         #print('SAMP')
         #print(samp)

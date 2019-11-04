@@ -24,8 +24,12 @@ class TestReport(TestBase):
 
             sampling_event = openapi_client.SamplingEvent(None, date(2017, 10, 10),
                                                           doc_accuracy='month')
-            loc = openapi_client.Location(None, 27.463, 90.495, 'country',
-                                          'Bhutan', 'test_create_with_locations', 'BTN')
+            loc = openapi_client.Location(None, latitude=27.463,
+                                          longitude=90.495,
+                                          accuracy='country',
+                                          curated_name='Bhutan',
+                                          notes='test_create_with_locations',
+                                          country='BTN')
             loc.attrs = [
                 openapi_client.Attr(attr_type='partner_name',
                                     attr_value='Bhutan location',

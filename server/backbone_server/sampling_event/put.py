@@ -1,15 +1,16 @@
+import logging
+
+import psycopg2
+
+from openapi_server.models.sampling_event import SamplingEvent
+
 from backbone_server.errors.duplicate_key_exception import DuplicateKeyException
 from backbone_server.errors.missing_key_exception import MissingKeyException
+from backbone_server.errors.nested_edit_exception import NestedEditException
 
 from backbone_server.sampling_event.edit import SamplingEventEdit
 from backbone_server.sampling_event.fetch import SamplingEventFetch
 from backbone_server.location.edit import LocationEdit
-
-from openapi_server.models.sampling_event import SamplingEvent
-
-import psycopg2
-
-import logging
 
 class SamplingEventPut():
 
@@ -47,11 +48,11 @@ class SamplingEventPut():
 
         stmt = '''UPDATE sampling_events
                     SET doc = %s, doc_accuracy = %s,
-                    location_id = %s, proxy_location_id = %s,
+                    location_id = %s,
                     individual_id = %s
                     WHERE id = %s'''
         args = (sampling_event.doc, sampling_event.doc_accuracy,
-                sampling_event.location_id, sampling_event.proxy_location_id,
+                sampling_event.location_id,
                 sampling_event.individual_id,
                 sampling_event_id)
 
@@ -70,10 +71,12 @@ class SamplingEventPut():
             raise err
 
 
-        sampling_event = SamplingEventFetch.fetch(cursor, sampling_event_id)
+        new_sampling_event = SamplingEventFetch.fetch(cursor, sampling_event_id)
 
+        if new_sampling_event.proxy_location_id != sampling_event.proxy_location_id:
+            raise NestedEditException(f"Incompatible proxy locations {new_sampling_event.proxy_location_id} {sampling_event.proxy_location_id}")
         if rc != 1:
             raise MissingKeyException("Error updating sampling_event {}".format(sampling_event_id))
 
 
-        return sampling_event
+        return new_sampling_event

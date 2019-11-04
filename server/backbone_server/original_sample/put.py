@@ -48,9 +48,6 @@ class OriginalSamplePut():
             if sampling_event:
                 LocationEdit.update_attr_study(cursor, sampling_event.location_id,
                                                      original_study_id, study_id)
-                LocationEdit.update_attr_study(cursor, sampling_event.proxy_location_id,
-                                                     original_study_id, study_id)
-
 
                 if sampling_event.individual_id:
                     IndividualEdit.update_attr_study(cursor, sampling_event.individual_id,

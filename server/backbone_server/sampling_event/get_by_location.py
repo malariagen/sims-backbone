@@ -30,13 +30,14 @@ class SamplingEventsGetByLocation():
                 except MissingKeyException as mke:
                     raise mke
 
-                fields = '''SELECT sampling_events.id'''
-                query_body = ''' FROM sampling_events
-                        WHERE location_id = %s OR proxy_location_id = %s'''
+                fields = '''SELECT se.id'''
+                query_body = ''' FROM sampling_events se
+                        LEFT JOIN locations l ON se.location_id = l.id
+                        WHERE se.location_id = %s OR l.proxy_location_id = %s'''
                 args = (location_id, location_id,)
 
                 count_args = args
-                count_query = 'SELECT COUNT(sampling_events.id) ' + query_body
+                count_query = 'SELECT COUNT(se.id) ' + query_body
 
                 query_body = query_body + ''' ORDER BY doc, id'''
 

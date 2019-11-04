@@ -32,9 +32,10 @@ class OriginalSamplesGetByLocation():
                 days_in_culture, partner_species'''
                 query_body = ''' FROM original_samples os
                 JOIN sampling_events se ON se.id = os.sampling_event_id
+                JOIN locations l ON l.id = se.location_id
                 LEFT JOIN partner_species_identifiers psi ON psi.id = os.partner_species_id
                 LEFT JOIN studies s ON s.id = os.study_id
-                WHERE location_id = %s OR proxy_location_id = %s'''
+                WHERE se.location_id = %s OR l.proxy_location_id = %s'''
                 args = (location_id, location_id,)
 
                 count_args = args
@@ -66,7 +67,8 @@ class OriginalSamplesGetByLocation():
                 JOIN attrs a ON osa.attr_id=a.id
                 JOIN original_samples os ON os.id = osa.original_sample_id
                 JOIN sampling_events se ON se.id = os.sampling_event_id
-                WHERE se.location_id = %s OR se.proxy_location_id = %s'''
+                JOIN locations l ON l.id = se.location_id
+                WHERE se.location_id = %s OR l.proxy_location_id = %s'''
 
                 cursor.execute(col_query, (location_id,location_id))
                 for (attr_type,) in cursor:

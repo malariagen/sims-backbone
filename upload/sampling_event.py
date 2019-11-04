@@ -231,7 +231,7 @@ class SamplingEventProcessor(BaseEntity):
         #print(looked_up_location)
         return looked_up_location, conflict
 
-    def process_location(self, values, prefix):
+    def process_location(self, values, prefix, proxy_location=None):
 
         partner_name, loc = self.create_location_from_values(values, prefix)
 
@@ -247,10 +247,16 @@ class SamplingEventProcessor(BaseEntity):
 
         #print('looked_up location')
         #print(looked_up)
-        return self.merge_locations(loc, looked_up, study_id, prefix, partner_name, values)
+        return self.merge_locations(loc, looked_up, study_id, prefix,
+                                    partner_name, values, proxy_location)
 
-    def merge_locations(self, loc, looked_up, study_id, prefix, partner_name, values):
+    def merge_locations(self, loc, looked_up, study_id, prefix, partner_name,
+                        values, proxy_location=None):
         ret = None
+
+        if proxy_location:
+            loc.proxy_location = proxy_location
+            loc.proxy_location_id = proxy_location.location_id
 
         if looked_up is not None:
             try:
@@ -267,7 +273,7 @@ class SamplingEventProcessor(BaseEntity):
                             ret = self.update_country(loc.country, looked_up)
                         except Exception as err:
                             self.report_conflict(None, 'Country', looked_up.country,
-                                                     loc.country, 'not updated', values)
+                                                 loc.country, 'not updated', values)
                     except Exception as err:
                         #Either a duplicate or country conflict
                         self.report(err, values)

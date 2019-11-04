@@ -72,6 +72,11 @@ class SamplingEventMerge():
         else:
             sampling_event1.location_id = sampling_event2.location_id
 
+        if sampling_event1.proxy_location_id == 'None':
+            sampling_event1.proxy_location_id = None
+        if sampling_event2.proxy_location_id == 'None':
+            sampling_event2.proxy_location_id = None
+
         if sampling_event1.proxy_location_id:
             if sampling_event2.proxy_location_id:
                 if sampling_event1.proxy_location_id != sampling_event2.proxy_location_id:

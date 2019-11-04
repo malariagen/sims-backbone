@@ -187,8 +187,11 @@ class TestLocation(TestBase):
                 openapi_client.Attr(attr_type='partner_name', attr_value='Kobeni', study_name='5002-PF-MR-ANON'),
             ]
 
-            loc1 = openapi_client.Location(None, 28.46362, 91.49542, 'country',
-                                          'Trongsa, Trongsa, Bhutan', 'pv_3_locations.txt', 'BTN')
+            loc1 = openapi_client.Location(None, latitude=28.46362,
+                                           longitude=91.49542, accuracy='country',
+                                           curated_name='Trongsa, Trongsa, Bhutan',
+                                           notes='pv_3_locations.txt',
+                                           country='BTN')
             loc1.attrs = [
                 openapi_client.Attr(attr_type='partner_name', attr_value='Kobeni', study_name='5002-PF-MR-ANON'),
             ]
@@ -518,16 +521,21 @@ class TestLocation(TestBase):
         try:
 
             loc = self.get_next_location()
-            loc = openapi_client.Location(None, 27.46362, 90.49542, 'country',
-                                          'Trongsa, Trongsa, Bhutan', 'pv_3_locations.txt', 'BTN')
+            loc = openapi_client.Location(None, latitude=27.46362,
+                                          longitude=90.49542, accuracy='country',
+                                          curated_name='Trongsa, Trongsa, Bhutan', notes='pv_3_locations.txt',
+                                          country='BTN')
             loc.attrs = [
                 openapi_client.Attr(attr_type='partner_name', attr_value='bhutan', study_name='1234-PV')
             ]
             created = api_instance.create_location(loc)
             looked_up_locs = api_instance.download_partner_location(loc.attrs[0].attr_value)
             looked_up = looked_up_locs.locations[0]
-            newloc = openapi_client.Location(None, 28.46362, 91.49542, 'location',
-                                        'new_Trongsa, Trongsa, Bhutan', 'new_pv_3_locations.txt', 'IND')
+            newloc = openapi_client.Location(None, latitude=28.46362,
+                                             longitude=91.49542, accuracy='location',
+                                             curated_name='new_Trongsa, Trongsa, Bhutan',
+                                             notes='new_pv_3_locations.txt',
+                                             country='IND')
             new_created = api_instance.create_location(newloc)
             with pytest.raises(ApiException, status=422):
                 created.location_id = new_created.location_id
@@ -550,7 +558,9 @@ class TestLocation(TestBase):
 
             loc = self.get_next_location()
             newloc = openapi_client.Location(None, 28.46362, 91.49542, 'location',
-                                        'new_Trongsa, Trongsa, Bhutan', 'new_pv_3_locations.txt', 'IND')
+                                             curated_name='new_Trongsa, Trongsa, Bhutan',
+                                             notes='new_pv_3_locations.txt',
+                                             country='IND')
             fake_id = uuid.uuid4()
             newloc.location_id = str(fake_id)
 
@@ -573,8 +583,10 @@ class TestLocation(TestBase):
 
         try:
             loc = self.get_next_location()
-            loc = openapi_client.Location(None, 27.46362, 90.49542, 'country',
-                                          'Trongsa, Trongsa, Bhutan', 'pv_3_locations.txt', 'BTN')
+            loc = openapi_client.Location(None, latitude=27.46362,
+                                          longitude=90.49542, accuracy='country',
+                                          curated_name='Trongsa, Trongsa, Bhutan',
+                                          notes='pv_3_locations.txt', country='BTN')
             loc.attrs = [
                 openapi_client.Attr(attr_type='partner_name', attr_value='bhutan', study_name='1234-PV')
             ]

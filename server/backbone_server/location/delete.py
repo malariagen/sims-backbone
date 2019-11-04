@@ -1,8 +1,9 @@
+import logging
+
 from openapi_server.models.location import Location
 
 from backbone_server.errors.missing_key_exception import MissingKeyException
 
-import logging
 
 class LocationDelete():
 
@@ -22,15 +23,17 @@ class LocationDelete():
 
         stmt = '''DELETE FROM location_attrs WHERE location_id = %s'''
 
-        cursor.execute( stmt, (location_id,))
+        cursor.execute(stmt, (location_id,))
+
+        stmt = '''UPDATE locations SET proxy_location_id = NULL WHERE proxy_location_id = %s'''
+
+        cursor.execute(stmt, (location_id,))
 
         stmt = '''DELETE FROM locations WHERE id = %s'''
 
-        cursor.execute( stmt, (location_id,))
+        cursor.execute(stmt, (location_id,))
 
         rc = cursor.rowcount
 
         if rc != 1:
             raise MissingKeyException("Error deleting location {}".format(location_id))
-
-

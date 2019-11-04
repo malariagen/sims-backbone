@@ -648,8 +648,11 @@ class TestOriginalSample(TestBase):
 
             sampling_event = openapi_client.SamplingEvent(None, date(2017, 10, 10),
                                                           doc_accuracy='month')
-            loc = openapi_client.Location(None, 27.463, 90.495, 'city',
-                                          'Trongsa, Trongsa, Bhutan', 'test_create_with_locations', 'BTN')
+            loc = openapi_client.Location(None, latitude=27.463,
+                                          longitude=90.495, accuracy='city',
+                                          curated_name='Trongsa, Trongsa, Bhutan',
+                                          notes='test_create_with_locations',
+                                          country='BTN')
             loc = location_api_instance.create_location(loc)
 
             sampling_event.location_id = loc.location_id
@@ -659,8 +662,8 @@ class TestOriginalSample(TestBase):
             samp.sampling_event_id = created_se.sampling_event_id
 
             samp.attrs = [
-                openapi_client.Attr (attr_type='oxford', attr_value='12345678',
-                                     attr_source='upd')
+                openapi_client.Attr(attr_type='oxford', attr_value='12345678',
+                                    attr_source='upd')
             ]
             created = api_instance.create_original_sample(samp)
 
@@ -756,8 +759,11 @@ class TestOriginalSample(TestBase):
 
             sampling_event = openapi_client.SamplingEvent(None, date(2017, 10, 10),
                                                           doc_accuracy='month')
-            loc = openapi_client.Location(None, 27.463, 90.495, 'city',
-                                          'Trongsa, Trongsa, Bhutan', 'test_create_with_locations', 'BTN')
+            loc = openapi_client.Location(None, latitude=27.463, longitude=90.495,
+                                          accuracy='city',
+                                          curated_name='Trongsa, Trongsa, Bhutan',
+                                          notes='test_create_with_locations',
+                                          country='BTN')
             loc = location_api_instance.create_location(loc)
 
             sampling_event.location_id = loc.location_id
@@ -1641,9 +1647,12 @@ class TestOriginalSample(TestBase):
 
             sampling_event = openapi_client.SamplingEvent(None, date(2017, 10, 10),
                                                           doc_accuracy='month')
-            loc = openapi_client.Location(None, 27.463, 90.495, 'city',
-                                          'Trongsa, Trongsa, Bhutan',
-                                          'test_os_update_study', 'BTN')
+            loc = openapi_client.Location(None, latitude=27.463,
+                                          longitude=90.495,
+                                          accuracy='city',
+                                          curated_name='Trongsa, Trongsa, Bhutan',
+                                          notes='test_os_update_study',
+                                          country='BTN')
             loc.attrs = [
                 openapi_client.Attr(attr_type='partner_name',
                                     attr_value='Trongsa',

@@ -58,7 +58,7 @@ class BaseEntity(object, metaclass=BaseEntityProperties):
             if new_val:
                 new_value = pformat(new_val.to_dict(), width=1000, compact=True)
 
-        if report_type == "Country":
+        if report_type.startswith("Country"):
             loc = None
             if sampling_event:
                 if 'proxy' in message:

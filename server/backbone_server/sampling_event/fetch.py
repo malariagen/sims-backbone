@@ -58,14 +58,16 @@ class SamplingEventFetch():
         stmt = '''SELECT sampling_events.id, doc, doc_accuracy,
                             location_id, proxy_location_id, individual_id
         FROM sampling_events
+        LEFT JOIN locations l ON sampling_events.location_id = l.id
         WHERE sampling_events.id = %s'''
-        cursor.execute( stmt, (sampling_event_id,))
+
+        cursor.execute(stmt, (sampling_event_id,))
 
         sampling_event = None
 
-        for (sampling_event_id, doc, doc_accuracy, location_id,
+        for (samp_event_id, doc, doc_accuracy, location_id,
              proxy_location_id, individual_id) in cursor:
-            sampling_event = SamplingEvent(str(sampling_event_id),
+            sampling_event = SamplingEvent(str(samp_event_id),
                                            doc=doc, doc_accuracy=doc_accuracy,
                                            individual_id=individual_id)
             if location_id:
@@ -98,4 +100,3 @@ class SamplingEventFetch():
                 sampling_event.proxy_location = proxy_location
 
         return sampling_event
-

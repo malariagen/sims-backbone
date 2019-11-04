@@ -44,14 +44,18 @@ class LocationPut(LocationEdit):
 
         LocationEdit.check_for_duplicate(cursor, location, location_id)
 
+        if location.proxy_location_id == 'None':
+            location.proxy_location_id = None
+
         stmt = '''UPDATE locations
                     SET location = ST_SetSRID(ST_MakePoint(%s, %s), 4326),
                     accuracy = %s, curated_name = %s, curation_method = %s, country = %s,
-                    notes = %s
+                    notes = %s, proxy_location_id=%s
                     WHERE id = %s'''
         args = (location.latitude, location.longitude,
                 location.accuracy, location.curated_name, location.curation_method,
-                location.country, location.notes, location_id)
+                location.country, location.notes, location.proxy_location_id,
+                location_id)
         try:
             cursor.execute(stmt, args)
             rc = cursor.rowcount

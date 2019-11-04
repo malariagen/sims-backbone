@@ -92,8 +92,12 @@ class TestStudies(TestBase):
         api_instance = api_factory.LocationApi()
         study_api = api_factory.StudyApi()
 
-        loc = openapi_client.Location(None, 27.46362, 90.49542, 'country',
-                                      'Trongsa, Trongsa, Bhutan', 'pv_3_locations.txt', 'BTN')
+        loc = openapi_client.Location(None, latitude=27.46362,
+                                      longitude=90.49542,
+                                      accuracy='country',
+                                      curated_name='Trongsa, Trongsa, Bhutan',
+                                      notes='pv_3_locations.txt',
+                                      country='BTN')
         loc.attrs = [
             openapi_client.Attr(attr_type='partner_name',
                                 attr_value='bhutan', study_name='2001-MD-UP')

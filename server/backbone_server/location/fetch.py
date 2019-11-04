@@ -14,16 +14,24 @@ class LocationFetch():
             return None
 
         stmt = '''SELECT id, ST_X(location) as latitude, ST_Y(location) as longitude,
-        accuracy, curated_name, curation_method, country, notes
+        accuracy, curated_name, curation_method, country, notes, proxy_location_id
                        FROM locations WHERE id = %s'''
         cursor.execute( stmt, (location_id,))
 
         location = None
 
-        for (location_id, latitude, longitude, accuracy, curated_name,
-             curation_method, country, notes) in cursor:
-            location = Location(str(location_id), latitude, longitude, accuracy,
-                                curated_name, curation_method, country, notes)
+        for (loc_id, latitude, longitude, accuracy, curated_name,
+             curation_method, country, notes, proxy_location_id) in cursor:
+            if proxy_location_id:
+                proxy_location_id = str(proxy_location_id)
+            location = Location(location_id=str(loc_id), latitude=latitude,
+                                longitude=longitude,
+                                accuracy=accuracy,
+                                curated_name=curated_name,
+                                curation_method=curation_method,
+                                country=country,
+                                notes=notes,
+                                proxy_location_id=proxy_location_id)
 
         stmt = '''SELECT DISTINCT attr_type, attr_value, attr_source, studies.study_name
                 FROM location_attrs
@@ -38,13 +46,13 @@ class LocationFetch():
 
         location.attrs = []
         for (name, value, source, study) in cursor:
-            ident = Attr(attr_type = name,
-                               attr_value = value,
-                               attr_source = source,
-                               study_name = study)
+            ident = Attr(attr_type=name,
+                         attr_value=value,
+                         attr_source=source,
+                         study_name=study)
             location.attrs.append(ident)
 
-        if len(location.attrs) == 0:
+        if not location.attrs:
             location.attrs = None
 
         return location

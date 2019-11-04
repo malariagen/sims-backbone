@@ -40,8 +40,10 @@ class TestHistory(TestBase):
 
             created_es = es_api_instance.create_event_set(event_set_name)
 
-            loc = openapi_client.Location(None, 28.463, 91.495, 'country',
-                                          'Trongsa, Trongsa, Bhutan', 'history_locations.txt', 'BTN')
+            loc = openapi_client.Location(location_id=None, latitude=28.463,
+                                          longitude=91.495, accuracy='country',
+                                          curated_name='Trongsa, Trongsa, Bhutan',
+                                          curation_method='history_locations.txt', country='BTN')
 
             location = loc_api_instance.create_location(loc)
 

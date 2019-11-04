@@ -248,6 +248,7 @@ CREATE TABLE public.location_attrs (
 CREATE TABLE public.locations (
     id uuid NOT NULL,
     location public.geometry(Point),
+    proxy_location_id uuid,
     country character(3),
     accuracy character varying,
     curated_name character varying,
@@ -309,8 +310,7 @@ CREATE TABLE public.sampling_events (
     doc date,
     doc_accuracy character varying,
     location_id uuid,
-    individual_id uuid,
-    proxy_location_id uuid
+    individual_id uuid
 );
 
 
@@ -364,7 +364,7 @@ CREATE VIEW public.v_sampling_events AS
     loc.country,
     loc.notes,
     la.attr_value AS partner_name,
-    sampling_events.proxy_location_id,
+    loc.proxy_location_id,
     public.st_x(proxy_loc.location) AS proxy_latitude,
     public.st_y(proxy_loc.location) AS proxy_longitude,
     proxy_loc.accuracy AS proxy_accuracy,
@@ -377,8 +377,8 @@ CREATE VIEW public.v_sampling_events AS
      LEFT JOIN public.locations loc ON ((loc.id = sampling_events.location_id)))
      LEFT JOIN public.location_attrs li ON ((li.location_id = sampling_events.location_id)))
      LEFT JOIN public.attrs la ON (((li.attr_id = la.id) AND ((la.attr_type)::text = 'partner_name'::text))))
-     LEFT JOIN public.locations proxy_loc ON ((proxy_loc.id = sampling_events.proxy_location_id)))
-     LEFT JOIN public.location_attrs pli ON ((pli.location_id = sampling_events.proxy_location_id)))
+     LEFT JOIN public.locations proxy_loc ON ((proxy_loc.id = loc.proxy_location_id)))
+     LEFT JOIN public.location_attrs pli ON ((pli.location_id = loc.proxy_location_id)))
      LEFT JOIN public.attrs pla ON (((pli.attr_id = pla.id) AND ((pla.attr_type)::text = 'partner_name'::text))));
 
 
@@ -612,7 +612,7 @@ CREATE INDEX fki_location_id ON public.location_attrs USING btree (location_id);
 -- Name: fki_proxy_location; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX fki_proxy_location ON public.sampling_events USING btree (proxy_location_id);
+CREATE INDEX fki_proxy_location ON public.locations USING btree (proxy_location_id);
 
 
 --
@@ -870,7 +870,7 @@ ALTER TABLE ONLY public.partner_species_identifiers
 -- Name: sampling_events fk_proxy_location; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.sampling_events
+ALTER TABLE ONLY public.locations
     ADD CONSTRAINT fk_proxy_location FOREIGN KEY (proxy_location_id) REFERENCES public.locations(id);
 
 
