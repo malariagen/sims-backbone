@@ -42,6 +42,7 @@ export class LocationEditComponent implements OnInit {
   public googleForm: FormGroup;
   public gPolygon: Array<LatLngLiteral> = [];
   public locationEvents = '/location/events';
+  public proxyLocationLink = '/location';
 
   zoom = 10;
   accuracy: string;
@@ -133,6 +134,7 @@ export class LocationEditComponent implements OnInit {
             notes: [this.location.notes, []],
             country: [this.location.country, [Validators.required, Validators.minLength(3)]],
             accuracy: [this.location.accuracy, [Validators.required]],
+            proxy_location_id: [this.location.proxy_location_id, {}],
             attrs: this._fb.array([]),
           }
         );
