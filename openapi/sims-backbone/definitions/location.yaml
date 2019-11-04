@@ -17,6 +17,11 @@ components:
               - city
               - region
               - country
+        proxy_location_id:
+          type: string
+  #        format: uuid
+        proxy_location:
+          $ref: './location.yaml#/components/schemas/Location'
         curated_name:
           type: string
         curation_method:
