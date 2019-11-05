@@ -21,7 +21,7 @@ fi
 # Argueably should be running everything using docker exec but not doing
 # that
 REBUILD_PREFIX=/docker-entrypoint-initdb.d/
-REBUILD_PREFIX=${DIR}/../compose/local/postgres/initdb/
+REBUILD_PREFIX=${DIR}/../compose/production/postgres/initdb/
 if [ "${2}" = "clean" ]
 then
     TMP_REBUILD=0

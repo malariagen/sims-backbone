@@ -1,3 +1,8 @@
+import logging
+import psycopg2
+
+from openapi_server.models.original_sample import OriginalSample
+
 from backbone_server.errors.duplicate_key_exception import DuplicateKeyException
 from backbone_server.errors.missing_key_exception import MissingKeyException
 
@@ -6,12 +11,8 @@ from backbone_server.original_sample.fetch import OriginalSampleFetch
 from backbone_server.sampling_event.fetch import SamplingEventFetch
 from backbone_server.location.edit import LocationEdit
 from backbone_server.individual.edit import IndividualEdit
+from backbone_server.study.edit import StudyEdit
 
-from openapi_server.models.original_sample import OriginalSample
-
-import psycopg2
-
-import logging
 
 class OriginalSamplePut():
 
@@ -30,12 +31,16 @@ class OriginalSamplePut():
     def run_command(self, cursor, original_sample_id, original_sample):
 
         stmt = '''SELECT id, study_id, sampling_event_id FROM original_samples WHERE  id = %s'''
-        cursor.execute( stmt, (original_sample_id,))
+        cursor.execute(stmt, (original_sample_id,))
 
         existing_original_sample = None
+        original_study_id = None
+        sampling_event_id = None
 
-        for (original_sample_id, original_study_id, sampling_event_id) in cursor:
-            existing_original_sample = OriginalSample(original_sample_id)
+        for (os_id, o_study_id, s_event_id) in cursor:
+            original_study_id = o_study_id
+            sampling_event_id = s_event_id
+            existing_original_sample = OriginalSample(os_id)
 
         if not existing_original_sample:
             raise MissingKeyException("Could not find original_sample to update {}".format(original_sample_id))
@@ -47,7 +52,7 @@ class OriginalSamplePut():
             sampling_event = SamplingEventFetch.fetch(cursor, sampling_event_id)
             if sampling_event:
                 LocationEdit.update_attr_study(cursor, sampling_event.location_id,
-                                                     original_study_id, study_id)
+                                               original_study_id, study_id)
 
                 if sampling_event.individual_id:
                     IndividualEdit.update_attr_study(cursor, sampling_event.individual_id,
@@ -78,7 +83,7 @@ class OriginalSamplePut():
         except DuplicateKeyException as err:
             raise err
 
-        OriginalSampleEdit.clean_up_taxonomies(cursor)
+        StudyEdit.clean_up_taxonomies(cursor)
 
         original_sample = OriginalSampleFetch.fetch(cursor, original_sample_id)
 

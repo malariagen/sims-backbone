@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 9.6.10
--- Dumped by pg_dump version 9.6.10
+-- Dumped from database version 10.7 (Debian 10.7-1.pgdg90+1)
+-- Dumped by pg_dump version 10.10 (Ubuntu 10.10-1.pgdg18.04+1)
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -12,6 +12,7 @@ SET client_encoding = 'UTF8';
 SET standard_conforming_strings = on;
 SELECT pg_catalog.set_config('search_path', '', false);
 SET check_function_bodies = false;
+SET xmloption = content;
 SET client_min_messages = warning;
 SET row_security = off;
 
@@ -213,6 +214,19 @@ ALTER SEQUENCE public.event_sets_id_seq OWNED BY public.event_sets.id;
 
 
 --
+-- Name: expected_samples; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.expected_samples (
+    id uuid NOT NULL,
+    study_id uuid NOT NULL,
+    partner_species_id uuid,
+    sample_count integer,
+    date_of_arrival date
+);
+
+
+--
 -- Name: individual_attrs; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -248,6 +262,7 @@ CREATE TABLE public.location_attrs (
 CREATE TABLE public.locations (
     id uuid NOT NULL,
     location public.geometry(Point),
+    proxy_location_id uuid,
     country character(3),
     accuracy character varying,
     curated_name character varying,
@@ -309,8 +324,7 @@ CREATE TABLE public.sampling_events (
     doc date,
     doc_accuracy character varying,
     location_id uuid,
-    individual_id uuid,
-    proxy_location_id uuid
+    individual_id uuid
 );
 
 
@@ -321,7 +335,8 @@ CREATE TABLE public.sampling_events (
 CREATE TABLE public.studies (
     id uuid NOT NULL,
     study_name character varying(64),
-    study_code character varying(4)
+    study_code character varying(4),
+    ethics_expiry date
 );
 
 
@@ -364,7 +379,7 @@ CREATE VIEW public.v_sampling_events AS
     loc.country,
     loc.notes,
     la.attr_value AS partner_name,
-    sampling_events.proxy_location_id,
+    loc.proxy_location_id,
     public.st_x(proxy_loc.location) AS proxy_latitude,
     public.st_y(proxy_loc.location) AS proxy_longitude,
     proxy_loc.accuracy AS proxy_accuracy,
@@ -377,8 +392,8 @@ CREATE VIEW public.v_sampling_events AS
      LEFT JOIN public.locations loc ON ((loc.id = sampling_events.location_id)))
      LEFT JOIN public.location_attrs li ON ((li.location_id = sampling_events.location_id)))
      LEFT JOIN public.attrs la ON (((li.attr_id = la.id) AND ((la.attr_type)::text = 'partner_name'::text))))
-     LEFT JOIN public.locations proxy_loc ON ((proxy_loc.id = sampling_events.proxy_location_id)))
-     LEFT JOIN public.location_attrs pli ON ((pli.location_id = sampling_events.proxy_location_id)))
+     LEFT JOIN public.locations proxy_loc ON ((proxy_loc.id = loc.proxy_location_id)))
+     LEFT JOIN public.location_attrs pli ON ((pli.location_id = loc.proxy_location_id)))
      LEFT JOIN public.attrs pla ON (((pli.attr_id = pla.id) AND ((pla.attr_type)::text = 'partner_name'::text))));
 
 
@@ -612,7 +627,7 @@ CREATE INDEX fki_location_id ON public.location_attrs USING btree (location_id);
 -- Name: fki_proxy_location; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX fki_proxy_location ON public.sampling_events USING btree (proxy_location_id);
+CREATE INDEX fki_proxy_location ON public.locations USING btree (proxy_location_id);
 
 
 --
@@ -755,6 +770,22 @@ ALTER TABLE ONLY public.derivative_samples
 
 
 --
+-- Name: expected_samples fk_es_psi; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.expected_samples
+    ADD CONSTRAINT fk_es_psi FOREIGN KEY (partner_species_id) REFERENCES public.partner_species_identifiers(id);
+
+
+--
+-- Name: expected_samples fk_es_si; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.expected_samples
+    ADD CONSTRAINT fk_es_si FOREIGN KEY (study_id) REFERENCES public.studies(id);
+
+
+--
 -- Name: event_set_members fk_esm_es; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -835,6 +866,14 @@ ALTER TABLE ONLY public.original_sample_attrs
 
 
 --
+-- Name: original_samples fk_os_psi; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.original_samples
+    ADD CONSTRAINT fk_os_psi FOREIGN KEY (partner_species_id) REFERENCES public.partner_species_identifiers(id);
+
+
+--
 -- Name: original_samples fk_os_se; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -867,10 +906,10 @@ ALTER TABLE ONLY public.partner_species_identifiers
 
 
 --
--- Name: sampling_events fk_proxy_location; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: locations fk_proxy_location; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.sampling_events
+ALTER TABLE ONLY public.locations
     ADD CONSTRAINT fk_proxy_location FOREIGN KEY (proxy_location_id) REFERENCES public.locations(id);
 
 

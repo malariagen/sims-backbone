@@ -1,10 +1,11 @@
+import logging
+
 from openapi_server.models.original_sample import OriginalSample
 
 from backbone_server.errors.missing_key_exception import MissingKeyException
 
-from backbone_server.original_sample.edit import OriginalSampleEdit
+from backbone_server.study.edit import StudyEdit
 
-import logging
 
 class OriginalSampleDelete():
 
@@ -24,22 +25,20 @@ class OriginalSampleDelete():
 
         stmt = '''UPDATE derivative_samples SET original_sample_id = NULL WHERE original_sample_id = %s'''
 
-        cursor.execute( stmt, (original_sample_id,))
+        cursor.execute(stmt, (original_sample_id,))
 
         stmt = '''DELETE FROM original_sample_attrs WHERE original_sample_id = %s'''
 
-        cursor.execute( stmt, (original_sample_id,))
+        cursor.execute(stmt, (original_sample_id,))
 
         stmt = '''DELETE FROM original_samples WHERE id = %s'''
 
-        cursor.execute( stmt, (original_sample_id,))
+        cursor.execute(stmt, (original_sample_id,))
 
         rc = cursor.rowcount
 
-        OriginalSampleEdit.clean_up_taxonomies(cursor)
+        StudyEdit.clean_up_taxonomies(cursor)
 
 
         if rc != 1:
             raise MissingKeyException("Error deleting original_sample {}".format(original_sample_id))
-
-

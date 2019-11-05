@@ -1,0 +1,20 @@
+components:
+  schemas:
+    ExpectedSamples:
+      type: object
+      properties:
+        expected_samples_id:
+          type: string
+  #        format: uuid
+        date_of_arrival:
+          type: string
+          format: date
+          description: 'Date Samples expected to arrive'
+        sample_count:
+          type: integer
+        expected_species:
+          type: string
+        expected_taxonomies:
+          type: array
+          items:
+              $ref: './original_sample.yaml#/components/schemas/Taxonomy'

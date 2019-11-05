@@ -186,10 +186,23 @@ class TestStudies(TestBase):
             taxa = openapi_client.Taxonomy(5833)
 
             study1.partner_species[0].taxa = [taxa]
+            study1.ethics_expiry = date(2019, 11, 4)
+
+            shipment = openapi_client.ExpectedSamples(None, date_of_arrival=date(2019, 1, 4),
+                                                      sample_count=42,
+                                                      expected_species='P.  vivax',
+                                                      expected_taxonomies=[])
+            study1.expected_samples = [shipment]
             study2 = study_api.update_study('2004-MD-UP', study1)
             assert study2.name == '2004-PF-MD-UP'
             assert study2.partner_species[0].taxa[0].taxonomy_id == 5833, 'taxa not updated'
 
+            assert study1.ethics_expiry == study2.ethics_expiry
+
+            study2.expected_samples[0].expected_samples_id = None
+            assert study1.expected_samples[0] == study2.expected_samples[0]
+
+            assert len(study2.partner_species) == 2
             api_instance.delete_original_sample(created.original_sample_id)
 
         except ApiException as error:

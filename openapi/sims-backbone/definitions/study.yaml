@@ -13,5 +13,12 @@ components:
             type: array
             items:
               $ref: './original_sample.yaml#/components/schemas/PartnerSpecies'
+        ethics_expiry:
+          type: string
+          format: date
+        expected_samples:
+          type: array
+          items:
+            $ref: './expected_samples.yaml#/components/schemas/ExpectedSamples'
         locations:
             $ref: './locations.yaml#/components/schemas/Locations'

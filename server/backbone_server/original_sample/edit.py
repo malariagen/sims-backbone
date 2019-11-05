@@ -87,15 +87,3 @@ class OriginalSampleEdit():
                     (original_sample_id, attr_id)
                     VALUES (%s, %s)'''
                 cursor.execute(stmt, (uuid_val, attr_id))
-
-
-
-    @staticmethod
-    def clean_up_taxonomies(cursor):
-
-        unused_species = '(select partner_species_identifiers.id from partner_species_identifiers LEFT JOIN studies ON studies.id = study_id LEFT JOIN original_samples ON original_samples.study_id = studies.id WHERE original_samples.id IS NULL)'
-        unused_idents = 'DELETE FROM taxonomy_identifiers WHERE partner_species_id IN ' + unused_species
-        unused_species_idents = 'DELETE FROM partner_species_identifiers WHERE id IN ' + unused_species
-
-        cursor.execute(unused_idents)
-        cursor.execute(unused_species_idents)
