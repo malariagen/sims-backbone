@@ -35,6 +35,29 @@ class TestAssayDatum(TestBase):
 
     """
     """
+    def test_ad_create_acc_date(self, api_factory):
+
+        api_instance = api_factory.AssayDataApi()
+
+        try:
+
+            samp = openapi_client.AssayDatum(None,
+                                             acc_date=date(2019, 11, 6))
+            created = api_instance.create_assay_datum(assay_datum=samp)
+            if not api_factory.is_authorized(None):
+                pytest.fail('Unauthorized call to create_assay_datum succeeded')
+
+            fetched = api_instance.download_assay_datum(created.assay_datum_id)
+            assert created == fetched, "create response != download response"
+            fetched.assay_datum_id = None
+            assert samp == fetched, "upload != download response"
+            api_instance.delete_assay_datum(created.assay_datum_id)
+
+        except ApiException as error:
+            self.check_api_exception(api_factory, "AssayDataApi->create_assay_datum", error)
+
+    """
+    """
     def test_ad_delete(self, api_factory):
 
         api_instance = api_factory.AssayDataApi()
@@ -262,12 +285,38 @@ class TestAssayDatum(TestBase):
 
             samp = openapi_client.AssayDatum(None)
             samp.attrs = [
-                openapi_client.Attr (attr_type='oxford', attr_value='1234567')
+                openapi_client.Attr(attr_type='oxford', attr_value='1234567')
             ]
             created = api_instance.create_assay_datum(samp)
             looked_up = api_instance.download_assay_data_by_attr('oxford', '1234567')
             looked_up = looked_up.assay_data[0]
             new_samp = openapi_client.AssayDatum(None)
+            updated = api_instance.update_assay_datum(looked_up.assay_datum_id, new_samp)
+            fetched = api_instance.download_assay_datum(looked_up.assay_datum_id)
+            assert updated == fetched, "update response != download response"
+            fetched.assay_datum_id = None
+            assert new_samp == fetched, "update != download response"
+            api_instance.delete_assay_datum(looked_up.assay_datum_id)
+
+        except ApiException as error:
+            self.check_api_exception(api_factory, "AssayDataApi->create_assay_datum", error)
+
+    """
+    """
+    def test_ad_update_acc_date(self, api_factory):
+
+        api_instance = api_factory.AssayDataApi()
+
+        try:
+
+            samp = openapi_client.AssayDatum(None)
+            samp.attrs = [
+                openapi_client.Attr(attr_type='oxford', attr_value='1234567')
+            ]
+            created = api_instance.create_assay_datum(samp)
+            looked_up = api_instance.download_assay_data_by_attr('oxford', '1234567')
+            looked_up = looked_up.assay_data[0]
+            new_samp = openapi_client.AssayDatum(None, acc_date=date(2019, 11, 6))
             updated = api_instance.update_assay_datum(looked_up.assay_datum_id, new_samp)
             fetched = api_instance.download_assay_datum(looked_up.assay_datum_id)
             assert updated == fetched, "update response != download response"

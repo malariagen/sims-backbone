@@ -26,6 +26,10 @@ components:
   #        $ref: './derivative_sample.yaml#/components/schemas/DerivativeSample'
         ebi_run_acc:
           type: string
+        acc_date:
+          type: string
+          format: date
+          description: 'Accession date'
         attrs:
           type: array
           items:

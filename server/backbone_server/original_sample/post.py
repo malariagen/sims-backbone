@@ -1,15 +1,13 @@
+import logging
+import uuid
+
+from openapi_server.models.original_sample import OriginalSample
+
 from backbone_server.errors.duplicate_key_exception import DuplicateKeyException
 
 from backbone_server.original_sample.edit import OriginalSampleEdit
 from backbone_server.sampling_event.edit import SamplingEventEdit
 from backbone_server.original_sample.fetch import OriginalSampleFetch
-
-from openapi_server.models.original_sample import OriginalSample
-
-import psycopg2
-
-import logging
-import uuid
 
 
 class OriginalSamplePost():
@@ -32,10 +30,13 @@ class OriginalSamplePost():
                 partner_species = OriginalSampleEdit.fetch_partner_species(
                     cursor, original_sample, study_id)
                 stmt = '''INSERT INTO original_samples
-                            (id, study_id, sampling_event_id, days_in_culture, partner_species_id)
-                            VALUES (%s, %s, %s, %s, %s)'''
+                            (id, study_id, sampling_event_id, days_in_culture,
+                            acc_date, partner_species_id)
+                            VALUES (%s, %s, %s, %s, %s, %s)'''
                 args = (uuid_val, study_id, original_sample.sampling_event_id,
-                        original_sample.days_in_culture, partner_species)
+                        original_sample.days_in_culture,
+                        original_sample.acc_date,
+                        partner_species)
 
                 cursor.execute(stmt, args)
 

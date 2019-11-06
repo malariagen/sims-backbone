@@ -36,6 +36,30 @@ class TestSample(TestBase):
 
     """
     """
+    def test_create_acc_date(self, api_factory):
+
+        api_instance = api_factory.SamplingEventApi()
+
+        try:
+
+            samp = openapi_client.SamplingEvent(None, date(2017, 10, 10),
+                                                acc_date=date(2017, 10, 10),
+                                                doc_accuracy='month')
+            created = api_instance.create_sampling_event(samp)
+            if not api_factory.is_authorized(None):
+                pytest.fail('Unauthorized call to create_sampling_event succeeded')
+
+            fetched = api_instance.download_sampling_event(created.sampling_event_id)
+            assert created == fetched, "create response != download response"
+            fetched.sampling_event_id = None
+            assert samp == fetched, "upload != download response"
+            api_instance.delete_sampling_event(created.sampling_event_id)
+
+        except ApiException as error:
+            self.check_api_exception(api_factory, "SamplingEventApi->create_sampling_event", error)
+
+    """
+    """
     def test_delete(self, api_factory):
 
         api_instance = api_factory.SamplingEventApi()
@@ -267,12 +291,39 @@ class TestSample(TestBase):
 
             samp = openapi_client.SamplingEvent(None, date(2017, 10, 15))
             samp.attrs = [
-                openapi_client.Attr (attr_type='oxford', attr_value='1234567')
+                openapi_client.Attr(attr_type='oxford', attr_value='1234567')
             ]
             created = api_instance.create_sampling_event(samp)
             looked_up = api_instance.download_sampling_events_by_attr('oxford', '1234567')
             looked_up = looked_up.sampling_events[0]
             new_samp = openapi_client.SamplingEvent(None, date(2018, 11, 11))
+            updated = api_instance.update_sampling_event(looked_up.sampling_event_id, new_samp)
+            fetched = api_instance.download_sampling_event(looked_up.sampling_event_id)
+            assert updated == fetched, "update response != download response"
+            fetched.sampling_event_id = None
+            assert new_samp == fetched, "update != download response"
+            api_instance.delete_sampling_event(looked_up.sampling_event_id)
+
+        except ApiException as error:
+            self.check_api_exception(api_factory, "SamplingEventApi->create_sampling_event", error)
+
+    """
+    """
+    def test_update_acc_date(self, api_factory):
+
+        api_instance = api_factory.SamplingEventApi()
+
+        try:
+
+            samp = openapi_client.SamplingEvent(None, date(2017, 10, 15))
+            samp.attrs = [
+                openapi_client.Attr(attr_type='oxford', attr_value='1234567')
+            ]
+            created = api_instance.create_sampling_event(samp)
+            looked_up = api_instance.download_sampling_events_by_attr('oxford', '1234567')
+            looked_up = looked_up.sampling_events[0]
+            new_samp = openapi_client.SamplingEvent(None, date(2018, 11, 11),
+                                                    acc_date=date(2019, 11, 6))
             updated = api_instance.update_sampling_event(looked_up.sampling_event_id, new_samp)
             fetched = api_instance.download_sampling_event(looked_up.sampling_event_id)
             assert updated == fetched, "update response != download response"

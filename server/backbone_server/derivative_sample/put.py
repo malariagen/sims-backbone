@@ -41,10 +41,12 @@ class DerivativeSamplePut():
         stmt = '''UPDATE derivative_samples
                     SET original_sample_id = %s,
                     dna_prep = %s,
+                    acc_date = %s,
                     parent_derivative_sample_id = %s
                     WHERE id = %s'''
         args = (derivative_sample.original_sample_id,
                 derivative_sample.dna_prep,
+                derivative_sample.acc_date,
                 derivative_sample.parent_derivative_sample_id,
                 derivative_sample_id)
 

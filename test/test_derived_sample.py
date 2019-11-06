@@ -35,6 +35,29 @@ class TestDerivativeSample(TestBase):
 
     """
     """
+    def test_ds_create_acc_date(self, api_factory):
+
+        api_instance = api_factory.DerivativeSampleApi()
+
+        try:
+
+            samp = openapi_client.DerivativeSample(None,
+                                                   acc_date=date(2019, 11, 6))
+            created = api_instance.create_derivative_sample(samp)
+            if not api_factory.is_authorized(None):
+                pytest.fail('Unauthorized call to create_derivative_sample succeeded')
+
+            fetched = api_instance.download_derivative_sample(created.derivative_sample_id)
+            assert created == fetched, "create response != download response"
+            fetched.derivative_sample_id = None
+            assert samp == fetched, "upload != download response"
+            api_instance.delete_derivative_sample(created.derivative_sample_id)
+
+        except ApiException as error:
+            self.check_api_exception(api_factory, "DerivativeSampleApi->create_derivative_sample", error)
+
+    """
+    """
     def test_ds_delete(self, api_factory):
 
         api_instance = api_factory.DerivativeSampleApi()
@@ -187,12 +210,39 @@ class TestDerivativeSample(TestBase):
 
             samp = openapi_client.DerivativeSample(None)
             samp.attrs = [
-                openapi_client.Attr (attr_type='oxford', attr_value='1234567')
+                openapi_client.Attr(attr_type='oxford', attr_value='1234567')
             ]
             created = api_instance.create_derivative_sample(samp)
             looked_up = api_instance.download_derivative_samples_by_attr('oxford', '1234567')
             looked_up = looked_up.derivative_samples[0]
             new_samp = openapi_client.DerivativeSample(None)
+            updated = api_instance.update_derivative_sample(looked_up.derivative_sample_id, new_samp)
+            fetched = api_instance.download_derivative_sample(looked_up.derivative_sample_id)
+            assert updated == fetched, "update response != download response"
+            fetched.derivative_sample_id = None
+            assert new_samp == fetched, "update != download response"
+            api_instance.delete_derivative_sample(looked_up.derivative_sample_id)
+
+        except ApiException as error:
+            self.check_api_exception(api_factory, "DerivativeSampleApi->create_derivative_sample", error)
+
+    """
+    """
+    def test_ds_update_acc_date(self, api_factory):
+
+        api_instance = api_factory.DerivativeSampleApi()
+
+        try:
+
+            samp = openapi_client.DerivativeSample(None)
+            samp.attrs = [
+                openapi_client.Attr(attr_type='oxford', attr_value='1234567')
+            ]
+            created = api_instance.create_derivative_sample(samp)
+            looked_up = api_instance.download_derivative_samples_by_attr('oxford', '1234567')
+            looked_up = looked_up.derivative_samples[0]
+            new_samp = openapi_client.DerivativeSample(None,
+                                                       acc_date=date(2019, 11, 6))
             updated = api_instance.update_derivative_sample(looked_up.derivative_sample_id, new_samp)
             fetched = api_instance.download_derivative_sample(looked_up.derivative_sample_id)
             assert updated == fetched, "update response != download response"
@@ -213,16 +263,16 @@ class TestDerivativeSample(TestBase):
 
             samp = openapi_client.DerivativeSample(None)
             samp.attrs = [
-                openapi_client.Attr (attr_type='oxford', attr_value='12345678',
-                                     attr_source='upd')
+                openapi_client.Attr(attr_type='oxford', attr_value='12345678',
+                                    attr_source='upd')
             ]
             created = api_instance.create_derivative_sample(samp)
             looked_up = api_instance.download_derivative_samples_by_attr('oxford', '12345678')
             looked_up = looked_up.derivative_samples[0]
             new_samp = openapi_client.DerivativeSample(None)
             new_samp.attrs = [
-                openapi_client.Attr (attr_type='oxford', attr_value='123456789',
-                                     attr_source='upd')
+                openapi_client.Attr(attr_type='oxford', attr_value='123456789',
+                                    attr_source='upd')
             ]
             new_created = api_instance.create_derivative_sample(new_samp)
             with pytest.raises(ApiException, status=422):

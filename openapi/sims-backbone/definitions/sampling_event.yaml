@@ -54,6 +54,10 @@ components:
         individual_id:
           type: string
   #        format: uuid
+        acc_date:
+          type: string
+          format: date
+          description: 'Accession date'
         attrs:
           type: array
           items:

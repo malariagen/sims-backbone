@@ -10,7 +10,6 @@ from backbone_server.errors.nested_edit_exception import NestedEditException
 
 from backbone_server.sampling_event.edit import SamplingEventEdit
 from backbone_server.sampling_event.fetch import SamplingEventFetch
-from backbone_server.location.edit import LocationEdit
 
 class SamplingEventPut():
 
@@ -29,12 +28,12 @@ class SamplingEventPut():
     def run_command(self, cursor, sampling_event_id, sampling_event):
 
         stmt = '''SELECT id FROM sampling_events WHERE  id = %s'''
-        cursor.execute( stmt, (sampling_event_id,))
+        cursor.execute(stmt, (sampling_event_id,))
 
         existing_sampling_event = None
 
-        for (sampling_event_id, ) in cursor:
-            existing_sampling_event = SamplingEvent(sampling_event_id)
+        for (samp_event_id, ) in cursor:
+            existing_sampling_event = SamplingEvent(samp_event_id)
 
         if not existing_sampling_event:
             raise MissingKeyException("Could not find sampling_event to update {}".format(sampling_event_id))
@@ -48,10 +47,12 @@ class SamplingEventPut():
 
         stmt = '''UPDATE sampling_events
                     SET doc = %s, doc_accuracy = %s,
+                    acc_date = %s,
                     location_id = %s,
                     individual_id = %s
                     WHERE id = %s'''
         args = (sampling_event.doc, sampling_event.doc_accuracy,
+                sampling_event.acc_date,
                 sampling_event.location_id,
                 sampling_event.individual_id,
                 sampling_event_id)

@@ -56,7 +56,8 @@ class SamplingEventFetch():
             return None
 
         stmt = '''SELECT sampling_events.id, doc, doc_accuracy,
-                            location_id, proxy_location_id, individual_id
+                            location_id, proxy_location_id, individual_id,
+                            acc_date
         FROM sampling_events
         LEFT JOIN locations l ON sampling_events.location_id = l.id
         WHERE sampling_events.id = %s'''
@@ -66,10 +67,11 @@ class SamplingEventFetch():
         sampling_event = None
 
         for (samp_event_id, doc, doc_accuracy, location_id,
-             proxy_location_id, individual_id) in cursor:
+             proxy_location_id, individual_id, acc_date) in cursor:
             sampling_event = SamplingEvent(str(samp_event_id),
                                            doc=doc, doc_accuracy=doc_accuracy,
-                                           individual_id=individual_id)
+                                           individual_id=individual_id,
+                                           acc_date=acc_date)
             if location_id:
                 sampling_event.location_id = str(location_id)
                 sampling_event.public_location_id = str(location_id)

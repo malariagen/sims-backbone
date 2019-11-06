@@ -25,10 +25,10 @@ class AssayDatumPost():
                 uuid_val = uuid.uuid4()
 
                 stmt = '''INSERT INTO assay_data
-                            (id, derivative_sample_id, ebi_run_acc)
-                            VALUES (%s, %s, %s)'''
+                            (id, derivative_sample_id, ebi_run_acc, acc_date)
+                            VALUES (%s, %s, %s, %s)'''
                 args = (uuid_val, assay_datum.derivative_sample_id,
-                        assay_datum.ebi_run_acc)
+                        assay_datum.ebi_run_acc, assay_datum.acc_date)
 
                 try:
                     cursor.execute(stmt, args)

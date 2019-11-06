@@ -34,7 +34,7 @@ class OriginalSampleFetch():
             return None
 
         stmt = '''SELECT original_samples.id, studies.study_name AS study_id,
-        sampling_event_id, days_in_culture, partner_species
+        sampling_event_id, days_in_culture, partner_species, acc_date
         FROM original_samples
         LEFT JOIN partner_species_identifiers psi ON psi.id = original_samples.partner_species_id
         LEFT JOIN studies ON studies.id = original_samples.study_id
@@ -44,11 +44,12 @@ class OriginalSampleFetch():
         original_sample = None
 
         for (os_id, study_id,
-             sampling_event_id, days_in_culture, partner_species) in cursor:
+             sampling_event_id, days_in_culture, partner_species, acc_date) in cursor:
             original_sample = OriginalSample(str(os_id),
                                              study_name=study_id,
                                              days_in_culture=days_in_culture,
-                                             partner_species=partner_species)
+                                             partner_species=partner_species,
+                                             acc_date=acc_date)
             taxa = OriginalSampleFetch.fetch_taxonomies(cursor, study_id, partner_species)
             original_sample.partner_taxonomies = taxa
             if sampling_event_id:

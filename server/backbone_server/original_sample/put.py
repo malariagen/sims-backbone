@@ -62,10 +62,12 @@ class OriginalSamplePut():
         stmt = '''UPDATE original_samples
                     SET study_id = %s, sampling_event_id = %s,
                     days_in_culture = %s,
+                    acc_date = %s,
                     partner_species_id = %s
                     WHERE id = %s'''
         args = (study_id, original_sample.sampling_event_id,
                 original_sample.days_in_culture,
+                original_sample.acc_date,
                 partner_species,
                 original_sample_id)
 

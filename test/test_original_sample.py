@@ -33,6 +33,30 @@ class TestOriginalSample(TestBase):
         except ApiException as error:
             self.check_api_exception(api_factory, "OriginalSampleApi->create_original_sample", error)
 
+    """
+    """
+    def test_os_create_acc_date(self, api_factory):
+
+        api_instance = api_factory.OriginalSampleApi()
+
+        try:
+
+            samp = openapi_client.OriginalSample(None, study_name='4000-MD-UP',
+                                                acc_date=date(2019, 11, 6))
+            created = api_instance.create_original_sample(samp)
+            if not api_factory.is_authorized(None):
+                pytest.fail('Unauthorized call to create_original_sample succeeded')
+
+            fetched = api_instance.download_original_sample(created.original_sample_id)
+            assert created == fetched, "create response != download response"
+            fetched.original_sample_id = None
+            assert samp == fetched, "upload != download response"
+            api_instance.delete_original_sample(created.original_sample_id)
+
+        except ApiException as error:
+            self.check_api_exception(api_factory, "OriginalSampleApi->create_original_sample", error)
+
+
 
     """
     """
@@ -305,12 +329,40 @@ class TestOriginalSample(TestBase):
 
             samp = openapi_client.OriginalSample(None, study_name='4005-MD-UP',)
             samp.attrs = [
-                openapi_client.Attr (attr_type='oxford', attr_value='1234567')
+                openapi_client.Attr(attr_type='oxford', attr_value='1234567')
             ]
             created = api_instance.create_original_sample(samp)
             looked_up = api_instance.download_original_samples_by_attr('oxford', '1234567')
             looked_up = looked_up.original_samples[0]
             new_samp = openapi_client.OriginalSample(None, study_name='0001-MD-UP')
+            updated = api_instance.update_original_sample(looked_up.original_sample_id, new_samp)
+            fetched = api_instance.download_original_sample(looked_up.original_sample_id)
+            assert updated == fetched, "update response != download response"
+            fetched.original_sample_id = None
+            assert new_samp == fetched, "update != download response"
+            api_instance.delete_original_sample(looked_up.original_sample_id)
+
+        except ApiException as error:
+            self.check_api_exception(api_factory, "OriginalSampleApi->create_original_sample", error)
+
+    """
+    """
+    def test_os_update_acc_date(self, api_factory):
+
+        api_instance = api_factory.OriginalSampleApi()
+
+        try:
+
+            samp = openapi_client.OriginalSample(None, study_name='4005-MD-UP',)
+            samp.attrs = [
+                openapi_client.Attr(attr_type='oxford', attr_value='1234567')
+            ]
+            created = api_instance.create_original_sample(samp)
+            looked_up = api_instance.download_original_samples_by_attr('oxford', '1234567')
+            looked_up = looked_up.original_samples[0]
+            new_samp = openapi_client.OriginalSample(None,
+                                                     study_name='0001-MD-UP',
+                                                     acc_date=date(2017, 10, 10))
             updated = api_instance.update_original_sample(looked_up.original_sample_id, new_samp)
             fetched = api_instance.download_original_sample(looked_up.original_sample_id)
             assert updated == fetched, "update response != download response"

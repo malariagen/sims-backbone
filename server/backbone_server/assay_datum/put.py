@@ -40,10 +40,12 @@ class AssayDatumPut():
 
         stmt = '''UPDATE assay_data
                     SET derivative_sample_id = %s,
-                    ebi_run_acc = %s
+                    ebi_run_acc = %s,
+                    acc_date = %s
                     WHERE id = %s'''
         args = (assay_datum.derivative_sample_id,
                 assay_datum.ebi_run_acc,
+                assay_datum.acc_date,
                 assay_datum_id)
 
         try:

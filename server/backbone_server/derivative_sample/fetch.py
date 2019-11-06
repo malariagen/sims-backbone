@@ -37,7 +37,7 @@ class DerivativeSampleFetch():
             return None
 
         stmt = '''SELECT derivative_samples.id, original_sample_id, dna_prep,
-        parent_derivative_sample_id
+        parent_derivative_sample_id, acc_date
         FROM derivative_samples
         WHERE derivative_samples.id = %s'''
         cursor.execute(stmt, (derivative_sample_id,))
@@ -45,9 +45,10 @@ class DerivativeSampleFetch():
         derivative_sample = None
 
         for (deriv_sample_id, original_sample_id,
-             dna_prep, parent_derivative_sample_id) in cursor:
+             dna_prep, parent_derivative_sample_id, acc_date) in cursor:
             derivative_sample = DerivativeSample(str(deriv_sample_id),
-                                                 dna_prep=dna_prep)
+                                                 dna_prep=dna_prep,
+                                                 acc_date=acc_date)
             if original_sample_id:
                 derivative_sample.original_sample_id = str(original_sample_id)
             if parent_derivative_sample_id:
@@ -69,7 +70,7 @@ class DerivativeSampleFetch():
 
         for (derivative_sample_id, original_sample_id, dna_prep, study_id) in cursor:
             derivative_sample = DerivativeSample(str(derivative_sample_id),
-                                             dna_prep=dna_prep)
+                                                 dna_prep=dna_prep)
             if original_sample_id:
                 derivative_sample.original_sample_id = str(original_sample_id)
                 if not str(original_sample_id) in original_sample_list:

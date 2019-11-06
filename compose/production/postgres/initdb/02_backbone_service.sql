@@ -91,6 +91,7 @@ ALTER SEQUENCE public.archive_id_seq OWNED BY public.archive.id;
 CREATE TABLE public.assay_data (
     id uuid NOT NULL,
     derivative_sample_id uuid,
+    acc_date date,
     ebi_run_acc character varying
 );
 
@@ -149,6 +150,7 @@ CREATE TABLE public.derivative_samples (
     id uuid NOT NULL,
     original_sample_id uuid,
     dna_prep character varying,
+    acc_date date,
     parent_derivative_sample_id uuid
 );
 
@@ -290,6 +292,7 @@ CREATE TABLE public.original_samples (
     study_id uuid,
     sampling_event_id uuid,
     partner_species_id uuid,
+    acc_date date,
     days_in_culture integer
 );
 
@@ -323,6 +326,7 @@ CREATE TABLE public.sampling_events (
     id uuid NOT NULL,
     doc date,
     doc_accuracy character varying,
+    acc_date date,
     location_id uuid,
     individual_id uuid
 );

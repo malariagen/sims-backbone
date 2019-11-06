@@ -34,17 +34,19 @@ class AssayDatumFetch():
         if not assay_datum_id:
             return None
 
-        stmt = '''SELECT assay_data.id, derivative_sample_id, ebi_run_acc
+        stmt = '''SELECT assay_data.id, derivative_sample_id, ebi_run_acc,
+        acc_date
         FROM assay_data
         WHERE assay_data.id = %s'''
         cursor.execute( stmt, (assay_datum_id,))
 
         assay_datum = None
 
-        for (assay_datum_id, derivative_sample_id,
-             ebi_run_acc) in cursor:
-            assay_datum = AssayDatum(str(assay_datum_id),
-                                            ebi_run_acc=ebi_run_acc)
+        for (ass_datum_id, derivative_sample_id,
+             ebi_run_acc, acc_date) in cursor:
+            assay_datum = AssayDatum(str(ass_datum_id),
+                                     ebi_run_acc=ebi_run_acc,
+                                     acc_date=acc_date)
             if derivative_sample_id:
                 assay_datum.derivative_sample_id = str(derivative_sample_id)
 
@@ -64,7 +66,7 @@ class AssayDatumFetch():
 
         for (assay_datum_id, derivative_sample_id, ebi_run_acc) in cursor:
             assay_datum = AssayDatum(str(assay_datum_id),
-                                             ebi_run_acc=ebi_run_acc)
+                                     ebi_run_acc=ebi_run_acc)
             if derivative_sample_id:
                 assay_datum.derivative_sample_id = str(derivative_sample_id)
                 if not str(derivative_sample_id) in derivative_sample_list:

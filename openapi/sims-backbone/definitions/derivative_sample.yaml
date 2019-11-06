@@ -29,6 +29,10 @@ components:
   #        format: uuid
         dna_prep:
           type: string
+        acc_date:
+          type: string
+          format: date
+          description: 'Accession date'
         attrs:
           type: array
           items:
