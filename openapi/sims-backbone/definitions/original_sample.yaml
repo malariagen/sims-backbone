@@ -23,6 +23,8 @@ components:
     OriginalSample:
       type: object
       description: 'Original sample details'
+      required:
+        - study_name
       properties:
         original_sample_id:
           type: string
