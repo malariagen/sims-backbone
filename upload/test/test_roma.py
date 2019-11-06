@@ -114,6 +114,19 @@ class TestROMA(TestBase):
             self.fail("test_year_of_collection: Exception when calling download_sampling_event_by_os_attr {}"
                         .format(error))
 
+    """
+    """
+    def test_date_of_accession(self):
+
+
+        try:
+            looked_up = self._dao.download_sampling_events_by_os_attr('roma_id', 'TST00002')
+            looked_up = looked_up.sampling_events[0]
+            self.assertEqual(looked_up.acc_date, datetime.date(2015, 9, 7))
+        except ApiException as error:
+            self.fail("test_year_of_accession: Exception when calling download_sampling_event_by_os_attr {}"
+                        .format(error))
+
 
     """
     """

@@ -315,11 +315,11 @@ class SamplingEventProcessor(BaseEntity):
 
         idents = []
         if 'sample_individual_id' in values:
-            idents.append(openapi_client.Attr ('individual_id', values['sample_individual_id'],
-                                                     self._event_set))
+            idents.append(openapi_client.Attr('individual_id', values['sample_individual_id'],
+                                              self._event_set))
         if 'roma_pk_id' in values:
-            idents.append(openapi_client.Attr ('roma_pk_id', values['roma_pk_id'],
-                                                     self._event_set))
+            idents.append(openapi_client.Attr('roma_pk_id', values['roma_pk_id'],
+                                              self._event_set))
 
 
         if 'doc' in values:
@@ -337,7 +337,10 @@ class SamplingEventProcessor(BaseEntity):
         if 'study_id' in values:
             study_id = values['study_id']
 
-        samp = openapi_client.SamplingEvent(None, doc = doc)
+        samp = openapi_client.SamplingEvent(None, doc=doc)
+
+        if 'creation_date' in values:
+            samp.acc_date = values['creation_date']
 
         if doc_accuracy:
             samp.doc_accuracy = doc_accuracy

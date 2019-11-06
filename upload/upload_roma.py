@@ -83,6 +83,7 @@ class Upload_ROMA(uploader.Uploader):
             roma_pk_id = instance + '_' + str(item['pk'])
             fields = item['fields']
             roma_id = fields['sample_name']
+            creation_date = fields['creation_date']
             source_code = fields['external_id'].strip()
             #source_code = None
             date_format = '%Y-%m-%d'
@@ -171,6 +172,7 @@ class Upload_ROMA(uploader.Uploader):
                     'patient_id': patient_id,
                     'species': taxon,
                     'doc': doc,
+                    'creation_date': creation_date,
                     'src_location_id': src_location_id,
                     'proxy_src_location_id': proxy_src_location_id,
                     'location_name': loc_name.strip(),
