@@ -1,15 +1,14 @@
-from backbone_server.errors.duplicate_key_exception import DuplicateKeyException
-
-from backbone_server.derivative_sample.edit import DerivativeSampleEdit
-from backbone_server.sampling_event.edit import SamplingEventEdit
-from backbone_server.derivative_sample.fetch import DerivativeSampleFetch
+import logging
+import uuid
 
 from openapi_server.models.derivative_sample import DerivativeSample
 
-import psycopg2
+from backbone_server.errors.duplicate_key_exception import DuplicateKeyException
 
-import logging
-import uuid
+from backbone_server.controllers.base_controller import BaseController
+from backbone_server.derivative_sample.edit import DerivativeSampleEdit
+from backbone_server.derivative_sample.fetch import DerivativeSampleFetch
+
 
 class DerivativeSamplePost():
 
@@ -18,10 +17,19 @@ class DerivativeSamplePost():
         self._connection = conn
 
 
-    def post(self, derivative_sample):
+    def post(self, derivative_sample, studies):
 
         with self._connection:
             with self._connection.cursor() as cursor:
+
+                if studies and derivative_sample.original_sample_id:
+                    stmt = '''SELECT study_code FROM original_samples
+                    LEFT JOIN studies ON studies.id = original_samples.study_id
+                    WHERE original_samples.id = %s'''
+                    cursor.execute(stmt, (derivative_sample.original_sample_id,))
+                    for (study_code,) in cursor:
+                        BaseController.has_study_permission(studies, study_code,
+                                                            BaseController.UPDATE_PERMISSION)
 
                 uuid_val = uuid.uuid4()
 
@@ -46,4 +54,3 @@ class DerivativeSamplePost():
                 derivative_sample = DerivativeSampleFetch.fetch(cursor, uuid_val)
 
         return derivative_sample
-

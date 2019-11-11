@@ -1,5 +1,4 @@
 import connexion
-import six
 
 from openapi_server.models.original_sample import OriginalSample  # noqa: E501
 from openapi_server.models.original_samples import OriginalSamples  # noqa: E501
@@ -25,8 +24,10 @@ def create_original_sample(body, user=None, token_info=None):
         original_sample = OriginalSample.from_dict(
             connexion.request.get_json())
 
-    return original_sample_controller.create_original_sample(original_sample, user,
-                                                             original_sample_controller.token_info(token_info))
+    return original_sample_controller.create_original_sample(original_sample,
+                                                             studies=None,
+                                                             user=user,
+                                                             auths=original_sample_controller.token_info(token_info))
 
 
 def delete_original_sample(original_sample_id, user=None, token_info=None):
@@ -38,8 +39,8 @@ def delete_original_sample(original_sample_id, user=None, token_info=None):
 
     :rtype: None
     """
-    return original_sample_controller.delete_original_sample(original_sample_id, user,
-                                                             original_sample_controller.token_info(token_info))
+    return original_sample_controller.delete_original_sample(original_sample_id, studies=None, user=user,
+                                                             auths=original_sample_controller.token_info(token_info))
 
 
 def download_original_sample(original_sample_id, user=None, token_info=None):
@@ -51,8 +52,8 @@ def download_original_sample(original_sample_id, user=None, token_info=None):
 
     :rtype: OriginalSample
     """
-    return original_sample_controller.download_original_sample(original_sample_id, user,
-                                                               original_sample_controller.token_info(token_info))
+    return original_sample_controller.download_original_sample(original_sample_id, studies=None, user=user,
+                                                               auths=original_sample_controller.token_info(token_info))
 
 
 def download_original_samples(search_filter=None, start=None, count=None, user=None, token_info=None):  # noqa: E501
@@ -70,8 +71,8 @@ def download_original_samples(search_filter=None, start=None, count=None, user=N
     :rtype: OriginalSamples
     """
     return original_sample_controller.download_original_samples(search_filter, start,
-                                                                count, user,
-                                                                original_sample_controller.token_info(token_info))
+                                                                count, studies=None, user=user,
+                                                                auths=original_sample_controller.token_info(token_info))
 
 
 def download_original_samples_by_event_set(event_set_id, start=None, count=None, user=None, token_info=None):
@@ -88,8 +89,8 @@ def download_original_samples_by_event_set(event_set_id, start=None, count=None,
     :rtype: OriginalSamples
     """
     return original_sample_controller.download_original_samples_by_event_set(event_set_id, start,
-                                                                             count, user,
-                                                                             original_sample_controller.token_info(token_info))
+                                                                             count, studies=None, user=user,
+                                                                             auths=original_sample_controller.token_info(token_info))
 
 
 def download_original_samples_by_attr(prop_name, prop_value, study_name=None, user=None, token_info=None):
@@ -105,8 +106,8 @@ def download_original_samples_by_attr(prop_name, prop_value, study_name=None, us
     """
     return original_sample_controller.download_original_samples_by_attr(prop_name, prop_value,
                                                                         study_name,
-                                                                        user,
-                                                                        original_sample_controller.token_info(token_info))
+                                                                        studies=None, user=user,
+                                                                        auths=original_sample_controller.token_info(token_info))
 
 
 def download_original_samples_by_location(location_id, start=None, count=None, user=None, token_info=None):
@@ -123,8 +124,8 @@ def download_original_samples_by_location(location_id, start=None, count=None, u
     :rtype: OriginalSamples
     """
     return original_sample_controller.download_original_samples_by_location(location_id, start,
-                                                                            count, user,
-                                                                            original_sample_controller.token_info(token_info))
+                                                                            count, studies=None, user=user,
+                                                                            auths=original_sample_controller.token_info(token_info))
 
 
 def download_original_samples_by_study(study_name, start=None, count=None, user=None, token_info=None):
@@ -141,8 +142,8 @@ def download_original_samples_by_study(study_name, start=None, count=None, user=
     :rtype: OriginalSamples
     """
     return original_sample_controller.download_original_samples_by_study(study_name, start,
-                                                                         count, user,
-                                                                         original_sample_controller.token_info(token_info))
+                                                                         count, studies=None, user=user,
+                                                                         auths=original_sample_controller.token_info(token_info))
 
 
 def download_original_samples_by_taxa(taxa_id, start=None, count=None, user=None, token_info=None):
@@ -159,8 +160,8 @@ def download_original_samples_by_taxa(taxa_id, start=None, count=None, user=None
     :rtype: OriginalSamples
     """
     return original_sample_controller.download_original_samples_by_taxa(taxa_id, start,
-                                                                        count, user,
-                                                                        original_sample_controller.token_info(token_info))
+                                                                        count, studies=None, user=user,
+                                                                        auths=original_sample_controller.token_info(token_info))
 
 
 def merge_original_samples(into, merged, user=None, token_info=None):  # noqa: E501
@@ -176,7 +177,7 @@ def merge_original_samples(into, merged, user=None, token_info=None):  # noqa: E
     :rtype: OriginalSample
     """
     return original_sample_controller.merge_original_samples(into, merged,
-                                                             original_sample_controller.token_info(token_info))
+                                                             auths=original_sample_controller.token_info(token_info))
 
 
 def update_original_sample(original_sample_id, body, user=None, token_info=None):
@@ -193,5 +194,5 @@ def update_original_sample(original_sample_id, body, user=None, token_info=None)
     if connexion.request.is_json:
         original_sample = OriginalSample.from_dict(
             connexion.request.get_json())
-    return original_sample_controller.update_original_sample(original_sample_id, original_sample, user,
-                                                             original_sample_controller.token_info(token_info))
+    return original_sample_controller.update_original_sample(original_sample_id, original_sample, studies=None, user=user,
+                                                             auths=original_sample_controller.token_info(token_info))

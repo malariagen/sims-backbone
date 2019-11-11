@@ -65,7 +65,7 @@ class Upload_ROMA(uploader.Uploader):
                 location_name = f'{instance}_loc_{location_id}'
                 try:
                     locations = self._dao.download_locations_by_attr('src_location_id',
-                                                                    location_name)
+                                                                     location_name)
                     for location in locations.locations:
                         self._dao.delete_location(location.location_id)
                 except ApiException as e:

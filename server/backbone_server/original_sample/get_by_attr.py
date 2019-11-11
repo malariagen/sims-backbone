@@ -1,9 +1,11 @@
+import logging
+
 from openapi_server.models.original_sample import OriginalSample
 from openapi_server.models.original_samples import OriginalSamples
 
+from backbone_server.controllers.base_controller import BaseController
 from backbone_server.original_sample.fetch import OriginalSampleFetch
 
-import logging
 
 class OriginalSampleGetByAttr():
 
@@ -11,7 +13,7 @@ class OriginalSampleGetByAttr():
         self._logger = logging.getLogger(__name__)
         self._connection = conn
 
-    def get(self, attr_type, attr_value, study_name):
+    def get(self, attr_type, attr_value, study_name, studies):
 
         with self._connection:
             with self._connection.cursor() as cursor:
@@ -24,12 +26,28 @@ class OriginalSampleGetByAttr():
                 args = (attr_type, attr_value)
 
                 if study_name:
+
+                    BaseController.has_study_permission(studies, study_name,
+                                                        BaseController.GET_PERMISSION)
+
                     stmt = '''SELECT DISTINCT original_sample_id FROM original_sample_attrs
                     JOIN attrs ON attrs.id = original_sample_attrs.attr_id
                     LEFT JOIN original_samples ON original_sample_attrs.original_sample_id=original_samples.id
                     LEFT JOIN studies ON original_samples.study_id=studies.id
                 WHERE attr_type = %s AND attr_value = %s AND study_code = %s'''
                     args = args + (study_name[:4],)
+
+                elif studies:
+
+                    filt = BaseController.study_filter(studies)
+
+                    if filt:
+                        stmt = '''SELECT DISTINCT original_sample_id FROM original_sample_attrs
+                        JOIN attrs ON attrs.id = original_sample_attrs.attr_id
+                        LEFT JOIN original_samples ON original_sample_attrs.original_sample_id=original_samples.id
+                        LEFT JOIN studies ON original_samples.study_id=studies.id
+                    WHERE attr_type = %s AND attr_value = %s AND '''
+                        stmt += filt
 
                 cursor.execute(stmt, args)
 

@@ -21,17 +21,17 @@ class SamplingEventMerge():
         self._connection = conn
 
 
-    def merge(self, into, merged):
+    def merge(self, into, merged, studies):
 
         with self._connection:
             with self._connection.cursor() as cursor:
 
-                return self.run_command(cursor, into, merged)
+                return self.run_command(cursor, into, merged, studies)
 
 
-    def run_command(self, cursor, into, merged):
+    def run_command(self, cursor, into, merged, studies):
 
-        sampling_event1 = SamplingEventFetch.fetch(cursor, into)
+        sampling_event1 = SamplingEventFetch.fetch(cursor, into, studies)
 
         if not sampling_event1:
             raise MissingKeyException("No sampling_event {}".format(into))
@@ -39,7 +39,7 @@ class SamplingEventMerge():
         if into == merged:
             return sampling_event1
 
-        sampling_event2 = SamplingEventFetch.fetch(cursor, merged)
+        sampling_event2 = SamplingEventFetch.fetch(cursor, merged, studies)
 
         if not sampling_event2:
             raise MissingKeyException("No sampling_event {}".format(merged))
@@ -48,7 +48,7 @@ class SamplingEventMerge():
             if sampling_event2.doc:
                 if sampling_event1.doc != sampling_event2.doc:
                     msg = 'Incompatible doc {} {}'.format(sampling_event1.doc,
-                                                       sampling_event2.doc)
+                                                          sampling_event2.doc)
                     raise IncompatibleException(msg)
         else:
             sampling_event1.doc = sampling_event2.doc
@@ -57,7 +57,7 @@ class SamplingEventMerge():
             if sampling_event2.doc_accuracy:
                 if sampling_event1.doc_accuracy != sampling_event2.doc_accuracy:
                     msg = 'Incompatible doc_accuracy {} {}'.format(sampling_event1.doc_accuracy,
-                                                       sampling_event2.doc_accuracy)
+                                                                   sampling_event2.doc_accuracy)
                     raise IncompatibleException(msg)
         else:
             if sampling_event2.doc_accuracy:
@@ -67,7 +67,7 @@ class SamplingEventMerge():
             if sampling_event2.location_id:
                 if sampling_event1.location_id != sampling_event2.location_id:
                     msg = 'Incompatible location_id {} {}'.format(sampling_event1.location_id,
-                                                       sampling_event2.location_id)
+                                                                  sampling_event2.location_id)
                     raise IncompatibleException(msg)
         else:
             sampling_event1.location_id = sampling_event2.location_id
@@ -81,7 +81,7 @@ class SamplingEventMerge():
             if sampling_event2.proxy_location_id:
                 if sampling_event1.proxy_location_id != sampling_event2.proxy_location_id:
                     msg = 'Incompatible proxy_location_id {} {}'.format(sampling_event1.proxy_location_id,
-                                                       sampling_event2.proxy_location_id)
+                                                                        sampling_event2.proxy_location_id)
                     raise IncompatibleException(msg)
         else:
             sampling_event1.proxy_location_id = sampling_event2.proxy_location_id
@@ -109,4 +109,5 @@ class SamplingEventMerge():
 
         put = SamplingEventPut(self._connection)
 
-        return put.run_command(cursor, sampling_event1.sampling_event_id, sampling_event1)
+        return put.run_command(cursor, sampling_event1.sampling_event_id,
+                               sampling_event1, studies)

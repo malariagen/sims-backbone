@@ -1,11 +1,12 @@
+import logging
+
 from openapi_server.models.derivative_sample import DerivativeSample
 from openapi_server.models.derivative_samples import DerivativeSamples
 
+from backbone_server.controllers.base_controller import BaseController
 from backbone_server.errors.missing_key_exception import MissingKeyException
 
 from backbone_server.derivative_sample.fetch import DerivativeSampleFetch
-
-import logging
 
 class DerivativeSamplesGetByTaxa():
 
@@ -13,10 +14,12 @@ class DerivativeSamplesGetByTaxa():
         self._logger = logging.getLogger(__name__)
         self._connection = conn
 
-    def get(self, taxa_id, start, count):
+    def get(self, taxa_id, studies, start, count):
 
         with self._connection:
             with self._connection.cursor() as cursor:
+
+                filt = None
 
                 stmt = '''SELECT id FROM taxonomies WHERE id = %s'''
                 cursor.execute(stmt, (taxa_id, ))
@@ -35,6 +38,11 @@ class DerivativeSamplesGetByTaxa():
                 JOIN taxonomy_identifiers ti ON ti.partner_species_id = os.partner_species_id
                 WHERE ti.taxonomy_id = %s'''
                 args = (taxa_id, )
+
+                if studies:
+                    filt = BaseController.study_filter(studies)
+                    if filt:
+                        query_body += ' AND ' + filt
 
                 count_args = args
                 count_query = 'SELECT COUNT(ds.id) ' + query_body
@@ -69,6 +77,9 @@ class DerivativeSamplesGetByTaxa():
                 JOIN original_samples os ON os.id = ds.original_sample_id
                 LEFT JOIN taxonomy_identifiers ti ON ti.partner_species_id = os.partner_species_id
                 WHERE ti.taxonomy_id = %s'''
+
+                if filt:
+                    query_body += ' AND ' + filt
 
                 cursor.execute(col_query, (taxa_id,))
                 for (attr_type,) in cursor:

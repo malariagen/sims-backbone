@@ -15,15 +15,20 @@ class SamplingEventPost():
         self._logger = logging.getLogger(__name__)
         self._connection = conn
 
-    def post(self, sampling_event):
+    def post(self, sampling_event, studies):
 
         with self._connection:
             with self._connection.cursor() as cursor:
 
+                # It is allowed to create a sampling event that's not
+                # associated with an original_sample,
+                # hence study so don't check for permission
                 SamplingEventEdit.check_location_details(cursor, sampling_event.location_id,
-                                                         sampling_event.location)
+                                                         sampling_event.location,
+                                                         studies=None)
                 SamplingEventEdit.check_location_details(cursor, sampling_event.proxy_location_id,
-                                                         sampling_event.proxy_location)
+                                                         sampling_event.proxy_location,
+                                                         studies=None)
 
                 SamplingEventEdit.check_date(sampling_event)
 
@@ -43,8 +48,9 @@ class SamplingEventPost():
 
                 SamplingEventEdit.add_attrs(cursor, uuid_val, sampling_event)
 
-                new_sampling_event = SamplingEventFetch.fetch(cursor, uuid_val)
-                if new_sampling_event.proxy_location_id != sampling_event.proxy_location_id:
+                new_sampling_event = SamplingEventFetch.fetch(cursor, uuid_val,
+                                                              studies=None)
+                if new_sampling_event and new_sampling_event.proxy_location_id != sampling_event.proxy_location_id:
                     raise NestedEditException(f"Incompatible proxy locations {new_sampling_event.proxy_location_id} {sampling_event.proxy_location_id}")
 
         return new_sampling_event

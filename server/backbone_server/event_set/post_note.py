@@ -1,12 +1,11 @@
-from backbone_server.errors.duplicate_key_exception import DuplicateKeyException
-from backbone_server.errors.missing_key_exception import MissingKeyException
+import logging
+
+import psycopg2
 
 from backbone_server.event_set.edit import EventSetEdit
 from backbone_server.event_set.fetch import EventSetFetch
 
-import psycopg2
-
-import logging
+from backbone_server.errors.duplicate_key_exception import DuplicateKeyException
 
 class EventSetPostNote():
 
@@ -15,13 +14,13 @@ class EventSetPostNote():
         self._connection = conn
 
 
-    def post(self, event_set_name, note_id, note):
+    def post(self, event_set_name, note_id, note, studies):
 
         ret = None
         with self._connection:
             with self._connection.cursor() as cursor:
 
-                event_set_id = EventSetFetch.fetch_event_set_id(cursor,event_set_name)
+                event_set_id = EventSetFetch.fetch_event_set_id(cursor, event_set_name)
 
                 try:
 
@@ -31,4 +30,3 @@ class EventSetPostNote():
                     raise DuplicateKeyException("Error inserting event set note {} {}".format(event_set_id, note)) from err
 
         return ret
-

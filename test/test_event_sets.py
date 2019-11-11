@@ -56,8 +56,8 @@ class TestEventSets(TestBase):
             if not api_factory.is_authorized(None):
                 pytest.fail('Unauthorized call to download_event_set succeeded')
 
-            assert fetched_set.members.sampling_events[0].sampling_event_id == created.sampling_event_id
             assert fetched_set.members.count == 1
+            assert fetched_set.members.sampling_events[0].sampling_event_id == created.sampling_event_id
 
             api_instance.delete_event_set_item(event_set, created.sampling_event_id)
 
@@ -346,13 +346,13 @@ class TestEventSets(TestBase):
             created_set = api_instance.create_event_set_item(event_set, created.sampling_event_id)
             fetched_set1 = api_instance.download_event_set(event_set)
 
-            assert fetched_set1.members.sampling_events[0].sampling_event_id == created.sampling_event_id
             assert fetched_set1.members.count == 1
+            assert fetched_set1.members.sampling_events[0].sampling_event_id == created.sampling_event_id
             assert fetched_set1.notes is None
 
             evsn = openapi_client.EventSetNote('note8', 'note8text')
 
-            fetched_set1.notes = [ evsn ]
+            fetched_set1.notes = [evsn]
             fetched_set1.members.sampling_events.append(created2)
             fetched_set1.members.count = 2
 

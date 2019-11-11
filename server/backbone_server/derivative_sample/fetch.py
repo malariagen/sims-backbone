@@ -1,11 +1,11 @@
+import logging
+
 from openapi_server.models.attr import Attr
 from openapi_server.models.taxonomy import Taxonomy
 from openapi_server.models.derivative_sample import DerivativeSample
-from backbone_server.errors.missing_key_exception import MissingKeyException
 
+from backbone_server.controllers.base_controller import BaseController
 from backbone_server.original_sample.fetch import OriginalSampleFetch
-
-import logging
 
 class DerivativeSampleFetch():
 
@@ -31,15 +31,23 @@ class DerivativeSampleFetch():
         return attrs
 
     @staticmethod
-    def fetch(cursor, derivative_sample_id, original_samples=None):
+    def fetch(cursor, derivative_sample_id, studies=None, original_samples=None):
 
         if not derivative_sample_id:
             return None
 
         stmt = '''SELECT derivative_samples.id, original_sample_id, dna_prep,
-        parent_derivative_sample_id, acc_date
+        parent_derivative_sample_id, derivative_samples.acc_date
         FROM derivative_samples
+        LEFT JOIN original_samples ON derivative_samples.original_sample_id = original_samples.id
+        LEFT JOIN studies ON original_samples.study_id = studies.id
         WHERE derivative_samples.id = %s'''
+        if studies:
+            filt = BaseController.study_filter(studies)
+            if filt:
+                stmt += ' AND ' + filt
+
+        #print(stmt % (derivative_sample_id,))
         cursor.execute(stmt, (derivative_sample_id,))
 
         derivative_sample = None

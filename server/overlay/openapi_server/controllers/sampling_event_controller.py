@@ -1,5 +1,4 @@
 import connexion
-import six
 
 from openapi_server.models.sampling_event import SamplingEvent  # noqa: E501
 from openapi_server.models.sampling_events import SamplingEvents  # noqa: E501
@@ -24,8 +23,8 @@ def create_sampling_event(body, user=None, token_info=None):
     if connexion.request.is_json:
         sampling_event = SamplingEvent.from_dict(connexion.request.get_json())
 
-    return sampling_event_controller.create_sampling_event(sampling_event, user,
-                                                           sampling_event_controller.token_info(token_info))
+    return sampling_event_controller.create_sampling_event(sampling_event, studies=None, user=user,
+                                                           auths=sampling_event_controller.token_info(token_info))
 
 
 def delete_sampling_event(sampling_event_id, user=None, token_info=None):
@@ -37,8 +36,8 @@ def delete_sampling_event(sampling_event_id, user=None, token_info=None):
 
     :rtype: None
     """
-    return sampling_event_controller.delete_sampling_event(sampling_event_id, user,
-                                                           sampling_event_controller.token_info(token_info))
+    return sampling_event_controller.delete_sampling_event(sampling_event_id, studies=None, user=user,
+                                                           auths=sampling_event_controller.token_info(token_info))
 
 
 def download_sampling_event(sampling_event_id, user=None, token_info=None):
@@ -50,11 +49,11 @@ def download_sampling_event(sampling_event_id, user=None, token_info=None):
 
     :rtype: SamplingEvent
     """
-    return sampling_event_controller.download_sampling_event(sampling_event_id, user,
-                                                             sampling_event_controller.token_info(token_info))
+    return sampling_event_controller.download_sampling_event(sampling_event_id, studies=None, user=user,
+                                                             auths=sampling_event_controller.token_info(token_info))
 
 
-def download_sampling_events(search_filter=None, start=None, count=None, user=None, token_info=None):  # noqa: E501
+def download_sampling_events(search_filter=None, studies=None, start=None, count=None, user=None, token_info=None):  # noqa: E501
     """fetches samplingEvents
 
      # noqa: E501
@@ -68,9 +67,12 @@ def download_sampling_events(search_filter=None, start=None, count=None, user=No
 
     :rtype: SamplingEvents
     """
-    return sampling_event_controller.download_sampling_events(search_filter, start,
-                                                              count, user,
-                                                              sampling_event_controller.token_info(token_info))
+    return sampling_event_controller.download_sampling_events(search_filter,
+                                                              studies=studies,
+                                                              start=start,
+                                                              count=count,
+                                                              user=user,
+                                                              auths=sampling_event_controller.token_info(token_info))
 
 
 def download_sampling_events_by_event_set(event_set_id, start=None, count=None, user=None, token_info=None):
@@ -86,9 +88,10 @@ def download_sampling_events_by_event_set(event_set_id, start=None, count=None, 
 
     :rtype: SamplingEvents
     """
-    return sampling_event_controller.download_sampling_events_by_event_set(event_set_id, start,
-                                                                           count, user,
-                                                                           sampling_event_controller.token_info(token_info))
+    return sampling_event_controller.download_sampling_events_by_event_set(event_set_id,
+                                                                           start=start,
+                                                                           count=count, studies=None, user=user,
+                                                                           auths=sampling_event_controller.token_info(token_info))
 
 
 def download_sampling_events_by_attr(prop_name, prop_value, study_name=None, user=None, token_info=None):
@@ -104,8 +107,8 @@ def download_sampling_events_by_attr(prop_name, prop_value, study_name=None, use
     """
     return sampling_event_controller.download_sampling_events_by_attr(prop_name, prop_value,
                                                                       study_name,
-                                                                      user,
-                                                                      sampling_event_controller.token_info(token_info))
+                                                                      studies=None, user=user,
+                                                                      auths=sampling_event_controller.token_info(token_info))
 
 
 def download_sampling_events_by_os_attr(prop_name, prop_value, study_name=None, user=None, token_info=None):
@@ -121,8 +124,8 @@ def download_sampling_events_by_os_attr(prop_name, prop_value, study_name=None, 
     """
     return sampling_event_controller.download_sampling_events_by_os_attr(prop_name, prop_value,
                                                                          study_name,
-                                                                         user,
-                                                                         sampling_event_controller.token_info(token_info))
+                                                                         studies=None, user=user,
+                                                                         auths=sampling_event_controller.token_info(token_info))
 
 
 def download_sampling_events_by_location(location_id, start=None, count=None, user=None, token_info=None):
@@ -138,9 +141,10 @@ def download_sampling_events_by_location(location_id, start=None, count=None, us
 
     :rtype: SamplingEvents
     """
-    return sampling_event_controller.download_sampling_events_by_location(location_id, start,
-                                                                          count, user,
-                                                                          sampling_event_controller.token_info(token_info))
+    return sampling_event_controller.download_sampling_events_by_location(location_id,
+                                                                          start=start,
+                                                                          count=count, studies=None, user=user,
+                                                                          auths=sampling_event_controller.token_info(token_info))
 
 
 def download_sampling_events_by_study(study_name, start=None, count=None, user=None, token_info=None):
@@ -156,9 +160,9 @@ def download_sampling_events_by_study(study_name, start=None, count=None, user=N
 
     :rtype: SamplingEvents
     """
-    return sampling_event_controller.download_sampling_events_by_study(study_name, start,
-                                                                       count, user,
-                                                                       sampling_event_controller.token_info(token_info))
+    return sampling_event_controller.download_sampling_events_by_study(study_name, start=start,
+                                                                       count=count, studies=None, user=user,
+                                                                       auths=sampling_event_controller.token_info(token_info))
 
 
 def download_sampling_events_by_taxa(taxa_id, start=None, count=None, user=None, token_info=None):
@@ -174,9 +178,10 @@ def download_sampling_events_by_taxa(taxa_id, start=None, count=None, user=None,
 
     :rtype: SamplingEvents
     """
-    return sampling_event_controller.download_sampling_events_by_taxa(taxa_id, start,
-                                                                      count, user,
-                                                                      sampling_event_controller.token_info(token_info))
+    return sampling_event_controller.download_sampling_events_by_taxa(taxa_id,
+                                                                      start=start,
+                                                                      count=count, studies=None, user=user,
+                                                                      auths=sampling_event_controller.token_info(token_info))
 
 
 def merge_sampling_events(into, merged, user=None, token_info=None):  # noqa: E501
@@ -192,7 +197,9 @@ def merge_sampling_events(into, merged, user=None, token_info=None):  # noqa: E5
     :rtype: SamplingEvent
     """
     return sampling_event_controller.merge_sampling_events(into, merged,
-                                                           sampling_event_controller.token_info(token_info))
+                                                           studies=None,
+                                                           user=user,
+                                                           auths=sampling_event_controller.token_info(token_info))
 
 
 def update_sampling_event(sampling_event_id, body, user=None, token_info=None):
@@ -208,5 +215,5 @@ def update_sampling_event(sampling_event_id, body, user=None, token_info=None):
     """
     if connexion.request.is_json:
         sampling_event = SamplingEvent.from_dict(connexion.request.get_json())
-    return sampling_event_controller.update_sampling_event(sampling_event_id, sampling_event, user,
-                                                           sampling_event_controller.token_info(token_info))
+    return sampling_event_controller.update_sampling_event(sampling_event_id, sampling_event, studies=None, user=user,
+                                                           auths=sampling_event_controller.token_info(token_info))

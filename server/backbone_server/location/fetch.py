@@ -1,5 +1,7 @@
 from openapi_server.models.location import Location
 from openapi_server.models.attr import Attr
+from backbone_server.controllers.base_controller import BaseController
+
 from backbone_server.errors.missing_key_exception import MissingKeyException
 
 import logging
@@ -8,15 +10,24 @@ class LocationFetch():
 
 
     @staticmethod
-    def fetch(cursor, location_id):
+    def fetch(cursor, location_id, studies):
 
         if not location_id:
             return None
 
-        stmt = '''SELECT id, ST_X(location) as latitude, ST_Y(location) as longitude,
+        stmt = '''SELECT DISTINCT locations.id, ST_X(location) as latitude, ST_Y(location) as longitude,
         accuracy, curated_name, curation_method, country, notes, proxy_location_id
-                       FROM locations WHERE id = %s'''
-        cursor.execute( stmt, (location_id,))
+                       FROM locations
+        LEFT JOIN sampling_events ON sampling_events.location_id = locations.id
+        LEFT JOIN original_samples ON original_samples.sampling_event_id = sampling_events.id
+        LEFT JOIN studies ON studies.id = original_samples.study_id
+                       WHERE locations.id = %s'''
+
+        if studies:
+            filt = BaseController.study_filter(studies)
+            if filt:
+                stmt += ' AND (original_samples.id IS NULL OR ' + filt + ')'
+        cursor.execute(stmt, (location_id,))
 
         location = None
 

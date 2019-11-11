@@ -1,15 +1,11 @@
-from backbone_server.errors.duplicate_key_exception import DuplicateKeyException
-from backbone_server.errors.missing_key_exception import MissingKeyException
-
-from backbone_server.event_set.edit import EventSetEdit
-from backbone_server.event_set.fetch import EventSetFetch
+import logging
 
 from openapi_server.models.event_set import EventSet
 
-import psycopg2
+from backbone_server.errors.duplicate_key_exception import DuplicateKeyException
+from backbone_server.errors.missing_key_exception import MissingKeyException
 
-import logging
-import uuid
+from backbone_server.event_set.fetch import EventSetFetch
 
 class EventSetPost():
 
@@ -18,7 +14,7 @@ class EventSetPost():
         self._connection = conn
 
 
-    def post(self, event_set_name):
+    def post(self, event_set_name, studies):
 
         resp = None
         with self._connection:
@@ -26,7 +22,7 @@ class EventSetPost():
 
                 event_set_id = None
                 try:
-                    event_set_id = EventSetFetch.fetch_event_set_id(cursor,event_set_name)
+                    event_set_id = EventSetFetch.fetch_event_set_id(cursor, event_set_name)
                 except MissingKeyException as err:
                     pass
 
@@ -39,11 +35,8 @@ class EventSetPost():
 
                 cursor.execute(stmt, args)
 
-                event_set_id = EventSetFetch.fetch_event_set_id(cursor,event_set_name)
+                event_set_id = EventSetFetch.fetch_event_set_id(cursor, event_set_name)
 
-                resp = EventSetFetch.fetch(cursor, event_set_id, 0, 0)
+                resp = EventSetFetch.fetch(cursor, event_set_id, studies, 0, 0)
 
         return resp
-
-
-

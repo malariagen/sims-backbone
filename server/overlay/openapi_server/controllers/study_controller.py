@@ -29,7 +29,7 @@ def download_studies(studies=None, start=None, count=None, user=None, token_info
                                              auths=study_controller.token_info(token_info))
 
 
-def download_study(study_name, user=None, token_info=None):  # noqa: E501
+def download_study(study_name, studies=None, user=None, token_info=None):  # noqa: E501
     """fetches a study
 
      # noqa: E501
@@ -39,11 +39,11 @@ def download_study(study_name, user=None, token_info=None):  # noqa: E501
 
     :rtype: Study
     """
-    return study_controller.download_study(study_name, user,
-                                           study_controller.token_info(token_info))
+    return study_controller.download_study(study_name, studies=studies, user=user,
+                                           auths=study_controller.token_info(token_info))
 
 
-def update_study(study_name, body, user=None, token_info=None):
+def update_study(study_name, body, studies=None, user=None, token_info=None):
     """updates a study
 
      # noqa: E501
@@ -57,5 +57,5 @@ def update_study(study_name, body, user=None, token_info=None):
     """
     if connexion.request.is_json:
         study = Study.from_dict(connexion.request.get_json())
-    return study_controller.update_study(study_name, study, user,
-                                         study_controller.token_info(token_info))
+    return study_controller.update_study(study_name, study, studies=studies, user=user,
+                                         auths=study_controller.token_info(token_info))

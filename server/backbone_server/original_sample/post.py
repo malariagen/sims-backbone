@@ -3,6 +3,7 @@ import uuid
 
 from openapi_server.models.original_sample import OriginalSample
 
+from backbone_server.controllers.base_controller import BaseController
 from backbone_server.errors.duplicate_key_exception import DuplicateKeyException
 
 from backbone_server.original_sample.edit import OriginalSampleEdit
@@ -16,7 +17,7 @@ class OriginalSamplePost():
         self._logger = logging.getLogger(__name__)
         self._connection = conn
 
-    def post(self, original_sample, uuid_val=None):
+    def post(self, original_sample, uuid_val=None, studies=None):
 
         with self._connection:
             with self._connection.cursor() as cursor:
@@ -24,6 +25,10 @@ class OriginalSamplePost():
                 if not uuid_val:
                     uuid_val = uuid.uuid4()
 
+                if studies:
+                    BaseController.has_study_permission(studies,
+                                                        original_sample.study_name,
+                                                        BaseController.CREATE_PERMISSION)
                 study_id = SamplingEventEdit.fetch_study_id(
                     cursor, original_sample.study_name, True)
 

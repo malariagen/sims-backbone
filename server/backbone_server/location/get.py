@@ -11,14 +11,14 @@ class LocationGetById():
         self._connection = conn
 
 
-    def get(self, location_id):
+    def get(self, location_id, studies):
 
         location = None
 
         with self._connection:
             with self._connection.cursor() as cursor:
 
-                location = LocationFetch.fetch(cursor, location_id)
+                location = LocationFetch.fetch(cursor, location_id, studies)
 
 
         return location

@@ -78,7 +78,8 @@ class TestBase(unittest.TestCase):
 
         if os.getenv('LOCAL_TEST'):
             dao = LocalBackboneDAO('upload_test',
-                                   [ 'cn=editor,ou=sims,ou=projects,ou=groups,dc=malariagen,dc=net'])
+                                   ['cn=editor,ou=sims,ou=projects,ou=groups,dc=malariagen,dc=net',
+                                    'cn=all_studies,ou=sims,ou=projects,ou=groups,dc=malariagen,dc=net'])
         else:
             dao.create_apis(TestBase._configuration)
 

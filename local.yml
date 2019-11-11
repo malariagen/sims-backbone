@@ -64,7 +64,7 @@ services:
     image: mdillon/postgis:10
     volumes:
       - local_postgres_data:/var/lib/postgresql/data
-      - ./compose/local/postgres/initdb:/docker-entrypoint-initdb.d/
+      - ./compose/production/postgres/initdb:/docker-entrypoint-initdb.d/
     ports:
       - 5432:5432
     env_file:

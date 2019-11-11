@@ -3,6 +3,7 @@ import psycopg2
 
 from openapi_server.models.original_sample import OriginalSample
 
+from backbone_server.controllers.base_controller import BaseController
 from backbone_server.errors.duplicate_key_exception import DuplicateKeyException
 from backbone_server.errors.missing_key_exception import MissingKeyException
 
@@ -22,13 +23,14 @@ class OriginalSamplePut():
         self._cursor = cursor
 
 
-    def put(self, original_sample_id, original_sample):
+    def put(self, original_sample_id, original_sample, studies):
 
         with self._connection:
             with self._connection.cursor() as cursor:
-                return self.run_command(cursor, original_sample_id, original_sample)
+                return self.run_command(cursor, original_sample_id,
+                                        original_sample, studies)
 
-    def run_command(self, cursor, original_sample_id, original_sample):
+    def run_command(self, cursor, original_sample_id, original_sample, studies):
 
         stmt = '''SELECT id, study_id, sampling_event_id FROM original_samples WHERE  id = %s'''
         cursor.execute(stmt, (original_sample_id,))
@@ -45,11 +47,18 @@ class OriginalSamplePut():
         if not existing_original_sample:
             raise MissingKeyException("Could not find original_sample to update {}".format(original_sample_id))
 
+        if studies:
+            BaseController.has_study_permission(studies,
+                                                original_sample.study_name,
+                                                BaseController.UPDATE_PERMISSION)
+
         study_id = OriginalSampleEdit.fetch_study_id(cursor, original_sample.study_name, True)
 
         if study_id != original_study_id:
 
-            sampling_event = SamplingEventFetch.fetch(cursor, sampling_event_id)
+            sampling_event = SamplingEventFetch.fetch(cursor,
+                                                      sampling_event_id,
+                                                      studies)
             if sampling_event:
                 LocationEdit.update_attr_study(cursor, sampling_event.location_id,
                                                original_study_id, study_id)

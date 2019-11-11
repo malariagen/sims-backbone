@@ -37,7 +37,7 @@ class LocalStudyApi(BaseLocalApi):
 
         return self.create_response(ret, retcode, 'Studies')
 
-    def download_study(self, study_name):  # noqa: E501
+    def download_study(self, study_name, studies=None):  # noqa: E501
         """fetches a study
 
          # noqa: E501
@@ -47,12 +47,13 @@ class LocalStudyApi(BaseLocalApi):
 
         :rtype: Study
         """
-        (ret, retcode) = self.study_controller.download_study(
-            study_name, self._user, self.study_controller.token_info(self.auth_tokens()))
+        (ret, retcode) = self.study_controller.download_study(study_name, studies=studies,
+                                                              user=self._user,
+                                                              auths=self.study_controller.token_info(self.auth_tokens()))
 
         return self.create_response(ret, retcode, 'Study')
 
-    def update_study(self, study_name, study):
+    def update_study(self, study_name, study, studies=None):
         """updates a study
 
          # noqa: E501
@@ -64,6 +65,8 @@ class LocalStudyApi(BaseLocalApi):
 
         :rtype: Study
         """
-        (ret, retcode) = self.study_controller.update_study(study_name, study, self._user,
-                                                            self.study_controller.token_info(self.auth_tokens()))
+        (ret, retcode) = self.study_controller.update_study(study_name, study,
+                                                            studies=studies,
+                                                            user=self._user,
+                                                            auths=self.study_controller.token_info(self.auth_tokens()))
         return self.create_response(ret, retcode, 'Study')

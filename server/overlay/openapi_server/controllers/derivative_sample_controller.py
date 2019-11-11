@@ -1,11 +1,10 @@
+import logging
+
 import connexion
-import six
 
 from openapi_server.models.derivative_sample import DerivativeSample  # noqa: E501
 from openapi_server.models.derivative_samples import DerivativeSamples  # noqa: E501
 from openapi_server import util
-
-import logging
 
 from backbone_server.controllers.derivative_sample_controller  import DerivativeSampleController
 
@@ -23,8 +22,8 @@ def create_derivative_sample(body, user=None, token_info=None):  # noqa: E501
     """
     if connexion.request.is_json:
         derivative_sample = DerivativeSample.from_dict(connexion.request.get_json())  # noqa: E501
-    return derivative_sample_controller.create_derivative_sample(derivative_sample, user,
-                                                                 derivative_sample_controller.token_info(token_info))
+    return derivative_sample_controller.create_derivative_sample(derivative_sample, studies=None, user=user,
+                                                                 auths=derivative_sample_controller.token_info(token_info))
 
 
 def delete_derivative_sample(derivative_sample_id, user=None, token_info=None):  # noqa: E501
@@ -37,8 +36,8 @@ def delete_derivative_sample(derivative_sample_id, user=None, token_info=None): 
 
     :rtype: None
     """
-    return derivative_sample_controller.delete_derivative_sample(derivative_sample_id, user,
-                                                                 derivative_sample_controller.token_info(token_info))
+    return derivative_sample_controller.delete_derivative_sample(derivative_sample_id, studies=None, user=user,
+                                                                 auths=derivative_sample_controller.token_info(token_info))
 
 
 def download_derivative_sample(derivative_sample_id, user=None, token_info=None):  # noqa: E501
@@ -51,8 +50,8 @@ def download_derivative_sample(derivative_sample_id, user=None, token_info=None)
 
     :rtype: DerivativeSample
     """
-    return derivative_sample_controller.download_derivative_sample(derivative_sample_id, user,
-                                                                   derivative_sample_controller.token_info(token_info))
+    return derivative_sample_controller.download_derivative_sample(derivative_sample_id, studies=None, user=user,
+                                                                   auths=derivative_sample_controller.token_info(token_info))
 
 
 
@@ -70,9 +69,10 @@ def download_derivative_samples(search_filter=None, start=None, count=None, user
 
     :rtype: DerivativeSamples
     """
-    return derivative_sample_controller.download_derivative_samples(search_filter, start,
-                                                                    count, user,
-                                                                    derivative_sample_controller.token_info(token_info))
+    return derivative_sample_controller.download_derivative_samples(search_filter,
+                                                                    studies=None, start=start,
+                                                                    count=count, user=user,
+                                                                    auths=derivative_sample_controller.token_info(token_info))
 
 def download_derivative_samples_by_attr(prop_name, prop_value, study_name=None, user=None, token_info=None):  # noqa: E501
     """fetches one or more DerivativeSample by property value
@@ -88,8 +88,8 @@ def download_derivative_samples_by_attr(prop_name, prop_value, study_name=None, 
 
     :rtype: DerivativeSamples
     """
-    return derivative_sample_controller.download_derivative_samples_by_attr(prop_name, prop_value, study_name, user,
-                                                                            derivative_sample_controller.token_info(token_info))
+    return derivative_sample_controller.download_derivative_samples_by_attr(prop_name, prop_value, study_name, studies=None, user=user,
+                                                                            auths=derivative_sample_controller.token_info(token_info))
 
 def download_derivative_samples_by_event_set(event_set_id, start=None, count=None, user=None, token_info=None):
     """fetches DerivativeSamples in a given event set
@@ -105,9 +105,10 @@ def download_derivative_samples_by_event_set(event_set_id, start=None, count=Non
 
     :rtype: DerivativeSamples
     """
-    return derivative_sample_controller.download_derivative_samples_by_event_set(event_set_id, start,
-                                                                                 count, user,
-                                                                                 derivative_sample_controller.token_info(token_info))
+    return derivative_sample_controller.download_derivative_samples_by_event_set(event_set_id, studies=None,
+                                                                                 start=start,
+                                                                                 count=count, user=user,
+                                                                                 auths=derivative_sample_controller.token_info(token_info))
 
 
 def download_derivative_samples_by_os_attr(prop_name, prop_value, study_name=None, user=None, token_info=None):  # noqa: E501
@@ -124,8 +125,8 @@ def download_derivative_samples_by_os_attr(prop_name, prop_value, study_name=Non
 
     :rtype: DerivativeSamples
     """
-    return derivative_sample_controller.download_derivative_samples_by_os_attr(prop_name, prop_value, study_name, user,
-                                                                               derivative_sample_controller.token_info(token_info))
+    return derivative_sample_controller.download_derivative_samples_by_os_attr(prop_name, prop_value, study_name, studies=None, user=user,
+                                                                               auths=derivative_sample_controller.token_info(token_info))
 
 
 def download_derivative_samples_by_study(study_name, start=None, count=None, user=None, token_info=None):
@@ -142,9 +143,10 @@ def download_derivative_samples_by_study(study_name, start=None, count=None, use
 
     :rtype: DerivativeSamples
     """
-    return derivative_sample_controller.download_derivative_samples_by_study(study_name, start,
-                                                                             count, user,
-                                                                             derivative_sample_controller.token_info(token_info))
+    return derivative_sample_controller.download_derivative_samples_by_study(study_name, studies=None,
+                                                                             start=start,
+                                                                             count=count, user=user,
+                                                                             auths=derivative_sample_controller.token_info(token_info))
 
 def download_derivative_samples_by_taxa(taxa_id, start=None, count=None, user=None, token_info=None):
     """fetches DerivativeSamples for a given taxonomy classification code
@@ -158,9 +160,10 @@ def download_derivative_samples_by_taxa(taxa_id, start=None, count=None, user=No
 
     :rtype: DerivativeSamples
     """
-    return derivative_sample_controller.download_derivative_samples_by_taxa(taxa_id, start,
-                                                                            count, user,
-                                                                            derivative_sample_controller.token_info(token_info))
+    return derivative_sample_controller.download_derivative_samples_by_taxa(taxa_id, studies=None,
+                                                                            start=start,
+                                                                            count=count, user=user,
+                                                                            auths=derivative_sample_controller.token_info(token_info))
 
 def update_derivative_sample(derivative_sample_id, body, user=None, token_info=None):  # noqa: E501
     """updates an DerivativeSample
@@ -176,5 +179,5 @@ def update_derivative_sample(derivative_sample_id, body, user=None, token_info=N
     """
     if connexion.request.is_json:
         derivative_sample = DerivativeSample.from_dict(connexion.request.get_json())  # noqa: E501
-    return derivative_sample_controller.update_derivative_sample(derivative_sample_id, derivative_sample, user,
-                                                                 derivative_sample_controller.token_info(token_info))
+    return derivative_sample_controller.update_derivative_sample(derivative_sample_id, derivative_sample, studies=None, user=user,
+                                                                 auths=derivative_sample_controller.token_info(token_info))

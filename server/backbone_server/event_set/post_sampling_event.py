@@ -1,13 +1,13 @@
+import logging
+
+import psycopg2
+
+from openapi_server.models.sampling_event import SamplingEvent
+
 from backbone_server.errors.duplicate_key_exception import DuplicateKeyException
 
 from backbone_server.event_set.edit import EventSetEdit
 from backbone_server.event_set.fetch import EventSetFetch
-
-from openapi_server.models.sampling_event import SamplingEvent
-
-import psycopg2
-
-import logging
 
 class EventSetPostSamplingEvent():
 
@@ -16,14 +16,14 @@ class EventSetPostSamplingEvent():
         self._connection = conn
 
 
-    def post(self, event_set_name, sampling_event_id):
+    def post(self, event_set_name, sampling_event_id, studies):
 
         resp = None
 
         with self._connection:
             with self._connection.cursor() as cursor:
 
-                event_set_id = EventSetFetch.fetch_event_set_id(cursor,event_set_name)
+                event_set_id = EventSetFetch.fetch_event_set_id(cursor, event_set_name)
 
                 try:
 
@@ -34,4 +34,3 @@ class EventSetPostSamplingEvent():
                     raise DuplicateKeyException("Error inserting sampling event to event set {} {}".format(event_set_name, sampling_event_id)) from err
 
         return resp
-

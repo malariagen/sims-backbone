@@ -13,7 +13,7 @@ class DerivativeSampleGetByOsAttr():
         self._logger = logging.getLogger(__name__)
         self._connection = conn
 
-    def get(self, attr_type, attr_value):
+    def get(self, attr_type, attr_value, studies):
 
         with self._connection:
             with self._connection.cursor() as cursor:
@@ -35,7 +35,9 @@ class DerivativeSampleGetByOsAttr():
                     event_ids.append(derivative_sample_id)
 
                 for derivative_sample_id in event_ids:
-                    derivative_sample = DerivativeSampleFetch.fetch(cursor, derivative_sample_id, locations)
+                    derivative_sample = DerivativeSampleFetch.fetch(cursor,
+                                                                    derivative_sample_id,
+                                                                    studies, locations)
                     derivative_samples.derivative_samples.append(derivative_sample)
                     derivative_samples.count = derivative_samples.count + 1
 

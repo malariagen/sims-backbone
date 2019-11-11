@@ -1,12 +1,12 @@
+import logging
+
 from openapi_server.models.derivative_sample import DerivativeSample
 from openapi_server.models.derivative_samples import DerivativeSamples
 
 from backbone_server.errors.missing_key_exception import MissingKeyException
 
+from backbone_server.controllers.base_controller import BaseController
 from backbone_server.derivative_sample.fetch import DerivativeSampleFetch
-
-import logging
-
 
 class DerivativeSamplesGetByEventSet():
 
@@ -14,7 +14,7 @@ class DerivativeSamplesGetByEventSet():
         self._logger = logging.getLogger(__name__)
         self._connection = conn
 
-    def get(self, event_set_name, start, count):
+    def get(self, event_set_name, studies, start, count):
 
         with self._connection:
             with self._connection.cursor() as cursor:
@@ -37,6 +37,11 @@ class DerivativeSamplesGetByEventSet():
                 LEFT JOIN studies s ON s.id = os.study_id
                 WHERE esm.event_set_id = %s'''
                 args = (event_set_id, )
+
+                if studies:
+                    filt = BaseController.study_filter(studies)
+                    if filt:
+                        query_body += ' AND ' + filt
 
                 count_args = args
                 count_query = 'SELECT COUNT(ds.id) ' + query_body

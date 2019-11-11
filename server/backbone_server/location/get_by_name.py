@@ -12,7 +12,7 @@ class LocationGetByPartnerName():
         self._logger = logging.getLogger(__name__)
         self._connection = conn
 
-    def get(self, partner_id):
+    def get(self, partner_id, studies):
 
         with self._connection:
             with self._connection.cursor() as cursor:
@@ -30,8 +30,9 @@ class LocationGetByPartnerName():
                     locs.append(location_id)
 
                 for location_id in locs:
-                    location = LocationFetch.fetch(cursor, location_id)
-                    locations.locations.append(location)
-                    locations.count = locations.count + 1
+                    location = LocationFetch.fetch(cursor, location_id, studies)
+                    if location:
+                        locations.locations.append(location)
+                        locations.count = locations.count + 1
 
         return locations

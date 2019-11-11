@@ -122,10 +122,15 @@ class TestAssayDatum(TestBase):
 
         api_instance = api_factory.AssayDataApi()
         ds_api_instance = api_factory.DerivativeSampleApi()
+        os_api_instance = api_factory.OriginalSampleApi()
 
         try:
 
-            samp1 = openapi_client.DerivativeSample(None)
+            o_samp = openapi_client.OriginalSample(None, study_name='5004-MD-UP')
+            orig_samp = os_api_instance.create_original_sample(o_samp)
+
+            samp1 = openapi_client.DerivativeSample(None,
+                                                    original_sample_id=orig_samp.original_sample_id)
             created1 = ds_api_instance.create_derivative_sample(samp1)
 
             samp = openapi_client.AssayDatum(None)
@@ -147,6 +152,7 @@ class TestAssayDatum(TestBase):
 
             api_instance.delete_assay_datum(created.assay_datum_id)
             ds_api_instance.delete_derivative_sample(created1.derivative_sample_id)
+            os_api_instance.delete_original_sample(orig_samp.original_sample_id)
 
         except ApiException as error:
             self.check_api_exception(api_factory, "AssayDataApi->create_assay_datum", error)

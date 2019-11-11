@@ -1,8 +1,10 @@
 from openapi_server.models.location import Location
 from openapi_server.models.locations import Locations
 
+from backbone_server.controllers.base_controller import BaseController
+
 from backbone_server.location.fetch import LocationFetch
-from backbone_server.errors.missing_key_exception import MissingKeyException
+from backbone_server.errors.permission_exception import PermissionException
 
 import logging
 
@@ -13,7 +15,7 @@ class LocationGetByAttr():
         self._logger = logging.getLogger(__name__)
         self._connection = conn
 
-    def get(self, attr_type, attr_value, study_code):
+    def get(self, attr_type, attr_value, study_code, studies):
 
         with self._connection:
             with self._connection.cursor() as cursor:
@@ -33,17 +35,20 @@ class LocationGetByAttr():
 
                 cursor.execute(query, args)
 
-                locations=Locations()
-                locations.locations=[]
-                locations.count=0
-                locs=[]
+                locations = Locations()
+                locations.locations = []
+                locations.count = 0
+                locs = []
 
                 for (location_id,) in cursor:
                     locs.append(location_id)
 
                 for location_id in locs:
-                    location=LocationFetch.fetch(cursor, location_id)
-                    locations.locations.append(location)
-                    locations.count=locations.count + 1
+                    try:
+                        location = LocationFetch.fetch(cursor, location_id, studies)
+                        locations.locations.append(location)
+                        locations.count = locations.count + 1
+                    except PermissionException as pme:
+                        pass
 
         return locations

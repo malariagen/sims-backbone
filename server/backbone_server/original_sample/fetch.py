@@ -90,7 +90,7 @@ class OriginalSampleFetch():
         return partner_taxonomies
 
     @staticmethod
-    def load_original_samples(cursor, all_attrs=True):
+    def load_original_samples(cursor, studies=None, all_attrs=True):
 
         original_samples = []
         sampling_event_list = []
@@ -121,8 +121,12 @@ class OriginalSampleFetch():
         sampling_events = {}
 
         for sampling_event_id in sampling_event_list:
-            sampling_event = SamplingEventFetch.fetch(
-                cursor, sampling_event_id)
+            sampling_event = SamplingEventFetch.fetch(cursor,
+                                                      sampling_event_id,
+                                                      studies)
             sampling_events[sampling_event_id] = sampling_event
 
+        #print('load_original_samples')
+        #print(original_samples)
+        #print(sampling_events)
         return original_samples, sampling_events

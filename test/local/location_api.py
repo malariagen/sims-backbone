@@ -20,7 +20,7 @@ class LocalLocationApi(BaseLocalApi):
 
         self.location_controller = LocationController()
 
-    def create_location(self, location):
+    def create_location(self, location, studies=None):
         """
         create_location
         Create a location
@@ -30,12 +30,12 @@ class LocalLocationApi(BaseLocalApi):
         :rtype: Location
         """
 
-        (ret, retcode) = self.location_controller.create_location(location, self._user,
-                                                                  self.location_controller.token_info(self.auth_tokens()))
+        (ret, retcode) = self.location_controller.create_location(location, studies=studies, user=self._user,
+                                                                  auths=self.location_controller.token_info(self.auth_tokens()))
 
         return self.create_response(ret, retcode, 'Location')
 
-    def delete_location(self, location_id):
+    def delete_location(self, location_id, studies=None):
         """
         deletes an location
 
@@ -44,12 +44,12 @@ class LocalLocationApi(BaseLocalApi):
 
         :rtype: None
         """
-        (ret, retcode) = self.location_controller.delete_location(location_id, self._user,
-                                                                  self.location_controller.token_info(self.auth_tokens()))
+        (ret, retcode) = self.location_controller.delete_location(location_id, studies=studies, user=self._user,
+                                                                  auths=self.location_controller.token_info(self.auth_tokens()))
 
         return self.create_response(ret, retcode)
 
-    def download_gps_location(self, latitude, longitude):
+    def download_gps_location(self, latitude, longitude, studies=None):
         """
         fetches location(s) by GPS
         Params must be string as negative numbers not handled - https://github.com/pallets/werkzeug/issues/729 - also want to avoid using float
@@ -60,11 +60,11 @@ class LocalLocationApi(BaseLocalApi):
 
         :rtype: Location
         """
-        (ret, retcode) = self.location_controller.download_gps_location(latitude, longitude, self._user,
-                                                                        self.location_controller.token_info(self.auth_tokens()))
+        (ret, retcode) = self.location_controller.download_gps_location(latitude, longitude, studies=studies, user=self._user,
+                                                                        auths=self.location_controller.token_info(self.auth_tokens()))
         return self.create_response(ret, retcode, 'Locations')
 
-    def download_location(self, location_id):
+    def download_location(self, location_id, studies=None):
         """
         fetches an location
 
@@ -73,12 +73,12 @@ class LocalLocationApi(BaseLocalApi):
 
         :rtype: Location
         """
-        (ret, retcode) = self.location_controller.download_location(location_id, self._user,
-                                                                    self.location_controller.token_info(self.auth_tokens()))
+        (ret, retcode) = self.location_controller.download_location(location_id, studies=studies, user=self._user,
+                                                                    auths=self.location_controller.token_info(self.auth_tokens()))
 
         return self.create_response(ret, retcode, 'Location')
 
-    def download_locations(self, study_name=None, start=None, count=None, orderby=None):
+    def download_locations(self, study_name=None, studies=None, start=None, count=None, orderby=None):
         """
         fetches locations
 
@@ -93,12 +93,13 @@ class LocalLocationApi(BaseLocalApi):
 
         :rtype: Locations
         """
-        (ret, retcode) = self.location_controller.download_locations(study_name, start, count, orderby, self._user,
-                                                                     self.location_controller.token_info(self.auth_tokens()))
+        (ret, retcode) = self.location_controller.download_locations(study_name, start, count, orderby, studies=studies, user=self._user,
+                                                                     auths=self.location_controller.token_info(self.auth_tokens()))
 
         return self.create_response(ret, retcode, 'Locations')
 
-    def download_locations_by_attr(self, attr_type, attr_value, study_name=None):
+    def download_locations_by_attr(self, attr_type, attr_value,
+                                   study_name=None, studies=None):
         """
         fetches locations
 
@@ -115,11 +116,12 @@ class LocalLocationApi(BaseLocalApi):
         """
         (ret, retcode) = self.location_controller.download_locations_by_attr(attr_type,
                                                                              attr_value, study_name,
-                                                                             self.location_controller.token_info(self.auth_tokens()))
+                                                                             studies=studies, user=self._user,
+                                                                             auths=self.location_controller.token_info(self.auth_tokens()))
 
         return self.create_response(ret, retcode, 'Locations')
 
-    def download_partner_location(self, partner_id):
+    def download_partner_location(self, partner_id, studies=None):
         """
         fetches location(s) by partner name
 
@@ -128,11 +130,11 @@ class LocalLocationApi(BaseLocalApi):
 
         :rtype: Locations
         """
-        (ret, retcode) = self.location_controller.download_partner_location(partner_id, self._user,
-                                                                            self.location_controller.token_info(self.auth_tokens()))
+        (ret, retcode) = self.location_controller.download_partner_location(partner_id, studies=studies, user=self._user,
+                                                                            auths=self.location_controller.token_info(self.auth_tokens()))
         return self.create_response(ret, retcode, 'Locations')
 
-    def update_location(self, location_id, location):
+    def update_location(self, location_id, location, studies=None):
         """
         updates an location
 
@@ -144,7 +146,7 @@ class LocalLocationApi(BaseLocalApi):
         :rtype: Location
         """
 
-        (ret, retcode) = self.location_controller.update_location(location_id, location, self._user,
-                                                                  self.location_controller.token_info(self.auth_tokens()))
+        (ret, retcode) = self.location_controller.update_location(location_id, location, studies=studies, user=self._user,
+                                                                  auths=self.location_controller.token_info(self.auth_tokens()))
 
         return self.create_response(ret, retcode, 'Location')

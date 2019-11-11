@@ -1,3 +1,11 @@
+import logging
+
+import psycopg2
+
+from openapi_server.models.original_sample import OriginalSample
+
+from backbone_server.controllers.base_controller import BaseController
+
 from backbone_server.errors.duplicate_key_exception import DuplicateKeyException
 from backbone_server.errors.missing_key_exception import MissingKeyException
 from backbone_server.errors.incompatible_exception import IncompatibleException
@@ -9,12 +17,6 @@ from backbone_server.original_sample.delete import OriginalSampleDelete
 from backbone_server.original_sample.fetch import OriginalSampleFetch
 from backbone_server.location.edit import LocationEdit
 
-from openapi_server.models.original_sample import OriginalSample
-
-import psycopg2
-
-import logging
-
 class OriginalSampleMerge():
 
     def __init__(self, conn):
@@ -22,7 +24,7 @@ class OriginalSampleMerge():
         self._connection = conn
 
 
-    def merge(self, into, merged):
+    def merge(self, into, merged, studies):
 
         ret = None
 
@@ -43,6 +45,9 @@ class OriginalSampleMerge():
                     raise MissingKeyException("No original_sample {}".format(merged))
 
                 if original_sample1.study_name:
+                    BaseController.has_study_permission(studies,
+                                                        original_sample1.study_name,
+                                                        BaseController.GET_PERMISSION)
                     if original_sample2.study_name:
                         if original_sample1.study_name[:4] == '0000':
                             original_sample1.study_name = original_sample2.study_name
@@ -50,16 +55,19 @@ class OriginalSampleMerge():
                             pass
                         elif original_sample1.study_name != original_sample2.study_name:
                             msg = 'Incompatible study_name {} {}'.format(original_sample1.study_name,
-                                                               original_sample2.study_name)
+                                                                         original_sample2.study_name)
                             raise IncompatibleException(msg)
                 else:
+                    BaseController.has_study_permission(studies,
+                                                        original_sample2.study_name,
+                                                        BaseController.GET_PERMISSION)
                     original_sample1.study_name = original_sample2.study_name
 
                 if original_sample1.days_in_culture:
                     if original_sample2.days_in_culture:
                         if original_sample1.days_in_culture != original_sample2.days_in_culture:
                             msg = 'Incompatible days_in_culture {} {}'.format(original_sample1.days_in_culture,
-                                                               original_sample2.days_in_culture)
+                                                                              original_sample2.days_in_culture)
                             raise IncompatibleException(msg)
                 else:
                     original_sample1.days_in_culture = original_sample2.days_in_culture
@@ -68,7 +76,7 @@ class OriginalSampleMerge():
                     if original_sample2.partner_species:
                         if original_sample1.partner_species != original_sample2.partner_species:
                             msg = 'Incompatible partner_species {} {}'.format(original_sample1.partner_species,
-                                                               original_sample2.partner_species)
+                                                                              original_sample2.partner_species)
                             raise IncompatibleException(msg)
                 else:
                     original_sample1.partner_species = original_sample2.partner_species
@@ -87,7 +95,8 @@ class OriginalSampleMerge():
                     if original_sample2.sampling_event_id:
                         merge = SamplingEventMerge(self._connection)
                         merged_se = merge.run_command(cursor, original_sample1.sampling_event_id,
-                                    original_sample2.sampling_event_id)
+                                                      original_sample2.sampling_event_id,
+                                                      studies)
                         original_sample1.sampling_event_id = merged_se.sampling_event_id
                         original_sample2.sampling_event_id = None
                 else:
@@ -104,6 +113,8 @@ class OriginalSampleMerge():
 
                 put = OriginalSamplePut(self._connection)
 
-                ret = put.run_command(cursor, original_sample1.original_sample_id, original_sample1)
+                ret = put.run_command(cursor,
+                                      original_sample1.original_sample_id,
+                                      original_sample1, studies)
 
         return ret

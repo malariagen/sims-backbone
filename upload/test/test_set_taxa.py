@@ -38,7 +38,7 @@ class TestSetTaxa(TestBase):
 
         return
 
-        TestBase.deleteStudies(['9030','9032','9033'], TestSetTaxa._locations)
+        TestBase.deleteStudies(['9030', '9032', '9033'], TestSetTaxa._locations)
 
         TestBase.tearDownLocations(TestSetTaxa._locations)
 
@@ -59,8 +59,16 @@ class TestSetTaxa(TestBase):
             assert looked_up.partner_species == 'Plasmodium falciparum'
             assert not looked_up.partner_taxonomies
 
+        except ApiException as error:
+            self.fail("test_species: Exception when calling download_original_samples_by_attr {}"
+                      .format(error))
+        try:
             study = self._dao.download_study('9030')
 
+        except ApiException as error:
+            self.fail("test_species: Exception when calling download_study {}"
+                      .format(error))
+        try:
             assert len(study.partner_species) == 1
             assert study.partner_species[0].partner_species == 'Plasmodium falciparum'
             assert not study.partner_species[0].taxa
@@ -107,7 +115,5 @@ class TestSetTaxa(TestBase):
             assert not looked_up.partner_taxonomies
 
         except ApiException as error:
-            self.fail("test_species: Exception when calling download_sampling_event_by_os_attr {}"
-                        .format(error))
-
-
+            self.fail("test_species: Exception when calling download_original_samples_by_attr {}"
+                      .format(error))

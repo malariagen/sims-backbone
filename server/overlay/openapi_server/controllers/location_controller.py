@@ -27,8 +27,8 @@ def create_location(body, user=None, token_info=None):
     if connexion.request.is_json:
         location = Location.from_dict(connexion.request.get_json())
 
-    return location_controller.create_location(location, user,
-                                               location_controller.token_info(token_info))
+    return location_controller.create_location(location, studies=None, user=user,
+                                               auths=location_controller.token_info(token_info))
 
 
 def delete_location(location_id, user=None, token_info=None):
@@ -40,8 +40,8 @@ def delete_location(location_id, user=None, token_info=None):
 
     :rtype: None
     """
-    return location_controller.delete_location(location_id, user,
-                                               location_controller.token_info(token_info))
+    return location_controller.delete_location(location_id, studies=None, user=user,
+                                               auths=location_controller.token_info(token_info))
 
 
 def download_gps_location(latitude, longitude, user=None, token_info=None):
@@ -55,8 +55,8 @@ def download_gps_location(latitude, longitude, user=None, token_info=None):
 
     :rtype: Location
     """
-    return location_controller.download_gps_location(latitude, longitude, user,
-                                                     location_controller.token_info(token_info))
+    return location_controller.download_gps_location(latitude, longitude, studies=None, user=user,
+                                                     auths=location_controller.token_info(token_info))
 
 
 def download_location(location_id, user=None, token_info=None):
@@ -68,8 +68,8 @@ def download_location(location_id, user=None, token_info=None):
 
     :rtype: Location
     """
-    return location_controller.download_location(location_id, user,
-                                                 location_controller.token_info(token_info))
+    return location_controller.download_location(location_id, studies=None, user=user,
+                                                 auths=location_controller.token_info(token_info))
 
 
 def download_locations(study_name=None, start=None, count=None, orderby=None, user=None,
@@ -88,8 +88,8 @@ def download_locations(study_name=None, start=None, count=None, orderby=None, us
 
     :rtype: Locations
     """
-    return location_controller.download_locations(study_name, start, count, orderby, user,
-                                                  location_controller.token_info(token_info))
+    return location_controller.download_locations(study_name, start, count, orderby, studies=None, user=user,
+                                                  auths=location_controller.token_info(token_info))
 
 
 def download_locations_by_attr(prop_name, prop_value,
@@ -109,8 +109,8 @@ def download_locations_by_attr(prop_name, prop_value,
     :rtype: Locations
     """
     return location_controller.download_locations_by_attr(prop_name,
-                                                          prop_value, study_name, user,
-                                                          location_controller.token_info(token_info))
+                                                          prop_value, study_name, studies=None, user=user,
+                                                          auths=location_controller.token_info(token_info))
 
 
 def download_partner_location(partner_id, user=None, token_info=None):
@@ -122,8 +122,8 @@ def download_partner_location(partner_id, user=None, token_info=None):
 
     :rtype: Locations
     """
-    return location_controller.download_partner_location(partner_id, user,
-                                                         location_controller.token_info(token_info))
+    return location_controller.download_partner_location(partner_id, studies=None, user=user,
+                                                         auths=location_controller.token_info(token_info))
 
 
 def update_location(location_id, body, user=None, token_info=None):
@@ -140,5 +140,5 @@ def update_location(location_id, body, user=None, token_info=None):
     if connexion.request.is_json:
         location = Location.from_dict(connexion.request.get_json())
 
-    return location_controller.update_location(location_id, location, user,
-                                               location_controller.token_info(token_info))
+    return location_controller.update_location(location_id, location, studies=None, user=user,
+                                               auths=location_controller.token_info(token_info))

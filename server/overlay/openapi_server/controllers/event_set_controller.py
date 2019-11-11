@@ -13,7 +13,7 @@ from backbone_server.controllers.event_set_controller import EventSetController
 event_set_controller = EventSetController()
 
 
-def create_event_set(event_set_id, user=None, token_info=None):
+def create_event_set(event_set_id, studies=None, user=None, token_info=None):
     """
     creates an eventSet
 
@@ -25,11 +25,11 @@ def create_event_set(event_set_id, user=None, token_info=None):
     :rtype: EventSet
     """
 
-    return event_set_controller.create_event_set(event_set_id, user,
-                                                 event_set_controller.token_info(token_info))
+    return event_set_controller.create_event_set(event_set_id, studies=studies, user=user,
+                                                 auths=event_set_controller.token_info(token_info))
 
 
-def create_event_set_item(event_set_id, sampling_event_id, user=None, token_info=None):
+def create_event_set_item(event_set_id, sampling_event_id, studies=None, user=None, token_info=None):
     """
     Adds a samplingEvent to an eventSet
 
@@ -40,12 +40,12 @@ def create_event_set_item(event_set_id, sampling_event_id, user=None, token_info
 
     :rtype: EventSet
     """
-    (ret, retcode) = event_set_controller.create_event_set_item(event_set_id, sampling_event_id, user,
-                                                                event_set_controller.token_info(token_info))
+    (ret, retcode) = event_set_controller.create_event_set_item(event_set_id, sampling_event_id, studies=studies, user=user,
+                                                                auths=event_set_controller.token_info(token_info))
     return ret, retcode
 
 
-def create_event_set_note(event_set_id, note_id, body, user=None, token_info=None):
+def create_event_set_note(event_set_id, note_id, body, studies=None, user=None, token_info=None):
     """
     Adds a note to an eventSet
 
@@ -60,11 +60,11 @@ def create_event_set_note(event_set_id, note_id, body, user=None, token_info=Non
     """
     if connexion.request.is_json:
         note = EventSetNote.from_dict(connexion.request.get_json())
-    return event_set_controller.create_event_set_note(event_set_id, note_id, note, user,
-                                                      event_set_controller.token_info(token_info))
+    return event_set_controller.create_event_set_note(event_set_id, note_id, note, studies=studies, user=user,
+                                                      auths=event_set_controller.token_info(token_info))
 
 
-def delete_event_set(event_set_id, user=None, token_info=None):
+def delete_event_set(event_set_id, studies=None, user=None, token_info=None):
     """
     deletes an eventSet
 
@@ -73,10 +73,10 @@ def delete_event_set(event_set_id, user=None, token_info=None):
 
     :rtype: None
     """
-    return event_set_controller.delete_event_set(event_set_id, user, event_set_controller.token_info(token_info))
+    return event_set_controller.delete_event_set(event_set_id, studies=studies, user=user, auths=event_set_controller.token_info(token_info))
 
 
-def delete_event_set_item(event_set_id, sampling_event_id, user=None, token_info=None):
+def delete_event_set_item(event_set_id, sampling_event_id, studies=None, user=None, token_info=None):
     """
     deletes a samplingEvent from an eventSet
 
@@ -87,11 +87,11 @@ def delete_event_set_item(event_set_id, sampling_event_id, user=None, token_info
 
     :rtype: None
     """
-    return event_set_controller.delete_event_set_item(event_set_id, sampling_event_id, user,
-                                                      event_set_controller.token_info(token_info))
+    return event_set_controller.delete_event_set_item(event_set_id, sampling_event_id, studies=studies, user=user,
+                                                      auths=event_set_controller.token_info(token_info))
 
 
-def delete_event_set_note(event_set_id, note_id, user=None, token_info=None):
+def delete_event_set_note(event_set_id, note_id, studies=None, user=None, token_info=None):
     """
     deletes an eventSet note
 
@@ -102,11 +102,11 @@ def delete_event_set_note(event_set_id, note_id, user=None, token_info=None):
 
     :rtype: None
     """
-    return event_set_controller.delete_event_set_note(event_set_id, note_id, user,
-                                                      event_set_controller.token_info(token_info))
+    return event_set_controller.delete_event_set_note(event_set_id, note_id, studies=studies, user=user,
+                                                      auths=event_set_controller.token_info(token_info))
 
 
-def download_event_set(event_set_id, start=None, count=None, user=None, token_info=None):
+def download_event_set(event_set_id, studies=None, start=None, count=None, user=None, token_info=None):
     """
     fetches an eventSet
 
@@ -115,22 +115,24 @@ def download_event_set(event_set_id, start=None, count=None, user=None, token_in
 
     :rtype: EventSet
     """
-    return event_set_controller.download_event_set(event_set_id, start, count, user,
-                                                   event_set_controller.token_info(token_info))
+    return event_set_controller.download_event_set(event_set_id,
+                                                   studies=studies,
+                                                   start=start, count=count, user=user,
+                                                   auths=event_set_controller.token_info(token_info))
 
 
-def download_event_sets(user=None, token_info=None):
+def download_event_sets(studies=None, user=None, token_info=None):
     """
     fetches eventSets
 
 
     :rtype: EventSets
     """
-    return event_set_controller.download_event_sets(user,
-                                                    event_set_controller.token_info(token_info))
+    return event_set_controller.download_event_sets(studies=studies, user=user,
+                                                    auths=event_set_controller.token_info(token_info))
 
 
-def update_event_set(event_set_id, body, user=None, token_info=None):
+def update_event_set(event_set_id, body, studies=None, user=None, token_info=None):
     """
     updates an eventSet
 
@@ -143,11 +145,11 @@ def update_event_set(event_set_id, body, user=None, token_info=None):
     """
     if connexion.request.is_json:
         event_set = EventSet.from_dict(connexion.request.get_json())
-    return event_set_controller.update_event_set(event_set_id, event_set, user,
-                                                 event_set_controller.token_info(token_info))
+    return event_set_controller.update_event_set(event_set_id, event_set, studies=studies, user=user,
+                                                 auths=event_set_controller.token_info(token_info))
 
 
-def update_event_set_note(event_set_id, note_id, body, user=None, token_info=None):
+def update_event_set_note(event_set_id, note_id, body, studies=None, user=None, token_info=None):
     """
     Adds a note to an eventSet
 
@@ -163,5 +165,5 @@ def update_event_set_note(event_set_id, note_id, body, user=None, token_info=Non
     if connexion.request.is_json:
         note = EventSetNote.from_dict(connexion.request.get_json())
 
-    return event_set_controller.update_event_set_note(event_set_id, note_id, note, user,
-                                                      event_set_controller.token_info(token_info))
+    return event_set_controller.update_event_set_note(event_set_id, note_id, note, studies=studies, user=user,
+                                                      auths=event_set_controller.token_info(token_info))

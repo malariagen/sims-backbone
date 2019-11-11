@@ -2,6 +2,7 @@ import logging
 
 from backbone_server.errors.missing_key_exception import MissingKeyException
 from backbone_server.errors.integrity_exception import IntegrityException
+from backbone_server.errors.permission_exception import PermissionException
 from backbone_server.study.gets import StudiesGet
 from backbone_server.study.get import StudyGet
 from backbone_server.study.put import StudyPut
@@ -32,7 +33,7 @@ class StudyController(BaseController):
 
         return studies, 200
 
-    def download_study(self, study_name, user=None, auths=None):
+    def download_study(self, study_name, studies=None, user=None, auths=None):
         """
         fetches a study
 
@@ -47,16 +48,22 @@ class StudyController(BaseController):
         study = None
         retcode = 200
         try:
-            study = get.get(study_name)
+            study = get.get(study_name, studies)
         except MissingKeyException as dme:
             logging.getLogger(__name__).debug(
                 "update_study: {}".format(repr(dme)))
             retcode = 404
             study = str(dme)
+        except PermissionException as pme:
+            logging.getLogger(__name__).debug(
+                "download_study: {}, {}".format(repr(pme), user))
+            retcode = 403
+            study = str(pme)
+
 
         return study, retcode
 
-    def update_study(self, study_name, study, user=None, auths=None):
+    def update_study(self, study_name, study, studies=None, user=None, auths=None):
         """
         updates a study
 
@@ -74,7 +81,7 @@ class StudyController(BaseController):
         try:
             put = StudyPut(self.get_connection())
 
-            updated_study = put.put(study_name, study)
+            updated_study = put.put(study_name, study, studies)
         except IntegrityException as dme:
             logging.getLogger(__name__).debug(
                 "update_study: {}".format(repr(dme)))
@@ -85,5 +92,10 @@ class StudyController(BaseController):
                 "update_study: {}".format(repr(dme)))
             retcode = 404
             updated_study = str(dme)
+        except PermissionException as pme:
+            logging.getLogger(__name__).debug(
+                "update_study: {}, {}".format(repr(pme), user))
+            retcode = 403
+            updated_study = str(pme)
 
         return updated_study, retcode

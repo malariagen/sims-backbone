@@ -2,6 +2,8 @@ import logging
 
 from openapi_server.models.location import Location
 
+from backbone_server.controllers.base_controller import BaseController
+
 from backbone_server.errors.missing_key_exception import MissingKeyException
 
 
@@ -12,14 +14,14 @@ class LocationDelete():
         self._connection = conn
 
 
-    def delete(self, location_id):
+    def delete(self, location_id, studies):
 
         with self._connection:
             with self._connection.cursor() as cursor:
 
-                return self.run_command(cursor, location_id)
+                return self.run_command(cursor, location_id, studies)
 
-    def run_command(self, cursor, location_id):
+    def run_command(self, cursor, location_id, studies):
 
         stmt = '''DELETE FROM location_attrs WHERE location_id = %s'''
 

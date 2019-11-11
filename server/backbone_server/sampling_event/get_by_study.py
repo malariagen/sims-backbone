@@ -18,7 +18,7 @@ class SamplingEventsGetByStudy():
         self._logger = logging.getLogger(__name__)
         self._connection = conn
 
-    def get(self, study_name, start, count):
+    def get(self, study_name, studies, start, count):
         with self._connection:
             with self._connection.cursor() as cursor:
 
@@ -56,7 +56,7 @@ class SamplingEventsGetByStudy():
                 locations = {}
                 sampling_events.sampling_events = []
                 for samp_id in samp_ids:
-                    event = SamplingEventFetch.fetch(cursor, samp_id, locations)
+                    event = SamplingEventFetch.fetch(cursor, samp_id, studies, locations)
                     sampling_events.sampling_events.append(event)
                 sampling_events.locations = locations
 

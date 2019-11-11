@@ -19,7 +19,8 @@ class LocalOriginalSampleApi(BaseLocalApi):
 
         self.original_sample_controller = OriginalSampleController()
 
-    def create_original_sample(self, original_sample, uuid_val=None):
+    def create_original_sample(self, original_sample, uuid_val=None,
+                               studies=None):
         """
         create_original_sample
         Create a samplingEvent
@@ -31,12 +32,13 @@ class LocalOriginalSampleApi(BaseLocalApi):
 
         (ret, retcode) = self.original_sample_controller.create_original_sample(original_sample,
                                                                                 uuid_val=uuid_val,
+                                                                                studies=studies,
                                                                                 user=self._user,
                                                                                 auths=self.original_sample_controller.token_info(self.auth_tokens()))
 
         return self.create_response(ret, retcode, 'OriginalSample')
 
-    def delete_original_sample(self, original_sample_id):
+    def delete_original_sample(self, original_sample_id, studies=None):
         """
         deletes an original_sample_id
 
@@ -45,12 +47,14 @@ class LocalOriginalSampleApi(BaseLocalApi):
 
         :rtype: None
         """
-        (ret, retcode) = self.original_sample_controller.delete_original_sample(original_sample_id, self._user,
-                                                                                self.original_sample_controller.token_info(self.auth_tokens()))
+        (ret, retcode) = self.original_sample_controller.delete_original_sample(original_sample_id,
+                                                                                studies=studies,
+                                                                                user=self._user,
+                                                                                auths=self.original_sample_controller.token_info(self.auth_tokens()))
 
         return self.create_response(ret, retcode)
 
-    def download_original_sample(self, original_sample_id):
+    def download_original_sample(self, original_sample_id, studies=None):
         """
         fetches an samplingEvent
 
@@ -59,12 +63,15 @@ class LocalOriginalSampleApi(BaseLocalApi):
 
         :rtype: OriginalSample
         """
-        (ret, retcode) = self.original_sample_controller.download_original_sample(original_sample_id, self._user,
-                                                                                  self.original_sample_controller.token_info(self.auth_tokens()))
+        (ret, retcode) = self.original_sample_controller.download_original_sample(original_sample_id,
+                                                                                  studies=studies,
+                                                                                  user=self._user,
+                                                                                  auths=self.original_sample_controller.token_info(self.auth_tokens()))
 
         return self.create_response(ret, retcode, 'OriginalSample')
 
-    def download_original_samples(self, search_filter=None, start=None, count=None):
+    def download_original_samples(self, search_filter=None, start=None,
+                                  count=None, studies=None):
         """
         fetches an samplingEvent
 
@@ -74,12 +81,15 @@ class LocalOriginalSampleApi(BaseLocalApi):
         :rtype: OriginalSample
         """
         (ret, retcode) = self.original_sample_controller.download_original_samples(search_filter, start,
-                                                                                   count, self._user,
-                                                                                   self.original_sample_controller.token_info(self.auth_tokens()))
+                                                                                   count,
+                                                                                   studies=studies,
+                                                                                   user=self._user,
+                                                                                   auths=self.original_sample_controller.token_info(self.auth_tokens()))
 
         return self.create_response(ret, retcode, 'OriginalSamples')
 
-    def download_original_samples_by_event_set(self, event_set_id, start=None, count=None):
+    def download_original_samples_by_event_set(self, event_set_id, start=None,
+                                               count=None, studies=None):
         """
         fetches samplingEvents in a given event set
 
@@ -93,12 +103,15 @@ class LocalOriginalSampleApi(BaseLocalApi):
         :rtype: OriginalSamples
         """
         (ret, retcode) = self.original_sample_controller.download_original_samples_by_event_set(event_set_id, start,
-                                                                                                count, self._user,
-                                                                                                self.original_sample_controller.token_info(self.auth_tokens()))
+                                                                                                count,
+                                                                                                studies=studies,
+                                                                                                user=self._user,
+                                                                                                auths=self.original_sample_controller.token_info(self.auth_tokens()))
 
         return self.create_response(ret, retcode, 'OriginalSamples')
 
-    def download_original_samples_by_attr(self, prop_name, prop_value, study_name=None):
+    def download_original_samples_by_attr(self, prop_name, prop_value,
+                                          study_name=None, studies=None):
         """
         fetches a samplingEvent by property value
 
@@ -111,12 +124,14 @@ class LocalOriginalSampleApi(BaseLocalApi):
         """
         (ret, retcode) = self.original_sample_controller.download_original_samples_by_attr(prop_name, prop_value,
                                                                                            study_name,
-                                                                                           self._user,
-                                                                                           self.original_sample_controller.token_info(self.auth_tokens()))
+                                                                                           studies=studies,
+                                                                                           user=self._user,
+                                                                                           auths=self.original_sample_controller.token_info(self.auth_tokens()))
 
         return self.create_response(ret, retcode, 'OriginalSamples')
 
-    def download_original_samples_by_location(self, location_id, start=None, count=None):
+    def download_original_samples_by_location(self, location_id, start=None,
+                                              count=None, studies=None):
         """
         fetches samplingEvents for a location
 
@@ -130,12 +145,15 @@ class LocalOriginalSampleApi(BaseLocalApi):
         :rtype: OriginalSamples
         """
         (ret, retcode) = self.original_sample_controller.download_original_samples_by_location(location_id, start,
-                                                                                               count, self._user,
-                                                                                               self.original_sample_controller.token_info(self.auth_tokens()))
+                                                                                               count,
+                                                                                               studies=studies,
+                                                                                               user=self._user,
+                                                                                               auths=self.original_sample_controller.token_info(self.auth_tokens()))
 
         return self.create_response(ret, retcode, 'OriginalSamples')
 
-    def download_original_samples_by_study(self, study_name, start=None, count=None):
+    def download_original_samples_by_study(self, study_name, start=None,
+                                           count=None, studies=None):
         """
         fetches samplingEvents for a study
 
@@ -148,13 +166,17 @@ class LocalOriginalSampleApi(BaseLocalApi):
 
         :rtype: OriginalSamples
         """
-        (ret, retcode) = self.original_sample_controller.download_original_samples_by_study(study_name, start,
-                                                                                            count, self._user,
-                                                                                            self.original_sample_controller.token_info(self.auth_tokens()))
+        (ret, retcode) = self.original_sample_controller.download_original_samples_by_study(study_name,
+                                                                                            studies=studies,
+                                                                                            start=start,
+                                                                                            count=count,
+                                                                                            user=self._user,
+                                                                                            auths=self.original_sample_controller.token_info(self.auth_tokens()))
 
         return self.create_response(ret, retcode, 'OriginalSamples')
 
-    def download_original_samples_by_taxa(self, taxa_id, start=None, count=None):
+    def download_original_samples_by_taxa(self, taxa_id, start=None,
+                                          count=None, studies=None):
         """
         fetches samplingEvents for a given taxonomy classification code
 
@@ -168,12 +190,15 @@ class LocalOriginalSampleApi(BaseLocalApi):
         :rtype: OriginalSamples
         """
         (ret, retcode) = self.original_sample_controller.download_original_samples_by_taxa(taxa_id, start,
-                                                                                           count, self._user,
-                                                                                           self.original_sample_controller.token_info(self.auth_tokens()))
+                                                                                           count,
+                                                                                           studies=studies,
+                                                                                           user=self._user,
+                                                                                           auths=self.original_sample_controller.token_info(self.auth_tokens()))
 
         return self.create_response(ret, retcode, 'OriginalSamples')
 
-    def update_original_sample(self, sampling_event_id, sampling_event):
+    def update_original_sample(self, sampling_event_id, sampling_event,
+                               studies=None):
         """
         updates an samplingEvent
 
@@ -186,12 +211,14 @@ class LocalOriginalSampleApi(BaseLocalApi):
         """
         (ret, retcode) = self.original_sample_controller.update_original_sample(sampling_event_id,
                                                                                 sampling_event,
-                                                                                self._user,
-                                                                                self.original_sample_controller.token_info(self.auth_tokens()))
+                                                                                studies=studies,
+                                                                                user=self._user,
+                                                                                auths=self.original_sample_controller.token_info(self.auth_tokens()))
 
         return self.create_response(ret, retcode, 'OriginalSample')
 
-    def merge_original_samples(self, samplingEventId, samplingEventId2):
+    def merge_original_samples(self, samplingEventId, samplingEventId2,
+                               studies=None):
         """
         merges OriginalSamples
 
@@ -204,7 +231,8 @@ class LocalOriginalSampleApi(BaseLocalApi):
         """
         (ret, retcode) = self.original_sample_controller.merge_original_samples(samplingEventId,
                                                                                 samplingEventId2,
-                                                                                self._user,
-                                                                                self.original_sample_controller.token_info(self.auth_tokens()))
+                                                                                studies=studies,
+                                                                                user=self._user,
+                                                                                auths=self.original_sample_controller.token_info(self.auth_tokens()))
 
         return self.create_response(ret, retcode, 'OriginalSample')

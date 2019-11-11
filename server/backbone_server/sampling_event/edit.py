@@ -19,12 +19,12 @@ class SamplingEventEdit():
                 raise InvalidDateException("The date of collection is in the future {}".format(sampling_event.doc))
 
     @staticmethod
-    def check_location_details(cursor, location_id, location):
+    def check_location_details(cursor, location_id, location, studies):
 
         current_location = None
 
         if location_id:
-            current_location = LocationFetch.fetch(cursor, location_id)
+            current_location = LocationFetch.fetch(cursor, location_id, studies)
 
             cli = current_location.attrs
 

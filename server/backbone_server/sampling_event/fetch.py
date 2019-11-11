@@ -1,10 +1,12 @@
+import logging
+
 from openapi_server.models.location import Location
 from openapi_server.models.attr import Attr
 from openapi_server.models.taxonomy import Taxonomy
 from openapi_server.models.sampling_event import SamplingEvent
-from backbone_server.errors.missing_key_exception import MissingKeyException
 
-import logging
+from backbone_server.controllers.base_controller import BaseController
+from backbone_server.errors.missing_key_exception import MissingKeyException
 
 from backbone_server.location.fetch import LocationFetch
 
@@ -50,17 +52,24 @@ class SamplingEventFetch():
         return attrs
 
     @staticmethod
-    def fetch(cursor, sampling_event_id, locations=None):
+    def fetch(cursor, sampling_event_id, studies=None, locations=None):
 
         if not sampling_event_id:
             return None
 
-        stmt = '''SELECT sampling_events.id, doc, doc_accuracy,
+        stmt = '''SELECT DISTINCT sampling_events.id, doc, doc_accuracy,
                             location_id, proxy_location_id, individual_id,
-                            acc_date
+                            sampling_events.acc_date
         FROM sampling_events
         LEFT JOIN locations l ON sampling_events.location_id = l.id
+        LEFT JOIN original_samples ON original_samples.sampling_event_id = sampling_events.id
+        LEFT JOIN studies ON original_samples.study_id = studies.id
         WHERE sampling_events.id = %s'''
+
+        if studies:
+            filt = BaseController.study_filter(studies)
+            if filt:
+                stmt += ' AND (' + filt + ' OR study_code IS NULL)'
 
         cursor.execute(stmt, (sampling_event_id,))
 
@@ -87,14 +96,17 @@ class SamplingEventFetch():
         sampling_event.event_sets = SamplingEventFetch.fetch_event_sets(cursor, sampling_event_id)
 
         if sampling_event.location_id:
-            location = LocationFetch.fetch(cursor, sampling_event.location_id)
+            location = LocationFetch.fetch(cursor, sampling_event.location_id,
+                                           studies)
             if locations is not None:
                 if sampling_event.location_id not in locations:
                     locations[sampling_event.location_id] = location
             else:
                 sampling_event.location = location
         if sampling_event.proxy_location_id:
-            proxy_location = LocationFetch.fetch(cursor, sampling_event.proxy_location_id)
+            proxy_location = LocationFetch.fetch(cursor,
+                                                 sampling_event.proxy_location_id,
+                                                 studies)
             if locations is not None:
                 if sampling_event.proxy_location_id not in locations:
                     locations[sampling_event.proxy_location_id] = proxy_location

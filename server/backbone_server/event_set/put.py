@@ -1,13 +1,7 @@
-from backbone_server.errors.duplicate_key_exception import DuplicateKeyException
+import logging
 
 from backbone_server.event_set.edit import EventSetEdit
 from backbone_server.event_set.fetch import EventSetFetch
-
-from openapi_server.models.event_set import EventSet
-
-import psycopg2
-
-import logging
 
 class EventSetPut():
 
@@ -17,14 +11,14 @@ class EventSetPut():
         self._cursor = cursor
 
 
-    def put(self, event_set_name, event_set):
+    def put(self, event_set_name, event_set, studies):
 
-        ret = None
         with self._connection:
             with self._connection.cursor() as cursor:
-                return self.run_command(cursor, event_set_name, event_set)
+                return self.run_command(cursor, event_set_name, event_set,
+                                        studies)
 
-    def run_command(self, cursor, event_set_name, event_set):
+    def run_command(self, cursor, event_set_name, event_set, studies):
 
         event_set_id = EventSetFetch.fetch_event_set_id(cursor, event_set_name)
 
@@ -44,8 +38,6 @@ class EventSetPut():
         EventSetEdit.add_notes(cursor, event_set_id, event_set.notes)
 
 
-        ret = EventSetFetch.fetch(cursor, event_set_id, None, None)
-
+        ret = EventSetFetch.fetch(cursor, event_set_id, studies, None, None)
 
         return ret
-

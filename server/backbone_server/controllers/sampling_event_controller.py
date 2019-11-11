@@ -30,7 +30,7 @@ from backbone_server.controllers.decorators import apply_decorators
 @apply_decorators
 class SamplingEventController(BaseController):
 
-    def create_sampling_event(self, sampling_event, user=None, auths=None):
+    def create_sampling_event(self, sampling_event, studies=None, user=None, auths=None):
         """
         create_sampling_event
         Create a samplingEvent
@@ -46,7 +46,7 @@ class SamplingEventController(BaseController):
         try:
             post = SamplingEventPost(self.get_connection())
 
-            samp = post.post(sampling_event)
+            samp = post.post(sampling_event, studies)
         except DuplicateKeyException as dke:
             logging.getLogger(__name__).debug(
                 "create_samplingEvent: {}".format(repr(dke)))
@@ -65,7 +65,7 @@ class SamplingEventController(BaseController):
 
         return samp, retcode
 
-    def delete_sampling_event(self, sampling_event_id, user=None, auths=None):
+    def delete_sampling_event(self, sampling_event_id, studies=None, user=None, auths=None):
         """
         deletes an samplingEvent
 
@@ -88,7 +88,7 @@ class SamplingEventController(BaseController):
 
         return None, retcode
 
-    def download_sampling_event(self, sampling_event_id, user=None, auths=None):
+    def download_sampling_event(self, sampling_event_id, studies=None, user=None, auths=None):
         """
         fetches an samplingEvent
 
@@ -104,7 +104,7 @@ class SamplingEventController(BaseController):
         samp = None
 
         try:
-            samp = get.get(sampling_event_id)
+            samp = get.get(sampling_event_id, studies)
         except MissingKeyException as dme:
             logging.getLogger(__name__).debug(
                 "download_samplingEvent: {}".format(repr(dme)))
@@ -113,7 +113,8 @@ class SamplingEventController(BaseController):
 
         return samp, retcode
 
-    def download_sampling_events(self, search_filter, start, count, user=None, auths=None):
+    def download_sampling_events(self, search_filter, studies=None, start=None,
+                                 count=None, user=None, auths=None):
         """
         fetches samplingEvents for a event_set
 
@@ -140,7 +141,7 @@ class SamplingEventController(BaseController):
         }
         func = search_funcs.get(options[0])
         if func:
-            return func(options[1], start, count, user, auths)
+            return func(options[1], studies, start, count, user, auths)
         elif options[0] == 'attr':
             study_name = None
             if len(options) > 3 and options[3]:
@@ -150,6 +151,7 @@ class SamplingEventController(BaseController):
             return self.download_sampling_events_by_attr(options[1],
                                                          options[2],
                                                          study_name,
+                                                         studies,
                                                          user,
                                                          auths)
         elif options[0] == 'os_attr':
@@ -161,6 +163,7 @@ class SamplingEventController(BaseController):
             return self.download_sampling_events_by_os_attr(options[1],
                                                             options[2],
                                                             study_name,
+                                                            studies,
                                                             user,
                                                             auths)
         else:
@@ -169,7 +172,8 @@ class SamplingEventController(BaseController):
 
         return samp, retcode
 
-    def download_sampling_events_by_event_set(self, event_set_id, start, count, user=None, auths=None):
+    def download_sampling_events_by_event_set(self, event_set_id, studies=None, start=None,
+                                              count=None, user=None, auths=None):
         """
         fetches samplingEvents for a event_set
 
@@ -185,7 +189,7 @@ class SamplingEventController(BaseController):
         try:
             get = EventSetGetById(self.get_connection())
             event_set_id = urllib.parse.unquote_plus(event_set_id)
-            evnt_st = get.get(event_set_id, start, count)
+            evnt_st = get.get(event_set_id, studies, start, count)
 
             samp = evnt_st.members
 
@@ -196,7 +200,8 @@ class SamplingEventController(BaseController):
 
         return samp, retcode
 
-    def download_sampling_events_by_attr(self, prop_name, prop_value, study_name=None, user=None, auths=None):
+    def download_sampling_events_by_attr(self, prop_name, prop_value,
+                                         study_name=None, studies=None, user=None, auths=None):
         """
         fetches a samplingEvent by property value
 
@@ -214,11 +219,12 @@ class SamplingEventController(BaseController):
         samp = None
 
         prop_value = urllib.parse.unquote_plus(prop_value)
-        samp = get.get(prop_name, prop_value, study_name)
+        samp = get.get(prop_name, prop_value, study_name, studies)
 
         return samp, retcode
 
-    def download_sampling_events_by_os_attr(self, prop_name, prop_value, study_name=None, user=None, auths=None):
+    def download_sampling_events_by_os_attr(self, prop_name, prop_value,
+                                            study_name=None, studies=None, user=None, auths=None):
         """
         fetches a samplingEvent by property value of associated original sample
 
@@ -236,11 +242,12 @@ class SamplingEventController(BaseController):
         samp = None
 
         prop_value = urllib.parse.unquote_plus(prop_value)
-        samp = get.get(prop_name, prop_value, study_name)
+        samp = get.get(prop_name, prop_value, study_name, studies)
 
         return samp, retcode
 
-    def download_sampling_events_by_location(self, location_id, start, count, user=None, auths=None):
+    def download_sampling_events_by_location(self, location_id, studies=None,
+                                             start=None, count=None, user=None, auths=None):
         """
         fetches samplingEvents for a location
 
@@ -256,7 +263,7 @@ class SamplingEventController(BaseController):
         samp = None
 
         try:
-            samp = get.get(location_id, start, count)
+            samp = get.get(location_id, studies, start, count)
         except MissingKeyException as dme:
             logging.getLogger(__name__).debug(
                 "download_samplingEvent: {}".format(repr(dme)))
@@ -265,7 +272,8 @@ class SamplingEventController(BaseController):
 
         return samp, retcode
 
-    def download_sampling_events_by_study(self, study_name, start, count, user=None, auths=None):
+    def download_sampling_events_by_study(self, study_name, studies=None,
+                                          start=None, count=None, user=None, auths=None):
         """
         fetches samplingEvents for a study
 
@@ -281,7 +289,7 @@ class SamplingEventController(BaseController):
         samp = None
 
         try:
-            samp = get.get(study_name, start, count)
+            samp = get.get(study_name, studies, start, count)
         except MissingKeyException as dme:
             logging.getLogger(__name__).debug(
                 "download_samplingEvent: {}".format(repr(dme)))
@@ -290,7 +298,7 @@ class SamplingEventController(BaseController):
 
         return samp, retcode
 
-    def download_sampling_events_by_taxa(self, taxa_id, start, count, user=None, auths=None):
+    def download_sampling_events_by_taxa(self, taxa_id, studies=None, start=None, count=None, user=None, auths=None):
         """
         fetches samplingEvents for a taxa
 
@@ -306,7 +314,7 @@ class SamplingEventController(BaseController):
         samp = None
 
         try:
-            samp = get.get(taxa_id, start, count)
+            samp = get.get(taxa_id, studies, start, count)
         except MissingKeyException as dme:
             logging.getLogger(__name__).debug(
                 "download_sampling_events_by_taxa: {}".format(repr(dme)))
@@ -315,7 +323,7 @@ class SamplingEventController(BaseController):
 
         return samp, retcode
 
-    def merge_sampling_events(self, into, merged, user=None, auths=None):  # noqa: E501
+    def merge_sampling_events(self, into, merged, studies=None, user=None, auths=None):  # noqa: E501
         """merges two samplingEvents
 
         merges sampling events with compatible properties updating references # noqa: E501
@@ -333,7 +341,7 @@ class SamplingEventController(BaseController):
         try:
             merge = SamplingEventMerge(self.get_connection())
 
-            samp = merge.merge(into, merged)
+            samp = merge.merge(into, merged, studies)
         except IncompatibleException as dke:
             logging.getLogger(__name__).debug(
                 "merge_samplingEvent: {}".format(repr(dke)))
@@ -347,7 +355,8 @@ class SamplingEventController(BaseController):
 
         return samp, retcode
 
-    def update_sampling_event(self, sampling_event_id, sampling_event, user=None, auths=None):
+    def update_sampling_event(self, sampling_event_id, sampling_event,
+                              studies=None, user=None, auths=None):
         """
         updates an samplingEvent
 
@@ -365,7 +374,7 @@ class SamplingEventController(BaseController):
         try:
             put = SamplingEventPut(self.get_connection())
 
-            samp = put.put(sampling_event_id, sampling_event)
+            samp = put.put(sampling_event_id, sampling_event, studies)
         except DuplicateKeyException as dke:
             logging.getLogger(__name__).debug(
                 "update_samplingEvent: {}".format(repr(dke)))

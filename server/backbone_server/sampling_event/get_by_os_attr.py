@@ -13,7 +13,7 @@ class SamplingEventGetByOsAttr():
         self._logger = logging.getLogger(__name__)
         self._connection = conn
 
-    def get(self, attr_type, attr_value, study_name):
+    def get(self, attr_type, attr_value, study_name, studies):
 
         with self._connection:
             with self._connection.cursor() as cursor:
@@ -44,7 +44,9 @@ class SamplingEventGetByOsAttr():
                     event_ids.append(sampling_event_id)
 
                 for sampling_event_id in event_ids:
-                    sampling_event = SamplingEventFetch.fetch(cursor, sampling_event_id, locations)
+                    sampling_event = SamplingEventFetch.fetch(cursor,
+                                                              sampling_event_id,
+                                                              studies, locations)
                     if sampling_event:
                         #Because the client doesn't support types in maps
                         #and the result set should be small

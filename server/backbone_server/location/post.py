@@ -1,14 +1,8 @@
-from backbone_server.errors.duplicate_key_exception import DuplicateKeyException
+import logging
+import uuid
 
 from backbone_server.location.edit import LocationEdit
 from backbone_server.location.fetch import LocationFetch
-
-from openapi_server.models.location import Location
-
-import psycopg2
-
-import logging
-import uuid
 
 class LocationPost(LocationEdit):
 
@@ -17,12 +11,16 @@ class LocationPost(LocationEdit):
         self._connection = conn
 
 
-    def post(self, location):
+    def post(self, location, studies):
 
         with self._connection:
             with self._connection.cursor() as cursor:
 
-                LocationEdit.check_for_duplicate(cursor, location, None)
+                # It is currently allowed to create a location that's not
+                # associated with a sampling event, hence original_sample,
+                # hence study so don't check for permission
+                LocationEdit.check_for_duplicate(cursor, location, None,
+                                                 studies=None)
 
                 uuid_val = uuid.uuid4()
 
@@ -40,7 +38,9 @@ class LocationPost(LocationEdit):
 
                 LocationEdit.add_attrs(cursor, uuid_val, location)
 
-                location = LocationFetch.fetch(cursor, uuid_val)
+                # It is currently allowed to create a location that's not
+                # associated with a sampling event, hence original_sample,
+                # hence study so don't check for permission
+                location = LocationFetch.fetch(cursor, uuid_val, studies=None)
 
         return location
-

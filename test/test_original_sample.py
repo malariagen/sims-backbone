@@ -486,9 +486,9 @@ class TestOriginalSample(TestBase):
             samp.sampling_event_id = created_se.sampling_event_id
 
             samp.attrs = [
-                openapi_client.Attr (attr_type='partner_id',
-                                     attr_value='os_study_lookup',
-                                     attr_source='encode')
+                openapi_client.Attr(attr_type='partner_id',
+                                    attr_value='os_study_lookup',
+                                    attr_source='encode')
             ]
             created = api_instance.create_original_sample(samp)
 
@@ -500,7 +500,7 @@ class TestOriginalSample(TestBase):
 
             assert fetched.original_samples[0].sampling_event_id in fetched.sampling_events
 
-            assert fetched.attr_types == [ samp.attrs[0].attr_type ]
+            assert fetched.attr_types == [samp.attrs[0].attr_type]
 
             ffetched = api_instance.download_original_samples(search_filter='studyId:' + study_code)
 
@@ -1153,74 +1153,6 @@ class TestOriginalSample(TestBase):
         except ApiException as error:
             self.check_api_exception(api_factory, "OriginalSampleApi->create_original_sample", error)
 
-    """
-    """
-    def test_os_merge_study3(self, api_factory):
-
-        api_instance = api_factory.OriginalSampleApi()
-
-        try:
-
-            samp1, samp2 = self.get_merge_samples()
-
-            samp1.study_name = None
-            created1 = api_instance.create_original_sample(samp1)
-            created2 = api_instance.create_original_sample(samp2)
-
-            merged = api_instance.merge_original_samples(created1.original_sample_id,
-                                                         created2.original_sample_id)
-
-            fetched = api_instance.download_original_sample(created1.original_sample_id)
-            assert merged == fetched, "create response != download response"
-
-            assert fetched.study_name == samp2.study_name
-
-            for attr in samp1.attrs:
-                assert attr in fetched.attrs
-                for attr in samp2.attrs:
-                    assert attr in fetched.attrs
-
-            api_instance.delete_original_sample(created1.original_sample_id)
-
-            with pytest.raises(ApiException, status=404):
-                api_instance.delete_original_sample(created2.original_sample_id)
-
-        except ApiException as error:
-            self.check_api_exception(api_factory, "OriginalSampleApi->create_original_sample", error)
-
-    """
-    """
-    def test_os_merge_study4(self, api_factory):
-
-        api_instance = api_factory.OriginalSampleApi()
-
-        try:
-
-            samp1, samp2 = self.get_merge_samples()
-
-            samp2.study_name = None
-            created1 = api_instance.create_original_sample(samp1)
-            created2 = api_instance.create_original_sample(samp2)
-
-            merged = api_instance.merge_original_samples(created1.original_sample_id,
-                                                         created2.original_sample_id)
-
-            fetched = api_instance.download_original_sample(created1.original_sample_id)
-            assert merged == fetched, "create response != download response"
-
-            assert fetched.study_name == samp1.study_name
-
-            for attr in samp1.attrs:
-                assert attr in fetched.attrs
-                for attr in samp2.attrs:
-                    assert attr in fetched.attrs
-
-            api_instance.delete_original_sample(created1.original_sample_id)
-
-            with pytest.raises(ApiException, status=404):
-                api_instance.delete_original_sample(created2.original_sample_id)
-
-        except ApiException as error:
             self.check_api_exception(api_factory, "OriginalSampleApi->create_original_sample", error)
 
     """

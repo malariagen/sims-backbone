@@ -33,7 +33,7 @@ class BaseLocalApi():
     def create_response(self, ret, retcode, response_type=None):
 
         if retcode >= 400:
-            raise ApiException(status=retcode, reason='')
+            raise ApiException(status=retcode, reason=ret)
 
         if ret and response_type:
             if isinstance(ret, Model):
@@ -41,10 +41,51 @@ class BaseLocalApi():
             else:
                 response_dict = ret
 
-            resp_data = json.dumps(response_dict, ensure_ascii=False, cls=JSONEncoder)
-            mr = MockResponse(resp_data, retcode)
-            response = RESTResponse(mr)
-            ret = self.api_client.deserialize(response, response_type)
+            if not response_type == 'LogItems':
+                resp_data = json.dumps(response_dict, ensure_ascii=False, cls=JSONEncoder)
+                mock = MockResponse(resp_data, retcode)
+                response = RESTResponse(mock)
+                ret = self.api_client.deserialize(response, response_type)
+            else:
+                # This whole section is because oneOf isn't properly
+                # deserialized when there are required elements
+                log_items = response_dict['log_items']
+                response_dict['log_items'] = None
+                resp_data = json.dumps(response_dict, ensure_ascii=False, cls=JSONEncoder)
+                mock = MockResponse(resp_data, retcode)
+                response = RESTResponse(mock)
+                ret = self.api_client.deserialize(response, response_type)
+                new_items = []
+                for item in log_items:
+                    sub_type = None
+                    if 'location' in item['action']:
+                        sub_type = 'Location'
+                    elif 'event' in item['action']:
+                        sub_type = 'SamplingEvent'
+                    elif 'original' in item['action']:
+                        sub_type = 'OriginalSample'
+                    elif 'derivative' in item['action']:
+                        sub_type = 'DerivativeSample'
+                    sub_item = None
+                    if item['result'] < 400:
+                        resp_data = json.dumps(item['output_value'], ensure_ascii=False, cls=JSONEncoder)
+                        item['output_value'] = None
+                        mock = MockResponse(resp_data, retcode)
+                        response = RESTResponse(mock)
+                        sub_item = self.api_client.deserialize(response,
+                                                               sub_type)
+                    else:
+                        sub_item = item['output_value']
+                        item['output_value'] = None
+                    resp_data = json.dumps(item, ensure_ascii=False, cls=JSONEncoder)
+                    mock = MockResponse(resp_data, retcode)
+                    response = RESTResponse(mock)
+                    item_val = self.api_client.deserialize(response,
+                                                           'LogItem')
+                    if sub_item:
+                        item_val.output_value = sub_item
+                    new_items.append(item_val)
+                ret.log_items = new_items
+
 
         return ret
-

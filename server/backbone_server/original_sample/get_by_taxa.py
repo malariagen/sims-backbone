@@ -2,6 +2,8 @@ from openapi_server.models.original_sample import OriginalSample
 from openapi_server.models.original_samples import OriginalSamples
 from openapi_server.models.location import Location
 from openapi_server.models.attr import Attr
+
+from backbone_server.controllers.base_controller import BaseController
 from backbone_server.errors.missing_key_exception import MissingKeyException
 
 from backbone_server.location.fetch import LocationFetch
@@ -18,7 +20,7 @@ class OriginalSamplesGetByTaxa():
         self._connection = conn
 
 
-    def get(self, taxa_id, start, count):
+    def get(self, taxa_id, start, count, studies):
         with self._connection:
             with self._connection.cursor() as cursor:
 
@@ -39,6 +41,12 @@ class OriginalSamplesGetByTaxa():
                 LEFT JOIN partner_species_identifiers psi ON psi.id = os.partner_species_id
                 JOIN taxonomy_identifiers ti ON ti.partner_species_id = os.partner_species_id
                 WHERE ti.taxonomy_id = %s'''
+
+                if studies:
+                    filt = BaseController.study_filter(studies)
+                    if filt:
+                        query_body += ' AND ' + filt
+
                 args = (taxa_id,)
 
                 count_args = args
@@ -56,7 +64,7 @@ class OriginalSamplesGetByTaxa():
 
                 cursor.execute(stmt, args)
 
-                original_samples.original_samples, original_samples.sampling_events = OriginalSampleFetch.load_original_samples(cursor, True)
+                original_samples.original_samples, original_samples.sampling_events = OriginalSampleFetch.load_original_samples(cursor, studies=studies, all_attrs=True)
 
                 if not (start is None and count is None):
                     cursor.execute(count_query, count_args)

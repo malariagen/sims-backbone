@@ -29,8 +29,8 @@ class LocalDerivativeSampleApi(BaseLocalApi):
         :rtype: DerivativeSample
         """
 
-        (ret, retcode) = self.derivative_sample_controller.create_derivative_sample(sampling_event, self._user,
-                                                                                    self.derivative_sample_controller.token_info(self.auth_tokens()))
+        (ret, retcode) = self.derivative_sample_controller.create_derivative_sample(sampling_event, user=self._user,
+                                                                                    auths=self.derivative_sample_controller.token_info(self.auth_tokens()))
 
         return self.create_response(ret, retcode, 'DerivativeSample')
 
@@ -43,8 +43,10 @@ class LocalDerivativeSampleApi(BaseLocalApi):
 
         :rtype: None
         """
-        (ret, retcode) = self.derivative_sample_controller.delete_derivative_sample(sampling_event_id, self._user,
-                                                                                    self.derivative_sample_controller.token_info(self.auth_tokens()))
+        (ret, retcode) = self.derivative_sample_controller.delete_derivative_sample(sampling_event_id,
+                                                                                    studies=None,
+                                                                                    user=self._user,
+                                                                                    auths=self.derivative_sample_controller.token_info(self.auth_tokens()))
 
         return self.create_response(ret, retcode)
 
@@ -57,8 +59,8 @@ class LocalDerivativeSampleApi(BaseLocalApi):
 
         :rtype: DerivativeSample
         """
-        (ret, retcode) = self.derivative_sample_controller.download_derivative_sample(derivative_sample_id, self._user,
-                                                                                      self.derivative_sample_controller.token_info(self.auth_tokens()))
+        (ret, retcode) = self.derivative_sample_controller.download_derivative_sample(derivative_sample_id, user=self._user,
+                                                                                      auths=self.derivative_sample_controller.token_info(self.auth_tokens()))
 
         return self.create_response(ret, retcode, 'DerivativeSample')
 
@@ -72,8 +74,8 @@ class LocalDerivativeSampleApi(BaseLocalApi):
         :rtype: DerivativeSample
         """
         (ret, retcode) = self.derivative_sample_controller.download_derivative_samples(search_filter, start,
-                                                                                       count, self._user,
-                                                                                       self.derivative_sample_controller.token_info(self.auth_tokens()))
+                                                                                       count, user=self._user,
+                                                                                       auths=self.derivative_sample_controller.token_info(self.auth_tokens()))
 
         return self.create_response(ret, retcode, 'DerivativeSamples')
 
@@ -89,8 +91,8 @@ class LocalDerivativeSampleApi(BaseLocalApi):
         :rtype: DerivativeSamples
         """
         (ret, retcode) = self.derivative_sample_controller.download_derivative_samples_by_attr(prop_name, prop_value,
-                                                                                               self._user,
-                                                                                               self.derivative_sample_controller.token_info(self.auth_tokens()))
+                                                                                               user=self._user,
+                                                                                               auths=self.derivative_sample_controller.token_info(self.auth_tokens()))
 
         return self.create_response(ret, retcode, 'DerivativeSamples')
 
@@ -106,8 +108,8 @@ class LocalDerivativeSampleApi(BaseLocalApi):
         :rtype: DerivativeSamples
         """
         (ret, retcode) = self.derivative_sample_controller.download_derivative_samples_by_os_attr(prop_name, prop_value,
-                                                                                                  self._user,
-                                                                                                  self.derivative_sample_controller.token_info(self.auth_tokens()))
+                                                                                                  user=self._user,
+                                                                                                  auths=self.derivative_sample_controller.token_info(self.auth_tokens()))
 
         return self.create_response(ret, retcode, 'DerivativeSamples')
 
@@ -124,8 +126,8 @@ class LocalDerivativeSampleApi(BaseLocalApi):
         """
         (ret, retcode) = self.derivative_sample_controller.download_derivative_samples(search_filter,
                                                                                        start, count,
-                                                                                       self._user,
-                                                                                       self.derivative_sample_controller.token_info(self.auth_tokens()))
+                                                                                       user=self._user,
+                                                                                       auths=self.derivative_sample_controller.token_info(self.auth_tokens()))
 
         return self.create_response(ret, retcode, 'DerivativeSamples')
 
@@ -142,9 +144,11 @@ class LocalDerivativeSampleApi(BaseLocalApi):
 
         :rtype: DerivativeSamples
         """
-        (ret, retcode) = self.derivative_sample_controller.download_derivative_samples_by_study(study_name, start,
-                                                                                                count, self._user,
-                                                                                                self.derivative_sample_controller.token_info(self.auth_tokens()))
+        (ret, retcode) = self.derivative_sample_controller.download_derivative_samples_by_study(study_name,
+                                                                                                studies=None,
+                                                                                                start=start,
+                                                                                                count=count, user=self._user,
+                                                                                                auths=self.derivative_sample_controller.token_info(self.auth_tokens()))
 
         return self.create_response(ret, retcode, 'DerivativeSamples')
 
@@ -162,8 +166,8 @@ class LocalDerivativeSampleApi(BaseLocalApi):
         :rtype: DerivativeSamples
         """
         (ret, retcode) = self.derivative_sample_controller.download_derivative_samples_by_event_set(event_set_id, start,
-                                                                                                    count, self._user,
-                                                                                                    self.derivative_sample_controller.token_info(self.auth_tokens()))
+                                                                                                    count, user=self._user,
+                                                                                                    auths=self.derivative_sample_controller.token_info(self.auth_tokens()))
 
         return self.create_response(ret, retcode, 'DerivativeSamples')
 
@@ -179,9 +183,11 @@ class LocalDerivativeSampleApi(BaseLocalApi):
         :rtype: DerivativeSamples
         """
         (ret, retcode) = self.derivative_sample_controller.download_derivative_samples_by_taxa(taxa_id,
-                                                                                               start, count,
-                                                                                               self._user,
-                                                                                               self.derivative_sample_controller.token_info(self.auth_tokens()))
+                                                                                               studies=None,
+                                                                                               start=start,
+                                                                                               count=count,
+                                                                                               user=self._user,
+                                                                                               auths=self.derivative_sample_controller.token_info(self.auth_tokens()))
 
         return self.create_response(ret, retcode, 'DerivativeSamples')
 
@@ -197,7 +203,7 @@ class LocalDerivativeSampleApi(BaseLocalApi):
         :rtype: DerivativeSample
         """
         (ret, retcode) = self.derivative_sample_controller.update_derivative_sample(derivative_sample_id,
-                                                                                    derivative_sample, self._user,
-                                                                                    self.derivative_sample_controller.token_info(self.auth_tokens()))
+                                                                                    derivative_sample, user=self._user,
+                                                                                    auths=self.derivative_sample_controller.token_info(self.auth_tokens()))
 
         return self.create_response(ret, retcode, 'DerivativeSample')

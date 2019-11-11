@@ -43,8 +43,8 @@ class LocalAssayDataApi(BaseLocalApi):
 
         :rtype: None
         """
-        (ret, retcode) = self.assay_datum_controller.delete_assay_datum(assay_datum_id, self._user,
-                                                                        self.assay_datum_controller.token_info(self.auth_tokens()))
+        (ret, retcode) = self.assay_datum_controller.delete_assay_datum(assay_datum_id, user=self._user,
+                                                                        auths=self.assay_datum_controller.token_info(self.auth_tokens()))
 
         return self.create_response(ret, retcode)
 

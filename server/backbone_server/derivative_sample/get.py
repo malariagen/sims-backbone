@@ -14,12 +14,14 @@ class DerivativeSampleGetById():
         self._connection = conn
 
 
-    def get(self, derivative_sample_id):
+    def get(self, derivative_sample_id, studies):
 
         with self._connection:
             with self._connection.cursor() as cursor:
 
-                derivative_sample = DerivativeSampleFetch.fetch(cursor, derivative_sample_id)
+                derivative_sample = DerivativeSampleFetch.fetch(cursor,
+                                                                derivative_sample_id,
+                                                                studies)
 
         if not derivative_sample:
             raise MissingKeyException("No derivative_sample {}".format(derivative_sample_id))

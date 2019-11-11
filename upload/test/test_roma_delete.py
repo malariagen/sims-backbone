@@ -33,7 +33,7 @@ class TestROMADelete(TestBase):
     @classmethod
     def tearDownClass(self):
 
-        TestBase.deleteStudies(['9030','9032','9033'], TestROMADelete._locations)
+        TestBase.deleteStudies(['9030', '9032', '9033'], TestROMADelete._locations)
 
         TestBase.tearDownLocations(TestROMADelete._locations)
 
@@ -59,8 +59,8 @@ class TestROMADelete(TestBase):
                 TestROMADelete._locations.append(looked_up.location_id)
 
         except ApiException as error:
-            self.fail("test_species: Exception when calling download_sampling_event_by_os_attr {}"
-                        .format(error))
+            self.fail("test_roma_delete_added: Exception when calling download_sampling_events_by_os_attr {}"
+                      .format(error))
 
     """
     """
@@ -74,8 +74,8 @@ class TestROMADelete(TestBase):
             assert not looked_up.sampling_events
 
         except ApiException as error:
-            self.fail("test_species: Exception when calling download_sampling_event_by_os_attr {}"
-                        .format(error))
+            self.fail("test_roma_delete_removed: Exception when calling download_sampling_event_by_os_attr {}"
+                      .format(error))
 
     """
     """
@@ -84,11 +84,10 @@ class TestROMADelete(TestBase):
         try:
 
             looked_up = self._dao.download_locations_by_attr('src_location_id',
-                                                            'roma_loc_1')
+                                                             'roma_loc_1')
 
             assert looked_up.count == 0
             assert not looked_up.locations
 
         except ApiException as error:
-            self.fail("test_species: Exception when calling download_location_by_attr {}".format(error))
-
+            self.fail("test_roma_delete_loc_removed: Exception when calling download_locations_by_attr {}".format(error))

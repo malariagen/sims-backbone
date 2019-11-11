@@ -1,12 +1,13 @@
+import logging
+
 from openapi_server.models.derivative_sample import DerivativeSample
 from openapi_server.models.derivative_samples import DerivativeSamples
 
+from backbone_server.controllers.base_controller import BaseController
 from backbone_server.errors.missing_key_exception import MissingKeyException
 
 from backbone_server.derivative_sample.fetch import DerivativeSampleFetch
 from backbone_server.original_sample.edit import OriginalSampleEdit
-
-import logging
 
 class DerivativeSamplesGetByStudy():
 
@@ -14,7 +15,7 @@ class DerivativeSamplesGetByStudy():
         self._logger = logging.getLogger(__name__)
         self._connection = conn
 
-    def get(self, study_name, start, count):
+    def get(self, study_name, studies, start, count):
 
         with self._connection:
             with self._connection.cursor() as cursor:
@@ -23,6 +24,10 @@ class DerivativeSamplesGetByStudy():
 
                 if not study_id:
                     raise MissingKeyException("No study {}".format(study_name))
+
+                if studies:
+                    BaseController.has_study_permission(studies, study_name,
+                                                        BaseController.GET_PERMISSION)
 
                 fields = '''SELECT DISTINCT ds.id, original_sample_id, dna_prep, s.study_name '''
 

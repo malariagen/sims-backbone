@@ -1,3 +1,5 @@
+import logging
+
 from openapi_server.models.sampling_event import SamplingEvent
 from openapi_server.models.sampling_events import SamplingEvents
 from openapi_server.models.event_set_note import EventSetNote
@@ -6,14 +8,11 @@ from openapi_server.models.event_set import EventSet
 from openapi_server.models.location import Location
 from openapi_server.models.attr import Attr
 
+from backbone_server.controllers.base_controller import BaseController
 from backbone_server.sampling_event.fetch import SamplingEventFetch
-
-from backbone_server.errors.missing_key_exception import MissingKeyException
-
-import logging
-
 from backbone_server.location.fetch import LocationFetch
 
+from backbone_server.errors.missing_key_exception import MissingKeyException
 
 class EventSetFetch():
 
@@ -32,7 +31,7 @@ class EventSetFetch():
         return res[0]
 
     @staticmethod
-    def fetch(cursor, event_set_id, start, count):
+    def fetch(cursor, event_set_id, studies, start, count):
 
         if not event_set_id:
             return None
@@ -60,9 +59,11 @@ class EventSetFetch():
         if len(event_set.notes) == 0:
             event_set.notes = None
 
-        fields = '''SELECT sampling_events.id'''
+        fields = '''SELECT DISTINCT sampling_events.id, doc'''
         query_body = ''' FROM sampling_events
                         JOIN event_set_members esm ON esm.sampling_event_id = sampling_events.id
+                        LEFT JOIN original_samples ON original_samples.sampling_event_id = sampling_events.id
+                        LEFT JOIN studies ON studies.id = original_samples.study_id
                         WHERE esm.event_set_id = %s'''
 
         args = (event_set_id,)
@@ -70,7 +71,13 @@ class EventSetFetch():
         count_args = args
         count_query = 'SELECT COUNT(sampling_events.id) ' + query_body
 
-        query_body = query_body + ''' ORDER BY doc, id'''
+        if studies:
+            filt = BaseController.study_filter(studies)
+            if filt:
+                query_body += ' AND (original_samples.id IS NULL OR ' + filt + ')'
+                query_body += ' GROUP BY sampling_events.id'
+
+        query_body = query_body + ''' ORDER BY doc, sampling_events.id'''
 
         if not (start is None and count is None):
             if count and count > 0:
@@ -84,20 +91,25 @@ class EventSetFetch():
         cursor.execute(stmt, args)
 
         samp_ids = []
-        for samp_id in cursor:
-            samp_ids.append(samp_id)
+        for samp_id, doc in cursor:
+            if samp_id not in samp_ids:
+                samp_ids.append(samp_id)
 
         locations = {}
         sampling_events.sampling_events = []
         for samp_id in samp_ids:
-            event = SamplingEventFetch.fetch(cursor, samp_id, locations)
-            sampling_events.sampling_events.append(event)
+            event = SamplingEventFetch.fetch(cursor, samp_id, studies,
+                                             locations=locations)
+            if event:
+                sampling_events.sampling_events.append(event)
         sampling_events.locations = locations
 
 
         if not (start is None and count is None):
             cursor.execute(count_query, count_args)
-            sampling_events.count = cursor.fetchone()[0]
+            res = cursor.fetchone()
+            if res:
+                sampling_events.count = res[0]
         else:
             sampling_events.count = len(sampling_events.sampling_events)
 

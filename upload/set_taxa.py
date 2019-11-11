@@ -36,7 +36,8 @@ class SetTaxa():
 
         if os.getenv('LOCAL_TEST'):
             self._dao = LocalBackboneDAO('upload_test',
-                                         [ 'cn=editor,ou=sims,ou=projects,ou=groups,dc=malariagen,dc=net'])
+                                         ['cn=editor,ou=sims,ou=projects,ou=groups,dc=malariagen,dc=net',
+                                          'cn=all_studies,ou=sims,ou=projects,ou=groups,dc=malariagen,dc=net'])
 
         self._config_file = config_file
 
@@ -53,10 +54,10 @@ class SetTaxa():
                     if args['dao_type'] == 'local':
                         if 'database' in args:
                             os.environ['POSTGRES_DB'] = args['database']
-                        self._logger.debug('Using database {}'.format(os.getenv('POSTGRES_DB','backbone_service')))
+                        self._logger.debug('Using database %s', os.getenv('POSTGRES_DB', 'backbone_service'))
                         self._dao = LocalBackboneDAO(args['username'], args['auths'])
         except FileNotFoundError as fnfe:
-            print('No config file found: {}'.format(config_file))
+            self._logger.fatal('No config file found: %s', config_file)
             pass
 
         self._dao.setup(config_file)

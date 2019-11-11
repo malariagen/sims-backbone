@@ -3,6 +3,7 @@ from openapi_server.models.locations import Locations
 
 from backbone_server.location.fetch import LocationFetch
 from backbone_server.errors.missing_key_exception import MissingKeyException
+from backbone_server.errors.permission_exception import PermissionException
 
 import logging
 
@@ -12,7 +13,7 @@ class LocationGetByGPS():
         self._logger = logging.getLogger(__name__)
         self._connection = conn
 
-    def get(self, latitude, longitude):
+    def get(self, latitude, longitude, studies):
 
         with self._connection:
             with self._connection.cursor() as cursor:
@@ -28,9 +29,12 @@ class LocationGetByGPS():
                     ids.append(str(location_id))
 
                 for location_id in ids:
-                    location = LocationFetch.fetch(cursor, location_id)
-                    locations.locations.append(location)
-                    locations.count = locations.count + 1
+                    try:
+                        location = LocationFetch.fetch(cursor, location_id, studies)
+                        locations.locations.append(location)
+                        locations.count = locations.count + 1
+                    except PermissionException as pme:
+                        pass
 
 
         if len(locations.locations) == 0:

@@ -118,7 +118,7 @@ class TestHistory(TestBase):
             metadata_api_instance = api_factory.MetadataApi()
 
             location_history = metadata_api_instance.download_history('location',
-                                                                created_se.location_id)
+                                                                      created_se.location_id)
 
             assert len(location_history.log_items) == 1
 

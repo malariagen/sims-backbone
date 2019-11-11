@@ -1,7 +1,7 @@
+import logging
+
 from openapi_server.models.event_set import EventSet
 from openapi_server.models.event_sets import EventSets
-
-import logging
 
 class EventSetsGet():
 
@@ -10,7 +10,7 @@ class EventSetsGet():
         self._connection = conn
 
 
-    def get(self):
+    def get(self, studies):
 
         sets = []
 

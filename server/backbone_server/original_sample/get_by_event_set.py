@@ -1,14 +1,13 @@
+import logging
+
 from openapi_server.models.original_sample import OriginalSample
 from openapi_server.models.original_samples import OriginalSamples
 from openapi_server.models.location import Location
 from openapi_server.models.attr import Attr
 from backbone_server.errors.missing_key_exception import MissingKeyException
 
+from backbone_server.controllers.base_controller import BaseController
 from backbone_server.original_sample.fetch import OriginalSampleFetch
-
-from backbone_server.original_sample.edit import OriginalSampleEdit
-
-import logging
 
 class OriginalSamplesGetByEventSet():
 
@@ -17,7 +16,7 @@ class OriginalSamplesGetByEventSet():
         self._connection = conn
 
 
-    def get(self, event_set_name, start, count):
+    def get(self, event_set_name, start, count, studies):
         with self._connection:
             with self._connection.cursor() as cursor:
 
@@ -38,6 +37,11 @@ class OriginalSamplesGetByEventSet():
                 JOIN event_set_members esm ON esm.sampling_event_id = se.id
                 LEFT JOIN studies s ON s.id = os.study_id
                 WHERE esm.event_set_id = %s'''
+
+                if studies:
+                    filt = BaseController.study_filter(studies)
+                    if filt:
+                        stmt += ' AND ' + filt
                 args = (event_set_id,)
 
                 count_args = args
@@ -55,7 +59,7 @@ class OriginalSamplesGetByEventSet():
 
                 cursor.execute(stmt, args)
 
-                original_samples.original_samples, original_samples.sampling_events = OriginalSampleFetch.load_original_samples(cursor, True)
+                original_samples.original_samples, original_samples.sampling_events = OriginalSampleFetch.load_original_samples(cursor, studies, True)
 
                 if not (start is None and count is None):
                     cursor.execute(count_query, count_args)

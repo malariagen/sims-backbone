@@ -56,6 +56,8 @@ def authorize_this(original_function):
                 auths = args[-1]
             func_name = original_function.__name__
 
+            #print(f'authorize_this {func_name} {auths}')
+
             if not auths:
                 message = f"No permission {func_name} {user} {auths}"
                 return message, 403
@@ -68,11 +70,11 @@ def authorize_this(original_function):
                     studies = []
                     if 'cn=all_studies,ou=sims,ou=projects,ou=groups,dc=malariagen,dc=net' in auths:
                         studies.append({
-                            'bucket': 'all',
+                            'bucket': 'pi',
                             'study': 'all'
                         })
                     else:
-                        pattern = re.compile('cn=(\w+),ou=(\d+),ou=studies,ou=groups,dc=malariagen,dc=net')
+                        pattern = re.compile(r'cn=(\w+),ou=(\d+),ou=studies,ou=groups,dc=malariagen,dc=net')
                         for auth in auths:
                             match = pattern.match(auth)
                             if match:

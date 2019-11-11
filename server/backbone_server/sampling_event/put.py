@@ -19,13 +19,14 @@ class SamplingEventPut():
         self._cursor = cursor
 
 
-    def put(self, sampling_event_id, sampling_event):
+    def put(self, sampling_event_id, sampling_event, studies):
 
         with self._connection:
             with self._connection.cursor() as cursor:
-                return self.run_command(cursor, sampling_event_id, sampling_event)
+                return self.run_command(cursor, sampling_event_id,
+                                        sampling_event, studies)
 
-    def run_command(self, cursor, sampling_event_id, sampling_event):
+    def run_command(self, cursor, sampling_event_id, sampling_event, studies):
 
         stmt = '''SELECT id FROM sampling_events WHERE  id = %s'''
         cursor.execute(stmt, (sampling_event_id,))
@@ -41,9 +42,11 @@ class SamplingEventPut():
         SamplingEventEdit.check_date(sampling_event)
 
         SamplingEventEdit.check_location_details(cursor, sampling_event.location_id,
-                                                 sampling_event.location)
+                                                 sampling_event.location,
+                                                 studies)
         SamplingEventEdit.check_location_details(cursor, sampling_event.proxy_location_id,
-                                                 sampling_event.proxy_location)
+                                                 sampling_event.proxy_location,
+                                                 studies)
 
         stmt = '''UPDATE sampling_events
                     SET doc = %s, doc_accuracy = %s,
@@ -72,7 +75,9 @@ class SamplingEventPut():
             raise err
 
 
-        new_sampling_event = SamplingEventFetch.fetch(cursor, sampling_event_id)
+        new_sampling_event = SamplingEventFetch.fetch(cursor,
+                                                      sampling_event_id,
+                                                      studies)
 
         if new_sampling_event.proxy_location_id != sampling_event.proxy_location_id:
             raise NestedEditException(f"Incompatible proxy locations {new_sampling_event.proxy_location_id} {sampling_event.proxy_location_id}")

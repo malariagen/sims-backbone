@@ -1,14 +1,21 @@
 import logging
 import os
-from openapi_server.encoder import JSONEncoder
 import json
 from psycopg2.extras import Json
 
+from openapi_server.encoder import JSONEncoder
+
+from backbone_server.errors.permission_exception import PermissionException
 
 class BaseController():
 
     _connection = None
     _logger = None
+
+    CREATE_PERMISSION = 'create'
+    UPDATE_PERMISSION = 'update'
+    GET_PERMISSION = 'get'
+    DELETE_PERMISSION = 'delete'
 
     def __init__(self):
         if os.getenv('BB_DEBUG'):
@@ -86,6 +93,25 @@ class BaseController():
                 study_filter = f' study_code in ({codes})'
 
         return study_filter
+
+    @staticmethod
+    def has_study_permission(studies, study_code, perm_type):
+
+        found = False
+
+        if studies is not None:
+            for study in studies:
+                if 'all' in study['study']:
+                    found = True
+                    break
+                if study['study'].startswith(study_code[:4]):
+                    found = True
+                    break
+
+        if not found:
+            raise PermissionException(f'No permission for study {study_code}')
+
+        return found
 
     def dumps(self, item):
 

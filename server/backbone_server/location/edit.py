@@ -1,15 +1,14 @@
-from backbone_server.errors.duplicate_key_exception import DuplicateKeyException
+import logging
+import uuid
+
+import psycopg2
 
 from openapi_server.models.location import Location
 from openapi_server.models.attr import Attr
 
-from backbone_server.location.fetch import LocationFetch
+from backbone_server.errors.duplicate_key_exception import DuplicateKeyException
 from backbone_server.sampling_event.edit import SamplingEventEdit
-
-import psycopg2
-
-import logging
-import uuid
+from backbone_server.location.fetch import LocationFetch
 
 class LocationEdit():
 
@@ -116,23 +115,23 @@ class LocationEdit():
                 cursor.execute('UPDATE attrs SET study_id=%s WHERE id=%s',(new_study_id, attr_id))
 
     @staticmethod
-    def check_for_duplicate(cursor, location, location_id):
+    def check_for_duplicate(cursor, location, location_id, studies):
 
         stmt = '''SELECT id, ST_X(location) as latitude, ST_Y(location) as longitude,
         accuracy, curated_name, curation_method, country
                        FROM locations WHERE  location = ST_SetSRID(ST_MakePoint(%s, %s), 4326)'''
-        cursor.execute( stmt, (location.latitude, location.longitude,))
+        cursor.execute(stmt, (location.latitude, location.longitude,))
 
         existing_locations = []
 
         for (loc_id, latitude, longitude, accuracy, curated_name,
              curation_method, country) in cursor:
-            if location_id is None or loc_id != location_id:
+            if str(loc_id) != location_id:
                 existing_locations.append(loc_id)
 
-
         for existing_id in existing_locations:
-            existing_location = LocationFetch.fetch(cursor, existing_id)
+            existing_location = LocationFetch.fetch(cursor, existing_id,
+                                                    studies)
 
             if existing_location.attrs:
 
@@ -141,5 +140,6 @@ class LocationEdit():
                         if ident.attr_type == existing_ident.attr_type and\
                             ident.attr_value == existing_ident.attr_value and\
                             ident.study_name == existing_ident.study_name:
-                            raise DuplicateKeyException("Error updating location - duplicate with {}".format(existing_location))
-
+                            raise DuplicateKeyException("Error updating location - {} {} {} duplicate with {}".format(ident.attr_type,
+                                                                   ident.attr_value,
+                                                                   ident.study_name,existing_location))

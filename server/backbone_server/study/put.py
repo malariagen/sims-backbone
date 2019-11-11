@@ -6,6 +6,7 @@ import psycopg2
 from openapi_server.models.study import Study
 from openapi_server.models.partner_species import PartnerSpecies
 
+from backbone_server.controllers.base_controller import BaseController
 from backbone_server.errors.missing_key_exception import MissingKeyException
 from backbone_server.errors.integrity_exception import IntegrityException
 
@@ -20,10 +21,13 @@ class StudyPut():
         self._cursor = cursor
 
 
-    def put(self, study_id, study):
+    def put(self, study_id, study, studies):
 
         if not study_id:
             raise MissingKeyException("No study {}".format(study_id))
+
+        BaseController.has_study_permission(studies, study_id,
+                                            BaseController.UPDATE_PERMISSION)
 
         with self._connection:
             with self._connection.cursor() as cursor:

@@ -1,12 +1,13 @@
-import openapi_client
-from openapi_client.rest import ApiException
-
-from test_base import TestBase
 from datetime import date
 import urllib
 
 import uuid
 import pytest
+
+import openapi_client
+from openapi_client.rest import ApiException
+
+from test_base import TestBase
 
 class TestDerivativeSample(TestBase):
 
@@ -16,12 +17,17 @@ class TestDerivativeSample(TestBase):
     def test_ds_create(self, api_factory):
 
         api_instance = api_factory.DerivativeSampleApi()
+        os_api_instance = api_factory.OriginalSampleApi()
 
         try:
 
-            samp = openapi_client.DerivativeSample(None)
+            o_samp = openapi_client.OriginalSample(None, study_name='7007-MD-UP')
+            orig_samp = os_api_instance.create_original_sample(o_samp)
+            samp = openapi_client.DerivativeSample(None,
+                                                   original_sample_id=orig_samp.original_sample_id)
+
             created = api_instance.create_derivative_sample(samp)
-            if not api_factory.is_authorized(None):
+            if not api_factory.is_authorized(orig_samp.study_name[:4]):
                 pytest.fail('Unauthorized call to create_derivative_sample succeeded')
 
             fetched = api_instance.download_derivative_sample(created.derivative_sample_id)
@@ -29,6 +35,7 @@ class TestDerivativeSample(TestBase):
             fetched.derivative_sample_id = None
             assert samp == fetched, "upload != download response"
             api_instance.delete_derivative_sample(created.derivative_sample_id)
+            os_api_instance.delete_original_sample(orig_samp.original_sample_id)
 
         except ApiException as error:
             self.check_api_exception(api_factory, "DerivativeSampleApi->create_derivative_sample", error)
@@ -38,13 +45,18 @@ class TestDerivativeSample(TestBase):
     def test_ds_create_acc_date(self, api_factory):
 
         api_instance = api_factory.DerivativeSampleApi()
+        os_api_instance = api_factory.OriginalSampleApi()
 
         try:
 
+            o_samp = openapi_client.OriginalSample(None, study_name='7008-MD-UP')
+            orig_samp = os_api_instance.create_original_sample(o_samp)
             samp = openapi_client.DerivativeSample(None,
-                                                   acc_date=date(2019, 11, 6))
+                                                   acc_date=date(2019, 11, 6),
+                                                   original_sample_id=orig_samp.original_sample_id)
+
             created = api_instance.create_derivative_sample(samp)
-            if not api_factory.is_authorized(None):
+            if not api_factory.is_authorized(orig_samp.study_name[:4]):
                 pytest.fail('Unauthorized call to create_derivative_sample succeeded')
 
             fetched = api_instance.download_derivative_sample(created.derivative_sample_id)
@@ -52,6 +64,7 @@ class TestDerivativeSample(TestBase):
             fetched.derivative_sample_id = None
             assert samp == fetched, "upload != download response"
             api_instance.delete_derivative_sample(created.derivative_sample_id)
+            os_api_instance.delete_original_sample(orig_samp.original_sample_id)
 
         except ApiException as error:
             self.check_api_exception(api_factory, "DerivativeSampleApi->create_derivative_sample", error)
@@ -61,15 +74,21 @@ class TestDerivativeSample(TestBase):
     def test_ds_delete(self, api_factory):
 
         api_instance = api_factory.DerivativeSampleApi()
+        os_api_instance = api_factory.OriginalSampleApi()
 
         try:
 
-            samp = openapi_client.DerivativeSample(None)
+            o_samp = openapi_client.OriginalSample(None, study_name='7009-MD-UP')
+            orig_samp = os_api_instance.create_original_sample(o_samp)
+
+            samp = openapi_client.DerivativeSample(None,
+                                                   original_sample_id=orig_samp.original_sample_id)
             created = api_instance.create_derivative_sample(samp)
             api_instance.delete_derivative_sample(created.derivative_sample_id)
             with pytest.raises(ApiException, status=404):
                 fetched = api_instance.download_derivative_sample(created.derivative_sample_id)
 
+            os_api_instance.delete_original_sample(orig_samp.original_sample_id)
         except ApiException as error:
             self.check_api_exception(api_factory, "DerivativeSampleApi->create_derivative_sample", error)
 
@@ -97,12 +116,17 @@ class TestDerivativeSample(TestBase):
     def test_ds_duplicate_key(self, api_factory):
 
         api_instance = api_factory.DerivativeSampleApi()
+        os_api_instance = api_factory.OriginalSampleApi()
 
         try:
 
-            samp = openapi_client.DerivativeSample(None)
+            o_samp = openapi_client.OriginalSample(None, study_name='7010-MD-UP')
+            orig_samp = os_api_instance.create_original_sample(o_samp)
+
+            samp = openapi_client.DerivativeSample(None,
+                                                   original_sample_id=orig_samp.original_sample_id)
             samp.attrs = [
-                openapi_client.Attr (attr_type='oxford', attr_value='1234',
+                openapi_client.Attr(attr_type='oxford', attr_value='1234',
                                      attr_source='same')
             ]
             created = api_instance.create_derivative_sample(samp)
@@ -111,6 +135,7 @@ class TestDerivativeSample(TestBase):
                 created = api_instance.create_derivative_sample(samp)
 
             api_instance.delete_derivative_sample(created.derivative_sample_id)
+            os_api_instance.delete_original_sample(orig_samp.original_sample_id)
 
         except ApiException as error:
             self.check_api_exception(api_factory, "DerivativeSampleApi->create_derivative_sample", error)
@@ -121,12 +146,17 @@ class TestDerivativeSample(TestBase):
     def test_ds_attr_lookup(self, api_factory):
 
         api_instance = api_factory.DerivativeSampleApi()
+        os_api_instance = api_factory.OriginalSampleApi()
 
         try:
 
-            samp = openapi_client.DerivativeSample(None)
+            o_samp = openapi_client.OriginalSample(None, study_name='7011-MD-UP')
+            orig_samp = os_api_instance.create_original_sample(o_samp)
+
+            samp = openapi_client.DerivativeSample(None,
+                                                   original_sample_id=orig_samp.original_sample_id)
             samp.attrs = [
-                openapi_client.Attr (attr_type='oxford', attr_value='123456')
+                openapi_client.Attr(attr_type='oxford', attr_value='123456')
             ]
             created = api_instance.create_derivative_sample(samp)
             results = api_instance.download_derivative_samples_by_attr('oxford', '123456')
@@ -140,6 +170,7 @@ class TestDerivativeSample(TestBase):
             assert samp == fetched, "upload != download response"
 
             api_instance.delete_derivative_sample(created.derivative_sample_id)
+            os_api_instance.delete_original_sample(orig_samp.original_sample_id)
 
         except ApiException as error:
             self.check_api_exception(api_factory, "DerivativeSampleApi->create_derivative_sample", error)
@@ -165,26 +196,32 @@ class TestDerivativeSample(TestBase):
     def test_ds_attr_merge(self, api_factory):
 
         api_instance = api_factory.DerivativeSampleApi()
+        os_api_instance = api_factory.OriginalSampleApi()
 
         try:
+
+            o_samp = openapi_client.OriginalSample(None, study_name='7012-MD-UP')
+            orig_samp = os_api_instance.create_original_sample(o_samp)
 
             ident1 = openapi_client.Attr(attr_type='oxford_id', attr_value='1234')
             ident2 = openapi_client.Attr(attr_type='roma_id', attr_value='12345')
             ident3 = openapi_client.Attr(attr_type='lims_id', attr_value='123456')
-            samp1 = openapi_client.DerivativeSample(None)
+            samp1 = openapi_client.DerivativeSample(None,
+                                                    original_sample_id=orig_samp.original_sample_id)
             samp1.attrs = [
                 ident1
             ]
             created1 = api_instance.create_derivative_sample(samp1)
 
-            samp2 = openapi_client.DerivativeSample(None)
+            samp2 = openapi_client.DerivativeSample(None,
+                                                    original_sample_id=orig_samp.original_sample_id)
             samp2.attrs = [
                 ident2
             ]
             created2 = api_instance.create_derivative_sample(samp2)
 
-
-            samp3 = openapi_client.DerivativeSample(None)
+            samp3 = openapi_client.DerivativeSample(None,
+                                                    original_sample_id=orig_samp.original_sample_id)
             samp3.attrs = [
                 ident1,
                 ident2,
@@ -195,6 +232,7 @@ class TestDerivativeSample(TestBase):
 
             api_instance.delete_derivative_sample(created1.derivative_sample_id)
             api_instance.delete_derivative_sample(created2.derivative_sample_id)
+            os_api_instance.delete_original_sample(orig_samp.original_sample_id)
 
 
         except ApiException as error:
@@ -205,23 +243,30 @@ class TestDerivativeSample(TestBase):
     def test_ds_update(self, api_factory):
 
         api_instance = api_factory.DerivativeSampleApi()
+        os_api_instance = api_factory.OriginalSampleApi()
 
         try:
 
-            samp = openapi_client.DerivativeSample(None)
+            o_samp = openapi_client.OriginalSample(None, study_name='7013-MD-UP')
+            orig_samp = os_api_instance.create_original_sample(o_samp)
+
+            samp = openapi_client.DerivativeSample(None,
+                                                   original_sample_id=orig_samp.original_sample_id)
             samp.attrs = [
                 openapi_client.Attr(attr_type='oxford', attr_value='1234567')
             ]
             created = api_instance.create_derivative_sample(samp)
             looked_up = api_instance.download_derivative_samples_by_attr('oxford', '1234567')
             looked_up = looked_up.derivative_samples[0]
-            new_samp = openapi_client.DerivativeSample(None)
+            new_samp = openapi_client.DerivativeSample(None,
+                                                       original_sample_id=orig_samp.original_sample_id)
             updated = api_instance.update_derivative_sample(looked_up.derivative_sample_id, new_samp)
             fetched = api_instance.download_derivative_sample(looked_up.derivative_sample_id)
             assert updated == fetched, "update response != download response"
             fetched.derivative_sample_id = None
             assert new_samp == fetched, "update != download response"
             api_instance.delete_derivative_sample(looked_up.derivative_sample_id)
+            os_api_instance.delete_original_sample(orig_samp.original_sample_id)
 
         except ApiException as error:
             self.check_api_exception(api_factory, "DerivativeSampleApi->create_derivative_sample", error)
@@ -231,10 +276,15 @@ class TestDerivativeSample(TestBase):
     def test_ds_update_acc_date(self, api_factory):
 
         api_instance = api_factory.DerivativeSampleApi()
+        os_api_instance = api_factory.OriginalSampleApi()
 
         try:
 
-            samp = openapi_client.DerivativeSample(None)
+            o_samp = openapi_client.OriginalSample(None, study_name='7014-MD-UP')
+            orig_samp = os_api_instance.create_original_sample(o_samp)
+
+            samp = openapi_client.DerivativeSample(None,
+                                                   original_sample_id=orig_samp.original_sample_id)
             samp.attrs = [
                 openapi_client.Attr(attr_type='oxford', attr_value='1234567')
             ]
@@ -242,6 +292,7 @@ class TestDerivativeSample(TestBase):
             looked_up = api_instance.download_derivative_samples_by_attr('oxford', '1234567')
             looked_up = looked_up.derivative_samples[0]
             new_samp = openapi_client.DerivativeSample(None,
+                                                       original_sample_id=orig_samp.original_sample_id,
                                                        acc_date=date(2019, 11, 6))
             updated = api_instance.update_derivative_sample(looked_up.derivative_sample_id, new_samp)
             fetched = api_instance.download_derivative_sample(looked_up.derivative_sample_id)
@@ -249,6 +300,7 @@ class TestDerivativeSample(TestBase):
             fetched.derivative_sample_id = None
             assert new_samp == fetched, "update != download response"
             api_instance.delete_derivative_sample(looked_up.derivative_sample_id)
+            os_api_instance.delete_original_sample(orig_samp.original_sample_id)
 
         except ApiException as error:
             self.check_api_exception(api_factory, "DerivativeSampleApi->create_derivative_sample", error)
@@ -258,10 +310,15 @@ class TestDerivativeSample(TestBase):
     def test_ds_update_duplicate(self, api_factory):
 
         api_instance = api_factory.DerivativeSampleApi()
+        os_api_instance = api_factory.OriginalSampleApi()
 
         try:
 
-            samp = openapi_client.DerivativeSample(None)
+            o_samp = openapi_client.OriginalSample(None, study_name='7015-MD-UP')
+            orig_samp = os_api_instance.create_original_sample(o_samp)
+
+            samp = openapi_client.DerivativeSample(None,
+                                                   original_sample_id=orig_samp.original_sample_id)
             samp.attrs = [
                 openapi_client.Attr(attr_type='oxford', attr_value='12345678',
                                     attr_source='upd')
@@ -269,7 +326,8 @@ class TestDerivativeSample(TestBase):
             created = api_instance.create_derivative_sample(samp)
             looked_up = api_instance.download_derivative_samples_by_attr('oxford', '12345678')
             looked_up = looked_up.derivative_samples[0]
-            new_samp = openapi_client.DerivativeSample(None)
+            new_samp = openapi_client.DerivativeSample(None,
+                                                       original_sample_id=orig_samp.original_sample_id)
             new_samp.attrs = [
                 openapi_client.Attr(attr_type='oxford', attr_value='123456789',
                                     attr_source='upd')
@@ -280,6 +338,7 @@ class TestDerivativeSample(TestBase):
 
             api_instance.delete_derivative_sample(looked_up.derivative_sample_id)
             api_instance.delete_derivative_sample(new_created.derivative_sample_id)
+            os_api_instance.delete_original_sample(orig_samp.original_sample_id)
 
         except ApiException as error:
             self.check_api_exception(api_factory, "DerivativeSampleApi->create_derivative_sample", error)
@@ -312,11 +371,16 @@ class TestDerivativeSample(TestBase):
     def test_ds_attr_lookup_encode(self, api_factory):
 
         api_instance = api_factory.DerivativeSampleApi()
+        os_api_instance = api_factory.OriginalSampleApi()
 
         try:
 
+            o_samp = openapi_client.OriginalSample(None, study_name='7016-MD-UP')
+            orig_samp = os_api_instance.create_original_sample(o_samp)
+
             test_id = 'MDG/DK_0005'
-            samp = openapi_client.DerivativeSample(None)
+            samp = openapi_client.DerivativeSample(None,
+                                                   original_sample_id=orig_samp.original_sample_id)
             samp.attrs = [
                 openapi_client.Attr (attr_type='partner_id', attr_value=test_id,
                                      attr_source='encode')
@@ -339,6 +403,7 @@ class TestDerivativeSample(TestBase):
             assert samp == fetched, "upload != download response"
 
             api_instance.delete_derivative_sample(created.derivative_sample_id)
+            os_api_instance.delete_original_sample(orig_samp.original_sample_id)
 
         except ApiException as error:
             self.check_api_exception(api_factory, "DerivativeSampleApi->create_derivative_sample", error)
@@ -823,18 +888,24 @@ class TestDerivativeSample(TestBase):
     def test_ds_parent_create(self, api_factory):
 
         api_instance = api_factory.DerivativeSampleApi()
+        os_api_instance = api_factory.OriginalSampleApi()
 
         try:
 
-            parent_samp = openapi_client.DerivativeSample(None)
+            o_samp = openapi_client.OriginalSample(None, study_name='7017-MD-UP')
+            orig_samp = os_api_instance.create_original_sample(o_samp)
+
+            parent_samp = openapi_client.DerivativeSample(None,
+                                                          original_sample_id=orig_samp.original_sample_id)
             parent_created = api_instance.create_derivative_sample(parent_samp)
 
-            samp = openapi_client.DerivativeSample(None)
+            samp = openapi_client.DerivativeSample(None,
+                                                   original_sample_id=orig_samp.original_sample_id)
 
             samp.parent_derivative_sample_id = parent_created.derivative_sample_id
 
             created = api_instance.create_derivative_sample(samp)
-            if not api_factory.is_authorized(None):
+            if not api_factory.is_authorized(orig_samp.study_name[:4]):
                 pytest.fail('Unauthorized call to create_derivative_sample succeeded')
 
             fetched = api_instance.download_derivative_sample(created.derivative_sample_id)
@@ -843,6 +914,7 @@ class TestDerivativeSample(TestBase):
             assert samp == fetched, "upload != download response"
             api_instance.delete_derivative_sample(parent_created.derivative_sample_id)
             api_instance.delete_derivative_sample(created.derivative_sample_id)
+            os_api_instance.delete_original_sample(orig_samp.original_sample_id)
 
         except ApiException as error:
             self.check_api_exception(api_factory, "DerivativeSampleApi->create_derivative_sample", error)
@@ -852,20 +924,27 @@ class TestDerivativeSample(TestBase):
     def test_ds_parent_update(self, api_factory):
 
         api_instance = api_factory.DerivativeSampleApi()
+        os_api_instance = api_factory.OriginalSampleApi()
 
         try:
 
-            parent_samp = openapi_client.DerivativeSample(None)
+            o_samp = openapi_client.OriginalSample(None, study_name='7018-MD-UP')
+            orig_samp = os_api_instance.create_original_sample(o_samp)
+
+            parent_samp = openapi_client.DerivativeSample(None,
+                                                          original_sample_id=orig_samp.original_sample_id)
             parent_created = api_instance.create_derivative_sample(parent_samp)
 
-            samp = openapi_client.DerivativeSample(None)
+            samp = openapi_client.DerivativeSample(None,
+                                                   original_sample_id=orig_samp.original_sample_id)
             samp.attrs = [
                 openapi_client.Attr (attr_type='oxford', attr_value='1234567')
             ]
             created = api_instance.create_derivative_sample(samp)
             looked_up = api_instance.download_derivative_samples_by_attr('oxford', '1234567')
             looked_up = looked_up.derivative_samples[0]
-            new_samp = openapi_client.DerivativeSample(None)
+            new_samp = openapi_client.DerivativeSample(None,
+                                                       original_sample_id=orig_samp.original_sample_id)
             new_samp.parent_derivative_sample_id = parent_created.derivative_sample_id
             updated = api_instance.update_derivative_sample(looked_up.derivative_sample_id, new_samp)
             fetched = api_instance.download_derivative_sample(looked_up.derivative_sample_id)
@@ -877,6 +956,7 @@ class TestDerivativeSample(TestBase):
 
             api_instance.delete_derivative_sample(parent_created.derivative_sample_id)
             api_instance.delete_derivative_sample(looked_up.derivative_sample_id)
+            os_api_instance.delete_original_sample(orig_samp.original_sample_id)
 
         except ApiException as error:
             self.check_api_exception(api_factory, "DerivativeSampleApi->create_derivative_sample", error)
@@ -886,19 +966,27 @@ class TestDerivativeSample(TestBase):
     def test_ds_nested_delete_ds(self, api_factory):
 
         api_instance = api_factory.DerivativeSampleApi()
+        os_api_instance = api_factory.OriginalSampleApi()
 
         try:
 
-            parent_samp = openapi_client.DerivativeSample(None)
+            o_samp = openapi_client.OriginalSample(None, study_name='7019-MD-UP')
+            orig_samp = os_api_instance.create_original_sample(o_samp)
+
+            parent_samp = openapi_client.DerivativeSample(None,
+                                                          orig_samp.original_sample_id)
+
             parent_created = api_instance.create_derivative_sample(parent_samp)
 
-            samp = openapi_client.DerivativeSample(None)
+            samp = openapi_client.DerivativeSample(None,
+                                                   orig_samp.original_sample_id)
 
             samp.parent_derivative_sample_id = parent_created.derivative_sample_id
 
             created = api_instance.create_derivative_sample(samp)
 
-            child_samp = openapi_client.DerivativeSample(None)
+            child_samp = openapi_client.DerivativeSample(None,
+                                                         orig_samp.original_sample_id)
 
             child_samp.parent_derivative_sample_id = created.derivative_sample_id
 
@@ -925,7 +1013,8 @@ class TestDerivativeSample(TestBase):
 
         try:
 
-            parent_samp = openapi_client.OriginalSample(None)
+            parent_samp = openapi_client.OriginalSample(None,
+                                                        study_name='7006-MD-UP')
             parent_created = os_api_instance.create_original_sample(parent_samp)
 
             samp = openapi_client.DerivativeSample(None)

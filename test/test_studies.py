@@ -132,11 +132,17 @@ class TestStudies(TestBase):
         try:
             created = api_instance.create_original_sample(samp)
 
-            study1 = study_api.download_study('2002-MD-UP')
-            study2 = study_api.download_study('2002')
+            if not api_factory.is_authorized('2002'):
+                with pytest.raises(ApiException, status=403):
+                    study1 = study_api.download_study('2002-MD-UP')
+                    study2 = study_api.download_study('2002')
 
-            assert study1 == study2, 'Study does not match'
-            assert study1.partner_species[0].partner_species == 'P. falciparum', 'Species not set'
+            else:
+                study1 = study_api.download_study('2002-MD-UP')
+                study2 = study_api.download_study('2002')
+                assert study1 == study2, 'Study does not match'
+                assert study1.partner_species[0].partner_species == 'P. falciparum', 'Species not set'
+
             api_instance.delete_original_sample(created.original_sample_id)
 
         except ApiException as error:
@@ -173,37 +179,44 @@ class TestStudies(TestBase):
 
         try:
 
-            samp = openapi_client.OriginalSample(None, study_name='2004-MD-UP',
-                                                partner_species='P. falciparum')
-            created = api_instance.create_original_sample(samp)
+            study1 = openapi_client.Study(name='2004-MD-UP',
+                                         code='2004')
 
-            study1 = study_api.download_study('2004-MD-UP')
+            if api_factory.is_authorized('2004'):
+                with pytest.raises(ApiException, status=403):
+                    study_api.update_study('2004-MD-UP', study1)
+            else:
+                samp = openapi_client.OriginalSample(None, study_name='2004-MD-UP',
+                                                     partner_species='P. falciparum')
+                created = api_instance.create_original_sample(samp)
 
-            assert study1.partner_species[0].partner_species == 'P. falciparum', 'Species not set'
-            # Taxa or study name are the only things you can update
-            # partner_species belong to the sampling event
-            study1.name = '2004-PF-MD-UP'
-            taxa = openapi_client.Taxonomy(5833)
+                study1 = study_api.download_study('2004-MD-UP')
 
-            study1.partner_species[0].taxa = [taxa]
-            study1.ethics_expiry = date(2019, 11, 4)
+                assert study1.partner_species[0].partner_species == 'P. falciparum', 'Species not set'
+                # Taxa or study name are the only things you can update
+                # partner_species belong to the sampling event
+                study1.name = '2004-PF-MD-UP'
+                taxa = openapi_client.Taxonomy(5833)
 
-            shipment = openapi_client.ExpectedSamples(None, date_of_arrival=date(2019, 1, 4),
-                                                      sample_count=42,
-                                                      expected_species='P.  vivax',
-                                                      expected_taxonomies=[])
-            study1.expected_samples = [shipment]
-            study2 = study_api.update_study('2004-MD-UP', study1)
-            assert study2.name == '2004-PF-MD-UP'
-            assert study2.partner_species[0].taxa[0].taxonomy_id == 5833, 'taxa not updated'
+                study1.partner_species[0].taxa = [taxa]
+                study1.ethics_expiry = date(2019, 11, 4)
 
-            assert study1.ethics_expiry == study2.ethics_expiry
+                shipment = openapi_client.ExpectedSamples(None, date_of_arrival=date(2019, 1, 4),
+                                                          sample_count=42,
+                                                          expected_species='P.  vivax',
+                                                          expected_taxonomies=[])
+                study1.expected_samples = [shipment]
+                study2 = study_api.update_study('2004-MD-UP', study1)
+                assert study2.name == '2004-PF-MD-UP'
+                assert study2.partner_species[0].taxa[0].taxonomy_id == 5833, 'taxa not updated'
 
-            study2.expected_samples[0].expected_samples_id = None
-            assert study1.expected_samples[0] == study2.expected_samples[0]
+                assert study1.ethics_expiry == study2.ethics_expiry
 
-            assert len(study2.partner_species) == 2
-            api_instance.delete_original_sample(created.original_sample_id)
+                study2.expected_samples[0].expected_samples_id = None
+                assert study1.expected_samples[0] == study2.expected_samples[0]
+
+                assert len(study2.partner_species) == 2
+                api_instance.delete_original_sample(created.original_sample_id)
 
         except ApiException as error:
             self.check_api_exception(

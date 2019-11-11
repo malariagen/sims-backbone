@@ -14,7 +14,7 @@ class OriginalSampleDelete():
         self._connection = conn
 
 
-    def delete(self, original_sample_id):
+    def delete(self, original_sample_id, studies):
 
         with self._connection:
             with self._connection.cursor() as cursor:

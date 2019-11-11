@@ -18,7 +18,7 @@ class SamplingEventsGetByTaxa():
         self._logger = logging.getLogger(__name__)
         self._connection = conn
 
-    def get(self, taxa_id, start, count):
+    def get(self, taxa_id, studies, start, count):
         with self._connection:
             with self._connection.cursor() as cursor:
 
@@ -61,8 +61,9 @@ class SamplingEventsGetByTaxa():
                 locations = {}
                 sampling_events.sampling_events = []
                 for samp_id in samp_ids:
-                    event = SamplingEventFetch.fetch(cursor, samp_id, locations)
-                    sampling_events.sampling_events.append(event)
+                    event = SamplingEventFetch.fetch(cursor, samp_id, studies, locations)
+                    if event:
+                        sampling_events.sampling_events.append(event)
                 sampling_events.locations = locations
 
                 if not (start is None and count is None):
