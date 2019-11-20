@@ -19,7 +19,6 @@ SET row_security = off;
 ALTER TABLE ONLY public.original_sample_attrs DROP CONSTRAINT original_sample_attrs_fk;
 ALTER TABLE ONLY public.taxonomy_identifiers DROP CONSTRAINT fk_taxa;
 ALTER TABLE ONLY public.attrs DROP CONSTRAINT fk_study_loc;
-ALTER TABLE ONLY public.original_samples DROP CONSTRAINT fk_species;
 ALTER TABLE ONLY public.sampling_event_attrs DROP CONSTRAINT fk_sampling_event_attr;
 ALTER TABLE ONLY public.sampling_event_attrs DROP CONSTRAINT fk_sampling_event;
 ALTER TABLE ONLY public.locations DROP CONSTRAINT fk_proxy_location;
@@ -1034,14 +1033,6 @@ ALTER TABLE ONLY public.sampling_event_attrs
 
 ALTER TABLE ONLY public.sampling_event_attrs
     ADD CONSTRAINT fk_sampling_event_attr FOREIGN KEY (attr_id) REFERENCES public.attrs(id);
-
-
---
--- Name: original_samples fk_species; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.original_samples
-    ADD CONSTRAINT fk_species FOREIGN KEY (partner_species_id) REFERENCES public.partner_species_identifiers(id);
 
 
 --
