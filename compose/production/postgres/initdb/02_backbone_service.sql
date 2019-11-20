@@ -3,7 +3,7 @@
 --
 
 -- Dumped from database version 10.7 (Debian 10.7-1.pgdg90+1)
--- Dumped by pg_dump version 10.10 (Ubuntu 10.10-1.pgdg18.04+1)
+-- Dumped by pg_dump version 12.1 (Ubuntu 12.1-1.pgdg18.04+1)
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -16,21 +16,110 @@ SET xmloption = content;
 SET client_min_messages = warning;
 SET row_security = off;
 
-
---
--- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: -
---
-
-CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
-
-
---
--- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner: -
---
-
-COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
-
-
+ALTER TABLE ONLY public.original_sample_attrs DROP CONSTRAINT original_sample_attrs_fk;
+ALTER TABLE ONLY public.taxonomy_identifiers DROP CONSTRAINT fk_taxa;
+ALTER TABLE ONLY public.attrs DROP CONSTRAINT fk_study_loc;
+ALTER TABLE ONLY public.original_samples DROP CONSTRAINT fk_species;
+ALTER TABLE ONLY public.sampling_event_attrs DROP CONSTRAINT fk_sampling_event_attr;
+ALTER TABLE ONLY public.sampling_event_attrs DROP CONSTRAINT fk_sampling_event;
+ALTER TABLE ONLY public.locations DROP CONSTRAINT fk_proxy_location;
+ALTER TABLE ONLY public.partner_species_identifiers DROP CONSTRAINT fk_partner_sp_study;
+ALTER TABLE ONLY public.taxonomy_identifiers DROP CONSTRAINT fk_partner_sp;
+ALTER TABLE ONLY public.original_samples DROP CONSTRAINT fk_os_study;
+ALTER TABLE ONLY public.original_samples DROP CONSTRAINT fk_os_se;
+ALTER TABLE ONLY public.original_samples DROP CONSTRAINT fk_os_psi;
+ALTER TABLE ONLY public.original_sample_attrs DROP CONSTRAINT fk_original_sample;
+ALTER TABLE ONLY public.location_attrs DROP CONSTRAINT fk_location_attr;
+ALTER TABLE ONLY public.location_attrs DROP CONSTRAINT fk_location;
+ALTER TABLE ONLY public.sampling_events DROP CONSTRAINT fk_location;
+ALTER TABLE ONLY public.individual_attrs DROP CONSTRAINT fk_individual_attr;
+ALTER TABLE ONLY public.individual_attrs DROP CONSTRAINT fk_individual;
+ALTER TABLE ONLY public.sampling_events DROP CONSTRAINT fk_individual;
+ALTER TABLE ONLY public.event_set_notes DROP CONSTRAINT fk_esn_es;
+ALTER TABLE ONLY public.event_set_members DROP CONSTRAINT fk_esm_se;
+ALTER TABLE ONLY public.event_set_members DROP CONSTRAINT fk_esm_es;
+ALTER TABLE ONLY public.expected_samples DROP CONSTRAINT fk_es_si;
+ALTER TABLE ONLY public.expected_samples DROP CONSTRAINT fk_es_psi;
+ALTER TABLE ONLY public.derivative_samples DROP CONSTRAINT fk_ds_os;
+ALTER TABLE ONLY public.derivative_sample_attrs DROP CONSTRAINT fk_derivative_sample;
+ALTER TABLE ONLY public.locations DROP CONSTRAINT fk_country;
+ALTER TABLE ONLY public.assay_datum_attrs DROP CONSTRAINT fk_assay_datum;
+ALTER TABLE ONLY public.assay_data DROP CONSTRAINT fk_ad_ds;
+ALTER TABLE ONLY public.derivative_samples DROP CONSTRAINT derivative_samples_derivative_samples_fk;
+ALTER TABLE ONLY public.derivative_sample_attrs DROP CONSTRAINT derivative_sample_attrs_fk;
+ALTER TABLE ONLY public.assay_datum_attrs DROP CONSTRAINT assay_datum_attrs_fk;
+DROP INDEX public.studies_study_code_idx;
+DROP INDEX public.partner_species_identifiers_partner_species_idx;
+DROP INDEX public.original_sample_attrs_original_sample_id_idx;
+DROP INDEX public.location_attrs_location_id_idx;
+DROP INDEX public.individual_attrs_individual_id_idx;
+DROP INDEX public.idx_study_name;
+DROP INDEX public.idx_study_id;
+DROP INDEX public.idx_se_doc;
+DROP INDEX public.idx_partner_species;
+DROP INDEX public.idx_ident_value;
+DROP INDEX public.idx_ident_type;
+DROP INDEX public.fki_sampling_event_id;
+DROP INDEX public.fki_sampling_event_attr_id;
+DROP INDEX public.fki_proxy_location;
+DROP INDEX public.fki_location_id;
+DROP INDEX public.fki_location_attr_id;
+DROP INDEX public.fki_location;
+DROP INDEX public.fki_individual_id;
+DROP INDEX public.fki_individual_attr_id;
+DROP INDEX public.fki_individual;
+DROP INDEX public.fki_fk_esn_es;
+DROP INDEX public.fki_fk_esm_se;
+DROP INDEX public.fki_fk_esm_es;
+DROP INDEX public.event_set_members_sampling_event_id_idx;
+DROP INDEX public.attrs_attr_type_idx;
+DROP INDEX public.attrs_attr_source_idx;
+ALTER TABLE ONLY public.studies DROP CONSTRAINT uniq_study_code;
+ALTER TABLE ONLY public.event_sets DROP CONSTRAINT uniq_event_sets;
+ALTER TABLE ONLY public.event_set_members DROP CONSTRAINT uniq_event_set_members;
+ALTER TABLE ONLY public.taxonomies DROP CONSTRAINT taxonomy_id;
+ALTER TABLE ONLY public.studies DROP CONSTRAINT studies_id;
+ALTER TABLE ONLY public.sampling_events DROP CONSTRAINT sampling_event_id;
+ALTER TABLE ONLY public.event_set_notes DROP CONSTRAINT pk_esn;
+ALTER TABLE ONLY public.event_sets DROP CONSTRAINT pk_es;
+ALTER TABLE ONLY public.partner_species_identifiers DROP CONSTRAINT partner_species_identifiers_id;
+ALTER TABLE ONLY public.original_samples DROP CONSTRAINT original_sample_id;
+ALTER TABLE ONLY public.locations DROP CONSTRAINT location_id;
+ALTER TABLE ONLY public.individuals DROP CONSTRAINT individual_id;
+ALTER TABLE ONLY public.derivative_samples DROP CONSTRAINT derivative_sample_id;
+ALTER TABLE ONLY public.countries DROP CONSTRAINT countries_id;
+ALTER TABLE ONLY public.attrs DROP CONSTRAINT attr_id;
+ALTER TABLE ONLY public.assay_data DROP CONSTRAINT assay_datum_id;
+ALTER TABLE public.event_sets ALTER COLUMN id DROP DEFAULT;
+ALTER TABLE public.archive ALTER COLUMN id DROP DEFAULT;
+DROP VIEW public.v_sampling_events;
+DROP TABLE public.taxonomy_identifiers;
+DROP TABLE public.taxonomies;
+DROP TABLE public.studies;
+DROP TABLE public.sampling_events;
+DROP TABLE public.sampling_event_attrs;
+DROP TABLE public.partner_species_identifiers;
+DROP TABLE public.original_samples;
+DROP TABLE public.original_sample_attrs;
+DROP TABLE public.locations;
+DROP TABLE public.location_attrs;
+DROP TABLE public.individuals;
+DROP TABLE public.individual_attrs;
+DROP TABLE public.expected_samples;
+DROP SEQUENCE public.event_sets_id_seq;
+DROP TABLE public.event_sets;
+DROP TABLE public.event_set_notes;
+DROP TABLE public.event_set_members;
+DROP TABLE public.derived_sample_attrs;
+DROP TABLE public.derivative_samples;
+DROP TABLE public.derivative_sample_attrs;
+DROP TABLE public.countries;
+DROP TABLE public.attrs;
+DROP TABLE public.assay_datum_attrs;
+DROP TABLE public.assay_data;
+DROP SEQUENCE public.archive_id_seq;
+DROP TABLE public.archive;
+DROP EXTENSION postgis;
 --
 -- Name: postgis; Type: EXTENSION; Schema: -; Owner: -
 --
@@ -46,8 +135,6 @@ COMMENT ON EXTENSION postgis IS 'PostGIS geometry, geography, and raster spatial
 
 
 SET default_tablespace = '';
-
-SET default_with_oids = false;
 
 --
 -- Name: archive; Type: TABLE; Schema: public; Owner: -
@@ -726,6 +813,22 @@ CREATE INDEX studies_study_code_idx ON public.studies USING btree (study_code);
 
 
 --
+-- Name: assay_datum_attrs assay_datum_attrs_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.assay_datum_attrs
+    ADD CONSTRAINT assay_datum_attrs_fk FOREIGN KEY (attr_id) REFERENCES public.attrs(id);
+
+
+--
+-- Name: derivative_sample_attrs derivative_sample_attrs_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.derivative_sample_attrs
+    ADD CONSTRAINT derivative_sample_attrs_fk FOREIGN KEY (attr_id) REFERENCES public.attrs(id);
+
+
+--
 -- Name: derivative_samples derivative_samples_derivative_samples_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -958,10 +1061,11 @@ ALTER TABLE ONLY public.taxonomy_identifiers
 
 
 --
--- Name: SCHEMA public; Type: ACL; Schema: -; Owner: -
+-- Name: original_sample_attrs original_sample_attrs_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-GRANT ALL ON SCHEMA public TO PUBLIC;
+ALTER TABLE ONLY public.original_sample_attrs
+    ADD CONSTRAINT original_sample_attrs_fk FOREIGN KEY (attr_id) REFERENCES public.attrs(id);
 
 
 --
