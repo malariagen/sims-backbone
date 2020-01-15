@@ -47,7 +47,8 @@ class Uploader():
 
         if os.getenv('LOCAL_TEST'):
             self._dao = LocalBackboneDAO('upload_test',
-                                         [ 'cn=editor,ou=sims,ou=projects,ou=groups,dc=malariagen,dc=net'])
+                                         ['cn=editor,ou=sims,ou=projects,ou=groups,dc=malariagen,dc=net',
+                                          'cn=all_studies,ou=sims,ou=projects,ou=groups,dc=malariagen,dc=net'])
 
         if config_file:
             self._config_file = config_file
