@@ -124,7 +124,7 @@ class Uploader():
             s = io.StringIO()
             sortby = 'cumulative'
             ps = pstats.Stats(profile, stream=s).sort_stats(sortby)
-            ps.print_stats(.1,'uploader')
+            ps.print_stats(.1)
             self._logger.debug(s.getvalue())
             profile.dump_stats('upload_source_stats.cprof')
 

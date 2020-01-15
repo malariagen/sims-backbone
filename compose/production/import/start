@@ -36,6 +36,28 @@ do
         mv $i ${ARCHIVE_DIR}/roma/$(basename ${i})
     fi
 done
+for i in ${INPUT1_STAGING_DIR}/import/access/*
+do
+    if [ ${i} != "_dummy" ]
+    then
+        test -d ${ARCHIVE_DIR}/access || mkdir -p ${ARCHIVE_DIR}/access
+        INSTANCE=$(basename ${i})
+        ACCESS_LOG=${OUTPUT1_STAGING_DIR}/${INSTANCE}_$(date +%Y-%m-%d-%H%M%S).log
+        JAR="lims-sims/target/lims-transform-1.0-SNAPSHOT.jar"
+        if [ ! -f ${JAR} ]
+        then
+            (cd $(dirname ${JAR})/..;
+            mvn package)
+        fi
+        java -classpath ${JAR}/../../util -jar ${JAR} net.malariagen.sims.lims.Transform ${i} ${i}.csv
+        python3 uploader.py ${i}.csv access.json ${IMPORT_CONFIG} 2>&1 | tee -i ${ACCESS_LOG}
+        if [ -s ${ACCESS_LOG} ]
+        then
+            python3 upload_log.py ${CMIS_CONFIG} ${ENVIRON} ${ACCESS_LOG}
+        fi
+        test -d ${ARCHIVE_DIR}/access && mkdir ${ARCHIVE_DIR}/access
+        mv $i ${ARCHIVE_DIR}/access/$(basename ${i})
+    fi
 METADATA_LOG=${OUTPUT1_STAGING_DIR}/metadata_$(date +%Y-%m-%d-%H%M%S).log
 python3 set_taxa.py ${IMPORT_CONFIG} | tee -i ${METADATA_LOG}
 python3 set_studies.py ${IMPORT_CONFIG} ${CMIS_CONFIG} | tee -i ${METADATA_LOG}

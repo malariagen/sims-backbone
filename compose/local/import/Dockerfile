@@ -2,7 +2,7 @@ FROM python:3.6.8-stretch
 ENV PYTHONUNBUFFERED 1
 
 WORKDIR /app
-RUN apt-get install -y libpq-dev
+RUN apt-get update && apt-get install -y libpq-dev maven openjdk-8-jdk
 #RUN ls /app/server
 COPY ./server/bb_server/requirements.txt /tmp
 RUN pip3 install --no-cache-dir -r /tmp/requirements.txt

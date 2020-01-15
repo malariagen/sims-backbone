@@ -38,6 +38,11 @@ class DerivativeSampleProcessor(BaseEntity):
                                               values['sanger_sample_id'],
                                               self._event_set))
 
+        if 'sequencescape_id' in values:
+            idents.append(openapi_client.Attr('sequencescape_id',
+                                              values['sequencescape_id'],
+                                              self._event_set))
+
         if 'sample_lims_id' in values and values['sample_lims_id']:
             idents.append(openapi_client.Attr('sanger_lims_id', values['sample_lims_id'],
                                               self._event_set))
@@ -54,6 +59,16 @@ class DerivativeSampleProcessor(BaseEntity):
         if 'dna_prep' in values:
             d_sample.dna_prep = values['dna_prep']
 
+        if 'parent_unique_ds_id' in values:
+            pds = openapi_client.DerivativeSample(None)
+            parent = self.lookup_derivative_sample(pds, {
+                'unique_ds_id': values['parent_unique_ds_id']
+            })
+            if parent:
+                d_sample.parent_derivative_sample_id = parent.derivative_sample_id
+            else:
+                self.report(f"Failed to find parent {values['unique_ds_id']} {values['parent_unique_ds_id']}", values)
+
         d_sample.attrs = idents
 
         return d_sample
@@ -63,14 +78,15 @@ class DerivativeSampleProcessor(BaseEntity):
         existing = None
 
         if 'unique_ds_id' in values:
+            # print(f"Looking in cache for unique_ds_id {values['unique_ds_id']}")
             if values['unique_ds_id'] in self._derivative_sample_cache:
                 existing_sample_id = self._derivative_sample_cache[values['unique_ds_id']]
                 existing = self._dao.download_derivative_sample(
                     existing_sample_id)
                 return existing
 
-        #print ("not in cache: {}".format(samp))
-        if len(samp.attrs) > 0:
+        # print("not in cache: {} {}".format(samp, values))
+        if samp.attrs:
             #print("Checking attrs {}".format(samp.attrs))
             for ident in samp.attrs:
                 try:
@@ -88,6 +104,10 @@ class DerivativeSampleProcessor(BaseEntity):
                                             existing = found
                         continue
                     if ident.attr_type == 'plate_position':
+                        continue
+
+                    if ident.attr_type == 'sequencescape_id':
+                        # Not guaranteed to be unique
                         continue
 
                     found_events = self._dao.download_derivative_samples_by_attr(ident.attr_type,
@@ -122,7 +142,7 @@ class DerivativeSampleProcessor(BaseEntity):
 
         if 'sanger_lims_id' in values and values['sanger_lims_id']:
             if not existing:
-                self.report("Could not find not adding ", values)
+                self.report("Could not find not adding derivative sample", values)
                 return None
 
         if existing:
@@ -144,9 +164,8 @@ class DerivativeSampleProcessor(BaseEntity):
                 self._logger.error("Error inserting {}".format(samp))
                 sys.exit(1)
 
-            if 'unique_ds_id' in values:
-                self._derivative_sample_cache[values['unique_ds_id']
-                                              ] = created.derivative_sample_id
+        if 'unique_ds_id' in values:
+            self._derivative_sample_cache[values['unique_ds_id']] = ret.derivative_sample_id
 
         return ret
 

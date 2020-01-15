@@ -1,0 +1,54 @@
+{
+	"values": {
+		"study_id": {
+			"column": 0,
+			"type": "string",
+			"regex": "(\\d{4}$)"
+		},
+		"sample_roma_id": {
+			"column": 4,
+			"type": "string"
+		},
+		"sample_oxford_id": {
+			"column": 5,
+			"type": "string"
+		},
+		"sample_partner_id": {
+			"column": 6,
+			"type": "string"
+		},
+		"os_acc_date": {
+			"column": 8,
+			"type": "datetime",
+			"date_format": "%Y-%m-%d"
+		},
+		"plate_name": {
+			"column": 10,
+			"type": "string"
+		},
+		"dna_prep": {
+			"column": 12,
+			"type": "string"
+		},
+		"sample_lims_id": {
+			"column": 13,
+			"type": "string"
+		},
+		"plate_position": {
+			"column": 14,
+			"type": "string"
+		},
+		"unique_ds_id": {
+			"column": 15,
+			"type": "string"
+		},
+		"parent_unique_ds_id": {
+			"column": 17,
+			"type": "string"
+		},
+		"sanger_sample_id": {
+			"column": 18,
+			"type": "string"
+		}
+	}
+}

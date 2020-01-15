@@ -26,40 +26,42 @@ class OriginalSampleProcessor(BaseEntity):
 
         idents = []
         if 'sample_roma_id' in values:
-            idents.append(openapi_client.Attr ('roma_id', values['sample_roma_id'],
-                                                     self._event_set))
+            idents.append(openapi_client.Attr('roma_id', values['sample_roma_id'],
+                                              self._event_set))
         if 'sample_partner_id' in values and values['sample_partner_id']:
-            idents.append(openapi_client.Attr ('partner_id', values['sample_partner_id'],
-                                                     self._event_set))
+            idents.append(openapi_client.Attr('partner_id', values['sample_partner_id'],
+                                              self._event_set))
         if 'sample_partner_id_1' in values and values['sample_partner_id_1']:
-            idents.append(openapi_client.Attr ('partner_id', values['sample_partner_id_1'],
-                                                     self._event_set))
+            idents.append(openapi_client.Attr('partner_id', values['sample_partner_id_1'],
+                                              self._event_set))
         if 'sample_oxford_id' in values and values['sample_oxford_id']:
-            idents.append(openapi_client.Attr ('oxford_id', values['sample_oxford_id'],
-                                                     self._event_set))
-        if 'sample_alternate_oxford_id' in values and len(values['sample_alternate_oxford_id']) > 0:
-            idents.append(openapi_client.Attr ('alt_oxford_id',
-                                                     values['sample_alternate_oxford_id'],
-                                                     self._event_set))
+            idents.append(openapi_client.Attr('oxford_id', values['sample_oxford_id'],
+                                              self._event_set))
+        if 'sample_alternate_oxford_id' in values and values['sample_alternate_oxford_id']:
+            idents.append(openapi_client.Attr('alt_oxford_id',
+                                              values['sample_alternate_oxford_id'],
+                                              self._event_set))
         if 'sample_source_id' in values and values['sample_source_id'] and values['sample_source_type']:
-            idents.append(openapi_client.Attr (values['sample_source_type'],
-                                                     values['sample_source_id'],
-                                                     self._event_set))
+            idents.append(openapi_client.Attr(values['sample_source_type'],
+                                              values['sample_source_id'],
+                                              self._event_set))
         if 'sample_source_id1' in values and values['sample_source_id1'] and values['sample_source_type1']:
-            idents.append(openapi_client.Attr (values['sample_source_type1'],
-                                                     values['sample_source_id1'],
-                                                     self._event_set))
+            idents.append(openapi_client.Attr(values['sample_source_type1'],
+                                              values['sample_source_id1'],
+                                              self._event_set))
         if 'sample_source_id2' in values and values['sample_source_id2'] and values['sample_source_type2']:
-            idents.append(openapi_client.Attr (values['sample_source_type2'],
-                                                     values['sample_source_id2'],
-                                                     self._event_set))
+            idents.append(openapi_client.Attr(values['sample_source_type2'],
+                                              values['sample_source_id2'],
+                                              self._event_set))
 
         if 'days_in_culture' in values:
             o_sample.days_in_culture = int(float(values['days_in_culture']))
 
-        if 'species' in values and values['species'] and len(values['species']) > 0:
+        if 'species' in values and values['species']:
             o_sample.partner_species = values['species']
 
+        if 'os_acc_date' in values:
+            o_sample.acc_date = values['os_acc_date']
 
         o_sample.attrs = idents
 
@@ -77,46 +79,39 @@ class OriginalSampleProcessor(BaseEntity):
 
         #print ("not in cache: {}".format(samp))
         if len(samp.attrs) > 0:
-            #print("Checking attrs {}".format(samp.attrs))
+            # print("Checking attrs {}".format(samp.attrs))
             for ident in samp.attrs:
                 try:
-                    #print("Looking for {} {}".format(ident.attr_type, ident.attr_value))
+                    # print("Looking for {} {}".format(ident.attr_type, ident.attr_value))
                     if ident.attr_type == 'individual_id':
                         #individual_id is used for grouping
                         # and is not a unique ident
                         continue
 
                     found_events = self._dao.download_original_samples_by_attr(ident.attr_type,
-                                                                                       ident.attr_value)
+                                                                               ident.attr_value)
 
                     for found in found_events.original_samples:
                         if ident.attr_type == 'partner_id':
                             #Partner ids within 1087 are not unique
                             if samp.study_name[:4] == '1087':
                                 continue
-                            if 'sample_lims_id' in values and values['sample_lims_id']:
-                                #Partner id is not the only id
-                                if len(samp.attrs) > 2:
+                            #Not safe as partner id's can be the same across studies
+                            #unless check study id as well
+                            #print('Checking study ids {} {} {}'.format(samp.study_name,
+                            #                                           found.study_name, ident))
+                            if samp.study_name:
+                                if samp.study_name[:4] == '0000':
                                     continue
-                                #Probably still not safe even though at this point it's a unique partner_id
-                                continue
+                                if found.study_name[:4] != samp.study_name[:4]:
+                                    continue
                             else:
-                                #Not safe as partner id's can be the same across studies
-                                #unless check study id as well
-                                #print('Checking study ids {} {} {}'.format(samp.study_name,
-                                #                                           found.study_name, ident))
-                                if samp.study_name:
-                                    if samp.study_name[:4] == '0000':
-                                        continue
-                                    if found.study_name[:4] != samp.study_name[:4]:
-                                        continue
-                                else:
-                                    continue
+                                continue
 
                         if existing and existing.original_sample_id != found.original_sample_id:
                             msg = ("Merging into {} using {}"
-                                            .format(existing.sampling_event_id,
-                                                               ident.attr_type), values)
+                                   .format(existing.sampling_event_id,
+                                           ident.attr_type), values)
                             #print(msg)
                             found = self.merge_original_samples(existing, found, values)
                         existing = found
@@ -128,8 +123,8 @@ class OriginalSampleProcessor(BaseEntity):
                     #print("Not found")
                         pass
 
-        #if not existing:
-        #    print('Not found {}'.format(samp))
+        # if not existing:
+        #     print('Not found {}'.format(samp))
         return existing
 
     def process_original_sample(self, values, samp, existing):

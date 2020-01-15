@@ -583,7 +583,7 @@ class SamplingEventProcessor(BaseEntity):
 
         if 'sample_lims_id' in values and values['sample_lims_id']:
             if not existing:
-                self.report("Could not find not adding ", values)
+                self.report("Could not find not adding sampling event", values)
                 return None
 
         ret = existing

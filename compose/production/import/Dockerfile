@@ -3,10 +3,11 @@ FROM node:11.15.0-stretch-slim as build
 WORKDIR /app
 
 RUN mkdir -p /usr/share/man/man1
-RUN apt-get update && apt-get install -y libpq-dev git openjdk-8-jre-headless && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y libpq-dev git openjdk-8-jdk-headless maven && rm -rf /var/lib/apt/lists/*
 
 RUN git clone https://github.com/malariagen/sims-backbone.git
 RUN (cd sims-backbone;./generate.sh)
+RUN (cd sims-backbone/upload/lims-sims;mvn package)
 
 
 FROM python:3.6.8-stretch
