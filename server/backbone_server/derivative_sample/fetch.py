@@ -38,14 +38,15 @@ class DerivativeSampleFetch():
 
         stmt = '''SELECT derivative_samples.id, original_sample_id, dna_prep,
         parent_derivative_sample_id, derivative_samples.acc_date
-        FROM derivative_samples
-        LEFT JOIN original_samples ON derivative_samples.original_sample_id = original_samples.id
-        LEFT JOIN studies ON original_samples.study_id = studies.id
-        WHERE derivative_samples.id = %s'''
+        FROM derivative_samples'''
         if studies:
             filt = BaseController.study_filter(studies)
             if filt:
+                stmt += '''LEFT JOIN original_samples ON derivative_samples.original_sample_id = original_samples.id
+        LEFT JOIN studies ON original_samples.study_id = studies.id'''
                 stmt += ' AND ' + filt
+
+        stmt += ''' WHERE derivative_samples.id = %s'''
 
         #print(stmt % (derivative_sample_id,))
         cursor.execute(stmt, (derivative_sample_id,))
