@@ -42,7 +42,7 @@ class DerivativeSampleFetch():
         if studies:
             filt = BaseController.study_filter(studies)
             if filt:
-                stmt += '''LEFT JOIN original_samples ON derivative_samples.original_sample_id = original_samples.id
+                stmt += ''' LEFT JOIN original_samples ON derivative_samples.original_sample_id = original_samples.id
         LEFT JOIN studies ON original_samples.study_id = studies.id'''
                 stmt += ' AND ' + filt
 
