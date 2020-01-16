@@ -44,7 +44,7 @@ do
             (cd $(dirname ${JAR})/..;
             mvn package)
         fi
-        java -classpath ${JAR}/../../util -jar ${JAR} net.malariagen.sims.lims.Transform ${i} ${i}.csv
+        java -jar ${JAR} net.malariagen.sims.lims.Transform ${i} ${i}.csv
         python3 uploader.py ${i}.csv access.json ${IMPORT_CONFIG} 2>&1 | tee -i ${ACCESS_LOG}
         # if [ -s ${ACCESS_LOG} ]
         # then

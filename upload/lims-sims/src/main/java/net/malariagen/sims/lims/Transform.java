@@ -204,12 +204,19 @@ public class Transform implements RequestHandler<S3Event, String> {
 		tempFile.delete();
 	}
 
+	/**
+	 * Usage:
+	 * java -jar lims-sims/target/lims-transform-1.0-SNAPSHOT.jar net.malariagen.sims.lims.Transform ./input/import/access/lab_sam_track_db_tables_20191014.accdb ./input/import/access/lab_sam_track_db_tables_20191014.accdb.csv
+	 * @param args
+	 */
 	public static void main(String[] args) {
 		Transform t = new Transform();
 
 		try {
-			FileInputStream fis = new FileInputStream(args[0]);
-			File fout = new File(args[1]);
+			File directory = new File(args[1]);
+			   System.out.println(directory.getAbsolutePath());
+			FileInputStream fis = new FileInputStream(args[1]);
+			File fout = new File(args[2]);
 			if (fout.exists()) {
 				fout.delete();
 			}
