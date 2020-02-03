@@ -1,0 +1,54 @@
+components:
+  schemas:
+    Documents:
+      type: object
+      description: 'Documents stored in a reasonably efficient structure'
+      properties:
+        documents:
+          type: array
+          items:
+            type: object
+            $ref: '#/components/schemas/Document'
+        count:
+          type: integer
+          description: Used when pagination is applied to return the number of results
+        attr_types:
+            type: array
+            items:
+              type: string
+              description: 'Attr types used in this set of Documents'
+    Document:
+      type: object
+      description: 'Document details'
+      required:
+        - doc_name
+        - doc_type
+        - study_name
+      properties:
+        document_id:
+          type: string
+  #        format: uuid
+        study_name:
+          type: string
+        doc_name:
+          type: string
+        doc_type:
+          type: string
+        doc_version:
+          type: string
+        content:
+          type: string
+          format: byte
+          description: 'This is only to be used when creating a file, otherwise use the content endpoints'
+        created_by:
+          type: string
+          description: 'Automatically assigned by the server'
+        updated_by:
+          type: string
+          description: 'Automatically assigned by the server'
+        note:
+          type: string
+        creation_date:
+          type: string
+          format: date
+          description: 'Automatically assigned by the server and applies to the first version'

@@ -121,6 +121,14 @@ paths:
     $ref: './sims-backbone/study/items.yaml'
   '/study/{study_name}':
     $ref: './sims-backbone/study/item.yaml'
+  '/document':
+    $ref: './sims-backbone/document/create.yaml'
+  '/document/{document_id}':
+    $ref: './sims-backbone/document/item.yaml'
+  '/document/content/{document_id}':
+    $ref: './sims-backbone/document/content.yaml'
+  '/documents/study/{study_name}':
+    $ref: './sims-backbone/document/by_study.yaml'
   '/eventSet/{event_set_id}':
     $ref: './sims-backbone/event_set/item.yaml'
   '/eventSet/{event_set_id}/{sampling_event_id}':
@@ -251,6 +259,12 @@ components:
         application/json:
           schema:
             $ref: "./sims-backbone/definitions/original_sample.yaml#/components/schemas/OriginalSample"
+      required: true
+    Document:
+      content:
+        multipart/form-data:
+          schema:
+            $ref: "./sims-backbone/definitions/document.yaml#/components/schemas/Document"
       required: true
   securitySchemes:
     OAuthSecurity:

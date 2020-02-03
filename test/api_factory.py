@@ -12,6 +12,7 @@ from local.original_sample_api import LocalOriginalSampleApi
 from local.derivative_sample_api import LocalDerivativeSampleApi
 from local.assay_data_api import LocalAssayDataApi
 from local.report_api import LocalReportApi
+from local.document_api import LocalDocumentApi
 
 from backbone_server.controllers.base_controller  import BaseController
 
@@ -178,5 +179,16 @@ class ApiFactory():
             ret = LocalReportApi(self._api_client, self._user, self._auths, self._method)
         else:
             ret = openapi_client.ReportApi(self._api_client)
+
+        return ret
+
+    def DocumentApi(self):
+
+        ret = None
+
+        if self.isLocal():
+            ret = LocalDocumentApi(self._api_client, self._user, self._auths, self._method)
+        else:
+            ret = openapi_client.DocumentApi(self._api_client)
 
         return ret
