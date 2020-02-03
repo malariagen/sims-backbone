@@ -498,7 +498,8 @@ class TestLocation(TestBase):
             created = api_instance.create_location(loc)
             looked_up_locs = api_instance.download_partner_location(loc.attrs[0].attr_value)
             looked_up = looked_up_locs.locations[0]
-            newloc = copy.deepcopy(loc)
+            newloc = self.get_next_location()
+            newloc.curated_name = loc.curated_name
             newloc.attrs = [
                 openapi_client.Attr(attr_type='partner_name', attr_value='nepal', study_name='1235-PV')
             ]

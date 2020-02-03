@@ -106,7 +106,8 @@ class TestIndividual(TestBase):
             indiv = self.get_next_individual()
             created = api_instance.create_individual(indiv)
 
-            newindiv = copy.deepcopy(indiv)
+            newindiv = self.get_next_individual()
+            newindiv.attrs[0].attr_value = indiv.attrs[0].attr_value
             newindiv.attrs[0].study_name = '6004'
             created1 = api_instance.create_individual(newindiv)
 
@@ -261,7 +262,7 @@ class TestIndividual(TestBase):
 
             indiv = self.get_next_individual()
             created = api_instance.create_individual(indiv)
-            newindiv = copy.deepcopy(indiv)
+            newindiv = self.get_next_individual()
             newindiv.attrs = [
                 openapi_client.Attr(attr_type='individual_id',
                                     attr_value='indiv', study_name='1235-PV')
