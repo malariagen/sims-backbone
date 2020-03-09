@@ -17,6 +17,7 @@ class DerivativeSampleProcessor(BaseEntity):
         self._dao = dao
         self._event_set = event_set
         self._derivative_sample_cache = {}
+        self._studies_cache = {}
 
     def create_derivative_sample_from_values(self, values, original_sample):
 
@@ -77,6 +78,42 @@ class DerivativeSampleProcessor(BaseEntity):
 
         return d_sample
 
+    def load_attr_cache(self, study_id, values):
+
+        if study_id and study_id not in self._studies_cache:
+            cache = {
+                'sample_lims_id': {},
+                'sanger_sample_id': {}
+            }
+            try:
+                found_events = self._dao.download_derivative_samples_by_study(study_id)
+                for found in found_events.derivative_samples:
+                    for attr in found.attrs:
+                        if attr.attr_type in cache:
+                            cache[attr.attr_type][attr.attr_value] = found
+                self._studies_cache[study_id] = cache
+            except ApiException as err:
+                #self._logger.debug("Error looking for {}".format(ident))
+                #print("Not found")
+                    pass
+
+    def attr_cache_lookup(self, study_id, existing, values, ident):
+
+        cache = None
+
+        if study_id and study_id in self._studies_cache:
+            cache = self._studies_cache[study_id]
+        if cache and ident.attr_type in cache:
+            if ident.attr_value in cache[ident.attr_type]:
+                found = cache[ident.attr_type][ident.attr_value]
+                if existing and existing.derivative_sample_id != found.derivative_sample_id:
+                    msg = ("Merging into {} using {}".format(existing.derivative_sample_id, ident.attr_type), values)
+                    #print(msg)
+                    found = self.merge_derivative_samples(existing, found, values)
+                existing = found
+                        #print ("found: {} {}".format(samp, found))
+        return existing
+
     def lookup_derivative_sample(self, samp, values):
 
         existing = None
@@ -88,48 +125,65 @@ class DerivativeSampleProcessor(BaseEntity):
                 existing = self._dao.download_derivative_sample(existing_sample_id)
                 return existing
 
+        study_id = None
+        if 'study_id' in values:
+            study_id = values['study_id']
+            if study_id[:4] == '0000':
+                study_id = None
+
+        self.load_attr_cache(study_id, values)
+
+        individual_lookup = False
         # print("not in cache: {} {}".format(samp, values))
         if samp.attrs:
             #print("Checking attrs {}".format(samp.attrs))
             for ident in samp.attrs:
-                try:
-                    #print("Looking for {} {}".format(ident.attr_type, ident.attr_value))
+                existing = self.attr_cache_lookup(study_id, existing, values, ident)
 
-                    if ident.attr_type == 'plate_name':
+                cache_existing = existing
+                # print(f'Existing {existing} from cache')
+                if not existing:
+                    individual_lookup = True
+
+                if individual_lookup or not study_id:
+                    try:
+                        #print("Looking for {} {}".format(ident.attr_type, ident.attr_value))
+
+                        if ident.attr_type == 'plate_name':
+                            found_events = self._dao.download_derivative_samples_by_attr(ident.attr_type,
+                                                                                         ident.attr_value)
+                            for found in found_events.derivative_samples:
+                                for samp_attr in samp.attrs:
+                                    if samp_attr.attr_type == 'plate_position':
+                                        for ds_attr in found.attrs:
+                                            if ds_attr.attr_type == 'plate_position' and \
+                                                ds_attr.attr_value == samp_attr.attr_value:
+                                                existing = found
+                            continue
+                        if ident.attr_type == 'plate_position':
+                            continue
+
+                        if ident.attr_type == 'sequencescape_id':
+                            # Not guaranteed to be unique
+                            continue
+
                         found_events = self._dao.download_derivative_samples_by_attr(ident.attr_type,
                                                                                      ident.attr_value)
+
                         for found in found_events.derivative_samples:
-                            for samp_attr in samp.attrs:
-                                if samp_attr.attr_type == 'plate_position':
-                                    for ds_attr in found.attrs:
-                                        if ds_attr.attr_type == 'plate_position' and \
-                                            ds_attr.attr_value == samp_attr.attr_value:
-                                            existing = found
-                        continue
-                    if ident.attr_type == 'plate_position':
-                        continue
-
-                    if ident.attr_type == 'sequencescape_id':
-                        # Not guaranteed to be unique
-                        continue
-
-                    found_events = self._dao.download_derivative_samples_by_attr(ident.attr_type,
-                                                                                 ident.attr_value)
-
-                    for found in found_events.derivative_samples:
-                        if existing and existing.derivative_sample_id != found.derivative_sample_id:
-                            msg = ("Merging into {} using {}"
-                                   .format(existing.sampling_event_id,
-                                           ident.attr_type), values)
-                            #print(msg)
-                            found = self.merge_derivative_samples(
-                                existing, found, values)
-                        existing = found
-                        #print ("found: {} {}".format(samp, found))
-                except ApiException as err:
-                    #self._logger.debug("Error looking for {}".format(ident))
-                    #print("Not found")
-                    pass
+                            if existing and existing.derivative_sample_id != found.derivative_sample_id:
+                                msg = ("Merging into {} using {}"
+                                       .format(existing.sampling_event_id,
+                                               ident.attr_type), values)
+                                #print(msg)
+                                found = self.merge_derivative_samples(
+                                    existing, found, values)
+                            existing = found
+                            #print ("found: {} {}".format(samp, found))
+                    except ApiException as err:
+                        #self._logger.debug("Error looking for {}".format(ident))
+                        #print("Not found")
+                        pass
 
         #if not existing:
         #    print('Not found {}'.format(samp))

@@ -141,8 +141,11 @@ class RemoteBackboneDAO(AbstractBackboneDAO):
     def download_sampling_events_by_event_set(self, eventSetId, user=None):
         return self.se_api_instance.download_sampling_events_by_event_set(eventSetId)
 
-    def download_sampling_events_by_study(self, study_id, user=None):
-        return self.se_api_instance.download_sampling_events_by_study(study_id)
+    def download_sampling_events_by_study(self, study_id, start=None,
+                                          count=None, user=None):
+        return self.se_api_instance.download_sampling_events_by_study(study_id,
+                                                                     start=start,
+                                                                     count=count)
 
     def download_sampling_events_by_attr(self, attr_type, attr_value):
 
@@ -170,6 +173,15 @@ class RemoteBackboneDAO(AbstractBackboneDAO):
 
         found_events = self.os_api_instance.download_original_samples_by_attr(attr_type,
                                                                               urllib.parse.quote_plus(attr_value))
+
+        return found_events
+
+    def download_original_samples_by_study(self, study_name, start=None,
+                                           count=None, user=None):
+
+        found_events = self.os_api_instance.download_original_samples_by_study(study_name,
+                                                                               start=start,
+                                                                               count=count)
 
         return found_events
 
@@ -251,6 +263,9 @@ class RemoteBackboneDAO(AbstractBackboneDAO):
     def download_derivative_samples_by_attr(self, attr_type, attr_value, user=None):
 
         return self.ds_api_instance.download_derivative_samples_by_attr(attr_type, attr_value)
+
+    def download_derivative_samples_by_study(self, study_name, start=None, count=None, studies=None, user=None):
+        return self.ds_api_instance.download_derivative_samples_by_study(study_name, start=start, count=count)
 
     def download_derivative_samples_by_os_attr(self, attr_type, attr_value, user=None):
 

@@ -49,8 +49,12 @@ class TestROMA(TestBase):
             looked_up = self._dao.download_sampling_events_by_os_attr('roma_id', 'TST00003')
             location = looked_up.locations[looked_up.sampling_events[0].location_id]
             looked_up = looked_up.sampling_events[0]
-            self.assertEquals(location.attrs[0].attr_value,
-                              'Test name with spaces')
+            found = False
+            for attr in location.attrs:
+                if attr.attr_value == 'Test name with spaces':
+                    found = True
+            assert found
+#            self.assertEqual(looked_up.location.notes, 'roma_dump.20180116103346.json')
             if looked_up.location_id not in TestROMA._locations:
                 TestROMA._locations.append(looked_up.location_id)
         except ApiException as error:
@@ -145,24 +149,23 @@ class TestROMA(TestBase):
             self.assertEqual(location.latitude, 12.5)
             self.assertEqual(location.longitude, 103.9)
             self.assertEqual(location.country, 'KHM')
-            self.assertEqual(location.attrs[0].attr_value,
-                             'Cambodia(Country)')
-            self.assertEqual(location.attrs[0].attr_source,
-                             'roma_dump')
-            self.assertEqual(location.attrs[0].study_name,
-                             '9030')
+
+            found = False
+            for attr in location.attrs:
+                if attr.attr_value == 'Cambodia(Country)' and attr.attr_source == 'roma_dump' and attr.study_name == '9030':
+                    found = True
+            assert found
 #            self.assertEqual(looked_up.location.notes, 'roma_dump.20180116103346.json')
             self.assertEqual(location.notes, 'roma_dump')
 
             self.assertEqual(proxy_location.latitude, 12.51)
             self.assertEqual(proxy_location.longitude, 103.91)
             self.assertEqual(proxy_location.country, 'KHM')
-            self.assertEqual(proxy_location.attrs[0].attr_value,
-                             'Test name with spaces')
-            self.assertEqual(proxy_location.attrs[0].attr_source,
-                             'roma_dump')
-            self.assertEqual(proxy_location.attrs[0].study_name,
-                             '9030')
+            found = False
+            for attr in proxy_location.attrs:
+                if attr.attr_value == 'Test name with spaces' and attr.attr_source == 'roma_dump' and attr.study_name == '9030':
+                    found = True
+            assert found
             if looked_up.location_id not in TestROMA._locations:
                 TestROMA._locations.append(looked_up.location_id)
             if looked_up.proxy_location_id not in TestROMA._locations:

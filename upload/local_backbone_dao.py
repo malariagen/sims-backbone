@@ -532,6 +532,24 @@ class LocalBackboneDAO(AbstractBackboneDAO):
 
         return found_events
 
+    def download_original_samples_by_study(self, study_name, start=None,
+                                           count=None, user=None):
+
+        if not user:
+            user = self._user
+
+        found_events, retcode = self.os_api_instance.download_original_samples_by_study(study_name,
+                                                                                        start=start,
+                                                                                        count=count,
+                                                                                        user=user, auths=self._auths)
+
+        self._logger.debug("GET /v1/originalSamples/study/{} {}".format(study_name, retcode))
+        if retcode >= 400:
+            raise ApiException(http_resp=HTTPResponse(
+                body=found_events, status=retcode))
+
+        return found_events
+
     def download_original_samples_by_event_set(self, event_set_id, start=None,
                                                count=None, user=None):
 
@@ -667,6 +685,23 @@ class LocalBackboneDAO(AbstractBackboneDAO):
 
         self._logger.debug("GET /v1/derivativeSamples/attr/{}/{} {}".format(attr_type,
                                                                             attr_value, retcode))
+        if retcode >= 400:
+            raise ApiException(http_resp=HTTPResponse(
+                body=found_events, status=retcode))
+
+        return found_events
+
+    def download_derivative_samples_by_study(self, study_name, start=None, count=None, studies=None, user=None):
+
+        if not user:
+            user = self._user
+
+        found_events, retcode = self.ds_api_instance.download_derivative_samples_by_study(study_name,
+                                                                                          start=start,
+                                                                                          count=count,
+                                                                                          user=user, auths=self._auths)
+
+        self._logger.debug("GET /v1/derivativeSamples/study/{} {}".format(study_name, retcode))
         if retcode >= 400:
             raise ApiException(http_resp=HTTPResponse(
                 body=found_events, status=retcode))

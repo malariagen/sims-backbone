@@ -113,9 +113,12 @@ class AbstractBackboneDAO(abc.ABC):
         return found_events
 
     @abc.abstractmethod
-    def download_sampling_events_by_study(self, study_name, studies=None, user=None):
+    def download_sampling_events_by_study(self, study_name, start=None,
+                                          count=None, studies=None, user=None):
 
-        found_events = self.se_api_instance.download_sampling_events_by_study(study_name, studies=None, user=user)
+        found_events = self.se_api_instance.download_sampling_events_by_study(study_name,
+                                                                              start=None,
+                                                                              count=None, studies=None, user=user)
 
         return found_events
 
@@ -190,6 +193,14 @@ class AbstractBackboneDAO(abc.ABC):
         return self.os_api_instance.download_original_samples_by_attr(attr_type, attr_value, studies=None, user=user)
 
     @abc.abstractmethod
+    def download_original_samples_by_study(self, study_name, start=None,
+                                           count=None, studies=None, user=None):
+
+        return self.os_api_instance.download_original_samples_by_study(study_name,
+                                                                       start=start,
+                                                                       count=count, studies=None, user=user)
+
+    @abc.abstractmethod
     def download_original_samples_by_event_set(self, event_set_id, start=None,
                                                count=None, studies=None, user=None):
 
@@ -223,6 +234,13 @@ class AbstractBackboneDAO(abc.ABC):
     def download_derivative_samples_by_attr(self, attr_type, attr_value, studies=None, user=None):
 
         return self.ds_api_instance.download_derivative_samples_by_attr(attr_type, attr_value, studies=None, user=user)
+
+    @abc.abstractmethod
+    def download_derivative_samples_by_study(self, study_name, start=None, count=None, studies=None, user=None):
+
+        return self.ds_api_instance.download_derivative_samples_by_study(study_name,
+                                                                         start=start,
+                                                                         count=count, studies=None, user=user)
 
     @abc.abstractmethod
     def download_derivative_samples_by_os_attr(self, attr_type, attr_value, studies=None, user=None):
