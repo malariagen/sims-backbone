@@ -3,12 +3,7 @@ import logging
 
 import urllib
 
-from backbone_server.assay_datum.post import AssayDatumPost
-from backbone_server.assay_datum.put import AssayDatumPut
-from backbone_server.assay_datum.get import AssayDatumGetById
-from backbone_server.assay_datum.delete import AssayDatumDelete
-from backbone_server.assay_datum.get_by_attr import AssayDatumGetByAttr
-from backbone_server.assay_datum.get_by_os_attr import AssayDatumGetByOsAttr
+from backbone_server.model.assay_data import BaseAssayDatum
 
 from backbone_server.controllers.base_controller import BaseController
 
@@ -21,7 +16,7 @@ from backbone_server.controllers.decorators import apply_decorators
 @apply_decorators
 class AssayDatumController(BaseController):
 
-    def create_assay_datum(self, assay_datum, user=None, auths=None):  # noqa: E501
+    def create_assay_datum(self, assay_datum, studies=None, user=None, auths=None):  # noqa: E501
         """create_assay_datum
 
         Create a AssayDatum # noqa: E501
@@ -35,18 +30,17 @@ class AssayDatumController(BaseController):
         samp = None
 
         try:
-            post = AssayDatumPost(self.get_connection())
-
-            samp = post.post(assay_datum)
+            post = BaseAssayDatum(self.get_engine(), self.get_session())
+            study_name = None
+            samp = post.post(assay_datum, study_name, studies, user)
         except DuplicateKeyException as dke:
-            logging.getLogger(__name__).debug(
-                "create_assayDatum: {}".format(repr(dke)))
+            logging.getLogger(__name__).debug("create_assayDatum: %s", repr(dke))
             retcode = 422
             samp = str(dke)
 
         return samp, retcode
 
-    def delete_assay_datum(self, assay_datum_id, user=None, auths=None):  # noqa: E501
+    def delete_assay_datum(self, assay_datum_id, studies=None, user=None, auths=None):  # noqa: E501
         """deletes an AssayDatum
 
          # noqa: E501
@@ -56,20 +50,19 @@ class AssayDatumController(BaseController):
 
         :rtype: None
         """
-        delete = AssayDatumDelete(self.get_connection())
+        delete = BaseAssayDatum(self.get_engine(), self.get_session())
 
         retcode = 200
 
         try:
-            delete.delete(assay_datum_id)
+            delete.delete(assay_datum_id, studies)
         except MissingKeyException as dme:
-            logging.getLogger(__name__).debug(
-                "delete_assayDatum: {}".format(repr(dme)))
+            logging.getLogger(__name__).debug("delete_assayDatum: %s", repr(dme))
             retcode = 404
 
         return None, retcode
 
-    def download_assay_datum(self, assay_datum_id, user=None, auths=None):  # noqa: E501
+    def download_assay_datum(self, assay_datum_id, studies=None, user=None, auths=None):  # noqa: E501
         """fetches an AssayDatum
 
          # noqa: E501
@@ -80,22 +73,21 @@ class AssayDatumController(BaseController):
         :rtype: AssayDatum
         """
 
-        get = AssayDatumGetById(self.get_connection())
+        get = BaseAssayDatum(self.get_engine(), self.get_session())
 
         retcode = 200
         samp = None
 
         try:
-            samp = get.get(assay_datum_id)
+            samp = get.get(assay_datum_id, studies)
         except MissingKeyException as dme:
-            logging.getLogger(__name__).debug(
-                "download_assayDatum: {}".format(repr(dme)))
+            logging.getLogger(__name__).debug("download_assayDatum: %s", repr(dme))
             retcode = 404
             samp = str(dme)
 
         return samp, retcode
 
-    def download_assay_data_by_attr(self, prop_name, prop_value, study_name=None, user=None, auths=None):  # noqa: E501
+    def download_assay_data_by_attr(self, prop_name, prop_value, study_name=None, studies=None, user=None, auths=None):  # noqa: E501
         """fetches one or more AssayDatum by property value
 
          # noqa: E501
@@ -110,17 +102,19 @@ class AssayDatumController(BaseController):
         :rtype: AssayData
         """
 
-        get = AssayDatumGetByAttr(self.get_connection())
+        get = BaseAssayDatum(self.get_engine(), self.get_session())
 
         retcode = 200
         samp = None
 
         prop_value = urllib.parse.unquote_plus(prop_value)
-        samp = get.get(prop_name, prop_value)
+        start = None
+        count = None
+        samp = get.get_by_attr(prop_name, prop_value, study_name, studies, start, count)
 
         return samp, retcode
 
-    def download_assay_data_by_os_attr(self, prop_name, prop_value, study_name=None, user=None, auths=None):  # noqa: E501
+    def download_assay_data_by_os_attr(self, prop_name, prop_value, study_name=None, studies=None, user=None, auths=None):  # noqa: E501
         """fetches one or more assayData by property value of associated original samples
 
          # noqa: E501
@@ -135,17 +129,19 @@ class AssayDatumController(BaseController):
         :rtype: AssayData
         """
 
-        get = AssayDatumGetByOsAttr(self.get_connection())
+        get = BaseAssayDatum(self.get_engine(), self.get_session())
 
         retcode = 200
         samp = None
 
         prop_value = urllib.parse.unquote_plus(prop_value)
-        samp = get.get(prop_name, prop_value)
+        start = None
+        count = None
+        samp = get.get_by_os_attr(prop_name, prop_value, study_name, studies, start, count)
 
         return samp, retcode
 
-    def update_assay_datum(self, assay_datum_id, assay_datum, user=None, auths=None):  # noqa: E501
+    def update_assay_datum(self, assay_datum_id, assay_datum, studies=None, user=None, auths=None):  # noqa: E501
         """updates an AssayDatum
 
          # noqa: E501
@@ -162,17 +158,16 @@ class AssayDatumController(BaseController):
         samp = None
 
         try:
-            put = AssayDatumPut(self.get_connection())
-
-            samp = put.put(assay_datum_id, assay_datum)
+            put = BaseAssayDatum(self.get_engine(), self.get_session())
+            study_name = None
+            samp = put.put(assay_datum_id, assay_datum, study_name, studies,
+                           user)
         except DuplicateKeyException as dke:
-            logging.getLogger(__name__).debug(
-                "update_assayDatum: {}".format(repr(dke)))
+            logging.getLogger(__name__).debug("update_assayDatum: %s", repr(dke))
             retcode = 422
             samp = str(dke)
         except MissingKeyException as dme:
-            logging.getLogger(__name__).debug(
-                "update_assayDatum: {}".format(repr(dme)))
+            logging.getLogger(__name__).debug("update_assayDatum: %s", repr(dme))
             retcode = 404
             samp = str(dme)
 

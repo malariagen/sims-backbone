@@ -1,38 +1,25 @@
 import logging
 
-from openapi_server.models.studies import Studies
-from backbone_server.study.fetch import StudyFetch
+from sqlalchemy.sql import text
+from backbone_server.model.scope import session_scope
+from backbone_server.report.base import BaseReport
 
 
-class MissingTaxon():
+class MissingTaxon(BaseReport):
 
-    def __init__(self, conn):
-        self._logger = logging.getLogger(__name__)
-        self._connection = conn
+    def get(self, studies):
 
+        with session_scope(self.session) as db:
+            stmt = text('''select distinct name from partner_species_identifier
+            LEFT JOIN taxonomy_identifier ON taxonomy_identifier.partner_species_identifier_id = partner_species_identifier.id
+            JOIN study ON study.id=study_id
+            WHERE taxonomy_id IS NULL ORDER BY name''')
 
-    def get(self):
+            result = self.engine.execute(stmt)
 
-        response = Studies([], 0)
+            report_studies = []
 
-        with self._connection:
-            with self._connection.cursor() as cursor:
+            for (study_name,) in result:
+                report_studies.append(study_name)
 
-                stmt = '''select distinct study_name from partner_species_identifiers
-                LEFT JOIN taxonomy_identifiers ON taxonomy_identifiers.partner_species_id = partner_species_identifiers.id
-                JOIN studies ON studies.id=study_id
-                WHERE taxonomy_id IS NULL ORDER BY study_name'''
-
-                cursor.execute(stmt)
-
-                studies = []
-
-                for (study_name,) in cursor:
-                    studies.append(study_name)
-
-                for study_id in studies:
-                    study = StudyFetch.fetch(cursor, study_id)
-                    response.studies.append(study)
-                    response.count = response.count + 1
-
-        return response
+        return self.return_studies(report_studies, studies)

@@ -1,42 +1,29 @@
 
 import logging
 
-from openapi_server.models.studies import Studies
-from backbone_server.study.fetch import StudyFetch
+from sqlalchemy.sql import text
+from backbone_server.model.scope import session_scope
+from backbone_server.report.base import BaseReport
 
+class MultipleLocationNames(BaseReport):
 
-class MultipleLocationNames():
+    def get(self, studies):
 
-    def __init__(self, conn):
-        self._logger = logging.getLogger(__name__)
-        self._connection = conn
+        with session_scope(self.session) as db:
 
+            #, curated_name, accuracy, country, partner_name
+            # ST_X(location) as latitude, ST_Y(location) as longitude
+            stmt = text('''select code from location_attr li
+            JOIN attr a ON a.id = li.attr_id
+            JOIN study s ON a.study_id = s.id
+            GROUP BY attr_type, attr_value, code
+            having count(attr_value) > 1''')
 
-    def get(self):
+            result = self.engine.execute(stmt)
 
-        response = Studies([],0)
+            report_studies = []
 
-        with self._connection:
-            with self._connection.cursor() as cursor:
+            for (study_name,) in result:
+                report_studies.append(study_name)
 
-                #, curated_name, accuracy, country, partner_name
-                # ST_X(location) as latitude, ST_Y(location) as longitude
-                stmt = '''select study_code from location_attrs li
-                JOIN attrs a ON a.id = li.attr_id
-                JOIN studies s ON a.study_id = s.id
-                GROUP BY attr_type, attr_value, study_code
-                having count(attr_value) > 1'''
-
-                cursor.execute(stmt)
-
-                studies = []
-
-                for (study_name,) in cursor:
-                    studies.append(study_name)
-
-                for study_id in studies:
-                    study = StudyFetch.fetch(cursor, study_id)
-                    response.studies.append(study)
-                    response.count = response.count + 1
-
-        return response
+        return self.return_studies(report_studies, studies)

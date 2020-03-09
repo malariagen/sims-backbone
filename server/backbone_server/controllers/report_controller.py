@@ -15,7 +15,7 @@ from backbone_server.controllers.decorators import apply_decorators
 @apply_decorators
 class ReportController(BaseController):
 
-    def missing_locations(self, include_country, user, auths):  # noqa: E501
+    def missing_locations(self, include_country, studies=None, user=None, auths=None):  # noqa: E501
         """fetches studies with sampling events with missing locations
 
          # noqa: E501
@@ -26,15 +26,15 @@ class ReportController(BaseController):
 
         :rtype: Studies
         """
-        get = MissingLocations(self.get_connection())
+        get = MissingLocations(self.get_engine(), self.get_session())
 
         retcode = 200
 
-        studies = get.get(include_country)
+        studies = get.get(include_country, studies)
 
         return studies, retcode
 
-    def missing_taxon(self, user, auths):  # noqa: E501
+    def missing_taxon(self, studies=None, user=None, auths=None):  # noqa: E501
         """fetches studies with uncurated taxon
 
          # noqa: E501
@@ -42,15 +42,15 @@ class ReportController(BaseController):
 
         :rtype: Studies
         """
-        get = MissingTaxon(self.get_connection())
+        get = MissingTaxon(self.get_engine(), self.get_session())
 
         retcode = 200
 
-        studies = get.get()
+        studies = get.get(studies)
 
         return studies, retcode
 
-    def multiple_location_gps(self, user=None, auths=None):  # noqa: E501
+    def multiple_location_gps(self, studies=None, user=None, auths=None):  # noqa: E501
         """fetches studies with multiple locations with the same GPS
 
          # noqa: E501
@@ -58,15 +58,15 @@ class ReportController(BaseController):
 
         :rtype: Studies
         """
-        get = MultipleLocationGPS(self.get_connection())
+        get = MultipleLocationGPS(self.get_engine(), self.get_session())
 
         retcode = 200
 
-        studies = get.get()
+        studies = get.get(studies)
 
         return studies, retcode
 
-    def multiple_location_names(self, user=None, auths=None):  # noqa: E501
+    def multiple_location_names(self, studies=None, user=None, auths=None):  # noqa: E501
         """fetches studies with multiple locations with the same name
 
          # noqa: E501
@@ -74,15 +74,15 @@ class ReportController(BaseController):
 
         :rtype: Studies
         """
-        get = MultipleLocationNames(self.get_connection())
+        get = MultipleLocationNames(self.get_engine(), self.get_session())
 
         retcode = 200
 
-        studies = get.get()
+        studies = get.get(studies)
 
         return studies, retcode
 
-    def uncurated_locations(self, user, auths):  # noqa: E501
+    def uncurated_locations(self, studies=None, user=None, auths=None):  # noqa: E501
         """fetches studies with uncurated locations
 
          # noqa: E501
@@ -91,10 +91,10 @@ class ReportController(BaseController):
         :rtype: Studies
         """
 
-        get = UncuratedLocations(self.get_connection())
+        get = UncuratedLocations(self.get_engine(), self.get_session())
 
         retcode = 200
 
-        studies = get.get()
+        studies = get.get(studies)
 
         return studies, retcode

@@ -82,6 +82,7 @@ def authorize_this(original_function):
                                     'bucket': match.group(1),
                                     'study': match.group(2)
                                 })
+#                    studies = [ { 'bucket': 'pi', 'study': '1208' } ]
                     kwargs['studies'] = studies
 
         x = original_function(*args, **kwargs)

@@ -118,7 +118,7 @@ class MetadataController(BaseController):
 
         get = AttrTypesGet(self.get_connection())
 
-        ident_types = get.get('location_attrs')
+        ident_types = get.get('location_attr')
 
         return ident_types, 200
 

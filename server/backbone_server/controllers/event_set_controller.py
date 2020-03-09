@@ -2,16 +2,11 @@ import logging
 
 import urllib
 
-from backbone_server.event_set.post import EventSetPost
-from backbone_server.event_set.post_sampling_event import EventSetPostSamplingEvent
-from backbone_server.event_set.post_note import EventSetPostNote
-from backbone_server.event_set.put_note import EventSetPutNote
-from backbone_server.event_set.delete_sampling_event import EventSetDeleteSamplingEvent
-from backbone_server.event_set.delete_note import EventSetDeleteNote
-from backbone_server.event_set.put import EventSetPut
-from backbone_server.event_set.get import EventSetGetById
-from backbone_server.event_set.gets import EventSetsGet
-from backbone_server.event_set.delete import EventSetDelete
+from openapi_server.models.event_set_note import EventSetNote
+
+from backbone_server.model.event_set import BaseEventSet
+from backbone_server.model.event_set_note import BaseEventSetNote
+from backbone_server.model.scope import session_scope
 
 from backbone_server.controllers.base_controller import BaseController
 
@@ -40,10 +35,10 @@ class EventSetController(BaseController):
         evnt_st = None
 
         try:
-            post = EventSetPost(self.get_connection())
+            post = BaseEventSet(self.get_engine(), self.get_session())
             event_set_id = urllib.parse.unquote_plus(event_set_id)
 
-            evnt_st = post.post(event_set_id, studies)
+            evnt_st = post.post(event_set_id, None, studies, user)
         except DuplicateKeyException as dke:
             logging.getLogger(__name__).debug("create_event_set: %s", repr(dke))
             evnt_st = str(dke)
@@ -68,10 +63,10 @@ class EventSetController(BaseController):
         evnt_st = None
 
         try:
-            post = EventSetPostSamplingEvent(self.get_connection())
+            post = BaseEventSet(self.get_engine(), self.get_session())
             event_set_id = urllib.parse.unquote_plus(event_set_id)
 
-            evnt_st = post.post(event_set_id, sampling_event_id, studies)
+            evnt_st = post.post_member(event_set_id, sampling_event_id, studies)
         except DuplicateKeyException as dke:
             logging.getLogger(__name__).debug("create_event_set_item: %s", repr(dke))
             retcode = 422
@@ -102,11 +97,15 @@ class EventSetController(BaseController):
         evnt_st = None
 
         try:
-            post = EventSetPostNote(self.get_connection())
+            post = BaseEventSetNote(self.get_engine(), self.get_session())
             event_set_id = urllib.parse.unquote_plus(event_set_id)
             note_id = urllib.parse.unquote_plus(note_id)
-
-            evnt_st = post.post(event_set_id, note_id, note, studies)
+            note.note_id = note_id
+            event_set = BaseEventSet(self.get_engine(), self.get_session())
+            evnt_set_id = None
+            with session_scope(self.get_session()) as db:
+                evnt_set_id = event_set.convert_to_id(db, event_set_id)
+            evnt_st = post.post(evnt_set_id, note, None, studies, user)
         except DuplicateKeyException as dke:
             logging.getLogger(__name__).debug(
                 "create_event_set_note: %s", repr(dke))
@@ -134,7 +133,7 @@ class EventSetController(BaseController):
         evnt_st = None
 
         try:
-            delete = EventSetDelete(self.get_connection())
+            delete = BaseEventSet(self.get_engine(), self.get_session())
             event_set_id = urllib.parse.unquote_plus(event_set_id)
 
             evnt_st = delete.delete(event_set_id, studies)
@@ -163,10 +162,10 @@ class EventSetController(BaseController):
         evnt_st = None
 
         try:
-            delete = EventSetDeleteSamplingEvent(self.get_connection())
+            delete = BaseEventSet(self.get_engine(), self.get_session())
             event_set_id = urllib.parse.unquote_plus(event_set_id)
 
-            evnt_st = delete.delete(event_set_id, sampling_event_id, studies)
+            evnt_st = delete.delete_member(event_set_id, sampling_event_id, studies)
         except MissingKeyException as dke:
             logging.getLogger(__name__).debug(
                 "delete_event_set_item: %s", repr(dke))
@@ -191,14 +190,17 @@ class EventSetController(BaseController):
         evnt_st = None
 
         try:
-            delete = EventSetDeleteNote(self.get_connection())
+            delete = BaseEventSetNote(self.get_engine(), self.get_session())
             event_set_id = urllib.parse.unquote_plus(event_set_id)
             note_id = urllib.parse.unquote_plus(note_id)
+            event_set = BaseEventSet(self.get_engine(), self.get_session())
+            evnt_set_id = None
+            with session_scope(self.get_session()) as db:
+                evnt_set_id = event_set.convert_to_id(db, event_set_id)
 
-            evnt_st = delete.delete(event_set_id, note_id, studies)
+            evnt_st = delete.delete(evnt_set_id, note_id, studies)
         except MissingKeyException as dke:
-            logging.getLogger(__name__).debug(
-                "delete_event_set_note: %s", repr(dke))
+            logging.getLogger(__name__).debug("delete_event_set_note: %s", repr(dke))
             retcode = 404
             evnt_st = str(dke)
 
@@ -223,9 +225,10 @@ class EventSetController(BaseController):
             retcode = 404
         else:
             try:
-                get = EventSetGetById(self.get_connection())
+                get = BaseEventSet(self.get_engine(), self.get_session())
                 event_set_id = urllib.parse.unquote_plus(event_set_id)
-                evnt_st = get.get(event_set_id, studies, start, count)
+                evnt_st = get.get_with_members(event_set_id, studies, start, count)
+
             except MissingKeyException as dke:
                 logging.getLogger(__name__).debug(
                     "download_event_set: %s", repr(dke))
@@ -244,8 +247,10 @@ class EventSetController(BaseController):
         retcode = 200
         evnt_sts = None
 
-        get = EventSetsGet(self.get_connection())
-        evnt_sts = get.get(studies)
+        get = BaseEventSet(self.get_engine(), self.get_session())
+        start = None
+        count = None
+        evnt_sts = get.gets(studies, start, count)
 
         return evnt_sts, retcode
 
@@ -265,9 +270,9 @@ class EventSetController(BaseController):
         evnt_st = None
 
         try:
-            put = EventSetPut(self.get_connection())
+            put = BaseEventSet(self.get_engine(), self.get_session())
             event_set_id = urllib.parse.unquote_plus(event_set_id)
-            evnt_st = put.put(event_set_id, event_set, studies)
+            evnt_st = put.put(event_set_id, event_set, None, studies, user)
         except MissingKeyException as dke:
             logging.getLogger(__name__).debug(
                 "update_event_set: %s", repr(dke))
@@ -294,10 +299,15 @@ class EventSetController(BaseController):
         evnt_set = None
 
         try:
-            put = EventSetPutNote(self.get_connection())
+            put = BaseEventSetNote(self.get_engine(), self.get_session())
             event_set_id = urllib.parse.unquote_plus(event_set_id)
             note_id = urllib.parse.unquote_plus(note_id)
-            evnt_set = put.put(event_set_id, note_id, note, studies)
+            event_set = BaseEventSet(self.get_engine(), self.get_session())
+            evnt_set_id = None
+            with session_scope(self.get_session()) as db:
+                evnt_set_id = event_set.convert_to_id(db, event_set_id)
+            evnt_set = put.put(evnt_set_id, note_id, note, studies, user)
+            evnt_set = event_set.get(event_set_id, studies)
         except MissingKeyException as dke:
             logging.getLogger(__name__).debug(
                 "update_event_set_note: %s", repr(dke))

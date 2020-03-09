@@ -1,40 +1,30 @@
 
 import logging
 
-from openapi_server.models.studies import Studies
-from backbone_server.study.fetch import StudyFetch
+from sqlalchemy.sql import text
+from backbone_server.model.scope import session_scope
+from backbone_server.report.base import BaseReport
 
 
-class UncuratedLocations():
+class UncuratedLocations(BaseReport):
 
-    def __init__(self, conn):
-        self._logger = logging.getLogger(__name__)
-        self._connection = conn
+    def get(self, studies):
 
-    def get(self):
+        with session_scope(self.session) as db:
 
-        response = Studies([], 0)
+            # , curated_name, accuracy, country, partner_name
+            stmt = text('''select distinct study.name AS study_id FROM location l
+            LEFT JOIN sampling_event se ON se.location_id = l.id
+            LEFT JOIN original_sample os ON os.sampling_event_id = se.id
+            LEFT JOIN study ON study.id = os.study_id
+            where curated_name is NULL or accuracy IS NULL OR country IS NULL
+                        ORDER BY study.name;''')
 
-        with self._connection:
-            with self._connection.cursor() as cursor:
+            result = self.engine.execute(stmt)
 
-                # , curated_name, accuracy, country, partner_name
-                stmt = '''select distinct studies.study_name AS study_id FROM locations l
-                LEFT JOIN sampling_events se ON se.location_id = l.id
-                LEFT JOIN original_samples os ON os.sampling_event_id = se.id
-                LEFT JOIN studies ON studies.id = os.study_id
-                where curated_name is NULL or accuracy IS NULL OR country IS NULL ORDER BY study_id;'''
+            report_studies = []
 
-                cursor.execute(stmt)
+            for (study_name,) in result:
+                report_studies.append(study_name)
 
-                studies = []
-
-                for (study_name,) in cursor:
-                    studies.append(study_name)
-
-                for study_id in studies:
-                    study = StudyFetch.fetch(cursor, study_id)
-                    response.studies.append(study)
-                    response.count = response.count + 1
-
-        return response
+        return self.return_studies(report_studies, studies)

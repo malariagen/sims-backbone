@@ -8,7 +8,7 @@ class AttrTypesGet():
         self._connection = conn
 
 
-    def get(self, table='attrs'):
+    def get(self, table='attr'):
 
         attr_types = []
 
@@ -16,9 +16,9 @@ class AttrTypesGet():
             with self._connection.cursor() as cursor:
 
                 if table == 'attrs':
-                    stmt = '''SELECT DISTINCT attr_type FROM attrs a'''
+                    stmt = '''SELECT DISTINCT attr_type FROM attr a'''
                 else:
-                    stmt = '''SELECT DISTINCT attr_type FROM attrs a
+                    stmt = '''SELECT DISTINCT attr_type FROM attr a
                     JOIN '''+ table + ' ON a.id = ' + table + '.attr_id'
                 cursor.execute( stmt, )
 

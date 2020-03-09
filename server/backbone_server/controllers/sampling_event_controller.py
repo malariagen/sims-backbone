@@ -3,22 +3,12 @@ import logging
 
 import urllib
 
-from backbone_server.sampling_event.post import SamplingEventPost
-from backbone_server.sampling_event.put import SamplingEventPut
-from backbone_server.sampling_event.merge import SamplingEventMerge
-from backbone_server.sampling_event.get import SamplingEventGetById
-from backbone_server.sampling_event.delete import SamplingEventDelete
-from backbone_server.sampling_event.get_by_attr import SamplingEventGetByAttr
-from backbone_server.sampling_event.get_by_os_attr import SamplingEventGetByOsAttr
-from backbone_server.sampling_event.get_by_location import SamplingEventsGetByLocation
-from backbone_server.sampling_event.get_by_study import SamplingEventsGetByStudy
-from backbone_server.sampling_event.get_by_taxa import SamplingEventsGetByTaxa
-
-from backbone_server.event_set.get import EventSetGetById
+from backbone_server.model.sampling_event import BaseSamplingEvent
 
 from backbone_server.controllers.base_controller import BaseController
 
 from backbone_server.errors.duplicate_key_exception import DuplicateKeyException
+from backbone_server.errors.permission_exception import PermissionException
 from backbone_server.errors.missing_key_exception import MissingKeyException
 from backbone_server.errors.nested_edit_exception import NestedEditException
 from backbone_server.errors.incompatible_exception import IncompatibleException
@@ -44,22 +34,19 @@ class SamplingEventController(BaseController):
         samp = None
 
         try:
-            post = SamplingEventPost(self.get_connection())
+            post = BaseSamplingEvent(self.get_engine(), self.get_session())
 
-            samp = post.post(sampling_event, studies)
+            samp = post.post(sampling_event, None, studies, user)
         except DuplicateKeyException as dke:
-            logging.getLogger(__name__).debug(
-                "create_samplingEvent: {}".format(repr(dke)))
+            logging.getLogger(__name__).debug("create_samplingEvent: %s", repr(dke))
             samp = str(dke)
             retcode = 422
         except NestedEditException as nee:
-            logging.getLogger(__name__).debug(
-                "create_samplingEvent: {}".format(repr(nee)))
+            logging.getLogger(__name__).debug("create_samplingEvent: %s", repr(nee))
             samp = str(nee)
             retcode = 422
         except InvalidDateException as ide:
-            logging.getLogger(__name__).debug(
-                "create_samplingEvent: {}".format(repr(ide)))
+            logging.getLogger(__name__).debug("create_samplingEvent: %s", repr(ide))
             samp = str(ide)
             retcode = 422
 
@@ -75,15 +62,14 @@ class SamplingEventController(BaseController):
         :rtype: None
         """
 
-        delete = SamplingEventDelete(self.get_connection())
+        delete = BaseSamplingEvent(self.get_engine(), self.get_session())
 
         retcode = 200
 
         try:
-            delete.delete(sampling_event_id)
+            delete.delete(sampling_event_id, studies)
         except MissingKeyException as dme:
-            logging.getLogger(__name__).debug(
-                "delete_samplingEvent: {}".format(repr(dme)))
+            logging.getLogger(__name__).debug("delete_samplingEvent: %s", repr(dme))
             retcode = 404
 
         return None, retcode
@@ -98,7 +84,7 @@ class SamplingEventController(BaseController):
         :rtype: SamplingEvent
         """
 
-        get = SamplingEventGetById(self.get_connection())
+        get = BaseSamplingEvent(self.get_engine(), self.get_session())
 
         retcode = 200
         samp = None
@@ -106,8 +92,7 @@ class SamplingEventController(BaseController):
         try:
             samp = get.get(sampling_event_id, studies)
         except MissingKeyException as dme:
-            logging.getLogger(__name__).debug(
-                "download_samplingEvent: {}".format(repr(dme)))
+            logging.getLogger(__name__).debug("download_samplingEvent: %s", repr(dme))
             retcode = 404
             samp = str(dme)
 
@@ -187,15 +172,14 @@ class SamplingEventController(BaseController):
         samp = None
 
         try:
-            get = EventSetGetById(self.get_connection())
+            get = BaseSamplingEvent(self.get_engine(), self.get_session())
             event_set_id = urllib.parse.unquote_plus(event_set_id)
-            evnt_st = get.get(event_set_id, studies, start, count)
+            evnt_st = get.get_by_event_set(event_set_id, studies, start, count)
 
-            samp = evnt_st.members
+            samp = evnt_st
 
         except MissingKeyException as dme:
-            logging.getLogger(__name__).debug(
-                "download_sampling_events_by_event_set: {}".format(repr(dme)))
+            logging.getLogger(__name__).debug("download_sampling_events_by_event_set: %s", repr(dme))
             retcode = 404
 
         return samp, retcode
@@ -213,13 +197,15 @@ class SamplingEventController(BaseController):
         :rtype: SamplingEvent
         """
 
-        get = SamplingEventGetByAttr(self.get_connection())
+        get = BaseSamplingEvent(self.get_engine(), self.get_session())
 
         retcode = 200
         samp = None
-
+        start = None
+        count = None
         prop_value = urllib.parse.unquote_plus(prop_value)
-        samp = get.get(prop_name, prop_value, study_name, studies)
+        samp = get.get_by_attr(prop_name, prop_value, study_name, studies,
+                               start, count)
 
         return samp, retcode
 
@@ -236,13 +222,16 @@ class SamplingEventController(BaseController):
         :rtype: SamplingEvent
         """
 
-        get = SamplingEventGetByOsAttr(self.get_connection())
+        get = BaseSamplingEvent(self.get_engine(), self.get_session())
 
         retcode = 200
         samp = None
 
         prop_value = urllib.parse.unquote_plus(prop_value)
-        samp = get.get(prop_name, prop_value, study_name, studies)
+        start = None
+        count = None
+        samp = get.get_by_os_attr(prop_name, prop_value, study_name, studies,
+                                  start, count)
 
         return samp, retcode
 
@@ -257,16 +246,15 @@ class SamplingEventController(BaseController):
         :rtype: SamplingEvents
         """
 
-        get = SamplingEventsGetByLocation(self.get_connection())
+        get = BaseSamplingEvent(self.get_engine(), self.get_session())
 
         retcode = 200
         samp = None
 
         try:
-            samp = get.get(location_id, studies, start, count)
+            samp = get.get_by_location(location_id, studies, start, count)
         except MissingKeyException as dme:
-            logging.getLogger(__name__).debug(
-                "download_samplingEvent: {}".format(repr(dme)))
+            logging.getLogger(__name__).debug("download_samplingEvent: %s", repr(dme))
             retcode = 404
             samp = str(dme)
 
@@ -283,18 +271,21 @@ class SamplingEventController(BaseController):
         :rtype: SamplingEvents
         """
 
-        get = SamplingEventsGetByStudy(self.get_connection())
+        get = BaseSamplingEvent(self.get_engine(), self.get_session())
 
         retcode = 200
         samp = None
 
         try:
-            samp = get.get(study_name, studies, start, count)
+            samp = get.get_by_study(study_name, studies, start, count)
         except MissingKeyException as dme:
-            logging.getLogger(__name__).debug(
-                "download_samplingEvent: {}".format(repr(dme)))
+            logging.getLogger(__name__).debug("download_samplingEvent: %s", repr(dme))
             retcode = 404
             samp = str(dme)
+        except PermissionException as pme:
+            logging.getLogger(__name__).debug("download_sampling_events_by_study: %s", repr(pme))
+            retcode = 403
+            samp = str(pme)
 
         return samp, retcode
 
@@ -308,16 +299,15 @@ class SamplingEventController(BaseController):
         :rtype: SamplingEvents
         """
 
-        get = SamplingEventsGetByTaxa(self.get_connection())
+        get = BaseSamplingEvent(self.get_engine(), self.get_session())
 
         retcode = 200
         samp = None
 
         try:
-            samp = get.get(taxa_id, studies, start, count)
+            samp = get.get_by_taxa(taxa_id, studies, start, count)
         except MissingKeyException as dme:
-            logging.getLogger(__name__).debug(
-                "download_sampling_events_by_taxa: {}".format(repr(dme)))
+            logging.getLogger(__name__).debug("download_sampling_events_by_taxa: %s", repr(dme))
             retcode = 404
             samp = str(dme)
 
@@ -339,17 +329,15 @@ class SamplingEventController(BaseController):
         samp = None
 
         try:
-            merge = SamplingEventMerge(self.get_connection())
+            merge = BaseSamplingEvent(self.get_engine(), self.get_session())
 
             samp = merge.merge(into, merged, studies)
         except IncompatibleException as dke:
-            logging.getLogger(__name__).debug(
-                "merge_samplingEvent: {}".format(repr(dke)))
+            logging.getLogger(__name__).debug("merge_samplingEvent: %s", repr(dke))
             samp = str(dke)
             retcode = 422
         except MissingKeyException as dme:
-            logging.getLogger(__name__).debug(
-                "merge_samplingEvent: {}".format(repr(dme)))
+            logging.getLogger(__name__).debug("merge_samplingEvent: %s", repr(dme))
             samp = str(dme)
             retcode = 404
 
@@ -372,26 +360,24 @@ class SamplingEventController(BaseController):
         samp = None
 
         try:
-            put = SamplingEventPut(self.get_connection())
+            put = BaseSamplingEvent(self.get_engine(), self.get_session())
 
-            samp = put.put(sampling_event_id, sampling_event, studies)
+            study = None
+            samp = put.put(sampling_event_id, sampling_event, study, studies,
+                           user)
         except DuplicateKeyException as dke:
-            logging.getLogger(__name__).debug(
-                "update_samplingEvent: {}".format(repr(dke)))
+            logging.getLogger(__name__).debug("update_samplingEvent: %s", repr(dke))
             samp = str(dke)
             retcode = 422
         except MissingKeyException as dme:
-            logging.getLogger(__name__).debug(
-                "update_samplingEvent: {}".format(repr(dme)))
+            logging.getLogger(__name__).debug("update_samplingEvent: %s", repr(dme))
             retcode = 404
         except NestedEditException as nee:
-            logging.getLogger(__name__).debug(
-                "update_samplingEvent: {}".format(repr(nee)))
+            logging.getLogger(__name__).debug("update_samplingEvent: %s", repr(nee))
             samp = str(nee)
             retcode = 422
         except InvalidDateException as ide:
-            logging.getLogger(__name__).debug(
-                "create_samplingEvent: {}".format(repr(ide)))
+            logging.getLogger(__name__).debug("create_samplingEvent: %s", repr(ide))
             samp = str(ide)
             retcode = 422
 

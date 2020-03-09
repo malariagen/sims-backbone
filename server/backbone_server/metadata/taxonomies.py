@@ -16,7 +16,7 @@ class TaxonomiesGet():
         with self._connection:
             with self._connection.cursor() as cursor:
 
-                stmt = '''SELECT id, rank, name FROM taxonomies '''
+                stmt = '''SELECT id, rank, name FROM taxonomy '''
                 cursor.execute( stmt, )
 
                 taxonomies = Taxonomies([], 0)

@@ -3,15 +3,7 @@ import logging
 
 import urllib
 
-from backbone_server.derivative_sample.post import DerivativeSamplePost
-from backbone_server.derivative_sample.put import DerivativeSamplePut
-from backbone_server.derivative_sample.get import DerivativeSampleGetById
-from backbone_server.derivative_sample.delete import DerivativeSampleDelete
-from backbone_server.derivative_sample.get_by_attr import DerivativeSampleGetByAttr  # noqa: E501
-from backbone_server.derivative_sample.get_by_event_set import DerivativeSamplesGetByEventSet   # noqa: E501
-from backbone_server.derivative_sample.get_by_study import DerivativeSamplesGetByStudy  # noqa: E501
-from backbone_server.derivative_sample.get_by_taxa import DerivativeSamplesGetByTaxa    # noqa: E501
-from backbone_server.derivative_sample.get_by_os_attr import DerivativeSampleGetByOsAttr  # noqa: E501
+from backbone_server.model.derivative_sample import BaseDerivativeSample
 
 from backbone_server.controllers.base_controller import BaseController
 
@@ -39,9 +31,9 @@ class DerivativeSampleController(BaseController):
         samp = None
 
         try:
-            post = DerivativeSamplePost(self.get_connection())
+            post = BaseDerivativeSample(self.get_engine(), self.get_session())
 
-            samp = post.post(derivative_sample, studies)
+            samp = post.post(derivative_sample, None, studies, user)
         except DuplicateKeyException as dke:
             logging.getLogger(__name__).debug("create_derivativeSample: %s", repr(dke))
             retcode = 422
@@ -63,7 +55,7 @@ class DerivativeSampleController(BaseController):
 
         :rtype: None
         """
-        delete = DerivativeSampleDelete(self.get_connection())
+        delete = BaseDerivativeSample(self.get_engine(), self.get_session())
 
         retcode = 200
 
@@ -91,7 +83,7 @@ class DerivativeSampleController(BaseController):
         :rtype: DerivativeSample
         """
 
-        get = DerivativeSampleGetById(self.get_connection())
+        get = BaseDerivativeSample(self.get_engine(), self.get_session())
 
         retcode = 200
         samp = None
@@ -136,7 +128,8 @@ class DerivativeSampleController(BaseController):
         }
         func = search_funcs.get(options[0])
         if func:
-            return func(options[1], studies, start, count, user, auths)
+            return func(options[1], start=start, count=count, studies=studies,
+                        user=user, auths=auths)
         elif options[0] == 'attr':
             study_name = None
             if len(options) > 3 and options[3]:
@@ -169,9 +162,9 @@ class DerivativeSampleController(BaseController):
         samp = None
 
         try:
-            get = DerivativeSamplesGetByEventSet(self.get_connection())
+            get = BaseDerivativeSample(self.get_engine(), self.get_session())
             event_set_id = urllib.parse.unquote_plus(event_set_id)
-            samp = get.get(event_set_id, studies, start, count)
+            samp = get.get_by_event_set(event_set_id, studies, start, count)
 
         except MissingKeyException as dme:
             logging.getLogger(__name__).debug(
@@ -200,13 +193,15 @@ class DerivativeSampleController(BaseController):
         :rtype: DerivativeSamples
         """
 
-        get = DerivativeSampleGetByAttr(self.get_connection())
+        get = BaseDerivativeSample(self.get_engine(), self.get_session())
 
         retcode = 200
         samp = None
 
         prop_value = urllib.parse.unquote_plus(prop_value)
-        samp = get.get(prop_name, prop_value, studies)
+        start = None
+        count = None
+        samp = get.get_by_attr(prop_name, prop_value, study_name, studies, start, count)
 
         return samp, retcode
 
@@ -225,18 +220,21 @@ class DerivativeSampleController(BaseController):
         :rtype: DerivativeSamples
         """
 
-        get = DerivativeSampleGetByOsAttr(self.get_connection())
+        get = BaseDerivativeSample(self.get_engine(), self.get_session())
 
         retcode = 200
         samp = None
 
         prop_value = urllib.parse.unquote_plus(prop_value)
-        samp = get.get(prop_name, prop_value, studies)
+        start = None
+        count = None
+        samp = get.get_by_os_attr(prop_name, prop_value, study_name, studies, start, count)
 
         return samp, retcode
 
-    def download_derivative_samples_by_study(self, study_name, studies=None,
-                                             start=None, count=None, user=None, auths=None):
+    def download_derivative_samples_by_study(self, study_name,
+                                             start=None, count=None,
+                                             studies=None, user=None, auths=None):
         """
         fetches derivativeSamples for a study
 
@@ -246,13 +244,13 @@ class DerivativeSampleController(BaseController):
         :rtype: DerivativeSamples
         """
 
-        get = DerivativeSamplesGetByStudy(self.get_connection())
+        get = BaseDerivativeSample(self.get_engine(), self.get_session())
 
         retcode = 200
         samp = None
 
         try:
-            samp = get.get(study_name, studies=studies, start=start, count=count)
+            samp = get.get_by_study(study_name, studies=studies, start=start, count=count)
         except MissingKeyException as dme:
             logging.getLogger(__name__).debug(
                 "download_derivativeSample: %s", repr(dme))
@@ -265,8 +263,9 @@ class DerivativeSampleController(BaseController):
 
         return samp, retcode
 
-    def download_derivative_samples_by_taxa(self, taxa_id, studies=None,
-                                            start=None, count=None, user=None, auths=None):
+    def download_derivative_samples_by_taxa(self, taxa_id,
+                                            start=None, count=None,
+                                            studies=None, user=None, auths=None):
         """
         fetches derivativeSamples for a taxa
 
@@ -276,13 +275,13 @@ class DerivativeSampleController(BaseController):
         :rtype: DerivativeSamples
         """
 
-        get = DerivativeSamplesGetByTaxa(self.get_connection())
+        get = BaseDerivativeSample(self.get_engine(), self.get_session())
 
         retcode = 200
         samp = None
 
         try:
-            samp = get.get(taxa_id, studies, start, count)
+            samp = get.get_by_taxa(taxa_id, studies, start, count)
         except MissingKeyException as dme:
             logging.getLogger(__name__).debug(
                 "download_derivative_samples_by_taxa: %s", repr(dme))
@@ -312,9 +311,10 @@ class DerivativeSampleController(BaseController):
         samp = None
 
         try:
-            put = DerivativeSamplePut(self.get_connection())
+            put = BaseDerivativeSample(self.get_engine(), self.get_session())
 
-            samp = put.put(derivative_sample_id, derivative_sample, studies)
+            study_name = None
+            samp = put.put(derivative_sample_id, derivative_sample, study_name, studies, user)
         except DuplicateKeyException as dke:
             logging.getLogger(__name__).debug(
                 "update_derivativeSample: %s", repr(dke))
