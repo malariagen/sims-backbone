@@ -120,14 +120,14 @@ class BaseDerivativeSample(SimsDbBase):
         ret = None
 
         with session_scope(self.session) as db:
-            from backbone_server.model.study import PartnerSpeciesIdentifier, Taxonomy
+            from backbone_server.model.study import taxonomy_identifier_table, Taxonomy
 
             db_items = None
             db_items = db.query(self.db_class).\
-                    join(self.db_class.original_sample).\
-                    join(OriginalSample.partner_species).\
-                    join(PartnerSpeciesIdentifier.taxa).\
-                    filter(Taxonomy.id == taxa_id)
+                        join(OriginalSample).\
+                        join(taxonomy_identifier_table,
+                             and_(taxonomy_identifier_table.c.partner_species_identifier_id == OriginalSample.partner_species_id,
+                                  taxonomy_identifier_table.c.taxonomy_id == taxa_id))
 
             ret = self._get_multiple_results(db, db_items, studies, start, count)
 

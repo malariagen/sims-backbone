@@ -349,13 +349,12 @@ class BaseOriginalSample(SimsDbBase):
         ret = None
 
         with session_scope(self.session) as db:
-            from backbone_server.model.study import Taxonomy
+            from backbone_server.model.study import Taxonomy, taxonomy_identifier_table
 
-            db_items = None
             db_items = db.query(self.db_class).\
-                    join(OriginalSample.partner_species).\
-                    join(PartnerSpeciesIdentifier.taxa).\
-                    filter(Taxonomy.id == taxa_id)
+                        join(taxonomy_identifier_table,
+                             and_(taxonomy_identifier_table.c.partner_species_identifier_id == OriginalSample.partner_species_id,
+                                  taxonomy_identifier_table.c.taxonomy_id == taxa_id))
 
             ret = self._get_multiple_results(db, db_items, studies, start, count)
 
