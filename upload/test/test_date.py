@@ -52,9 +52,10 @@ class TestDate(TestBase):
     def tearDownClass(self):
 
 
-        self.deleteStudies(['9020'], TestDate._locations)
-
+        looked_up = TestBase.getDAO().download_original_samples_by_attr('oxford_id', '12355')
+        TestBase.getDAO().delete_original_sample(looked_up.original_samples[0].original_sample_id)
         self.deleteEventSets(['dates'], TestDate._locations)
+        self.deleteStudies(['9020'], TestDate._locations)
 
 
     """

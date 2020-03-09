@@ -30,12 +30,14 @@ class TestROMA(TestBase):
     @classmethod
     def tearDownClass(self):
 
-        TestBase.deleteStudies(['9030','9032','9033'], TestROMA._locations)
+        looked_up = TestBase.getDAO().download_derivative_samples_by_os_attr('roma_id', 'TST00001')
 
-        TestBase.tearDownLocations(TestROMA._locations)
-
-        TestBase.deleteEventSets(['roma_dump', 'roma_MNF00001'],
+        for derived_sample in looked_up.derivative_samples:
+            TestBase.getDAO().delete_derivative_sample(derived_sample.derivative_sample_id)
+        TestBase.deleteEventSets(['roma_dump', 'roma_MNF00001', 'roma_MNF00002', 'roma_MNF00003'],
                                  TestROMA._locations)
+        TestBase.deleteStudies(['9030', '9032', '9033'], TestROMA._locations)
+        TestBase.tearDownLocations(TestROMA._locations)
 
 
     """
@@ -45,11 +47,12 @@ class TestROMA(TestBase):
 
         try:
             looked_up = self._dao.download_sampling_events_by_os_attr('roma_id', 'TST00003')
+            location = looked_up.locations[looked_up.sampling_events[0].location_id]
             looked_up = looked_up.sampling_events[0]
-            self.assertEquals(looked_up.location.attrs[0].attr_value,
+            self.assertEquals(location.attrs[0].attr_value,
                               'Test name with spaces')
-            if looked_up.location.location_id not in TestROMA._locations:
-                TestROMA._locations.append(looked_up.location.location_id)
+            if looked_up.location_id not in TestROMA._locations:
+                TestROMA._locations.append(looked_up.location_id)
         except ApiException as error:
             self.fail("test_year_accuracy: Exception when calling download_sampling_event_by_attr {}"
                         .format(error))
@@ -136,32 +139,34 @@ class TestROMA(TestBase):
         try:
             looked_up = self._dao.download_sampling_events_by_os_attr('roma_id', 'TST00001')
 
+            location = looked_up.locations[looked_up.sampling_events[0].location_id]
+            proxy_location = looked_up.locations[looked_up.sampling_events[0].proxy_location_id]
             looked_up = looked_up.sampling_events[0]
-            self.assertEqual(looked_up.location.latitude, 12.5)
-            self.assertEqual(looked_up.location.longitude, 103.9)
-            self.assertEqual(looked_up.location.country, 'KHM')
-            self.assertEqual(looked_up.location.attrs[0].attr_value,
+            self.assertEqual(location.latitude, 12.5)
+            self.assertEqual(location.longitude, 103.9)
+            self.assertEqual(location.country, 'KHM')
+            self.assertEqual(location.attrs[0].attr_value,
                              'Cambodia(Country)')
-            self.assertEqual(looked_up.location.attrs[0].attr_source,
+            self.assertEqual(location.attrs[0].attr_source,
                              'roma_dump')
-            self.assertEqual(looked_up.location.attrs[0].study_name,
+            self.assertEqual(location.attrs[0].study_name,
                              '9030')
 #            self.assertEqual(looked_up.location.notes, 'roma_dump.20180116103346.json')
-            self.assertEqual(looked_up.location.notes, 'roma_dump')
+            self.assertEqual(location.notes, 'roma_dump')
 
-            self.assertEqual(looked_up.proxy_location.latitude, 12.51)
-            self.assertEqual(looked_up.proxy_location.longitude, 103.91)
-            self.assertEqual(looked_up.proxy_location.country, 'KHM')
-            self.assertEqual(looked_up.proxy_location.attrs[0].attr_value,
+            self.assertEqual(proxy_location.latitude, 12.51)
+            self.assertEqual(proxy_location.longitude, 103.91)
+            self.assertEqual(proxy_location.country, 'KHM')
+            self.assertEqual(proxy_location.attrs[0].attr_value,
                              'Test name with spaces')
-            self.assertEqual(looked_up.proxy_location.attrs[0].attr_source,
+            self.assertEqual(proxy_location.attrs[0].attr_source,
                              'roma_dump')
-            self.assertEqual(looked_up.proxy_location.attrs[0].study_name,
+            self.assertEqual(proxy_location.attrs[0].study_name,
                              '9030')
-            if looked_up.location.location_id not in TestROMA._locations:
-                TestROMA._locations.append(looked_up.location.location_id)
-            if looked_up.proxy_location.location_id not in TestROMA._locations:
-                TestROMA._locations.append(looked_up.proxy_location.location_id)
+            if looked_up.location_id not in TestROMA._locations:
+                TestROMA._locations.append(looked_up.location_id)
+            if looked_up.proxy_location_id not in TestROMA._locations:
+                TestROMA._locations.append(looked_up.proxy_location_id)
         except ApiException as error:
             self.fail("test_roma_location: Exception when calling download_sampling_event_by_os_attr {}"
                         .format(error))

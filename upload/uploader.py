@@ -311,13 +311,15 @@ class Uploader():
         original_sample = self.os_processor.process_original_sample(values, o_sample, o_existing)
 
 
-        d_sample = self.ds_processor.create_derivative_sample_from_values(values)
+        d_sample = self.ds_processor.create_derivative_sample_from_values(values,
+                                                                          original_sample)
 
         dsamp = self.ds_processor.lookup_derivative_sample(d_sample, values)
 
         derivative_sample = self.ds_processor.process_derivative_sample(d_sample, dsamp, original_sample, values)
 
-        ad_sample = self.ad_processor.create_assay_datum_from_values(values)
+        ad_sample = self.ad_processor.create_assay_datum_from_values(values,
+                                                                     derivative_sample)
 
         adsamp = self.ad_processor.lookup_assay_datum(ad_sample, values)
 

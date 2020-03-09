@@ -11,17 +11,20 @@ from base_entity import BaseEntity
 
 class DerivativeSampleProcessor(BaseEntity):
 
-    _derivative_sample_cache = {}
-
     def __init__(self, dao, event_set):
         super().__init__(dao, event_set)
         self._logger = logging.getLogger(__name__)
         self._dao = dao
         self._event_set = event_set
+        self._derivative_sample_cache = {}
 
-    def create_derivative_sample_from_values(self, values):
+    def create_derivative_sample_from_values(self, values, original_sample):
 
-        d_sample = openapi_client.DerivativeSample(None)
+        if not original_sample:
+            return None
+
+        d_sample = openapi_client.DerivativeSample(None,
+                                                   original_sample_id=original_sample.original_sample_id)
 
         idents = []
         if 'derivative_sample_id' in values:
@@ -66,6 +69,7 @@ class DerivativeSampleProcessor(BaseEntity):
             })
             if parent:
                 d_sample.parent_derivative_sample_id = parent.derivative_sample_id
+                d_sample.original_sample_id = parent.original_sample_id
             else:
                 self.report(f"Failed to find parent {values['unique_ds_id']} {values['parent_unique_ds_id']}", values)
 
@@ -81,8 +85,7 @@ class DerivativeSampleProcessor(BaseEntity):
             # print(f"Looking in cache for unique_ds_id {values['unique_ds_id']}")
             if values['unique_ds_id'] in self._derivative_sample_cache:
                 existing_sample_id = self._derivative_sample_cache[values['unique_ds_id']]
-                existing = self._dao.download_derivative_sample(
-                    existing_sample_id)
+                existing = self._dao.download_derivative_sample(existing_sample_id)
                 return existing
 
         # print("not in cache: {} {}".format(samp, values))

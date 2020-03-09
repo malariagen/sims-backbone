@@ -243,30 +243,23 @@ class TestMerge(TestBase):
 
         locations = TestMerge._locations
 
-        for oxid in ['EXTST000002', 'OF0093-C', 'OV0050-C', 'CT0001-C', 'CT0002-C']:
-            try:
-                looked_up = TestBase.getDAO().download_sampling_events_by_os_attr('oxford_id',
-                                                                                 oxid)
-                looked_up = looked_up.sampling_events[0]
+        looked_up = TestBase.getDAO().download_derivative_samples_by_os_attr('roma_id', 'TST00001')
 
-                TestBase.deleteSamplingEvent(looked_up, locations)
+        for derived_sample in looked_up.derivative_samples:
+            TestBase.getDAO().delete_derivative_sample(derived_sample.derivative_sample_id)
+        TestBase.tearDownSSR(['oxford_merge', 'pf6_merge', 'pv3_merge',
+                              'roma_dump', 'roma_MNF00001', 'roma_MNF00002',
+                              'roma_MNF00003', 'sanger-lims_merge'], locations)
 
-                looked_up = TestBase.getDAO().download_original_samples_by_attr('oxford_id', oxid)
-                looked_up = looked_up.original_samples[0]
 
-                TestBase.getDAO().delete_original_sample(looked_up.original_sample_id)
+        TestBase.deleteStudies(['9030', '9031', '9032', '9033'], locations)
 
-            except ApiException as err:
-                print(err)
-                pass
+        looked_up = TestBase.getDAO().download_sampling_events_by_attr('roma_pk_id', 'roma_3')
 
-        TestBase.deleteStudies(['9030','9031','9032','9033'], locations)
+        # TODO - check why orphan sampling event
+        for sampling_event in looked_up.sampling_events:
+            TestBase.getDAO().delete_sampling_event(sampling_event.sampling_event_id)
 
-        TestBase.deleteEventSets(['oxford_merge', 'pf6_merge', 'pv3_merge',
-                                  'roma_dump', 'roma_MNF00001',
-                                  'sanger-lims_merge'], locations)
-
-        TestBase.tearDownSSR(locations)
         TestBase.tearDownLocations(locations)
 
     """
@@ -289,35 +282,35 @@ class TestMerge(TestBase):
 
         IdentClass = looked_up.attrs[0].__class__
         ident = IdentClass(attr_source='roma_dump',
-                                          attr_type='oxford_id', attr_value='OX0001-C')
+                           attr_type='oxford_id', attr_value='OX0001-C')
 
         assert ident in looked_up.attrs
 
         ident = IdentClass(attr_source='roma_dump',
-                                          attr_type='partner_id',
-                                          attr_value='EXTST000002')
+                           attr_type='partner_id',
+                           attr_value='EXTST000002')
 
         assert ident in looked_up.attrs
 
         ident = IdentClass(attr_source='oxford_merge',
-                                          attr_type='alt_oxford_id',
-                                          attr_value='216714')
+                           attr_type='alt_oxford_id',
+                           attr_value='216714')
 
         assert ident in looked_up.attrs
 
         ident = IdentClass(attr_source='sanger-lims_merge',
-                                          attr_type='oxford_id',
-                                          attr_value='EXTST000002')
+                           attr_type='oxford_id',
+                           attr_value='EXTST000002')
 
         assert ident in looked_up.attrs
 
 
         looked_up = self._dao.download_sampling_events_by_os_attr('oxford_id',
-                                                                             'EXTST000002')
+                                                                  'EXTST000002')
 
-        looked_up = looked_up.sampling_events[0]
+        location = looked_up.locations[looked_up.sampling_events[0].location_id]
 
-        self.assertEquals(looked_up.location.latitude, 12.5)
+        self.assertEquals(location.latitude, 12.5)
 
 
     def test_merge_on_partner_id(self):
@@ -329,15 +322,15 @@ class TestMerge(TestBase):
 #                                                                             'EXTST000003')
 
         looked_up1 = self._dao.download_original_samples_by_attr('roma_id',
-                                                                             'TST00003')
+                                                                 'TST00003')
         looked_up1 = looked_up1.original_samples[0]
 
         looked_up2 = self._dao.download_original_samples_by_attr('oxford_id',
-                                                                             'OX0008-C')
+                                                                 'OX0008-C')
         looked_up2 = looked_up2.original_samples[0]
 
         looked_up3 = self._dao.download_original_samples_by_attr('oxford_id',
-                                                                             'OX0009-C')
+                                                                 'OX0009-C')
         looked_up3 = looked_up3.original_samples[0]
 
         self.assertEqual(looked_up1.original_sample_id, looked_up2.original_sample_id)

@@ -16,9 +16,13 @@ class AssayDataProcessor(BaseEntity):
         super().__init__(dao, event_set)
         self._logger = logging.getLogger(__name__)
 
-    def create_assay_datum_from_values(self, values):
+    def create_assay_datum_from_values(self, values, derivative_sample):
 
-        d_sample = openapi_client.AssayDatum(None)
+        if not derivative_sample:
+            return None
+
+        d_sample = openapi_client.AssayDatum(None,
+                                             derivative_sample_id=derivative_sample.derivative_sample_id)
 
         idents = []
         if 'assay_datum_id' in values:
@@ -39,6 +43,9 @@ class AssayDataProcessor(BaseEntity):
         return d_sample
 
     def lookup_assay_datum(self, samp, values):
+
+        if not samp:
+            return None
 
         existing = None
 
@@ -77,6 +84,9 @@ class AssayDataProcessor(BaseEntity):
         return existing
 
     def process_assay_datum(self, samp, existing, derivative_sample, values):
+
+        if not samp:
+            return None
 
         #print('process_assay data {} {} {} {}'.format(samp, existing, derivative_sample, values))
 

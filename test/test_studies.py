@@ -327,3 +327,47 @@ class TestStudies(TestBase):
         except ApiException as error:
             self.check_api_exception(api_factory,
                                      "SamplingEventApi->download_sampling_events_by_study", error)
+
+    """
+    """
+    def test_location_study_lookup(self, api_factory):
+
+        api_instance = api_factory.SamplingEventApi()
+        os_api_instance = api_factory.OriginalSampleApi()
+        loc_api_instance = api_factory.LocationApi()
+        study_api = api_factory.StudyApi()
+
+        try:
+            study_code = '2008-MD-UP'
+            loc = openapi_client.Location(None, latitude=27.46362,
+                                          longitude=90.49542, accuracy='country',
+                                          curated_name='Trongsa, Trongsa, Bhutan',
+                                          notes='pv_3_locations.txt', country='BTN')
+            loc.attrs = [
+                openapi_client.Attr(attr_type='partner_name',
+                                    attr_value='bhutan', study_name=study_code)
+            ]
+            loc_created = loc_api_instance.create_location(loc)
+
+            from datetime import date
+            samp = openapi_client.SamplingEvent(None, date(2017, 10, 14))
+            samp.location_id = loc_created.location_id
+            created_se = api_instance.create_sampling_event(samp)
+            samp = openapi_client.OriginalSample(None, study_name=study_code,
+                                                 partner_species='PF')
+            samp.sampling_event_id = created_se.sampling_event_id
+            created_os = os_api_instance.create_original_sample(samp)
+
+            fetched = study_api.download_study(study_code)
+
+            assert fetched.locations, "Study locations not found"
+
+            assert loc_created == fetched.locations.locations[0], "create response != download response"
+
+            os_api_instance.delete_original_sample(created_os.original_sample_id)
+
+            api_instance.delete_sampling_event(created_se.sampling_event_id)
+            loc_api_instance.delete_location(loc_created.location_id)
+
+        except ApiException as error:
+            self.check_api_exception(api_factory, "SamplingEventApi->create_sampling_event", error)

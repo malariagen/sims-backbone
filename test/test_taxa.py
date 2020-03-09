@@ -46,12 +46,12 @@ class TestTaxa(TestBase):
             created = api_instance.create_original_sample(samp)
             new_samp = openapi_client.OriginalSample(None, study_name='3001-MD-UP',
                                                      partner_species='P. vivax')
+            new_samp.original_sample_id = created.original_sample_id
             updated = api_instance.update_original_sample(
                 created.original_sample_id, new_samp)
             fetched = api_instance.download_original_sample(
                 created.original_sample_id)
             assert updated == fetched, "update response != download response"
-            fetched.original_sample_id = None
             assert new_samp == fetched, "update != download response"
             api_instance.delete_original_sample(created.original_sample_id)
 
@@ -109,7 +109,7 @@ class TestTaxa(TestBase):
                     with conn:
                         with conn.cursor() as cursor:
 
-                            stmt = "DELETE FROM taxonomies WHERE id=%s;"
+                            stmt = "DELETE FROM taxonomy WHERE id=%s;"
 
                             cursor.execute(stmt, (taxa.taxonomy_id,))
 

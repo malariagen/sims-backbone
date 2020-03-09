@@ -10,11 +10,11 @@ from base_entity import BaseEntity
 
 class OriginalSampleProcessor(BaseEntity):
 
-    _original_sample_cache = {}
 
     def __init__(self, dao, event_set):
         super().__init__(dao, event_set)
         self._logger = logging.getLogger(__name__)
+        self._original_sample_cache = {}
 
 
     def create_original_sample_from_values(self, values):

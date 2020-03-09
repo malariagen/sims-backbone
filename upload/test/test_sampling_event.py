@@ -54,16 +54,6 @@ class TestSampling_Event(TestBase):
     @classmethod
     def tearDownClass(self):
 
-        looked_up = TestBase.getDAO().download_sampling_events_by_os_attr('oxford_id', '123456')
-        looked_up = looked_up.sampling_events[0]
-
-        TestBase.getDAO().delete_sampling_event(looked_up.sampling_event_id)
-
-        looked_up = TestBase.getDAO().download_original_samples_by_attr('oxford_id', '123456')
-        looked_up = looked_up.original_samples[0]
-
-        TestBase.getDAO().delete_original_sample(looked_up.original_sample_id)
-
         TestBase.deleteEventSets(['multiple_study'], TestSampling_Event._locations)
 
         TestBase.tearDownLocations(TestSampling_Event._locations)

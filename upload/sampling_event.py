@@ -14,11 +14,11 @@ from base_entity import BaseEntity
 
 class SamplingEventProcessor(BaseEntity):
 
-    _sample_cache = {}
 
     def __init__(self, dao, event_set):
         super().__init__(dao, event_set)
         self._logger = logging.getLogger(__name__)
+        self._sample_cache = {}
 
     """
         returns true if the attr is already in, or successfully added to, the location
@@ -573,7 +573,11 @@ class SamplingEventProcessor(BaseEntity):
                 change_reasons.append('Set proxy location')
 
 
-        #print('\n'.join(change_reasons))
+        # print('merge_sampling_events')
+        # print(existing)
+        # print(samp)
+        # print('\n'.join(change_reasons))
+        # print('######################')
 
         return existing, new_ident_value
 
@@ -606,9 +610,10 @@ class SamplingEventProcessor(BaseEntity):
                     #Make sure no implied edit - location should have been updated before here
                     existing.location = None
                     existing.proxy_location = None
-                    #print("Updating {} to {}".format(orig, existing))
+                    # print("Updating {} to {}".format(orig, existing))
                     ret = self._dao.update_sampling_event(existing.sampling_event_id,
                                                           existing, user)
+                    # print("Updated {} to {}".format(existing, ret))
 
                 if not existing.event_sets or self._event_set not in existing.event_sets:
                     self._dao.create_event_set_item(self._event_set,

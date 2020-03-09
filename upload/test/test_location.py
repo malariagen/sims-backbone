@@ -116,12 +116,9 @@ class TestLocation(TestBase):
 
         locations = TestLocation._locations
 
-
+        self.tearDownSSR(['locations', 'loc_no_study'], locations)
         self.deleteStudies(['9040', '9041', '9042'], locations)
 
-        self.deleteEventSets(['locations', 'loc_no_study'], locations)
-
-        self.tearDownSSR(locations)
         self.tearDownLocations(locations)
 
 
@@ -134,14 +131,14 @@ class TestLocation(TestBase):
             conflict_loc = self._dao.download_gps_location('13.86208','107.097015')
             results = self._dao.download_sampling_events_by_os_attr('oxford_id', '22345')
             looked_up = results.sampling_events[0]
-
             assert looked_up.location_id != looked_up.proxy_location_id
+            location = results.locations[looked_up.location_id]
+            proxy_location = results.locations[looked_up.proxy_location_id]
+            assert location.attrs[0].attr_value == 'Ratanakiri'
+            assert proxy_location.attrs[0].attr_value == 'Ratanakiri'
 
-            assert looked_up.location.attrs[0].attr_value == 'Ratanakiri'
-            assert looked_up.proxy_location.attrs[0].attr_value == 'Ratanakiri'
-
-            assert looked_up.location.latitude == 13.86208
-            assert looked_up.proxy_location.latitude == 13.9
+            assert location.latitude == 13.86208
+            assert proxy_location.latitude == 13.9
 
             if looked_up.location_id not in TestLocation._locations:
                 TestLocation._locations.append(looked_up.location_id)

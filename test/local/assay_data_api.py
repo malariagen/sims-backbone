@@ -19,7 +19,7 @@ class LocalAssayDataApi(BaseLocalApi):
 
         self.assay_datum_controller = AssayDatumController()
 
-    def create_assay_datum(self, assay_datum):
+    def create_assay_datum(self, assay_datum, studies=None):
         """
         create_assay_datum
         Create a assayDatum
@@ -29,12 +29,12 @@ class LocalAssayDataApi(BaseLocalApi):
         :rtype: assayDatum
         """
 
-        (ret, retcode) = self.assay_datum_controller.create_assay_datum(assay_datum, self._user,
-                                                                        self.assay_datum_controller.token_info(self.auth_tokens()))
+        (ret, retcode) = self.assay_datum_controller.create_assay_datum(assay_datum, studies=studies, user=self._user,
+                                                                        auths=self.assay_datum_controller.token_info(self.auth_tokens()))
 
         return self.create_response(ret, retcode, 'AssayDatum')
 
-    def delete_assay_datum(self, assay_datum_id):
+    def delete_assay_datum(self, assay_datum_id, studies=None):
         """
         deletes an assayDatum
 
@@ -43,12 +43,12 @@ class LocalAssayDataApi(BaseLocalApi):
 
         :rtype: None
         """
-        (ret, retcode) = self.assay_datum_controller.delete_assay_datum(assay_datum_id, user=self._user,
+        (ret, retcode) = self.assay_datum_controller.delete_assay_datum(assay_datum_id, studies=studies, user=self._user,
                                                                         auths=self.assay_datum_controller.token_info(self.auth_tokens()))
 
         return self.create_response(ret, retcode)
 
-    def download_assay_datum(self, assay_datum_id):
+    def download_assay_datum(self, assay_datum_id, studies=None):
         """
         fetches an assayDatum
 
@@ -57,12 +57,12 @@ class LocalAssayDataApi(BaseLocalApi):
 
         :rtype: AssayDatum
         """
-        (ret, retcode) = self.assay_datum_controller.download_assay_datum(assay_datum_id, self._user,
-                                                                          self.assay_datum_controller.token_info(self.auth_tokens()))
+        (ret, retcode) = self.assay_datum_controller.download_assay_datum(assay_datum_id, studies=studies, user=self._user,
+                                                                          auths=self.assay_datum_controller.token_info(self.auth_tokens()))
 
         return self.create_response(ret, retcode, 'AssayDatum')
 
-    def download_assay_data(self, filter=None, start=None, count=None):
+    def download_assay_data(self, filter=None, start=None, count=None, studies=None):
         """
         fetches an assayDatum
 
@@ -72,12 +72,12 @@ class LocalAssayDataApi(BaseLocalApi):
         :rtype: AssayDatum
         """
         (ret, retcode) = self.assay_datum_controller.download_assay_data(filter, start,
-                                                                         count, self._user,
-                                                                         self.assay_datum_controller.token_info(self.auth_tokens()))
+                                                                         count, studies=studies, user=self._user,
+                                                                         auths=self.assay_datum_controller.token_info(self.auth_tokens()))
 
         return self.create_response(ret, retcode, 'AssayData')
 
-    def download_assay_data_by_attr(self, prop_name, prop_value, study_name=None):
+    def download_assay_data_by_attr(self, prop_name, prop_value, study_name=None, studies=None):
         """
         fetches a assayDatum by property value
 
@@ -90,12 +90,12 @@ class LocalAssayDataApi(BaseLocalApi):
         """
         (ret, retcode) = self.assay_datum_controller.download_assay_data_by_attr(prop_name, prop_value,
                                                                                  study_name,
-                                                                                 self._user,
-                                                                                 self.assay_datum_controller.token_info(self.auth_tokens()))
+                                                                                 studies=studies, user=self._user,
+                                                                                 auths=self.assay_datum_controller.token_info(self.auth_tokens()))
 
         return self.create_response(ret, retcode, 'AssayData')
 
-    def download_assay_data_by_os_attr(self, prop_name, prop_value, study_name=None):
+    def download_assay_data_by_os_attr(self, prop_name, prop_value, study_name=None, studies=None):
         """
         fetches a assayDatum by property value
 
@@ -108,12 +108,12 @@ class LocalAssayDataApi(BaseLocalApi):
         """
         (ret, retcode) = self.assay_datum_controller.download_assay_data_by_os_attr(prop_name, prop_value,
                                                                                     study_name,
-                                                                                    self._user,
-                                                                                    self.assay_datum_controller.token_info(self.auth_tokens()))
+                                                                                    studies=studies, user=self._user,
+                                                                                    auths=self.assay_datum_controller.token_info(self.auth_tokens()))
 
         return self.create_response(ret, retcode, 'AssayData')
 
-    def update_assay_datum(self, assay_datum_id, assay_datum):
+    def update_assay_datum(self, assay_datum_id, assay_datum, studies=None):
         """
         updates an assayDatum
 
@@ -125,7 +125,7 @@ class LocalAssayDataApi(BaseLocalApi):
         :rtype: AssayDatum
         """
         (ret, retcode) = self.assay_datum_controller.update_assay_datum(assay_datum_id,
-                                                                        assay_datum, self._user,
-                                                                        self.assay_datum_controller.token_info(self.auth_tokens()))
+                                                                        assay_datum, studies=studies, user=self._user,
+                                                                        auths=self.assay_datum_controller.token_info(self.auth_tokens()))
 
         return self.create_response(ret, retcode, 'AssayDatum')

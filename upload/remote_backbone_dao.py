@@ -82,6 +82,9 @@ class RemoteBackboneDAO(AbstractBackboneDAO):
     def create_event_set_item(self, event_set_id, sampling_event_id, user=None):
         self.es_api_instance.create_event_set_item(event_set_id, sampling_event_id)
 
+    def delete_event_set_item(self, event_set_id, sampling_event_id, user=None):
+        self.es_api_instance.delete_event_set_item(event_set_id, sampling_event_id)
+
     def create_location(self, location, user=None):
 
         created = self.location_api_instance.create_location(location)

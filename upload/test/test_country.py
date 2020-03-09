@@ -156,10 +156,9 @@ class TestCountry(TestBase):
 
         locations = TestCountry._locations
 
+        self.tearDownSSR(['countries', 'oxford_country'], locations)
         self.deleteStudies(['9052', '0000', '9060'], locations)
-        self.deleteEventSets(['countries', 'oxford_country'], locations)
 
-        self.tearDownSSR(locations)
         self.tearDownLocations(locations)
         pass
 
@@ -199,13 +198,14 @@ class TestCountry(TestBase):
 
         try:
             looked_up = self._dao.download_sampling_events_by_os_attr('oxford_id',
-                                                                           'CT0003-C')
-
+                                                                      'CT0003-C')
+            locations = looked_up.locations
             looked_up = looked_up.sampling_events[0]
-            #print(looked_up)
-            self.assertEqual(looked_up.location.country, 'BEN')
-            self.assertEqual(looked_up.location.latitude, 9.30769)
-            self.assertEqual(looked_up.location.longitude, 2.315834)
+            location = locations[looked_up.location_id]
+
+            self.assertEqual(location.country, 'BEN')
+            self.assertEqual(location.latitude, 9.30769)
+            self.assertEqual(location.longitude, 2.315834)
             if looked_up.location_id not in TestCountry._locations:
                 TestCountry._locations.append(looked_up.location_id)
         except ApiException as error:
@@ -220,11 +220,13 @@ class TestCountry(TestBase):
             looked_up = self._dao.download_sampling_events_by_os_attr('oxford_id',
                                                                            'CT0002-C')
 
+            locations = looked_up.locations
             looked_up = looked_up.sampling_events[0]
+            location = locations[looked_up.location_id]
 #            print(looked_up)
-            self.assertEqual(looked_up.location.country, 'MDG')
-            self.assertEqual(looked_up.location.latitude, -18.766947)
-            self.assertEqual(looked_up.location.longitude, 46.869107)
+            self.assertEqual(location.country, 'MDG')
+            self.assertEqual(location.latitude, -18.766947)
+            self.assertEqual(location.longitude, 46.869107)
             if looked_up.location_id not in TestCountry._locations:
                 TestCountry._locations.append(looked_up.location_id)
         except ApiException as error:
@@ -237,8 +239,9 @@ class TestCountry(TestBase):
 
         try:
 
-            original_sample = self._dao.download_original_samples('attr:partner_id:MDG/TST_0004').original_samples[0]
-            looked_up = self._dao.download_sampling_event(original_sample.sampling_event_id)
+            original_samples = self._dao.download_original_samples('attr:partner_id:MDG/TST_0004')
+            original_sample = original_samples.original_samples[0]
+            looked_up = original_samples.sampling_events[original_sample.sampling_event_id]
 
             self.assertEqual(looked_up.proxy_location.country, 'MDG')
             self.assertEqual(looked_up.proxy_location.latitude, -19.0)

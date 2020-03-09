@@ -80,7 +80,7 @@ class SetCountry(upload_ssr.Upload_SSR):
                     found_samples = self._dao.download_original_samples(f'attr:{id_type}:{id_value}')
                     if found_samples:
                         for found_sample in found_samples.original_samples:
-                            found_event = self._dao.download_sampling_event(found_sample.sampling_event_id)
+                            found_event = found_samples.sampling_events[found_sample.sampling_event_id]
                             if found_event:
                                 found = found_event
                                 found_event.original_sample = found_sample
@@ -168,13 +168,13 @@ class SetCountry(upload_ssr.Upload_SSR):
             except ApiException as e:
                 if country_value != 'nan':
                     self.os_processor.report("Exception when looking up country {} {}".format(country_value,
-                                                                                 found), None)
+                                                                                              found), None)
                 return found
 
         ident = openapi_client.Attr('partner_name',
-                                          attr_value=self._country_cache[country_value].english,
-                                          attr_source='set_country {}'.format(filename),
-                                          study_name=original_sample.study_name)
+                                    attr_value=self._country_cache[country_value].english,
+                                    attr_source='set_country {}'.format(filename),
+                                    study_name=original_sample.study_name)
 
 
         error = False
@@ -182,8 +182,9 @@ class SetCountry(upload_ssr.Upload_SSR):
             try:
                 found.location = self.se_processor.update_country(self._country_cache[country_value].alpha3, found.location)
             except Exception as cue:
+                print(found)
                 self.os_processor.report_conflict(found, 'Country', found.location.country,
-                                     country_value, 'not updated', values)
+                                                  country_value, 'not updated', values)
                 error = True
 
         if found.proxy_location:
@@ -228,6 +229,8 @@ class SetCountry(upload_ssr.Upload_SSR):
             if found.location:
                 #print("adding study ident for {}".format(found))
                 if not error:
+                    if not found.location.attrs:
+                        found.location.attrs = []
                     found.location.attrs.append(ident)
                 try:
                     self._dao.update_location(found.location_id, found.location)

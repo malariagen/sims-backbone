@@ -57,7 +57,8 @@ class TestHistory(TestBase):
             es_api_instance.create_event_set_item(event_set_name, created_se.sampling_event_id)
 
             samp = openapi_client.OriginalSample(None, study_name=study_name,
-                                                 partner_species='PF')
+                                                 partner_species='PF',
+                                                 sampling_event_id=created_se.sampling_event_id)
             samp.attrs = [
                 openapi_client.Attr(attr_type='ds_os_attr', attr_value='123456')
             ]
@@ -66,8 +67,10 @@ class TestHistory(TestBase):
             study_detail.partner_species[0].taxa = [openapi_client.Taxonomy(taxonomy_id=5833)]
             study_api.update_study(study_name, study_detail)
 
-            samp1 = openapi_client.DerivativeSample(None)
-            samp2 = openapi_client.DerivativeSample(None)
+            samp1 = openapi_client.DerivativeSample(None,
+                                                    original_sample_id=created.original_sample_id)
+            samp2 = openapi_client.DerivativeSample(None,
+                                                    original_sample_id=created.original_sample_id)
 
             samp1.attrs = [
                 openapi_client.Attr(attr_type='test1', attr_value='test1',
@@ -77,13 +80,9 @@ class TestHistory(TestBase):
                 openapi_client.Attr(attr_type='test2', attr_value='test2',
                                     attr_source='ds_os_attr')
             ]
-            samp1.original_sample_id = created.original_sample_id
-            samp2.original_sample_id = created.original_sample_id
 
             created1 = ds_api_instance.create_derivative_sample(samp1)
             created2 = ds_api_instance.create_derivative_sample(samp2)
-
-            created.sampling_event_id = created_se.sampling_event_id
 
             api_instance.update_original_sample(created.original_sample_id,
                                                 created)
@@ -101,6 +100,7 @@ class TestHistory(TestBase):
         es_api_instance = api_factory.EventSetApi()
         ds_api_instance = api_factory.DerivativeSampleApi()
 
+        es_api_instance.delete_event_set_item(created_es.event_set_name, created_se.sampling_event_id)
         se_api_instance.delete_sampling_event(created_se.sampling_event_id)
         loc_api_instance.delete_location(created_se.location_id)
 

@@ -51,10 +51,10 @@ components:
           items:
               type: object
               $ref: './attr.yaml#/components/schemas/Attr'
-        derivative_samples:
-          type: object
-          description: 'The samples derivative from this original sample'
-          $ref: './derivative_sample.yaml#/components/schemas/DerivativeSamples'
+              #        derivative_samples:
+              #          type: object
+              #          description: 'The samples derivative from this original sample'
+              #          $ref: './derivative_sample.yaml#/components/schemas/DerivativeSamples'
     PartnerSpecies:
       type: object
       properties:

@@ -103,11 +103,23 @@ class LocalBackboneDAO(AbstractBackboneDAO):
 
         if retcode >= 400:
             # Probably because it already exists
-            self._logger.debug("Error adding sample {} to event set {}".format(
-                sampling_event_id, event_set_id))
+            self._logger.debug("Error adding sample %s to event set %s", sampling_event_id, event_set_id)
 
         return ret
 
+    def delete_event_set_item(self, event_set_id, sampling_event_id, user=None):
+
+        if not user:
+            user = self._user
+
+        ret, retcode = self.es_api_instance.delete_event_set_item(
+            event_set_id, sampling_event_id, user=user, auths=self._auths)
+
+        if retcode >= 400:
+            # Probably because it already exists
+            self._logger.debug("Error deleting sample %s to event set %s", sampling_event_id, event_set_id)
+
+        return ret
     def create_location(self, location, user=None):
 
         if not user:

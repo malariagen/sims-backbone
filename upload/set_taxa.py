@@ -26,7 +26,6 @@ from local_backbone_dao import LocalBackboneDAO
 class SetTaxa():
 
 
-    _taxa_map = {}
     _auth_token = ''
     _api_client = None
 
@@ -61,6 +60,7 @@ class SetTaxa():
             pass
 
         self._dao.setup(config_file)
+        self._taxa_map = {}
 
     def load_taxa_map(self):
 
@@ -83,14 +83,17 @@ class SetTaxa():
         update = False
         for study in studies.studies:
             study_detail = self._dao.download_study(study.code)
+            if not study_detail.partner_species:
+                study_detail.partner_species=[]
             for species in study_detail.partner_species:
                 if species.partner_species in self._taxa_map:
                     taxas = self._taxa_map[species.partner_species]
                     for taxa in taxas:
                         found = False
-                        for st in species.taxa:
-                            if int(taxa.taxonomy_id) == int(st.taxonomy_id):
-                                found = True
+                        if species.taxa:
+                            for st in species.taxa:
+                                if int(taxa.taxonomy_id) == int(st.taxonomy_id):
+                                    found = True
                         if not found:
                             print("In study {} Setting taxa for {} to {} from {}".format(study.code,
                                                                                          species.partner_species,

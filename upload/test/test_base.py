@@ -114,8 +114,14 @@ class TestBase(unittest.TestCase):
         event_api_instance = openapi_client.SamplingEventApi(TestBase.getApiClient())
         if event.location_id and event.location_id not in locations:
             locations.append(event.location_id)
-        if event.proxy_location_id and event.proxy_location_id not in locations:
-            locations.append(event.proxy_location_id)
+
+        if event.proxy_location_id:
+            if event.proxy_location_id in locations:
+                #Need to ensure proxy locations are at the end
+                locations.remove(event.proxy_location_id)
+                locations.append(event.proxy_location_id)
+            else:
+                locations.append(event.proxy_location_id)
         TestBase.getDAO().delete_sampling_event(event.sampling_event_id)
 
     """
@@ -126,17 +132,39 @@ class TestBase(unittest.TestCase):
         api_instance = openapi_client.EventSetApi(TestBase.getApiClient())
         event_api_instance = openapi_client.SamplingEventApi(TestBase.getApiClient())
 
+        sampling_events = []
+        sampling_event_ids = []
+        original_sample_ids = []
+        original_samples = []
         for event_set in event_sets:
             test_os = TestBase.getDAO().download_original_samples_by_event_set(event_set)
-
             for os in test_os.original_samples:
-                TestBase.getDAO().delete_original_sample(os.original_sample_id)
+                if os.sampling_event_id not in sampling_event_ids:
+                    event = test_os.sampling_events[os.sampling_event_id]
+                    if event.event_sets and len(event.event_sets) == 1:
+                        sampling_events.append(event)
+                        sampling_event_ids.append(os.sampling_event_id)
+                if os.original_sample_id not in original_sample_ids:
+                    original_sample_ids.append(os.original_sample_id)
+                    original_samples.append(os)
 
             test_events = TestBase.getDAO().download_sampling_events_by_event_set(event_set)
 
             for event in test_events.sampling_events:
-                TestBase.deleteSamplingEvent(event, locations)
+                TestBase.getDAO().delete_event_set_item(event_set,
+                                                        event.sampling_event_id)
+                if event.event_sets and len(event.event_sets) == 1:
+                    if event.sampling_event_id not in sampling_event_ids:
+                        sampling_events.append(event)
+                        sampling_event_ids.append(event.sampling_event_id)
 
+        for os in original_samples:
+            TestBase.getDAO().delete_original_sample(os.original_sample_id)
+
+        for event in sampling_events:
+            TestBase.deleteSamplingEvent(event, locations)
+
+        for event_set in event_sets:
             TestBase.getDAO().delete_event_set(event_set)
 
     """
@@ -154,12 +182,12 @@ class TestBase(unittest.TestCase):
     """
     """
     @classmethod
-    def tearDownSSR(self, locations):
+    def tearDownSSR(self, event_sets, locations):
+
+        TestBase.deleteEventSets(event_sets + ['TestSSR', 'Report', 'Sequencescape', 'PV4', 'PF27', 'Ag'],
+                                 locations)
 
         TestBase.deleteStudies(['9050', '9051'], locations)
-
-        TestBase.deleteEventSets(['TestSSR', 'Report', 'Sequencescape', 'PV4', 'PF27', 'Ag'],
-                                 locations)
 
     """
     """
@@ -170,4 +198,3 @@ class TestBase(unittest.TestCase):
         for loc in locations:
             if loc:
                 TestBase.getDAO().delete_location(loc)
-

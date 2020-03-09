@@ -9,11 +9,16 @@ components:
           items:
             type: object
             $ref: '#/components/schemas/AssayDatum'
+        derivative_samples:
+          type: object
+          $ref: '#/components/schemas/DerivativeSampleMap'
         count:
           type: integer
           description: Used when pagination is applied to return the number of results
     AssayDatum:
       type: object
+      required:
+        - derivative_sample_id
       properties:
         assay_datum_id:
           type: string
@@ -21,9 +26,9 @@ components:
         derivative_sample_id:
           type: string
   #        format: uuid
-  #      derivative_sample:
-  #        type: object
-  #        $ref: './derivative_sample.yaml#/components/schemas/DerivativeSample'
+        derivative_sample:
+          type: object
+          $ref: './derivative_sample.yaml#/components/schemas/DerivativeSample'
         ebi_run_acc:
           type: string
         acc_date:
@@ -35,3 +40,12 @@ components:
           items:
               type: object
               $ref: './attr.yaml#/components/schemas/Attr'
+    DerivativeSampleMap:
+      type: object
+      additionalProperties:
+        type: object
+        properties:
+          derivative_sample_id:
+            type: string
+          derivative_sample:
+            $ref: "./sims-backbone/definitions/derivative_sample.yaml#/components/schemas/DerivativeSample"

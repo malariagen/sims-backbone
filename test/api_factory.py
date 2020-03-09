@@ -14,7 +14,6 @@ from local.assay_data_api import LocalAssayDataApi
 from local.report_api import LocalReportApi
 from local.document_api import LocalDocumentApi
 
-from backbone_server.controllers.base_controller  import BaseController
 
 import logging
 
@@ -26,7 +25,9 @@ class ApiFactory():
         self._method = method
         self._api_client = api_client
 
-        self.base_controller = BaseController()
+        if self.isLocal():
+            from backbone_server.controllers.base_controller import BaseController
+            self.base_controller = BaseController()
 
 
     def isLocal(self):

@@ -454,7 +454,7 @@ class TestLocation(TestBase):
 
     """
     """
-    def test_update(self, api_factory):
+    def test_location_update(self, api_factory):
 
         api_instance = api_factory.LocationApi()
 
@@ -468,15 +468,17 @@ class TestLocation(TestBase):
             looked_up_locs = api_instance.download_partner_location(loc.attrs[0].attr_value)
             looked_up = looked_up_locs.locations[0]
             newloc = self.get_next_location()
-            newloc.country = 'IND'
+            newloc.country = 'MDG'
             newloc.accuracy = 'region'
+            newloc.latitude = -16.94223
+            newloc.longitude = 46.83144
             newloc.attrs = [
                 openapi_client.Attr(attr_type='partner_name', attr_value='nepal', study_name='1235-PV')
             ]
+            newloc.location_id = looked_up.location_id
             updated = api_instance.update_location(looked_up.location_id, newloc)
             fetched = api_instance.download_location(looked_up.location_id)
             assert updated == fetched, "update response != download response"
-            fetched.location_id = None
             assert newloc == fetched, "update != download response"
             api_instance.delete_location(looked_up.location_id)
 
@@ -503,10 +505,10 @@ class TestLocation(TestBase):
             newloc.attrs = [
                 openapi_client.Attr(attr_type='partner_name', attr_value='nepal', study_name='1235-PV')
             ]
+            newloc.location_id = looked_up.location_id
             updated = api_instance.update_location(looked_up.location_id, newloc)
             fetched = api_instance.download_location(looked_up.location_id)
             assert updated == fetched, "update response != download response"
-            fetched.location_id = None
             assert newloc == fetched, "update != download response"
             api_instance.delete_location(looked_up.location_id)
 
@@ -538,9 +540,11 @@ class TestLocation(TestBase):
                                              notes='new_pv_3_locations.txt',
                                              country='IND')
             new_created = api_instance.create_location(newloc)
-            with pytest.raises(ApiException, status=422):
-                created.location_id = new_created.location_id
-                updated = api_instance.update_location(new_created.location_id, created)
+            created.location_id = new_created.location_id
+            # Duplicates currently allowed
+            # with pytest.raises(ApiException, status=422):
+            created.location_id = new_created.location_id
+            updated = api_instance.update_location(new_created.location_id, created)
 
 
             api_instance.delete_location(looked_up.location_id)
@@ -616,4 +620,3 @@ class TestLocation(TestBase):
 
         except ApiException as error:
             self.check_api_exception(api_factory, "LocationApi->create_location", error)
-

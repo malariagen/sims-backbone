@@ -67,7 +67,7 @@ class IndividualProcessor(BaseEntity):
                     for found in found_events.individuals:
 
                         if existing and existing.individual_id != found.individual_id:
-                            msg = ("Merging into {} using {}".format(existing.sampling_event_id,
+                            msg = ("Merging into {} using {}".format(existing.individual_id,
                                                                      ident.attr_type), values)
                             #print(msg)
                             found = self.merge_individuals(existing, found, values)

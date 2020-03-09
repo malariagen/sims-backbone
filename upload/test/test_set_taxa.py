@@ -36,15 +36,16 @@ class TestSetTaxa(TestBase):
     @classmethod
     def tearDownClass(self):
 
-        return
+        looked_up = TestBase.getDAO().download_derivative_samples_by_os_attr('roma_id', 'TST00001')
 
-        TestBase.deleteStudies(['9030', '9032', '9033'], TestSetTaxa._locations)
+        for derived_sample in looked_up.derivative_samples:
+            TestBase.getDAO().delete_derivative_sample(derived_sample.derivative_sample_id)
 
+        TestBase.deleteEventSets(['roma_dump', 'roma_MNF00001', 'roma_MNF00002', 'roma_MNF00003'],
+                                 TestSetTaxa._locations)
         TestBase.tearDownLocations(TestSetTaxa._locations)
 
-        TestBase.deleteEventSets(['roma_dump', 'roma_MNF00001'],
-                                 TestSetTaxa._locations)
-
+        TestBase.deleteStudies(['9030', '9032', '9033'], TestSetTaxa._locations)
 
 
     """
