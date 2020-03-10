@@ -67,7 +67,7 @@ location_attr_table = Table('location_attr', Base.metadata,
 class Location(Versioned, Base):
 
     country = Column(String(3))
-    location = Column(Geometry('POINT'))
+    location = Column(Geometry('POINT'), index=True)
     accuracy = Column(String())
     curated_name = Column(String())
     curation_method = Column(String())
