@@ -126,6 +126,7 @@ def user(request):
     },
     {
         'memberOf': [
+            'cn=editor,ou=sims,ou=projects,ou=groups,dc=malariagen,dc=net',
             'cn=all_studies,ou=sims,ou=projects,ou=groups,dc=malariagen,dc=net'
         ],
         'scope': ['editor'],

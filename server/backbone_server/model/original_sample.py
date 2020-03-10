@@ -144,19 +144,7 @@ class BaseOriginalSample(SimsDbBase):
                                     sampling_event_id=db_item.sampling_event_id)
 
         if api_item.partner_species:
-            ps_item_query = db.query(PartnerSpeciesIdentifier).\
-                                join(Study).\
-                                filter(and_(PartnerSpeciesIdentifier.partner_species == api_item.partner_species,
-                                            Study.code == api_item.study_name[:4]))
-            ps_item = ps_item_query.first()
-
-            if not ps_item:
-                ps_item = PartnerSpeciesIdentifier(partner_species=api_item.partner_species,
-                                                   study_id=study.id)
-                db.add(ps_item)
-            db_item.partner_species = ps_item
-
-
+            db_item.partner_species = PartnerSpeciesIdentifier.get_or_create(db, api_item.partner_species, study.id)
 
         # print('db_map_actions')
         # print(api_item)

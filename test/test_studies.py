@@ -180,9 +180,9 @@ class TestStudies(TestBase):
         try:
 
             study1 = openapi_client.Study(name='2004-MD-UP',
-                                         code='2004')
+                                          code='2004')
 
-            if api_factory.is_authorized('2004'):
+            if not api_factory.is_authorized('2004'):
                 with pytest.raises(ApiException, status=403):
                     study_api.update_study('2004-MD-UP', study1)
             else:

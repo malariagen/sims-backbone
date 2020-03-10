@@ -550,6 +550,7 @@ class TestOriginalSample(TestBase):
             assert ffetched == fetched
 
             fetched.original_samples[0].partner_taxonomies = None
+            created.partner_taxonomies = None
 
             assert created == fetched.original_samples[0], "create response != download response"
 

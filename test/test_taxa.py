@@ -134,7 +134,20 @@ class TestTaxa(TestBase):
             samp1 = openapi_client.OriginalSample(None, study_name=study_ident,
                                                   partner_species='P. falciparum')
             created1 = api_instance.create_original_sample(samp1)
+
+            # Make sure nothing left from earlier
+            study_detail = study_api_instance.download_study(study_ident)
+
+            for species in study_detail.partner_species:
+                species.taxa = []
+
+            study_api_instance.update_study(study_ident, study_detail)
+            study_detail = study_api_instance.download_study(study_ident)
+
+            # Just deleted them
+            created1.partner_taxonomies = None
             fetched1 = api_instance.download_original_sample(created1.original_sample_id)
+
             assert created1 == fetched1, "create response != download response"
             fetched1.original_sample_id = None
             assert samp1 == fetched1, "upload != download response"
