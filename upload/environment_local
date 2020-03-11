@@ -3,3 +3,10 @@ export IMPORT_CONFIG=config_dev.json
 export CMIS_CONFIG=cmis_config.json
 export INPUT1_STAGING_DIR=input
 export OUTPUT1_STAGING_DIR=output
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+export PYTHONPATH=${DIR}:${DIR}/../python_client:${DIR}/../server:${DIR}/../server/bb_server
+set -o allexport
+source ${DIR}/../.envs/.local/.postgres
+set +o allexport
+export POSTGRES_HOST=localhost
+export POSTGRES_DB=backbone_test
