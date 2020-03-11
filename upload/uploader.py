@@ -198,18 +198,19 @@ class Uploader():
                         if 'regex' in defn:
                             re_match = re.search(defn['regex'], data_value)
                             if re_match:
-                                #print("Groupdict:" + repr(re_match.groupdict()))
+                                # print("Groupdict:" + repr(re_match.groupdict()))
                                 try:
                                     data_value = re_match.group(1)
                                 except IndexError as iere:
                                         raise InvalidDataValueException("Failed to parse {} using {}"
                                                                         .format(data_value, defn['regex'])) from iere
-                                #print("Transformed value is:" + data_value + " from " + row[defn['column']])
-                                #print(repr(re_match.groupdict()))
-                                #if row[defn['column']] != "" and data_value == "":
-                                #    print("Empty match: {} {}".format(defn['regex'], row[defn['column']]))
-                            #else:
-                            #    print("No match: {} {}".format(defn['regex'], data_value))
+                                # print("Transformed value is:" + data_value + " from " + row[defn['column']])
+                                # print(repr(re_match.groupdict()))
+                                # if row[defn['column']] != "" and data_value == "":
+                                #     print("Empty match: {} {}".format(defn['regex'], row[defn['column']]))
+                            else:
+                                # print("No match: {} {}".format(defn, data_value))
+                                data_value = None
                         if defn['type'] == 'datetime':
                             if not (data_value == '' or
                                     data_value == 'NULL' or
