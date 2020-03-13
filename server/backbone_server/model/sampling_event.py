@@ -359,7 +359,7 @@ class BaseSamplingEvent(SimsDbBase):
                              and_(original_sample_attr_table.c.original_sample_id == OriginalSample.id,
                                   original_sample_attr_table.c.attr_id.in_(attrs)))
 
-            print(db_items)
+            # print(db_items)
             # db_item = db.query(self.db_class).filter_by(id=item_id).first()
             ret = self._get_multiple_results(db, db_items, studies, start,
                                              count, study_filter=study_filter)
