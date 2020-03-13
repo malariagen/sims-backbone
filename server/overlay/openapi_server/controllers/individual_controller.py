@@ -87,7 +87,9 @@ def download_individuals(search_filter,
                                                       auths=individual_controller.token_info(token_info))
 
 
-def download_individuals_by_attr(prop_name, prop_value, study_name=None, user=None, token_info=None):  # noqa: E501
+def download_individuals_by_attr(prop_name, prop_value, study_name=None,
+                                 start=None, count=None, value_type=None,
+                                 studies=None, user=None, token_info=None):  # noqa: E501
     """fetches one or more individuals by property value
 
      # noqa: E501
@@ -104,7 +106,10 @@ def download_individuals_by_attr(prop_name, prop_value, study_name=None, user=No
     return individual_controller.download_individuals_by_attr(prop_name,
                                                               prop_value,
                                                               study_name,
-                                                              studies=None, user=user,
+                                                              start=start,
+                                                              count=count,
+                                                              value_type=value_type,
+                                                              studies=studies, user=user,
                                                               auths=individual_controller.token_info(token_info))
 
 

@@ -398,6 +398,7 @@ class SimsDbBase():
 
         # print(study_codes)
         # print(db_query)
+        # print(f'start {start} count {count} order_by {order_by}')
         for db_item in db_query.all():
             api_item = self.openapi_class()
             if isinstance(db_item, self.db_class):
@@ -432,16 +433,16 @@ class SimsDbBase():
 
 
     # Note that study_name applies to the attr not the entity
-    def get_by_attr(self, attr_type, attr_value, study_name, studies, start,
-                    count):
+    def get_by_attr(self, attr_type, attr_value, study_name, value_type, start,
+                    count, studies=None):
 
         if not attr_type:
             raise MissingKeyException(f"No attr_type to get {self.db_class.__table__}")
 
         if study_name and studies:
-            BaseController.has_study_permission(studies,
-                                                study_name,
-                                                BaseController.GET_PERMISSION)
+            self.has_study_permission(studies,
+                                      study_name,
+                                      self.GET_PERMISSION)
 
         ret = None
 
@@ -451,40 +452,46 @@ class SimsDbBase():
             from backbone_server.model.attr import Attr
             my_db_id = getattr(self.attr_link.c, self.api_id)
             attr_filter = None
-            if study_name:
-                from backbone_server.model.study import Study
+            from openapi_server.models.attr import Attr as AttrApi
+
+            api_attr = AttrApi(attr_type=attr_type,
+                               attr_value=attr_value,
+                               study_name=study_name)
+            attrs = []
+            for db_attr in Attr.get_all(db, api_attr, value_type):
+                attrs.append(db_attr.id)
+
+            if attrs:
                 attr_filter = db.query(my_db_id).\
                          join(Attr).\
-                         join(Study).\
-                         filter(and_(\
-                                Attr.attr_type == attr_type,\
-                                Attr.attr_value == attr_value,\
-                                Study.code == study_name[:4])).\
+                         filter(Attr.id.in_(attrs)).\
                         distinct(my_db_id)
+
+                db_items = self.lookup_query(db).\
+                        filter(self.db_class.id.in_(attr_filter))
+
+                ret = self._get_multiple_results(db, db_items, studies, start, count)
             else:
-                attr_filter = db.query(my_db_id).\
-                         join(Attr).\
-                         filter(and_(\
-                                Attr.attr_type == attr_type,\
-                                Attr.attr_value == attr_value)).\
-                        distinct(my_db_id)
-
-            db_items = self.lookup_query(db).\
-                    filter(self.db_class.id.in_(attr_filter))
-
-            ret = self._get_multiple_results(db, db_items, studies, start, count)
+                ret = self.openapi_multiple_class()
+                ret.count = 0
+                for key, value in ret.openapi_types.items():
+                    if issubclass(value, typing.List):
+                        # Slightly hacky to get the type of the list members
+                        (api_subitem_class,) = value.__args__
+                        if api_subitem_class == self.openapi_class:
+                            setattr(ret, key, [])
 
         return ret
 
-    def get_by_study(self, study_name, studies, start, count):
+    def get_by_study(self, study_name, start, count, studies):
 
         if not study_name:
             raise MissingKeyException(f"No study_name to get {self.db_class.__table__}")
 
         if study_name and studies:
-            BaseController.has_study_permission(studies,
-                                                study_name,
-                                                BaseController.GET_PERMISSION)
+            self.has_study_permission(studies,
+                                      study_name,
+                                      self.GET_PERMISSION)
 
         ret = None
 

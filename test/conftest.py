@@ -88,6 +88,7 @@ def user(request):
                      'cn=pi,ou=4036,ou=studies,ou=groups,dc=malariagen,dc=net',
                      'cn=pi,ou=4037,ou=studies,ou=groups,dc=malariagen,dc=net',
                      'cn=pi,ou=4038,ou=studies,ou=groups,dc=malariagen,dc=net',
+                     'cn=pi,ou=4039,ou=studies,ou=groups,dc=malariagen,dc=net',
                      'cn=pi,ou=5000,ou=studies,ou=groups,dc=malariagen,dc=net',
                      'cn=pi,ou=5002,ou=studies,ou=groups,dc=malariagen,dc=net',
                      'cn=pi,ou=5004,ou=studies,ou=groups,dc=malariagen,dc=net',

@@ -66,7 +66,7 @@ class BaseIndividual(SimsDbBase):
         self.api_id = 'individual_id'
         self.duplicate_attrs = []
 
-    def get_by_study(self, study_name, studies, start, count):
+    def get_by_study(self, study_name, start, count, studies):
 
         if not study_name:
             raise MissingKeyException(f"No study_name to get {self.db_class.__table__}")

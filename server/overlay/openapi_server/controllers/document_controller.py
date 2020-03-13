@@ -69,8 +69,8 @@ def download_document_content(document_id, user=None, token_info=None):  # noqa:
     :rtype: Document
     """
     return document_controller.download_document_content(document_id, studies=None,
-                                                 user=user,
-                                                 auths=document_controller.token_info(token_info))
+                                                         user=user,
+                                                         auths=document_controller.token_info(token_info))
 
 
 def download_documents_by_study(study_name, user=None, token_info=None):  # noqa: E501
@@ -119,6 +119,6 @@ def update_document_content(document_id, body, user=None, token_info=None):  # n
 
     :rtype: Document
     """
-    return document_controller.update_document_content(document_id, document, studies=None,
-                                               user=user,
-                                               auths=document_controller.token_info(token_info))
+    return document_controller.update_document_content(document_id, body, studies=None,
+                                                       user=user,
+                                                       auths=document_controller.token_info(token_info))

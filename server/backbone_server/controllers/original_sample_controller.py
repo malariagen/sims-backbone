@@ -103,7 +103,8 @@ class OriginalSampleController(BaseController):
 
         return samp, retcode
 
-    def download_original_samples(self, search_filter, start, count,
+    def download_original_samples(self, search_filter, value_type=None,
+                                  start=None, count=None,
                                   studies=None, user=None, auths=None):
         """
         fetches originalSamples for a event_set
@@ -141,8 +142,10 @@ class OriginalSampleController(BaseController):
             return self.download_original_samples_by_attr(options[1],
                                                           options[2],
                                                           study_name,
-                                                          studies=studies,
-                                                          user=user,
+                                                          value_type=value_type,
+                                                          start=start,
+                                                          count=count,
+                                                          studies=studies, user=user,
                                                           auths=auths)
         else:
             samp = 'Invalid filter option'
@@ -180,7 +183,9 @@ class OriginalSampleController(BaseController):
         return samp, retcode
 
     def download_original_samples_by_attr(self, prop_name, prop_value,
-                                          study_name=None, studies=None, user=None, auths=None):
+                                          study_name=None,
+                                          value_type=None, start=None, count=None,
+                                          studies=None, user=None, auths=None):
         """
         fetches a originalSample by property value
 
@@ -197,11 +202,8 @@ class OriginalSampleController(BaseController):
         retcode = 200
         samp = None
 
-        prop_value = urllib.parse.unquote_plus(prop_value)
-        start = 0
-        count = 9999
-        samp = get.get_by_attr(prop_name, prop_value, study_name,
-                               studies, start, count)
+        samp = get.get_by_attr(prop_name, prop_value, study_name, value_type,
+                               start, count, studies)
 
         return samp, retcode
 
@@ -251,7 +253,7 @@ class OriginalSampleController(BaseController):
         samp = None
 
         try:
-            samp = get.get_by_study(study_name, studies, start, count)
+            samp = get.get_by_study(study_name, start, count, studies)
         except MissingKeyException as dme:
             logging.getLogger(__name__).debug("download_originalSample: %s", repr(dme))
             retcode = 404

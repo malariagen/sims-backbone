@@ -2,9 +2,9 @@ from datetime import datetime
 
 from sqlalchemy import Table, MetaData, Column
 from sqlalchemy import Integer, String, ForeignKey, DateTime, Date, func, UniqueConstraint
-from sqlalchemy import or_
+from sqlalchemy import or_, and_
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm import relationship, backref, foreign
+from sqlalchemy.orm import relationship, backref, aliased
 
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.ext.declarative import declared_attr
@@ -16,6 +16,7 @@ from backbone_server.errors.duplicate_key_exception import DuplicateKeyException
 from backbone_server.errors.missing_key_exception import MissingKeyException
 from backbone_server.errors.nested_edit_exception import NestedEditException
 from backbone_server.errors.invalid_date_exception import InvalidDateException
+from backbone_server.errors.permission_exception import PermissionException
 
 from backbone_server.model.scope import session_scope
 
@@ -216,7 +217,8 @@ class BaseAssayDatum(SimsDbBase):
 #                     raise MissingKeyException("No event_set_name {}".format(event_set_name))
 #         return ret
 #
-    def get_by_os_attr(self, attr_type, attr_value, study_name, studies, start, count):
+    def get_by_os_attr(self, attr_type, attr_value, study_name, value_type, start,
+                       count, studies):
 
         if not attr_type:
             raise MissingKeyException(f"No attr_type to get {self.db_class.__table__}")
@@ -229,21 +231,48 @@ class BaseAssayDatum(SimsDbBase):
         ret = None
 
         with session_scope(self.session) as db:
+            from backbone_server.model.original_sample import original_sample_attr_table
+
+            from openapi_server.models.attr import Attr as AttrApi
+
+            api_attr = AttrApi(attr_type=attr_type,
+                               attr_value=attr_value,
+                               study_name=study_name)
+            attrs = []
+            for db_attr in Attr.get_all(db, api_attr, value_type):
+                attrs.append(db_attr.id)
+
+            if not attrs:
+                ret = self.openapi_multiple_class()
+                ret.count = 0
+                return ret
 
             db_items = None
             if study_name:
+                study_codes = self.study_filter(studies)
+
+                if study_codes:
+                    if study_name[:4] not in study_codes:
+                        raise PermissionException(f'No allowed to access {study_name}')
+
+                os_study = aliased(OriginalSample.study)
                 db_items = db.query(self.db_class).\
                         join(self.db_class.derivative_sample).\
                         join(OriginalSample).\
-                        filter(Study.code == study_name[:4]).\
-                        filter(Attr.attr_type == attr_type).\
-                        filter(Attr.attr_value == attr_value)
+                        join(original_sample_attr_table,
+                             and_(original_sample_attr_table.c.original_sample_id == DerivativeSample.original_sample_id,
+                                  original_sample_attr_table.c.attr_id.in_(attrs))).\
+                        outerjoin(Study).\
+                        outerjoin(os_study, OriginalSample.study_id == os_study.id).\
+                        filter(or_(Study.code == study_name[:4],
+                                   os_study.code == study_name[:4]))
             else:
                 db_items = db.query(self.db_class).\
                         join(self.db_class.derivative_sample).\
                         join(OriginalSample).\
-                        filter(Attr.attr_type == attr_type).\
-                        filter(Attr.attr_value == attr_value)
+                        join(original_sample_attr_table,
+                             and_(original_sample_attr_table.c.original_sample_id == DerivativeSample.original_sample_id,
+                                  original_sample_attr_table.c.attr_id.in_(attrs)))
             # db_item = db.query(self.db_class).filter_by(id=item_id).first()
 
             ret = self._get_multiple_results(db, db_items, studies, start, count)

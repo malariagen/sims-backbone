@@ -122,7 +122,7 @@ class IndividualController(BaseController):
         return loc, retcode
 
     def download_individuals(self, search_filter, study_name=None,
-                             studies=None, start=None, count=None, orderby=None, user=None,
+                             value_type=None, start=None, count=None, orderby=None, studies=None, user=None,
                              auths=None):
         """
         fetches individuals
@@ -159,6 +159,8 @@ class IndividualController(BaseController):
             return self.download_individuals_by_attr(options[1],
                                                      options[2],
                                                      study_name,
+                                                     value_type,
+                                                     start, count,
                                                      studies,
                                                      user,
                                                      auths)
@@ -169,7 +171,8 @@ class IndividualController(BaseController):
         return indiv, retcode
 
     def download_individuals_by_attr(self, prop_name, prop_value,
-                                     study_name=None, studies=None, user=None, auths=None):
+                                     study_name=None, value_type=None,
+                                     start=None, count=None, studies=None, user=None, auths=None):
         """
         fetches a individual by property value
 
@@ -185,11 +188,8 @@ class IndividualController(BaseController):
 
         retcode = 200
         samp = None
-        start = None
-        count = None
-        prop_value = urllib.parse.unquote_plus(prop_value)
-        samp = get.get_by_attr(prop_name, prop_value, study_name, studies,
-                               start, count)
+        samp = get.get_by_attr(prop_name, prop_value, study_name, value_type,
+                               start, count, studies)
 
         return samp, retcode
 

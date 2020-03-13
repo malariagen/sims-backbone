@@ -55,7 +55,9 @@ def download_assay_datum(assay_datum_id, studies=None, user=None, token_info=Non
                                                        auths=assay_datum_controller.token_info(token_info))
 
 
-def download_assay_data_by_attr(prop_name, prop_value, study_name=None, studies=None, user=None, token_info=None):  # noqa: E501
+def download_assay_data_by_attr(prop_name, prop_value, study_name=None,
+                                start=None, count=None,
+                                value_type=None, studies=None, user=None, token_info=None):  # noqa: E501
     """fetches one or more AssayDatum by property value
 
      # noqa: E501
@@ -69,11 +71,19 @@ def download_assay_data_by_attr(prop_name, prop_value, study_name=None, studies=
 
     :rtype: AssayData
     """
-    return assay_datum_controller.download_assay_data_by_attr(prop_name, prop_value, study_name, studies=studies, user=user,
+    return assay_datum_controller.download_assay_data_by_attr(prop_name,
+                                                              prop_value,
+                                                              study_name,
+                                                              start=start,
+                                                              count=count,
+                                                              value_type=value_type,
+                                                              studies=studies, user=user,
                                                               auths=assay_datum_controller.token_info(token_info))
 
 
-def download_assay_data_by_os_attr(prop_name, prop_value, study_name=None, studies=None, user=None, token_info=None):  # noqa: E501
+def download_assay_data_by_os_attr(prop_name, prop_value, study_name=None,
+                                   start=None, count=None,
+                                   value_type=None, studies=None, user=None, token_info=None):  # noqa: E501
     """fetches one or more assayData by property value of associated original samples
 
      # noqa: E501
@@ -87,7 +97,12 @@ def download_assay_data_by_os_attr(prop_name, prop_value, study_name=None, studi
 
     :rtype: AssayData
     """
-    return assay_datum_controller.download_assay_data_by_os_attr(prop_name, prop_value, study_name, studies=studies, user=user,
+    return assay_datum_controller.download_assay_data_by_os_attr(prop_name,
+                                                                 prop_value,
+                                                                 study_name=study_name,
+                                                                 start=start, count=count,
+                                                                 value_type=value_type,
+                                                                 studies=studies, user=user,
                                                                  auths=assay_datum_controller.token_info(token_info))
 
 

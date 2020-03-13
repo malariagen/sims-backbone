@@ -74,11 +74,15 @@ class AbstractBackboneDAO(abc.ABC):
 
     @abc.abstractmethod
     def download_locations_by_attr(self, attr_type, attr_value,
-                                   study_name=None, studies=None, user=None):
+                                   study_name=None, value_type=None,
+                                   start=None, count=None, studies=None, user=None):
 
         ret = self.location_api_instance.download_locations_by_attr(attr_type,
                                                                     attr_value,
-                                                                    study_name, studies=None, user=user)
+                                                                    study_name,
+                                                                    value_type=value_type,
+                                                                    start=start,
+                                                                    count=count, studies=None, user=user)
 
         return ret
 
@@ -105,10 +109,15 @@ class AbstractBackboneDAO(abc.ABC):
         return self.se_api_instance.download_sampling_events_by_event_set(eventSetId, studies=None, user=user)
 
     @abc.abstractmethod
-    def download_sampling_events_by_attr(self, attr_type, attr_value, studies=None, user=None):
+    def download_sampling_events_by_attr(self, attr_type, attr_value,
+                                         value_type=None, start=None,
+                                         count=None, studies=None, user=None):
 
         found_events = self.se_api_instance.download_sampling_events_by_attr(attr_type,
-                                                                                   attr_value, studies=None, user=user)
+                                                                             attr_value,
+                                                                             value_type=value_type,
+                                                                             start=start,
+                                                                             count=count, studies=None, user=user)
 
         return found_events
 
@@ -123,10 +132,15 @@ class AbstractBackboneDAO(abc.ABC):
         return found_events
 
     @abc.abstractmethod
-    def download_sampling_events_by_os_attr(self, attr_type, attr_value, studies=None, user=None):
+    def download_sampling_events_by_os_attr(self, attr_type, attr_value,
+                                            value_type=None, start=None,
+                                            count=None, studies=None, user=None):
 
         found_events = self.se_api_instance.download_sampling_events_by_os_attr(attr_type,
-                                                                                   attr_value, studies=None, user=user)
+                                                                                attr_value,
+                                                                                value_type=value_type,
+                                                                                start=start,
+                                                                                count=count, studies=None, user=user)
 
         return found_events
 
@@ -188,9 +202,15 @@ class AbstractBackboneDAO(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def download_original_samples_by_attr(self, attr_type, attr_value, studies=None, user=None):
+    def download_original_samples_by_attr(self, attr_type, attr_value,
+                                          value_type=None, start=None,
+                                          count=None, studies=None, user=None):
 
-        return self.os_api_instance.download_original_samples_by_attr(attr_type, attr_value, studies=None, user=user)
+        return self.os_api_instance.download_original_samples_by_attr(attr_type,
+                                                                      attr_value,
+                                                                      value_type=value_type,
+                                                                      start=start,
+                                                                      count=count, studies=None, user=user)
 
     @abc.abstractmethod
     def download_original_samples_by_study(self, study_name, start=None,
@@ -231,9 +251,15 @@ class AbstractBackboneDAO(abc.ABC):
         return self.ds_api_instance.download_derivative_sample(derivative_sample_id, studies=None, user=user)
 
     @abc.abstractmethod
-    def download_derivative_samples_by_attr(self, attr_type, attr_value, studies=None, user=None):
+    def download_derivative_samples_by_attr(self, attr_type, attr_value,
+                                            value_type=None, start=None,
+                                            count=None, studies=None, user=None):
 
-        return self.ds_api_instance.download_derivative_samples_by_attr(attr_type, attr_value, studies=None, user=user)
+        return self.ds_api_instance.download_derivative_samples_by_attr(attr_type,
+                                                                        attr_value,
+                                                                        value_type=value_type,
+                                                                        start=start,
+                                                                        count=count, studies=None, user=user)
 
     @abc.abstractmethod
     def download_derivative_samples_by_study(self, study_name, start=None, count=None, studies=None, user=None):
@@ -243,9 +269,15 @@ class AbstractBackboneDAO(abc.ABC):
                                                                          count=count, studies=None, user=user)
 
     @abc.abstractmethod
-    def download_derivative_samples_by_os_attr(self, attr_type, attr_value, studies=None, user=None):
+    def download_derivative_samples_by_os_attr(self, attr_type, attr_value,
+                                               value_type=None,
+                                               start=None, count=None, studies=None, user=None):
 
-        return self.ds_api_instance.download_derivative_samples_by_os_attr(attr_type, attr_value, studies=None, user=user)
+        return self.ds_api_instance.download_derivative_samples_by_os_attr(attr_type,
+                                                                           attr_value,
+                                                                           value_type=value_type,
+                                                                           start=start,
+                                                                           count=count, studies=None, user=user)
 
 
     @abc.abstractmethod
@@ -265,9 +297,14 @@ class AbstractBackboneDAO(abc.ABC):
         return self.ad_api_instance.delete_assay_datum(assay_datum_id, studies=None, user=user)
 
     @abc.abstractmethod
-    def download_assay_data_by_attr(self, attr_type, attr_value, studies=None, user=None):
+    def download_assay_data_by_attr(self, attr_type, attr_value,
+                                    value_type=None, start=None, count=None, studies=None, user=None):
 
-        return self.ad_api_instance.download_assay_data_by_attr(attr_type, attr_value, studies=None, user=user)
+        return self.ad_api_instance.download_assay_data_by_attr(attr_type,
+                                                                attr_value,
+                                                                value_type=value_type,
+                                                                start=start,
+                                                                count=count, studies=None, user=user)
 
     @abc.abstractmethod
     def download_study(self, study_code, studies=None, user=None):
@@ -313,11 +350,15 @@ class AbstractBackboneDAO(abc.ABC):
 
     @abc.abstractmethod
     def download_individuals_by_attr(self, prop_name, prop_value,
-                                     study_name=None, studies=None, user=None):
+                                     study_name=None, value_type=None,
+                                     start=None, count=None, studies=None, user=None):
 
         return self.i_api_instance.download_individuals_by_attr(prop_name,
                                                                 prop_value,
-                                                                study_name=study_name, studies=None, user=user)
+                                                                study_name=study_name,
+                                                                value_type=value_type,
+                                                                start=start,
+                                                                count=count, studies=None, user=user)
 
     @abc.abstractmethod
     def download_history(self, record_type, record_id, studies=None, user=None):

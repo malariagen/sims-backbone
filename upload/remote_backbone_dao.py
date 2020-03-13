@@ -114,11 +114,15 @@ class RemoteBackboneDAO(AbstractBackboneDAO):
         return ret
 
     def download_locations_by_attr(self, attr_type, attr_value,
-                                   study_name=None, user=None):
+                                   study_name=None, value_type=None,
+                                   start=None, count=None, user=None):
 
         ret = self.location_api_instance.download_locations_by_attr(attr_type,
                                                                     attr_value,
-                                                                    study_name=study_name)
+                                                                    study_name=study_name,
+                                                                    value_type=value_type,
+                                                                    start=start,
+                                                                    count=count)
 
         return ret
 
@@ -144,35 +148,53 @@ class RemoteBackboneDAO(AbstractBackboneDAO):
     def download_sampling_events_by_study(self, study_id, start=None,
                                           count=None, user=None):
         return self.se_api_instance.download_sampling_events_by_study(study_id,
-                                                                     start=start,
-                                                                     count=count)
+                                                                      start=start,
+                                                                      count=count)
 
-    def download_sampling_events_by_attr(self, attr_type, attr_value):
+    def download_sampling_events_by_attr(self, attr_type, attr_value,
+                                         value_type=None, start=None,
+                                         count=None):
 
         value = urllib.parse.quote_plus(attr_value)
         found_events = self.se_api_instance.download_sampling_events_by_attr(attr_type,
-                                                                             value)
+                                                                             value,
+                                                                             value_type=value_type,
+                                                                             start=start,
+                                                                             count=count)
 
         return found_events
 
-    def download_sampling_events_by_os_attr(self, attr_type, attr_value, user=None):
+    def download_sampling_events_by_os_attr(self, attr_type, attr_value,
+                                            value_type=None, start=None,
+                                            count=None, user=None):
 
         value = urllib.parse.quote_plus(attr_value)
         found_events = self.se_api_instance.download_sampling_events_by_os_attr(attr_type,
-                                                                                value)
+                                                                                value,
+                                                                                value_type=value_type,
+                                                                                start=start,
+                                                                                count=count)
 
         return found_events
 
-    def download_original_samples(self, search_filter, user=None):
+    def download_original_samples(self, search_filter, value_type=None,
+                                  start=None, count=None, user=None):
 
-        found_events = self.os_api_instance.download_original_samples(search_filter)
+        found_events = self.os_api_instance.download_original_samples(search_filter,
+                                                                      value_type=value_type,
+                                                                      start=start, count=count)
 
         return found_events
 
-    def download_original_samples_by_attr(self, attr_type, attr_value, user=None):
+    def download_original_samples_by_attr(self, attr_type, attr_value,
+                                          value_type=None, start=None,
+                                          count=None, user=None):
 
         found_events = self.os_api_instance.download_original_samples_by_attr(attr_type,
-                                                                              urllib.parse.quote_plus(attr_value))
+                                                                              urllib.parse.quote_plus(attr_value),
+                                                                              value_type=value_type,
+                                                                              start=start,
+                                                                              count=count)
 
         return found_events
 
@@ -233,10 +255,6 @@ class RemoteBackboneDAO(AbstractBackboneDAO):
 
         return self.os_api_instance.download_original_sample(original_sample_id)
 
-    def download_original_samples_by_attr(self, attr_type, attr_value, user=None):
-
-        return self.os_api_instance.download_original_samples_by_attr(attr_type, attr_value)
-
     def download_original_samples_by_event_set(self, event_set_id, start=None,
                                                count=None, user=None):
 
@@ -252,7 +270,7 @@ class RemoteBackboneDAO(AbstractBackboneDAO):
         return self.ds_api_instance.update_derivative_sample(derivative_sample_id,
                                                                             derivative_sample)
 
-    def delete_derivative_sample(self, derivative_sample_id , user=None):
+    def delete_derivative_sample(self, derivative_sample_id, user=None):
 
         return self.ds_api_instance.delete_derivative_sample(derivative_sample_id)
 
@@ -260,16 +278,28 @@ class RemoteBackboneDAO(AbstractBackboneDAO):
 
         return self.ds_api_instance.download_derivative_sample(derivative_sample_id)
 
-    def download_derivative_samples_by_attr(self, attr_type, attr_value, user=None):
+    def download_derivative_samples_by_attr(self, attr_type, attr_value,
+                                            value_type=None, start=None,
+                                            count=None, user=None):
 
-        return self.ds_api_instance.download_derivative_samples_by_attr(attr_type, attr_value)
+        return self.ds_api_instance.download_derivative_samples_by_attr(attr_type,
+                                                                        attr_value,
+                                                                        value_type=value_type,
+                                                                        start=start,
+                                                                        count=count)
 
     def download_derivative_samples_by_study(self, study_name, start=None, count=None, studies=None, user=None):
         return self.ds_api_instance.download_derivative_samples_by_study(study_name, start=start, count=count)
 
-    def download_derivative_samples_by_os_attr(self, attr_type, attr_value, user=None):
+    def download_derivative_samples_by_os_attr(self, attr_type, attr_value,
+                                               value_type=None,
+                                               start=None, count=None, user=None):
 
-        return self.ds_api_instance.download_derivative_samples_by_os_attr(attr_type, attr_value)
+        return self.ds_api_instance.download_derivative_samples_by_os_attr(attr_type,
+                                                                           attr_value,
+                                                                           value_type=value_type,
+                                                                           start=start,
+                                                                           count=count)
 
 
     def create_assay_datum(self, assay_datum, user=None):
@@ -285,9 +315,15 @@ class RemoteBackboneDAO(AbstractBackboneDAO):
 
         return self.ad_api_instance.delete_assay_datum(assay_datum_id)
 
-    def download_assay_data_by_attr(self, attr_type, attr_value, user=None):
+    def download_assay_data_by_attr(self, attr_type, attr_value,
+                                    value_type=None, start=None,
+                                    count=None, user=None):
 
-        return self.ad_api_instance.download_assay_data_by_attr(attr_type, attr_value)
+        return self.ad_api_instance.download_assay_data_by_attr(attr_type,
+                                                                attr_value,
+                                                                value_type=value_type,
+                                                                start=start,
+                                                                count=count)
 
     def download_study(self, study_code, user=None):
         return self.study_api_instance.download_study(study_code)
@@ -319,20 +355,28 @@ class RemoteBackboneDAO(AbstractBackboneDAO):
 
         return self.i_api_instance.download_individual(individual_id)
 
-    def download_individuals(self, search_filter, study_name=None, user=None):
+    def download_individuals(self, search_filter, study_name=None,
+                             value_type=None, start=None, count=None, user=None):
 
         return self.i_api_instance.download_individuals_by_attr(search_filter,
-                                                                study_name=study_name)
+                                                                study_name=study_name,
+                                                                value_type=value_type,
+                                                                start=start,
+                                                                count=count)
 
     def download_individuals_by_attr(self, prop_name, prop_value,
-                                     study_name=None, user=None):
+                                     study_name=None, value_type=None,
+                                     start=None, count=None, user=None):
 
         return self.i_api_instance.download_individuals_by_attr(prop_name,
                                                                 prop_value,
-                                                                study_name=study_name)
+                                                                study_name=study_name,
+                                                                value_type=value_type,
+                                                                start=start,
+                                                                count=count)
 
     def download_history(self, record_type, record_id, user=None):
         history = self.metadata_api_instance.download_history(record_type,
-                                                               record_id)
+                                                              record_id)
 
         return history

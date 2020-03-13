@@ -24,6 +24,26 @@
           required: false
           schema:
             type: string
+        - name: start
+          in: query
+          description: for pagination start the result set at a record x
+          required: false
+          schema:
+            type: integer
+        - name: count
+          in: query
+          description: for pagination the number of entries to return
+          required: false
+          schema:
+            type: integer
+        - name: value_type
+          in: query
+          description: The type of the attribute you want to search for
+          required: false
+          schema:
+            type: string
+            enum: [str, int, float, date]
+            default: str
       responses:
         "200":
           description: successful operation

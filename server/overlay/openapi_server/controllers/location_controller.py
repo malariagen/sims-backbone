@@ -93,7 +93,8 @@ def download_locations(study_name=None, start=None, count=None, orderby=None, us
 
 
 def download_locations_by_attr(prop_name, prop_value,
-                               study_name=None, user=None,
+                               study_name=None, start=None, count=None,
+                               value_type=None, studies=None, user=None,
                                token_info=None):  # noqa: E501
     """fetches one or more location by property value
 
@@ -109,7 +110,12 @@ def download_locations_by_attr(prop_name, prop_value,
     :rtype: Locations
     """
     return location_controller.download_locations_by_attr(prop_name,
-                                                          prop_value, study_name, studies=None, user=user,
+                                                          prop_value,
+                                                          study_name,
+                                                          start=start,
+                                                          count=count,
+                                                          value_type=value_type,
+                                                          studies=studies, user=user,
                                                           auths=location_controller.token_info(token_info))
 
 

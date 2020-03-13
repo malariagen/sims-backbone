@@ -87,7 +87,9 @@ class AssayDatumController(BaseController):
 
         return samp, retcode
 
-    def download_assay_data_by_attr(self, prop_name, prop_value, study_name=None, studies=None, user=None, auths=None):  # noqa: E501
+    def download_assay_data_by_attr(self, prop_name, prop_value,
+                                    study_name=None, value_type=None, start=None,
+                                    count=None, studies=None, user=None, auths=None):  # noqa: E501
         """fetches one or more AssayDatum by property value
 
          # noqa: E501
@@ -107,14 +109,14 @@ class AssayDatumController(BaseController):
         retcode = 200
         samp = None
 
-        prop_value = urllib.parse.unquote_plus(prop_value)
-        start = None
-        count = None
-        samp = get.get_by_attr(prop_name, prop_value, study_name, studies, start, count)
+        samp = get.get_by_attr(prop_name, prop_value, study_name, value_type,
+                               start, count, studies)
 
         return samp, retcode
 
-    def download_assay_data_by_os_attr(self, prop_name, prop_value, study_name=None, studies=None, user=None, auths=None):  # noqa: E501
+    def download_assay_data_by_os_attr(self, prop_name, prop_value,
+                                       study_name=None, value_type=None,
+                                       start=None, count=None, studies=None, user=None, auths=None):  # noqa: E501
         """fetches one or more assayData by property value of associated original samples
 
          # noqa: E501
@@ -135,9 +137,8 @@ class AssayDatumController(BaseController):
         samp = None
 
         prop_value = urllib.parse.unquote_plus(prop_value)
-        start = None
-        count = None
-        samp = get.get_by_os_attr(prop_name, prop_value, study_name, studies, start, count)
+        samp = get.get_by_os_attr(prop_name, prop_value, study_name,
+                                  value_type, start, count, studies)
 
         return samp, retcode
 

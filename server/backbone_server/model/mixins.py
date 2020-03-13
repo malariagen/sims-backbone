@@ -147,6 +147,13 @@ class Base(object):
                     setattr(openapi_type, key, str(getattr(self, key)))
                 else:
                     setattr(openapi_type, key, getattr(self, key))
+            elif key == 'attr_value':
+                for value_type in ['attr_value_str', 'attr_value_int',
+                                   'attr_value_float', 'attr_value_date',
+                                   'attr_value_datetime',
+                                   'attr_value_list_int', 'attr_value_object']:
+                    if getattr(self, value_type):
+                        setattr(openapi_type, key, getattr(self, value_type))
             else:
                 # print(f'No mapping d2a: {self.__class__.__name__}:' + key)
                 pass

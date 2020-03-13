@@ -6,7 +6,7 @@ components:
         attr_type:
           type: string
         attr_value:
-          type: string
+          $ref: '../../sims-backbone.yaml#/components/schemas/AnyValue'
         attr_source:
           type: string
         study_name:

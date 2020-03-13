@@ -99,7 +99,8 @@ class LocalLocationApi(BaseLocalApi):
         return self.create_response(ret, retcode, 'Locations')
 
     def download_locations_by_attr(self, attr_type, attr_value,
-                                   study_name=None, studies=None):
+                                   study_name=None, value_type=None,
+                                   start=None, count=None, studies=None):
         """
         fetches locations
 
@@ -115,7 +116,11 @@ class LocalLocationApi(BaseLocalApi):
         :rtype: Locations
         """
         (ret, retcode) = self.location_controller.download_locations_by_attr(attr_type,
-                                                                             attr_value, study_name,
+                                                                             attr_value,
+                                                                             study_name,
+                                                                             value_type=value_type,
+                                                                             start=start,
+                                                                             count=count,
                                                                              studies=studies, user=self._user,
                                                                              auths=self.location_controller.token_info(self.auth_tokens()))
 

@@ -87,7 +87,9 @@ class LocalIndividualApi(BaseLocalApi):
 
         return self.create_response(ret, retcode, 'Individuals')
 
-    def download_individuals_by_attr(self, attr_name, attr_value, study_name=None):
+    def download_individuals_by_attr(self, attr_name, attr_value,
+                                     study_name=None, value_type=None,
+                                     start=None, count=None):
         """
         fetches individuals
 
@@ -105,6 +107,9 @@ class LocalIndividualApi(BaseLocalApi):
         (ret, retcode) = self.individual_controller.download_individuals_by_attr(attr_name,
                                                                                  attr_value,
                                                                                  study_name,
+                                                                                 value_type=value_type,
+                                                                                 start=start,
+                                                                                 count=count,
                                                                                  user=self._user,
                                                                                  auths=self.individual_controller.token_info(self.auth_tokens()))
 

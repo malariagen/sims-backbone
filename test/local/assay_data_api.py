@@ -77,7 +77,9 @@ class LocalAssayDataApi(BaseLocalApi):
 
         return self.create_response(ret, retcode, 'AssayData')
 
-    def download_assay_data_by_attr(self, prop_name, prop_value, study_name=None, studies=None):
+    def download_assay_data_by_attr(self, prop_name, prop_value,
+                                    study_name=None, value_type=None,
+                                    start=None, count=None, studies=None):
         """
         fetches a assayDatum by property value
 
@@ -90,12 +92,17 @@ class LocalAssayDataApi(BaseLocalApi):
         """
         (ret, retcode) = self.assay_datum_controller.download_assay_data_by_attr(prop_name, prop_value,
                                                                                  study_name,
+                                                                                 value_type=value_type,
+                                                                                 start=start,
+                                                                                 count=count,
                                                                                  studies=studies, user=self._user,
                                                                                  auths=self.assay_datum_controller.token_info(self.auth_tokens()))
 
         return self.create_response(ret, retcode, 'AssayData')
 
-    def download_assay_data_by_os_attr(self, prop_name, prop_value, study_name=None, studies=None):
+    def download_assay_data_by_os_attr(self, prop_name, prop_value,
+                                       study_name=None, value_type=None,
+                                       start=None, count=None, studies=None):
         """
         fetches a assayDatum by property value
 
@@ -108,6 +115,9 @@ class LocalAssayDataApi(BaseLocalApi):
         """
         (ret, retcode) = self.assay_datum_controller.download_assay_data_by_os_attr(prop_name, prop_value,
                                                                                     study_name,
+                                                                                    value_type=value_type,
+                                                                                    start=start,
+                                                                                    count=count,
                                                                                     studies=studies, user=self._user,
                                                                                     auths=self.assay_datum_controller.token_info(self.auth_tokens()))
 

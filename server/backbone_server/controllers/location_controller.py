@@ -144,7 +144,7 @@ class LocationController(BaseController):
         return loc, retcode
 
     def download_locations_by_attr(self, attr_type, attr_value, study_code,
-                                  studies=None, user=None, auths=None):
+                                  value_type=None, start=None, count=None, studies=None, user=None, auths=None):
         """
         fetches an location
 
@@ -158,11 +158,10 @@ class LocationController(BaseController):
 
         retcode = 200
         loc = None
-        start = None
-        count = None
 
-        loc = get.get_by_attr(attr_type, attr_value, study_code, studies,
-                              start, count)
+        loc = get.get_by_attr(attr_type, attr_value, study_code,
+                              value_type=value_type,
+                              start=start, count=count, studies=studies)
 
         return loc, retcode
 
@@ -204,8 +203,11 @@ class LocationController(BaseController):
         """
 
         return self.download_locations_by_attr('partner_name', partner_id,
-                                               None, studies, user,
-                                               auths)
+                                               study_code=None,
+                                               value_type='str',
+                                               start=None, count=None,
+                                               studies=studies, user=user,
+                                               auths=auths)
 
     def update_location(self, location_id, location, studies=None, user=None, auths=None):
         """

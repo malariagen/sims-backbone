@@ -53,7 +53,8 @@ def download_sampling_event(sampling_event_id, user=None, token_info=None):
                                                              auths=sampling_event_controller.token_info(token_info))
 
 
-def download_sampling_events(search_filter=None, studies=None, start=None, count=None, user=None, token_info=None):  # noqa: E501
+def download_sampling_events(search_filter=None, start=None,
+                             count=None, value_type=None, studies=None, user=None, token_info=None):  # noqa: E501
     """fetches samplingEvents
 
      # noqa: E501
@@ -68,10 +69,10 @@ def download_sampling_events(search_filter=None, studies=None, start=None, count
     :rtype: SamplingEvents
     """
     return sampling_event_controller.download_sampling_events(search_filter,
-                                                              studies=studies,
                                                               start=start,
                                                               count=count,
-                                                              user=user,
+                                                              value_type=value_type,
+                                                              studies=studies, user=user,
                                                               auths=sampling_event_controller.token_info(token_info))
 
 
@@ -94,7 +95,8 @@ def download_sampling_events_by_event_set(event_set_id, start=None, count=None, 
                                                                            auths=sampling_event_controller.token_info(token_info))
 
 
-def download_sampling_events_by_attr(prop_name, prop_value, study_name=None, user=None, token_info=None):
+def download_sampling_events_by_attr(prop_name, prop_value, study_name=None,
+                                     start=None, count=None, value_type=None, user=None, token_info=None):
     """
     fetches a samplingEvent by property value
 
@@ -107,11 +109,16 @@ def download_sampling_events_by_attr(prop_name, prop_value, study_name=None, use
     """
     return sampling_event_controller.download_sampling_events_by_attr(prop_name, prop_value,
                                                                       study_name,
-                                                                      studies=None, user=user,
+                                                                      start=start,
+                                                                      count=count,
+                                                                      value_type=value_type,
+                                                                      studies=studies, user=user,
                                                                       auths=sampling_event_controller.token_info(token_info))
 
 
-def download_sampling_events_by_os_attr(prop_name, prop_value, study_name=None, user=None, token_info=None):
+def download_sampling_events_by_os_attr(prop_name, prop_value, study_name=None,
+                                        start=None, count=None,
+                                        value_type=None, user=None, token_info=None):
     """
     fetches a samplingEvent by property value of associated original sample
 
@@ -124,7 +131,10 @@ def download_sampling_events_by_os_attr(prop_name, prop_value, study_name=None, 
     """
     return sampling_event_controller.download_sampling_events_by_os_attr(prop_name, prop_value,
                                                                          study_name,
-                                                                         studies=None, user=user,
+                                                                         start=start,
+                                                                         count=count,
+                                                                         value_type=value_type,
+                                                                         studies=studies, user=user,
                                                                          auths=sampling_event_controller.token_info(token_info))
 
 

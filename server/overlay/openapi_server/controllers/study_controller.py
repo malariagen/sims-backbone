@@ -22,9 +22,8 @@ def download_studies(studies=None, start=None, count=None, user=None, token_info
 
     :rtype: Studies
     """
-    return study_controller.download_studies(studies=studies,
-                                             start=start,
-                                             count=count,
+    return study_controller.download_studies(start=start,
+                                             count=count, studies=studies,
                                              user=user,
                                              auths=study_controller.token_info(token_info))
 

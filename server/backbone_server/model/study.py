@@ -337,7 +337,6 @@ class BaseStudy(SimsDbBase):
 
         study_name = api_item.name
 
-        api_item.locations = locs.get_by_study(study_name, studies, None,
-                                               None)
+        api_item.locations = locs.get_by_study(study_name, None, None, studies)
 
         return api_item

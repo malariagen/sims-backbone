@@ -1,6 +1,5 @@
 
 import logging
-
 import urllib
 
 from backbone_server.model.derivative_sample import BaseDerivativeSample
@@ -102,7 +101,9 @@ class DerivativeSampleController(BaseController):
 
         return samp, retcode
 
-    def download_derivative_samples(self, search_filter, start, count, studies=None, user=None, auths=None):
+    def download_derivative_samples(self, search_filter, value_type=None,
+                                    start=None, count=None,
+                                    studies=None, user=None, auths=None):
         """
         fetches derivativeSamples for a event_set
 
@@ -115,6 +116,7 @@ class DerivativeSampleController(BaseController):
         retcode = 200
         samp = None
 
+        # print(f'search_filter {search_filter} vt {value_type} start {start} count {count}')
         search_filter = urllib.parse.unquote_plus(search_filter)
         options = search_filter.split(':')
         if len(options) < 2:
@@ -139,9 +141,12 @@ class DerivativeSampleController(BaseController):
             return self.download_derivative_samples_by_attr(options[1],
                                                             options[2],
                                                             study_name,
-                                                            studies,
-                                                            user,
-                                                            auths)
+                                                            value_type=value_type,
+                                                            start=start,
+                                                            count=count,
+                                                            studies=studies,
+                                                            user=user,
+                                                            auths=auths)
         else:
             samp = 'Invalid filter option'
             retcode = 422
@@ -178,7 +183,10 @@ class DerivativeSampleController(BaseController):
 
         return samp, retcode
 
-    def download_derivative_samples_by_attr(self, prop_name, prop_value, study_name=None, studies=None, user=None, auths=None):  # noqa: E501
+    def download_derivative_samples_by_attr(self, prop_name, prop_value,
+                                            study_name=None, value_type=None,
+                                            start=None, count=None,
+                                            studies=None, user=None, auths=None):  # noqa: E501
         """fetches one or more DerivativeSample by property value
 
          # noqa: E501
@@ -198,14 +206,15 @@ class DerivativeSampleController(BaseController):
         retcode = 200
         samp = None
 
-        prop_value = urllib.parse.unquote_plus(prop_value)
-        start = None
-        count = None
-        samp = get.get_by_attr(prop_name, prop_value, study_name, studies, start, count)
+        samp = get.get_by_attr(prop_name, prop_value, study_name, value_type, start,
+                               count, studies)
 
         return samp, retcode
 
-    def download_derivative_samples_by_os_attr(self, prop_name, prop_value, study_name=None, studies=None, user=None, auths=None):  # noqa: E501
+    def download_derivative_samples_by_os_attr(self, prop_name, prop_value,
+                                               study_name=None, value_type=None,
+                                               start=None, count=None,
+                                               studies=None, user=None, auths=None):  # noqa: E501
         """fetches one or more derivativeSamples by property value of associated derivative samples
 
          # noqa: E501
@@ -225,10 +234,8 @@ class DerivativeSampleController(BaseController):
         retcode = 200
         samp = None
 
-        prop_value = urllib.parse.unquote_plus(prop_value)
-        start = None
-        count = None
-        samp = get.get_by_os_attr(prop_name, prop_value, study_name, studies, start, count)
+        samp = get.get_by_os_attr(prop_name, prop_value, study_name, value_type, start,
+                                  count, studies)
 
         return samp, retcode
 
@@ -249,8 +256,9 @@ class DerivativeSampleController(BaseController):
         retcode = 200
         samp = None
 
+        # print(f'study_name {study_name} start {start} count {count}')
         try:
-            samp = get.get_by_study(study_name, studies=studies, start=start, count=count)
+            samp = get.get_by_study(study_name, start=start, count=count, studies=studies)
         except MissingKeyException as dme:
             logging.getLogger(__name__).debug(
                 "download_derivativeSample: %s", repr(dme))

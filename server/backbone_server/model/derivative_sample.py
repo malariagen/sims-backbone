@@ -138,7 +138,7 @@ class BaseDerivativeSample(SimsDbBase):
                     raise MissingKeyException("No taxa_id {}".format(taxa_id))
         return ret
 
-    def get_by_study(self, study_name, studies, start, count):
+    def get_by_study(self, study_name, start, count, studies):
 
         if not study_name:
             raise MissingKeyException(f"No study_name to get {self.db_class.__table__}")
@@ -199,7 +199,8 @@ class BaseDerivativeSample(SimsDbBase):
                     raise MissingKeyException("No event_set_name {}".format(event_set_name))
         return ret
 
-    def get_by_os_attr(self, attr_type, attr_value, study_name, studies, start, count):
+    def get_by_os_attr(self, attr_type, attr_value, study_name, value_type,
+                       start, count, studies):
 
         if not attr_type:
             raise MissingKeyException(f"No attr_type to get {self.db_class.__table__}")
@@ -212,10 +213,22 @@ class BaseDerivativeSample(SimsDbBase):
         ret = None
 
         with session_scope(self.session) as db:
-            from backbone_server.model.original_sample import original_sample_attr_table
 
+            from backbone_server.model.original_sample import original_sample_attr_table
             db_items = None
             study_filter = True
+            from openapi_server.models.attr import Attr as AttrApi
+
+            api_attr = AttrApi(attr_type=attr_type,
+                               attr_value=attr_value,
+                               study_name=study_name)
+            db_attr = Attr.get(db, api_attr, value_type)
+
+            if not db_attr:
+                ret = self.openapi_multiple_class()
+                ret.count = 0
+                return ret
+
             if study_name:
                 study_filter = False
                 study_codes = self.study_filter(studies)
@@ -223,26 +236,25 @@ class BaseDerivativeSample(SimsDbBase):
                 if study_codes:
                     if study_name[:4] not in study_codes:
                         raise PermissionException(f'No allowed to access {study_name}')
+
                 os_study = aliased(OriginalSample.study)
                 db_items = db.query(self.db_class).\
                         join(self.db_class.original_sample).\
-                        join(original_sample_attr_table).\
-                        join(Attr).\
+                        join(original_sample_attr_table,
+                             and_(original_sample_attr_table.c.attr_id == db_attr.id,
+                                  DerivativeSample.original_sample_id == original_sample_attr_table.c.original_sample_id)).\
                         outerjoin(Study).\
                         outerjoin(os_study, OriginalSample.study_id == os_study.id).\
-                        filter(and_(or_(Study.code == study_name[:4],
-                                        os_study.code == study_name[:4]),\
-                        Attr.attr_type == attr_type, \
-                        Attr.attr_value == attr_value))
+                        filter(or_(Study.code == study_name[:4],
+                                   os_study.code == study_name[:4]))
             else:
                 db_items = db.query(self.db_class).\
                         join(self.db_class.original_sample).\
-                        join(original_sample_attr_table).\
-                        join(Attr).\
-                        filter(Attr.attr_type == attr_type).\
-                        filter(Attr.attr_value == attr_value)
-            # db_item = db.query(self.db_class).filter_by(id=item_id).first()
+                        join(original_sample_attr_table,
+                             and_(original_sample_attr_table.c.attr_id == db_attr.id,
+                                  DerivativeSample.original_sample_id == original_sample_attr_table.c.original_sample_id))
 
+            # db_item = db.query(self.db_class).filter_by(id=item_id).first()
             ret = self._get_multiple_results(db, db_items, studies, start,
                                              count, study_filter=study_filter)
 

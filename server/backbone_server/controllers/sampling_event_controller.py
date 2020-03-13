@@ -98,8 +98,8 @@ class SamplingEventController(BaseController):
 
         return samp, retcode
 
-    def download_sampling_events(self, search_filter, studies=None, start=None,
-                                 count=None, user=None, auths=None):
+    def download_sampling_events(self, search_filter, value_type=None, start=None,
+                                 count=None, studies=None, user=None, auths=None):
         """
         fetches samplingEvents for a event_set
 
@@ -136,8 +136,10 @@ class SamplingEventController(BaseController):
             return self.download_sampling_events_by_attr(options[1],
                                                          options[2],
                                                          study_name,
-                                                         studies,
-                                                         user,
+                                                         value_type,
+                                                         start,
+                                                         count,
+                                                         studies, user,
                                                          auths)
         elif options[0] == 'os_attr':
             study_name = None
@@ -148,8 +150,10 @@ class SamplingEventController(BaseController):
             return self.download_sampling_events_by_os_attr(options[1],
                                                             options[2],
                                                             study_name,
-                                                            studies,
-                                                            user,
+                                                            value_type,
+                                                            start,
+                                                            count,
+                                                            studies, user,
                                                             auths)
         else:
             samp = 'Invalid filter option'
@@ -185,7 +189,10 @@ class SamplingEventController(BaseController):
         return samp, retcode
 
     def download_sampling_events_by_attr(self, prop_name, prop_value,
-                                         study_name=None, studies=None, user=None, auths=None):
+                                         study_name=None,
+                                         value_type=None,
+                                         start=None, count=None,
+                                         studies=None, user=None, auths=None):
         """
         fetches a samplingEvent by property value
 
@@ -201,16 +208,15 @@ class SamplingEventController(BaseController):
 
         retcode = 200
         samp = None
-        start = None
-        count = None
-        prop_value = urllib.parse.unquote_plus(prop_value)
-        samp = get.get_by_attr(prop_name, prop_value, study_name, studies,
-                               start, count)
+        samp = get.get_by_attr(prop_name, prop_value, study_name, value_type,
+                               start, count, studies)
 
         return samp, retcode
 
     def download_sampling_events_by_os_attr(self, prop_name, prop_value,
-                                            study_name=None, studies=None, user=None, auths=None):
+                                            study_name=None, value_type=None,
+                                            start=None, count=None,
+                                            studies=None, user=None, auths=None):
         """
         fetches a samplingEvent by property value of associated original sample
 
@@ -227,11 +233,9 @@ class SamplingEventController(BaseController):
         retcode = 200
         samp = None
 
-        prop_value = urllib.parse.unquote_plus(prop_value)
-        start = None
-        count = None
-        samp = get.get_by_os_attr(prop_name, prop_value, study_name, studies,
-                                  start, count)
+        samp = get.get_by_os_attr(prop_name, prop_value, study_name,
+                                  value_type,
+                                  start, count, studies)
 
         return samp, retcode
 
@@ -277,7 +281,7 @@ class SamplingEventController(BaseController):
         samp = None
 
         try:
-            samp = get.get_by_study(study_name, studies, start, count)
+            samp = get.get_by_study(study_name, start, count, studies)
         except MissingKeyException as dme:
             logging.getLogger(__name__).debug("download_samplingEvent: %s", repr(dme))
             retcode = 404

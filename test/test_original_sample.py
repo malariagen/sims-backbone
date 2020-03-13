@@ -1,12 +1,13 @@
-import openapi_client
-from openapi_client.rest import ApiException
-
-from test_base import TestBase
 from datetime import date
 import urllib
 
 import uuid
 import pytest
+
+import openapi_client
+from openapi_client.rest import ApiException
+
+from test_base import TestBase
 
 class TestOriginalSample(TestBase):
 
@@ -1678,3 +1679,55 @@ class TestOriginalSample(TestBase):
 
         except ApiException as error:
             self.check_api_exception(api_factory, "OriginalSampleApi->create_original_sample", error)
+
+    """
+    """
+    def test_os_attr_duck_lookup(self, api_factory):
+
+        api_instance = api_factory.OriginalSampleApi()
+
+        created = None
+        try:
+            from decimal import Decimal
+            from datetime import date
+            samp = openapi_client.OriginalSample(None, study_name='4039-MD-UP')
+            samp.attrs = [
+                openapi_client.Attr(attr_type='oxford_str', attr_value='123456'),
+                openapi_client.Attr(attr_type='oxford_int', attr_value=12345),
+                openapi_client.Attr(attr_type='oxford_float', attr_value=123.45)
+                # openapi_client.Attr(attr_type='oxford_list_int', attr_value=[1, 2, 3, 4, 5])
+                # Date does work but response is string not date object
+                # openapi_client.Attr(attr_type='oxford_date', attr_value=date(2020, 3, 13))
+                # Doesn't serialize
+                # openapi_client.Attr(attr_type='oxford_Decimal', attr_value=Decimal(1234.5))
+            ]
+            created = api_instance.create_original_sample(samp)
+
+            for attr in samp.attrs:
+                results = api_instance.download_original_samples_by_attr(attr.attr_type,
+                                                                         attr.attr_value)
+
+                assert results.count == 1
+                looked_up = results.original_samples[0]
+                assert looked_up == created
+
+                fetched = api_instance.download_original_sample(looked_up.original_sample_id)
+
+                assert created == fetched, "create response != download response"
+
+                value_type = attr.attr_type.split('_')[1]
+                ffetched = api_instance.download_original_samples(search_filter=f'attr:{attr.attr_type}:{attr.attr_value}',
+                                                                  value_type=value_type)
+
+                assert ffetched == results
+
+                fetched.original_sample_id = None
+                assert samp == fetched, f"upload {samp} != download response {fetched}"
+
+            # api_instance.delete_original_sample(created.original_sample_id)
+
+        except ApiException as error:
+            self.check_api_exception(api_factory, "OriginalSampleApi->create_original_sample", error)
+
+        if created:
+            api_instance.delete_original_sample(created.original_sample_id)

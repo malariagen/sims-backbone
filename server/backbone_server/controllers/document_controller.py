@@ -147,8 +147,8 @@ class DocumentController(BaseController):
         try:
             start = None
             count = None
-            doc = get.get_by_study(study_name, studies=studies, start=start,
-                                   count=count)
+            doc = get.get_by_study(study_name, start=start,
+                                   count=count, studies=studies)
         except MissingKeyException as dme:
             logging.getLogger(__name__).debug(
                 "download_document: %s", repr(dme))

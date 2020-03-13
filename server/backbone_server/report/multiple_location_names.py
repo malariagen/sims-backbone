@@ -16,8 +16,8 @@ class MultipleLocationNames(BaseReport):
             stmt = text('''select code from location_attr li
             JOIN attr a ON a.id = li.attr_id
             JOIN study s ON a.study_id = s.id
-            GROUP BY attr_type, attr_value, code
-            having count(attr_value) > 1''')
+            GROUP BY attr_type, attr_value_str, code
+            having count(attr_value_str) > 1''')
 
             result = self.engine.execute(stmt)
 

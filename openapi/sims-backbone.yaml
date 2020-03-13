@@ -218,6 +218,9 @@ paths:
 servers:
   - url: http://localhost/v1
 components:
+  schemas:
+    AnyValue:
+      description: Can be any value - string, number, boolean, array or object.
   requestBodies:
     AssayDatum:
       content:

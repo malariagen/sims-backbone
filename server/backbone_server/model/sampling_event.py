@@ -244,7 +244,7 @@ class BaseSamplingEvent(SimsDbBase):
                     raise MissingKeyException("No taxa_id {}".format(taxa_id))
         return ret
 
-    def get_by_study(self, study_name, studies, start, count):
+    def get_by_study(self, study_name, start, count, studies):
 
         if not study_name:
             raise MissingKeyException(f"No study_name to get {self.db_class.__table__}")
@@ -302,7 +302,8 @@ class BaseSamplingEvent(SimsDbBase):
                     raise MissingKeyException("No event_set_name {}".format(event_set_name))
         return ret
 
-    def get_by_os_attr(self, attr_type, attr_value, study_name, studies, start, count):
+    def get_by_os_attr(self, attr_type, attr_value, study_name, value_type,
+                       start, count, studies):
 
         if not attr_type:
             raise MissingKeyException(f"No attr_type to get {self.db_class.__table__}")
@@ -319,6 +320,20 @@ class BaseSamplingEvent(SimsDbBase):
             from backbone_server.model.original_sample import original_sample_attr_table
             db_items = None
             study_filter = True
+            from openapi_server.models.attr import Attr as AttrApi
+
+            api_attr = AttrApi(attr_type=attr_type,
+                               attr_value=attr_value,
+                               study_name=study_name)
+            attrs = []
+            for db_attr in Attr.get_all(db, api_attr, value_type):
+                attrs.append(db_attr.id)
+
+            if not attrs:
+                ret = self.openapi_multiple_class()
+                ret.count = 0
+                return ret
+
             if study_name:
                 study_filter = False
                 study_codes = self.study_filter(studies)
@@ -330,22 +345,21 @@ class BaseSamplingEvent(SimsDbBase):
                 os_study = aliased(OriginalSample.study)
                 db_items = db.query(self.db_class).\
                         join(OriginalSample.sampling_event).\
-                        join(original_sample_attr_table).\
-                        join(Attr).\
+                        join(original_sample_attr_table,
+                             and_(original_sample_attr_table.c.original_sample_id == OriginalSample.id,
+                                  original_sample_attr_table.c.attr_id.in_(attrs))).\
                         outerjoin(Study).\
                         outerjoin(os_study, OriginalSample.study_id == os_study.id).\
-                        filter(and_(or_(Study.code == study_name[:4],
-                                        os_study.code == study_name[:4]),\
-                        Attr.attr_type == attr_type, \
-                        Attr.attr_value == attr_value))
+                        filter(or_(Study.code == study_name[:4],
+                                   os_study.code == study_name[:4]))
             else:
                 db_items = db.query(self.db_class).\
                         join(OriginalSample.sampling_event).\
-                        join(original_sample_attr_table).\
-                        join(Attr).\
-                        filter(and_(Attr.attr_type == attr_type),
-                               (Attr.attr_value == attr_value))
+                        join(original_sample_attr_table,
+                             and_(original_sample_attr_table.c.original_sample_id == OriginalSample.id,
+                                  original_sample_attr_table.c.attr_id.in_(attrs)))
 
+            print(db_items)
             # db_item = db.query(self.db_class).filter_by(id=item_id).first()
             ret = self._get_multiple_results(db, db_items, studies, start,
                                              count, study_filter=study_filter)

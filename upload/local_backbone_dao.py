@@ -208,13 +208,15 @@ class LocalBackboneDAO(AbstractBackboneDAO):
         return ret
 
     def download_locations_by_attr(self, attr_type, attr_value,
-                                   study_name=None, user=None):
+                                   study_name=None, value_type=None,
+                                   start=None, count=None, user=None):
 
         if not user:
             user = self._user
 
         ret, retcode = self.location_api_instance.download_locations_by_attr(
-            attr_type, attr_value, study_name,
+            attr_type, attr_value, study_name, value_type=value_type,
+            start=start, count=count,
             user=user, auths=self._auths)
 
         self._logger.debug("GET /v1/locations/attr/{}/{} {}".format(attr_type,
@@ -276,7 +278,9 @@ class LocalBackboneDAO(AbstractBackboneDAO):
 
         return found_events
 
-    def download_sampling_events_by_attr(self, attr_type, attr_value, user=None):
+    def download_sampling_events_by_attr(self, attr_type, attr_value,
+                                         value_type=None, start=None,
+                                         count=None, user=None):
 
         if not user:
             user = self._user
@@ -284,6 +288,9 @@ class LocalBackboneDAO(AbstractBackboneDAO):
         found_events, retcode = self.se_api_instance.download_sampling_events_by_attr(attr_type,
                                                                                       urllib.parse.quote_plus(
                                                                                           attr_value),
+                                                                                      value_type=value_type,
+                                                                                      start=start,
+                                                                                      count=count,
                                                                                       user=user, auths=self._auths)
 
         self._logger.debug("GET /v1/samplingEvents/attr/{}/{} {}".format(attr_type,
@@ -315,7 +322,8 @@ class LocalBackboneDAO(AbstractBackboneDAO):
         return found_events
 
     def download_sampling_events_by_os_attr(self, attr_type, attr_value,
-                                            user=None):
+                                            value_type=None, start=None,
+                                            count=None, user=None):
 
         if not user:
             user = self._user
@@ -323,6 +331,9 @@ class LocalBackboneDAO(AbstractBackboneDAO):
         found_events, retcode = self.se_api_instance.download_sampling_events_by_os_attr(attr_type,
                                                                                          urllib.parse.quote_plus(
                                                                                              attr_value),
+                                                                                         value_type=value_type,
+                                                                                         start=start,
+                                                                                         count=count,
                                                                                          studies=None,
                                                                                          user=user, auths=self._auths)
 
@@ -495,12 +506,13 @@ class LocalBackboneDAO(AbstractBackboneDAO):
 
         return found_events
 
-    def download_original_samples(self, search_filter, start=None, count=None, user=None):
+    def download_original_samples(self, search_filter, value_type=None, start=None, count=None, user=None):
 
         if not user:
             user = self._user
 
         found_events, retcode = self.os_api_instance.download_original_samples(search_filter,
+                                                                               value_type=value_type,
                                                                                start=start,
                                                                                count=count,
                                                                                user=user, auths=self._auths)
@@ -514,7 +526,8 @@ class LocalBackboneDAO(AbstractBackboneDAO):
         return found_events
 
     def download_original_samples_by_attr(self, attr_type, attr_value,
-                                          user=None):
+                                          value_type=None, start=None,
+                                          count=None, user=None):
 
         if not user:
             user = self._user
@@ -522,6 +535,9 @@ class LocalBackboneDAO(AbstractBackboneDAO):
         found_events, retcode = self.os_api_instance.download_original_samples_by_attr(attr_type,
                                                                                        urllib.parse.quote_plus(
                                                                                            attr_value),
+                                                                                       value_type=value_type,
+                                                                                       start=start,
+                                                                                       count=count,
                                                                                        user=user, auths=self._auths)
 
         self._logger.debug("GET /v1/originalSamples/attr/{}/{} {}".format(attr_type,
@@ -570,7 +586,8 @@ class LocalBackboneDAO(AbstractBackboneDAO):
         return found_events
 
     def download_original_samples_by_os_attr(self, attr_type, attr_value,
-                                             user=None):
+                                             value_type=None, start=None,
+                                             count=None, user=None):
 
         if not user:
             user = self._user
@@ -578,6 +595,9 @@ class LocalBackboneDAO(AbstractBackboneDAO):
         found_events, retcode = self.os_api_instance.download_original_samples_by_os_attr(attr_type,
                                                                                           urllib.parse.quote_plus(
                                                                                               attr_value),
+                                                                                          value_type=value_type,
+                                                                                          start=start,
+                                                                                          count=count,
                                                                                           user=user, auths=self._auths)
 
         self._logger.debug("GET /v1/originalSamples/os/attr/{}/{} {}".format(attr_type,
@@ -673,7 +693,8 @@ class LocalBackboneDAO(AbstractBackboneDAO):
         return found_events
 
     def download_derivative_samples_by_attr(self, attr_type, attr_value,
-                                            user=None):
+                                            value_type=None, start=None,
+                                            count=None, user=None):
 
         if not user:
             user = self._user
@@ -681,6 +702,9 @@ class LocalBackboneDAO(AbstractBackboneDAO):
         found_events, retcode = self.ds_api_instance.download_derivative_samples_by_attr(attr_type,
                                                                                          urllib.parse.quote_plus(
                                                                                              attr_value),
+                                                                                         value_type=value_type,
+                                                                                         start=start,
+                                                                                         count=count,
                                                                                          user=user, auths=self._auths)
 
         self._logger.debug("GET /v1/derivativeSamples/attr/{}/{} {}".format(attr_type,
@@ -709,7 +733,8 @@ class LocalBackboneDAO(AbstractBackboneDAO):
         return found_events
 
     def download_derivative_samples_by_os_attr(self, attr_type, attr_value,
-                                               user=None):
+                                               value_type=None, start=None,
+                                               count=None, user=None):
 
         if not user:
             user = self._user
@@ -717,6 +742,9 @@ class LocalBackboneDAO(AbstractBackboneDAO):
         found_events, retcode = self.ds_api_instance.download_derivative_samples_by_os_attr(attr_type,
                                                                                             urllib.parse.quote_plus(
                                                                                                 attr_value),
+                                                                                            value_type=value_type,
+                                                                                            start=start,
+                                                                                            count=count,
                                                                                             user=user, auths=self._auths)
 
         self._logger.debug("GET /v1/derivativeSamples/os/attr/{}/{} {}".format(attr_type,
@@ -792,7 +820,8 @@ class LocalBackboneDAO(AbstractBackboneDAO):
 
         return found_events
 
-    def download_assay_data_by_attr(self, attr_type, attr_value, user=None):
+    def download_assay_data_by_attr(self, attr_type, attr_value,
+                                    value_type=None, start=None, count=None, user=None):
 
         if not user:
             user = self._user
@@ -800,6 +829,9 @@ class LocalBackboneDAO(AbstractBackboneDAO):
         found_events, retcode = self.ad_api_instance.download_assay_data_by_attr(attr_type,
                                                                                  urllib.parse.quote_plus(
                                                                                      attr_value),
+                                                                                 value_type=value_type,
+                                                                                 start=start,
+                                                                                 count=count,
                                                                                  user=user, auths=self._auths)
 
         self._logger.debug("GET /v1/derivativeSamples/attr/{}/{} {}".format(attr_type,
@@ -950,7 +982,7 @@ class LocalBackboneDAO(AbstractBackboneDAO):
         return found_events
 
     def download_individuals_by_attr(self, prop_name, prop_value, study_name,
-                                     user=None):
+                                     value_type=None, start=None, count=None, user=None):
 
         if not user:
             user = self._user
@@ -959,6 +991,9 @@ class LocalBackboneDAO(AbstractBackboneDAO):
                                                                                  urllib.parse.quote_plus(
                                                                                      prop_value),
                                                                                  study_name,
+                                                                                 value_type=value_type,
+                                                                                 start=start,
+                                                                                 count=count,
                                                                                  user=user, auths=self._auths)
 
         self._logger.debug("GET /v1/individuals/attr/{}/{} {}".format(prop_name,
