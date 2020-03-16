@@ -1,6 +1,7 @@
 import logging
 import uuid
 import typing
+import inspect
 import sqlalchemy
 from sqlalchemy import Table, Column
 from sqlalchemy import Integer, String, ForeignKey, DateTime, func, text
@@ -37,6 +38,8 @@ class Base(object):
         pass
 
     def map_from_openapi(self, openapi_type):
+        if not openapi_type:
+            return
         id_val = self.get_id_key()
         if hasattr(openapi_type, id_val):
             setattr(self, 'id', getattr(openapi_type, id_val))
@@ -59,32 +62,39 @@ class Base(object):
                                 self.logger.debug(f'Mapping {key} {value}')
                                 setattr(self, key, getattr(openapi_type,
                                                            subitem_descrip))
-# Doesn't work properly for updates - see upload/test/test_country.py -
-# update_sampling_event in set_country leads to incorrect location
-#                    elif not isinstance(value, str) and issubclass(value, Model) and subitem_descrip and issubclass(subitem_descrip, Base):
-#                        db_item = subitem_descrip()
-#                        self.logger.debug(f'Recurse {key} {subitem_descrip} {type(getattr(openapi_type, key))} {value}')
-#                        if isinstance(getattr(openapi_type, key), object):
-#                            db_item.map_from_openapi(getattr(openapi_type,
-#                                                             key))
-#                        else:
-#                            db_item.map_from_openapi(openapi_type)
-#                        setattr(self, key, db_item)
-#                    elif not isinstance(value, str) and issubclass(value, typing.List):
-#                        self.logger.debug(f'Recurse list {key} {subitem_descrip} {type(getattr(openapi_type, key))} {value}')
-#                        sub_items = getattr(openapi_type, key)
-#                        if sub_items:
-#                            sub_item_list = []
-#                            for api_subitem in sub_items:
-#                                if isinstance(api_subitem, object):
-#                                    db_subitem = subitem_descrip()
-#                                    db_subitem.map_from_openapi(api_subitem)
-#                                    sub_item_list.append(db_subitem)
-#                                self.logger.debug(db_subitem)
-#                            if sub_item_list:
-#                                setattr(self, key, sub_item_list)
+                    elif not key == 'attr' and\
+                            not isinstance(value, str) and issubclass(value, Model) and\
+                            subitem_descrip and issubclass(subitem_descrip, Base):
+                        db_item = subitem_descrip()
+                        val = getattr(openapi_type, key)
+                        if isinstance(val, object):
+                            db_item.map_from_openapi(val)
+                        else:
+                            db_item.map_from_openapi(openapi_type)
+                        self.logger.debug(f'Recurse {key} {subitem_descrip} {type(val)} {val} {db_item}')
+                        if val:
+                            setattr(self, key, db_item)
+                    elif key not in ['attrs', 'members', 'partner_species'] and\
+                             ((isinstance(value, str) and value.startswith('list['))
+                              or (inspect.isclass(value) and issubclass(value, typing.List))):
+                        self.logger.debug(f'Recurse list {key} {subitem_descrip} {type(getattr(openapi_type, key))} {value}')
+                        sub_items = getattr(openapi_type, key)
+                        self.logger.debug(f'{openapi_type} sub_items {sub_items}')
+                        if sub_items:
+                            sub_item_list = []
+                            for api_subitem in sub_items:
+                                self.logger.debug(api_subitem)
+                                if isinstance(api_subitem, object):
+                                    db_subitem = subitem_descrip()
+                                    db_subitem.map_from_openapi(api_subitem)
+                                    sub_item_list.append(db_subitem)
+                                    self.logger.debug(db_subitem)
+                                self.logger.debug(db_subitem)
+                            self.logger.debug(sub_item_list)
+                            if sub_item_list:
+                                setattr(self, key, sub_item_list)
                     else:
-                        self.logger.debug(f'Mapping failed for {key} {value}')
+                        self.logger.debug(f'Mapping failed for {key} {value} {type(value)}')
             elif hasattr(self, key) and getattr(openapi_type, key):
                 setattr(self, key, getattr(openapi_type, key))
             elif hasattr(self, key):

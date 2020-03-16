@@ -44,7 +44,8 @@ class Individual(Versioned, Base):
 
     def __repr__(self):
         return f'''<Individual ID {self.id}
-    {self.individual_id}
+    {self.attrs}
+    {self.individual_ident}
     >'''
 
 class BaseIndividual(SimsDbBase):

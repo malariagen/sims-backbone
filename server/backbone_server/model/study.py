@@ -47,8 +47,8 @@ class ExpectedSamples(Base):
         expected_sample = None
         if e_sample is None or e_sample.expected_samples_id is None:
             expected_sample = ExpectedSamples(sample_count=e_sample.sample_count,
-                                             date_of_arrival=e_sample.date_of_arrival,
-                                             study_id=study_id)
+                                              date_of_arrival=e_sample.date_of_arrival,
+                                              study_id=study_id)
             psi = PartnerSpeciesIdentifier.get_or_create(db, e_sample.expected_species, study_id)
             expected_sample.partner_species_id = psi.id
             expected_sample.partner_species = psi
@@ -75,7 +75,7 @@ class ExpectedSamples(Base):
         return f'''<ExpectedSamples ID {self.id}
     Study {self.study_id}
     Partner Species {self.partner_species}
-    Partner Species {self.partner_species_id}
+    Partner Species Id {self.partner_species_id}
     {self.sample_count}
     {self.date_of_arrival}
     >'''
@@ -257,7 +257,7 @@ class BaseStudy(SimsDbBase):
             for expected_sample in expected_sample_to_remove:
                 db_item.expected_samples.remove(expected_sample)
 
-    def db_map_actions(self, db, db_item, api_item):
+    def db_map_partner_species(self, db, db_item, api_item):
 
         for ps in api_item.partner_species:
             found = False
@@ -295,6 +295,9 @@ class BaseStudy(SimsDbBase):
                     for taxa in remove_taxa:
                         db_ps.taxa.remove(taxa)
 
+    def db_map_actions(self, db, db_item, api_item):
+
+        self.db_map_partner_species(db, db_item, api_item)
         self.db_map_expected_samples(db, db_item, api_item)
         # print('db_map_actions')
         # print(api_item)
@@ -314,10 +317,14 @@ class BaseStudy(SimsDbBase):
                 ps_item.taxa = []
             api_item.partner_species.append(ps_item)
         if api_item.expected_samples:
+            # print(api_item.expected_samples)
             for es in api_item.expected_samples:
                 for db_es in db_item.expected_samples:
+                    # print(f'db_es {db_es}')
                     if str(db_es.id) == es.expected_samples_id:
                         ps_item = PartnerSpecies()
+                        if not db_es.partner_species:
+                            db_es.partner_species = PartnerSpeciesIdentifier()
                         db_es.partner_species.map_to_openapi(ps_item)
                         ps_item.partner_taxonomies = []
 

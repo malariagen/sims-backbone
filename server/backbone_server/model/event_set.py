@@ -149,6 +149,12 @@ class BaseEventSet(SimsDbBase):
             for sampling_event in remove_members:
                 db_item.members.remove(sampling_event)
 
+        # print(api_item)
+        # print(db_item)
+        # self.db_map_notes(db, db_item, api_item)
+
+    def db_map_notes(self, db, db_item, api_item):
+
         if api_item.notes:
             new_notes = []
             new_existing_notes = []
