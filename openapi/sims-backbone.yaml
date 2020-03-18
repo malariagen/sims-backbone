@@ -83,6 +83,8 @@ paths:
     $ref: './sims-backbone/original_sample/by_taxa.yaml'
   '/originalSamples/eventSet/{event_set_id}':
     $ref: './sims-backbone/original_sample/by_set.yaml'
+  '/originalSamples/release/{release_id}':
+    $ref: './sims-backbone/original_sample/by_release.yaml'
   '/derivativeSample':
     $ref: './sims-backbone/derivative_sample/create.yaml'
   '/derivativeSamples':
@@ -137,6 +139,14 @@ paths:
     $ref: './sims-backbone/event_set/note.yaml'
   '/eventSets':
     $ref: './sims-backbone/event_set/items.yaml'
+  '/release/{release_id}':
+    $ref: './sims-backbone/release/item.yaml'
+  '/release/{release_id}/{release_item_id}':
+    $ref: './sims-backbone/release/release_item.yaml'
+  '/release/{release_id}/notes/{note_id}':
+    $ref: './sims-backbone/release/note.yaml'
+  '/releases':
+    $ref: './sims-backbone/release/items.yaml'
   '/missingTaxon':
     get:
       tags:
@@ -262,6 +272,18 @@ components:
         application/json:
           schema:
             $ref: "./sims-backbone/definitions/original_sample.yaml#/components/schemas/OriginalSample"
+      required: true
+    ReleaseItem:
+      content:
+        application/json:
+          schema:
+            $ref: "./sims-backbone/definitions/release.yaml#/components/schemas/ReleaseItem"
+      required: true
+    ReleaseNote:
+      content:
+        application/json:
+          schema:
+            $ref: "./sims-backbone/definitions/release.yaml#/components/schemas/ReleaseNote"
       required: true
     Document:
       content:

@@ -1,0 +1,108 @@
+    post:
+      tags:
+        - release
+      summary: creates an release
+      description: ""
+      operationId: createRelease
+      parameters:
+        - name: release_id
+          in: path
+          description: ID of release to create
+          required: true
+          schema:
+            type: string
+      responses:
+        "201":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "./sims-backbone/definitions/release.yaml#/components/schemas/Release"
+    get:
+      tags:
+        - release
+      summary: fetches an release
+      description: ""
+      operationId: downloadRelease
+      parameters:
+        - name: release_id
+          in: path
+          description: ID of release to fetch
+          required: true
+          schema:
+            type: string
+        - name: start
+          in: query
+          description: for pagination start the result set at a record x
+          required: false
+          schema:
+            type: integer
+        - name: count
+          in: query
+          description: for pagination the number of entries to return
+          required: false
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "./sims-backbone/definitions/release.yaml#/components/schemas/Release"
+    put:
+      tags:
+        - release
+      summary: updates an release
+      description: ""
+      operationId: updateRelease
+      parameters:
+        - name: release_id
+          in: path
+          description: ID of release to update
+          required: true
+          schema:
+            type: string
+        - name: update_studies
+          in: query
+          description: Update the saved studies
+          required: false
+          schema:
+            type: boolean
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "./sims-backbone/definitions/release.yaml#/components/schemas/Release"
+        required: true
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "./sims-backbone/definitions/release.yaml#/components/schemas/Release"
+        "404":
+          description: Release not found
+          content:
+            application/json:
+              schema:
+                type: string
+    delete:
+      tags:
+        - release
+      summary: deletes an release
+      description: ""
+      operationId: deleteRelease
+      parameters:
+        - name: release_id
+          in: path
+          description: ID of release to delete
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: successful operation
+        "404":
+          description: Release not found

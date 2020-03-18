@@ -19,7 +19,7 @@ class TestSample(TestBase):
 
         try:
 
-            samp = openapi_client.SamplingEvent(None, date(2017, 10, 10),
+            samp = openapi_client.SamplingEvent(None, doc=date(2017, 10, 10),
                                                 doc_accuracy='month')
             created = api_instance.create_sampling_event(samp)
             if not api_factory.is_authorized(None):
@@ -28,6 +28,7 @@ class TestSample(TestBase):
             fetched = api_instance.download_sampling_event(created.sampling_event_id)
             assert created == fetched, "create response != download response"
             fetched.sampling_event_id = None
+            fetched.version = None
             assert samp == fetched, "upload != download response"
             api_instance.delete_sampling_event(created.sampling_event_id)
 
@@ -42,7 +43,7 @@ class TestSample(TestBase):
 
         try:
 
-            samp = openapi_client.SamplingEvent(None, date(2017, 10, 10),
+            samp = openapi_client.SamplingEvent(None, doc=date(2017, 10, 10),
                                                 acc_date=date(2017, 10, 10),
                                                 doc_accuracy='month')
             created = api_instance.create_sampling_event(samp)
@@ -52,6 +53,7 @@ class TestSample(TestBase):
             fetched = api_instance.download_sampling_event(created.sampling_event_id)
             assert created == fetched, "create response != download response"
             fetched.sampling_event_id = None
+            fetched.version = None
             assert samp == fetched, "upload != download response"
             api_instance.delete_sampling_event(created.sampling_event_id)
 
@@ -66,7 +68,7 @@ class TestSample(TestBase):
 
         try:
 
-            samp = openapi_client.SamplingEvent(None, date(2017, 10, 11))
+            samp = openapi_client.SamplingEvent(None, doc=date(2017, 10, 11))
             created = api_instance.create_sampling_event(samp)
             api_instance.delete_sampling_event(created.sampling_event_id)
             with pytest.raises(ApiException, status=404):
@@ -102,7 +104,7 @@ class TestSample(TestBase):
 
         try:
 
-            samp = openapi_client.SamplingEvent(None, date(2017, 10, 12))
+            samp = openapi_client.SamplingEvent(None, doc=date(2017, 10, 12))
             samp.attrs = [
                 openapi_client.Attr (attr_type='oxford', attr_value='1234',
                                      attr_source='same')
@@ -125,7 +127,7 @@ class TestSample(TestBase):
 
         try:
 
-            samp = openapi_client.SamplingEvent(None, date(2017, 10, 13))
+            samp = openapi_client.SamplingEvent(None, doc=date(2017, 10, 13))
             samp.attrs = [
                 openapi_client.Attr (attr_type='partner_id', attr_value='12345')
             ]
@@ -150,7 +152,7 @@ class TestSample(TestBase):
 
         try:
 
-            samp = openapi_client.SamplingEvent(None, date(2017, 10, 13))
+            samp = openapi_client.SamplingEvent(None, doc=date(2017, 10, 13))
             samp.attrs = [
                 openapi_client.Attr (attr_type='individual_id', attr_value='12345')
             ]
@@ -177,7 +179,7 @@ class TestSample(TestBase):
 
         try:
 
-            samp = openapi_client.SamplingEvent(None, date(2017, 10, 14))
+            samp = openapi_client.SamplingEvent(None, doc=date(2017, 10, 14))
             samp.attrs = [
                 openapi_client.Attr (attr_type='oxford', attr_value='123456')
             ]
@@ -200,6 +202,7 @@ class TestSample(TestBase):
             assert ffetched == results
 
             fetched.sampling_event_id = None
+            fetched.version = None
             assert samp == fetched, "upload != download response"
 
             os_api_instance.delete_original_sample(os_created.original_sample_id)
@@ -218,7 +221,7 @@ class TestSample(TestBase):
         try:
 
             study_code = '1022-MD-UP'
-            samp = openapi_client.SamplingEvent(None, date(2017, 10, 14))
+            samp = openapi_client.SamplingEvent(None, doc=date(2017, 10, 14))
             samp.attrs = [
                 openapi_client.Attr(attr_type='partner_id',
                                     attr_value='123456', study_name=study_code)
@@ -274,20 +277,20 @@ class TestSample(TestBase):
             ident1 = openapi_client.Attr(attr_type='oxford_id', attr_value='1234')
             ident2 = openapi_client.Attr(attr_type='roma_id', attr_value='12345')
             ident3 = openapi_client.Attr(attr_type='lims_id', attr_value='123456')
-            samp1 = openapi_client.SamplingEvent(None, date(2017, 10, 14))
+            samp1 = openapi_client.SamplingEvent(None, doc=date(2017, 10, 14))
             samp1.attrs = [
                 ident1
             ]
             created1 = api_instance.create_sampling_event(samp1)
 
-            samp2 = openapi_client.SamplingEvent(None, date(2017, 10, 14))
+            samp2 = openapi_client.SamplingEvent(None, doc=date(2017, 10, 14))
             samp2.attrs = [
                 ident2
             ]
             created2 = api_instance.create_sampling_event(samp2)
 
 
-            samp3 = openapi_client.SamplingEvent(None, date(2017, 10, 14))
+            samp3 = openapi_client.SamplingEvent(None, doc=date(2017, 10, 14))
             samp3.attrs = [
                 ident1,
                 ident2,
@@ -311,19 +314,21 @@ class TestSample(TestBase):
 
         try:
 
-            samp = openapi_client.SamplingEvent(None, date(2017, 10, 15))
+            samp = openapi_client.SamplingEvent(None, doc=date(2017, 10, 15))
             samp.attrs = [
                 openapi_client.Attr(attr_type='oxford', attr_value='1234567')
             ]
             created = api_instance.create_sampling_event(samp)
             looked_up = api_instance.download_sampling_events_by_attr('oxford', '1234567')
             looked_up = looked_up.sampling_events[0]
-            new_samp = openapi_client.SamplingEvent(None, date(2018, 11, 11))
+            new_samp = openapi_client.SamplingEvent(None, doc=date(2018, 11, 11))
             new_samp.sampling_event_id = looked_up.sampling_event_id
             new_samp.attrs = samp.attrs
+            new_samp.version = looked_up.version
             updated = api_instance.update_sampling_event(looked_up.sampling_event_id, new_samp)
             fetched = api_instance.download_sampling_event(looked_up.sampling_event_id)
             assert updated == fetched, "update response != download response"
+            new_samp.version = fetched.version
             assert new_samp == fetched, "update != download response"
             api_instance.delete_sampling_event(looked_up.sampling_event_id)
 
@@ -338,20 +343,22 @@ class TestSample(TestBase):
 
         try:
 
-            samp = openapi_client.SamplingEvent(None, date(2017, 10, 15))
+            samp = openapi_client.SamplingEvent(None, doc=date(2017, 10, 15))
             samp.attrs = [
                 openapi_client.Attr(attr_type='oxford', attr_value='1234567')
             ]
             created = api_instance.create_sampling_event(samp)
             looked_up = api_instance.download_sampling_events_by_attr('oxford', '1234567')
             looked_up = looked_up.sampling_events[0]
-            new_samp = openapi_client.SamplingEvent(None, date(2018, 11, 11),
+            new_samp = openapi_client.SamplingEvent(None, doc=date(2018, 11, 11),
                                                     acc_date=date(2019, 11, 6))
             new_samp.sampling_event_id = looked_up.sampling_event_id
+            new_samp.version = looked_up.version
             new_samp.attrs = samp.attrs
             updated = api_instance.update_sampling_event(looked_up.sampling_event_id, new_samp)
             fetched = api_instance.download_sampling_event(looked_up.sampling_event_id)
             assert updated == fetched, "update response != download response"
+            new_samp.version = fetched.version
             assert new_samp == fetched, "update != download response"
             api_instance.delete_sampling_event(looked_up.sampling_event_id)
 
@@ -366,7 +373,7 @@ class TestSample(TestBase):
 
         try:
 
-            samp = openapi_client.SamplingEvent(None, date(2017, 10, 16))
+            samp = openapi_client.SamplingEvent(None, doc=date(2017, 10, 16))
             samp.attrs = [
                 openapi_client.Attr (attr_type='oxford', attr_value='12345678',
                                      attr_source='upd')
@@ -374,7 +381,7 @@ class TestSample(TestBase):
             created = api_instance.create_sampling_event(samp)
             looked_up = api_instance.download_sampling_events_by_attr('oxford', '12345678')
             looked_up = looked_up.sampling_events[0]
-            new_samp = openapi_client.SamplingEvent(None, date(2018, 10, 10))
+            new_samp = openapi_client.SamplingEvent(None, doc=date(2018, 10, 10))
             new_samp.attrs = [
                 openapi_client.Attr (attr_type='oxford', attr_value='123456789',
                                      attr_source='upd')
@@ -397,7 +404,7 @@ class TestSample(TestBase):
 
         try:
 
-            new_samp = openapi_client.SamplingEvent(None, date(2018, 11, 17))
+            new_samp = openapi_client.SamplingEvent(None, doc=date(2018, 11, 17))
             fake_id = uuid.uuid4()
             new_samp.sampling_event_id = str(fake_id)
 
@@ -422,7 +429,7 @@ class TestSample(TestBase):
         try:
 
             test_id = 'MDG/DK_0005'
-            samp = openapi_client.SamplingEvent(None, date(2017, 10, 14))
+            samp = openapi_client.SamplingEvent(None, doc=date(2017, 10, 14))
             samp.attrs = [
                 openapi_client.Attr (attr_type='partner_id', attr_value=test_id,
                                      attr_source='encode')
@@ -433,6 +440,7 @@ class TestSample(TestBase):
 
             assert created == fetched, "create response != download response"
             fetched.sampling_event_id = None
+            fetched.version = None
             assert samp == fetched, "upload != download response"
 
             results = api_instance.download_sampling_events_by_attr('partner_id',
@@ -442,6 +450,7 @@ class TestSample(TestBase):
 
             assert created == fetched, "create response != download response"
             fetched.sampling_event_id = None
+            fetched.version = None
             assert samp == fetched, "upload != download response"
 
             ffetched = api_instance.download_sampling_events(search_filter=urllib.parse.quote_plus('attr:partner_id:' + test_id))
@@ -467,7 +476,7 @@ class TestSample(TestBase):
 
 
 
-            samp = openapi_client.SamplingEvent(None, date(2017, 10, 10),
+            samp = openapi_client.SamplingEvent(None, doc=date(2017, 10, 10),
                                                 doc_accuracy='month')
             loc = openapi_client.Location(None, latitude=27.463,
                                           longitude=90.495,
@@ -506,6 +515,7 @@ class TestSample(TestBase):
             location_api_instance.update_location(loc.location_id, loc)
             samp.proxy_location_id = proxy_loc.location_id
             samp.sampling_event_id = fetched.sampling_event_id
+            samp.version = fetched.version
             fetched = api_instance.update_sampling_event(fetched.sampling_event_id, samp)
             assert samp.location_id == fetched.location_id, "upload location != download response"
             assert samp.proxy_location_id == fetched.proxy_location_id, "upload proxy_location != download response"
@@ -541,7 +551,7 @@ class TestSample(TestBase):
 
 
 
-            samp = openapi_client.SamplingEvent(None, date(2017, 10, 10),
+            samp = openapi_client.SamplingEvent(None, doc=date(2017, 10, 10),
                                                 doc_accuracy='month')
             loc = openapi_client.Location(None, latitude=27.463,
                                           longitude=90.495,
@@ -580,6 +590,7 @@ class TestSample(TestBase):
             location_api_instance.update_location(loc.location_id, loc)
             samp.proxy_location_id = proxy_loc.location_id
             samp.sampling_event_id = fetched.sampling_event_id
+            samp.version = fetched.version
             fetched = api_instance.update_sampling_event(fetched.sampling_event_id, samp)
             assert samp.location_id == fetched.location_id, "upload location != download response"
             assert samp.proxy_location_id == fetched.proxy_location_id, "upload proxy_location != download response"
@@ -604,10 +615,11 @@ class TestSample(TestBase):
             created.location_id = new_loc.location_id
             created.public_location_id = new_loc.location_id
             created.location = None
-
+            created.version = fetched.version
             new_se = api_instance.update_sampling_event(created.sampling_event_id, created)
 
             new_se.location = None
+            created.version = new_se.version
             assert new_se == created
 
             os_api_instance.delete_original_sample(os_created.original_sample_id)
@@ -631,7 +643,7 @@ class TestSample(TestBase):
         study_code = '1009-MD_UP'
         try:
 
-            samp = openapi_client.SamplingEvent(None, date(2017, 10, 10),
+            samp = openapi_client.SamplingEvent(None, doc=date(2017, 10, 10),
                                                 doc_accuracy='month')
             samp.attrs = [
                 openapi_client.Attr(attr_type='attr1',
@@ -639,9 +651,9 @@ class TestSample(TestBase):
                 openapi_client.Attr(attr_type='attr2',
                                     attr_value='attr2val'),
             ]
-            samp1 = openapi_client.SamplingEvent(None, date(2017, 11, 11),
+            samp1 = openapi_client.SamplingEvent(None, doc=date(2017, 11, 11),
                                                  doc_accuracy='month')
-            samp2 = openapi_client.SamplingEvent(None, date(2017, 12, 12),
+            samp2 = openapi_client.SamplingEvent(None, doc=date(2017, 12, 12),
                                                  doc_accuracy='month')
             loc = openapi_client.Location(None, latitude=27.463,
                                           longitude=90.495,
@@ -770,7 +782,7 @@ class TestSample(TestBase):
         try:
             study_code = '1010-MD-UP'
 
-            sampling_event = openapi_client.SamplingEvent(None, date(2017, 10, 14))
+            sampling_event = openapi_client.SamplingEvent(None, doc=date(2017, 10, 14))
             sampling_event.attrs = [
                 openapi_client.Attr(attr_type='se_oxford', attr_value='12345678',
                                     attr_source='se_taxa_lookup')
@@ -841,7 +853,7 @@ class TestSample(TestBase):
             study_codes = [ '1011-MD-UP', '1012-MD-UP', '1013-MD-UP', '1014-MD-UP', '1014-MD-UP']
 
             for study_code in study_codes:
-                samp_event = openapi_client.SamplingEvent(None, date(2017, 10, 14))
+                samp_event = openapi_client.SamplingEvent(None, doc=date(2017, 10, 14))
                 created_se = api_instance.create_sampling_event(samp_event)
                 samp = openapi_client.OriginalSample(None, study_name=study_code,
                                                      partner_species='PF')
@@ -895,7 +907,7 @@ class TestSample(TestBase):
         try:
             study_code = '1020-MD-UP'
 
-            samp = openapi_client.SamplingEvent(None, date(2017, 10, 14))
+            samp = openapi_client.SamplingEvent(None, doc=date(2017, 10, 14))
             created_se = api_instance.create_sampling_event(samp)
             samp = openapi_client.OriginalSample(None, study_name=study_code,
                                                  partner_species='PF',
@@ -934,7 +946,7 @@ class TestSample(TestBase):
 
             original_samples = []
             for i in range(5):
-                samp = openapi_client.SamplingEvent(None, date(2017, 10, 14))
+                samp = openapi_client.SamplingEvent(None, doc=date(2017, 10, 14))
                 created = api_instance.create_sampling_event(samp)
                 samp = openapi_client.OriginalSample(None, study_name=study_code,
                                                      partner_species='PF')
@@ -996,7 +1008,7 @@ class TestSample(TestBase):
 
             study_code = '1022-MD-UP'
 
-            samp = openapi_client.SamplingEvent(None, date(2017, 10, 14))
+            samp = openapi_client.SamplingEvent(None, doc=date(2017, 10, 14))
             created = api_instance.create_sampling_event(samp)
             os_samp = openapi_client.OriginalSample(None, study_name=study_code,
                                                     partner_species='PF',
@@ -1042,7 +1054,7 @@ class TestSample(TestBase):
 
             study_code = '1023-MD-UP'
 
-            samp = openapi_client.SamplingEvent(None, date(2017, 10, 14))
+            samp = openapi_client.SamplingEvent(None, doc=date(2017, 10, 14))
             created = api_instance.create_sampling_event(samp)
             os_samp = openapi_client.OriginalSample(None, study_name=study_code,
                                                     partner_species='PF',
@@ -1109,7 +1121,7 @@ class TestSample(TestBase):
 
             original_samples = []
             for i in range(5):
-                samp = openapi_client.SamplingEvent(None, date(2017, 10, 14))
+                samp = openapi_client.SamplingEvent(None, doc=date(2017, 10, 14))
                 created = api_instance.create_sampling_event(samp)
                 es_api_instance.create_event_set_item(es_name, created.sampling_event_id)
                 os_samp = openapi_client.OriginalSample(None, study_name=study_code,
@@ -1164,7 +1176,7 @@ class TestSample(TestBase):
         api_instance = api_factory.SamplingEventApi()
 
         try:
-            samp = openapi_client.SamplingEvent(None, date(2017, 10, 16))
+            samp = openapi_client.SamplingEvent(None, doc=date(2017, 10, 16))
             samp.attrs = [
                 openapi_client.Attr (attr_type='oxford', attr_value='12345678',
                                      attr_source='upd')
@@ -1203,7 +1215,7 @@ class TestSample(TestBase):
 
         try:
 
-            samp = openapi_client.SamplingEvent(None, date(2017, 10, 10),
+            samp = openapi_client.SamplingEvent(None, doc=date(2017, 10, 10),
                                                 doc_accuracy='month')
             loc = openapi_client.Location(None, latitude=27.463,
                                           longitude=90.495,
@@ -1235,7 +1247,7 @@ class TestSample(TestBase):
 
         try:
 
-            samp = openapi_client.SamplingEvent(None, date(2017, 10, 10),
+            samp = openapi_client.SamplingEvent(None, doc=date(2017, 10, 10),
                                                 doc_accuracy='month')
             loc = openapi_client.Location(None, latitude=27.463,
                                           longitude=90.495,
@@ -1268,7 +1280,7 @@ class TestSample(TestBase):
 
         try:
 
-            samp = openapi_client.SamplingEvent(None, date(2017, 10, 10),
+            samp = openapi_client.SamplingEvent(None, doc=date(2017, 10, 10),
                                                 doc_accuracy='month')
             loc = openapi_client.Location(None, latitude=27.463,
                                           longitude=90.495,
@@ -1303,7 +1315,7 @@ class TestSample(TestBase):
 
         try:
 
-            samp = openapi_client.SamplingEvent(None, date(2017, 10, 10),
+            samp = openapi_client.SamplingEvent(None, doc=date(2017, 10, 10),
                                                 doc_accuracy='month')
             loc = openapi_client.Location(None, latitude=27.463,
                                           longitude=90.495,
@@ -1376,7 +1388,7 @@ class TestSample(TestBase):
 
         try:
 
-            sampling_event = openapi_client.SamplingEvent(None, date(2017, 10, 10),
+            sampling_event = openapi_client.SamplingEvent(None, doc=date(2017, 10, 10),
                                                           doc_accuracy='month')
             created_se = se_api_instance.create_sampling_event(sampling_event)
 
@@ -1427,13 +1439,13 @@ class TestSample(TestBase):
 
             #Uses partner_id because only partner_id and individual_id are allowed to
             #have the same value assigned to different sampling events
-            samp1 = openapi_client.SamplingEvent(None, date(2017, 10, 16))
+            samp1 = openapi_client.SamplingEvent(None, doc=date(2017, 10, 16))
             samp1.attrs = [
                 openapi_client.Attr (attr_type='partner_id', attr_value='mrg1-12345678',
                                      attr_source='mrg')
             ]
             samp1.doc_accuracy = 'day'
-            samp2 = openapi_client.SamplingEvent(None, date(2017, 10, 16))
+            samp2 = openapi_client.SamplingEvent(None, doc=date(2017, 10, 16))
             samp2.attrs = [
                 openapi_client.Attr (attr_type='partner_id', attr_value='mrg2-12345678',
                                      attr_source='mrg')
@@ -2082,7 +2094,7 @@ class TestSample(TestBase):
 
         try:
 
-            samp = openapi_client.SamplingEvent(None, date(2037, 10, 10),
+            samp = openapi_client.SamplingEvent(None, doc=date(2037, 10, 10),
                                                 doc_accuracy='month')
             with pytest.raises(ApiException, status=422):
                 created = api_instance.create_sampling_event(samp)
@@ -2098,14 +2110,14 @@ class TestSample(TestBase):
 
         try:
 
-            samp = openapi_client.SamplingEvent(None, date(2017, 10, 15))
+            samp = openapi_client.SamplingEvent(None, doc=date(2017, 10, 15))
             samp.attrs = [
                 openapi_client.Attr (attr_type='oxford', attr_value='1234567')
             ]
             created = api_instance.create_sampling_event(samp)
             looked_up = api_instance.download_sampling_events_by_attr('oxford', '1234567')
             looked_up = looked_up.sampling_events[0]
-            new_samp = openapi_client.SamplingEvent(None, date(2038, 11, 11))
+            new_samp = openapi_client.SamplingEvent(None, doc=date(2038, 11, 11))
             with pytest.raises(ApiException, status=422):
                 updated = api_instance.update_sampling_event(looked_up.sampling_event_id, new_samp)
             fetched = api_instance.download_sampling_event(looked_up.sampling_event_id)
@@ -2125,7 +2137,7 @@ class TestSample(TestBase):
 
         try:
 
-            samp = openapi_client.SamplingEvent(None, date(2017, 10, 10),
+            samp = openapi_client.SamplingEvent(None, doc=date(2017, 10, 10),
                                                 doc_accuracy='month')
             indiv = openapi_client.Individual(None)
             ident = openapi_client.Attr(attr_type='patient_id', attr_value='Tron',
@@ -2158,7 +2170,7 @@ class TestSample(TestBase):
 
         try:
 
-            samp = openapi_client.SamplingEvent(None, date(2017, 10, 10),
+            samp = openapi_client.SamplingEvent(None, doc=date(2017, 10, 10),
                                                 doc_accuracy='month')
             indiv = openapi_client.Individual(None)
             ident = openapi_client.Attr(attr_type='patient_id', attr_value='Tron',

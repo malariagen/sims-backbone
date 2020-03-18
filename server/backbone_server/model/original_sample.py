@@ -59,7 +59,7 @@ class OriginalSample(Versioned, Base):
     attrs = relationship("Attr", secondary=original_sample_attr_table)
     partner_species = relationship("PartnerSpeciesIdentifier",
                                    backref=backref("original_sample",
-                                                   uselist=True))
+                                                   uselist=False))
 
     def submapped_items(self):
         return {
@@ -107,7 +107,7 @@ class BaseOriginalSample(SimsDbBase):
             self.old_study_id = db_item.study.id
 
 
-    def db_map_actions(self, db, db_item, api_item):
+    def db_map_actions(self, db, db_item, api_item, studies):
         # print('db_map_actions')
         # print(api_item)
 

@@ -26,6 +26,7 @@ class TestTaxa(TestBase):
                 created.original_sample_id)
             assert created == fetched, "create response != download response"
             fetched.original_sample_id = None
+            fetched.version = None
             assert samp == fetched, "upload != download response"
             api_instance.delete_original_sample(created.original_sample_id)
 
@@ -47,11 +48,13 @@ class TestTaxa(TestBase):
             new_samp = openapi_client.OriginalSample(None, study_name='3001-MD-UP',
                                                      partner_species='P. vivax')
             new_samp.original_sample_id = created.original_sample_id
+            new_samp.version = created.version
             updated = api_instance.update_original_sample(
                 created.original_sample_id, new_samp)
             fetched = api_instance.download_original_sample(
                 created.original_sample_id)
             assert updated == fetched, "update response != download response"
+            new_samp.version = fetched.version
             assert new_samp == fetched, "update != download response"
             api_instance.delete_original_sample(created.original_sample_id)
 
@@ -150,6 +153,7 @@ class TestTaxa(TestBase):
 
             assert created1 == fetched1, "create response != download response"
             fetched1.original_sample_id = None
+            fetched1.version = None
             assert samp1 == fetched1, "upload != download response"
 
             samp2 = openapi_client.OriginalSample(None, study_name=study_ident,
@@ -158,6 +162,7 @@ class TestTaxa(TestBase):
             fetched2 = api_instance.download_original_sample(created2.original_sample_id)
             assert created2 == fetched2, "create response != download response"
             fetched2.original_sample_id = None
+            fetched2.version = None
             assert samp2 == fetched2, "upload != download response"
 
             samp3 = openapi_client.OriginalSample(None, study_name=study_ident,
@@ -166,6 +171,7 @@ class TestTaxa(TestBase):
             fetched3 = api_instance.download_original_sample(created3.original_sample_id)
             assert created3 == fetched3, "create response != download response"
             fetched3.original_sample_id = None
+            fetched3.version = None
             assert samp3 == fetched3, "upload != download response"
 
             samp4 = openapi_client.OriginalSample(None, study_name=study_ident,
@@ -174,6 +180,7 @@ class TestTaxa(TestBase):
             fetched4 = api_instance.download_original_sample(created4.original_sample_id)
             assert created4 == fetched4, "create response != download response"
             fetched4.original_sample_id = None
+            fetched4.version = None
             assert samp4 == fetched4, "upload != download response"
 
             study_detail = study_api_instance.download_study(study_ident)

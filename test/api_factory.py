@@ -13,7 +13,7 @@ from local.derivative_sample_api import LocalDerivativeSampleApi
 from local.assay_data_api import LocalAssayDataApi
 from local.report_api import LocalReportApi
 from local.document_api import LocalDocumentApi
-
+from local.release_api import LocalReleaseApi
 
 import logging
 
@@ -191,5 +191,16 @@ class ApiFactory():
             ret = LocalDocumentApi(self._api_client, self._user, self._auths, self._method)
         else:
             ret = openapi_client.DocumentApi(self._api_client)
+
+        return ret
+
+    def ReleaseApi(self):
+
+        ret = None
+
+        if self.isLocal():
+            ret = LocalReleaseApi(self._api_client, self._user, self._auths, self._method)
+        else:
+            ret = openapi_client.ReleaseApi(self._api_client)
 
         return ret

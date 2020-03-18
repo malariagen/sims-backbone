@@ -295,7 +295,7 @@ class BaseStudy(SimsDbBase):
                     for taxa in remove_taxa:
                         db_ps.taxa.remove(taxa)
 
-    def db_map_actions(self, db, db_item, api_item):
+    def db_map_actions(self, db, db_item, api_item, studies):
 
         self.db_map_partner_species(db, db_item, api_item)
         self.db_map_expected_samples(db, db_item, api_item)

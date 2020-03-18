@@ -108,7 +108,7 @@ class SimsDbBase():
             for attr in attr_to_remove:
                 db_item.attrs.remove(attr)
 
-    def db_map_actions(self, db, db_item, api_item):
+    def db_map_actions(self, db, db_item, api_item, studies, **kwargs):
         pass
 
     def openapi_map_actions(self, api_item, db_item):
@@ -131,7 +131,7 @@ class SimsDbBase():
             db_item = self.db_class()
             db_item.map_from_openapi(api_item)
 
-            self.db_map_actions(db, db_item, api_item)
+            self.db_map_actions(db, db_item, api_item, studies)
             self.db_map_attrs(db, db_item, api_item)
 
             db_item.created_by = user
@@ -194,7 +194,7 @@ class SimsDbBase():
     def put_premap(self, db, api_item, db_item):
         pass
 
-    def put(self, input_item_id, api_item, study_name, studies, user):
+    def put(self, input_item_id, api_item, study_name, studies, user, **kwargs):
 
         if study_name and studies:
             self.has_study_permission(studies,
@@ -217,6 +217,10 @@ class SimsDbBase():
             if not update_item:
                 raise MissingKeyException(f"Could not find {self.db_class.__table__} to update {item_id}")
 
+            old_version = None
+            if hasattr(update_item, 'version'):
+                old_version = update_item.version
+
             self.put_premap(db, api_item, update_item)
 
             update_item.map_from_openapi(api_item)
@@ -224,7 +228,11 @@ class SimsDbBase():
             if update_item.id != item_id:
                 raise MissingKeyException(f"Id in item does not match id in call {self.db_class.__table__} {item_id} {update_item.id}")
 
-            self.db_map_actions(db, update_item, api_item)
+            if hasattr(api_item, 'version'):
+                if api_item.version != old_version:
+                    raise MissingKeyException(f"Version in item to update does not match stored version in call {self.db_class.__table__} {item_id} {update_item.id}")
+
+            self.db_map_actions(db, update_item, api_item, studies, **kwargs)
             self.db_map_attrs(db, update_item, api_item)
             update_item.updated_by = user
 
@@ -284,8 +292,10 @@ class SimsDbBase():
                 if orig_samp.study.code not in ret:
                     ret.append(orig_samp.study.code)
         if hasattr(db_item, 'original_sample'):
-            if db_item.original_sample and db_item.original_sample.study:
-                ret = db_item.original_sample.study.code
+            if db_item.original_sample:
+                from backbone_server.model.original_sample import OriginalSample
+                if isinstance(db_item.original_sample, OriginalSample):
+                    ret = db_item.original_sample.study.code
         if len(ret) == 1:
             return ret[0]
         else:
@@ -303,34 +313,39 @@ class SimsDbBase():
         if not item_id:
             raise MissingKeyException(f"No item id to get {self.db_class.__table__}")
 
-        api_item = self.openapi_class()
-
+        api_item = None
         with session_scope(self.session) as db:
+            api_item = self.get_no_close(db, item_id, studies)
 
-            item_id = self.convert_to_id(db, item_id)
+        return api_item
 
-            if 'study_name' in api_item.openapi_types:
-                db_item = self.lookup_query(db).filter_by(id=item_id).options(joinedload('study')).first()
-            else:
-                db_item = self.lookup_query(db).filter_by(id=item_id).first()
+    def get_no_close(self, db, item_id, studies):
 
-            if not db_item:
-                raise MissingKeyException(f"Could not find {self.db_class.__table__} to get {item_id}")
+        api_item = self.openapi_class()
+        item_id = self.convert_to_id(db, item_id)
 
-            # determine if the result contains just the object or more
-            # or if self.result_fields()
-            if isinstance(db_item, self.db_class):
-                db_item.map_to_openapi(api_item)
-            self.openapi_map_actions(api_item, db_item)
+        if 'study_name' in api_item.openapi_types:
+            db_item = self.lookup_query(db).filter_by(id=item_id).options(joinedload('study')).first()
+        else:
+            db_item = self.lookup_query(db).filter_by(id=item_id).first()
 
-            study_code = self.get_study_code(db_item)
+        if not db_item:
+            raise MissingKeyException(f"Could not find {self.db_class.__table__} to get {item_id}")
 
-            self.has_study_permission(studies,
-                                      study_code,
-                                      self.GET_PERMISSION)
+        # determine if the result contains just the object or more
+        # or if self.result_fields()
+        if isinstance(db_item, self.db_class):
+            db_item.map_to_openapi(api_item)
+        self.openapi_map_actions(api_item, db_item)
 
-            api_item = self.post_get_action(db, db_item, api_item, studies,
-                                            False)
+        study_code = self.get_study_code(db_item)
+
+        self.has_study_permission(studies,
+                                  study_code,
+                                  self.GET_PERMISSION)
+
+        api_item = self.post_get_action(db, db_item, api_item, studies,
+                                        False)
 
             # print(db_item)
             # print(api_item)
@@ -526,12 +541,14 @@ class SimsDbBase():
 
     def gets_in(self, ids, studies, start, count):
 
+        with session_scope(self.session) as db:
+            return self.gets_in_noclose(db, ids, studies, start, count)
+
+    def gets_in_noclose(self, db, ids, studies, start, count):
         ret = None
 
-        with session_scope(self.session) as db:
+        db_items = self.lookup_query(db).filter(self.db_class.id.in_(ids))
 
-            db_items = self.lookup_query(db).filter(self.db_class.id.in_(ids))
-
-            ret = self._get_multiple_results(db, db_items, studies, start, count)
+        ret = self._get_multiple_results(db, db_items, studies, start, count)
 
         return ret

@@ -124,7 +124,7 @@ class BaseEventSet(SimsDbBase):
     # This is more complicated than usual
     # Possible to add sampling event members via post/put
     # Possible to create/remove new notes via post/put
-    def db_map_actions(self, db, db_item, api_item):
+    def db_map_actions(self, db, db_item, api_item, studies):
 
         if api_item.members:
             new_members = []
@@ -192,10 +192,10 @@ class BaseEventSet(SimsDbBase):
             raise MissingKeyException(f"No item id to get {self.db_class.__table__}")
 
         api_item = self.openapi_class()
+        orig_item_id = item_id
 
         with session_scope(self.session) as db:
 
-            orig_item_id = item_id
             item_id = self.convert_to_id(db, item_id)
 
             db_item = db.query(self.db_class).filter_by(id=item_id).first()

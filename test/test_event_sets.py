@@ -21,7 +21,7 @@ class TestEventSets(TestBase):
         try:
             study_code = '1010-MD-UP'
 
-            sampling_event = openapi_client.SamplingEvent(None, date(2017, 10, 14))
+            sampling_event = openapi_client.SamplingEvent(None, doc=date(2017, 10, 14))
             self.attr_value = self.attr_value + 1
             sampling_event.attrs = [
                 openapi_client.Attr(attr_type='se_oxford',
@@ -171,7 +171,7 @@ class TestEventSets(TestBase):
 #            event_set = 'EventSet6'
 #            created = api_instance.create_event_set(event_set)
 #
-#            samp = openapi_client.SamplingEvent(None, '4000-MD-UP', date(2017, 10, 10))
+#            samp = openapi_client.SamplingEvent(None, '4000-MD-UP', doc=date(2017, 10, 10))
 #            samp.event_sets = [ event_set ]
 #            created = event_api_instance.create_sampling_event(samp)
 #
@@ -197,7 +197,7 @@ class TestEventSets(TestBase):
 #            event_set = 'EventSet7'
 #            created = api_instance.create_event_set(event_set)
 #
-#            samp = openapi_client.SamplingEvent(None, '4000-MD-UP', date(2017, 10, 10))
+#            samp = openapi_client.SamplingEvent(None, '4000-MD-UP', doc=date(2017, 10, 10))
 #            created = event_api_instance.create_sampling_event(samp)
 #
 #            created.event_sets = [ event_set ]
@@ -384,10 +384,10 @@ class TestEventSets(TestBase):
             event_set = 'EventSet8'
             created = api_instance.create_event_set(event_set)
 
-            samp = openapi_client.SamplingEvent(None, date(2017, 10, 10))
+            samp = openapi_client.SamplingEvent(None, doc=date(2017, 10, 10))
             os_created, created = self.create_sampling_event(api_factory)
 
-            samp2 = openapi_client.SamplingEvent(None, date(2017, 10, 11))
+            samp2 = openapi_client.SamplingEvent(None, doc=date(2017, 10, 11))
             os_created2, created2 = self.create_sampling_event(api_factory)
 
             created_set = api_instance.create_event_set_item(event_set, created.sampling_event_id)
@@ -491,7 +491,7 @@ class TestEventSets(TestBase):
             event_set = 'EventSet11'
             created = api_instance.create_event_set(event_set)
 
-            samp = openapi_client.SamplingEvent(None, date(2017, 10, 10))
+            samp = openapi_client.SamplingEvent(None, doc=date(2017, 10, 10))
             os_created, created = self.create_sampling_event(api_factory)
 
             created_set = api_instance.create_event_set_item(event_set, created.sampling_event_id)
@@ -519,7 +519,7 @@ class TestEventSets(TestBase):
             event_set = 'EventSet12'
             created = api_instance.create_event_set(event_set)
 
-            samp = openapi_client.SamplingEvent(None, date(2017, 10, 10))
+            samp = openapi_client.SamplingEvent(None, doc=date(2017, 10, 10))
             os_created, created = self.create_sampling_event(api_factory)
 
             created_set = api_instance.create_event_set_item(event_set, created.sampling_event_id)

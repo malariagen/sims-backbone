@@ -95,7 +95,8 @@ class Base(object):
                                 setattr(self, key, sub_item_list)
                     else:
                         self.logger.debug(f'Mapping failed for {key} {value} {type(value)}')
-            elif hasattr(self, key) and getattr(openapi_type, key):
+            elif key not in ['version'] and (hasattr(self, key) and
+                                             getattr(openapi_type, key)):
                 setattr(self, key, getattr(openapi_type, key))
             elif hasattr(self, key):
                 # if it's None

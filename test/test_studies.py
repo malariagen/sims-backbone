@@ -350,7 +350,7 @@ class TestStudies(TestBase):
             loc_created = loc_api_instance.create_location(loc)
 
             from datetime import date
-            samp = openapi_client.SamplingEvent(None, date(2017, 10, 14))
+            samp = openapi_client.SamplingEvent(None, doc=date(2017, 10, 14))
             samp.location_id = loc_created.location_id
             created_se = api_instance.create_sampling_event(samp)
             samp = openapi_client.OriginalSample(None, study_name=study_code,

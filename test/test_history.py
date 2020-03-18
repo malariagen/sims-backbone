@@ -47,7 +47,7 @@ class TestHistory(TestBase):
 
             location = loc_api_instance.create_location(loc)
 
-            sampling_event = openapi_client.SamplingEvent(None, date(2017, 10, 10),
+            sampling_event = openapi_client.SamplingEvent(None, doc=date(2017, 10, 10),
                                                           doc_accuracy='month')
 
             sampling_event.location_id = location.location_id

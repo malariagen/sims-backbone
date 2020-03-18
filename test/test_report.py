@@ -22,7 +22,7 @@ class TestReport(TestBase):
 
         try:
 
-            sampling_event = openapi_client.SamplingEvent(None, date(2017, 10, 10),
+            sampling_event = openapi_client.SamplingEvent(None, doc=date(2017, 10, 10),
                                                           doc_accuracy='month')
             loc = openapi_client.Location(None, latitude=27.463,
                                           longitude=90.495,

@@ -23,6 +23,9 @@ components:
         sampling_event_id:
           type: string
   #        format: uuid
+        version:
+          type: integer
+          readOnly: true
         doc:
           type: string
           format: date

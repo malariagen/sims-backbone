@@ -130,7 +130,7 @@ class TestDerivativeSample(TestBase):
                                                    original_sample_id=orig_samp.original_sample_id)
             samp.attrs = [
                 openapi_client.Attr(attr_type='oxford', attr_value='1234',
-                                     attr_source='same')
+                                    attr_source='same')
             ]
             created = api_instance.create_derivative_sample(samp)
 
@@ -396,8 +396,8 @@ class TestDerivativeSample(TestBase):
                                                    original_sample=orig_samp,
                                                    original_sample_id=orig_samp.original_sample_id)
             samp.attrs = [
-                openapi_client.Attr (attr_type='partner_id', attr_value=test_id,
-                                     attr_source='encode')
+                openapi_client.Attr(attr_type='partner_id', attr_value=test_id,
+                                    attr_source='encode')
             ]
             created = api_instance.create_derivative_sample(samp)
 
@@ -474,12 +474,12 @@ class TestDerivativeSample(TestBase):
                                                     original_sample_id=created.original_sample_id)
 
             samp1.attrs = [
-                openapi_client.Attr (attr_type='test1', attr_value='test1',
-                                     attr_source='ds_os_attr')
+                openapi_client.Attr(attr_type='test1', attr_value='test1',
+                                    attr_source='ds_os_attr')
             ]
             samp2.attrs = [
-                openapi_client.Attr (attr_type='test2', attr_value='test2',
-                                     attr_source='ds_os_attr')
+                openapi_client.Attr(attr_type='test2', attr_value='test2',
+                                    attr_source='ds_os_attr')
             ]
             created1 = ds_api_instance.create_derivative_sample(samp1)
             created2 = ds_api_instance.create_derivative_sample(samp2)
@@ -538,12 +538,12 @@ class TestDerivativeSample(TestBase):
                                                 original_sample_id=created.original_sample_id)
 
         samp1.attrs = [
-            openapi_client.Attr (attr_type='test1', attr_value='test1',
-                                 attr_source='ds_os_attr')
+            openapi_client.Attr(attr_type='test1', attr_value='test1',
+                                attr_source='ds_os_attr')
         ]
         samp2.attrs = [
-            openapi_client.Attr (attr_type='test2', attr_value='test2',
-                                 attr_source='ds_os_attr')
+            openapi_client.Attr(attr_type='test2', attr_value='test2',
+                                attr_source='ds_os_attr')
         ]
         created1 = ds_api_instance.create_derivative_sample(samp1)
         created2 = ds_api_instance.create_derivative_sample(samp2)
@@ -738,7 +738,7 @@ class TestDerivativeSample(TestBase):
 
             created_es = es_api_instance.create_event_set(event_set_name)
 
-            sampling_event = openapi_client.SamplingEvent(None, date(2017, 10, 10),
+            sampling_event = openapi_client.SamplingEvent(None, doc=date(2017, 10, 10),
                                                           doc_accuracy='month')
 
             created_se = se_api_instance.create_sampling_event(sampling_event)
@@ -760,6 +760,10 @@ class TestDerivativeSample(TestBase):
 
             created1.original_sample.sampling_event_id = created_se.sampling_event_id
             created2.original_sample.sampling_event_id = created_se.sampling_event_id
+
+            fetched.original_sample.version = None
+            created1.original_sample.version = None
+            created2.original_sample.version = None
             assert fetched in (created1, created2), "create response != download response"
 
             assert results.attr_types == ['test1', 'test2']
@@ -812,7 +816,7 @@ class TestDerivativeSample(TestBase):
 
             created_es = es_api_instance.create_event_set(event_set_name)
 
-            sampling_event = openapi_client.SamplingEvent(None, date(2017, 10, 10),
+            sampling_event = openapi_client.SamplingEvent(None, doc=date(2017, 10, 10),
                                                           doc_accuracy='month')
 
             created_se = se_api_instance.create_sampling_event(sampling_event)
@@ -835,6 +839,9 @@ class TestDerivativeSample(TestBase):
 
             created1.original_sample.sampling_event_id = created_se.sampling_event_id
             created2.original_sample.sampling_event_id = created_se.sampling_event_id
+            fetched.original_sample.version = None
+            created1.original_sample.version = None
+            created2.original_sample.version = None
             assert fetched in (created1, created2), "create response != download response"
 
             assert results.attr_types == ['test1', 'test2']
@@ -875,7 +882,7 @@ class TestDerivativeSample(TestBase):
 
             created_es = es_api_instance.create_event_set(event_set_name)
 
-            sampling_event = openapi_client.SamplingEvent(None, date(2017, 10, 10),
+            sampling_event = openapi_client.SamplingEvent(None, doc=date(2017, 10, 10),
                                                           doc_accuracy='month')
 
             created_se = se_api_instance.create_sampling_event(sampling_event)

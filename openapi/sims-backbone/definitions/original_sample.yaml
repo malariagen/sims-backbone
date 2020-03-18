@@ -29,6 +29,9 @@ components:
         original_sample_id:
           type: string
   #        format: uuid
+        version:
+          type: integer
+          readOnly: true
         sampling_event_id:
           type: string
   #        format: uuid

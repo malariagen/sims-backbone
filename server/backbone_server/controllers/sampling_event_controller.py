@@ -375,6 +375,7 @@ class SamplingEventController(BaseController):
             retcode = 422
         except MissingKeyException as dme:
             logging.getLogger(__name__).debug("update_samplingEvent: %s", repr(dme))
+            samp = str(dme)
             retcode = 404
         except NestedEditException as nee:
             logging.getLogger(__name__).debug("update_samplingEvent: %s", repr(nee))

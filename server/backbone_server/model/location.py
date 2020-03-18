@@ -169,7 +169,7 @@ class BaseLocation(SimsDbBase):
         return api_item
 
 
-    def db_map_actions(self, db, db_item, api_item):
+    def db_map_actions(self, db, db_item, api_item, studies):
 
         if api_item.latitude == None or api_item.longitude == None:
             return

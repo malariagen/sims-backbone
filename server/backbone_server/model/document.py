@@ -68,7 +68,7 @@ class BaseDocument(SimsDbBase):
         self.openapi_class = Doc
         self.openapi_multiple_class = Documents
 
-    def db_map_actions(self, db, db_item, api_item):
+    def db_map_actions(self, db, db_item, api_item, studies):
 
         study = Study.get_or_create_study(db, api_item.study_name)
         db_item.study_id = study.id
