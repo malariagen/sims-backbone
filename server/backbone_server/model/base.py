@@ -150,7 +150,7 @@ class SimsDbBase():
 
         return ret
 
-    def convert_to_id(self, db, item_id):
+    def convert_to_id(self, db, item_id, **kwargs):
 
         return item_id
 
@@ -308,21 +308,21 @@ class SimsDbBase():
     def lookup_query(self, db):
         return db.query(self.db_class)
 
-    def get(self, item_id, studies):
+    def get(self, item_id, studies, **kwargs):
 
         if not item_id:
             raise MissingKeyException(f"No item id to get {self.db_class.__table__}")
 
         api_item = None
         with session_scope(self.session) as db:
-            api_item = self.get_no_close(db, item_id, studies)
+            api_item = self.get_no_close(db, item_id, studies, **kwargs)
 
         return api_item
 
-    def get_no_close(self, db, item_id, studies):
+    def get_no_close(self, db, item_id, studies, **kwargs):
 
         api_item = self.openapi_class()
-        item_id = self.convert_to_id(db, item_id)
+        item_id = self.convert_to_id(db, item_id, **kwargs)
 
         if 'study_name' in api_item.openapi_types:
             db_item = self.lookup_query(db).filter_by(id=item_id).options(joinedload('study')).first()
@@ -372,7 +372,7 @@ class SimsDbBase():
     def order_by(self):
         return self.db_class.id
 
-    def _get_multiple_results(self, db, db_query, studies, start, count,
+    def _get_multiple_results(self, db, db_query, start, count, studies=None,
                               order_by=None, study_filter=True):
 
         response_items = []
@@ -485,7 +485,8 @@ class SimsDbBase():
                 db_items = self.lookup_query(db).\
                         filter(self.db_class.id.in_(attr_filter))
 
-                ret = self._get_multiple_results(db, db_items, studies, start, count)
+                ret = self._get_multiple_results(db, db_items, start, count,
+                                                 studies=studies)
             else:
                 ret = self.openapi_multiple_class()
                 ret.count = 0
@@ -515,7 +516,8 @@ class SimsDbBase():
             db_items = None
             db_items = self.lookup_query(db).filter(self.db_class.study.has(code=study_name[:4])).options(joinedload('study'))
 
-            ret = self._get_multiple_results(db, db_items, studies, start, count)
+            ret = self._get_multiple_results(db, db_items, start, count,
+                                             studies=studies)
 
             if ret.count == 0:
                 from backbone_server.model.study import Study
@@ -534,8 +536,8 @@ class SimsDbBase():
 
             db_items = self.lookup_query(db)
 
-            ret = self._get_multiple_results(db, db_items, studies, start,
-                                             count, self.order_by())
+            ret = self._get_multiple_results(db, db_items, start, count,
+                                             studies=studies, order_by=self.order_by())
 
         return ret
 
@@ -549,6 +551,7 @@ class SimsDbBase():
 
         db_items = self.lookup_query(db).filter(self.db_class.id.in_(ids))
 
-        ret = self._get_multiple_results(db, db_items, studies, start, count)
+        ret = self._get_multiple_results(db, db_items, start, count,
+                                         studies=studies)
 
         return ret

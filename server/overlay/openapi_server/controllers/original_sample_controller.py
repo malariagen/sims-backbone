@@ -159,7 +159,8 @@ def download_original_samples_by_study(study_name, start=None, count=None,
                                                                          auths=original_sample_controller.token_info(token_info))
 
 
-def download_original_samples_by_taxa(taxa_id, start=None, count=None, user=None, token_info=None):
+def download_original_samples_by_taxa(taxa_id, start=None, count=None,
+                                      studies=None, user=None, token_info=None):
     """
     fetches originalSamples for a given taxonomy classification code
 
@@ -173,7 +174,8 @@ def download_original_samples_by_taxa(taxa_id, start=None, count=None, user=None
     :rtype: OriginalSamples
     """
     return original_sample_controller.download_original_samples_by_taxa(taxa_id, start,
-                                                                        count, studies=None, user=user,
+                                                                        count,
+                                                                        studies=studies, user=user,
                                                                         auths=original_sample_controller.token_info(token_info))
 
 

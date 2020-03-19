@@ -199,7 +199,8 @@ class BaseLocation(SimsDbBase):
 
             db_query = self.lookup_query(db).filter(and_(func.ST_X(Location.location) == lat, func.ST_Y(Location.location) == lng))
 
-            ret = self._get_multiple_results(db, db_query, studies, start, count)
+            ret = self._get_multiple_results(db, db_query, start, count,
+                                             studies=studies)
 
             if ret.count == 0:
                 raise MissingKeyException(f"GPS location not found {lat}, {lng}")
@@ -215,7 +216,8 @@ class BaseLocation(SimsDbBase):
             db_items = None
             db_items = self.lookup_query(db)
 
-            ret = self._get_multiple_results(db, db_items, studies, start, count)
+            ret = self._get_multiple_results(db, db_items, start, count,
+                                             studies=studies)
 
         return ret
 
@@ -245,7 +247,8 @@ class BaseLocation(SimsDbBase):
                     filter(os_study.code == study_name[:4]).\
                     distinct(Location.id)
 
-            ret = self._get_multiple_results(db, db_items, studies, start, count)
+            ret = self._get_multiple_results(db, db_items, start, count,
+                                             studies=studies)
 
             if ret.count == 0:
                 db_item = db.query(Study).filter_by(code=study_name[:4]).first()

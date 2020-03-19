@@ -209,7 +209,8 @@ class BaseSamplingEvent(SimsDbBase):
                     join(self.db_class.original_samples).\
                     filter(or_(SamplingEvent.location_id == location_id, SamplingEvent.proxy_location_id == location_id))
 
-            ret = self._get_multiple_results(db, db_items, studies, start, count)
+            ret = self._get_multiple_results(db, db_items, start, count,
+                                             studies=studies)
 
             if ret.count == 0:
                 db_item = db.query(Location).get(location_id)
@@ -218,7 +219,7 @@ class BaseSamplingEvent(SimsDbBase):
                     raise MissingKeyException("No location_id {}".format(location_id))
         return ret
 
-    def get_by_taxa(self, taxa_id, studies, start, count):
+    def get_by_taxa(self, taxa_id, start, count, studies=None):
 
         if not taxa_id:
             raise MissingKeyException("No taxa {}".format(taxa_id))
@@ -235,7 +236,8 @@ class BaseSamplingEvent(SimsDbBase):
                          and_(taxonomy_identifier_table.c.partner_species_identifier_id == OriginalSample.partner_species_id,
                               taxonomy_identifier_table.c.taxonomy_id == taxa_id))
 
-            ret = self._get_multiple_results(db, db_items, studies, start, count)
+            ret = self._get_multiple_results(db, db_items, start, count,
+                                             studies=studies)
 
             if ret.count == 0:
                 db_item = db.query(Taxonomy).get(taxa_id)
@@ -263,7 +265,8 @@ class BaseSamplingEvent(SimsDbBase):
                     join(self.db_class.original_samples).\
                     filter(OriginalSample.study.has(code=study_name[:4]))
 
-            ret = self._get_multiple_results(db, db_items, studies, start, count)
+            ret = self._get_multiple_results(db, db_items, start, count,
+                                             studies=studies)
 
             if ret.count == 0:
                 db_item = db.query(Study).filter_by(code=study_name[:4]).first()
@@ -293,7 +296,8 @@ class BaseSamplingEvent(SimsDbBase):
                     join(self.db_class.original_samples).\
                     filter(EventSet.event_set_name == event_set_name)
 
-            ret = self._get_multiple_results(db, db_items, studies, start, count)
+            ret = self._get_multiple_results(db, db_items, start, count,
+                                             studies=studies)
 
             if ret.count == 0:
                 db_item = db.query(EventSet).filter(EventSet.event_set_name == event_set_name).first()
@@ -361,8 +365,8 @@ class BaseSamplingEvent(SimsDbBase):
 
             # print(db_items)
             # db_item = db.query(self.db_class).filter_by(id=item_id).first()
-            ret = self._get_multiple_results(db, db_items, studies, start,
-                                             count, study_filter=study_filter)
+            ret = self._get_multiple_results(db, db_items, start, count,
+                                             studies=studies, study_filter=study_filter)
 
         return ret
 

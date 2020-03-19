@@ -55,11 +55,15 @@ class OriginalSample(Versioned, Base):
     acc_date = Column(Date)
     days_in_culture = Column(Integer)
 
-    study = relationship("Study", backref=backref("original_sample", uselist=False))
-    attrs = relationship("Attr", secondary=original_sample_attr_table)
+    # If uselist is False then only one original sample can link to a given
+    # xxxx
+    study = relationship("Study", backref=backref("original_sample",
+                                                  uselist=True))
     partner_species = relationship("PartnerSpeciesIdentifier",
                                    backref=backref("original_sample",
-                                                   uselist=False))
+                                                   uselist=True))
+
+    attrs = relationship("Attr", secondary=original_sample_attr_table)
 
     def submapped_items(self):
         return {
@@ -75,6 +79,7 @@ class OriginalSample(Versioned, Base):
     Acc Date {self.acc_date}
     DIC {self.days_in_culture}
     {self.partner_species}
+    {self.partner_species_id}
     {self.attrs}
     >'''
 
@@ -320,7 +325,8 @@ class BaseOriginalSample(SimsDbBase):
                     join(SamplingEvent.location).\
                     filter(Location.id == location_id)
 
-            ret = self._get_multiple_results(db, db_items, studies, start, count)
+            ret = self._get_multiple_results(db, db_items, start, count,
+                                             studies=studies)
 
             if ret.count == 0:
                 db_item = db.query(Location).get(location_id)
@@ -329,7 +335,7 @@ class BaseOriginalSample(SimsDbBase):
                     raise MissingKeyException("No location_id {}".format(location_id))
         return ret
 
-    def get_by_taxa(self, taxa_id, studies, start, count):
+    def get_by_taxa(self, taxa_id, start=None, count=None, studies=None):
 
         if not taxa_id:
             raise MissingKeyException("No taxa {}".format(taxa_id))
@@ -343,8 +349,8 @@ class BaseOriginalSample(SimsDbBase):
                         join(taxonomy_identifier_table,
                              and_(taxonomy_identifier_table.c.partner_species_identifier_id == OriginalSample.partner_species_id,
                                   taxonomy_identifier_table.c.taxonomy_id == taxa_id))
-
-            ret = self._get_multiple_results(db, db_items, studies, start, count)
+            ret = self._get_multiple_results(db, db_items, start, count,
+                                             studies=studies)
 
             if ret.count == 0:
                 if not db.query(Taxonomy).get(taxa_id):
@@ -376,7 +382,8 @@ class BaseOriginalSample(SimsDbBase):
                     filter(event_set_members_table.c.event_set_id == event_set.id).\
                     distinct(self.db_class.id)
 
-            ret = self._get_multiple_results(db, db_items, studies, start, count)
+            ret = self._get_multiple_results(db, db_items, start, count,
+                                             studies=studies)
 
             if ret.count == 0:
                 db_item = db.query(EventSet).filter(EventSet.event_set_name == event_set_name).first()

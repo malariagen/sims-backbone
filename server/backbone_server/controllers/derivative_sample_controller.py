@@ -289,7 +289,7 @@ class DerivativeSampleController(BaseController):
         samp = None
 
         try:
-            samp = get.get_by_taxa(taxa_id, studies, start, count)
+            samp = get.get_by_taxa(taxa_id, start, count, studies=studies)
         except MissingKeyException as dme:
             logging.getLogger(__name__).debug(
                 "download_derivative_samples_by_taxa: %s", repr(dme))

@@ -970,7 +970,7 @@ class TestOriginalSample(TestBase):
 
         try:
 
-            study_codes = [ '4031-MD-UP', '4032-MD-UP', '4033-MD-UP', '4034-MD-UP', '4034-MD-UP']
+            study_codes = ['4031-MD-UP', '4032-MD-UP', '4033-MD-UP', '4034-MD-UP', '4034-MD-UP']
 
             for study_code in study_codes:
                 samp1 = openapi_client.OriginalSample(None,
@@ -978,7 +978,7 @@ class TestOriginalSample(TestBase):
                                                       partner_species='PF')
                 created1 = api_instance.create_original_sample(samp1)
                 study_detail = study_api.download_study(study_code)
-                study_detail.partner_species[0].taxa = [ openapi_client.Taxonomy(taxonomy_id=5833) ]
+                study_detail.partner_species[0].taxa = [openapi_client.Taxonomy(taxonomy_id=5833)]
                 study_api.update_study(study_code, study_detail)
 
             results = api_instance.download_original_samples_by_taxa(5833,

@@ -175,7 +175,8 @@ def download_sampling_events_by_study(study_name, start=None, count=None, user=N
                                                                        auths=sampling_event_controller.token_info(token_info))
 
 
-def download_sampling_events_by_taxa(taxa_id, start=None, count=None, user=None, token_info=None):
+def download_sampling_events_by_taxa(taxa_id, start=None, count=None,
+                                     studies=None, user=None, token_info=None):
     """
     fetches samplingEvents for a given taxonomy classification code
 
@@ -190,7 +191,8 @@ def download_sampling_events_by_taxa(taxa_id, start=None, count=None, user=None,
     """
     return sampling_event_controller.download_sampling_events_by_taxa(taxa_id,
                                                                       start=start,
-                                                                      count=count, studies=None, user=user,
+                                                                      count=count,
+                                                                      studies=studies, user=user,
                                                                       auths=sampling_event_controller.token_info(token_info))
 
 

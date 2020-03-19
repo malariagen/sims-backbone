@@ -87,7 +87,8 @@ class BaseIndividual(SimsDbBase):
                     join(Attr).\
                     filter(Attr.study.has(code=study_name[:4]))
 
-            ret = self._get_multiple_results(db, db_items, studies, start, count)
+            ret = self._get_multiple_results(db, db_items, start, count,
+                                             studies=studies)
 
         return ret
 

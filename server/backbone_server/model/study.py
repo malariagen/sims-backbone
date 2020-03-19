@@ -39,7 +39,9 @@ class ExpectedSamples(Base):
     partner_species_id = Column('partner_species_id',
                                 UUID(as_uuid=True),
                                 ForeignKey('partner_species_identifier.id'))
-    partner_species = relationship("PartnerSpeciesIdentifier", backref=backref("expected_sample", uselist=False))
+    partner_species = relationship("PartnerSpeciesIdentifier",
+                                   backref=backref("expected_sample",
+                                                   uselist=True))
 
     @staticmethod
     def get_or_create(db, e_sample, study_id):
@@ -130,7 +132,7 @@ class Study(Base):
     partner_species = relationship('PartnerSpeciesIdentifier',
                                    back_populates='study')
     expected_samples = relationship("ExpectedSamples",
-                                    backref=backref("study"))
+                                    backref=backref("study", uselist=True))
     def __repr__(self):
         return f'''<Study {self.name} {self.code}
     {self.partner_species}

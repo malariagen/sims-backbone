@@ -130,7 +130,8 @@ class BaseAssayDatum(SimsDbBase):
 #                     join(self.db_class.original_sample).\
 #                     filter(or_(SamplingEvent.location_id == location_id, SamplingEvent.proxy_location_id == location_id))
 #
-#             ret = self._get_multiple_results(db, db_items, studies, start, count)
+#             ret = self._get_multiple_results(db, db_items, start, count,
+#             studies=studies)
 #
 #             if ret.count == 0:
 #                 db_item = db.query(Location).get(location_id)
@@ -156,7 +157,8 @@ class BaseAssayDatum(SimsDbBase):
 #                     join(PartnerSpeciesIdentifier.taxa).\
 #                     filter(Taxonomy.id==taxa_id)
 #
-#             ret = self._get_multiple_results(db, db_items, studies, start, count)
+#             ret = self._get_multiple_results(db, db_items, start, count,
+#             studies=studies)
 #
 #             if ret.count == 0:
 #                 db_item = db.query(Taxonomy).get(taxa_id)
@@ -184,7 +186,8 @@ class BaseAssayDatum(SimsDbBase):
 #                     join(self.db_class.original_sample).\
 #                     filter(OriginalSample.study.has(code=study_name[:4]))
 #
-#             ret = self._get_multiple_results(db, db_items, studies, start, count)
+#             ret = self._get_multiple_results(db, db_items, start, count,
+#             studies=studies)
 #
 #             if ret.count == 0:
 #                 db_item = db.query(Study).filter_by(code=study_name[:4]).first()
@@ -208,7 +211,8 @@ class BaseAssayDatum(SimsDbBase):
 #                     join(EventSet.members).\
 #                     filter(EventSet.event_set_name==event_set_name)
 #
-#             ret = self._get_multiple_results(db, db_items, studies, start, count)
+#             ret = self._get_multiple_results(db, db_items, start, count,
+#             studies=studies)
 #
 #             if ret.count == 0:
 #                 db_item = db.query(EventSet).filter(EventSet.event_set_name==event_set_name).first()
@@ -275,6 +279,7 @@ class BaseAssayDatum(SimsDbBase):
                                   original_sample_attr_table.c.attr_id.in_(attrs)))
             # db_item = db.query(self.db_class).filter_by(id=item_id).first()
 
-            ret = self._get_multiple_results(db, db_items, studies, start, count)
+            ret = self._get_multiple_results(db, db_items, start, count,
+                                             studies=studies)
 
         return ret
