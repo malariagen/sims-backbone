@@ -5,6 +5,7 @@ import inspect
 import sqlalchemy
 from sqlalchemy import Table, Column
 from sqlalchemy import Integer, String, ForeignKey, DateTime, func, text
+from sqlalchemy.sql import func
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.ext.declarative import declarative_base
@@ -25,6 +26,10 @@ class Base(object):
 
     id = Column(UUID(as_uuid=True), default=uuid.uuid4,
                 primary_key=True)
+
+    created_by = Column(String(64))
+    updated_by = Column(String(64))
+    action_date = Column(DateTime(), server_default=func.now())
 
     def get_id_key(self):
         name = self.__tablename__
