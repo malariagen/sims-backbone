@@ -65,6 +65,9 @@ class OriginalSample(Versioned, Base):
 
     attrs = relationship("Attr", secondary=original_sample_attr_table)
 
+    openapi_class = OS
+    openapi_multiple_class = OriginalSamples
+
     def submapped_items(self):
         return {
             # 'partner_species': 'partner_species.partner_species',
@@ -72,6 +75,18 @@ class OriginalSample(Versioned, Base):
             'study_name': 'study.name',
             'attrs': Attr
         }
+
+    def openapi_map_actions(self, api_item):
+
+        db_ps_item = self.partner_species
+        if db_ps_item:
+            # print('Mapping db_ps_item to ps_item')
+            ps_item = db_ps_item.map_to_openapi()
+            api_item.partner_species = ps_item.partner_species
+            api_item.partner_taxonomies = ps_item.taxa
+            # print(ps_item)
+        # print(f'BaseOriginalSample.openapi_map_actions {db_item}')
+        # print(f'BaseOriginalSample.openapi_map_actions {api_item}')
 
     def __repr__(self):
         return f'''<OriginalSample ID {self.id}
@@ -97,8 +112,6 @@ class BaseOriginalSample(SimsDbBase):
                                             'attr'])
         Base.metadata.create_all(engine)
         self.db_class = OriginalSample
-        self.openapi_class = OS
-        self.openapi_multiple_class = OriginalSamples
         self.attr_link = original_sample_attr_table
         self.duplicate_attrs = [
             'partner_id',
@@ -155,18 +168,6 @@ class BaseOriginalSample(SimsDbBase):
         # print(api_item)
         # print(db_item)
 
-    def openapi_map_actions(self, api_item, db_item):
-
-        db_ps_item = db_item.partner_species
-        if db_ps_item:
-            ps_item = PartnerSpecies()
-            # print('Mapping db_ps_item to ps_item')
-            db_ps_item.map_to_openapi(ps_item)
-            api_item.partner_species = ps_item.partner_species
-            api_item.partner_taxonomies = ps_item.taxa
-            # print(ps_item)
-        # print(f'BaseOriginalSample.openapi_map_actions {db_item}')
-        # print(f'BaseOriginalSample.openapi_map_actions {api_item}')
 
     def expand_results(self, db, simple_results, studies):
 
@@ -185,9 +186,7 @@ class BaseOriginalSample(SimsDbBase):
             db_query = db.query(SamplingEvent).filter(SamplingEvent.id.in_((sampling_events)))
             se = BaseSamplingEvent(self.engine, self.session)
             for db_item in db_query.all():
-                api_item = ApiSamplingEvent()
-                db_item.map_to_openapi(api_item)
-                se.openapi_map_actions(api_item, db_item)
+                api_item = db_item.map_to_openapi()
 
                 study_code = se.get_study_code(db_item)
                 self.has_study_permission(studies,

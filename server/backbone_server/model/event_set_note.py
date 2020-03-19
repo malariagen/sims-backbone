@@ -34,6 +34,8 @@ class EventSetNote(Versioned, Base):
                           UUID(as_uuid=True),
                           ForeignKey('event_set.id'))
 
+    openapi_class = ApiEventSetNote
+
     def submapped_items(self):
         return {
         }
@@ -53,7 +55,6 @@ class BaseEventSetNote(SimsDbBase):
         self.metadata.reflect(engine, only=['event_set'])
 
         self.db_class = EventSetNote
-        self.openapi_class = ApiEventSetNote
 
     def pre_post_check(self, db, event_set_id, api_item, studies):
 
@@ -149,8 +150,7 @@ class BaseEventSetNote(SimsDbBase):
             if not delete_item:
                 raise MissingKeyException(f"Could not find {self.db_class.__table__} to delete {input_item_id}")
 
-            api_delete = self.openapi_class()
-            delete_item.map_to_openapi(api_delete)
+            api_delete = delete_item.map_to_openapi()
 
             self.delete_extra_actions(db, delete_item, api_delete)
 

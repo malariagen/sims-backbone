@@ -72,6 +72,9 @@ class ReleaseItem(Versioned, Base):
 
     attrs = relationship("Attr", secondary=release_item_attr_table)
 
+    openapi_class = ReleaseItemApi
+    openapi_multiple_class = ReleaseItems
+
     def submapped_items(self):
         return {
             'attrs': Attr,
@@ -100,6 +103,8 @@ class Release(Versioned, Base):
     notes = relationship("ReleaseNote",
                          backref=backref('release'))
 
+    openapi_class = ApiRelease
+    openapi_multiple_class = Releases
 
     def submapped_items(self):
         return {
@@ -125,8 +130,6 @@ class BaseReleaseItem(SimsDbBase):
         super().__init__(engine, session)
 
         self.db_class = ReleaseItem
-        self.openapi_class = ReleaseItemApi
-        self.openapi_multiple_class = ReleaseItems
         self.attr_link = release_item_attr_table
         self.api_id = 'release_item_id'
 
@@ -232,8 +235,6 @@ class BaseRelease(SimsDbBase):
                                             'attr'])
 
         self.db_class = Release
-        self.openapi_class = ApiRelease
-        self.openapi_multiple_class = Releases
         self.attr_link = release_attr_table
         self.api_id = 'release_id'
 
@@ -244,7 +245,7 @@ class BaseRelease(SimsDbBase):
         if db_item:
             raise DuplicateKeyException(f"Error inserting release already exists {api_item}")
 
-        new_api_item = self.openapi_class()
+        new_api_item = self.db_class.openapi_class()
         new_api_item.release_name = api_item
 
         return new_api_item
@@ -299,7 +300,6 @@ class BaseRelease(SimsDbBase):
         if not item_id:
             raise MissingKeyException(f"No item id to get {self.db_class.__table__}")
 
-        api_item = self.openapi_class()
         orig_item_id = item_id
 
         with session_scope(self.session) as db:
@@ -311,8 +311,7 @@ class BaseRelease(SimsDbBase):
             if not db_item:
                 raise MissingKeyException(f"Could not find {self.db_class.__table__} to get {item_id}")
 
-            db_item.map_to_openapi(api_item)
-            self.openapi_map_actions(api_item, db_item)
+            api_item = db_item.map_to_openapi()
 
             study_code = self.get_study_code(db_item)
 
@@ -388,11 +387,6 @@ class BaseRelease(SimsDbBase):
 
             if not db_item:
                 raise MissingKeyException(f"Could not find release_item to get {item_id}")
-
-            # determine if the result contains just the object or more
-            # or if self.result_fields()
-            self.openapi_map_actions(api_item, db_item)
-
 
             api_item = self.post_get_action(db, db_item, api_item, studies,
                                             False)

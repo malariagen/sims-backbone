@@ -25,6 +25,9 @@ class Archive(Base):
     result_code = Column(Integer())
     action_date = Column(DateTime(), server_default=func.now())
 
+    openapi_class = LogItem
+    openapi_multiple_class = LogItems
+
     def __repr__(self):
         return f'''<Archive ID {self.id}
     {self.submitter}
@@ -48,6 +51,4 @@ class BaseArchive():
         ])
 
         self.db_class = Archive
-        self.openapi_class = LogItem
-        self.openapi_multiple_class = LogItems
         self.api_id = 'id'

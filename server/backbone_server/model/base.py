@@ -30,8 +30,6 @@ class SimsDbBase():
         self.metadata = MetaData(bind=engine)
         Base.metadata.create_all(bind=engine)
 
-        self.openapi_class = None
-        self.openapi_multiple_class = None
         self.db_class = None
         self.attr_link = None
         self.api_id = None
@@ -109,9 +107,6 @@ class SimsDbBase():
                 db_item.attrs.remove(attr)
 
     def db_map_actions(self, db, db_item, api_item, studies, **kwargs):
-        pass
-
-    def openapi_map_actions(self, api_item, db_item):
         pass
 
     def post(self, api_item, study_name, studies, user):
@@ -217,6 +212,7 @@ class SimsDbBase():
             if not update_item:
                 raise MissingKeyException(f"Could not find {self.db_class.__table__} to update {item_id}")
 
+            update_item.pre_update_json = update_item.to_json()
             old_version = None
             if hasattr(update_item, 'version'):
                 old_version = update_item.version
@@ -268,8 +264,7 @@ class SimsDbBase():
                 if not delete_item:
                     raise MissingKeyException(f"Could not find {self.db_class.__table__} to delete {item_id}")
 
-                api_delete = self.openapi_class()
-                delete_item.map_to_openapi(api_delete)
+                api_delete = delete_item.map_to_openapi()
                 if studies:
                     study_code = self.get_study_code(delete_item)
                     BaseController.has_study_permission(studies,
@@ -321,10 +316,9 @@ class SimsDbBase():
 
     def get_no_close(self, db, item_id, studies, **kwargs):
 
-        api_item = self.openapi_class()
         item_id = self.convert_to_id(db, item_id, **kwargs)
 
-        if 'study_name' in api_item.openapi_types:
+        if hasattr(self.db_class, 'study_id'):
             db_item = self.lookup_query(db).filter_by(id=item_id).options(joinedload('study')).first()
         else:
             db_item = self.lookup_query(db).filter_by(id=item_id).first()
@@ -332,11 +326,13 @@ class SimsDbBase():
         if not db_item:
             raise MissingKeyException(f"Could not find {self.db_class.__table__} to get {item_id}")
 
+        api_item = None
         # determine if the result contains just the object or more
         # or if self.result_fields()
         if isinstance(db_item, self.db_class):
-            db_item.map_to_openapi(api_item)
-        self.openapi_map_actions(api_item, db_item)
+            api_item = db_item.map_to_openapi()
+        else:
+            api_item = self.map_multiple_results(db_item)
 
         study_code = self.get_study_code(db_item)
 
@@ -388,7 +384,7 @@ class SimsDbBase():
         else:
             db_query = db_query.distinct(self.db_class.id)
 
-        ret = self.openapi_multiple_class()
+        ret = self.db_class.openapi_multiple_class()
         ret.count = db_query.count()
 
         if hasattr(ret, 'attr_types'):
@@ -415,10 +411,11 @@ class SimsDbBase():
         # print(db_query)
         # print(f'start {start} count {count} order_by {order_by}')
         for db_item in db_query.all():
-            api_item = self.openapi_class()
+            api_item = None
             if isinstance(db_item, self.db_class):
-                db_item.map_to_openapi(api_item, recurse=False)
-            self.openapi_map_actions(api_item, db_item)
+                api_item = db_item.map_to_openapi(recurse=False)
+            else:
+                api_item = self.map_multiple_results(db_item)
 
             study_code = self.get_study_code(db_item)
 
@@ -441,7 +438,7 @@ class SimsDbBase():
             if issubclass(value, typing.List):
                 # Slightly hacky to get the type of the list members
                 (api_subitem_class,) = value.__args__
-                if api_subitem_class == self.openapi_class:
+                if api_subitem_class == self.db_class.openapi_class:
                     setattr(ret, key, response_items)
 
         return self.expand_results(db, ret, studies)
@@ -488,13 +485,13 @@ class SimsDbBase():
                 ret = self._get_multiple_results(db, db_items, start, count,
                                                  studies=studies)
             else:
-                ret = self.openapi_multiple_class()
+                ret = self.db_class.openapi_multiple_class()
                 ret.count = 0
                 for key, value in ret.openapi_types.items():
                     if issubclass(value, typing.List):
                         # Slightly hacky to get the type of the list members
                         (api_subitem_class,) = value.__args__
-                        if api_subitem_class == self.openapi_class:
+                        if api_subitem_class == self.db_class.openapi_class:
                             setattr(ret, key, [])
 
         return ret

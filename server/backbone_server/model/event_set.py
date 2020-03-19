@@ -57,6 +57,8 @@ class EventSet(Versioned, Base):
     notes = relationship("EventSetNote",
                         backref=backref('event_set'))
 
+    openapi_class = ApiEventSet
+    openapi_multiple_class = EventSets
 
     def submapped_items(self):
         return {
@@ -88,8 +90,6 @@ class BaseEventSet(SimsDbBase):
                                             'attr'])
 
         self.db_class = EventSet
-        self.openapi_class = ApiEventSet
-        self.openapi_multiple_class = EventSets
         self.attr_class = Attr
 
     def pre_post_check(self, db, api_item, studies):
@@ -99,7 +99,7 @@ class BaseEventSet(SimsDbBase):
         if db_item:
             raise DuplicateKeyException(f"Error inserting event set already exists {api_item}")
 
-        new_api_item = self.openapi_class()
+        new_api_item = self.db_class.openapi_class()
         new_api_item.event_set_name = api_item
 
         return new_api_item
@@ -191,7 +191,6 @@ class BaseEventSet(SimsDbBase):
         if not item_id:
             raise MissingKeyException(f"No item id to get {self.db_class.__table__}")
 
-        api_item = self.openapi_class()
         orig_item_id = item_id
 
         with session_scope(self.session) as db:
@@ -203,8 +202,7 @@ class BaseEventSet(SimsDbBase):
             if not db_item:
                 raise MissingKeyException(f"Could not find {self.db_class.__table__} to get {item_id}")
 
-            db_item.map_to_openapi(api_item)
-            self.openapi_map_actions(api_item, db_item)
+            api_item = db_item.map_to_openapi()
 
             study_code = self.get_study_code(db_item)
 

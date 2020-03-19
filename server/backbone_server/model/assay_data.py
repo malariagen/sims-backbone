@@ -56,6 +56,9 @@ class AssayDatum(Versioned, Base):
     #derivative_sample = relationship("DerivativeSample",
     #                                backref=backref("derivative_sample"))
 
+    openapi_class = ApiAssayDatum
+    openapi_multiple_class = AssayData
+
     def submapped_items(self):
         return {
             # 'partner_species': 'partner_species.partner_species',
@@ -82,8 +85,6 @@ class BaseAssayDatum(SimsDbBase):
                                             'attr'])
 
         self.db_class = AssayDatum
-        self.openapi_class = ApiAssayDatum
-        self.openapi_multiple_class = AssayData
         self.attr_link = assay_datum_attr_table
         self.api_id = 'assay_datum_id'
         self.duplicate_attrs = []
@@ -103,9 +104,7 @@ class BaseAssayDatum(SimsDbBase):
             db_query = db.query(DerivativeSample).filter(DerivativeSample.id.in_((derivative_samples)))
             ds = BaseDerivativeSample(self.engine, self.session)
             for db_item in db_query.all():
-                api_item = ApiDerivativeSample()
-                db_item.map_to_openapi(api_item)
-                ds.openapi_map_actions(api_item, db_item)
+                api_item = db_item.map_to_openapi()
 
                 study_code = ds.get_study_code(db_item)
                 self.has_study_permission(studies,
@@ -247,7 +246,7 @@ class BaseAssayDatum(SimsDbBase):
                 attrs.append(db_attr.id)
 
             if not attrs:
-                ret = self.openapi_multiple_class()
+                ret = self.db_class.openapi_multiple_class()
                 ret.count = 0
                 return ret
 

@@ -4,6 +4,7 @@ from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.orm import mapper, attributes, object_mapper
 from sqlalchemy.orm.exc import UnmappedColumnError
 from sqlalchemy import Table, Column, ForeignKeyConstraint, Integer, DateTime
+from sqlalchemy.types import JSON
 from sqlalchemy import event, util
 import datetime
 from sqlalchemy.orm.properties import RelationshipProperty
@@ -101,6 +102,8 @@ def _history_mapper(local_mapper):
 
         if super_fks:
             cols.append(ForeignKeyConstraint(*zip(*super_fks)))
+
+        cols.append(Column('api_json', JSON, info=version_meta))
 
         table = Table(
             local_mapper.local_table.name + '_history',
@@ -241,6 +244,7 @@ def create_version(obj, session, deleted=False):
     hist = history_cls()
     for key, value in attr.items():
         setattr(hist, key, value)
+    setattr(hist, 'api_json', obj.pre_update_json)
     session.add(hist)
     obj.version += 1
 

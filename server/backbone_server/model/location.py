@@ -78,6 +78,10 @@ class Location(Versioned, Base):
                                ForeignKey('location.id'))
 
     attrs = relationship("Attr", secondary=location_attr_table)
+
+    openapi_class = ApiLocation
+    openapi_multiple_class = Locations
+
     def submapped_items(self):
         return {
             'attrs': Attr
@@ -110,8 +114,6 @@ class BaseLocation(SimsDbBase):
                                             'attr'])
 
         self.db_class = Location
-        self.openapi_class = ApiLocation
-        self.openapi_multiple_class = Locations
         self.attr_link = location_attr_table
         self.api_id = 'location_id'
         self.duplicate_attrs = ['partner_name']
@@ -182,11 +184,13 @@ class BaseLocation(SimsDbBase):
                         func.ST_X(Location.location).label('latitude'),
                         func.ST_Y(Location.location).label('longitude'))
 
-    def openapi_map_actions(self, api_item, db_item):
-        loc_item = db_item[0]
-        loc_item.map_to_openapi(api_item)
-        api_item.latitude = db_item[1]
-        api_item.longitude = db_item[2]
+    def map_multiple_results(self, db_items):
+        loc_item = db_items[0]
+        api_item = loc_item.map_to_openapi()
+        api_item.latitude = db_items[1]
+        api_item.longitude = db_items[2]
+
+        return api_item
 
     def get_by_gps(self, lat, lng, studies, start, count):
 

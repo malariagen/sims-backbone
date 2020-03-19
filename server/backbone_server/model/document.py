@@ -42,6 +42,9 @@ class Document(Versioned, Base):
     study = relationship("Study", backref=backref("document", uselist=False))
     attrs = relationship("Attr", secondary=document_attr_table)
 
+    openapi_class = Doc
+    openapi_multiple_class = Documents
+
     def submapped_items(self):
         return {
             'study_name': 'study',
@@ -65,8 +68,6 @@ class BaseDocument(SimsDbBase):
         self.metadata.reflect(engine, only=['study'])
 
         self.db_class = Document
-        self.openapi_class = Doc
-        self.openapi_multiple_class = Documents
 
     def db_map_actions(self, db, db_item, api_item, studies):
 

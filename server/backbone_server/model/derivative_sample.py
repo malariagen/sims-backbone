@@ -57,6 +57,9 @@ class DerivativeSample(Versioned, Base):
     #derivative_sample = relationship("DerivativeSample",
     #                                backref=backref("derivative_sample"))
 
+    openapi_class = ApiDerivativeSample
+    openapi_multiple_class = DerivativeSamples
+
     def submapped_items(self):
         return {
             # 'partner_species': 'partner_species.partner_species',
@@ -82,8 +85,6 @@ class BaseDerivativeSample(SimsDbBase):
                                             'attr'])
 
         self.db_class = DerivativeSample
-        self.openapi_class = ApiDerivativeSample
-        self.openapi_multiple_class = DerivativeSamples
         self.attr_link = derivative_sample_attr_table
         self.api_id = 'derivative_sample_id'
         self.duplicate_attrs = ['plate_name', 'plate_position']
@@ -228,7 +229,7 @@ class BaseDerivativeSample(SimsDbBase):
             db_attr = Attr.get(db, api_attr, value_type)
 
             if not db_attr:
-                ret = self.openapi_multiple_class()
+                ret = self.db_class.openapi_multiple_class()
                 ret.count = 0
                 return ret
 

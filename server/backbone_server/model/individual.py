@@ -34,6 +34,9 @@ class Individual(Versioned, Base):
 
     attrs = relationship("Attr", secondary=individual_attr_table)
 
+    openapi_class = ApiIndividual
+    openapi_multiple_class = Individuals
+
     def submapped_items(self):
         return {
             # 'partner_species': 'partner_species.partner_species',
@@ -59,10 +62,6 @@ class BaseIndividual(SimsDbBase):
         ])
 
         self.db_class = Individual
-        self.openapi_class = ApiIndividual
-        self.openapi_multiple_class = Individuals
-        self.attr_class = Attr
-        self.study_class = Study
         self.attr_link = individual_attr_table
         self.api_id = 'individual_id'
         self.duplicate_attrs = []

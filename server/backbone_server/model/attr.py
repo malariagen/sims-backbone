@@ -7,6 +7,8 @@ from sqlalchemy.dialects.postgresql import UUID
 
 from sqlalchemy.orm import relationship, backref
 
+from openapi_server.models.attr import Attr as AttrApi
+
 from backbone_server.model.mixins import Base
 from backbone_server.model.study import Study
 
@@ -29,6 +31,8 @@ class Attr(Base):
 
     study = relationship('Study',
                          backref=backref('attr'))
+
+    openapi_class = AttrApi
 
     def submapped_items(self):
         return {

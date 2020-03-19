@@ -13,6 +13,7 @@ from openapi_server.models.study import Study as ApiStudy
 from openapi_server.models.studies import Studies as ApiStudies
 from openapi_server.models.partner_species import PartnerSpecies
 from openapi_server.models.taxonomy import Taxonomy as ApiTaxonomy
+from openapi_server.models.expected_samples import ExpectedSamples
 
 from backbone_server.errors.missing_key_exception import MissingKeyException
 from backbone_server.errors.duplicate_key_exception import DuplicateKeyException
@@ -67,6 +68,8 @@ class ExpectedSamples(Base):
 
         return expected_sample
 
+    openapi_class = ExpectedSamples
+
     def submapped_items(self):
         return {
             'partner_species': PartnerSpeciesIdentifier,
@@ -101,6 +104,8 @@ class Taxonomy(Base):
 
         return taxa
 
+    openapi_class = ApiTaxonomy
+
     def __repr__(self):
         return f'''<Taxonomy ID {self.id}
     Rank {self.rank}
@@ -133,12 +138,6 @@ class Study(Base):
                                    back_populates='study')
     expected_samples = relationship("ExpectedSamples",
                                     backref=backref("study", uselist=True))
-    def __repr__(self):
-        return f'''<Study {self.name} {self.code}
-    {self.partner_species}
-    {self.expected_samples}
-    {self.ethics_expiry}>'''
-
     @staticmethod
     def get_or_create_study(db, study_name):
 
@@ -152,11 +151,52 @@ class Study(Base):
 
         return study
 
+    openapi_class = ApiStudy
+    openapi_multiple_class = ApiStudies
+
+    def openapi_map_actions(self, api_item):
+        # print('openapi_map_actions')
+        # print(api_item)
+        db_item = self
+        # print(db_item)
+
+        api_item.partner_species = []
+        for psi in db_item.partner_species:
+            ps_item = psi.map_to_openapi()
+            ps_item.partner_taxonomies = []
+
+            if not ps_item.taxa:
+                ps_item.taxa = []
+            api_item.partner_species.append(ps_item)
+        if api_item.expected_samples:
+            # print(api_item.expected_samples)
+            for es in api_item.expected_samples:
+                for db_es in db_item.expected_samples:
+                    # print(f'db_es {db_es}')
+                    if str(db_es.id) == es.expected_samples_id:
+                        ps_item = PartnerSpecies()
+                        if not db_es.partner_species:
+                            db_es.partner_species = PartnerSpeciesIdentifier()
+                        ps_item = db_es.partner_species.map_to_openapi()
+                        ps_item.partner_taxonomies = []
+
+                        if not ps_item.taxa:
+                            ps_item.taxa = []
+                        es.expected_species = ps_item.partner_species
+                        es.expected_taxonomies = ps_item.taxa
+        # print(f'Study openapi_map_actions {api_item}')
+
     def submapped_items(self):
         return {
             'partner_species': PartnerSpeciesIdentifier,
             'expected_samples': ExpectedSamples
         }
+
+    def __repr__(self):
+        return f'''<Study {self.name} {self.code}
+    {self.partner_species}
+    {self.expected_samples}
+    {self.ethics_expiry}>'''
 
 
 class PartnerSpeciesIdentifier(Base):
@@ -172,6 +212,8 @@ class PartnerSpeciesIdentifier(Base):
                          back_populates='partner_species')
     taxa = relationship('Taxonomy',
                               secondary=taxonomy_identifier_table)
+
+    openapi_class = PartnerSpecies
 
     @staticmethod
     def get_or_create(db, partner_species, study_id):
@@ -210,8 +252,6 @@ class BaseStudy(SimsDbBase):
         ])
 
         self.db_class = Study
-        self.openapi_class = ApiStudy
-        self.openapi_multiple_class = ApiStudies
 
     def convert_to_id(self, db, item_id):
 
@@ -305,36 +345,6 @@ class BaseStudy(SimsDbBase):
         # print(api_item)
         # print(db_item)
 
-    def openapi_map_actions(self, api_item, db_item):
-        # print('openapi_map_actions')
-        # print(db_item)
-        # print(api_item)
-        api_item.partner_species = []
-        for psi in db_item.partner_species:
-            ps_item = PartnerSpecies()
-            psi.map_to_openapi(ps_item)
-            ps_item.partner_taxonomies = []
-
-            if not ps_item.taxa:
-                ps_item.taxa = []
-            api_item.partner_species.append(ps_item)
-        if api_item.expected_samples:
-            # print(api_item.expected_samples)
-            for es in api_item.expected_samples:
-                for db_es in db_item.expected_samples:
-                    # print(f'db_es {db_es}')
-                    if str(db_es.id) == es.expected_samples_id:
-                        ps_item = PartnerSpecies()
-                        if not db_es.partner_species:
-                            db_es.partner_species = PartnerSpeciesIdentifier()
-                        db_es.partner_species.map_to_openapi(ps_item)
-                        ps_item.partner_taxonomies = []
-
-                        if not ps_item.taxa:
-                            ps_item.taxa = []
-                        es.expected_species = ps_item.partner_species
-                        es.expected_taxonomies = ps_item.taxa
-        # print(f'Study openapi_map_actions {api_item}')
 
     def post_get_action(self, db, db_item, api_item, studies, multiple=False):
 

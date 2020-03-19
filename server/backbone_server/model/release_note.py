@@ -31,8 +31,10 @@ class ReleaseNote(Versioned, Base):
     note_text = Column(Text())
 
     release_id = Column('release_id',
-                          UUID(as_uuid=True),
-                          ForeignKey('release.id'))
+                        UUID(as_uuid=True),
+                        ForeignKey('release.id'))
+
+    openapi_class = ApiReleaseNote
 
     def submapped_items(self):
         return {
@@ -53,7 +55,6 @@ class BaseReleaseNote(SimsDbBase):
         self.metadata.reflect(engine, only=['release'])
 
         self.db_class = ReleaseNote
-        self.openapi_class = ApiReleaseNote
 
     def pre_post_check(self, db, release_id, api_item, studies):
 
@@ -149,8 +150,7 @@ class BaseReleaseNote(SimsDbBase):
             if not delete_item:
                 raise MissingKeyException(f"Could not find {self.db_class.__table__} to delete {input_item_id}")
 
-            api_delete = self.openapi_class()
-            delete_item.map_to_openapi(api_delete)
+            api_delete = delete_item.map_to_openapi()
 
             self.delete_extra_actions(db, delete_item, api_delete)
 

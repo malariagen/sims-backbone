@@ -2,17 +2,18 @@ import logging
 import uuid
 import typing
 import inspect
-import sqlalchemy
-from sqlalchemy import Table, Column
-from sqlalchemy import Integer, String, ForeignKey, DateTime, func, text
-from sqlalchemy.sql import func
+import json
+from typing import List, Dict  # noqa: F401
+
+from sqlalchemy import Column
+from sqlalchemy import String, DateTime, func
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.ext.declarative import declarative_base
 
-from sqlalchemy.orm import relationship
 
-from typing import List, Dict  # noqa: F401
+from openapi_server.encoder import JSONEncoder
+
 from openapi_server.models.base_model_ import Model
 
 class Base(object):
@@ -31,10 +32,20 @@ class Base(object):
     updated_by = Column(String(64))
     action_date = Column(DateTime(), server_default=func.now())
 
+    openapi_class = None
+    openapi_multiple_class = None
+    pre_update_json = None
+
     def get_id_key(self):
         name = self.__tablename__
 
         return name + '_id'
+
+    def to_json(self, recurse=True):
+        item = self.map_to_openapi(recurse)
+        item_json = json.dumps(item, ensure_ascii=False, cls=JSONEncoder)
+
+        return item_json
 
     def submapped_items(self):
         return {}
@@ -110,10 +121,15 @@ class Base(object):
                 self.logger.debug(f'No mapping: {self.__class__.__name__}:' + key)
         self.map_from_openapi_actions(openapi_type)
 
-    def map_to_openapi_actions(self, api_item):
+    def openapi_map_actions(self, api_item):
         pass
 
-    def map_to_openapi(self, openapi_type, recurse=True):
+    def map_to_openapi(self, recurse=True):
+
+        if not self.openapi_class:
+            print(f'No class defined for {self.__class__.__name__}')
+        openapi_type = self.openapi_class()
+
         # print(f'Mapping d2a: {self.__class__.__name__} {openapi_type}')
         # print(self)
         for key, value in openapi_type.openapi_types.items():
@@ -138,10 +154,8 @@ class Base(object):
                         api_list = []
                         for db_subitem in db_subitems:
                             # Slightly hacky to get the type of the list members
-                            (api_subitem_class,) = value.__args__
-                            api_subitem = api_subitem_class()
+                            api_subitem = db_subitem.map_to_openapi()
                             # print(f'Recurse in list {key} {subitem_descrip} {type(api_subitem)}')
-                            db_subitem.map_to_openapi(api_subitem)
                             api_list.append(api_subitem)
                         # [] or None
                         if api_list:
@@ -149,11 +163,10 @@ class Base(object):
                 elif issubclass(value, Model) and subitem_descrip and issubclass(subitem_descrip, Base):
                     if recurse or key == 'attrs':
                         db_item = subitem_descrip()
-                        api_subitem = value()
                         db_subitem = getattr(self, key)
                         # print(f'Recurse {key} {subitem_descrip} {type(getattr(openapi_type, key))} {value}')
                         if db_subitem:
-                            db_subitem.map_to_openapi(api_subitem)
+                            api_subitem = db_subitem.map_to_openapi()
                             setattr(openapi_type, key, api_subitem)
                 else:
                     # print(f'No mapped key mapping d2a: {self.__class__.__name__}:' + key)
@@ -184,6 +197,8 @@ class Base(object):
         # else:
         #     print(f'No attr {id_val} {self} {openapi_type}')
 
-        self.map_to_openapi_actions(openapi_type)
+        self.openapi_map_actions(openapi_type)
+
+        return openapi_type
 
 Base = declarative_base(cls=Base)

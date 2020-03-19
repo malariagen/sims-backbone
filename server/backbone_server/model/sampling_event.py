@@ -70,6 +70,9 @@ class SamplingEvent(Versioned, Base):
 #                         primaryjoin="and_(foreign(OriginalSample.sampling_event_id) == SamplingEvent.id, foreign(OriginalSample.study_id) == Study.id)")
     individual = relationship("Individual", backref=backref("sampling_event", uselist=False))
 
+    openapi_class = ApiSamplingEvent
+    openapi_multiple_class = SamplingEvents
+
     def submapped_items(self):
         return {
             # 'partner_species': 'partner_species.partner_species',
@@ -102,8 +105,6 @@ class BaseSamplingEvent(SimsDbBase):
                                             'attr'])
 
         self.db_class = SamplingEvent
-        self.openapi_class = ApiSamplingEvent
-        self.openapi_multiple_class = SamplingEvents
         self.attr_link = sampling_event_attr_table
         self.api_id = 'sampling_event_id'
         self.duplicate_attrs = ['partner_id', 'individual_id']
@@ -120,10 +121,7 @@ class BaseSamplingEvent(SimsDbBase):
 
         if api_location_id and api_location and api_location.location_id:
             location = db.query(Location).get(api_location_id)
-            from openapi_server.models.location import Location as ApiLocation
-            api_item = ApiLocation()
-            location.map_to_openapi(api_item)
-            self.openapi_map_actions(api_item, location)
+            api_item = location.map_to_openapi()
 
             if api_item != api_location:
                 raise NestedEditException(f"Implied location edit not allowed for {api_location_id}")
@@ -334,7 +332,7 @@ class BaseSamplingEvent(SimsDbBase):
                 attrs.append(db_attr.id)
 
             if not attrs:
-                ret = self.openapi_multiple_class()
+                ret = self.db_class.openapi_multiple_class()
                 ret.count = 0
                 return ret
 
