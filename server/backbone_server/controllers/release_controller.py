@@ -11,7 +11,7 @@ from backbone_server.controllers.base_controller import BaseController
 
 from backbone_server.model.scope import session_scope
 
-from backbone_server.model.release import BaseRelease
+from backbone_server.model.release import BaseRelease, BaseReleaseItem
 from backbone_server.model.release_note import BaseReleaseNote
 
 from backbone_server.errors.duplicate_key_exception import DuplicateKeyException
@@ -168,7 +168,7 @@ class ReleaseController(BaseController):
             delete = BaseRelease(self.get_engine(), self.get_session())
             release_id = urllib.parse.unquote_plus(release_id)
 
-            rel_item = delete.delete_member(release_id, original_sample_id, studies)
+            delete.delete_member(release_id, original_sample_id, studies)
         except MissingKeyException as dke:
             logging.getLogger(__name__).debug(
                 "delete_release_item: %s", repr(dke))
@@ -231,18 +231,59 @@ class ReleaseController(BaseController):
         rel_item = None
 
         if not release_id:
-            rel_item = 'No event set specified to download'
+            rel_item = 'No release specified to download'
             logging.getLogger(__name__).debug("download_release: %s", rel_item)
             retcode = 404
         else:
             try:
                 get = BaseRelease(self.get_engine(), self.get_session())
                 release_id = urllib.parse.unquote_plus(release_id)
-                rel_item = get.get_with_members(release_id, studies, start, count)
+                rel_item = get.get_with_members(release_id, start=start, count=count, studies=studies)
 
             except MissingKeyException as dke:
                 logging.getLogger(__name__).debug(
                     "download_release: %s", repr(dke))
+                rel_item = str(dke)
+                retcode = 404
+
+        return rel_item, retcode
+
+    def download_release_item(self, release_item_id, release_id=None,
+                              original_sample_id=None, studies=None, user=None, auths=None):  # noqa: E501
+        """fetches a release item
+
+         # noqa: E501
+
+        :param release_item_id: ID of release_item to fetch
+        :type release_item_id: str
+        :param start: for pagination start the result set at a record x
+        :type start: int
+        :param count: for pagination the number of entries to return
+        :type count: int
+
+        :rtype: Release
+        """
+
+        retcode = 200
+        rel_item = None
+
+        if not release_item_id:
+            rel_item = 'No release item specified to download'
+            logging.getLogger(__name__).debug("download_release_item: %s", rel_item)
+            retcode = 404
+        else:
+            try:
+                get = BaseReleaseItem(self.get_engine(), self.get_session())
+                if release_id:
+                    release_id = urllib.parse.unquote_plus(release_id)
+                rel_item = get.get(release_item_id,
+                                   release_id=release_id,
+                                   original_sample_id=original_sample_id,
+                                   studies=studies)
+
+            except MissingKeyException as dke:
+                logging.getLogger(__name__).debug(
+                    "download_release_item: %s", repr(dke))
                 rel_item = str(dke)
                 retcode = 404
 
@@ -294,6 +335,36 @@ class ReleaseController(BaseController):
         except MissingKeyException as dke:
             logging.getLogger(__name__).debug(
                 "update_release: %s", repr(dke))
+            retcode = 404
+            rel_item = str(dke)
+
+        return rel_item, retcode
+
+    def update_release_item(self, release_item_id, release_item, update_samples=None, studies=None, user=None, auths=None):  # noqa: E501
+        """updates an release
+
+         # noqa: E501
+
+        :param release_item_id: ID of release to update
+        :type release_item_id: str
+        :param release_item:
+        :type release_item: dict | bytes
+
+        :rtype: Release
+        """
+
+        retcode = 200
+        rel_item = None
+
+        try:
+            put = BaseReleaseItem(self.get_engine(), self.get_session())
+            release_item_id = urllib.parse.unquote_plus(release_item_id)
+            rel_item = put.put(release_item_id, release_item, None,
+                               update_samples=update_samples, studies=studies,
+                               user=user)
+        except MissingKeyException as dke:
+            logging.getLogger(__name__).debug(
+                "update_release_item: %s", repr(dke))
             retcode = 404
             rel_item = str(dke)
 

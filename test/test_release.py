@@ -123,6 +123,109 @@ class TestReleases(TestBase):
         except ApiException as error:
             self.check_api_exception(api_factory, "ReleasesApi->create_release", error)
 
+
+    """
+    """
+    def test_lookup_release_member(self, api_factory):
+
+        api_instance = api_factory.ReleaseApi()
+        event_api_instance = api_factory.OriginalSampleApi()
+
+        try:
+
+            release = 'Release2'
+            created = api_instance.create_release(release)
+
+            os_created, created = self.create_original_sample(api_factory)
+
+            created_item = api_instance.create_release_item(release, os_created.original_sample_id)
+            if not api_factory.is_authorized(None):
+                pytest.fail('Unauthorized call to create_release_item succeeded')
+            fetched_set = api_instance.download_release(release)
+
+            if not api_factory.is_authorized(None):
+                pytest.fail('Unauthorized call to download_release succeeded')
+
+            assert fetched_set.members.count == 1
+            assert fetched_set.members.release_items[0].original_sample_id == os_created.original_sample_id
+
+            looked_up = api_instance.download_release_item(created_item.release_item_id)
+
+            assert created_item == looked_up
+
+            looked_up = api_instance.download_release_item('unknown',
+                                                           release_id=release,
+                                                           original_sample_id=os_created.original_sample_id)
+
+            assert created_item == looked_up
+
+            api_instance.delete_release_item(release, os_created.original_sample_id)
+
+            fetched_set = api_instance.download_release(release)
+
+            assert fetched_set.members.count == 0
+
+            self.delete_original_sample(api_factory, os_created, created)
+
+            api_instance.delete_release(release)
+
+        except ApiException as error:
+            self.check_api_exception(api_factory, "ReleasesApi->create_release", error)
+
+    """
+    """
+    def test_update_release_member(self, api_factory):
+
+        api_instance = api_factory.ReleaseApi()
+        event_api_instance = api_factory.OriginalSampleApi()
+
+        try:
+
+            release = 'Release2'
+            created = api_instance.create_release(release)
+
+            os_created, created = self.create_original_sample(api_factory)
+
+            created_item = api_instance.create_release_item(release, os_created.original_sample_id)
+            if not api_factory.is_authorized(None):
+                pytest.fail('Unauthorized call to create_release_item succeeded')
+            fetched_set = api_instance.download_release(release)
+
+            if not api_factory.is_authorized(None):
+                pytest.fail('Unauthorized call to download_release succeeded')
+
+            assert fetched_set.members.count == 1
+            assert fetched_set.members.release_items[0].original_sample_id == os_created.original_sample_id
+
+            created_item.attrs = [
+                openapi_client.Attr(attr_type='update_item',
+                                    attr_value=str(self.attr_value),
+                                    attr_source='upd')
+            ]
+            created_item.original_sample = {'original_sample_id': uuid.uuid4()}
+            orig_ad = created_item.assay_data
+            created_item.assay_data = {'count': 0, 'assay_data': []}
+            updated_item = api_instance.update_release_item(created_item.release_item_id, created_item)
+
+            created_item.original_sample = os_created
+            created_item.assay_data = orig_ad
+            created_item.version = updated_item.version
+
+            assert created_item == updated_item
+
+            api_instance.delete_release_item(release, os_created.original_sample_id)
+
+            fetched_set = api_instance.download_release(release)
+
+            assert fetched_set.members.count == 0
+
+            self.delete_original_sample(api_factory, os_created, created)
+
+            api_instance.delete_release(release)
+
+        except ApiException as error:
+            self.check_api_exception(api_factory, "ReleasesApi->create_release", error)
+
     """
     """
     def test_create_missing_member(self, api_factory):

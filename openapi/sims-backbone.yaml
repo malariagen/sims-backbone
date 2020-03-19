@@ -141,8 +141,10 @@ paths:
     $ref: './sims-backbone/event_set/items.yaml'
   '/release/{release_id}':
     $ref: './sims-backbone/release/item.yaml'
-  '/release/{release_id}/{release_item_id}':
+  '/release/{release_id}/{original_sample_id}':
     $ref: './sims-backbone/release/release_item.yaml'
+  '/release_item/{release_item_id}':
+    $ref: './sims-backbone/release_item/item.yaml'
   '/release/{release_id}/notes/{note_id}':
     $ref: './sims-backbone/release/note.yaml'
   '/releases':

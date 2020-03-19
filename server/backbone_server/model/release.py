@@ -74,7 +74,9 @@ class ReleaseItem(Versioned, Base):
 
     def submapped_items(self):
         return {
-            'original_sample': None
+            'attrs': Attr,
+            'original_sample': str,
+            'assay_data': str
         }
 
     def __repr__(self):
@@ -125,7 +127,36 @@ class BaseReleaseItem(SimsDbBase):
         self.db_class = ReleaseItem
         self.openapi_class = ReleaseItemApi
         self.openapi_multiple_class = ReleaseItems
+        self.attr_link = release_item_attr_table
+        self.api_id = 'release_item_id'
 
+
+    def convert_to_id(self, db, item_id, **kwargs):
+
+        if 'release_id' in kwargs and kwargs['release_id'] and\
+            'original_sample_id' in kwargs and kwargs['original_sample_id']:
+
+            release_name = kwargs['release_id']
+            release_id = None
+
+            db_query = db.query(Release).filter_by(release_name=release_name)
+            db_item = db_query.first()
+            if db_item:
+                release_id = db_item.id
+            else:
+                raise MissingKeyException(f"Error release does not exist {release_name}")
+
+            orig_samp_id = kwargs['original_sample_id']
+
+            db_item = db.query(ReleaseItem).filter(and_(ReleaseItem.release_id == release_id,
+                                                        ReleaseItem.original_sample_id == orig_samp_id)).first()
+
+            if db_item:
+                item_id = db_item.id
+            else:
+                raise MissingKeyException(f"Error release does not exist {release_name}")
+
+        return item_id
 
     def post_get_action(self, db, db_item, api_item, studies, multiple=False):
 
@@ -134,6 +165,35 @@ class BaseReleaseItem(SimsDbBase):
             api_item.assay_data = AssayData.from_dict(json.loads(db_item.assay_data))
 
         return api_item
+
+    def db_map_actions(self, db, db_item, api_item, studies, **kwargs):
+        if 'update_samples' in kwargs and kwargs['update_samples']:
+            os_base = BaseOriginalSample(self.engine, self.session)
+            os_item = os_base.get_no_close(db, api_item.original_sample_id, studies)
+            os_json = json.dumps(os_item, ensure_ascii=False, cls=JSONEncoder)
+            db_item.original_sample = os_json
+
+            db_items = db.query(AssayDatum.id).\
+                    join(DerivativeSample).\
+                    filter(DerivativeSample.original_sample_id == os_item.original_sample_id)
+
+            ad_ids = []
+            for ad_id in db_items.all():
+                ad_ids.append(ad_id)
+            bse = BaseAssayDatum(self.engine, self.session)
+            ad_recs = bse.gets_in_noclose(db, ad_ids, studies=studies, start=None, count=None)
+            if ad_recs.derivative_samples:
+                for ds_id, ds in ad_recs.derivative_samples.items():
+                    ds.original_sample = None
+            os_json = json.dumps(ad_recs, ensure_ascii=False, cls=JSONEncoder)
+            db_item.assay_data = os_json
+
+    def put_premap(self, db, api_item, db_item):
+        # This is to ensure not mapped and as shouldn't be updated by put
+        if hasattr(api_item.openapi_types, 'original_sample'):
+            del api_item.openapi_types['original_sample']
+        if hasattr(api_item.openapi_types, 'assay_data'):
+            del api_item.openapi_types['assay_data']
 
     def get_by_release(self, release_name, studies, start, count):
 
@@ -154,7 +214,8 @@ class BaseReleaseItem(SimsDbBase):
                     join(Study, Study.id == OriginalSample.study_id).\
                     filter(ReleaseItem.release_id == release.id)
 
-            ret = self._get_multiple_results(db, db_items, studies, start, count)
+            ret = self._get_multiple_results(db, db_items, start, count,
+                                             studies=studies)
 
         return ret
 
@@ -173,6 +234,8 @@ class BaseRelease(SimsDbBase):
         self.db_class = Release
         self.openapi_class = ApiRelease
         self.openapi_multiple_class = Releases
+        self.attr_link = release_attr_table
+        self.api_id = 'release_id'
 
     def pre_post_check(self, db, api_item, studies):
 
@@ -226,6 +289,11 @@ class BaseRelease(SimsDbBase):
             db_item.studies = os_json
 
 
+    def put_premap(self, db, api_item, db_item):
+        # This is to ensure not mapped and as shouldn't be updated by put
+        if hasattr(api_item.openapi_types, 'studies'):
+            del api_item.openapi_types['studies']
+
     def get_with_members(self, item_id, studies, start, count):
 
         if not item_id:
@@ -265,6 +333,7 @@ class BaseRelease(SimsDbBase):
 
         ri_item_id = None
         os_base = BaseOriginalSample(self.engine, self.session)
+        bse = BaseReleaseItem(self.engine, self.session)
 
         with session_scope(self.session) as db:
 
@@ -284,25 +353,12 @@ class BaseRelease(SimsDbBase):
             ri_item.release_id = release_id
             ri_item.original_sample_id = os_item.original_sample_id
             ri_item.original_sample_version = os_item.version
-
-
-            os_json = json.dumps(os_item, ensure_ascii=False, cls=JSONEncoder)
-            ri_item.original_sample = os_json
             ri_item.created_by = user
+            api_item = ReleaseItemApi(None,
+                                      original_sample_id=original_sample_id)
+            bse.db_map_actions(db, ri_item, api_item, studies,
+                               update_samples=True)
 
-            db_items = db.query(AssayDatum.id).\
-                    join(DerivativeSample).\
-                    filter(DerivativeSample.original_sample_id == os_item.original_sample_id)
-
-            ad_ids = []
-            for ad_id in db_items.all():
-                ad_ids.append(ad_id)
-            bse = BaseAssayDatum(self.engine, self.session)
-            ad_recs = bse.gets_in_noclose(db, ad_ids, studies=studies, start=None, count=None)
-            for ds_id, ds in ad_recs.derivative_samples.items():
-                ds.original_sample = None
-            os_json = json.dumps(ad_recs, ensure_ascii=False, cls=JSONEncoder)
-            ri_item.assay_data = os_json
 
             db.add(ri_item)
 
@@ -310,8 +366,8 @@ class BaseRelease(SimsDbBase):
 
             ri_item_id = ri_item.id
 
-        bse = BaseReleaseItem(self.engine, self.session)
-        ret = bse.get(ri_item_id, studies)
+        ret = bse.get(ri_item_id, studies=studies)
+
         return ret
 
     def get_member(self, item_id, os_item, studies):

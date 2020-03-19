@@ -18,6 +18,7 @@ from backbone_server.controllers.original_sample_controller import OriginalSampl
 from backbone_server.controllers.derivative_sample_controller import DerivativeSampleController
 from backbone_server.controllers.assay_datum_controller import AssayDatumController
 from backbone_server.controllers.individual_controller import IndividualController
+from backbone_server.controllers.release_controller import ReleaseController
 
 from openapi_client.rest import ApiException
 
@@ -37,6 +38,7 @@ class LocalBackboneDAO(AbstractBackboneDAO):
         self.metadata_api_instance = MetadataController()
         self.study_api_instance = StudyController()
         self.i_api_instance = IndividualController()
+        self.r_api_instance = ReleaseController()
 
     def setup(self, config):
         pass
@@ -1018,3 +1020,58 @@ class LocalBackboneDAO(AbstractBackboneDAO):
                 body=history, status=retcode))
 
         return history
+
+    def create_release(self, release_id, studies=None, user=None, auths=None):  # noqa: E501
+        if not user:
+            user = self._user
+
+        rel, retcode = self.r_api_instance.create_release(release_id, studies=studies,
+                                                          user=user, auths=self._auths)
+        if retcode >= 400:
+            raise ApiException(http_resp=HTTPResponse(body=rel, status=retcode))
+
+        return rel
+
+
+
+    def download_release(self, release_id, start=None, count=None, studies=None, user=None, auths=None):  # noqa: E501
+        if not user:
+            user = self._user
+
+        rel, retcode = self.r_api_instance.download_release(release_id, start=start,
+                                                            count=count, studies=studies,
+                                                            user=user,
+                                                            auths=self._auths)
+        if retcode >= 400:
+            raise ApiException(http_resp=HTTPResponse(body=rel, status=retcode))
+
+        return rel
+
+
+    def create_release_item(self, release_id, release_item, studies=None, user=None, auths=None):  # noqa: E501
+        if not user:
+            user = self._user
+
+        rel, retcode = self.r_api_instance.create_release_item(release_id, release_item, studies=studies,
+                                                               user=user,
+                                                               auths=self._auths)
+        if retcode >= 400:
+            raise ApiException(http_resp=HTTPResponse(body=rel, status=retcode))
+
+        return rel
+
+    def update_release_item(self, release_item_id, release_item,
+                            update_samples=None, studies=None, user=None,
+                            auths=None):  # noqa: E501
+        if not user:
+            user = self._user
+
+        rel, retcode = self.r_api_instance.update_release_item(release_item_id,
+                                                               release_item,
+                                                               update_samples=update_samples, studies=studies,
+                                                               user=user,
+                                                               auths=self._auths)
+        if retcode >= 400:
+            raise ApiException(http_resp=HTTPResponse(body=rel, status=retcode))
+
+        return rel

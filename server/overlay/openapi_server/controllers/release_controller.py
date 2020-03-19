@@ -137,6 +137,28 @@ def download_release(release_id, start=None, count=None, studies=None, user=None
                                                user=user,
                                                auths=release_controller.token_info(token_info))
 
+def download_release_item(release_item_id,
+                          release_id=None,
+                          original_sample_id=None, studies=None, user=None,
+                          token_info=None):  # noqa: E501
+    """fetches an release item
+
+     # noqa: E501
+
+    :param release_item_id: ID of release_item to fetch - use unknown if using query params instead
+    :type release_item_id: str
+    :param release_id: if the release_item_id is not known then it is possible to use release_id and original_sample_id
+    :type release_id: str
+    :param original_sample_id: if the release_item_id is not known then it is possible to use release_id and original_sample_id
+    :type original_sample_id: str
+
+    :rtype: ReleaseItem
+    """
+    return release_controller.download_release_item(release_item_id,
+                                                    release_id=release_id,
+                                                    original_sample_id=original_sample_id, studies=studies,
+                                                    user=user,
+                                                    auths=release_controller.token_info(token_info))
 
 def download_releases(studies=None, user=None, token_info=None):  # noqa: E501
     """fetches releases
@@ -166,10 +188,35 @@ def update_release(release_id, release, update_studies=None, studies=None, user=
     if connexion.request.is_json:
         release = Release.from_dict(connexion.request.get_json())  # noqa: E501
     return release_controller.update_release(release_id,
+                                             release,
                                              update_studies=update_studies, studies=studies,
                                              user=user,
                                              auths=release_controller.token_info(token_info))
 
+def update_release_item(release_item_id, release_item,
+                        update_samples=None, studies=None, user=None,
+                        token_info=None):  # noqa: E501
+    """updates an release item
+
+     # noqa: E501
+
+    :param release_item_id: ID of release_item to update
+    :type release_item_id: str
+    :param release_item:
+    :type release_item: dict | bytes
+    :param update_samples: Update the saved samples
+    :type update_samples: bool
+
+    :rtype: ReleaseItem
+    """
+    if connexion.request.is_json:
+        release_item = ReleaseItem.from_dict(
+            connexion.request.get_json())  # noqa: E501
+    return release_controller.update_release_item(release_item_id,
+                                                  release_item,
+                                                  update_samples=update_samples, studies=studies,
+                                                  user=user,
+                                                  auths=release_controller.token_info(token_info))
 
 def update_release_note(release_id, note_id, release_note, studies=None, user=None, token_info=None):  # noqa: E501
     """Adds a note to an release

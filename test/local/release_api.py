@@ -48,7 +48,7 @@ class LocalReleaseApi(BaseLocalApi):
                                                                      studies=studies,
                                                                      user=self._user,
                                                                      auths=self.release_controller.token_info(self.auth_tokens()))
-        return self.create_response(ret, retcode, 'Release')
+        return self.create_response(ret, retcode, 'ReleaseItem')
 
     def create_release_note(self, release_id, note_id, note, studies=None):
         """
@@ -137,6 +137,24 @@ class LocalReleaseApi(BaseLocalApi):
 
         return self.create_response(ret, retcode, 'Release')
 
+    def download_release_item(self, release_item_id, release_id=None,
+                              original_sample_id=None,
+                              count=None, studies=None):
+        """
+        fetches an release
+
+        :param releaseId: ID of release to fetch
+        :type releaseId: str
+
+        :rtype: Release
+        """
+        (ret, retcode) = self.release_controller.download_release_item(release_item_id, release_id=release_id,
+                                                                       original_sample_id=original_sample_id, studies=studies,
+                                                                       user=self._user,
+                                                                       auths=self.release_controller.token_info(self.auth_tokens()))
+
+        return self.create_response(ret, retcode, 'ReleaseItem')
+
     def download_releases(self, studies=None):
         """
         fetches releases
@@ -148,6 +166,7 @@ class LocalReleaseApi(BaseLocalApi):
                                                                    user=self._user,
                                                                    auths=self.release_controller.token_info(self.auth_tokens()))
         return self.create_response(ret, retcode, 'Releases')
+
 
     def update_release(self, release_id, release, update_studies=None, studies=None):
         """
@@ -166,6 +185,24 @@ class LocalReleaseApi(BaseLocalApi):
                                                                 user=self._user,
                                                                 auths=self.release_controller.token_info(self.auth_tokens()))
         return self.create_response(ret, retcode, 'Release')
+
+    def update_release_item(self, release_item_id, release_item, update_samples=None, studies=None):
+        """
+        updates an release
+
+        :param release_id: ID of release to update
+        :type release_id: str
+        :param release:
+        :type release: dict | bytes
+
+        :rtype: Release
+        """
+        (ret, retcode) = self.release_controller.update_release_item(release_item_id, release_item,
+                                                                     update_samples=update_samples,
+                                                                     studies=studies,
+                                                                     user=self._user,
+                                                                     auths=self.release_controller.token_info(self.auth_tokens()))
+        return self.create_response(ret, retcode, 'ReleaseItem')
 
     def update_release_note(self, release_id, note_id, note, studies=None):
         """

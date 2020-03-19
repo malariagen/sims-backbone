@@ -42,6 +42,7 @@ class RemoteBackboneDAO(AbstractBackboneDAO):
         self.metadata_api_instance = openapi_client.MetadataApi(openapi_client.ApiClient(configuration))
         self.study_api_instance = openapi_client.StudyApi(openapi_client.ApiClient(configuration))
         self.i_api_instance = openapi_client.IndividualApi(openapi_client.ApiClient(configuration))
+        self.r_api_instance = openapi_client.ReleaseController(openapi_client.ApiClient(configuration))
 
     def get_access_token(self, config_file):
 

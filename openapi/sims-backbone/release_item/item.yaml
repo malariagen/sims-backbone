@@ -1,0 +1,70 @@
+    get:
+      tags:
+        - release
+      summary: fetches an release item
+      description: ""
+      operationId: downloadReleaseItem
+      parameters:
+        - name: release_item_id
+          in: path
+          description: ID of release_item to fetch - use unknown if using query params instead
+          required: true
+          schema:
+            type: string
+        - name: release_id
+          in: query
+          description: if the release_item_id is not known then it is possible to use release_id and original_sample_id
+          required: false
+          schema:
+            type: string
+        - name: original_sample_id
+          in: query
+          description: if the release_item_id is not known then it is possible to use release_id and original_sample_id
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "./sims-backbone/definitions/release.yaml#/components/schemas/ReleaseItem"
+    put:
+      tags:
+        - release
+      summary: updates an release item
+      description: ""
+      operationId: updateReleaseItem
+      parameters:
+        - name: release_item_id
+          in: path
+          description: ID of release_item to update
+          required: true
+          schema:
+            type: string
+        - name: update_samples
+          in: query
+          description: Update the saved samples
+          required: false
+          schema:
+            type: boolean
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "./sims-backbone/definitions/release.yaml#/components/schemas/ReleaseItem"
+        required: true
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "./sims-backbone/definitions/release.yaml#/components/schemas/ReleaseItem"
+        "404":
+          description: Release not found
+          content:
+            application/json:
+              schema:
+                type: string
