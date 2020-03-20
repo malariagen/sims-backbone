@@ -34,7 +34,7 @@ class TestDerivativeSample(TestBase):
             fetched = api_instance.download_derivative_sample(created.derivative_sample_id)
             assert created == fetched, "create response != download response"
             fetched.derivative_sample_id = None
-            fetched.derivative_sample_id = None
+            fetched.version = None
             assert samp == fetched, "upload != download response"
             api_instance.delete_derivative_sample(created.derivative_sample_id)
             os_api_instance.delete_original_sample(orig_samp.original_sample_id)
@@ -65,6 +65,7 @@ class TestDerivativeSample(TestBase):
             fetched = api_instance.download_derivative_sample(created.derivative_sample_id)
             assert created == fetched, "create response != download response"
             fetched.derivative_sample_id = None
+            fetched.version = None
             assert samp == fetched, "upload != download response"
             api_instance.delete_derivative_sample(created.derivative_sample_id)
             os_api_instance.delete_original_sample(orig_samp.original_sample_id)
@@ -171,6 +172,7 @@ class TestDerivativeSample(TestBase):
             assert created == fetched, "create response != download response"
 
             fetched.derivative_sample_id = None
+            fetched.version = None
             assert samp == fetched, "upload != download response"
 
             api_instance.delete_derivative_sample(created.derivative_sample_id)
@@ -270,9 +272,11 @@ class TestDerivativeSample(TestBase):
                                                        original_sample=orig_samp,
                                                        original_sample_id=orig_samp.original_sample_id)
             new_samp.attrs = samp.attrs
+            new_samp.version = looked_up.version
             updated = api_instance.update_derivative_sample(looked_up.derivative_sample_id, new_samp)
             fetched = api_instance.download_derivative_sample(looked_up.derivative_sample_id)
             assert updated == fetched, "update response != download response"
+            new_samp.version = fetched.version
             assert new_samp == fetched, "update != download response"
             api_instance.delete_derivative_sample(looked_up.derivative_sample_id)
             os_api_instance.delete_original_sample(orig_samp.original_sample_id)
@@ -306,9 +310,11 @@ class TestDerivativeSample(TestBase):
                                                        original_sample_id=orig_samp.original_sample_id,
                                                        acc_date=date(2019, 11, 6))
             new_samp.attrs = samp.attrs
+            new_samp.version = looked_up.version
             updated = api_instance.update_derivative_sample(looked_up.derivative_sample_id, new_samp)
             fetched = api_instance.download_derivative_sample(looked_up.derivative_sample_id)
             assert updated == fetched, "update response != download response"
+            new_samp.version = fetched.version
             assert new_samp == fetched, "update != download response"
             api_instance.delete_derivative_sample(looked_up.derivative_sample_id)
             os_api_instance.delete_original_sample(orig_samp.original_sample_id)
@@ -345,6 +351,7 @@ class TestDerivativeSample(TestBase):
                 openapi_client.Attr(attr_type='oxford', attr_value='123456789',
                                     attr_source='upd')
             ]
+            new_samp.version = looked_up.version
             new_created = api_instance.create_derivative_sample(new_samp)
             with pytest.raises(ApiException, status=422):
                 updated = api_instance.update_derivative_sample(looked_up.derivative_sample_id, new_samp)
@@ -405,6 +412,7 @@ class TestDerivativeSample(TestBase):
 
             assert created == fetched, "create response != download response"
             fetched.derivative_sample_id = None
+            fetched.version = None
             assert samp == fetched, "upload != download response"
 
             results = api_instance.download_derivative_samples_by_attr('partner_id',
@@ -414,6 +422,7 @@ class TestDerivativeSample(TestBase):
 
             assert created == fetched, "create response != download response"
             fetched.derivative_sample_id = None
+            fetched.version = None
             assert samp == fetched, "upload != download response"
 
             api_instance.delete_derivative_sample(created.derivative_sample_id)
@@ -951,6 +960,7 @@ class TestDerivativeSample(TestBase):
             fetched = api_instance.download_derivative_sample(created.derivative_sample_id)
             assert created == fetched, "create response != download response"
             fetched.derivative_sample_id = None
+            fetched.version = None
             assert samp == fetched, "upload != download response"
             api_instance.delete_derivative_sample(created.derivative_sample_id)
             api_instance.delete_derivative_sample(parent_created.derivative_sample_id)
@@ -990,9 +1000,11 @@ class TestDerivativeSample(TestBase):
                                                        original_sample_id=orig_samp.original_sample_id)
             new_samp.parent_derivative_sample_id = parent_created.derivative_sample_id
             new_samp.attrs = samp.attrs
+            new_samp.version = looked_up.version
             updated = api_instance.update_derivative_sample(looked_up.derivative_sample_id, new_samp)
             fetched = api_instance.download_derivative_sample(looked_up.derivative_sample_id)
             assert updated == fetched, "update response != download response"
+            new_samp.version = fetched.version
             assert new_samp == fetched, "update != download response"
 
             assert fetched.parent_derivative_sample_id == new_samp.parent_derivative_sample_id

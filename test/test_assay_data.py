@@ -65,6 +65,7 @@ class TestAssayDatum(TestBase):
             fetched = api_instance.download_assay_datum(created.assay_datum_id)
             assert created == fetched, "create response != download response"
             fetched.assay_datum_id = None
+            samp.version = 1
             assert samp == fetched, "upload != download response"
             self.delete_assay_datum(api_factory, created)
 
@@ -87,6 +88,7 @@ class TestAssayDatum(TestBase):
                 fetched = api_instance.download_assay_datum(created.assay_datum_id)
                 assert created == fetched, "create response != download response"
                 fetched.assay_datum_id = None
+                fetched.version = None
                 assert samp == fetched, "upload != download response"
                 self.delete_assay_datum(api_factory, created)
 
@@ -207,6 +209,7 @@ class TestAssayDatum(TestBase):
             assert created == fetched, "create response != download response"
 
             fetched.assay_datum_id = None
+            fetched.version = None
             assert samp == fetched, "upload != download response"
 
             self.delete_assay_datum(api_factory, created)
@@ -290,6 +293,7 @@ class TestAssayDatum(TestBase):
             assert ad_created == fetched, "create response != download response"
 
             fetched.assay_datum_id = None
+            fetched.version = None
             fetched.derivative_sample = None
             assert ad_samp == fetched, "upload != download response"
 
@@ -314,9 +318,9 @@ class TestAssayDatum(TestBase):
 
         try:
 
-            ident1 = openapi_client.Attr(attr_type='oxford_id', attr_value='1234')
-            ident2 = openapi_client.Attr(attr_type='roma_id', attr_value='12345')
-            ident3 = openapi_client.Attr(attr_type='lims_id', attr_value='123456')
+            ident1 = openapi_client.Attr(attr_type='assay_datum_id', attr_value='1234')
+            ident2 = openapi_client.Attr(attr_type='assay_datum_id', attr_value='12345')
+            ident3 = openapi_client.Attr(attr_type='assay_datum_id', attr_value='123456')
             samp1 = self.create_assay_datum(api_factory)
             samp1.attrs = [
                 ident1
@@ -332,9 +336,7 @@ class TestAssayDatum(TestBase):
 
             samp3 = self.create_assay_datum(api_factory)
             samp3.attrs = [
-                ident1,
-                ident2,
-                ident3
+                ident1
             ]
             with pytest.raises(ApiException, status=422):
                 created3 = api_instance.create_assay_datum(samp3)
@@ -366,9 +368,11 @@ class TestAssayDatum(TestBase):
             new_samp = openapi_client.AssayDatum(created.assay_datum_id,
                                                  derivative_sample=created.derivative_sample,
                                                  derivative_sample_id=created.derivative_sample_id)
+            new_samp.version = looked_up.version
             updated = api_instance.update_assay_datum(looked_up.assay_datum_id, new_samp)
             fetched = api_instance.download_assay_datum(looked_up.assay_datum_id)
             assert updated == fetched, "update response != download response"
+            new_samp.version = fetched.version
             assert new_samp == fetched, "update != download response"
             self.delete_assay_datum(api_factory, updated)
 
@@ -397,9 +401,11 @@ class TestAssayDatum(TestBase):
                                                  derivative_sample=created.derivative_sample,
                                                  acc_date=date(2019, 11, 6))
             new_samp.attrs = samp.attrs
+            new_samp.version = looked_up.version
             updated = api_instance.update_assay_datum(looked_up.assay_datum_id, new_samp)
             fetched = api_instance.download_assay_datum(looked_up.assay_datum_id)
             assert updated == fetched, "update response != download response"
+            new_samp.version = fetched.version
             assert new_samp == fetched, "update != download response"
             self.delete_assay_datum(api_factory, updated)
 
@@ -487,6 +493,7 @@ class TestAssayDatum(TestBase):
 
             assert created == fetched, "create response != download response"
             fetched.assay_datum_id = None
+            fetched.version = None
             assert samp == fetched, "upload != download response"
 
             results = api_instance.download_assay_data_by_attr('partner_id',
@@ -496,6 +503,7 @@ class TestAssayDatum(TestBase):
 
             assert created == fetched, "create response != download response"
             fetched.assay_datum_id = None
+            fetched.version = None
             assert samp == fetched, "upload != download response"
 
             self.delete_assay_datum(api_factory, created)

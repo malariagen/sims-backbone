@@ -9,6 +9,9 @@ components:
           type: string
         name:
           type: string
+        version:
+          type: integer
+          readOnly: true
         partner_species:
             type: array
             items:

@@ -23,6 +23,7 @@ components:
   #        format: uuid
         version:
           type: integer
+          readOnly: true
         original_sample_id:
           type: string
   #        format: uuid
@@ -58,6 +59,9 @@ components:
       properties:
         release_name:
           type: string
+        version:
+          type: integer
+          readOnly: true
         release_date:
           type: string
           format: date

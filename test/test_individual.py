@@ -47,6 +47,7 @@ class TestIndividual(TestBase):
             fetched = api_instance.download_individual(created.individual_id)
             assert created == fetched, "create response != download response"
             fetched.individual_id = None
+            fetched.version = None
             assert indiv == fetched, "upload != download response"
             api_instance.delete_individual(created.individual_id)
 
@@ -240,10 +241,12 @@ class TestIndividual(TestBase):
             newindiv = self.get_next_individual()
 
             newindiv.individual_id = created.individual_id
+            newindiv.version = created.version
             updated = api_instance.update_individual(
                 created.individual_id, newindiv)
             fetched = api_instance.download_individual(created.individual_id)
             assert updated == fetched, "update response != download response"
+            newindiv.version = fetched.version
             assert newindiv == fetched, "update != download response"
             api_instance.delete_individual(created.individual_id)
 
@@ -268,10 +271,12 @@ class TestIndividual(TestBase):
                                     attr_value='indiv', study_name='1235-PV')
             ]
             newindiv.individual_id = created.individual_id
+            newindiv.version = created.version
             updated = api_instance.update_individual(
                 created.individual_id, newindiv)
             fetched = api_instance.download_individual(created.individual_id)
             assert updated == fetched, "update response != download response"
+            newindiv.version = fetched.version
             assert newindiv == fetched, "update != download response"
             api_instance.delete_individual(created.individual_id)
 

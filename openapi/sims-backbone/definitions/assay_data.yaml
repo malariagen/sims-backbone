@@ -23,6 +23,9 @@ components:
         assay_datum_id:
           type: string
   #        format: uuid
+        version:
+          type: integer
+          readOnly: true
         derivative_sample_id:
           type: string
   #        format: uuid

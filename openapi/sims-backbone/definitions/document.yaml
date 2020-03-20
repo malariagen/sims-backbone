@@ -28,6 +28,9 @@ components:
         document_id:
           type: string
   #        format: uuid
+        version:
+          type: integer
+          readOnly: true
         study_name:
           type: string
         doc_name:

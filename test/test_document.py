@@ -39,6 +39,7 @@ class TestDocument(TestBase):
             assert created == fetched, "create response != download response"
             fetched.document_id = None
             fetched.created_by = None
+            fetched.version = None
             doc.content = None
             assert doc == fetched, "upload != download response"
 
@@ -126,6 +127,7 @@ class TestDocument(TestBase):
             updated = api_instance.update_document(created.document_id,
                                                    created)
             updated.updated_by = None
+            created.version = updated.version
             assert updated == created, "update response != download response"
             updated_fetched = api_instance.download_document(created.document_id)
             updated_fetched.updated_by = None

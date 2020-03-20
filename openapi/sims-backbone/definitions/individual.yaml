@@ -17,6 +17,9 @@ components:
         individual_id:
           type: string
   #        format: uuid
+        version:
+          type: integer
+          readOnly: true
         attrs:
           type: array
           items:
