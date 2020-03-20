@@ -9,6 +9,8 @@ fi
 test -f environment && source environment
 test -f ${INPUT1_STAGING_DIR}/import/environment && source ${INPUT1_STAGING_DIR}/import/environment
 
+env
+
 OUTFILE=${OUTPUT1_STAGING_DIR}/import_$(date +%Y-%m-%d-%H%M%S).log
 # Redirect stdout ( > ) into a named pipe ( >() ) running "tee"
 exec &> >(tee -i ${OUTFILE})
@@ -73,8 +75,7 @@ do
         #     python3 upload_log.py ${CMIS_CONFIG} ${ENVIRON} ${ACCESS_LOG}
         # fi
         test -d ${ARCHIVE_DIR}/access && mkdir ${ARCHIVE_DIR}/access
-        aws s3 mv
-        "s3://malariagen-sims-import-${ENVIRON}/import/access/$(basename ${i})" "s3://malariagen-sims-import-${ENVIRON}/output/archive/access/"
+        aws s3 mv "s3://malariagen-sims-import-${ENVIRON}/import/access/$(basename ${i})" "s3://malariagen-sims-import-${ENVIRON}/output/archive/access/"
         mv $i ${ARCHIVE_DIR}/access/$(basename ${i})
     fi
 done
