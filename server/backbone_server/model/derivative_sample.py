@@ -51,8 +51,8 @@ class DerivativeSample(Versioned, Base):
     acc_date = Column(DateTime)
     dna_prep = Column(String(20))
     taxon = Column('taxon',
-                      Integer,
-                      ForeignKey('taxonomy.id'))
+                   Integer,
+                   ForeignKey('taxonomy.id'))
 
     attrs = relationship("Attr", secondary=derivative_sample_attr_table)
     original_sample = relationship("OriginalSample",
