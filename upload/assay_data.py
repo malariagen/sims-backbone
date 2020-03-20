@@ -16,6 +16,33 @@ class AssayDataProcessor(BaseEntity):
         super().__init__(dao, event_set)
         self._logger = logging.getLogger(__name__)
 
+        self.attrs = [
+            {
+                'from': 'assay_datum_id'
+            },
+            {
+                'from': 'assay_datum_source'
+            },
+            {
+                'from': 'irods_path'
+            },
+            {
+                'from': 'tag_index'
+            },
+            {
+                'from': 'manual_qc'
+            },
+            {
+                'from': 'qc_complete'
+            },
+            {
+                'from': 'id_run'
+            },
+            {
+                'from': 'position'
+            }
+        ]
+
     def create_assay_datum_from_values(self, values, derivative_sample):
 
         if not derivative_sample:
@@ -25,15 +52,14 @@ class AssayDataProcessor(BaseEntity):
                                              derivative_sample_id=derivative_sample.derivative_sample_id)
 
         idents = []
-        if 'assay_datum_id' in values:
-            idents.append(openapi_client.Attr('assay_datum_id', values['assay_datum_id'],
-                                              self._event_set))
-
-        if 'assay_datum_source' in values:
-            idents.append(openapi_client.Attr('assay_datum_source',
-                                              values['assay_datum_source'],
-                                              self._event_set))
-
+        for attr_descrip in self.attrs:
+            if attr_descrip['from'] in values:
+                from_key = attr_descrip['from']
+                to = from_key
+                if 'to' in values:
+                    to = attr_descrip['to']
+                idents.append(openapi_client.Attr(to, values[from_key],
+                                                  self._event_set))
 
         if 'ebi_run_acc' in values:
             d_sample.ebi_run_acc = values['ebi_run_acc']
@@ -59,6 +85,8 @@ class AssayDataProcessor(BaseEntity):
         if len(samp.attrs) > 0:
             #print("Checking attrs {}".format(samp.attrs))
             for ident in samp.attrs:
+                if ident.attr_type not in ['assay_datum_id']:
+                    continue
                 try:
                     #print("Looking for {} {}".format(ident.attr_type, ident.attr_value))
 
@@ -88,7 +116,7 @@ class AssayDataProcessor(BaseEntity):
         if not samp:
             return None
 
-        #print('process_assay data {} {} {} {}'.format(samp, existing, derivative_sample, values))
+        # print('process_assay data {} {} {} {}'.format(samp, existing, derivative_sample, values))
 
         user = None
         if 'updated_by' in values:
@@ -97,13 +125,9 @@ class AssayDataProcessor(BaseEntity):
         if existing:
             ret = self.merge_assay_data(existing, samp, values)
         else:
-            #print("Creating {}".format(samp))
-            if len(samp.attrs) == 0:
-                return None
+            # print("Creating {}".format(samp))
 
             try:
-                if derivative_sample:
-                    samp.derivative_sample_id = derivative_sample.derivative_sample_id
                 created = self._dao.create_assay_datum(samp, user)
 
                 ret = created

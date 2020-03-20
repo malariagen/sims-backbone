@@ -14,6 +14,7 @@ class AbstractBackboneDAO(abc.ABC):
         self.metadata_api_instance = None
         self.study_api_instance = None
         self.i_api_instance = None
+        self.r_api_instance = None
 
     @abc.abstractmethod
     def setup(self, config):
@@ -360,9 +361,31 @@ class AbstractBackboneDAO(abc.ABC):
                                                                 start=start,
                                                                 count=count, studies=None, user=user)
 
-    @abc.abstractmethod
     def download_history(self, record_type, record_id, studies=None, user=None):
         history = self.metadata_api_instance.download_history(record_type,
                                                               record_id, studies=None, user=user)
 
         return history
+
+    def create_release(self, release_id, studies=None, user=None, token_info=None):  # noqa: E501
+        return self.r_api_instance.create_release(release_id, studies=studies,
+                                                  user=user)
+
+
+    def download_release(self, release_id, start=None, count=None, studies=None, user=None, token_info=None):  # noqa: E501
+        return self.r_api_instance.download_release(release_id, start=start,
+                                                    count=count, studies=studies,
+                                                    user=user)
+
+
+    def create_release_item(self, release_id, release_item, studies=None, user=None, token_info=None):  # noqa: E501
+        return self.r_api_instance.create_release_item(release_id, release_item, studies=studies,
+                                                       user=user)
+
+    def update_release_item(self, release_item_id, release_item,
+                            update_samples=None, studies=None, user=None,
+                            token_info=None):  # noqa: E501
+        return self.r_api_instance.update_release_item(release_item_id,
+                                                       release_item,
+                                                       update_samples=update_samples, studies=studies,
+                                                       user=user)

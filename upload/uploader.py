@@ -27,6 +27,7 @@ from base_entity import BaseEntity
 from sampling_event import SamplingEventProcessor
 from original_sample import OriginalSampleProcessor
 from derivative_sample import DerivativeSampleProcessor
+from release import ReleaseProcessor
 from assay_data import AssayDataProcessor
 from individual import IndividualProcessor
 
@@ -102,10 +103,11 @@ class Uploader():
         self.ds_processor = DerivativeSampleProcessor(self._dao, self._event_set)
         self.ad_processor = AssayDataProcessor(self._dao, self._event_set)
         self.i_processor = IndividualProcessor(self._dao, self._event_set)
+        self.r_processor = ReleaseProcessor(self._dao, self._event_set)
 
         api_response = self._dao.create_event_set(event_set_id)
 
-    def load_data_file(self, data_def, filename):
+    def load_data_file(self, data_def, filename, release=None):
 
         self.setup(filename)
 
@@ -116,7 +118,7 @@ class Uploader():
             profile = cProfile.Profile()
             profile.enable()
 
-        ret = self.load_data(data_def, input_stream, True, False)
+        ret = self.load_data(data_def, input_stream, True, False, release)
 
         if self._logger.isEnabledFor(logging.DEBUG):
             profile.disable()
@@ -169,7 +171,8 @@ class Uploader():
 
         return data_value, accuracy
 
-    def load_data(self, data_def, input_stream, skip_header, update_only):
+    def load_data(self, data_def, input_stream, skip_header, update_only,
+                  release=None):
 
         processed = 0
 
@@ -247,6 +250,8 @@ class Uploader():
                     else:
                         values[name] = data_value
 
+                if release:
+                    values['release'] = release
                 self.process_item(values)
 
 
@@ -317,6 +322,16 @@ class Uploader():
 
         dsamp = self.ds_processor.lookup_derivative_sample(d_sample, values)
 
+        if not original_sample:
+            if dsamp:
+                # Might have the values to lookup the derivative sample but not
+                # the original sample so handle that here
+                print(f'Using derivative sample to find original sample {values}')
+                original_sample = self.os_processor.process_original_sample(values, o_sample, dsamp.original_sample)
+            else:
+                # Because derivative samples must have an original sample
+                d_sample = None
+
         derivative_sample = self.ds_processor.process_derivative_sample(d_sample, dsamp, original_sample, values)
 
         ad_sample = self.ad_processor.create_assay_datum_from_values(values,
@@ -326,6 +341,12 @@ class Uploader():
 
         self.ad_processor.process_assay_datum(ad_sample, adsamp, derivative_sample, values)
 
+        r_sample = self.ds_processor.create_derivative_sample_from_values(values,
+                                                                          original_sample)
+
+        rsamp = self.r_processor.lookup_release_item(r_sample, values)
+
+        self.r_processor.process_release_item(r_sample, rsamp, original_sample, values)
         #print(existing)
         #print(sampling_event)
         #print(values)
@@ -337,9 +358,17 @@ class Uploader():
 
 
 if __name__ == '__main__':
-    sd = Uploader(sys.argv[3])
-    with open(sys.argv[2]) as json_file:
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument("data_file")
+    parser.add_argument("data_config")
+    parser.add_argument("config")
+    parser.add_argument('--release')
+    args = parser.parse_args()
+    print(args)
+    sd = Uploader(args.config)
+    with open(args.data_config) as json_file:
         json_data = json.load(json_file)
-        sd.load_data_file(json_data, sys.argv[1])
+        sd.load_data_file(json_data, args.data_file, args.release)
 
     #print(repr(sd.fetch_entity_by_source('test',1)))
