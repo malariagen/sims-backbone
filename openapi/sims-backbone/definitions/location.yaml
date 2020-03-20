@@ -7,7 +7,6 @@ components:
           type: string
         version:
           type: integer
-          readOnly: true
         latitude:
           type: number
         longitude:

@@ -25,7 +25,6 @@ components:
   #        format: uuid
         version:
           type: integer
-          readOnly: true
         derivative_sample_id:
           type: string
   #        format: uuid

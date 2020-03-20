@@ -30,7 +30,6 @@ components:
   #        format: uuid
         version:
           type: integer
-          readOnly: true
         study_name:
           type: string
         doc_name:
