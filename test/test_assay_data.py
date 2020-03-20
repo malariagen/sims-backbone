@@ -129,9 +129,36 @@ class TestAssayDatum(TestBase):
         except ApiException as error:
             self.check_api_exception(api_factory, "AssayDataApi->delete_assay_datum", error)
 
+
     """
     """
     def test_ad_duplicate_key(self, api_factory):
+
+        if not api_factory.is_authorized(None):
+            return
+
+        api_instance = api_factory.AssayDataApi()
+
+        try:
+
+            samp = self.create_assay_datum(api_factory)
+            samp.attrs = [
+                openapi_client.Attr(attr_type='assay_datum_id', attr_value='1234',
+                                    attr_source='same')
+            ]
+            created = api_instance.create_assay_datum(samp)
+
+            with pytest.raises(ApiException, status=422):
+                created = api_instance.create_assay_datum(samp)
+
+            self.delete_assay_datum(api_factory, created)
+
+        except ApiException as error:
+            self.check_api_exception(api_factory, "AssayDataApi->create_assay_datum", error)
+
+    """
+    """
+    def test_ad_duplicate_key_allowed(self, api_factory):
 
         if not api_factory.is_authorized(None):
             return
@@ -147,9 +174,9 @@ class TestAssayDatum(TestBase):
             ]
             created = api_instance.create_assay_datum(samp)
 
-            with pytest.raises(ApiException, status=422):
-                created = api_instance.create_assay_datum(samp)
+            created1 = api_instance.create_assay_datum(samp)
 
+            api_instance.delete_assay_datum(created1.assay_datum_id)
             self.delete_assay_datum(api_factory, created)
 
         except ApiException as error:

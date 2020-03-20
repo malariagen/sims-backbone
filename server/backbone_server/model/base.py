@@ -63,7 +63,16 @@ class SimsDbBase():
     def post_duplicate_attr_check(self, db, api_item):
         if hasattr(api_item, 'attrs') and api_item.attrs:
             for attr in api_item.attrs:
-                if attr.attr_type not in self.duplicate_attrs:
+                check = True
+                if self.duplicate_attrs:
+                    if attr.attr_type in self.duplicate_attrs:
+                        check = False
+
+                if self.unique_attrs:
+                    if attr.attr_type not in self.unique_attrs:
+                        check = False
+
+                if check:
                     from backbone_server.model.attr import Attr
                     from backbone_server.model.study import Study
                     for db_attr in Attr.get_all(db, attr):
