@@ -139,6 +139,26 @@ def download_original_samples_by_location(location_id, start=None, count=None,
                                                                             auths=original_sample_controller.token_info(token_info))
 
 
+def download_original_samples_by_release(release_id, start=None,
+                                         count=None):  # noqa: E501
+    """fetches OriginalSamples in a given release
+
+     # noqa: E501
+
+    :param release_id: release name
+    :type release_id: str
+    :param start: for pagination start the result set at a record x
+    :type start: int
+    :param count: for pagination the number of entries to return
+    :type count: int
+
+    :rtype: OriginalSamples
+    """
+    return original_sample_controller.download_original_samples_by_release(release_id, start,
+                                                                           count,
+                                                                           studies=studies, user=user,
+                                                                           auths=original_sample_controller.token_info(token_info))
+
 def download_original_samples_by_study(study_name, start=None, count=None,
                                        studies=None, user=None, token_info=None):
     """

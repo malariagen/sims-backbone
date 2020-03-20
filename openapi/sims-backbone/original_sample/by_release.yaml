@@ -1,7 +1,7 @@
     get:
       tags:
         - OriginalSample
-      summary: fetches OriginalSamples in a given event set
+      summary: fetches OriginalSamples in a given release
       description: ""
       operationId: downloadOriginalSamplesByRelease
       parameters:
