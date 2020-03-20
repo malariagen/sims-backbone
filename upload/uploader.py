@@ -1,24 +1,13 @@
-from __future__ import print_function
+import os
 import json
 import csv
 import re
 import time
 import datetime
 import logging
-import sys
 
 import openapi_client
 from openapi_client.rest import ApiException
-
-from decimal import *
-
-from copy import deepcopy
-
-from pprint import pprint
-from pprint import pformat
-
-import os
-import requests
 
 from remote_backbone_dao import RemoteBackboneDAO
 from local_backbone_dao import LocalBackboneDAO
@@ -118,7 +107,7 @@ class Uploader():
             profile = cProfile.Profile()
             profile.enable()
 
-        ret = self.load_data(data_def, input_stream, True, False, release)
+        self.load_data(data_def, input_stream, True, False, release)
 
         if self._logger.isEnabledFor(logging.DEBUG):
             profile.disable()
@@ -132,7 +121,7 @@ class Uploader():
             profile.dump_stats('upload_source_stats.cprof')
 
 
-        return ret
+        return None
 
 
     def parse_date(self, defn, date_value):
@@ -183,14 +172,11 @@ class Uploader():
                 next(data_reader)
 
             for row in data_reader:
-                entity_id = None
                 values = {}
-                prop_by_column = {}
                 processed = processed + 1
                 #Ensure columns are processed in order - see also doc_accuracy comment below
                 #For more predictable behaviour
                 for name, defn in sorted(data_def['values'].items(), key=lambda x: x[1]['column']):
-                    identity = False
                     #print(repr(defn))
                     #print(repr(row))
                     data_value = row[defn['column']]
@@ -205,8 +191,8 @@ class Uploader():
                                 try:
                                     data_value = re_match.group(1)
                                 except IndexError as iere:
-                                        raise InvalidDataValueException("Failed to parse {} using {}"
-                                                                        .format(data_value, defn['regex'])) from iere
+                                    raise InvalidDataValueException("Failed to parse {} using {}"
+                                                                    .format(data_value, defn['regex'])) from iere
                                 # print("Transformed value is:" + data_value + " from " + row[defn['column']])
                                 # print(repr(re_match.groupdict()))
                                 # if row[defn['column']] != "" and data_value == "":
@@ -222,8 +208,7 @@ class Uploader():
                                 try:
                                     data_value, values[name + '_accuracy'] = self.parse_date(defn, data_value)
                                 except ValueError as dpe:
-                                    self.se_processor.report("Failed to parse date '{}'".format(data_value),
-                                                                                   values)
+                                    self.se_processor.report("Failed to parse date '{}'".format(data_value), values)
                                     continue
                             else:
                                 #Skip this property

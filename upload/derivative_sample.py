@@ -290,7 +290,6 @@ class DerivativeSampleProcessor(BaseEntity):
 
     def merge_derivative_sample_objects(self, existing, samp, values):
 
-        orig = deepcopy(existing)
         changed = False
 
         change_reasons = []
@@ -314,8 +313,6 @@ class DerivativeSampleProcessor(BaseEntity):
             if existing.taxon:
                 if existing.taxon != int(samp.taxon):
                     msg = "Not updated"
-                    print(existing.taxon)
-                    print(samp.taxon)
                     self.report_conflict(None, "Taxon",
                                          existing.taxon, samp.taxon,
                                          msg, values)

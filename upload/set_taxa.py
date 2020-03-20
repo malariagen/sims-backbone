@@ -1,23 +1,11 @@
-from __future__ import print_function
+import os
 import json
 import csv
-import re
-import time
 import datetime
 import logging
 import sys
 import openapi_client
 from openapi_client.rest import ApiException
-
-from decimal import *
-
-import urllib.parse
-from copy import deepcopy
-
-from pprint import pprint
-
-import os
-import requests
 
 from remote_backbone_dao import RemoteBackboneDAO
 from local_backbone_dao import LocalBackboneDAO
@@ -84,7 +72,7 @@ class SetTaxa():
         for study in studies.studies:
             study_detail = self._dao.download_study(study.code)
             if not study_detail.partner_species:
-                study_detail.partner_species=[]
+                study_detail.partner_species = []
             for species in study_detail.partner_species:
                 if species.partner_species in self._taxa_map:
                     taxas = self._taxa_map[species.partner_species]
@@ -113,5 +101,3 @@ if __name__ == '__main__':
     sd = SetTaxa(sys.argv[1])
     sd.load_taxa_map()
     sd.set_taxa()
-
-

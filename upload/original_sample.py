@@ -1,5 +1,4 @@
 import sys
-from copy import deepcopy
 
 import logging
 
@@ -278,7 +277,6 @@ class OriginalSampleProcessor(BaseEntity):
     def merge_original_sample_objects(self, existing, samp, values):
 
         #print('Merging original samples {} {} {}'.format(existing, samp, values))
-        orig = deepcopy(existing)
         new_ident_value = False
 
         change_reasons = []

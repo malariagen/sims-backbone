@@ -1,6 +1,4 @@
 import sys
-from copy import deepcopy
-
 import logging
 
 import openapi_client
@@ -137,7 +135,7 @@ class AssayDataProcessor(BaseEntity):
                 self._logger.error("Error inserting {}".format(samp))
                 sys.exit(1)
 
-            if 'unique_ds_id' in values:
+            if 'unique_ad_id' in values:
                 self._assay_datum_cache[values['unique_ad_id']] = created.assay_datum_id
 
         return ret
@@ -189,7 +187,6 @@ class AssayDataProcessor(BaseEntity):
 
     def merge_assay_datum_objects(self, existing, samp, values):
 
-        orig = deepcopy(existing)
         changed = False
 
         change_reasons = []

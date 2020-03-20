@@ -1,24 +1,9 @@
-from __future__ import print_function
-import json
 import csv
-import re
-import time
-import datetime
-import logging
 import sys
 import openapi_client
 from openapi_client.rest import ApiException
 
 from decimal import *
-
-import urllib.parse
-from copy import deepcopy
-
-from pprint import pprint
-from pprint import pformat
-
-import os
-import requests
 
 from original_sample import OriginalSampleProcessor
 from sampling_event import SamplingEventProcessor
@@ -131,7 +116,7 @@ class SetCountry(upload_ssr.Upload_SSR):
             else:
                 try:
                     location = self._dao.download_gps_location(cached_country['latitude'],
-                                                                           cached_country['longitude'])
+                                                               cached_country['longitude'])
                     location = location.locations[0]
                 except ApiException as exp:
                     lat = round(float(Decimal(cached_country['latitude'])), 7)
@@ -159,7 +144,6 @@ class SetCountry(upload_ssr.Upload_SSR):
 
         self.os_processor = OriginalSampleProcessor(self._dao, self._event_set)
         self.se_processor = SamplingEventProcessor(self._dao, self._event_set)
-        orig = deepcopy(found)
 
         if country_value not in self._country_cache:
             try:
@@ -192,7 +176,7 @@ class SetCountry(upload_ssr.Upload_SSR):
                 found.proxy_location = self.se_processor.update_country(self._country_cache[country_value].alpha3, found.proxy_location)
             except Exception as cue:
                 self.os_processor.report_conflict(found, 'Country', found.proxy_location.country,
-                                     country_value, 'proxy not updated', values)
+                                                  country_value, 'proxy not updated', values)
                 error = True
 
         if error:
