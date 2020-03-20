@@ -34,6 +34,7 @@ class SimsDbBase():
         self.attr_link = None
         self.api_id = None
         self.duplicate_attrs = []
+        self.unique_attrs = []
 
     def has_study_permission(self, studies, study_code, perm_type):
 
