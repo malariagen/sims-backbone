@@ -312,9 +312,11 @@ class DerivativeSampleProcessor(BaseEntity):
 
         if samp.taxon:
             if existing.taxon:
-                if existing.taxon != samp.taxon:
+                if existing.taxon != int(samp.taxon):
                     msg = "Not updated"
-                    self.report_conflict(existing, "Taxon",
+                    print(existing.taxon)
+                    print(samp.taxon)
+                    self.report_conflict(None, "Taxon",
                                          existing.taxon, samp.taxon,
                                          msg, values)
 
