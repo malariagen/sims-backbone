@@ -22,10 +22,12 @@ class DerivativeSampleProcessor(BaseEntity):
     def create_derivative_sample_from_values(self, values, original_sample):
 
         if not original_sample:
-            return None
+            original_sample_id = 'Unknown'
+        else:
+            original_sample_id = original_sample.original_sample_id
 
         d_sample = openapi_client.DerivativeSample(None,
-                                                   original_sample_id=original_sample.original_sample_id)
+                                                   original_sample_id=original_sample_id)
 
         idents = []
         if 'derivative_sample_id' in values:
@@ -62,6 +64,9 @@ class DerivativeSampleProcessor(BaseEntity):
 
         if 'dna_prep' in values:
             d_sample.dna_prep = values['dna_prep']
+
+        if 'taxon' in values:
+            d_sample.taxon = values['taxon']
 
         if 'parent_unique_ds_id' in values:
             pds = openapi_client.DerivativeSample(None)
@@ -117,6 +122,9 @@ class DerivativeSampleProcessor(BaseEntity):
     def lookup_derivative_sample(self, samp, values):
 
         existing = None
+
+        if not samp:
+            return existing
 
         if 'unique_ds_id' in values:
             # print(f"Looking in cache for unique_ds_id {values['unique_ds_id']}")
@@ -185,6 +193,8 @@ class DerivativeSampleProcessor(BaseEntity):
                         #print("Not found")
                         pass
 
+        if existing and samp.original_sample_id == 'Unknown':
+            samp.original_sample_id = existing.original_sample_id
         #if not existing:
         #    print('Not found {}'.format(samp))
         return existing
@@ -205,6 +215,9 @@ class DerivativeSampleProcessor(BaseEntity):
         if existing:
             ret = self.merge_derivative_samples(existing, samp, values)
         else:
+            if not samp:
+                return existing
+
             #print("Creating {}".format(samp))
             if len(samp.attrs) == 0:
                 return None
@@ -296,6 +309,19 @@ class DerivativeSampleProcessor(BaseEntity):
                 changed = True
                 change_reasons.append("Adding ident {}".format(new_ident))
                 existing.attrs.append(new_ident)
+
+        if samp.taxon:
+            if existing.taxon:
+                if existing.taxon != samp.taxon:
+                    msg = "Not updated"
+                    self.report_conflict(existing, "Taxon",
+                                         existing.taxon, samp.taxon,
+                                         msg, values)
+
+            else:
+                existing.taxon = samp.taxon
+                new_ident_value = True
+                change_reasons.append('Set taxon')
 
         if samp.original_sample_id != existing.original_sample_id:
             # print(existing)

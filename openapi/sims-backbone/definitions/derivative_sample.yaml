@@ -33,6 +33,9 @@ components:
           $ref: "./original_sample.yaml#/components/schemas/OriginalSample"
         dna_prep:
           type: string
+        taxon:
+          type: integer
+          description: The taxon as stored in mlwh
         acc_date:
           type: string
           format: date
