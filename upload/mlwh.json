@@ -1,0 +1,124 @@
+{
+    "values": {
+        "irods_filename": {
+            "column": 0,
+            "type": "string"
+        },
+        "path": {
+            "column": 1,
+            "type": "string"
+        },
+        "study_id": {
+            "column": 2,
+            "type": "string",
+            "regex": "(\\d{4}\\-[\\-A-Z]*)$"
+        },
+        "sample_oxford_id": {
+            "column": 3,
+            "type": "string",
+            "regex": "([A-Z]{2}\\d{4}\\-[A-Z]*)$"
+        },
+        "sample_roma_id": {
+            "column": 3,
+            "type": "string",
+            "regex": "([A-Z]{3}\\d{5})$"
+        },
+        "lane": {
+            "column": 4,
+            "type": "string"
+        },
+        "reads": {
+            "column": 5,
+            "type": "string"
+        },
+        "paired": {
+            "column": 6,
+            "type": "string"
+        },
+        "irods_path": {
+            "column": 7,
+            "type": "string"
+        },
+        "sanger_sample_id": {
+            "column": 8,
+            "type": "string"
+        },
+        "taxon": {
+            "column": 9,
+            "type": "integer"
+        },
+        "study_lims": {
+            "column": 10,
+            "type": "string"
+        },
+        "unused_study_id": {
+            "column": 11,
+            "type": "string",
+            "regex": "(\\d{4}\\-[\\-A-Z]*)$"
+        },
+        "id_run": {
+            "column": 12,
+            "type": "string"
+        },
+        "position": {
+            "column": 13,
+            "type": "string"
+        },
+        "tag_index": {
+            "column": 14,
+            "type": "string"
+        },
+        "qc_complete": {
+            "column": 15,
+            "type": "string"
+        },
+        "manual_qc": {
+            "column": 16,
+            "type": "string"
+        },
+        "description": {
+            "column": 17,
+            "type": "string"
+        },
+        "instrument_name": {
+            "column": 18,
+            "type": "string"
+        },
+        "instrument_model": {
+            "column": 19,
+            "type": "string"
+        },
+        "forward_read_length": {
+            "column": 20,
+            "type": "string"
+        },
+        "requested_insert_size_from": {
+            "column": 21,
+            "type": "string"
+        },
+        "requested_insert_size_to": {
+            "column": 22,
+            "type": "string"
+        },
+        "human_percent_mapped": {
+            "column": 23,
+            "type": "string"
+        },
+        "subtrack_filename": {
+            "column": 24,
+            "type": "string"
+        },
+        "subtrack_files_bytes": {
+            "column": 25,
+            "type": "string"
+        },
+        "ebi_run_acc": {
+            "column": 26,
+            "type": "string"
+        },
+        "release": {
+            "column": 27,
+            "type": "string"
+        }
+    }
+}
