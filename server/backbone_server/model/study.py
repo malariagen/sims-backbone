@@ -129,7 +129,7 @@ def insert_taxa(mapper, connection, checkfirst, _ddl_runner,
 
 class Study(Base):
 
-    name = Column(String(64))
+    name = Column(String(64), index=True)
     code = Column(String(4), index=True)
     ethics_expiry = Column(Date())
 

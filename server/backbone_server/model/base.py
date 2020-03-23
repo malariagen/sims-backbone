@@ -379,7 +379,7 @@ class SimsDbBase():
         return self.db_class.id
 
     def _get_multiple_results(self, db, db_query, start, count, studies=None,
-                              order_by=None, study_filter=True):
+                              order_by=None, distinct=True, study_filter=True):
 
         response_items = []
 
@@ -391,7 +391,7 @@ class SimsDbBase():
 
         if order_by:
             db_query = db_query.distinct(order_by)
-        else:
+        elif distinct:
             db_query = db_query.distinct(self.db_class.id)
 
         ret = self.db_class.openapi_multiple_class()
@@ -399,9 +399,8 @@ class SimsDbBase():
 
         if hasattr(ret, 'attr_types'):
             from backbone_server.model.attr import Attr
-            attr_items = db.query(self.db_class, Attr,
-                                  Attr.attr_type).\
-                        join(self.db_class.attrs).\
+            attr_items = db.query(Attr.attr_type).\
+                        join(self.attr_link).\
                         distinct(Attr.attr_type)
             if attr_items:
                 ret.attr_types = []

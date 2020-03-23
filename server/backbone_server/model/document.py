@@ -68,6 +68,7 @@ class BaseDocument(SimsDbBase):
         self.metadata.reflect(engine, only=['study'])
 
         self.db_class = Document
+        self.attr_link = document_attr_table
 
     def db_map_actions(self, db, db_item, api_item, studies):
 
