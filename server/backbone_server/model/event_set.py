@@ -48,7 +48,7 @@ class EventSet(Versioned, Base):
     def __tablename__(cls):
         return 'event_set'
 
-    event_set_name = Column(String(128))
+    event_set_name = Column(String(128), index=True)
 
 
     attrs = relationship("Attr", secondary=event_set_attr_table)
