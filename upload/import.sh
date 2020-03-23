@@ -18,13 +18,13 @@ exec &> >(tee -i ${OUTFILE})
 ARCHIVE_DIR=${OUTPUT1_STAGING_DIR}/archive
 
 shopt -s nullglob
-for i in import/oxford_11JAN2018.csv
+for i in $INPUT1_STAGING_DIR}/import/oxford_11JAN2018.csv
 do
-    if [ -f $i.csv ]
+    if [ -f $i ]
     then
         INSTANCE=$(basename ${i} | awk -F_ '{print $1}')
         UPLOAD_LOG=${OUTPUT1_STAGING_DIR}/${INSTANCE}_$(date +%Y-%m-%d-%H%M%S).log
-        python3 uploader.py $i.csv ${INSTANCE}.json ${IMPORT_CONFIG} 2>&1 | tee -i ${UPLOAD_LOG}
+        python3 uploader.py $i {INSTANCE}.json ${IMPORT_CONFIG} 2>&1 | tee -i ${UPLOAD_LOG}
         if [ -s ${UPLOAD_LOG} ]
         then
             python3 upload_log.py ${CMIS_CONFIG} ${ENVIRON} ${UPLOAD_LOG}
@@ -34,9 +34,9 @@ do
     fi
 done
 SSR=2017_06_07_report_sample_status.xls
-if [ -f import/${SSR} ]
+if [ -f $INPUT1_STAGING_DIR}/import/${SSR} ]
 then
-    python3 upload_ssr.py ${IMPORT_CONFIG} import/${SSR}
+    python3 upload_ssr.py ${IMPORT_CONFIG} $INPUT1_STAGING_DIR}/import/${SSR}
     aws s3 mv "s3://malariagen-sims-import-${ENVIRON}/import/${SSR}" "s3://malariagen-sims-import-${ENVIRON}/output/archive/"
 fi
 for i in ${INPUT1_STAGING_DIR}/import/roma/*
@@ -79,13 +79,13 @@ do
         mv $i ${ARCHIVE_DIR}/access/$(basename ${i})
     fi
 done
-for i in import/mlwh
+for i in ${INPUT1_STAGING_DIR}/import/mlwh*
 do
-    if [ -f $i.csv ]
+    if [ -f $i ]
     then
         INSTANCE=$(basename ${i} | awk -F_ '{print $1}')
         UPLOAD_LOG=${OUTPUT1_STAGING_DIR}/${INSTANCE}_$(date +%Y-%m-%d-%H%M%S).log
-        python3 uploader.py $i.csv ${INSTANCE}.json ${IMPORT_CONFIG} 2>&1 | tee -i ${UPLOAD_LOG}
+        python3 uploader.py $i ${INSTANCE}.json ${IMPORT_CONFIG} 2>&1 | tee -i ${UPLOAD_LOG}
         if [ -s ${UPLOAD_LOG} ]
         then
             python3 upload_log.py ${CMIS_CONFIG} ${ENVIRON} ${UPLOAD_LOG}
