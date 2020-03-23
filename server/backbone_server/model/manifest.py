@@ -26,6 +26,7 @@ from backbone_server.model.scope import session_scope
 
 from backbone_server.model.mixins import Base
 from backbone_server.model.attr import Attr
+from backbone_server.model.document import Document
 from backbone_server.model.manifest_note import ManifestNote
 
 from backbone_server.model.derivative_sample import DerivativeSample
@@ -236,7 +237,7 @@ class BaseManifest(SimsDbBase):
 
         self.metadata.reflect(engine, only=['study',
                                             'manifest',
-                                            'individual',
+                                            'document',
                                             'manifest_attr',
                                             'attr'])
 

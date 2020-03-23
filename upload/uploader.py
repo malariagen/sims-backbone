@@ -100,16 +100,18 @@ class Uploader():
 
         self.setup(filename)
 
+        profile = self._logger.isEnabledFor(logging.DEBUG)
+
         input_stream = open(filename)
 
-        if self._logger.isEnabledFor(logging.DEBUG):
+        if profile:
             import cProfile
             profile = cProfile.Profile()
             profile.enable()
 
         self.load_data(data_def, input_stream, True, False, manifest)
 
-        if self._logger.isEnabledFor(logging.DEBUG):
+        if profile:
             profile.disable()
             #profile.print_stats()
             import io,pstats
@@ -118,6 +120,7 @@ class Uploader():
             ps = pstats.Stats(profile, stream=s).sort_stats(sortby)
             ps.print_stats(.1)
             self._logger.debug(s.getvalue())
+            print(s.getvalue())
             profile.dump_stats('upload_source_stats.cprof')
 
 
@@ -353,6 +356,6 @@ if __name__ == '__main__':
     sd = Uploader(args.config)
     with open(args.data_config) as json_file:
         json_data = json.load(json_file)
-        sd.load_data_file(json_data, args.data_file, args.manifest)
+        sd.load_data_file(json_data, args.data_file, args.release)
 
     #print(repr(sd.fetch_entity_by_source('test',1)))
