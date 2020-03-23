@@ -1,14 +1,14 @@
     get:
       tags:
-        - release
-      summary: fetches releases
+        - manifest
+      summary: fetches manifests
       description: ""
-      operationId: downloadReleases
+      operationId: downloadManifests
       responses:
         "200":
           description: successful operation
           content:
             application/json:
               schema:
-                $ref: './sims-backbone/definitions/release.yaml#/components/schemas/Releases'
+                $ref: './sims-backbone/definitions/manifest.yaml#/components/schemas/Manifests'
 

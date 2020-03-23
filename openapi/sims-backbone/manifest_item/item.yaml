@@ -1,25 +1,25 @@
     get:
       tags:
-        - release
-      summary: fetches an release item
+        - manifest
+      summary: fetches an manifest item
       description: ""
-      operationId: downloadReleaseItem
+      operationId: downloadManifestItem
       parameters:
-        - name: release_item_id
+        - name: manifest_item_id
           in: path
-          description: ID of release_item to fetch - use unknown if using query params instead
+          description: ID of manifest_item to fetch - use unknown if using query params instead
           required: true
           schema:
             type: string
-        - name: release_id
+        - name: manifest_id
           in: query
-          description: if the release_item_id is not known then it is possible to use release_id and original_sample_id
+          description: if the manifest_item_id is not known then it is possible to use manifest_id and original_sample_id
           required: false
           schema:
             type: string
         - name: original_sample_id
           in: query
-          description: if the release_item_id is not known then it is possible to use release_id and original_sample_id
+          description: if the manifest_item_id is not known then it is possible to use manifest_id and original_sample_id
           required: false
           schema:
             type: string
@@ -29,17 +29,17 @@
           content:
             application/json:
               schema:
-                $ref: "./sims-backbone/definitions/release.yaml#/components/schemas/ReleaseItem"
+                $ref: "./sims-backbone/definitions/manifest.yaml#/components/schemas/ManifestItem"
     put:
       tags:
-        - release
-      summary: updates an release item
+        - manifest
+      summary: updates an manifest item
       description: ""
-      operationId: updateReleaseItem
+      operationId: updateManifestItem
       parameters:
-        - name: release_item_id
+        - name: manifest_item_id
           in: path
-          description: ID of release_item to update
+          description: ID of manifest_item to update
           required: true
           schema:
             type: string
@@ -53,7 +53,7 @@
         content:
           application/json:
             schema:
-              $ref: "./sims-backbone/definitions/release.yaml#/components/schemas/ReleaseItem"
+              $ref: "./sims-backbone/definitions/manifest.yaml#/components/schemas/ManifestItem"
         required: true
       responses:
         "200":
@@ -61,9 +61,9 @@
           content:
             application/json:
               schema:
-                $ref: "./sims-backbone/definitions/release.yaml#/components/schemas/ReleaseItem"
+                $ref: "./sims-backbone/definitions/manifest.yaml#/components/schemas/ManifestItem"
         "404":
-          description: Release not found
+          description: Manifest not found
           content:
             application/json:
               schema:

@@ -367,25 +367,25 @@ class AbstractBackboneDAO(abc.ABC):
 
         return history
 
-    def create_release(self, release_id, studies=None, user=None, token_info=None):  # noqa: E501
-        return self.r_api_instance.create_release(release_id, studies=studies,
-                                                  user=user)
+    def create_manifest(self, manifest_id, studies=None, user=None):  # noqa: E501
+        return self.r_api_instance.create_manifest(manifest_id, studies=studies,
+                                                   user=user)
 
 
-    def download_release(self, release_id, start=None, count=None, studies=None, user=None, token_info=None):  # noqa: E501
-        return self.r_api_instance.download_release(release_id, start=start,
-                                                    count=count, studies=studies,
-                                                    user=user)
+    def download_manifest(self, manifest_id, start=None, count=None, studies=None, user=None):  # noqa: E501
+        return self.r_api_instance.download_manifest(manifest_id, start=start,
+                                                     count=count, studies=studies,
+                                                     user=user)
 
 
-    def create_release_item(self, release_id, release_item, studies=None, user=None, token_info=None):  # noqa: E501
-        return self.r_api_instance.create_release_item(release_id, release_item, studies=studies,
-                                                       user=user)
+    def create_manifest_item(self, manifest_id, manifest_item, studies=None, user=None):  # noqa: E501
+        return self.r_api_instance.create_manifest_item(manifest_id, manifest_item, studies=studies,
+                                                        user=user)
 
-    def update_release_item(self, release_item_id, release_item,
-                            update_samples=None, studies=None, user=None,
-                            token_info=None):  # noqa: E501
-        return self.r_api_instance.update_release_item(release_item_id,
-                                                       release_item,
-                                                       update_samples=update_samples, studies=studies,
-                                                       user=user)
+    def update_manifest_item(self, manifest_item_id, manifest_item,
+                             update_samples=None, studies=None, user=None,
+                             token_info=None):  # noqa: E501
+        return self.r_api_instance.update_manifest_item(manifest_item_id,
+                                                        manifest_item,
+                                                        update_samples=update_samples, studies=studies,
+                                                        user=user)

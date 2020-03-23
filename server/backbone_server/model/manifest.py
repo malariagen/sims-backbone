@@ -11,10 +11,10 @@ from sqlalchemy.ext.declarative import declared_attr
 
 from openapi_server.encoder import JSONEncoder
 
-from openapi_server.models.release import Release as ApiRelease
-from openapi_server.models.releases import Releases
-from openapi_server.models.release_item import ReleaseItem as ReleaseItemApi
-from openapi_server.models.release_items import ReleaseItems
+from openapi_server.models.manifest import Manifest as ApiManifest
+from openapi_server.models.manifests import Manifests
+from openapi_server.models.manifest_item import ManifestItem as ManifestItemApi
+from openapi_server.models.manifest_items import ManifestItems
 from openapi_server.models.original_sample import OriginalSample as OriginalSampleApi
 from openapi_server.models.derivative_sample import DerivativeSample as ApiDerivativeSample
 from openapi_server.models.assay_data import AssayData
@@ -26,7 +26,7 @@ from backbone_server.model.scope import session_scope
 
 from backbone_server.model.mixins import Base
 from backbone_server.model.attr import Attr
-from backbone_server.model.release_note import ReleaseNote
+from backbone_server.model.manifest_note import ManifestNote
 
 from backbone_server.model.derivative_sample import DerivativeSample
 from backbone_server.model.original_sample import OriginalSample, BaseOriginalSample
@@ -36,44 +36,44 @@ from backbone_server.model.base import SimsDbBase
 
 from backbone_server.errors.duplicate_key_exception import DuplicateKeyException
 
-release_attr_table = Table('release_attr', Base.metadata,
-                           Column('release_id', UUID(as_uuid=True),
-                                  ForeignKey('release.id')),
+manifest_attr_table = Table('manifest_attr', Base.metadata,
+                           Column('manifest_id', UUID(as_uuid=True),
+                                  ForeignKey('manifest.id')),
                            Column('attr_id', UUID(as_uuid=True),
                                   ForeignKey('attr.id'))
                            )
 
 
-release_item_attr_table = Table('release_item_attr', Base.metadata,
-                                Column('release_item_id', UUID(as_uuid=True),
-                                       ForeignKey('release_item.id')),
+manifest_item_attr_table = Table('manifest_item_attr', Base.metadata,
+                                Column('manifest_item_id', UUID(as_uuid=True),
+                                       ForeignKey('manifest_item.id')),
                                 Column('attr_id', UUID(as_uuid=True),
                                        ForeignKey('attr.id'))
                                 )
 
 
-class ReleaseItem(Versioned, Base):
+class ManifestItem(Versioned, Base):
 
 
     @declared_attr
     def __tablename__(cls):
-        return 'release_item'
+        return 'manifest_item'
 
     original_sample_id = Column('original_sample_id',
                                 UUID(as_uuid=True),
                                 ForeignKey('original_sample.id'))
-    release_id = Column('release_id',
-                        UUID(as_uuid=True),
-                        ForeignKey('release.id'))
+    manifest_id = Column('manifest_id',
+                         UUID(as_uuid=True),
+                         ForeignKey('manifest.id'))
     original_sample_version = Column(Integer)
     original_sample = Column(JSON)
     assay_data = Column(JSON)
 
 
-    attrs = relationship("Attr", secondary=release_item_attr_table)
+    attrs = relationship("Attr", secondary=manifest_item_attr_table)
 
-    openapi_class = ReleaseItemApi
-    openapi_multiple_class = ReleaseItems
+    openapi_class = ManifestItemApi
+    openapi_multiple_class = ManifestItems
 
     def submapped_items(self):
         return {
@@ -83,8 +83,8 @@ class ReleaseItem(Versioned, Base):
         }
 
     def __repr__(self):
-        return f'''<Release Item ID {self.id}
-    {self.release_id}
+        return f'''<Manifest Item ID {self.id}
+    {self.manifest_id}
     {self.original_sample_id}
     {self.original_sample_version}
     {self.original_sample}
@@ -92,72 +92,78 @@ class ReleaseItem(Versioned, Base):
     {self.attrs}
     >'''
 
-class Release(Versioned, Base):
+class Manifest(Versioned, Base):
 
-    release_name = Column(String(128))
-    release_date = Column(Date)
+    manifest_name = Column(String(128), index=True)
+    manifest_type = Column(String(32), index=True)
+    manifest_date = Column(Date)
     studies = Column(JSON)
 
+    manifest_number = Column(Integer, autoincrement=True)
 
-    attrs = relationship("Attr", secondary=release_attr_table)
-    notes = relationship("ReleaseNote",
-                         backref=backref('release'))
+    manifest_doc = Column('document_id',
+                          UUID(as_uuid=True),
+                          ForeignKey('document.id'))
 
-    openapi_class = ApiRelease
-    openapi_multiple_class = Releases
+    attrs = relationship("Attr", secondary=manifest_attr_table)
+    notes = relationship("ManifestNote",
+                         backref=backref('manifest'))
+
+    openapi_class = ApiManifest
+    openapi_multiple_class = Manifests
 
     def submapped_items(self):
         return {
-            'release_item': ReleaseItem,
+            'manifest_item': ManifestItem,
             'attrs': Attr,
-            'notes': ReleaseNote
+            'notes': ManifestNote
         }
 
     def __repr__(self):
-        return f'''<Release ID {self.id}
-    {self.release_name}
-    {self.release_date}
+        return f'''<Manifest ID {self.id}
+    {self.manifest_name}
+    {self.manifest_date}
     {self.studies}
     {self.attrs}
     Notes {self.notes}
     >'''
 
 
-class BaseReleaseItem(SimsDbBase):
+class BaseManifestItem(SimsDbBase):
 
     def __init__(self, engine, session):
 
         super().__init__(engine, session)
 
-        self.db_class = ReleaseItem
-        self.attr_link = release_item_attr_table
-        self.api_id = 'release_item_id'
+        self.db_class = ManifestItem
+        self.attr_link = manifest_item_attr_table
+        self.api_id = 'manifest_item_id'
 
 
     def convert_to_id(self, db, item_id, **kwargs):
 
-        if 'release_id' in kwargs and kwargs['release_id'] and\
+        if 'manifest_id' in kwargs and kwargs['manifest_id'] and\
             'original_sample_id' in kwargs and kwargs['original_sample_id']:
 
-            release_name = kwargs['release_id']
-            release_id = None
+            manifest_name = kwargs['manifest_id']
+            manifest_id = None
 
-            db_query = db.query(Release).filter_by(release_name=release_name)
+            db_query = db.query(Manifest).filter_by(manifest_name=manifest_name)
             db_item = db_query.first()
             if db_item:
-                release_id = db_item.id
+                manifest_id = db_item.id
             else:
-                raise MissingKeyException(f"Error release does not exist {release_name}")
+                raise MissingKeyException(f"Error manifest does not exist {manifest_name}")
 
             orig_samp_id = kwargs['original_sample_id']
 
-            db_item = db.query(ReleaseItem).filter(and_(ReleaseItem.release_id == release_id,
-                                                        ReleaseItem.original_sample_id == orig_samp_id)).first()
+            db_item = db.query(ManifestItem).filter(and_(ManifestItem.manifest_id == manifest_id,
+                                                        ManifestItem.original_sample_id == orig_samp_id)).first()
 
             if db_item:
                 item_id = db_item.id
             else:
-                raise MissingKeyException(f"Error release does not exist {release_name}")
+                raise MissingKeyException(f"Error manifest does not exist {manifest_name}")
 
         return item_id
 
@@ -198,72 +204,72 @@ class BaseReleaseItem(SimsDbBase):
         if hasattr(api_item.openapi_types, 'assay_data'):
             del api_item.openapi_types['assay_data']
 
-    def get_by_release(self, release_name, studies, start, count):
+    def get_by_manifest(self, manifest_name, studies, start, count):
 
-        if not release_name:
-            raise MissingKeyException("No event_set_name {}".format(release_name))
+        if not manifest_name:
+            raise MissingKeyException("No event_set_name {}".format(manifest_name))
 
         ret = None
 
         with session_scope(self.session) as db:
 
-            release = db.query(Release).filter_by(release_name=release_name).first()
-            if not release:
-                raise MissingKeyException("No release_name {}".format(release_name))
+            manifest = db.query(Manifest).filter_by(manifest_name=manifest_name).first()
+            if not manifest:
+                raise MissingKeyException("No manifest_name {}".format(manifest_name))
 
             from backbone_server.model.study import Study
-            db_items = db.query(ReleaseItem).\
+            db_items = db.query(ManifestItem).\
                     join(OriginalSample).\
                     join(Study, Study.id == OriginalSample.study_id).\
-                    filter(ReleaseItem.release_id == release.id)
+                    filter(ManifestItem.manifest_id == manifest.id)
 
             ret = self._get_multiple_results(db, db_items, start, count,
                                              studies=studies)
 
         return ret
 
-class BaseRelease(SimsDbBase):
+class BaseManifest(SimsDbBase):
 
     def __init__(self, engine, session):
 
         super().__init__(engine, session)
 
         self.metadata.reflect(engine, only=['study',
-                                            'release',
+                                            'manifest',
                                             'individual',
-                                            'release_attr',
+                                            'manifest_attr',
                                             'attr'])
 
-        self.db_class = Release
-        self.attr_link = release_attr_table
-        self.api_id = 'release_id'
+        self.db_class = Manifest
+        self.attr_link = manifest_attr_table
+        self.api_id = 'manifest_id'
 
     def pre_post_check(self, db, api_item, studies):
 
-        db_item = db.query(self.db_class).filter_by(release_name=api_item).first()
+        db_item = db.query(self.db_class).filter_by(manifest_name=api_item).first()
 
         if db_item:
-            raise DuplicateKeyException(f"Error inserting release already exists {api_item}")
+            raise DuplicateKeyException(f"Error inserting manifest already exists {api_item}")
 
         new_api_item = self.db_class.openapi_class()
-        new_api_item.release_name = api_item
+        new_api_item.manifest_name = api_item
 
         return new_api_item
 
     def convert_to_id(self, db, item_id):
 
-        db_item = db.query(self.db_class).filter_by(release_name=item_id).first()
+        db_item = db.query(self.db_class).filter_by(manifest_name=item_id).first()
 
         if db_item:
             item_id = db_item.id
         else:
-            raise MissingKeyException(f"Error release does not exist {item_id}")
+            raise MissingKeyException(f"Error manifest does not exist {item_id}")
 
         return item_id
 
     def convert_from_id(self, db, item_id):
 
-        db_item = db.query(self.db_class.release_name).filter_by(id=item_id)
+        db_item = db.query(self.db_class.manifest_name).filter_by(id=item_id)
 
         return db_item.first()
 
@@ -278,8 +284,8 @@ class BaseRelease(SimsDbBase):
         if 'update_studies' in kwargs and kwargs['update_studies']:
             from backbone_server.model.study import BaseStudy
             db_items = db.query(OriginalSample.study_id).\
-                    join(ReleaseItem).\
-                    filter(ReleaseItem.release_id == db_item.id)
+                    join(ManifestItem).\
+                    filter(ManifestItem.manifest_id == db_item.id)
 
             study_ids = []
             for study_id in db_items.all():
@@ -322,17 +328,17 @@ class BaseRelease(SimsDbBase):
                                             False)
 
 
-        bse = BaseReleaseItem(self.engine, self.session)
-        api_item.members = bse.get_by_release(orig_item_id, studies, start, count)
+        bse = BaseManifestItem(self.engine, self.session)
+        api_item.members = bse.get_by_manifest(orig_item_id, studies, start, count)
 
         return api_item
 
 
-    def post_member(self, release_name, original_sample_id, user, studies):
+    def post_member(self, manifest_name, original_sample_id, user, studies):
 
         ri_item_id = None
         os_base = BaseOriginalSample(self.engine, self.session)
-        bse = BaseReleaseItem(self.engine, self.session)
+        bse = BaseManifestItem(self.engine, self.session)
 
         with session_scope(self.session) as db:
 
@@ -341,19 +347,19 @@ class BaseRelease(SimsDbBase):
             if not os_item:
                 raise MissingKeyException(f"original sample does not exist {original_sample_id}")
 
-            release_id = self.convert_to_id(db, release_name)
+            manifest_id = self.convert_to_id(db, manifest_name)
 
-            member = db.query(ReleaseItem).filter(and_(ReleaseItem.original_sample_id == original_sample_id,
-                                                       ReleaseItem.release_id == release_id)).first()
+            member = db.query(ManifestItem).filter(and_(ManifestItem.original_sample_id == original_sample_id,
+                                                       ManifestItem.manifest_id == manifest_id)).first()
             if member:
-                raise DuplicateKeyException(f"{original_sample_id} already in {release_name}")
+                raise DuplicateKeyException(f"{original_sample_id} already in {manifest_name}")
 
-            ri_item = ReleaseItem()
-            ri_item.release_id = release_id
+            ri_item = ManifestItem()
+            ri_item.manifest_id = manifest_id
             ri_item.original_sample_id = os_item.original_sample_id
             ri_item.original_sample_version = os_item.version
             ri_item.created_by = user
-            api_item = ReleaseItemApi(None,
+            api_item = ManifestItemApi(None,
                                       original_sample_id=original_sample_id)
             bse.db_map_actions(db, ri_item, api_item, studies,
                                update_samples=True)
@@ -372,21 +378,21 @@ class BaseRelease(SimsDbBase):
     def get_member(self, item_id, os_item, studies):
 
         if not item_id:
-            raise MissingKeyException(f"No item id to get release member")
+            raise MissingKeyException(f"No item id to get manifest member")
 
         if studies:
             self.has_study_permission(studies,
                                       os_item.study_name,
                                       self.GET_PERMISSION)
-        api_item = ReleaseItemApi()
+        api_item = ManifestItemApi()
 
         with session_scope(self.session) as db:
 
 
-            db_item = db.query(ReleaseItem).get(item_id)
+            db_item = db.query(ManifestItem).get(item_id)
 
             if not db_item:
-                raise MissingKeyException(f"Could not find release_item to get {item_id}")
+                raise MissingKeyException(f"Could not find manifest_item to get {item_id}")
 
             api_item = self.post_get_action(db, db_item, api_item, studies,
                                             False)
@@ -396,19 +402,19 @@ class BaseRelease(SimsDbBase):
         return api_item
 
 
-    def delete_member(self, release_name, original_sample_id, studies):
+    def delete_member(self, manifest_name, original_sample_id, studies):
 
         with session_scope(self.session) as db:
-            db_item = db.query(self.db_class).filter_by(release_name=release_name).first()
+            db_item = db.query(self.db_class).filter_by(manifest_name=manifest_name).first()
 
             if not db_item:
-                raise MissingKeyException(f"event set does not exist {release_name}")
+                raise MissingKeyException(f"event set does not exist {manifest_name}")
 
-            os_item = db.query(ReleaseItem).filter(and_(ReleaseItem.original_sample_id == original_sample_id,
-                                                        ReleaseItem.release_id == db_item.id)).first()
+            os_item = db.query(ManifestItem).filter(and_(ManifestItem.original_sample_id == original_sample_id,
+                                                        ManifestItem.manifest_id == db_item.id)).first()
 
             if not os_item:
-                raise MissingKeyException(f"release_item does not exist {original_sample_id}")
+                raise MissingKeyException(f"manifest_item does not exist {original_sample_id}")
 
             db.delete(os_item)
 

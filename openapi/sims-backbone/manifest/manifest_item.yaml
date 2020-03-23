@@ -1,13 +1,13 @@
     post:
       tags:
-        - release
-      summary: Adds an item  to a release
+        - manifest
+      summary: Adds an item  to a manifest
       description: ""
-      operationId: createReleaseItem
+      operationId: createManifestItem
       parameters:
-        - name: release_id
+        - name: manifest_id
           in: path
-          description: ID of release to modify
+          description: ID of manifest to modify
           required: true
           schema:
             type: string
@@ -23,19 +23,19 @@
           content:
             application/json:
               schema:
-                $ref: "./sims-backbone/definitions/release.yaml#/components/schemas/ReleaseItem"
+                $ref: "./sims-backbone/definitions/manifest.yaml#/components/schemas/ManifestItem"
         "404":
-          description: Release or sample not found
+          description: Manifest or sample not found
     delete:
       tags:
-        - release
-      summary: deletes a release_item from an release
+        - manifest
+      summary: deletes a manifest_item from an manifest
       description: ""
-      operationId: deleteReleaseItem
+      operationId: deleteManifestItem
       parameters:
-        - name: release_id
+        - name: manifest_id
           in: path
-          description: ID of release to modify
+          description: ID of manifest to modify
           required: true
           schema:
             type: string
@@ -49,4 +49,4 @@
         "200":
           description: successful operation
         "404":
-          description: Release or release item not found
+          description: Manifest or manifest item not found

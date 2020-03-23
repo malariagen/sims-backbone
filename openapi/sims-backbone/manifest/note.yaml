@@ -1,13 +1,13 @@
     post:
       tags:
-        - release
-      summary: Adds a note to an release
+        - manifest
+      summary: Adds a note to an manifest
       description: ""
-      operationId: createReleaseNote
+      operationId: createManifestNote
       parameters:
-        - name: release_id
+        - name: manifest_id
           in: path
-          description: ID of release to modify
+          description: ID of manifest to modify
           required: true
           schema:
             type: string
@@ -18,22 +18,22 @@
           schema:
             type: string
       requestBody:
-        $ref: "./sims-backbone.yaml#/components/requestBodies/ReleaseNote"
+        $ref: "./sims-backbone.yaml#/components/requestBodies/ManifestNote"
       responses:
         "201":
           description: successful operation
         "401":
-          description: Release or samplingEvent not found
+          description: Manifest or samplingEvent not found
     put:
       tags:
-        - release
-      summary: Adds a note to an release
+        - manifest
+      summary: Adds a note to an manifest
       description: ""
-      operationId: updateReleaseNote
+      operationId: updateManifestNote
       parameters:
-        - name: release_id
+        - name: manifest_id
           in: path
-          description: ID of release to modify
+          description: ID of manifest to modify
           required: true
           schema:
             type: string
@@ -44,22 +44,22 @@
           schema:
             type: string
       requestBody:
-        $ref: "./sims-backbone.yaml#/components/requestBodies/ReleaseNote"
+        $ref: "./sims-backbone.yaml#/components/requestBodies/ManifestNote"
       responses:
         "200":
           description: successful operation
         "404":
-          description: Release not found
+          description: Manifest not found
     delete:
       tags:
-        - release
-      summary: deletes an release note
+        - manifest
+      summary: deletes an manifest note
       description: ""
-      operationId: deleteReleaseNote
+      operationId: deleteManifestNote
       parameters:
-        - name: release_id
+        - name: manifest_id
           in: path
-          description: ID of release to modify
+          description: ID of manifest to modify
           required: true
           schema:
             type: string
@@ -73,4 +73,4 @@
         "200":
           description: successful operation
         "404":
-          description: Release or note not found
+          description: Manifest or note not found

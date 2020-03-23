@@ -16,7 +16,7 @@ from base_entity import BaseEntity
 from sampling_event import SamplingEventProcessor
 from original_sample import OriginalSampleProcessor
 from derivative_sample import DerivativeSampleProcessor
-from release import ReleaseProcessor
+from manifest import ManifestProcessor
 from assay_data import AssayDataProcessor
 from individual import IndividualProcessor
 
@@ -92,11 +92,11 @@ class Uploader():
         self.ds_processor = DerivativeSampleProcessor(self._dao, self._event_set)
         self.ad_processor = AssayDataProcessor(self._dao, self._event_set)
         self.i_processor = IndividualProcessor(self._dao, self._event_set)
-        self.r_processor = ReleaseProcessor(self._dao, self._event_set)
+        self.r_processor = ManifestProcessor(self._dao, self._event_set)
 
         api_response = self._dao.create_event_set(event_set_id)
 
-    def load_data_file(self, data_def, filename, release=None):
+    def load_data_file(self, data_def, filename, manifest=None):
 
         self.setup(filename)
 
@@ -107,7 +107,7 @@ class Uploader():
             profile = cProfile.Profile()
             profile.enable()
 
-        self.load_data(data_def, input_stream, True, False, release)
+        self.load_data(data_def, input_stream, True, False, manifest)
 
         if self._logger.isEnabledFor(logging.DEBUG):
             profile.disable()
@@ -161,7 +161,7 @@ class Uploader():
         return data_value, accuracy
 
     def load_data(self, data_def, input_stream, skip_header, update_only,
-                  release=None):
+                  manifest=None):
 
         processed = 0
 
@@ -235,8 +235,8 @@ class Uploader():
                     else:
                         values[name] = data_value
 
-                if release:
-                    values['release'] = release
+                if manifest:
+                    values['release'] = manifest
                 self.process_item(values)
 
 
@@ -329,9 +329,9 @@ class Uploader():
         r_sample = self.ds_processor.create_derivative_sample_from_values(values,
                                                                           original_sample)
 
-        rsamp = self.r_processor.lookup_release_item(r_sample, values)
+        rsamp = self.r_processor.lookup_manifest_item(r_sample, values)
 
-        self.r_processor.process_release_item(r_sample, rsamp, original_sample, values)
+        self.r_processor.process_manifest_item(r_sample, rsamp, original_sample, values)
         #print(existing)
         #print(sampling_event)
         #print(values)
@@ -350,10 +350,9 @@ if __name__ == '__main__':
     parser.add_argument("config")
     parser.add_argument('--release')
     args = parser.parse_args()
-    print(args)
     sd = Uploader(args.config)
     with open(args.data_config) as json_file:
         json_data = json.load(json_file)
-        sd.load_data_file(json_data, args.data_file, args.release)
+        sd.load_data_file(json_data, args.data_file, args.manifest)
 
     #print(repr(sd.fetch_entity_by_source('test',1)))

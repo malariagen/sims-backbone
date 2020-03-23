@@ -1,13 +1,13 @@
     get:
       tags:
         - OriginalSample
-      summary: fetches OriginalSamples in a given release
+      summary: fetches OriginalSamples in a given manifest
       description: ""
-      operationId: downloadOriginalSamplesByRelease
+      operationId: downloadOriginalSamplesByManifest
       parameters:
-        - name: release_id
+        - name: manifest_id
           in: path
-          description: release name
+          description: manifest name
           required: true
           schema:
             type: string

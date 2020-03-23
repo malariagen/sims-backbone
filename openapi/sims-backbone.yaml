@@ -83,8 +83,8 @@ paths:
     $ref: './sims-backbone/original_sample/by_taxa.yaml'
   '/originalSamples/eventSet/{event_set_id}':
     $ref: './sims-backbone/original_sample/by_set.yaml'
-  '/originalSamples/release/{release_id}':
-    $ref: './sims-backbone/original_sample/by_release.yaml'
+  '/originalSamples/manifest/{manifest_id}':
+    $ref: './sims-backbone/original_sample/by_manifest.yaml'
   '/derivativeSample':
     $ref: './sims-backbone/derivative_sample/create.yaml'
   '/derivativeSamples':
@@ -139,16 +139,16 @@ paths:
     $ref: './sims-backbone/event_set/note.yaml'
   '/eventSets':
     $ref: './sims-backbone/event_set/items.yaml'
-  '/release/{release_id}':
-    $ref: './sims-backbone/release/item.yaml'
-  '/release/{release_id}/{original_sample_id}':
-    $ref: './sims-backbone/release/release_item.yaml'
-  '/release_item/{release_item_id}':
-    $ref: './sims-backbone/release_item/item.yaml'
-  '/release/{release_id}/notes/{note_id}':
-    $ref: './sims-backbone/release/note.yaml'
-  '/releases':
-    $ref: './sims-backbone/release/items.yaml'
+  '/manifest/{manifest_id}':
+    $ref: './sims-backbone/manifest/item.yaml'
+  '/manifest/{manifest_id}/{original_sample_id}':
+    $ref: './sims-backbone/manifest/manifest_item.yaml'
+  '/manifest_item/{manifest_item_id}':
+    $ref: './sims-backbone/manifest_item/item.yaml'
+  '/manifest/{manifest_id}/notes/{note_id}':
+    $ref: './sims-backbone/manifest/note.yaml'
+  '/manifests':
+    $ref: './sims-backbone/manifest/items.yaml'
   '/missingTaxon':
     get:
       tags:
@@ -275,17 +275,17 @@ components:
           schema:
             $ref: "./sims-backbone/definitions/original_sample.yaml#/components/schemas/OriginalSample"
       required: true
-    ReleaseItem:
+    ManifestItem:
       content:
         application/json:
           schema:
-            $ref: "./sims-backbone/definitions/release.yaml#/components/schemas/ReleaseItem"
+            $ref: "./sims-backbone/definitions/manifest.yaml#/components/schemas/ManifestItem"
       required: true
-    ReleaseNote:
+    ManifestNote:
       content:
         application/json:
           schema:
-            $ref: "./sims-backbone/definitions/release.yaml#/components/schemas/ReleaseNote"
+            $ref: "./sims-backbone/definitions/manifest.yaml#/components/schemas/ManifestNote"
       required: true
     Document:
       content:

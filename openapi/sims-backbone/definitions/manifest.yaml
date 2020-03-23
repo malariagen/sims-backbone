@@ -1,12 +1,12 @@
 components:
   schemas:
-    ReleaseItems:
+    ManifestItems:
       type: object
       properties:
-        release_items:
+        manifest_items:
           type: array
           items:
-            $ref: '#/components/schemas/ReleaseItem'
+            $ref: '#/components/schemas/ManifestItem'
         attr_types:
             type: array
             items:
@@ -15,10 +15,10 @@ components:
         count:
           type: integer
           description: Used when pagination is applied to return the number of results
-    ReleaseItem:
+    ManifestItem:
       type: object
       properties:
-        release_item_id:
+        manifest_item_id:
           type: string
   #        format: uuid
         version:
@@ -44,7 +44,7 @@ components:
           type: array
           items:
               $ref: './attr.yaml#/components/schemas/Attr'
-    ReleaseNote:
+    ManifestNote:
       type: object
       required:
           - note_name
@@ -53,31 +53,31 @@ components:
           type: string
         note_text:
           type: string
-    Release:
+    Manifest:
       type: object
       properties:
-        release_name:
+        manifest_name:
           type: string
         version:
           type: integer
           readOnly: true
-        release_date:
+        manifest_date:
           type: string
           format: date
         studies:
           $ref: './studies.yaml#/components/schemas/Studies'
           readOnly: true
         members:
-          $ref: '#/components/schemas/ReleaseItems'
+          $ref: '#/components/schemas/ManifestItems'
           readOnly: true
         notes:
           type: array
           items:
-            $ref: '#/components/schemas/ReleaseNote'
-    Releases:
+            $ref: '#/components/schemas/ManifestNote'
+    Manifests:
       type: object
       properties:
-        releases:
+        manifests:
           type: array
           items:
-            $ref: '#/components/schemas/Release'
+            $ref: '#/components/schemas/Manifest'

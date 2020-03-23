@@ -1,13 +1,13 @@
     post:
       tags:
-        - release
-      summary: creates an release
+        - manifest
+      summary: creates an manifest
       description: ""
-      operationId: createRelease
+      operationId: createManifest
       parameters:
-        - name: release_id
+        - name: manifest_id
           in: path
-          description: ID of release to create
+          description: ID of manifest to create
           required: true
           schema:
             type: string
@@ -17,17 +17,17 @@
           content:
             application/json:
               schema:
-                $ref: "./sims-backbone/definitions/release.yaml#/components/schemas/Release"
+                $ref: "./sims-backbone/definitions/manifest.yaml#/components/schemas/Manifest"
     get:
       tags:
-        - release
-      summary: fetches an release
+        - manifest
+      summary: fetches an manifest
       description: ""
-      operationId: downloadRelease
+      operationId: downloadManifest
       parameters:
-        - name: release_id
+        - name: manifest_id
           in: path
-          description: ID of release to fetch
+          description: ID of manifest to fetch
           required: true
           schema:
             type: string
@@ -49,17 +49,17 @@
           content:
             application/json:
               schema:
-                $ref: "./sims-backbone/definitions/release.yaml#/components/schemas/Release"
+                $ref: "./sims-backbone/definitions/manifest.yaml#/components/schemas/Manifest"
     put:
       tags:
-        - release
-      summary: updates an release
+        - manifest
+      summary: updates an manifest
       description: ""
-      operationId: updateRelease
+      operationId: updateManifest
       parameters:
-        - name: release_id
+        - name: manifest_id
           in: path
-          description: ID of release to update
+          description: ID of manifest to update
           required: true
           schema:
             type: string
@@ -73,7 +73,7 @@
         content:
           application/json:
             schema:
-              $ref: "./sims-backbone/definitions/release.yaml#/components/schemas/Release"
+              $ref: "./sims-backbone/definitions/manifest.yaml#/components/schemas/Manifest"
         required: true
       responses:
         "200":
@@ -81,23 +81,23 @@
           content:
             application/json:
               schema:
-                $ref: "./sims-backbone/definitions/release.yaml#/components/schemas/Release"
+                $ref: "./sims-backbone/definitions/manifest.yaml#/components/schemas/Manifest"
         "404":
-          description: Release not found
+          description: Manifest not found
           content:
             application/json:
               schema:
                 type: string
     delete:
       tags:
-        - release
-      summary: deletes an release
+        - manifest
+      summary: deletes an manifest
       description: ""
-      operationId: deleteRelease
+      operationId: deleteManifest
       parameters:
-        - name: release_id
+        - name: manifest_id
           in: path
-          description: ID of release to delete
+          description: ID of manifest to delete
           required: true
           schema:
             type: string
@@ -105,4 +105,4 @@
         "200":
           description: successful operation
         "404":
-          description: Release not found
+          description: Manifest not found
