@@ -52,7 +52,7 @@ export class SampleOverviewComponent implements AfterContentInit, OnChanges {
         let label: string;
         element.attrs.forEach(attr => {
           if (attr.attr_type === 'oxford_id') {
-            label = attr.attr_value;
+            label = String(attr.attr_value);
           }
 
         });
@@ -72,7 +72,7 @@ export class SampleOverviewComponent implements AfterContentInit, OnChanges {
         let label: string;
         element.attrs.forEach(attr => {
           if (attr.attr_type === 'derivative_sample_source') {
-            label = attr.attr_value;
+            label = String(attr.attr_value);
           }
 
         });
@@ -95,7 +95,7 @@ export class SampleOverviewComponent implements AfterContentInit, OnChanges {
         let label: string = element.assay_datum_id;
         element.attrs.forEach(attr => {
           if (attr.attr_type === 'assay_datum_id') {
-            label = attr.attr_value;
+            label = String(attr.attr_value);
           }
 
         });
