@@ -4,6 +4,7 @@ from sqlalchemy import Table, Column
 from sqlalchemy import Integer, String, Date, ForeignKey, DateTime
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship, backref
+from sqlalchemy.sql import text
 
 from sqlalchemy.ext.declarative import declared_attr
 
@@ -337,6 +338,123 @@ class BaseStudy(SimsDbBase):
                     for taxa in remove_taxa:
                         db_ps.taxa.remove(taxa)
 
+    def db_map_counts(self, db, db_item, api_item):
+
+        api_item_code = "'" + str(api_item.code) + "'"
+
+        stmt = '''SELECT COUNT(*), code FROM
+            (SELECT code, COUNT(*) FROM sampling_event se
+            LEFT JOIN original_sample os ON os.sampling_event_id = se.id
+            LEFT JOIN study s ON s.id = os.study_id group by code, doc) AS
+            collections'''
+
+        stmt += ' WHERE code = ' + api_item_code
+        stmt += ' GROUP BY code'
+
+        result = self.engine.execute(text(stmt))
+
+        sample_count = 0
+        for (count, code) in result:
+            sample_count = count
+
+        api_item.num_collections = sample_count
+
+        stmt = '''SELECT COUNT(*), code FROM original_sample os
+                    JOIN study s ON s.id = os.study_id'''
+
+        stmt += ' WHERE code = ' + api_item_code
+        stmt += ' GROUP BY code'
+
+        result = self.engine.execute(text(stmt))
+
+        sample_count = 0
+        for (count, code) in result:
+            sample_count = count
+
+        api_item.num_original_samples = sample_count
+
+        stmt = '''SELECT COUNT(*), code FROM derivative_sample ds
+                    JOIN original_sample os ON os.id = ds.original_sample_id
+                    JOIN study s ON s.id = os.study_id'''
+
+        stmt += ' WHERE code = ' + api_item_code
+        stmt += ' GROUP BY code'
+
+        result = self.engine.execute(text(stmt))
+
+        sample_count = 0
+        for (count, code) in result:
+            sample_count = count
+
+        api_item.num_derivative_samples = sample_count
+
+        stmt = '''SELECT COUNT(*), code FROM assay_datum ad
+                    JOIN derivative_sample ds ON ds.id = ad.derivative_sample_id
+                    JOIN original_sample os ON os.id = ds.original_sample_id
+                    JOIN study s ON s.id = os.study_id'''
+
+        stmt += ' WHERE code = ' + api_item_code
+        stmt += ' GROUP BY code'
+
+        result = self.engine.execute(text(stmt))
+
+        sample_count = 0
+        for (count, code) in result:
+            sample_count = count
+
+        api_item.num_assay_data = sample_count
+
+        stmt = '''SELECT COUNT(*), code FROM original_sample os
+                    JOIN study s ON os.study_id = s.id
+                    JOIN (SELECT distinct ON (original_sample_id)
+                          original_sample_id FROM derivative_sample) AS ds ON
+                    ds.original_sample_id = os.id'''
+
+        stmt += ' WHERE code = ' + api_item_code
+        stmt += ' GROUP BY code'
+
+        result = self.engine.execute(text(stmt))
+
+        sample_count = 0
+        for (count, code) in result:
+            sample_count = count
+
+        api_item.num_original_derivative_samples = sample_count
+
+        stmt = '''SELECT COUNT(*), code FROM original_sample os
+            JOIN study s ON os.study_id = s.id
+            JOIN (SELECT distinct ON (original_sample_id) original_sample_id, id FROM derivative_sample) AS ds ON ds.original_sample_id = os.id
+            JOIN (SELECT distinct ON (derivative_sample_id) derivative_sample_id FROM assay_datum) AS ad
+                    ON ad.derivative_sample_id = ds.id'''
+
+        stmt += ' WHERE code = ' + api_item_code
+        stmt += ' GROUP BY code'
+
+        result = self.engine.execute(text(stmt))
+
+        sample_count = 0
+        for (count, code) in result:
+            sample_count = count
+        api_item.num_original_assay_data = sample_count
+
+        stmt = '''SELECT code, count(*) FROM
+                    (SELECT DISTINCT ON (original_sample_id) original_sample_id FROM manifest_item mi
+                    JOIN manifest m ON m.id = mi.manifest_id
+                    WHERE manifest_type='release') AS released
+                JOIN original_sample os ON released.original_sample_id = os.id
+                JOIN study s ON s.id = os.study_id'''
+        stmt += ' WHERE code = ' + api_item_code
+        stmt += ' GROUP BY code'
+
+        result = self.engine.execute(text(stmt))
+
+        sample_count = 0
+        for (count, code) in result:
+            sample_count = count
+
+        api_item.num_released = sample_count
+
+
     def db_map_actions(self, db, db_item, api_item, studies):
 
         self.db_map_partner_species(db, db_item, api_item)
@@ -348,6 +466,7 @@ class BaseStudy(SimsDbBase):
 
     def post_get_action(self, db, db_item, api_item, studies, multiple=False):
 
+        self.db_map_counts(db, db_item, api_item)
         if multiple:
             return api_item
 
