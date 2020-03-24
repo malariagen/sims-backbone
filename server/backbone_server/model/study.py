@@ -437,7 +437,7 @@ class BaseStudy(SimsDbBase):
             sample_count = count
         api_item.num_original_assay_data = sample_count
 
-        stmt = '''SELECT code, count(*) FROM
+        stmt = '''SELECT COUNT(*), code FROM
                     (SELECT DISTINCT ON (original_sample_id) original_sample_id FROM manifest_item mi
                     JOIN manifest m ON m.id = mi.manifest_id
                     WHERE manifest_type='release') AS released
