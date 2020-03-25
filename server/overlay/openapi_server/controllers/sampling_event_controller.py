@@ -96,7 +96,8 @@ def download_sampling_events_by_event_set(event_set_id, start=None, count=None, 
 
 
 def download_sampling_events_by_attr(prop_name, prop_value, study_name=None,
-                                     start=None, count=None, value_type=None, user=None, token_info=None):
+                                     start=None, count=None, value_type=None,
+                                     studies=None, user=None, token_info=None):
     """
     fetches a samplingEvent by property value
 
@@ -118,7 +119,7 @@ def download_sampling_events_by_attr(prop_name, prop_value, study_name=None,
 
 def download_sampling_events_by_os_attr(prop_name, prop_value, study_name=None,
                                         start=None, count=None,
-                                        value_type=None, user=None, token_info=None):
+                                        value_type=None, studies=None, user=None, token_info=None):
     """
     fetches a samplingEvent by property value of associated original sample
 
