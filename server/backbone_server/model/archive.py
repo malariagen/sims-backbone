@@ -1,5 +1,5 @@
 from sqlalchemy.sql import func
-from sqlalchemy import Table, MetaData, Column
+from sqlalchemy import MetaData, Column
 from sqlalchemy import Integer, String, Text, DateTime
 from sqlalchemy.types import JSON
 

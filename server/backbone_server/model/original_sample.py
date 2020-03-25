@@ -1,4 +1,4 @@
-from sqlalchemy import Table, MetaData, Column
+from sqlalchemy import MetaData, Column
 from sqlalchemy import Integer, String, ForeignKey, Date, func, UniqueConstraint
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy import and_
@@ -27,13 +27,15 @@ from backbone_server.model.study import Study, PartnerSpeciesIdentifier
 from backbone_server.model.history_meta import Versioned
 from backbone_server.model.base import SimsDbBase
 
-original_sample_attr_table = Table('original_sample_attr', Base.metadata,
-                                   Column('original_sample_id', UUID(as_uuid=True),
-                                          ForeignKey('original_sample.id')),
-                                   Column('attr_id', UUID(as_uuid=True),
-                                          ForeignKey('attr.id'))
-                                   )
+class OriginalSampleAttr(Base):
 
+    __tablename__ = 'original_sample_attr'
+
+    original_sample_id = Column(UUID(as_uuid=True),
+                                ForeignKey('original_sample.id'),
+                                primary_key=True)
+    attr_id = Column(UUID(as_uuid=True),
+                     ForeignKey('attr.id'), primary_key=True)
 
 
 class OriginalSample(Versioned, Base):
@@ -63,7 +65,7 @@ class OriginalSample(Versioned, Base):
                                    backref=backref("original_sample",
                                                    uselist=True))
 
-    attrs = relationship("Attr", secondary=original_sample_attr_table)
+    attrs = relationship("Attr", secondary='original_sample_attr')
 
     openapi_class = OS
     openapi_multiple_class = OriginalSamples
@@ -112,7 +114,7 @@ class BaseOriginalSample(SimsDbBase):
                                             'attr'])
         Base.metadata.create_all(engine)
         self.db_class = OriginalSample
-        self.attr_link = original_sample_attr_table
+        self.attr_link = OriginalSampleAttr
         self.duplicate_attrs = [
             'partner_id',
             'individual_id'

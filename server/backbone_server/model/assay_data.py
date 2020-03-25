@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from sqlalchemy import Table, MetaData, Column
+from sqlalchemy import MetaData, Column
 from sqlalchemy import Integer, String, ForeignKey, DateTime, Date, func, UniqueConstraint
 from sqlalchemy import or_, and_
 from sqlalchemy.dialects.postgresql import UUID
@@ -29,13 +29,15 @@ from backbone_server.model.original_sample import OriginalSample
 from backbone_server.model.history_meta import Versioned
 from backbone_server.model.base import SimsDbBase
 
-assay_datum_attr_table = Table('assay_datum_attr', Base.metadata,
-                                  Column('assay_datum_id', UUID(as_uuid=True),
-                                         ForeignKey('assay_datum.id')),
-                                  Column('attr_id', UUID(as_uuid=True),
-                                         ForeignKey('attr.id'))
-                                  )
+class AssayDatumAttr(Base):
 
+    __tablename__ = 'assay_datum_attr'
+
+    assay_datum_id = Column(UUID(as_uuid=True),
+                            ForeignKey('assay_datum.id'),
+                            primary_key=True)
+    attr_id = Column(UUID(as_uuid=True),
+                     ForeignKey('attr.id'), primary_key=True)
 
 
 class AssayDatum(Versioned, Base):
@@ -45,14 +47,14 @@ class AssayDatum(Versioned, Base):
         return 'assay_datum'
 
     derivative_sample_id = Column('derivative_sample_id',
-                               UUID(as_uuid=True),
-                               ForeignKey('derivative_sample.id'))
+                                  UUID(as_uuid=True),
+                                  ForeignKey('derivative_sample.id'))
     acc_date = Column(DateTime)
     ebi_run_acc = Column(String(20))
 
-    attrs = relationship("Attr", secondary=assay_datum_attr_table)
+    attrs = relationship("Attr", secondary='assay_datum_attr')
     derivative_sample = relationship("DerivativeSample",
-                                   backref=backref("assay_datum"))
+                                     backref=backref("assay_datum"))
     #derivative_sample = relationship("DerivativeSample",
     #                                backref=backref("derivative_sample"))
 
@@ -85,7 +87,7 @@ class BaseAssayDatum(SimsDbBase):
                                             'attr'])
 
         self.db_class = AssayDatum
-        self.attr_link = assay_datum_attr_table
+        self.attr_link = AssayDatumAttr
         self.api_id = 'assay_datum_id'
         self.unique_attrs = ['assay_datum_id']
 
@@ -234,7 +236,7 @@ class BaseAssayDatum(SimsDbBase):
         ret = None
 
         with session_scope(self.session) as db:
-            from backbone_server.model.original_sample import original_sample_attr_table
+            from backbone_server.model.original_sample import OriginalSampleAttr
 
             from openapi_server.models.attr import Attr as AttrApi
 
@@ -262,9 +264,9 @@ class BaseAssayDatum(SimsDbBase):
                 db_items = db.query(self.db_class).\
                         join(self.db_class.derivative_sample).\
                         join(OriginalSample).\
-                        join(original_sample_attr_table,
-                             and_(original_sample_attr_table.c.original_sample_id == DerivativeSample.original_sample_id,
-                                  original_sample_attr_table.c.attr_id.in_(attrs))).\
+                        join(OriginalSampleAttr,
+                             and_(OriginalSampleAttr.original_sample_id == DerivativeSample.original_sample_id,
+                                  OriginalSampleAttr.attr_id.in_(attrs))).\
                         outerjoin(Study).\
                         outerjoin(os_study, OriginalSample.study_id == os_study.id).\
                         filter(or_(Study.code == study_name[:4],
@@ -273,9 +275,9 @@ class BaseAssayDatum(SimsDbBase):
                 db_items = db.query(self.db_class).\
                         join(self.db_class.derivative_sample).\
                         join(OriginalSample).\
-                        join(original_sample_attr_table,
-                             and_(original_sample_attr_table.c.original_sample_id == DerivativeSample.original_sample_id,
-                                  original_sample_attr_table.c.attr_id.in_(attrs)))
+                        join(OriginalSampleAttr,
+                             and_(OriginalSampleAttr.original_sample_id == DerivativeSample.original_sample_id,
+                                  OriginalSampleAttr.attr_id.in_(attrs)))
             # db_item = db.query(self.db_class).filter_by(id=item_id).first()
 
             ret = self._get_multiple_results(db, db_items, start, count,

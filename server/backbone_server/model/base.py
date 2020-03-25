@@ -81,11 +81,11 @@ class SimsDbBase():
                             if db.query(self.attr_link).\
                                join(Attr).\
                                join(Study).\
-                               filter(and_(self.attr_link.c.attr_id == db_attr.id,\
+                               filter(and_(self.attr_link.attr_id == db_attr.id,\
                                            Study.code == attr.study_name[:4])).first():
                                 raise DuplicateKeyException(f"Error inserting {self.api_id} attr {attr.attr_type} {api_item}")
                         else:
-                            if db.query(self.attr_link).filter(self.attr_link.c.attr_id == db_attr.id).first():
+                            if db.query(self.attr_link).filter(self.attr_link.attr_id == db_attr.id).first():
                                 raise DuplicateKeyException(f"Error inserting {self.api_id} attr {attr.attr_type} {api_item}")
 
     def post_extra_actions(self, api_item):
@@ -174,20 +174,20 @@ class SimsDbBase():
                     from backbone_server.model.attr import Attr
                     from backbone_server.model.study import Study
                     for db_attr in Attr.get_all(db, attr):
-                        my_db_id = getattr(self.attr_link.c, self.api_id)
+                        my_db_id = getattr(self.attr_link, self.api_id)
                         my_api_id = getattr(api_item, self.api_id)
                         if db_attr.study:
                             i_with_attr = db.query(self.attr_link).\
                                      join(Attr).\
                                      join(Study).\
-                                     filter(and_(self.attr_link.c.attr_id == db_attr.id, \
+                                     filter(and_(self.attr_link.attr_id == db_attr.id, \
                                      my_db_id != my_api_id, \
                                      Study.code == attr.study_name[:4]))
                             if i_with_attr.first():
                                 raise DuplicateKeyException(f"Error updating {self.api_id} attr {attr.attr_type} {api_item}")
                         else:
                             i_with_attr = db.query(self.attr_link).\
-                                     filter(and_(self.attr_link.c.attr_id == db_attr.id),\
+                                     filter(and_(self.attr_link.attr_id == db_attr.id),\
                                      my_db_id != my_api_id)
                             if i_with_attr.first():
                                 raise DuplicateKeyException(f"Error updating {self.api_id} attr {attr.attr_type} {attr.attr_value} {my_db_id} {api_item}")
@@ -471,7 +471,7 @@ class SimsDbBase():
 
             db_items = None
             from backbone_server.model.attr import Attr
-            my_db_id = getattr(self.attr_link.c, self.api_id)
+            my_db_id = getattr(self.attr_link, self.api_id)
             attr_filter = None
             from openapi_server.models.attr import Attr as AttrApi
 

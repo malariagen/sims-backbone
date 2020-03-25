@@ -1,4 +1,4 @@
-from sqlalchemy import Table, MetaData, Column
+from sqlalchemy import MetaData, Column
 from sqlalchemy import Integer, String, ForeignKey, DateTime, Date, func, UniqueConstraint
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship, backref, foreign
@@ -26,13 +26,16 @@ from backbone_server.model.base import SimsDbBase
 
 from backbone_server.errors.duplicate_key_exception import DuplicateKeyException
 
-event_set_attr_table = Table('event_set_attr', Base.metadata,
-                             Column('event_set_id', UUID(as_uuid=True),
-                                    ForeignKey('event_set.id')),
-                             Column('attr_id', UUID(as_uuid=True),
-                                    ForeignKey('attr.id'))
-                             )
+class EventSetAttr(Base):
 
+    __tablename__ = 'event_set_attr'
+
+    event_set_id = Column(UUID(as_uuid=True), ForeignKey('event_set.id'),
+                          primary_key=True)
+    attr_id = Column(UUID(as_uuid=True),
+                     ForeignKey('attr.id'), primary_key=True)
+
+#event_set_members_table = Table('event_set_member', Base.metadata,
 
 class EventSetMember(Base):
 
@@ -60,7 +63,7 @@ class EventSet(Versioned, Base):
     event_set_name = Column(String(128), index=True)
 
 
-    attrs = relationship("Attr", secondary=event_set_attr_table)
+    attrs = relationship("Attr", secondary='event_set_attr')
     members = relationship("SamplingEvent",
                            secondary='event_set_member')
     notes = relationship("EventSetNote",
@@ -99,7 +102,7 @@ class BaseEventSet(SimsDbBase):
                                             'attr'])
 
         self.db_class = EventSet
-        self.attr_class = Attr
+        self.attr_link = EventSetAttr
 
     def pre_post_check(self, db, api_item, studies):
 

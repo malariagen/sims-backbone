@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from sqlalchemy import and_
-from sqlalchemy import Table, MetaData, Column
+from sqlalchemy import MetaData, Column
 from sqlalchemy import Integer, String, ForeignKey, DateTime, Date, func, UniqueConstraint
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship, backref, foreign
@@ -21,18 +21,21 @@ from backbone_server.model.study import Study
 from backbone_server.model.history_meta import Versioned
 from backbone_server.model.base import SimsDbBase
 
-individual_attr_table = Table('individual_attr', Base.metadata,
-                              Column('individual_id', UUID(as_uuid=True),
-                                     ForeignKey('individual.id')),
-                              Column('attr_id', UUID(as_uuid=True),
-                                     ForeignKey('attr.id'))
-                              )
+class IndividualAttr(Base):
+
+    __tablename__ = 'individual_attr'
+
+    individual_id = Column(UUID(as_uuid=True),
+                           ForeignKey('individual.id'),
+                           primary_key=True)
+    attr_id = Column(UUID(as_uuid=True),
+                     ForeignKey('attr.id'), primary_key=True)
 
 class Individual(Versioned, Base):
 
     individual_ident = Column(String(30))
 
-    attrs = relationship("Attr", secondary=individual_attr_table)
+    attrs = relationship("Attr", secondary='individual_attr')
 
     openapi_class = ApiIndividual
     openapi_multiple_class = Individuals
@@ -62,7 +65,7 @@ class BaseIndividual(SimsDbBase):
         ])
 
         self.db_class = Individual
-        self.attr_link = individual_attr_table
+        self.attr_link = IndividualAttr
         self.api_id = 'individual_id'
         self.duplicate_attrs = []
 
@@ -82,7 +85,7 @@ class BaseIndividual(SimsDbBase):
 
             db_items = None
             db_items = db.query(self.db_class).\
-                    join(individual_attr_table).\
+                    join(IndividualAttr).\
                     join(Attr).\
                     filter(Attr.study.has(code=study_name[:4]))
 

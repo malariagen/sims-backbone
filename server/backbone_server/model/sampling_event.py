@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from sqlalchemy import Table, Column
+from sqlalchemy import Column
 from sqlalchemy import String, ForeignKey, Date
 from sqlalchemy import or_, and_
 from sqlalchemy.sql import text
@@ -31,13 +31,16 @@ from backbone_server.model.location import Location, BaseLocation
 from backbone_server.model.history_meta import Versioned
 from backbone_server.model.base import SimsDbBase
 
-sampling_event_attr_table = Table('sampling_event_attr', Base.metadata,
-                                  Column('sampling_event_id', UUID(as_uuid=True),
-                                         ForeignKey('sampling_event.id')),
-                                  Column('attr_id', UUID(as_uuid=True),
-                                         ForeignKey('attr.id'))
-                                  )
 
+class SamplingEventAttr(Base):
+
+    __tablename__ = 'sampling_event_attr'
+
+    sampling_event_id = Column(UUID(as_uuid=True),
+                               ForeignKey('sampling_event.id'),
+                               primary_key=True)
+    attr_id = Column(UUID(as_uuid=True),
+                     ForeignKey('attr.id'), primary_key=True)
 
 
 class SamplingEvent(Versioned, Base):
@@ -63,7 +66,7 @@ class SamplingEvent(Versioned, Base):
                             foreign_keys='SamplingEvent.location_id')
     proxy_location = relationship('Location',
                                   foreign_keys='SamplingEvent.proxy_location_id')
-    attrs = relationship("Attr", secondary=sampling_event_attr_table)
+    attrs = relationship("Attr", secondary='sampling_event_attr')
     original_samples = relationship("OriginalSample",
                                     backref=backref("sampling_event"))
 #    study = relationship("Study",
@@ -105,7 +108,7 @@ class BaseSamplingEvent(SimsDbBase):
                                             'attr'])
 
         self.db_class = SamplingEvent
-        self.attr_link = sampling_event_attr_table
+        self.attr_link = SamplingEventAttr
         self.api_id = 'sampling_event_id'
         self.duplicate_attrs = ['partner_id', 'individual_id']
         self.locations = []
@@ -319,7 +322,7 @@ class BaseSamplingEvent(SimsDbBase):
 
         with session_scope(self.session) as db:
 
-            from backbone_server.model.original_sample import original_sample_attr_table
+            from backbone_server.model.original_sample import OriginalSampleAttr
             db_items = None
             study_filter = True
             from openapi_server.models.attr import Attr as AttrApi
@@ -347,9 +350,9 @@ class BaseSamplingEvent(SimsDbBase):
                 os_study = aliased(OriginalSample.study)
                 db_items = db.query(self.db_class).\
                         join(OriginalSample.sampling_event).\
-                        join(original_sample_attr_table,
-                             and_(original_sample_attr_table.c.original_sample_id == OriginalSample.id,
-                                  original_sample_attr_table.c.attr_id.in_(attrs))).\
+                        join(OriginalSampleAttr,
+                             and_(OriginalSampleAttr.original_sample_id == OriginalSample.id,
+                                  OriginalSampleAttr.attr_id.in_(attrs))).\
                         outerjoin(Study).\
                         outerjoin(os_study, OriginalSample.study_id == os_study.id).\
                         filter(or_(Study.code == study_name[:4],
@@ -357,9 +360,9 @@ class BaseSamplingEvent(SimsDbBase):
             else:
                 db_items = db.query(self.db_class).\
                         join(OriginalSample.sampling_event).\
-                        join(original_sample_attr_table,
-                             and_(original_sample_attr_table.c.original_sample_id == OriginalSample.id,
-                                  original_sample_attr_table.c.attr_id.in_(attrs)))
+                        join(OriginalSampleAttr,
+                             and_(OriginalSampleAttr.original_sample_id == OriginalSample.id,
+                                  OriginalSampleAttr.attr_id.in_(attrs)))
 
             # print(db_items)
             # db_item = db.query(self.db_class).filter_by(id=item_id).first()

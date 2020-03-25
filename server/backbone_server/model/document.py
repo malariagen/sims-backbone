@@ -1,4 +1,4 @@
-from sqlalchemy import Table, MetaData, Column
+from sqlalchemy import MetaData, Column
 from sqlalchemy import Integer, String, ForeignKey, DateTime, func, UniqueConstraint
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship, backref
@@ -15,12 +15,15 @@ from backbone_server.model.study import Study
 from backbone_server.model.history_meta import Versioned
 from backbone_server.model.base import SimsDbBase
 
-document_attr_table = Table('document_attr', Base.metadata,
-                            Column('document_id', UUID(as_uuid=True),
-                                   ForeignKey('document.id')),
-                            Column('attr_id', UUID(as_uuid=True),
-                                   ForeignKey('attr.id'))
-                            )
+class DocumentAttr(Base):
+
+    __tablename__ = 'document_attr'
+
+    document_id = Column(UUID(as_uuid=True),
+                         ForeignKey('document.id'),
+                         primary_key=True)
+    attr_id = Column(UUID(as_uuid=True),
+                     ForeignKey('attr.id'), primary_key=True)
 
 class Document(Versioned, Base):
 
@@ -40,7 +43,7 @@ class Document(Versioned, Base):
     __table_args__ = (UniqueConstraint('doc_name', 'doc_type',
                                        name='uniq_doc'),)
     study = relationship("Study", backref=backref("document", uselist=False))
-    attrs = relationship("Attr", secondary=document_attr_table)
+    attrs = relationship("Attr", secondary='document_attr')
 
     openapi_class = Doc
     openapi_multiple_class = Documents
@@ -68,7 +71,7 @@ class BaseDocument(SimsDbBase):
         self.metadata.reflect(engine, only=['study'])
 
         self.db_class = Document
-        self.attr_link = document_attr_table
+        self.attr_link = DocumentAttr
 
     def db_map_actions(self, db, db_item, api_item, studies):
 
@@ -109,8 +112,8 @@ class BaseDocument(SimsDbBase):
 
     def put_content(self, document_id, studies):
 
-        doc = super().put(document_id, studies)
+        #doc = super().put(document_id, None, studies=studies)
 
         util = FileUtil()
 
-        return util.put_content(doc)
+        #return util.put_content(doc)

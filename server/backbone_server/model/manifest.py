@@ -1,7 +1,7 @@
 import json
 
 from sqlalchemy import Integer, String, ForeignKey, DateTime, Date, func, UniqueConstraint
-from sqlalchemy import Table, MetaData, Column
+from sqlalchemy import MetaData, Column
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship, backref, foreign
 from sqlalchemy.exc import IntegrityError
@@ -37,20 +37,25 @@ from backbone_server.model.base import SimsDbBase
 
 from backbone_server.errors.duplicate_key_exception import DuplicateKeyException
 
-manifest_attr_table = Table('manifest_attr', Base.metadata,
-                           Column('manifest_id', UUID(as_uuid=True),
-                                  ForeignKey('manifest.id')),
-                           Column('attr_id', UUID(as_uuid=True),
-                                  ForeignKey('attr.id'))
-                           )
+class ManifestItemAttr(Base):
 
+    __tablename__ = 'manifest_item_attr'
 
-manifest_item_attr_table = Table('manifest_item_attr', Base.metadata,
-                                Column('manifest_item_id', UUID(as_uuid=True),
-                                       ForeignKey('manifest_item.id')),
-                                Column('attr_id', UUID(as_uuid=True),
-                                       ForeignKey('attr.id'))
-                                )
+    manifest_item_id = Column(UUID(as_uuid=True),
+                         ForeignKey('manifest_item.id'),
+                         primary_key=True)
+    attr_id = Column(UUID(as_uuid=True),
+                     ForeignKey('attr.id'), primary_key=True)
+
+class ManifestAttr(Base):
+
+    __tablename__ = 'manifest_attr'
+
+    manifest_id = Column(UUID(as_uuid=True),
+                         ForeignKey('manifest.id'),
+                         primary_key=True)
+    attr_id = Column(UUID(as_uuid=True),
+                     ForeignKey('attr.id'), primary_key=True)
 
 
 class ManifestItem(Versioned, Base):
@@ -71,7 +76,7 @@ class ManifestItem(Versioned, Base):
     assay_data = Column(JSON)
 
 
-    attrs = relationship("Attr", secondary=manifest_item_attr_table)
+    attrs = relationship("Attr", secondary='manifest_item_attr')
 
     openapi_class = ManifestItemApi
     openapi_multiple_class = ManifestItems
@@ -106,7 +111,7 @@ class Manifest(Versioned, Base):
                           UUID(as_uuid=True),
                           ForeignKey('document.id'))
 
-    attrs = relationship("Attr", secondary=manifest_attr_table)
+    attrs = relationship("Attr", secondary='manifest_attr')
     notes = relationship("ManifestNote",
                          backref=backref('manifest'))
 
@@ -137,7 +142,7 @@ class BaseManifestItem(SimsDbBase):
         super().__init__(engine, session)
 
         self.db_class = ManifestItem
-        self.attr_link = manifest_item_attr_table
+        self.attr_link = ManifestItemAttr
         self.api_id = 'manifest_item_id'
 
 
@@ -242,7 +247,7 @@ class BaseManifest(SimsDbBase):
                                             'attr'])
 
         self.db_class = Manifest
-        self.attr_link = manifest_attr_table
+        self.attr_link = ManifestAttr
         self.api_id = 'manifest_id'
 
     def pre_post_check(self, db, api_item, studies):

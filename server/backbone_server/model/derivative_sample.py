@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from sqlalchemy import Table, MetaData, Column
+from sqlalchemy import MetaData, Column
 from sqlalchemy import Integer, String, ForeignKey, DateTime, Date, func, UniqueConstraint
 from sqlalchemy import or_, and_
 from sqlalchemy.dialects.postgresql import UUID
@@ -27,12 +27,16 @@ from backbone_server.model.location import Location
 from backbone_server.model.history_meta import Versioned
 from backbone_server.model.base import SimsDbBase
 
-derivative_sample_attr_table = Table('derivative_sample_attr', Base.metadata,
-                                     Column('derivative_sample_id', UUID(as_uuid=True),
-                                            ForeignKey('derivative_sample.id')),
-                                     Column('attr_id', UUID(as_uuid=True),
-                                            ForeignKey('attr.id'))
-                                     )
+
+class DerivativeSampleAttr(Base):
+
+    __tablename__ = 'derivative_sample_attr'
+
+    derivative_sample_id = Column(UUID(as_uuid=True),
+                                  ForeignKey('derivative_sample.id'),
+                                  primary_key=True)
+    attr_id = Column(UUID(as_uuid=True),
+                     ForeignKey('attr.id'), primary_key=True)
 
 
 
@@ -54,7 +58,7 @@ class DerivativeSample(Versioned, Base):
                    Integer,
                    ForeignKey('taxonomy.id'))
 
-    attrs = relationship("Attr", secondary=derivative_sample_attr_table)
+    attrs = relationship("Attr", secondary='derivative_sample_attr')
     original_sample = relationship("OriginalSample",
                                    backref=backref("derivative_sample"))
     #derivative_sample = relationship("DerivativeSample",
@@ -88,7 +92,7 @@ class BaseDerivativeSample(SimsDbBase):
                                             'attr'])
 
         self.db_class = DerivativeSample
-        self.attr_link = derivative_sample_attr_table
+        self.attr_link = DerivativeSampleAttr
         self.api_id = 'derivative_sample_id'
         self.duplicate_attrs = ['plate_name', 'plate_position']
 
@@ -270,7 +274,7 @@ class BaseDerivativeSample(SimsDbBase):
 
         with session_scope(self.session) as db:
 
-            from backbone_server.model.original_sample import original_sample_attr_table
+            from backbone_server.model.original_sample import OriginalSampleAttr
             db_items = None
             study_filter = True
             from openapi_server.models.attr import Attr as AttrApi
@@ -296,9 +300,9 @@ class BaseDerivativeSample(SimsDbBase):
                 os_study = aliased(OriginalSample.study)
                 db_items = db.query(self.db_class).\
                         join(self.db_class.original_sample).\
-                        join(original_sample_attr_table,
-                             and_(original_sample_attr_table.c.attr_id == db_attr.id,
-                                  DerivativeSample.original_sample_id == original_sample_attr_table.c.original_sample_id)).\
+                        join(OriginalSampleAttr,
+                             and_(OriginalSampleAttr.attr_id == db_attr.id,
+                                  DerivativeSample.original_sample_id == OriginalSampleAttr.original_sample_id)).\
                         outerjoin(Study).\
                         outerjoin(os_study, OriginalSample.study_id == os_study.id).\
                         filter(or_(Study.code == study_name[:4],
@@ -306,9 +310,9 @@ class BaseDerivativeSample(SimsDbBase):
             else:
                 db_items = db.query(self.db_class).\
                         join(self.db_class.original_sample).\
-                        join(original_sample_attr_table,
-                             and_(original_sample_attr_table.c.attr_id == db_attr.id,
-                                  DerivativeSample.original_sample_id == original_sample_attr_table.c.original_sample_id))
+                        join(OriginalSampleAttr,
+                             and_(OriginalSampleAttr.attr_id == db_attr.id,
+                                  DerivativeSample.original_sample_id == OriginalSampleAttr.original_sample_id))
 
             # db_item = db.query(self.db_class).filter_by(id=item_id).first()
             ret = self._get_multiple_results(db, db_items, start, count,

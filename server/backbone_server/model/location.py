@@ -1,7 +1,7 @@
 import os
 
 from sqlalchemy import and_
-from sqlalchemy import Table, MetaData, Column
+from sqlalchemy import MetaData, Column
 from sqlalchemy import Integer, String, ForeignKey, DateTime, Date, func, UniqueConstraint
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship, backref, foreign
@@ -52,17 +52,16 @@ def insert_countries(mapper, connection, checkfirst, _ddl_runner,
             cur.copy_from(fp, 'country', columns=('english', 'french', 'alpha2',
                                                   'alpha3', 'numeric_code'))
     connection.connection.commit()
-#            connection.execute(po.insert().values(store_id=target.store_id,
-#                                                  order_id=target.id,
-#                                                  scenario=target.order_type))
 
+class LocationAttr(Base):
 
-location_attr_table = Table('location_attr', Base.metadata,
-                            Column('location_id', UUID(as_uuid=True),
-                                   ForeignKey('location.id')),
-                            Column('attr_id', UUID(as_uuid=True),
-                                   ForeignKey('attr.id'))
-                            )
+    __tablename__ = 'location_attr'
+
+    location_id = Column(UUID(as_uuid=True),
+                         ForeignKey('location.id'),
+                         primary_key=True)
+    attr_id = Column(UUID(as_uuid=True),
+                     ForeignKey('attr.id'), primary_key=True)
 
 class Location(Versioned, Base):
 
@@ -77,7 +76,7 @@ class Location(Versioned, Base):
                                UUID(as_uuid=True),
                                ForeignKey('location.id'))
 
-    attrs = relationship("Attr", secondary=location_attr_table)
+    attrs = relationship("Attr", secondary='location_attr')
 
     openapi_class = ApiLocation
     openapi_multiple_class = Locations
@@ -114,7 +113,7 @@ class BaseLocation(SimsDbBase):
                                             'attr'])
 
         self.db_class = Location
-        self.attr_link = location_attr_table
+        self.attr_link = LocationAttr
         self.api_id = 'location_id'
         self.duplicate_attrs = ['partner_name']
 
