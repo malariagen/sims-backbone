@@ -93,6 +93,30 @@ class BaseDerivativeSample(SimsDbBase):
         self.duplicate_attrs = ['plate_name', 'plate_position']
 
 
+    def expand_results(self, db, simple_results, studies):
+
+        original_samples = []
+        for os in simple_results.derivative_samples:
+            if os.original_sample_id not in original_samples:
+                original_samples.append(os.original_sample_id)
+
+        from backbone_server.model.original_sample import OriginalSample, BaseOriginalSample
+
+        if original_samples:
+            simple_results.original_samples = {}
+            db_query = db.query(OriginalSample).filter(OriginalSample.id.in_((original_samples)))
+            se = BaseOriginalSample(self.engine, self.session)
+            for db_item in db_query.all():
+                api_item = db_item.map_to_openapi()
+
+                study_code = se.get_study_code(db_item)
+                self.has_study_permission(studies,
+                                          study_code,
+                                          self.GET_PERMISSION)
+                simple_results.original_samples[api_item.original_sample_id] = api_item
+
+        return simple_results
+
     def get_by_location(self, location_id, studies, start, count):
 
         if not location_id:

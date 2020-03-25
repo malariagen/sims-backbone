@@ -78,8 +78,8 @@ export class DsListComponent implements OnInit, AfterViewInit {
   @Input()
   set studyName(studyName: string) {
     this._studyName = studyName;
-    this.downloadFileName = studyName + '_sampling_events.csv';
-    this.jsonDownloadFileName = studyName + '_sampling_events.json';
+    this.downloadFileName = studyName + '_derivative_samples.csv';
+    this.jsonDownloadFileName = studyName + '_derivative_samples.json';
   }
 
   loadOriginalSamplesPage() {
@@ -97,7 +97,7 @@ export class DsListComponent implements OnInit, AfterViewInit {
       return;
     }
 
-    let columnsForDisplay = ['derivative_sample_id', 'dna_prep', 'partner_species'];
+    let columnsForDisplay = ['derivative_sample_id', 'study_name', 'dna_prep', 'taxon', 'partner_species'];
     columnsForDisplay = columnsForDisplay.concat(this._dataSource.attrTypes);
     columnsForDisplay = columnsForDisplay.concat(['original_sample_id']);
 
