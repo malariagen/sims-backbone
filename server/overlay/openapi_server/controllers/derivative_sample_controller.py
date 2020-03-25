@@ -193,6 +193,25 @@ def download_derivative_samples_by_taxa(taxa_id, start=None, count=None,
                                                                             studies=studies, user=user,
                                                                             auths=derivative_sample_controller.token_info(token_info))
 
+def download_derivative_samples_by_partner_taxa(taxa_id, start=None, count=None,
+                                        studies=None, user=None, token_info=None):
+    """fetches DerivativeSamples for a given taxonomy classification code
+
+    :param taxaId: NCBI taxonomy code
+    :type taxaId: str
+    :param start: for pagination start the result set at a record x
+    :type start: int
+    :param count: for pagination the number of entries to return
+    :type count: int
+
+    :rtype: DerivativeSamples
+    """
+    return derivative_sample_controller.download_derivative_samples_by_partner_taxa(taxa_id,
+                                                                                    start=start,
+                                                                                    count=count,
+                                                                                    studies=studies, user=user,
+                                                                                    auths=derivative_sample_controller.token_info(token_info))
+
 def update_derivative_sample(derivative_sample_id, body, studies=None, user=None, token_info=None):  # noqa: E501
     """updates an DerivativeSample
 

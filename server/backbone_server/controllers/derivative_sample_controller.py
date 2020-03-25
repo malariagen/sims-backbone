@@ -271,6 +271,37 @@ class DerivativeSampleController(BaseController):
 
         return samp, retcode
 
+    def download_derivative_samples_by_partner_taxa(self, taxa_id,
+                                            start=None, count=None,
+                                            studies=None, user=None, auths=None):
+        """
+        fetches derivativeSamples for a taxa
+
+        :param taxaId: taxa
+        :type taxaId: str
+
+        :rtype: DerivativeSamples
+        """
+
+        get = BaseDerivativeSample(self.get_engine(), self.get_session())
+
+        retcode = 200
+        samp = None
+
+        try:
+            samp = get.get_by_partner_taxa(taxa_id, start, count, studies=studies)
+        except MissingKeyException as dme:
+            logging.getLogger(__name__).debug(
+                "download_derivative_samples_by_taxa: %s", repr(dme))
+            retcode = 404
+            samp = str(dme)
+        except PermissionException as dke:
+            logging.getLogger(__name__).debug("download_derivative_samples_by_taxa: %s", repr(dke))
+            retcode = 403
+            samp = str(dke)
+
+        return samp, retcode
+
     def download_derivative_samples_by_taxa(self, taxa_id,
                                             start=None, count=None,
                                             studies=None, user=None, auths=None):

@@ -97,6 +97,8 @@ paths:
     $ref: './sims-backbone/derivative_sample/by_os_attr.yaml'
   '/derivativeSamples/taxa/{taxa_id}':
     $ref: './sims-backbone/derivative_sample/by_taxa.yaml'
+  '/derivativeSamples/partner_taxa/{taxa_id}':
+    $ref: './sims-backbone/derivative_sample/by_partner_taxa.yaml'
   '/derivativeSamples/eventSet/{event_set_id}':
     $ref: './sims-backbone/derivative_sample/by_set.yaml'
   '/derivativeSamples/study/{study_name}':

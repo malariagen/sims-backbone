@@ -116,7 +116,7 @@ class BaseDerivativeSample(SimsDbBase):
                     raise MissingKeyException("No location_id {}".format(location_id))
         return ret
 
-    def get_by_taxa(self, taxa_id, start, count, studies=None):
+    def get_by_partner_taxa(self, taxa_id, start, count, studies=None):
 
         if not taxa_id:
             raise MissingKeyException("No taxa {}".format(taxa_id))
@@ -132,6 +132,31 @@ class BaseDerivativeSample(SimsDbBase):
                         join(taxonomy_identifier_table,
                              and_(taxonomy_identifier_table.c.partner_species_identifier_id == OriginalSample.partner_species_id,
                                   taxonomy_identifier_table.c.taxonomy_id == taxa_id))
+
+            ret = self._get_multiple_results(db, db_items, start, count,
+                                             studies=studies)
+
+            if ret.count == 0:
+                db_item = db.query(Taxonomy).get(taxa_id)
+
+                if not db_item:
+                    raise MissingKeyException("No taxa_id {}".format(taxa_id))
+        return ret
+
+    def get_by_taxa(self, taxa_id, start, count, studies=None):
+
+        if not taxa_id:
+            raise MissingKeyException("No taxa {}".format(taxa_id))
+
+        ret = None
+
+        with session_scope(self.session) as db:
+            from backbone_server.model.study import taxonomy_identifier_table, Taxonomy
+
+            db_items = None
+            db_items = db.query(self.db_class).\
+                        join(OriginalSample).\
+                        filter(DerivativeSample.taxon == taxa_id)
 
             ret = self._get_multiple_results(db, db_items, start, count,
                                              studies=studies)
