@@ -4,6 +4,14 @@
       summary: fetches all the attr types
       description: returns all attr types in use
       operationId: getAttrTypes
+      parameters:
+        - name: parent_type
+          in: query
+          description: The type of the attributes you want to list
+          required: false
+          schema:
+            type: string
+            enum: ['os', 'ds', 'ad', 'loc', 'se']
       responses:
         "200":
           description: successful operation

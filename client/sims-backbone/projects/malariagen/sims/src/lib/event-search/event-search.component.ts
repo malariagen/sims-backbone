@@ -8,7 +8,7 @@ import { AssayDataService } from '../typescript-angular-client/api/assayData.ser
 import { SamplingEvents } from '../typescript-angular-client/model/samplingEvents';
 import { AssayData, OriginalSamples, DerivativeSamples } from '../typescript-angular-client';
 
-
+// Despite the name this is a search for Original Samples
 @Component({
   selector: 'sims-event-search',
   providers: [
@@ -34,7 +34,7 @@ export class EventSearchComponent implements OnInit {
 
   ngOnInit() {
 
-    this.metadataService.getAttrTypes().subscribe(attrTypes => {
+    this.metadataService.getAttrTypes('os').subscribe(attrTypes => {
       this.options = attrTypes;
     });
     this.warmUp();
