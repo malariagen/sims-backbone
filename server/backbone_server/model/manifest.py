@@ -351,7 +351,7 @@ class BaseManifest(SimsDbBase):
             manifest_id = self.convert_to_id(db, manifest_name)
 
             member = db.query(ManifestItem).filter(and_(ManifestItem.original_sample_id == original_sample_id,
-                                                       ManifestItem.manifest_id == manifest_id)).first()
+                                                        ManifestItem.manifest_id == manifest_id)).first()
             if member:
                 raise DuplicateKeyException(f"{original_sample_id} already in {manifest_name}")
 
@@ -361,7 +361,7 @@ class BaseManifest(SimsDbBase):
             ri_item.original_sample_version = os_item.version
             ri_item.created_by = user
             api_item = ManifestItemApi(None,
-                                      original_sample_id=original_sample_id)
+                                       original_sample_id=original_sample_id)
             bse.db_map_actions(db, ri_item, api_item, studies,
                                update_samples=True)
 

@@ -231,7 +231,7 @@ class BaseDerivativeSample(SimsDbBase):
         with session_scope(self.session) as db:
             from sqlalchemy.orm import aliased
             from sqlalchemy import and_
-            from backbone_server.model.event_set import EventSet, event_set_members_table
+            from backbone_server.model.event_set import EventSet, EventSetMember
 
             event_set = db.query(EventSet).filter_by(event_set_name=event_set_name).first()
             if not event_set:
@@ -241,9 +241,9 @@ class BaseDerivativeSample(SimsDbBase):
             db_items = db.query(self.db_class).\
                     join(self.db_class.original_sample).\
                     join(sampling_event).\
-                    join(event_set_members_table, \
-                    and_(event_set_members_table.c.event_set_id == str(event_set.id),
-                         event_set_members_table.c.sampling_event_id == sampling_event.id)).\
+                    join(EventSetMember, \
+                    and_(EventSetMember.event_set_id == str(event_set.id),
+                         EventSetMember.sampling_event_id == sampling_event.id)).\
                     distinct(self.db_class.id)
 
             ret = self._get_multiple_results(db, db_items, start, count,

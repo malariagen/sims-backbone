@@ -34,13 +34,22 @@ event_set_attr_table = Table('event_set_attr', Base.metadata,
                              )
 
 
-event_set_members_table = Table('event_set_member', Base.metadata,
-                                Column('event_set_id', UUID(as_uuid=True),
-                                       ForeignKey('event_set.id')),
-                                Column('sampling_event_id', UUID(as_uuid=True),
-                                       ForeignKey('sampling_event.id'))
-                                )
+class EventSetMember(Base):
 
+    __tablename__ = 'event_set_member'
+
+    event_set_id = Column(UUID(as_uuid=True), ForeignKey('event_set.id'),
+                          primary_key=True)
+    sampling_event_id = Column(UUID(as_uuid=True),
+                               ForeignKey('sampling_event.id'), primary_key=True)
+
+#event_set_members_table = Table('event_set_member', Base.metadata,
+#                                Column('event_set_id', UUID(as_uuid=True),
+#                                       ForeignKey('event_set.id')),
+#                                Column('sampling_event_id', UUID(as_uuid=True),
+#                                       ForeignKey('sampling_event.id'))
+#                                )
+#
 
 class EventSet(Versioned, Base):
 
@@ -53,9 +62,9 @@ class EventSet(Versioned, Base):
 
     attrs = relationship("Attr", secondary=event_set_attr_table)
     members = relationship("SamplingEvent",
-                           secondary=event_set_members_table)
+                           secondary='event_set_member')
     notes = relationship("EventSetNote",
-                        backref=backref('event_set'))
+                         backref=backref('event_set'))
 
     openapi_class = ApiEventSet
     openapi_multiple_class = EventSets
@@ -232,18 +241,17 @@ class BaseEventSet(SimsDbBase):
             if not se_item:
                 raise MissingKeyException(f"event set does not exist {sampling_event_id}")
 
-            if se_item in db_item.members:
+            member = db.query(EventSetMember).\
+                                filter(and_(EventSetMember.sampling_event_id == sampling_event_id,
+                                            EventSetMember.event_set_id == db_item.id)).first()
+            if member:
                 raise DuplicateKeyException(f"{sampling_event_id} already in {event_set_name}")
 
-            db_item.members.extend([se_item])
-            try:
-                db.commit()
-            except IntegrityError as int_error:
-                if 'already exists' in str(int_error):
-                    raise DuplicateKeyException(f'{str(int_error)}')
-                raise int_error
+            member_item = EventSetMember(sampling_event_id=sampling_event_id,
+                                         event_set_id=db_item.id)
+            db.add(member_item)
 
-                    #raise DuplicateKeyException("Error inserting sampling event to event set {} {}".format(event_set_name, sampling_event_id)) from err
+            db.commit()
 
         return None
 

@@ -179,11 +179,11 @@ class BaseSamplingEvent(SimsDbBase):
                 bl = BaseLocation(self.engine, self.session)
                 api_item.proxy_location = bl.get(api_item.proxy_location_id, studies)
 
-        from backbone_server.model.event_set import EventSet, event_set_members_table
+        from backbone_server.model.event_set import EventSet, EventSetMember
 
         event_sets = db.query(EventSet).\
-                join(event_set_members_table).\
-                filter(event_set_members_table.c.sampling_event_id.in_((api_item.sampling_event_id,)))
+                join(EventSetMember).\
+                filter(EventSetMember.sampling_event_id.in_((api_item.sampling_event_id,)))
 
         api_item.event_sets = []
         for event_set in event_sets.all():
@@ -281,16 +281,16 @@ class BaseSamplingEvent(SimsDbBase):
         ret = None
 
         with session_scope(self.session) as db:
-            from backbone_server.model.event_set import EventSet, event_set_members_table
+            from backbone_server.model.event_set import EventSet, EventSetMember
 
             event_set = db.query(EventSet).filter_by(event_set_name=event_set_name).first()
             if not event_set:
                 raise MissingKeyException("No event_set_name {}".format(event_set_name))
 
             db_items = db.query(self.db_class).\
-                    join(event_set_members_table, \
-                    and_(event_set_members_table.c.event_set_id == event_set.id,
-                         event_set_members_table.c.sampling_event_id == SamplingEvent.id)).\
+                    join(EventSetMember, \
+                    and_(EventSetMember.event_set_id == event_set.id,
+                         EventSetMember.sampling_event_id == SamplingEvent.id)).\
                     join(self.db_class.original_samples).\
                     filter(EventSet.event_set_name == event_set_name)
 

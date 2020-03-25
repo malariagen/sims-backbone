@@ -368,7 +368,7 @@ class BaseOriginalSample(SimsDbBase):
 
         with session_scope(self.session) as db:
             from sqlalchemy.orm import aliased
-            from backbone_server.model.event_set import EventSet, event_set_members_table
+            from backbone_server.model.event_set import EventSet, EventSetMember
 
             event_set = db.query(EventSet).filter_by(event_set_name=event_set_name).first()
             if not event_set:
@@ -377,8 +377,8 @@ class BaseOriginalSample(SimsDbBase):
             sampling_event = aliased(OriginalSample.sampling_event)
             db_items = db.query(self.db_class).\
                     join(sampling_event).\
-                    join(event_set_members_table).\
-                    filter(event_set_members_table.c.event_set_id == event_set.id).\
+                    join(EventSetMember).\
+                    filter(EventSetMember.event_set_id == event_set.id).\
                     distinct(self.db_class.id)
 
             ret = self._get_multiple_results(db, db_items, start, count,
