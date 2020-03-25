@@ -1,5 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import { NgModule, APP_INITIALIZER } from '@angular/core';
 
 import { HttpClientModule, HttpClient, HTTP_INTERCEPTORS } from '@angular/common/http';
 
@@ -33,6 +33,19 @@ import { ReactiveFormsModule } from '@angular/forms';
 
 export function storageFactory(): OAuthStorage {
   return localStorage
+}
+
+function runOnInit() {
+  //Prime the services
+  return (): Promise<any> => {
+    return new Promise((resolve, reject) => {
+      console.log(`initializeApp called`);
+      setTimeout(() => {
+        console.log(`initializeApp Finished`);
+        resolve();
+      }, 2000);
+    });
+  };
 }
 
 @NgModule({
@@ -87,7 +100,12 @@ export function storageFactory(): OAuthStorage {
       useClass: AlfResponseInterceptor,
       multi: true
     },
-
+    {
+      provide: APP_INITIALIZER,
+      useFactory: runOnInit,
+      multi: true,
+      deps: [SimsModule]
+    }
 
   ],
   entryComponents: [
