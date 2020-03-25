@@ -185,6 +185,26 @@ class LocalDerivativeSampleApi(BaseLocalApi):
 
         return self.create_response(ret, retcode, 'DerivativeSamples')
 
+    def download_derivative_samples_by_partner_taxa(self, taxa_id, start=None, count=None):
+        """
+        fetches a samplingEvent by property value
+
+        :param propName: name of property to search
+        :type propName: str
+        :param propValue: matching value of property to search
+        :type propValue: str
+
+        :rtype: DerivativeSamples
+        """
+        (ret, retcode) = self.derivative_sample_controller.download_derivative_samples_by_partner_taxa(taxa_id,
+                                                                                                       studies=None,
+                                                                                                       start=start,
+                                                                                                       count=count,
+                                                                                                       user=self._user,
+                                                                                                       auths=self.derivative_sample_controller.token_info(self.auth_tokens()))
+
+        return self.create_response(ret, retcode, 'DerivativeSamples')
+
     def download_derivative_samples_by_taxa(self, taxa_id, start=None, count=None):
         """
         fetches a samplingEvent by property value

@@ -540,9 +540,11 @@ class TestDerivativeSample(TestBase):
         study_api.update_study(study_name, study_detail)
 
         samp1 = openapi_client.DerivativeSample(None,
+                                                taxon=5855,
                                                 original_sample=created,
                                                 original_sample_id=created.original_sample_id)
         samp2 = openapi_client.DerivativeSample(None,
+                                                taxon=5855,
                                                 original_sample=created,
                                                 original_sample_id=created.original_sample_id)
 
@@ -561,35 +563,71 @@ class TestDerivativeSample(TestBase):
 
     """
     """
-    def test_ds_taxa_lookup(self, api_factory):
+    def test_ds_partner_taxa_lookup(self, api_factory):
 
         api_instance = api_factory.OriginalSampleApi()
         ds_api_instance = api_factory.DerivativeSampleApi()
-        study_api = api_factory.StudyApi()
 
         try:
             study_name = '7001-MD-UP'
             created, created1, created2 = self.create_test_samples(api_factory, study_name)
-            results = ds_api_instance.download_derivative_samples_by_taxa(5833)
+            results = ds_api_instance.download_derivative_samples_by_partner_taxa(5833)
 
             assert results.count == 2
             assert results.derivative_samples[0].derivative_sample_id != results.derivative_samples[1].derivative_sample_id
             assert results.derivative_samples[0].original_sample_id == results.derivative_samples[1].original_sample_id
             assert results.derivative_samples[0].original_sample_id == created.original_sample_id
 
-            results1 = ds_api_instance.download_derivative_samples_by_taxa(5833,start=0,count=1)
+            results1 = ds_api_instance.download_derivative_samples_by_partner_taxa(5833, start=0, count=1)
 
             assert results1.count == 2
             assert len(results1.derivative_samples) == 1
             assert results1.derivative_samples[0].derivative_sample_id == results.derivative_samples[0].derivative_sample_id
 
-            results2 = ds_api_instance.download_derivative_samples_by_taxa(5833,start=1,count=1)
+            results2 = ds_api_instance.download_derivative_samples_by_partner_taxa(5833, start=1, count=1)
 
             assert results2.count == 2
             assert len(results2.derivative_samples) == 1
             assert results2.derivative_samples[0].derivative_sample_id == results.derivative_samples[1].derivative_sample_id
 
-            results3 = ds_api_instance.download_derivative_samples(search_filter='taxa:5833')
+            ds_api_instance.delete_derivative_sample(created1.derivative_sample_id)
+            ds_api_instance.delete_derivative_sample(created2.derivative_sample_id)
+            api_instance.delete_original_sample(created.original_sample_id)
+
+        except ApiException as error:
+            self.check_api_exception(api_factory, "DerivativeSampleApi->create_derivative_sample", error)
+
+    """
+    """
+    def test_ds_taxa_lookup(self, api_factory):
+
+        api_instance = api_factory.OriginalSampleApi()
+        ds_api_instance = api_factory.DerivativeSampleApi()
+
+        try:
+            study_name = '7001-MD-UP'
+            created, created1, created2 = self.create_test_samples(api_factory, study_name)
+            results = ds_api_instance.download_derivative_samples_by_taxa(5855)
+
+            assert results.count == 2
+            assert results.derivative_samples[0].derivative_sample_id != results.derivative_samples[1].derivative_sample_id
+            assert results.derivative_samples[0].original_sample_id == results.derivative_samples[1].original_sample_id
+            assert results.derivative_samples[0].original_sample_id == created.original_sample_id
+
+            results1 = ds_api_instance.download_derivative_samples_by_taxa(5855, start=0, count=1)
+
+            print(results1)
+            assert results1.count == 2
+            assert len(results1.derivative_samples) == 1
+            assert results1.derivative_samples[0].derivative_sample_id == results.derivative_samples[0].derivative_sample_id
+
+            results2 = ds_api_instance.download_derivative_samples_by_taxa(5855, start=1, count=1)
+
+            assert results2.count == 2
+            assert len(results2.derivative_samples) == 1
+            assert results2.derivative_samples[0].derivative_sample_id == results.derivative_samples[1].derivative_sample_id
+
+            results3 = ds_api_instance.download_derivative_samples(search_filter='taxa:5855')
 
             assert results3 == results
 
