@@ -212,6 +212,9 @@ def create_version(obj, session, deleted=False):
 
             a, u, d = attributes.get_history(obj, prop.key)
 
+            if prop.key == 'action_date':
+                continue
+
             if d:
                 attr[prop.key] = d[0]
                 obj_changed = True
