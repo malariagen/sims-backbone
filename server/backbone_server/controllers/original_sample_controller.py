@@ -3,16 +3,7 @@ import logging
 
 import urllib
 
-from backbone_server.original_sample.post import OriginalSamplePost
-from backbone_server.original_sample.put import OriginalSamplePut
-from backbone_server.original_sample.merge import OriginalSampleMerge
-from backbone_server.original_sample.get import OriginalSampleGetById
-from backbone_server.original_sample.delete import OriginalSampleDelete
-from backbone_server.original_sample.get_by_attr import OriginalSampleGetByAttr
-from backbone_server.original_sample.get_by_location import OriginalSamplesGetByLocation
-from backbone_server.original_sample.get_by_study import OriginalSamplesGetByStudy
-from backbone_server.original_sample.get_by_taxa import OriginalSamplesGetByTaxa
-from backbone_server.original_sample.get_by_event_set import OriginalSamplesGetByEventSet
+from backbone_server.model.original_sample import BaseOriginalSample
 
 from backbone_server.controllers.base_controller import BaseController
 
@@ -42,18 +33,16 @@ class OriginalSampleController(BaseController):
         samp = None
 
         try:
-            post = OriginalSamplePost(self.get_connection())
+            post = BaseOriginalSample(self.get_engine(), self.get_session())
 
-            samp = post.post(original_sample, uuid_val=uuid_val,
-                             studies=studies)
+            samp = post.post(original_sample, original_sample.study_name, studies, user)
+
         except DuplicateKeyException as dke:
-            logging.getLogger(__name__).debug(
-                "create_originalSample: {}".format(repr(dke)))
+            logging.getLogger(__name__).debug("create_originalSample: %s", repr(dke))
             retcode = 422
             samp = str(dke)
         except PermissionException as pme:
-            logging.getLogger(__name__).debug(
-                "create_original_sample: {}, {}".format(repr(pme), user))
+            logging.getLogger(__name__).debug("create_original_sample: %s, %s", repr(pme), user)
             retcode = 403
             samp = str(pme)
 
@@ -69,7 +58,7 @@ class OriginalSampleController(BaseController):
         :rtype: None
         """
 
-        delete = OriginalSampleDelete(self.get_connection())
+        delete = BaseOriginalSample(self.get_engine(), self.get_session())
 
         retcode = 200
         resp = None
@@ -77,12 +66,10 @@ class OriginalSampleController(BaseController):
         try:
             delete.delete(original_sample_id, studies=studies)
         except MissingKeyException as dme:
-            logging.getLogger(__name__).debug(
-                "delete_originalSample: {}".format(repr(dme)))
+            logging.getLogger(__name__).debug("delete_originalSample: %s", repr(dme))
             retcode = 404
         except PermissionException as pme:
-            logging.getLogger(__name__).debug(
-                "delete_original_sample: {}, {}".format(repr(pme), user))
+            logging.getLogger(__name__).debug("delete_original_sample: %s, %s", repr(pme), user)
             retcode = 403
             resp = str(pme)
 
@@ -98,7 +85,7 @@ class OriginalSampleController(BaseController):
         :rtype: OriginalSample
         """
 
-        get = OriginalSampleGetById(self.get_connection())
+        get = BaseOriginalSample(self.get_engine(), self.get_session())
 
         retcode = 200
         samp = None
@@ -106,19 +93,18 @@ class OriginalSampleController(BaseController):
         try:
             samp = get.get(original_sample_id, studies=studies)
         except MissingKeyException as dme:
-            logging.getLogger(__name__).debug(
-                "download_originalSample: {}".format(repr(dme)))
+            logging.getLogger(__name__).debug("download_originalSample: %s", repr(dme))
             retcode = 404
             samp = str(dme)
         except PermissionException as pme:
-            logging.getLogger(__name__).debug(
-                "download_original_sample: {}, {}".format(repr(pme), user))
+            logging.getLogger(__name__).debug("download_original_sample: %s, %s", repr(pme), user)
             retcode = 403
             samp = str(pme)
 
         return samp, retcode
 
-    def download_original_samples(self, search_filter, start, count,
+    def download_original_samples(self, search_filter, value_type=None,
+                                  start=None, count=None,
                                   studies=None, user=None, auths=None):
         """
         fetches originalSamples for a event_set
@@ -156,8 +142,10 @@ class OriginalSampleController(BaseController):
             return self.download_original_samples_by_attr(options[1],
                                                           options[2],
                                                           study_name,
-                                                          studies=studies,
-                                                          user=user,
+                                                          value_type=value_type,
+                                                          start=start,
+                                                          count=count,
+                                                          studies=studies, user=user,
                                                           auths=auths)
         else:
             samp = 'Invalid filter option'
@@ -180,24 +168,24 @@ class OriginalSampleController(BaseController):
         samp = None
 
         try:
-            get = OriginalSamplesGetByEventSet(self.get_connection())
+            get = BaseOriginalSample(self.get_engine(), self.get_session())
             event_set_id = urllib.parse.unquote_plus(event_set_id)
-            samp = get.get(event_set_id, start, count, studies=studies)
+            samp = get.get_by_event_set(event_set_id, studies, start, count)
 
         except MissingKeyException as dme:
-            logging.getLogger(__name__).debug(
-                "download_original_samples_by_event_set: {}".format(repr(dme)))
+            logging.getLogger(__name__).debug("download_original_samples_by_event_set: %s", repr(dme))
             retcode = 404
         except PermissionException as pme:
-            logging.getLogger(__name__).debug(
-                "download_original_samples_by_event_set: {}, {}".format(repr(pme), user))
+            logging.getLogger(__name__).debug("download_original_samples_by_event_set: %s, %s", repr(pme), user)
             retcode = 403
             samp = str(pme)
 
         return samp, retcode
 
     def download_original_samples_by_attr(self, prop_name, prop_value,
-                                          study_name=None, studies=None, user=None, auths=None):
+                                          study_name=None,
+                                          value_type=None, start=None, count=None,
+                                          studies=None, user=None, auths=None):
         """
         fetches a originalSample by property value
 
@@ -209,13 +197,13 @@ class OriginalSampleController(BaseController):
         :rtype: OriginalSample
         """
 
-        get = OriginalSampleGetByAttr(self.get_connection())
+        get = BaseOriginalSample(self.get_engine(), self.get_session())
 
         retcode = 200
         samp = None
 
-        prop_value = urllib.parse.unquote_plus(prop_value)
-        samp = get.get(prop_name, prop_value, study_name, studies=studies)
+        samp = get.get_by_attr(prop_name, prop_value, study_name, value_type,
+                               start, count, studies)
 
         return samp, retcode
 
@@ -230,21 +218,19 @@ class OriginalSampleController(BaseController):
         :rtype: OriginalSamples
         """
 
-        get = OriginalSamplesGetByLocation(self.get_connection())
+        get = BaseOriginalSample(self.get_engine(), self.get_session())
 
         retcode = 200
         samp = None
 
         try:
-            samp = get.get(location_id, start, count, studies=studies)
+            samp = get.get_by_location(location_id, studies, start, count)
         except MissingKeyException as dme:
-            logging.getLogger(__name__).debug(
-                "download_originalSample: {}".format(repr(dme)))
+            logging.getLogger(__name__).debug("download_originalSample: %s", repr(dme))
             retcode = 404
             samp = str(dme)
         except PermissionException as pme:
-            logging.getLogger(__name__).debug(
-                "download_original_samples_by_location: {}, {}".format(repr(pme), user))
+            logging.getLogger(__name__).debug("download_original_samples_by_location: %s, %s", repr(pme), user)
             retcode = 403
             samp = str(pme)
 
@@ -261,21 +247,19 @@ class OriginalSampleController(BaseController):
         :rtype: OriginalSamples
         """
 
-        get = OriginalSamplesGetByStudy(self.get_connection())
+        get = BaseOriginalSample(self.get_engine(), self.get_session())
 
         retcode = 200
         samp = None
 
         try:
-            samp = get.get(study_name, start, count, studies=studies)
+            samp = get.get_by_study(study_name, start, count, studies)
         except MissingKeyException as dme:
-            logging.getLogger(__name__).debug(
-                "download_originalSample: {}".format(repr(dme)))
+            logging.getLogger(__name__).debug("download_originalSample: %s", repr(dme))
             retcode = 404
             samp = str(dme)
         except PermissionException as pme:
-            logging.getLogger(__name__).debug(
-                "download_original_samples_by_study: {}, {}".format(repr(pme), user))
+            logging.getLogger(__name__).debug("download_original_samples_by_study: %s, %s", repr(pme), user)
             retcode = 403
             samp = str(pme)
 
@@ -292,21 +276,19 @@ class OriginalSampleController(BaseController):
         :rtype: OriginalSamples
         """
 
-        get = OriginalSamplesGetByTaxa(self.get_connection())
+        get = BaseOriginalSample(self.get_engine(), self.get_session())
 
         retcode = 200
         samp = None
 
         try:
-            samp = get.get(taxa_id, start, count, studies=studies)
+            samp = get.get_by_taxa(taxa_id, start, count, studies=studies)
         except MissingKeyException as dme:
-            logging.getLogger(__name__).debug(
-                "download_original_samples_by_taxa: {}".format(repr(dme)))
+            logging.getLogger(__name__).debug("download_original_samples_by_taxa: %s", repr(dme))
             retcode = 404
             samp = str(dme)
         except PermissionException as pme:
-            logging.getLogger(__name__).debug(
-                "download_original_samples_by_taxa: {}, {}".format(repr(pme), user))
+            logging.getLogger(__name__).debug("download_original_samples_by_taxa: %s, %s", repr(pme), user)
             retcode = 403
             samp = str(pme)
 
@@ -329,22 +311,19 @@ class OriginalSampleController(BaseController):
         samp = None
 
         try:
-            merge = OriginalSampleMerge(self.get_connection())
+            merge = BaseOriginalSample(self.get_engine(), self.get_session())
 
             samp = merge.merge(into, merged, studies=studies)
         except IncompatibleException as dke:
-            logging.getLogger(__name__).debug(
-                "merge_originalSample: {}".format(repr(dke)))
+            logging.getLogger(__name__).debug("merge_originalSample: %s", repr(dke))
             retcode = 422
             samp = str(dke)
         except MissingKeyException as dme:
-            logging.getLogger(__name__).debug(
-                "merge_originalSample: {}".format(repr(dme)))
+            logging.getLogger(__name__).debug("merge_originalSample: %s", repr(dme))
             retcode = 404
             samp = str(dme)
         except PermissionException as pme:
-            logging.getLogger(__name__).debug(
-                "merge_original_samples: {}, {}".format(repr(pme), user))
+            logging.getLogger(__name__).debug("merge_original_samples: %s, %s", repr(pme), user)
             retcode = 403
             samp = str(pme)
 
@@ -367,22 +346,21 @@ class OriginalSampleController(BaseController):
         samp = None
 
         try:
-            put = OriginalSamplePut(self.get_connection())
+            put = BaseOriginalSample(self.get_engine(), self.get_session())
 
-            samp = put.put(original_sample_id, original_sample, studies=studies)
+            samp = put.put(original_sample_id, original_sample,
+                           original_sample.study_name,
+                           studies, user)
         except DuplicateKeyException as dke:
-            logging.getLogger(__name__).debug(
-                "update_originalSample: {}".format(repr(dke)))
+            logging.getLogger(__name__).debug("update_originalSample: %s", repr(dke))
             retcode = 422
             samp = str(dke)
         except MissingKeyException as dme:
-            logging.getLogger(__name__).debug(
-                "update_originalSample: {}".format(repr(dme)))
+            logging.getLogger(__name__).debug("update_originalSample: %s", repr(dme))
             retcode = 404
             samp = str(dme)
         except PermissionException as pme:
-            logging.getLogger(__name__).debug(
-                "update_original_sample: {}, {}".format(repr(pme), user))
+            logging.getLogger(__name__).debug("update_original_sample: %s, %s", repr(pme), user)
             retcode = 403
             samp = str(pme)
 

@@ -9,6 +9,8 @@ components:
           type: string
         name:
           type: string
+        version:
+          type: integer
         partner_species:
             type: array
             items:
@@ -16,6 +18,34 @@ components:
         ethics_expiry:
           type: string
           format: date
+        num_collections:
+          type: integer
+          description: Number of unique by date/location sampling points
+          readOnly: true
+        num_original_samples:
+          type: integer
+          description: Number of original samples
+          readOnly: true
+        num_derivative_samples:
+          type: integer
+          description: Number of derivative samples
+          readOnly: true
+        num_original_derivative_samples:
+          type: integer
+          description: Number of original samples which have a derivative sample
+          readOnly: true
+        num_assay_data:
+          type: integer
+          description: Number of related assay data
+          readOnly: true
+        num_original_assay_data:
+          type: integer
+          description: Number of original samples which have related assay data
+          readOnly: true
+        num_released:
+          type: integer
+          description: Number of (original) samples which have been released (are in a release manifest)
+          readOnly: true
         expected_samples:
           type: array
           items:

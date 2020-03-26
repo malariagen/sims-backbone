@@ -2,20 +2,14 @@ import logging
 
 from decimal import Decimal, InvalidOperation
 
-from backbone_server.location.post import LocationPost
-from backbone_server.location.put import LocationPut
-from backbone_server.location.get import LocationGetById
-from backbone_server.location.get_by_attr import LocationGetByAttr
-from backbone_server.location.gets import LocationsGet
-from backbone_server.location.delete import LocationDelete
-from backbone_server.location.get_by_name import LocationGetByPartnerName
-from backbone_server.location.get_by_gps import LocationGetByGPS
+from backbone_server.model.location import BaseLocation
 
 from backbone_server.controllers.base_controller import BaseController
 
 from backbone_server.errors.duplicate_key_exception import DuplicateKeyException
 from backbone_server.errors.missing_key_exception import MissingKeyException
 from backbone_server.errors.permission_exception import PermissionException
+from backbone_server.errors.integrity_exception import IntegrityException
 
 from backbone_server.controllers.decorators import apply_decorators
 
@@ -37,16 +31,14 @@ class LocationController(BaseController):
         loc = None
 
         try:
-            post = LocationPost(self.get_connection())
+            post = BaseLocation(self.get_engine(), self.get_session())
 
-            loc = post.post(location, studies)
+            loc = post.post(location, None, studies, user)
         except DuplicateKeyException as dke:
-            logging.getLogger(__name__).debug(
-                "create_location: {}".format(repr(dke)))
+            logging.getLogger(__name__).debug("create_location: %s", repr(dke))
             retcode = 422
         except PermissionException as pme:
-            logging.getLogger(__name__).debug(
-                "create_location: {}, {}".format(repr(pme), user))
+            logging.getLogger(__name__).debug("create_location: %s, %s", repr(pme), user)
             retcode = 403
             loc = str(pme)
 
@@ -62,23 +54,28 @@ class LocationController(BaseController):
         :rtype: None
         """
 
-        delete = LocationDelete(self.get_connection())
+        loc = None
+
+        delete = BaseLocation(self.get_engine(), self.get_session())
 
         retcode = 200
 
         try:
             delete.delete(location_id, studies)
         except MissingKeyException as dme:
-            logging.getLogger(__name__).debug(
-                "delete_location: {}".format(repr(dme)))
+            logging.getLogger(__name__).debug("delete_location: %s", repr(dme))
             retcode = 404
+            loc = str(dme)
         except PermissionException as pme:
-            logging.getLogger(__name__).debug(
-                "delete_location: {}, {}".format(repr(pme), user))
+            logging.getLogger(__name__).debug("delete_location: %s, %s", repr(pme), user)
             retcode = 403
             loc = str(pme)
+        except IntegrityException as pme:
+            logging.getLogger(__name__).debug("delete_location: %s, %s", repr(pme), user)
+            retcode = 422
+            loc = str(pme)
 
-        return None, retcode
+        return loc, retcode
 
     def download_gps_location(self, latitude, longitude, studies=None, user=None, auths=None):
         """
@@ -92,7 +89,7 @@ class LocationController(BaseController):
         :rtype: Location
         """
 
-        get = LocationGetByGPS(self.get_connection())
+        get = BaseLocation(self.get_engine(), self.get_session())
 
         retcode = 200
         loc = None
@@ -100,20 +97,19 @@ class LocationController(BaseController):
         try:
             lat = Decimal(latitude)
             lng = Decimal(longitude)
-            loc = get.get(lat, lng, studies)
+            start = None
+            count = None
+            loc = get.get_by_gps(lat, lng, studies, start, count)
         except MissingKeyException as dme:
-            logging.getLogger(__name__).debug(
-                "download_partner_location: {}".format(repr(dme)))
+            logging.getLogger(__name__).debug("download_partner_location: %s", repr(dme))
             retcode = 404
             loc = str(dme)
         except InvalidOperation as nfe:
-            logging.getLogger(__name__).debug(
-                "download_partner_location: {}".format(repr(nfe)))
+            logging.getLogger(__name__).debug("download_partner_location: %s", repr(nfe))
             retcode = 422
             loc = str(nfe)
         except PermissionException as pme:
-            logging.getLogger(__name__).debug(
-                "download_gps_location: {}, {}".format(repr(pme), user))
+            logging.getLogger(__name__).debug("download_gps_location: %s, %s", repr(pme), user)
             retcode = 403
             loc = str(pme)
 
@@ -129,7 +125,7 @@ class LocationController(BaseController):
         :rtype: Location
         """
 
-        get = LocationGetById(self.get_connection())
+        get = BaseLocation(self.get_engine(), self.get_session())
 
         retcode = 200
         loc = None
@@ -137,20 +133,18 @@ class LocationController(BaseController):
         try:
             loc = get.get(location_id, studies)
         except MissingKeyException as dme:
-            logging.getLogger(__name__).debug(
-                "download_location: {}".format(repr(dme)))
+            logging.getLogger(__name__).debug("download_location: %s", repr(dme))
             retcode = 404
             loc = str(dme)
         except PermissionException as pme:
-            logging.getLogger(__name__).debug(
-                "download_location: {}, {}".format(repr(pme), user))
+            logging.getLogger(__name__).debug("download_location: %s, %s", repr(pme), user)
             retcode = 403
             loc = str(pme)
 
         return loc, retcode
 
     def download_locations_by_attr(self, attr_type, attr_value, study_code,
-                                  studies=None, user=None, auths=None):
+                                  value_type=None, start=None, count=None, studies=None, user=None, auths=None):
         """
         fetches an location
 
@@ -160,12 +154,14 @@ class LocationController(BaseController):
         :rtype: Location
         """
 
-        get = LocationGetByAttr(self.get_connection())
+        get = BaseLocation(self.get_engine(), self.get_session())
 
         retcode = 200
         loc = None
 
-        loc = get.get(attr_type, attr_value, study_code, studies)
+        loc = get.get_by_attr(attr_type, attr_value, study_code,
+                              value_type=value_type,
+                              start=start, count=count, studies=studies)
 
         return loc, retcode
 
@@ -187,12 +183,12 @@ class LocationController(BaseController):
         :rtype: Locations
         """
 
-        get = LocationsGet(self.get_connection())
+        get = BaseLocation(self.get_engine(), self.get_session())
 
         retcode = 200
         loc = None
 
-        loc = get.get(study_name, studies, start, count, orderby)
+        loc = get.gets(study_name, studies, start, count, orderby)
 
         return loc, retcode
 
@@ -206,20 +202,12 @@ class LocationController(BaseController):
         :rtype: Locations
         """
 
-        get = LocationGetByPartnerName(self.get_connection())
-
-        retcode = 200
-        loc = None
-
-        try:
-            loc = get.get(partner_id, studies)
-        except MissingKeyException as dme:
-            logging.getLogger(__name__).debug(
-                "download_partner_location: {}".format(repr(dme)))
-            retcode = 404
-            loc = str(dme)
-
-        return loc, retcode
+        return self.download_locations_by_attr('partner_name', partner_id,
+                                               study_code=None,
+                                               value_type='str',
+                                               start=None, count=None,
+                                               studies=studies, user=user,
+                                               auths=auths)
 
     def update_location(self, location_id, location, studies=None, user=None, auths=None):
         """
@@ -237,22 +225,20 @@ class LocationController(BaseController):
         loc = None
 
         try:
-            put = LocationPut(self.get_connection())
+            put = BaseLocation(self.get_engine(), self.get_session())
 
-            loc = put.put(location_id, location, studies)
+            study = None
+            loc = put.put(location_id, location, study, studies, user)
         except DuplicateKeyException as dke:
-            logging.getLogger(__name__).debug(
-                "update_location: {}".format(repr(dke)))
+            logging.getLogger(__name__).debug("update_location: %s", repr(dke))
             retcode = 422
             loc = str(dke)
         except MissingKeyException as dme:
-            logging.getLogger(__name__).debug(
-                "update_location: {}".format(repr(dme)))
+            logging.getLogger(__name__).debug("update_location: %s", repr(dme))
             retcode = 404
             loc = str(dme)
         except PermissionException as pme:
-            logging.getLogger(__name__).debug(
-                "update_location: {}, {}".format(repr(pme), user))
+            logging.getLogger(__name__).debug("update_location: %s, %s", repr(pme), user)
             retcode = 403
             loc = str(pme)
 

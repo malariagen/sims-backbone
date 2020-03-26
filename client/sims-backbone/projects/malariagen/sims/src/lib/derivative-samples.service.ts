@@ -13,7 +13,7 @@ export class DerivativeSamplesService {
   findDerivativeSamples(filter = '', sortOrder = 'asc',
     pageNumber = 0, pageSize = 3): Observable<DerivativeSamples> {
 
-    return this.sampleService.downloadDerivativeSamples(filter, pageNumber * pageSize, pageSize);
+    return this.sampleService.downloadDerivativeSamples(filter, 'str', pageNumber * pageSize, pageSize);
 
   }
 }

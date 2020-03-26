@@ -16,7 +16,7 @@ class CountryGet():
         with self._connection:
             with self._connection.cursor() as cursor:
 
-                stmt = '''SELECT english, alpha2, alpha3 FROM countries WHERE '''
+                stmt = '''SELECT english, alpha2, alpha3 FROM country WHERE '''
                 if len(country_id) == 2:
                     stmt = stmt + ''' LOWER(alpha2) =%s'''
                 elif len(country_id) == 3:

@@ -10,6 +10,54 @@ import uuid
 class TestEventSets(TestBase):
 
 
+    attr_value = 12345
+
+    def create_sampling_event(self, api_factory):
+
+        os_api_instance = api_factory.OriginalSampleApi()
+        api_instance = api_factory.SamplingEventApi()
+        study_api = api_factory.StudyApi()
+
+        try:
+            study_code = '1010-MD-UP'
+
+            sampling_event = openapi_client.SamplingEvent(None, doc=date(2017, 10, 14))
+            self.attr_value = self.attr_value + 1
+            sampling_event.attrs = [
+                openapi_client.Attr(attr_type='se_oxford',
+                                    attr_value=str(self.attr_value),
+                                    attr_source='se_taxa_lookup')
+            ]
+            created_se = api_instance.create_sampling_event(sampling_event)
+
+            samp = openapi_client.OriginalSample(None, study_name=study_code,
+                                                 partner_species='PF',
+                                                 sampling_event_id=created_se.sampling_event_id)
+
+            samp.attrs = [
+                openapi_client.Attr(attr_type='oxford',
+                                    attr_value=str(self.attr_value),
+                                    attr_source='upd')
+            ]
+            created_os = os_api_instance.create_original_sample(samp)
+
+            return created_os, created_se
+
+        except ApiException as error:
+            self.check_api_exception(api_factory, "TestEventSets->create_sampling_event", error)
+
+    def delete_sampling_event(self, api_factory, original_sample):
+
+        os_api_instance = api_factory.OriginalSampleApi()
+        api_instance = api_factory.SamplingEventApi()
+
+        try:
+            os_api_instance.delete_original_sample(original_sample.original_sample_id)
+            api_instance.delete_sampling_event(original_sample.sampling_event_id)
+
+        except ApiException as error:
+            self.check_api_exception(api_factory, "TestEventSets->create_sampling_event", error)
+
     """
     """
     def test_create_event_set_simple(self, api_factory):
@@ -45,8 +93,7 @@ class TestEventSets(TestBase):
             event_set = 'EventSet2'
             created = api_instance.create_event_set(event_set)
 
-            samp = openapi_client.SamplingEvent(None, date(2017, 10, 10))
-            created = event_api_instance.create_sampling_event(samp)
+            os_created, created = self.create_sampling_event(api_factory)
 
             created_set = api_instance.create_event_set_item(event_set, created.sampling_event_id)
             if not api_factory.is_authorized(None):
@@ -65,9 +112,9 @@ class TestEventSets(TestBase):
 
             assert fetched_set.members.count == 0
 
+            self.delete_sampling_event(api_factory, os_created)
 
             api_instance.delete_event_set(event_set)
-            event_api_instance.delete_sampling_event(created.sampling_event_id)
 
         except ApiException as error:
             self.check_api_exception(api_factory, "EventSetsApi->create_event_set", error)
@@ -124,7 +171,7 @@ class TestEventSets(TestBase):
 #            event_set = 'EventSet6'
 #            created = api_instance.create_event_set(event_set)
 #
-#            samp = openapi_client.SamplingEvent(None, '4000-MD-UP', date(2017, 10, 10))
+#            samp = openapi_client.SamplingEvent(None, '4000-MD-UP', doc=date(2017, 10, 10))
 #            samp.event_sets = [ event_set ]
 #            created = event_api_instance.create_sampling_event(samp)
 #
@@ -150,7 +197,7 @@ class TestEventSets(TestBase):
 #            event_set = 'EventSet7'
 #            created = api_instance.create_event_set(event_set)
 #
-#            samp = openapi_client.SamplingEvent(None, '4000-MD-UP', date(2017, 10, 10))
+#            samp = openapi_client.SamplingEvent(None, '4000-MD-UP', doc=date(2017, 10, 10))
 #            created = event_api_instance.create_sampling_event(samp)
 #
 #            created.event_sets = [ event_set ]
@@ -337,11 +384,11 @@ class TestEventSets(TestBase):
             event_set = 'EventSet8'
             created = api_instance.create_event_set(event_set)
 
-            samp = openapi_client.SamplingEvent(None, date(2017, 10, 10))
-            created = event_api_instance.create_sampling_event(samp)
+            samp = openapi_client.SamplingEvent(None, doc=date(2017, 10, 10))
+            os_created, created = self.create_sampling_event(api_factory)
 
-            samp2 = openapi_client.SamplingEvent(None, date(2017, 10, 11))
-            created2 = event_api_instance.create_sampling_event(samp2)
+            samp2 = openapi_client.SamplingEvent(None, doc=date(2017, 10, 11))
+            os_created2, created2 = self.create_sampling_event(api_factory)
 
             created_set = api_instance.create_event_set_item(event_set, created.sampling_event_id)
             fetched_set1 = api_instance.download_event_set(event_set)
@@ -380,9 +427,9 @@ class TestEventSets(TestBase):
             assert fetched_set.members.count == 0
 
 
+            self.delete_sampling_event(api_factory, os_created)
+            self.delete_sampling_event(api_factory, os_created2)
             api_instance.delete_event_set(event_set)
-            event_api_instance.delete_sampling_event(created.sampling_event_id)
-            event_api_instance.delete_sampling_event(created2.sampling_event_id)
 
         except ApiException as error:
             self.check_api_exception(api_factory, "EventSetsApi->create_event_set", error)
@@ -444,8 +491,8 @@ class TestEventSets(TestBase):
             event_set = 'EventSet11'
             created = api_instance.create_event_set(event_set)
 
-            samp = openapi_client.SamplingEvent(None, date(2017, 10, 10))
-            created = event_api_instance.create_sampling_event(samp)
+            samp = openapi_client.SamplingEvent(None, doc=date(2017, 10, 10))
+            os_created, created = self.create_sampling_event(api_factory)
 
             created_set = api_instance.create_event_set_item(event_set, created.sampling_event_id)
 
@@ -454,8 +501,8 @@ class TestEventSets(TestBase):
 
             api_instance.delete_event_set_item(event_set, created.sampling_event_id)
 
+            self.delete_sampling_event(api_factory, os_created)
             api_instance.delete_event_set(event_set)
-            event_api_instance.delete_sampling_event(created.sampling_event_id)
 
         except ApiException as error:
             self.check_api_exception(api_factory, "EventSetsApi->create_event_set", error)
@@ -472,8 +519,8 @@ class TestEventSets(TestBase):
             event_set = 'EventSet12'
             created = api_instance.create_event_set(event_set)
 
-            samp = openapi_client.SamplingEvent(None, date(2017, 10, 10))
-            created = event_api_instance.create_sampling_event(samp)
+            samp = openapi_client.SamplingEvent(None, doc=date(2017, 10, 10))
+            os_created, created = self.create_sampling_event(api_factory)
 
             created_set = api_instance.create_event_set_item(event_set, created.sampling_event_id)
 
@@ -482,8 +529,8 @@ class TestEventSets(TestBase):
             with pytest.raises(ApiException, status=404):
                 api_instance.delete_event_set_item(event_set, created.sampling_event_id)
 
+            self.delete_sampling_event(api_factory, os_created)
             api_instance.delete_event_set(event_set)
-            event_api_instance.delete_sampling_event(created.sampling_event_id)
 
         except ApiException as error:
             self.check_api_exception(api_factory, "EventSetsApi->create_event_set", error)

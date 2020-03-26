@@ -1,12 +1,13 @@
-import openapi_client
-from openapi_client.rest import ApiException
-
-from test_base import TestBase
 from datetime import date
 import urllib
 
 import uuid
 import pytest
+
+import openapi_client
+from openapi_client.rest import ApiException
+
+from test_base import TestBase
 
 class TestOriginalSample(TestBase):
 
@@ -27,6 +28,7 @@ class TestOriginalSample(TestBase):
             fetched = api_instance.download_original_sample(created.original_sample_id)
             assert created == fetched, "create response != download response"
             fetched.original_sample_id = None
+            fetched.version = None
             assert samp == fetched, "upload != download response"
             api_instance.delete_original_sample(created.original_sample_id)
 
@@ -50,6 +52,7 @@ class TestOriginalSample(TestBase):
             fetched = api_instance.download_original_sample(created.original_sample_id)
             assert created == fetched, "create response != download response"
             fetched.original_sample_id = None
+            fetched.version = None
             assert samp == fetched, "upload != download response"
             api_instance.delete_original_sample(created.original_sample_id)
 
@@ -213,6 +216,8 @@ class TestOriginalSample(TestBase):
             ]
             created = api_instance.create_original_sample(samp)
             results = api_instance.download_original_samples_by_attr('oxford', '123456')
+
+            assert results.count == 1
             looked_up = results.original_samples[0]
 
             fetched = api_instance.download_original_sample(looked_up.original_sample_id)
@@ -224,6 +229,7 @@ class TestOriginalSample(TestBase):
             assert ffetched == results
 
             fetched.original_sample_id = None
+            fetched.version = None
             assert samp == fetched, "upload != download response"
 
             api_instance.delete_original_sample(created.original_sample_id)
@@ -240,13 +246,15 @@ class TestOriginalSample(TestBase):
 
         try:
 
-            sampling_event = openapi_client.SamplingEvent(None, date(2017, 10, 10),
+            sampling_event = openapi_client.SamplingEvent(None, doc=date(2017, 10, 10),
                                                           doc_accuracy='month')
 
             created_se = se_api_instance.create_sampling_event(sampling_event)
             samp = openapi_client.OriginalSample(None, study_name='4022-MD-UP')
             samp.attrs = [
-                openapi_client.Attr (attr_type='partner_id', attr_value='123456')
+                openapi_client.Attr(attr_type='partner_id',
+                                    attr_value='123456',
+                                    study_name='4022-MD-UP')
             ]
             samp.sampling_event_id = created_se.sampling_event_id
 
@@ -335,10 +343,12 @@ class TestOriginalSample(TestBase):
             looked_up = api_instance.download_original_samples_by_attr('oxford', '1234567')
             looked_up = looked_up.original_samples[0]
             new_samp = openapi_client.OriginalSample(None, study_name='0001-MD-UP')
+            new_samp.original_sample_id = looked_up.original_sample_id
+            new_samp.version = looked_up.version
             updated = api_instance.update_original_sample(looked_up.original_sample_id, new_samp)
             fetched = api_instance.download_original_sample(looked_up.original_sample_id)
             assert updated == fetched, "update response != download response"
-            fetched.original_sample_id = None
+            new_samp.version = fetched.version
             assert new_samp == fetched, "update != download response"
             api_instance.delete_original_sample(looked_up.original_sample_id)
 
@@ -363,10 +373,12 @@ class TestOriginalSample(TestBase):
             new_samp = openapi_client.OriginalSample(None,
                                                      study_name='0001-MD-UP',
                                                      acc_date=date(2017, 10, 10))
+            new_samp.original_sample_id = looked_up.original_sample_id
+            new_samp.version = looked_up.version
             updated = api_instance.update_original_sample(looked_up.original_sample_id, new_samp)
             fetched = api_instance.download_original_sample(looked_up.original_sample_id)
             assert updated == fetched, "update response != download response"
-            fetched.original_sample_id = None
+            new_samp.version = fetched.version
             assert new_samp == fetched, "update != download response"
             api_instance.delete_original_sample(looked_up.original_sample_id)
 
@@ -395,6 +407,8 @@ class TestOriginalSample(TestBase):
                                      attr_source='upd')
             ]
             new_created = api_instance.create_original_sample(new_samp)
+            new_samp.original_sample_id = looked_up.original_sample_id
+            new_samp.version = looked_up.version
             with pytest.raises(ApiException, status=422):
                 updated = api_instance.update_original_sample(looked_up.original_sample_id, new_samp)
 
@@ -447,6 +461,8 @@ class TestOriginalSample(TestBase):
 
             assert created == fetched, "create response != download response"
             fetched.original_sample_id = None
+            fetched.version = None
+
             assert samp == fetched, "upload != download response"
 
             results = api_instance.download_original_samples_by_attr('partner_id',
@@ -456,6 +472,7 @@ class TestOriginalSample(TestBase):
 
             assert created == fetched, "create response != download response"
             fetched.original_sample_id = None
+            fetched.version = None
             assert samp == fetched, "upload != download response"
 
             ffetched = api_instance.download_original_samples(search_filter=urllib.parse.quote_plus('attr:partner_id:' + test_id))
@@ -477,7 +494,7 @@ class TestOriginalSample(TestBase):
         try:
             study_code = '4020-MD-UP'
 
-            sampling_event = openapi_client.SamplingEvent(None, date(2017, 10, 10),
+            sampling_event = openapi_client.SamplingEvent(None, doc=date(2017, 10, 10),
                                                           doc_accuracy='month')
 
             created_se = se_api_instance.create_sampling_event(sampling_event)
@@ -545,6 +562,7 @@ class TestOriginalSample(TestBase):
             assert ffetched == fetched
 
             fetched.original_samples[0].partner_taxonomies = None
+            created.partner_taxonomies = None
 
             assert created == fetched.original_samples[0], "create response != download response"
 
@@ -698,7 +716,7 @@ class TestOriginalSample(TestBase):
 
         try:
 
-            sampling_event = openapi_client.SamplingEvent(None, date(2017, 10, 10),
+            sampling_event = openapi_client.SamplingEvent(None, doc=date(2017, 10, 10),
                                                           doc_accuracy='month')
             loc = openapi_client.Location(None, latitude=27.463,
                                           longitude=90.495, accuracy='city',
@@ -735,6 +753,7 @@ class TestOriginalSample(TestBase):
             assert ffetched == results
 
             fetched.original_sample_id = None
+            fetched.version = None
             assert samp == fetched, "upload != download response"
 
             se_api_instance.delete_sampling_event(created_se.sampling_event_id)
@@ -761,7 +780,7 @@ class TestOriginalSample(TestBase):
 
             created_es = es_api_instance.create_event_set(event_set_name)
 
-            sampling_event = openapi_client.SamplingEvent(None, date(2017, 10, 10),
+            sampling_event = openapi_client.SamplingEvent(None, doc=date(2017, 10, 10),
                                                           doc_accuracy='month')
 
             created_se = se_api_instance.create_sampling_event(sampling_event)
@@ -787,6 +806,8 @@ class TestOriginalSample(TestBase):
 
             assert results.attr_types == ['oxford']
 
+            es_api_instance.delete_event_set_item(event_set_name,
+                                                  created_se.sampling_event_id)
             se_api_instance.delete_sampling_event(created_se.sampling_event_id)
 
             es_api_instance.delete_event_set(event_set_name)
@@ -809,7 +830,7 @@ class TestOriginalSample(TestBase):
 
         try:
 
-            sampling_event = openapi_client.SamplingEvent(None, date(2017, 10, 10),
+            sampling_event = openapi_client.SamplingEvent(None, doc=date(2017, 10, 10),
                                                           doc_accuracy='month')
             loc = openapi_client.Location(None, latitude=27.463, longitude=90.495,
                                           accuracy='city',
@@ -851,6 +872,7 @@ class TestOriginalSample(TestBase):
             assert ffetched == results
 
             fetched.original_sample_id = None
+            fetched.version = None
             assert samp1 == fetched, "upload != download response"
 
             se_api_instance.delete_sampling_event(created_se.sampling_event_id)
@@ -890,7 +912,7 @@ class TestOriginalSample(TestBase):
 
         try:
 
-            sampling_event = openapi_client.SamplingEvent(None, date(2017, 10, 10),
+            sampling_event = openapi_client.SamplingEvent(None, doc=date(2017, 10, 10),
                                                           doc_accuracy='month')
 
             created_se = se_api_instance.create_sampling_event(sampling_event)
@@ -915,6 +937,9 @@ class TestOriginalSample(TestBase):
 
             fetched = api_instance.download_original_sample(looked_up.original_sample_id)
 
+            assert created.partner_taxonomies[0].taxonomy_id == fetched.partner_taxonomies[0].taxonomy_id
+            created.partner_taxonomies = []
+            fetched.partner_taxonomies = []
             assert created == fetched, "create response != download response"
 
             assert results.attr_types == ['oxford']
@@ -924,7 +949,9 @@ class TestOriginalSample(TestBase):
             assert ffetched == results
 
             fetched.original_sample_id = None
+            fetched.version = None
 
+            samp.partner_taxonomies = []
             assert samp == fetched, "upload != download response"
 
             for original_sample in results.original_samples:
@@ -943,7 +970,7 @@ class TestOriginalSample(TestBase):
 
         try:
 
-            study_codes = [ '4031-MD-UP', '4032-MD-UP', '4033-MD-UP', '4034-MD-UP', '4034-MD-UP']
+            study_codes = ['4031-MD-UP', '4032-MD-UP', '4033-MD-UP', '4034-MD-UP', '4034-MD-UP']
 
             for study_code in study_codes:
                 samp1 = openapi_client.OriginalSample(None,
@@ -951,14 +978,14 @@ class TestOriginalSample(TestBase):
                                                       partner_species='PF')
                 created1 = api_instance.create_original_sample(samp1)
                 study_detail = study_api.download_study(study_code)
-                study_detail.partner_species[0].taxa = [ openapi_client.Taxonomy(taxonomy_id=5833) ]
+                study_detail.partner_species[0].taxa = [openapi_client.Taxonomy(taxonomy_id=5833)]
                 study_api.update_study(study_code, study_detail)
 
             results = api_instance.download_original_samples_by_taxa(5833,
                                                                      start=0,
                                                                      count=2)
 
-            assert results.count == 5
+            assert results.count == len(study_codes)
             assert len(results.original_samples) == 2
 
             looked_up = results.original_samples[0]
@@ -1063,25 +1090,6 @@ class TestOriginalSample(TestBase):
         except ApiException as error:
             self.check_api_exception(api_factory, "OriginalSampleApi->create_original_sample", error)
 
-    """
-    """
-    def test_os_merge_study1(self, api_factory):
-
-        api_instance = api_factory.OriginalSampleApi()
-
-        try:
-
-            samp1, samp2 = self.get_merge_samples()
-
-            samp1.study_name = '0000 default'
-            created1 = api_instance.create_original_sample(samp1)
-            created2 = api_instance.create_original_sample(samp2)
-
-            api_instance.delete_original_sample(created1.original_sample_id)
-
-
-        except ApiException as error:
-            self.check_api_exception(api_factory, "OriginalSampleApi->create_original_sample", error)
 
     """
     """
@@ -1312,22 +1320,22 @@ class TestOriginalSample(TestBase):
 
     def get_merge_events(self):
 
-            #Uses partner_id because only partner_id and individual_id are allowed to
-            #have the same value assigned to different sampling events
-            samp1 = openapi_client.SamplingEvent(None, date(2017, 10, 16))
-            samp1.attrs = [
-                openapi_client.Attr (attr_type='partner_id', attr_value='mrg1-12345678',
-                                     attr_source='mrg')
-            ]
-            samp1.doc_accuracy = 'day'
-            samp2 = openapi_client.SamplingEvent(None, date(2017, 10, 16))
-            samp2.attrs = [
-                openapi_client.Attr (attr_type='partner_id', attr_value='mrg2-12345678',
-                                     attr_source='mrg')
-            ]
-            samp2.doc_accuracy = 'day'
+        #Uses partner_id because only partner_id and individual_id are allowed to
+        #have the same value assigned to different sampling events
+        samp1 = openapi_client.SamplingEvent(None, doc=date(2017, 10, 16))
+        samp1.attrs = [
+            openapi_client.Attr(attr_type='partner_id', attr_value='mrg1-12345678',
+                                attr_source='mrg')
+        ]
+        samp1.doc_accuracy = 'day'
+        samp2 = openapi_client.SamplingEvent(None, doc=date(2017, 10, 16))
+        samp2.attrs = [
+            openapi_client.Attr(attr_type='partner_id', attr_value='mrg2-12345678',
+                                 attr_source='mrg')
+        ]
+        samp2.doc_accuracy = 'day'
 
-            return samp1, samp2
+        return samp1, samp2
 
     """
     """
@@ -1353,8 +1361,10 @@ class TestOriginalSample(TestBase):
             created1 = api_instance.create_original_sample(samp1)
             created2 = api_instance.create_original_sample(samp2)
 
-            ds_samp1 = openapi_client.DerivativeSample(None)
-            ds_samp2 = openapi_client.DerivativeSample(None)
+            ds_samp1 = openapi_client.DerivativeSample(None,
+                                                      original_sample_id=created1.original_sample_id)
+            ds_samp2 = openapi_client.DerivativeSample(None,
+                                                      original_sample_id=created1.original_sample_id)
 
             ds_samp1.attrs = [
                 openapi_client.Attr (attr_type='test1', attr_value='test1',
@@ -1364,8 +1374,6 @@ class TestOriginalSample(TestBase):
                 openapi_client.Attr (attr_type='test2', attr_value='test2',
                                      attr_source='ds_os_attr')
             ]
-            ds_samp1.original_sample_id = created1.original_sample_id
-            ds_samp2.original_sample_id = created2.original_sample_id
             ds_created1 = ds_api_instance.create_derivative_sample(ds_samp1)
             ds_created2 = ds_api_instance.create_derivative_sample(ds_samp2)
 
@@ -1629,7 +1637,7 @@ class TestOriginalSample(TestBase):
             old_study = '4037-MD-UP'
             new_study = '4038-MD-UP'
 
-            sampling_event = openapi_client.SamplingEvent(None, date(2017, 10, 10),
+            sampling_event = openapi_client.SamplingEvent(None, doc=date(2017, 10, 10),
                                                           doc_accuracy='month')
             loc = openapi_client.Location(None, latitude=27.463,
                                           longitude=90.495,
@@ -1679,10 +1687,62 @@ class TestOriginalSample(TestBase):
             assert fetched_i.attrs[1].study_name == looked_up.study_name
 
             se_api_instance.delete_sampling_event(created_se.sampling_event_id)
-            with pytest.raises(ApiException, status=404):
-                indiv_api_instance.delete_individual(individual.individual_id)
+            indiv_api_instance.delete_individual(individual.individual_id)
             location_api_instance.delete_location(loc.location_id)
             api_instance.delete_original_sample(looked_up.original_sample_id)
 
         except ApiException as error:
             self.check_api_exception(api_factory, "OriginalSampleApi->create_original_sample", error)
+
+    """
+    """
+    def test_os_attr_duck_lookup(self, api_factory):
+
+        api_instance = api_factory.OriginalSampleApi()
+
+        created = None
+        try:
+            from decimal import Decimal
+            from datetime import date
+            samp = openapi_client.OriginalSample(None, study_name='4039-MD-UP')
+            samp.attrs = [
+                openapi_client.Attr(attr_type='oxford_str', attr_value='123456'),
+                openapi_client.Attr(attr_type='oxford_int', attr_value=12345),
+                openapi_client.Attr(attr_type='oxford_float', attr_value=123.45)
+                # openapi_client.Attr(attr_type='oxford_list_int', attr_value=[1, 2, 3, 4, 5])
+                # Date does work but response is string not date object
+                # openapi_client.Attr(attr_type='oxford_date', attr_value=date(2020, 3, 13))
+                # Doesn't serialize
+                # openapi_client.Attr(attr_type='oxford_Decimal', attr_value=Decimal(1234.5))
+            ]
+            created = api_instance.create_original_sample(samp)
+
+            for attr in samp.attrs:
+                results = api_instance.download_original_samples_by_attr(attr.attr_type,
+                                                                         attr.attr_value)
+
+                assert results.count == 1
+                looked_up = results.original_samples[0]
+                assert looked_up == created
+
+                fetched = api_instance.download_original_sample(looked_up.original_sample_id)
+
+                assert created == fetched, "create response != download response"
+
+                value_type = attr.attr_type.split('_')[1]
+                ffetched = api_instance.download_original_samples(search_filter=f'attr:{attr.attr_type}:{attr.attr_value}',
+                                                                  value_type=value_type)
+
+                assert ffetched == results
+
+                fetched.original_sample_id = None
+                fetched.version = None
+                assert samp == fetched, f"upload {samp} != download response {fetched}"
+
+            # api_instance.delete_original_sample(created.original_sample_id)
+
+        except ApiException as error:
+            self.check_api_exception(api_factory, "OriginalSampleApi->create_original_sample", error)
+
+        if created:
+            api_instance.delete_original_sample(created.original_sample_id)

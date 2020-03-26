@@ -1,0 +1,85 @@
+components:
+  schemas:
+    ManifestItems:
+      type: object
+      properties:
+        manifest_items:
+          type: array
+          items:
+            $ref: '#/components/schemas/ManifestItem'
+        attr_types:
+            type: array
+            items:
+              type: string
+              description: 'Attr types used in this set of sampling events'
+        count:
+          type: integer
+          description: Used when pagination is applied to return the number of results
+    ManifestItem:
+      type: object
+      properties:
+        manifest_item_id:
+          type: string
+  #        format: uuid
+        version:
+          type: integer
+        original_sample_id:
+          type: string
+  #        format: uuid
+        original_sample_version:
+          type: integer
+        original_sample:
+          $ref: './original_sample.yaml#/components/schemas/OriginalSample'
+          readOnly: true
+          #        derivative_samples:
+          #$ref: './derivative_sample.yaml#/components/schemas/DerivativeSamples'
+        assay_data:
+          description: Assay data - also contains derivative samples as map
+          readOnly: true
+          $ref: './assay_data.yaml#/components/schemas/AssayData'
+        created_by:
+          type: string
+          readOnly: true
+        attrs:
+          type: array
+          items:
+              $ref: './attr.yaml#/components/schemas/Attr'
+    ManifestNote:
+      type: object
+      required:
+          - note_name
+      properties:
+        note_name:
+          type: string
+        note_text:
+          type: string
+    Manifest:
+      type: object
+      properties:
+        manifest_name:
+          type: string
+        manifest_type:
+          type: string
+        version:
+          type: integer
+          readOnly: true
+        manifest_date:
+          type: string
+          format: date
+        studies:
+          $ref: './studies.yaml#/components/schemas/Studies'
+          readOnly: true
+        members:
+          $ref: '#/components/schemas/ManifestItems'
+          readOnly: true
+        notes:
+          type: array
+          items:
+            $ref: '#/components/schemas/ManifestNote'
+    Manifests:
+      type: object
+      properties:
+        manifests:
+          type: array
+          items:
+            $ref: '#/components/schemas/Manifest'

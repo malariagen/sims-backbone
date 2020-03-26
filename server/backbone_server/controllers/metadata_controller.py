@@ -93,7 +93,7 @@ class MetadataController(BaseController):
 
         return country, retcode
 
-    def get_attr_types(self, user=None, auths=None):  # noqa: E501
+    def get_attr_types(self, parent_type=None, user=None, auths=None):  # noqa: E501
         """fetches all the attr types
 
         returns all attr types in use # noqa: E501
@@ -103,7 +103,7 @@ class MetadataController(BaseController):
         """
         get = AttrTypesGet(self.get_connection())
 
-        ident_types = get.get('attrs')
+        ident_types = get.get(parent_type)
 
         return ident_types, 200
 
@@ -118,7 +118,7 @@ class MetadataController(BaseController):
 
         get = AttrTypesGet(self.get_connection())
 
-        ident_types = get.get('location_attrs')
+        ident_types = get.get('loc')
 
         return ident_types, 200
 

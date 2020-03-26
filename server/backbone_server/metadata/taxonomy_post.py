@@ -19,15 +19,14 @@ class TaxonomyPost():
         with self._connection:
             with self._connection.cursor() as cursor:
 
-                stmt = '''INSERT INTO taxonomies (id, rank, name) VALUES (%s, %s, %s)'''
-                cursor.execute( stmt, (taxa.taxonomy_id, taxa.rank, taxa.name))
+                stmt = '''INSERT INTO taxonomy (id, rank, name) VALUES (%s, %s, %s)'''
+                cursor.execute(stmt, (taxa.taxonomy_id, taxa.rank, taxa.name))
 
-                stmt = '''SELECT id, rank, name FROM taxonomies WHERE id = %s'''
-                cursor.execute( stmt, (taxa.taxonomy_id,))
+                stmt = '''SELECT id, rank, name FROM taxonomy WHERE id = %s'''
+                cursor.execute(stmt, (taxa.taxonomy_id,))
                 for (tid, trank, tname) in cursor:
                     ret.taxonomy_id = tid
                     ret.rank = trank
                     ret.name = tname
 
         return ret
-

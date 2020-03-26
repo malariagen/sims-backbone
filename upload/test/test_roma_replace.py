@@ -33,12 +33,15 @@ class TestROMAReplace(TestBase):
     @classmethod
     def tearDownClass(self):
 
-        TestBase.deleteStudies(['9030','9032','9033'], TestROMAReplace._locations)
+        looked_up = TestBase.getDAO().download_derivative_samples_by_os_attr('roma_id', 'TST00001')
 
-        TestBase.tearDownLocations(TestROMAReplace._locations)
+        for derived_sample in looked_up.derivative_samples:
+            TestBase.getDAO().delete_derivative_sample(derived_sample.derivative_sample_id)
 
-        TestBase.deleteEventSets(['roma_dump', 'roma_MNF00002'],
+        TestBase.deleteEventSets(['roma_dump', 'roma_MNF00002', 'roma_MNF00003'],
                                  TestROMAReplace._locations)
+        TestBase.deleteStudies(['9030', '9032', '9033'], TestROMAReplace._locations)
+        TestBase.tearDownLocations(TestROMAReplace._locations)
 
 
 
@@ -58,6 +61,4 @@ class TestROMAReplace(TestBase):
 
         except ApiException as error:
             self.fail("test_species: Exception when calling download_sampling_event_by_os_attr {}"
-                        .format(error))
-
-
+                      .format(error))

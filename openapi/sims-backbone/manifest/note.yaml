@@ -1,0 +1,76 @@
+    post:
+      tags:
+        - manifest
+      summary: Adds a note to an manifest
+      description: ""
+      operationId: createManifestNote
+      parameters:
+        - name: manifest_id
+          in: path
+          description: ID of manifest to modify
+          required: true
+          schema:
+            type: string
+        - name: note_id
+          in: path
+          description: ID of note to modify in the set
+          required: true
+          schema:
+            type: string
+      requestBody:
+        $ref: "./sims-backbone.yaml#/components/requestBodies/ManifestNote"
+      responses:
+        "201":
+          description: successful operation
+        "401":
+          description: Manifest or samplingEvent not found
+    put:
+      tags:
+        - manifest
+      summary: Adds a note to an manifest
+      description: ""
+      operationId: updateManifestNote
+      parameters:
+        - name: manifest_id
+          in: path
+          description: ID of manifest to modify
+          required: true
+          schema:
+            type: string
+        - name: note_id
+          in: path
+          description: ID of note to modify in the set
+          required: true
+          schema:
+            type: string
+      requestBody:
+        $ref: "./sims-backbone.yaml#/components/requestBodies/ManifestNote"
+      responses:
+        "200":
+          description: successful operation
+        "404":
+          description: Manifest not found
+    delete:
+      tags:
+        - manifest
+      summary: deletes an manifest note
+      description: ""
+      operationId: deleteManifestNote
+      parameters:
+        - name: manifest_id
+          in: path
+          description: ID of manifest to modify
+          required: true
+          schema:
+            type: string
+        - name: note_id
+          in: path
+          description: ID of note to remove from the set
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: successful operation
+        "404":
+          description: Manifest or note not found

@@ -61,7 +61,7 @@ class LocalSamplingEventApi(BaseLocalApi):
 
         return self.create_response(ret, retcode, 'SamplingEvent')
 
-    def download_sampling_events(self, search_filter=None, studies=None, start=None, count=None):
+    def download_sampling_events(self, search_filter=None, value_type=None, start=None, count=None, studies=None):
         """
         fetches an samplingEvent
 
@@ -71,6 +71,7 @@ class LocalSamplingEventApi(BaseLocalApi):
         :rtype: SamplingEvent
         """
         (ret, retcode) = self.sampling_event_controller.download_sampling_events(search_filter,
+                                                                                 value_type=value_type,
                                                                                  start=start,
                                                                                  count=count, studies=studies, user=self._user,
                                                                                  auths=self.sampling_event_controller.token_info(self.auth_tokens()))
@@ -97,7 +98,8 @@ class LocalSamplingEventApi(BaseLocalApi):
         return self.create_response(ret, retcode, 'SamplingEvents')
 
     def download_sampling_events_by_attr(self, prop_name, prop_value,
-                                         study_name=None, studies=None):
+                                         study_name=None, value_type=None,
+                                         start=None, count=None, studies=None):
         """
         fetches a samplingEvent by property value
 
@@ -110,13 +112,18 @@ class LocalSamplingEventApi(BaseLocalApi):
         """
         (ret, retcode) = self.sampling_event_controller.download_sampling_events_by_attr(prop_name, prop_value,
                                                                                          study_name,
+                                                                                         value_type=value_type,
+                                                                                         start=start,
+                                                                                         count=count,
                                                                                          studies=studies, user=self._user,
                                                                                          auths=self.sampling_event_controller.token_info(self.auth_tokens()))
 
         return self.create_response(ret, retcode, 'SamplingEvents')
 
     def download_sampling_events_by_os_attr(self, prop_name, prop_value,
-                                            study_name=None, studies=None):
+                                            study_name=None,
+                                            value_type=None, start=None,
+                                            count=None, studies=None):
         """
         fetches a samplingEvent by property value
 
@@ -129,6 +136,9 @@ class LocalSamplingEventApi(BaseLocalApi):
         """
         (ret, retcode) = self.sampling_event_controller.download_sampling_events_by_os_attr(prop_name, prop_value,
                                                                                             study_name,
+                                                                                            value_type=value_type,
+                                                                                            start=start,
+                                                                                            count=count,
                                                                                             studies=studies, user=self._user,
                                                                                             auths=self.sampling_event_controller.token_info(self.auth_tokens()))
 

@@ -10,6 +10,41 @@ import time
 
 class Upload_ROMA(uploader.Uploader):
 
+    def clean_up_manifests(self, instance, items, max_manifest, max_location):
+
+        original_samples_to_delete = []
+        sampling_events_to_delete = []
+        event_sets_to_delete = []
+        for manifest_id in range(1, max_manifest + 1):
+            if manifest_id not in items['samples.manifest']:
+                event_set_name = f'{instance}_MNF{str(manifest_id).zfill(5)}'
+                try:
+                    samples = self._dao.download_original_samples_by_event_set(event_set_name)
+                    for sample in samples.original_samples:
+                        original_samples_to_delete.append(sample.original_sample_id)
+                        if sample.sampling_event_id not in sampling_events_to_delete:
+                            sampling_events_to_delete.append(sample.sampling_event_id)
+                    samples = self._dao.download_sampling_events_by_event_set(event_set_name)
+                    for sample in samples.sampling_events:
+                        if sample.sampling_event_id not in sampling_events_to_delete:
+                            sampling_events_to_delete.append(sample)
+                    event_sets_to_delete.append(event_set_name)
+                except ApiException as e:
+                    print(e)
+                    pass #Already gone
+
+        locations_to_delete = []
+        for location_id in range(1, max_location + 1):
+            if location_id not in items['locations.location']:
+                location_name = f'{instance}_loc_{location_id}'
+                locations = self._dao.download_locations_by_attr('src_location_id',
+                                                                 location_name)
+                for location in locations.locations:
+                    if location.location_id not in locations_to_delete:
+                        locations_to_delete.append(location.location_id)
+
+        return original_samples_to_delete, sampling_events_to_delete, event_sets_to_delete, locations_to_delete
+
     def load_data_file(self, filename):
 
         self.setup(filename)
@@ -45,31 +80,12 @@ class Upload_ROMA(uploader.Uploader):
                     items['sample_well'][sample_id] = [item]
 
 
-
-        for manifest_id in range(1, max_manifest + 1):
-            if manifest_id not in items['samples.manifest']:
-                event_set_name = f'{instance}_MNF{str(manifest_id).zfill(5)}'
-                try:
-                    samples = self._dao.download_original_samples_by_event_set(event_set_name)
-                    for sample in samples.original_samples:
-                        self._dao.delete_original_sample(sample.original_sample_id)
-                    samples = self._dao.download_sampling_events_by_event_set(event_set_name)
-                    for sample in samples.sampling_events:
-                        self._dao.delete_sampling_event(sample.sampling_event_id)
-                    self._dao.delete_event_set(event_set_name)
-                except ApiException as e:
-                    pass #Already gone
-
-        for location_id in range(1, max_location + 1):
-            if location_id not in items['locations.location']:
-                location_name = f'{instance}_loc_{location_id}'
-                try:
-                    locations = self._dao.download_locations_by_attr('src_location_id',
-                                                                     location_name)
-                    for location in locations.locations:
-                        self._dao.delete_location(location.location_id)
-                except ApiException as e:
-                    pass #Already gone
+        original_samples_to_delete, sampling_events_to_delete, event_sets_to_delete, locations_to_delete = self.clean_up_manifests(instance, items,
+                                                                                                                                   max_manifest,
+                                                                                                                                   max_location)
+        self.delete_items(original_samples_to_delete,
+                          sampling_events_to_delete, event_sets_to_delete,
+                          locations_to_delete)
 
         proxy_locations = {}
 
@@ -204,6 +220,31 @@ class Upload_ROMA(uploader.Uploader):
                 #print(sampling_event)
 
                 self.validate(values, sampling_event)
+
+    def delete_items(self, original_samples_to_delete,
+                     sampling_events_to_delete, event_sets_to_delete,
+                     locations_to_delete):
+        # Need to do after processing otherwise sampling event may still
+        # reference location
+        for original_sample_id in original_samples_to_delete:
+            sample = self._dao.download_original_sample(original_sample_id)
+            if sample.sampling_event_id not in sampling_events_to_delete:
+                sampling_events_to_delete.append(sample.sampling_event_id)
+            self._dao.delete_original_sample(original_sample_id)
+        for sampling_event_id in sampling_events_to_delete:
+            sample = self._dao.download_sampling_event(sampling_event_id)
+            for event_set_name in sample.event_sets:
+                self._dao.delete_event_set_item(event_set_name,
+                                                sample.sampling_event_id)
+            self._dao.delete_sampling_event(sample.sampling_event_id)
+        for event_set_name in event_sets_to_delete:
+            self._dao.delete_event_set(event_set_name)
+        for location_id in locations_to_delete:
+            try:
+                self._dao.delete_location(location_id)
+            except ApiException as e:
+                print(e)
+                pass
 
 
     def validate(self, input_values, output_values):

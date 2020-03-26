@@ -31,7 +31,7 @@ export class SamplingEventDisplayPipe implements PipeTransform {
         const location: Location = locations[value.location_id];
         if (location.attrs) {
           location.attrs.forEach(ident => {
-            const ident_value = ident.attr_value;
+            const ident_value = String(ident.attr_value);
             if (studyId) {
               if ((studyId && (ident.study_name === studyId))) {
                 ret = ident_value;
@@ -47,12 +47,12 @@ export class SamplingEventDisplayPipe implements PipeTransform {
       value.attrs.forEach(ident => {
         if (ident.attr_type === key) {
           if (ret === '') {
-            ret = ident.attr_value;
+            ret = String(ident.attr_value);
           } else {
             const ids: Array<String> = ret.split(';');
             // Avoid duplicates from different sources
-            if (!ids.includes(ident.attr_value)) {
-              ret = [ret, ident.attr_value].join(';');
+            if (!ids.includes(String(ident.attr_value))) {
+              ret = [ret, String(ident.attr_value)].join(';');
             }
           }
         }

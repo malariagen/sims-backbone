@@ -22,7 +22,7 @@ class TestReport(TestBase):
 
         try:
 
-            sampling_event = openapi_client.SamplingEvent(None, date(2017, 10, 10),
+            sampling_event = openapi_client.SamplingEvent(None, doc=date(2017, 10, 10),
                                                           doc_accuracy='month')
             loc = openapi_client.Location(None, latitude=27.463,
                                           longitude=90.495,
@@ -96,7 +96,7 @@ class TestReport(TestBase):
                 fetched.location_id = None
                 se_api_instance.update_sampling_event(data.sampling_event_id,
                                                       fetched)
-                missing_locations = api_instance.missing_locations()
+                missing_locations = api_instance.missing_locations(include_country=True)
 
                 assert missing_locations.studies[0].name == data.study_name
 
@@ -120,7 +120,7 @@ class TestReport(TestBase):
                 fetched = se_api_instance.download_sampling_event(data.sampling_event_id)
                 fetched = loc_api_instance.download_location(fetched.location_id)
                 fetched.country = None
-                loc_api_instance.update_location(fetched.location_id,
+                upd = loc_api_instance.update_location(fetched.location_id,
                                                  fetched)
                 missing_locations = api_instance.uncurated_locations()
 
@@ -174,6 +174,7 @@ class TestReport(TestBase):
                 fetched = se_api_instance.download_sampling_event(data.sampling_event_id)
                 fetched = loc_api_instance.download_location(fetched.location_id)
                 fetched.attrs[0].attr_value = 'second name'
+                fetched.location_id = None
                 new = loc_api_instance.create_location(fetched)
                 multiple_locations = api_instance.multiple_location_gps()
                 assert multiple_locations.studies[0].name == data.study_name
@@ -201,6 +202,7 @@ class TestReport(TestBase):
                 fetched = loc_api_instance.download_location(fetched.location_id)
                 fetched.latitude = 27.4631
                 fetched.longitude = 90.4951
+                fetched.location_id = None
                 new = loc_api_instance.create_location(fetched)
                 multiple_locations = api_instance.multiple_location_names()
                 assert multiple_locations.studies[0].name == data.study_name
@@ -224,7 +226,9 @@ class TestReport(TestBase):
             for data in self.create_report_data(api_factory):
                 missing_taxa = api_instance.missing_taxon()
 
-                assert missing_taxa.studies[0].name == data.study_name
+                studies = [d.name for d in missing_taxa.studies]
+
+                assert data.study_name in studies
 
                 if not api_factory.is_authorized(None):
                     pytest.fail('Unauthorized call to missing_taxon succeeded')

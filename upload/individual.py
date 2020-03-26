@@ -15,6 +15,19 @@ class IndividualProcessor(BaseEntity):
     def __init__(self, dao, event_set):
         super().__init__(dao, event_set)
         self._logger = logging.getLogger(__name__)
+        self._lookup_attrs = [
+            'patient_id',
+            'donor_source_code'
+        ]
+        self.attrs = [
+            {
+                'from': 'patient_id'
+            },
+            {
+                'from': 'donor_source_code'
+            }
+        ]
+
 
 
     def create_individual_from_values(self, values):
@@ -24,19 +37,7 @@ class IndividualProcessor(BaseEntity):
 
         o_sample = openapi_client.Individual(None)
 
-        idents = []
-        if 'patient_id' in values and values['patient_id']:
-            idents.append(openapi_client.Attr('patient_id',
-                                              str(values['patient_id']),
-                                              study_name=study_id,
-                                              attr_source=self._event_set))
-
-        if 'donor_source_code' in values and values['donor_source_code']:
-            idents.append(openapi_client.Attr('donor_source_code',
-                                              str(values['donor_source_code']),
-                                              study_name=study_id,
-                                              attr_source=self._event_set))
-        o_sample.attrs = idents
+        o_sample.attrs = self.attrs_from_values(values)
 
         return o_sample
 
@@ -58,6 +59,9 @@ class IndividualProcessor(BaseEntity):
         if samp.attrs:
             #print("Checking attrs {}".format(samp.attrs))
             for ident in samp.attrs:
+
+                if ident.attr_type not in self._lookup_attrs:
+                    continue
                 try:
                     #print("Looking for {} {}".format(ident.attr_type, ident.attr_value))
 
@@ -67,7 +71,7 @@ class IndividualProcessor(BaseEntity):
                     for found in found_events.individuals:
 
                         if existing and existing.individual_id != found.individual_id:
-                            msg = ("Merging into {} using {}".format(existing.sampling_event_id,
+                            msg = ("Merging into {} using {}".format(existing.individual_id,
                                                                      ident.attr_type), values)
                             #print(msg)
                             found = self.merge_individuals(existing, found, values)

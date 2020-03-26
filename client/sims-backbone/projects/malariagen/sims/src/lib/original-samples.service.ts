@@ -13,7 +13,7 @@ export class OriginalSamplesService {
   findOriginalSamples(filter = '', sortOrder = 'asc',
     pageNumber = 0, pageSize = 3): Observable<OriginalSamples> {
 
-    return this.sampleService.downloadOriginalSamples(filter, pageNumber * pageSize, pageSize);
+    return this.sampleService.downloadOriginalSamples(filter, 'str', pageNumber * pageSize, pageSize);
 
   }
 }

@@ -21,12 +21,12 @@ def roma_03():
     yield el.message_buffer
 
     locations = []
+
+    TestBase.deleteEventSets(['roma3_dump', 'roma3_MNF00004'],
+                             locations)
     TestBase.deleteStudies(['3030'], locations)
 
     TestBase.tearDownLocations(locations)
-
-    TestBase.deleteEventSets(['roma3_MNF00004'],
-                             locations)
 
 """
 """

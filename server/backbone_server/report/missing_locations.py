@@ -1,44 +1,33 @@
 
 import logging
 
-from openapi_server.models.studies import Studies
-from backbone_server.study.fetch import StudyFetch
+from sqlalchemy.sql import text
+from backbone_server.model.scope import session_scope
+
+from backbone_server.report.base import BaseReport
 
 
-class MissingLocations():
+class MissingLocations(BaseReport):
 
-    def __init__(self, conn):
-        self._logger = logging.getLogger(__name__)
-        self._connection = conn
+    def get(self, include_country, studies):
 
+       with session_scope(self.session) as db:
 
-    def get(self, include_country):
+            stmt = text('''select distinct code, accuracy FROM sampling_event se
+            LEFT JOIN original_sample os ON os.sampling_event_id = se.id
+            LEFT JOIN study ON study.id = os.study_id
+            LEFT JOIN location ON location.id = location_id
+            WHERE location_id IS NULL OR location.accuracy = 'country';''')
 
-        response = Studies([],0)
+            result = self.engine.execute(stmt)
 
-        with self._connection:
-            with self._connection.cursor() as cursor:
+            report_studies = []
 
-                stmt = '''select distinct study_code, accuracy FROM sampling_events se
-                LEFT JOIN original_samples os ON os.sampling_event_id = se.id
-                LEFT JOIN studies ON studies.id = os.study_id
-                LEFT JOIN locations ON locations.id = location_id
-                WHERE location_id IS NULL OR locations.accuracy = 'country';'''
+            for (study_name, accuracy) in result:
+                if accuracy and accuracy == 'country':
+                    if include_country:
+                        report_studies.append(study_name)
+                else:
+                    report_studies.append(study_name)
 
-                cursor.execute(stmt)
-
-                studies = []
-
-                for (study_name, accuracy) in cursor:
-                    if accuracy and accuracy == 'country':
-                        if include_country:
-                            studies.append(study_name)
-                    else:
-                        studies.append(study_name)
-
-                for study_id in studies:
-                    study = StudyFetch.fetch(cursor, study_id)
-                    response.studies.append(study)
-                    response.count = response.count + 1
-
-        return response
+       return self.return_studies(report_studies, studies)

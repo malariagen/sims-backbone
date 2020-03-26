@@ -1,25 +1,25 @@
 <div *ngIf="taxonomies" class="grid grid-pad">
   <div *ngFor="let t of taxonomies">
     <div fxLayout="row">
-      <div fxFlex="10%">
+      <div fxFlex="15%">
         <a i18n="@@simsSamplingEvents" [routerLink]="['/taxa/events', t.taxonomy_id]">
           Sampling Events
         </a>
       </div>
-      <div fxFlex="10%">
+      <div fxFlex="15%">
         <a i18n="@@simsOriginalSamples" [routerLink]="['/taxa/os', t.taxonomy_id]">
-          Original Samples
+          {{ t.num_original_samples}} Original Samples
         </a>
       </div>
-      <div fxFlex="10%">
+      <div fxFlex="15%">
         <a i18n="@@simsDerivativeSamples" [routerLink]="['/taxa/ds', t.taxonomy_id]">
-          Derivative Samples
+          {{ t.num_derivative_samples}} Derivative Samples
         </a>
       </div>
       <div fxFlex="10%">
         {{t.rank}}
       </div>
-      <div fxFlex="60%">
+      <div fxFlex="45%">
         {{t.taxonomy_id}} {{t.name}}
       </div>
     </div>

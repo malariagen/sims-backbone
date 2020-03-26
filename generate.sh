@@ -1,4 +1,4 @@
-npm install -g @openapitools/openapi-generator-cli@cli-4.0.3 -D
+npm install -g @openapitools/openapi-generator-cli@cli-4.2.2 -D
 for i in "$@"
 do
 case $i in

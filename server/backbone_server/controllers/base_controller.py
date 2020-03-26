@@ -5,12 +5,22 @@ from psycopg2.extras import Json
 
 from openapi_server.encoder import JSONEncoder
 
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker, scoped_session
+
+from backbone_server.model.history_meta import versioned_session
+from backbone_server.model.archive import BaseArchive
 from backbone_server.errors.permission_exception import PermissionException
+
+from backbone_server.model.logging import *
+
+engine = None
 
 class BaseController():
 
     _connection = None
     _logger = None
+    _engine = None
 
     CREATE_PERMISSION = 'create'
     UPDATE_PERMISSION = 'update'
@@ -29,6 +39,12 @@ class BaseController():
 
     def get_connection(self):
         return self._connection
+
+    def get_engine(self):
+        return self._engine
+
+    def get_session(self):
+        return self._session
 
     def _init_connection(self):
         _postgres = True
@@ -52,6 +68,34 @@ class BaseController():
             conn = psycopg2.connect(
                 connection_factory=LoggingConnection, **config)
             conn.initialize(self._logger)
+
+            log = False
+            if os.getenv('SA_DEBUG'):
+                log = True
+            url = 'postgresql+psycopg2://' + config['user']
+            if config['password']:
+                url += ':' + config['password']
+            url += '@' + config['host']
+            url += ':' + config['port']
+            url += '/' + config['database']
+
+            global engine
+
+            if not engine:
+                engine = create_engine(url,
+                                       convert_unicode=True,
+                                       pool_pre_ping=True,
+                                       echo=log)
+            self._engine = engine
+            self._session = scoped_session(sessionmaker(autocommit=False,
+                                                        autoflush=False,
+                                                        bind=self._engine))
+
+            versioned_session(self._session)
+
+            # create the archive table
+            ba = BaseArchive(self._engine, self._session)
+            # https://docs.sqlalchemy.org/en/13/orm/extensions/automap.html
     #        cur = conn.cursor()
     #        cur.execute("SET search_path TO " + 'backbone,public,contrib')
     #        cur.close()
@@ -99,6 +143,10 @@ class BaseController():
 
         found = False
 
+        if isinstance(study_code, list):
+            for sc in study_code:
+                BaseController.has_study_permission(studies, sc, perm_type)
+            return True
         if studies is not None:
             for study in studies:
                 if 'all' in study['study']:
@@ -127,7 +175,18 @@ class BaseController():
             #    content_json = json.dumps(content.to_dict())
             result_json = None
             if result:
-                result_json = Json(result, dumps=self.dumps)
+                from openapi_server.models.base_model_ import Model
+                from openapi_server.models.document import Document
+                if isinstance(result, Document):
+                    for key, value in result.openapi_types.items():
+                    #    print(key, value)
+                    #    print(type(value))
+                        if str(value) == 'file':
+                            #delattr(result, key)
+                    #        print('yyyyyyyyy')
+                            result.openapi_types.pop('content')
+                else:
+                    result_json = Json(result, dumps=self.dumps)
             args = (user, action, entity_id, str(content),
                     result_json, retcode)
 

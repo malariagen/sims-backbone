@@ -13,7 +13,7 @@ export class SamplingEventsService {
   findEvents(filter = '', sortOrder = 'asc',
     pageNumber = 0, pageSize = 3): Observable<SamplingEvents> {
 
-    return this.sampleService.downloadSamplingEvents(filter, pageNumber * pageSize, pageSize);
+    return this.sampleService.downloadSamplingEvents(filter, 'str', pageNumber * pageSize, pageSize);
 
   }
 }

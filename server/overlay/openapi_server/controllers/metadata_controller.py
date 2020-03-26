@@ -62,7 +62,7 @@ def get_country_metadata(country_id, user=None, token_info=None):
                                                     metadata_controller.token_info(token_info))
 
 
-def get_attr_types(user=None, token_info=None):  # noqa: E501
+def get_attr_types(parent_type=None, user=None, token_info=None):  # noqa: E501
     """fetches all the attr types
 
     returns all attr types in use # noqa: E501
@@ -70,8 +70,9 @@ def get_attr_types(user=None, token_info=None):  # noqa: E501
 
     :rtype: List[str]
     """
-    return metadata_controller.get_attr_types(user,
-                                              metadata_controller.token_info(token_info))
+    return metadata_controller.get_attr_types(parent_type=parent_type,
+                                              user=user,
+                                              auths=metadata_controller.token_info(token_info))
 
 
 def get_location_attr_types(user=None, token_info=None):  # noqa: E501

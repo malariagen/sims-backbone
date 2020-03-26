@@ -8,3 +8,4 @@ then
     pip3 install -r $(pwd)/../server/backbone_server/REQUIREMENTS
     pip3 install -r $(pwd)/../server/bb_server/requirements.txt
 fi
+source upload-env/bin/activate

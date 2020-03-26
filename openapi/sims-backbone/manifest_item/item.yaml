@@ -1,0 +1,70 @@
+    get:
+      tags:
+        - manifest
+      summary: fetches an manifest item
+      description: ""
+      operationId: downloadManifestItem
+      parameters:
+        - name: manifest_item_id
+          in: path
+          description: ID of manifest_item to fetch - use unknown if using query params instead
+          required: true
+          schema:
+            type: string
+        - name: manifest_id
+          in: query
+          description: if the manifest_item_id is not known then it is possible to use manifest_id and original_sample_id
+          required: false
+          schema:
+            type: string
+        - name: original_sample_id
+          in: query
+          description: if the manifest_item_id is not known then it is possible to use manifest_id and original_sample_id
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "./sims-backbone/definitions/manifest.yaml#/components/schemas/ManifestItem"
+    put:
+      tags:
+        - manifest
+      summary: updates an manifest item
+      description: ""
+      operationId: updateManifestItem
+      parameters:
+        - name: manifest_item_id
+          in: path
+          description: ID of manifest_item to update
+          required: true
+          schema:
+            type: string
+        - name: update_samples
+          in: query
+          description: Update the saved samples
+          required: false
+          schema:
+            type: boolean
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "./sims-backbone/definitions/manifest.yaml#/components/schemas/ManifestItem"
+        required: true
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "./sims-backbone/definitions/manifest.yaml#/components/schemas/ManifestItem"
+        "404":
+          description: Manifest not found
+          content:
+            application/json:
+              schema:
+                type: string

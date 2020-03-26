@@ -26,8 +26,9 @@ def create_individual(body, user=None, token_info=None):
     if connexion.request.is_json:
         individual = Individual.from_dict(connexion.request.get_json())
 
-    return individual_controller.create_individual(individual, user,
-                                                   individual_controller.token_info(token_info))
+    return individual_controller.create_individual(individual, studies=None,
+                                                   user=user,
+                                                   auths=individual_controller.token_info(token_info))
 
 
 def delete_individual(individual_id, user=None, token_info=None):
@@ -39,8 +40,8 @@ def delete_individual(individual_id, user=None, token_info=None):
 
     :rtype: None
     """
-    return individual_controller.delete_individual(individual_id, user,
-                                                   individual_controller.token_info(token_info))
+    return individual_controller.delete_individual(individual_id, studies=None, user=user,
+                                                   auths=individual_controller.token_info(token_info))
 
 
 def download_individual(individual_id, user=None, token_info=None):
@@ -52,8 +53,9 @@ def download_individual(individual_id, user=None, token_info=None):
 
     :rtype: Individual
     """
-    return individual_controller.download_individual(individual_id, user,
-                                                     individual_controller.token_info(token_info))
+    return individual_controller.download_individual(individual_id,
+                                                     studies=None, user=user,
+                                                     auths=individual_controller.token_info(token_info))
 
 
 def download_individuals(search_filter,
@@ -78,11 +80,16 @@ def download_individuals(search_filter,
 
     :rtype: Individuals
     """
-    return individual_controller.download_individuals(search_filter, study_name, start, count, orderby, user,
-                                                      individual_controller.token_info(token_info))
+    return individual_controller.download_individuals(search_filter,
+                                                      study_name=study_name, start=start,
+                                                      count=count,
+                                                      orderby=orderby, studies=None, user=user,
+                                                      auths=individual_controller.token_info(token_info))
 
 
-def download_individuals_by_attr(prop_name, prop_value, study_name=None, user=None, token_info=None):  # noqa: E501
+def download_individuals_by_attr(prop_name, prop_value, study_name=None,
+                                 start=None, count=None, value_type=None,
+                                 studies=None, user=None, token_info=None):  # noqa: E501
     """fetches one or more individuals by property value
 
      # noqa: E501
@@ -97,8 +104,13 @@ def download_individuals_by_attr(prop_name, prop_value, study_name=None, user=No
     :rtype: Individuals
     """
     return individual_controller.download_individuals_by_attr(prop_name,
-                                                              prop_value, study_name, user,
-                                                              individual_controller.token_info(token_info))
+                                                              prop_value,
+                                                              study_name,
+                                                              start=start,
+                                                              count=count,
+                                                              value_type=value_type,
+                                                              studies=studies, user=user,
+                                                              auths=individual_controller.token_info(token_info))
 
 
 def merge_individuals(into, merged, user=None, token_info=None):
@@ -113,8 +125,8 @@ def merge_individuals(into, merged, user=None, token_info=None):
 
     :rtype: Individual
     """
-    return individual_controller.merge_individuals(into, merged, user,
-                                                   individual_controller.token_info(token_info))
+    return individual_controller.merge_individuals(into, merged, studies=None, user=user,
+                                                   auths=individual_controller.token_info(token_info))
 
 
 def update_individual(individual_id, body, user=None, token_info=None):
@@ -131,5 +143,6 @@ def update_individual(individual_id, body, user=None, token_info=None):
     if connexion.request.is_json:
         individual = Individual.from_dict(connexion.request.get_json())
 
-    return individual_controller.update_individual(individual_id, individual, user,
-                                                   individual_controller.token_info(token_info))
+    return individual_controller.update_individual(individual_id, individual,
+                                                   studies=None, user=user,
+                                                   auths=individual_controller.token_info(token_info))

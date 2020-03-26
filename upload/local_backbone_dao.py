@@ -18,6 +18,7 @@ from backbone_server.controllers.original_sample_controller import OriginalSampl
 from backbone_server.controllers.derivative_sample_controller import DerivativeSampleController
 from backbone_server.controllers.assay_datum_controller import AssayDatumController
 from backbone_server.controllers.individual_controller import IndividualController
+from backbone_server.controllers.manifest_controller import ManifestController
 
 from openapi_client.rest import ApiException
 
@@ -37,6 +38,7 @@ class LocalBackboneDAO(AbstractBackboneDAO):
         self.metadata_api_instance = MetadataController()
         self.study_api_instance = StudyController()
         self.i_api_instance = IndividualController()
+        self.r_api_instance = ManifestController()
 
     def setup(self, config):
         pass
@@ -103,11 +105,23 @@ class LocalBackboneDAO(AbstractBackboneDAO):
 
         if retcode >= 400:
             # Probably because it already exists
-            self._logger.debug("Error adding sample {} to event set {}".format(
-                sampling_event_id, event_set_id))
+            self._logger.debug("Error adding sample %s to event set %s", sampling_event_id, event_set_id)
 
         return ret
 
+    def delete_event_set_item(self, event_set_id, sampling_event_id, user=None):
+
+        if not user:
+            user = self._user
+
+        ret, retcode = self.es_api_instance.delete_event_set_item(
+            event_set_id, sampling_event_id, user=user, auths=self._auths)
+
+        if retcode >= 400:
+            # Probably because it already exists
+            self._logger.debug("Error deleting sample %s to event set %s", sampling_event_id, event_set_id)
+
+        return ret
     def create_location(self, location, user=None):
 
         if not user:
@@ -196,13 +210,15 @@ class LocalBackboneDAO(AbstractBackboneDAO):
         return ret
 
     def download_locations_by_attr(self, attr_type, attr_value,
-                                   study_name=None, user=None):
+                                   study_name=None, value_type=None,
+                                   start=None, count=None, user=None):
 
         if not user:
             user = self._user
 
         ret, retcode = self.location_api_instance.download_locations_by_attr(
-            attr_type, attr_value, study_name,
+            attr_type, attr_value, study_name, value_type=value_type,
+            start=start, count=count,
             user=user, auths=self._auths)
 
         self._logger.debug("GET /v1/locations/attr/{}/{} {}".format(attr_type,
@@ -264,7 +280,9 @@ class LocalBackboneDAO(AbstractBackboneDAO):
 
         return found_events
 
-    def download_sampling_events_by_attr(self, attr_type, attr_value, user=None):
+    def download_sampling_events_by_attr(self, attr_type, attr_value,
+                                         value_type=None, start=None,
+                                         count=None, user=None):
 
         if not user:
             user = self._user
@@ -272,6 +290,9 @@ class LocalBackboneDAO(AbstractBackboneDAO):
         found_events, retcode = self.se_api_instance.download_sampling_events_by_attr(attr_type,
                                                                                       urllib.parse.quote_plus(
                                                                                           attr_value),
+                                                                                      value_type=value_type,
+                                                                                      start=start,
+                                                                                      count=count,
                                                                                       user=user, auths=self._auths)
 
         self._logger.debug("GET /v1/samplingEvents/attr/{}/{} {}".format(attr_type,
@@ -303,7 +324,8 @@ class LocalBackboneDAO(AbstractBackboneDAO):
         return found_events
 
     def download_sampling_events_by_os_attr(self, attr_type, attr_value,
-                                            user=None):
+                                            value_type=None, start=None,
+                                            count=None, user=None):
 
         if not user:
             user = self._user
@@ -311,6 +333,9 @@ class LocalBackboneDAO(AbstractBackboneDAO):
         found_events, retcode = self.se_api_instance.download_sampling_events_by_os_attr(attr_type,
                                                                                          urllib.parse.quote_plus(
                                                                                              attr_value),
+                                                                                         value_type=value_type,
+                                                                                         start=start,
+                                                                                         count=count,
                                                                                          studies=None,
                                                                                          user=user, auths=self._auths)
 
@@ -483,12 +508,13 @@ class LocalBackboneDAO(AbstractBackboneDAO):
 
         return found_events
 
-    def download_original_samples(self, search_filter, start=None, count=None, user=None):
+    def download_original_samples(self, search_filter, value_type=None, start=None, count=None, user=None):
 
         if not user:
             user = self._user
 
         found_events, retcode = self.os_api_instance.download_original_samples(search_filter,
+                                                                               value_type=value_type,
                                                                                start=start,
                                                                                count=count,
                                                                                user=user, auths=self._auths)
@@ -502,7 +528,8 @@ class LocalBackboneDAO(AbstractBackboneDAO):
         return found_events
 
     def download_original_samples_by_attr(self, attr_type, attr_value,
-                                          user=None):
+                                          value_type=None, start=None,
+                                          count=None, user=None):
 
         if not user:
             user = self._user
@@ -510,10 +537,31 @@ class LocalBackboneDAO(AbstractBackboneDAO):
         found_events, retcode = self.os_api_instance.download_original_samples_by_attr(attr_type,
                                                                                        urllib.parse.quote_plus(
                                                                                            attr_value),
+                                                                                       value_type=value_type,
+                                                                                       start=start,
+                                                                                       count=count,
                                                                                        user=user, auths=self._auths)
 
         self._logger.debug("GET /v1/originalSamples/attr/{}/{} {}".format(attr_type,
                                                                           attr_value, retcode))
+        if retcode >= 400:
+            raise ApiException(http_resp=HTTPResponse(
+                body=found_events, status=retcode))
+
+        return found_events
+
+    def download_original_samples_by_study(self, study_name, start=None,
+                                           count=None, user=None):
+
+        if not user:
+            user = self._user
+
+        found_events, retcode = self.os_api_instance.download_original_samples_by_study(study_name,
+                                                                                        start=start,
+                                                                                        count=count,
+                                                                                        user=user, auths=self._auths)
+
+        self._logger.debug("GET /v1/originalSamples/study/{} {}".format(study_name, retcode))
         if retcode >= 400:
             raise ApiException(http_resp=HTTPResponse(
                 body=found_events, status=retcode))
@@ -540,7 +588,8 @@ class LocalBackboneDAO(AbstractBackboneDAO):
         return found_events
 
     def download_original_samples_by_os_attr(self, attr_type, attr_value,
-                                             user=None):
+                                             value_type=None, start=None,
+                                             count=None, user=None):
 
         if not user:
             user = self._user
@@ -548,6 +597,9 @@ class LocalBackboneDAO(AbstractBackboneDAO):
         found_events, retcode = self.os_api_instance.download_original_samples_by_os_attr(attr_type,
                                                                                           urllib.parse.quote_plus(
                                                                                               attr_value),
+                                                                                          value_type=value_type,
+                                                                                          start=start,
+                                                                                          count=count,
                                                                                           user=user, auths=self._auths)
 
         self._logger.debug("GET /v1/originalSamples/os/attr/{}/{} {}".format(attr_type,
@@ -643,7 +695,8 @@ class LocalBackboneDAO(AbstractBackboneDAO):
         return found_events
 
     def download_derivative_samples_by_attr(self, attr_type, attr_value,
-                                            user=None):
+                                            value_type=None, start=None,
+                                            count=None, user=None):
 
         if not user:
             user = self._user
@@ -651,6 +704,9 @@ class LocalBackboneDAO(AbstractBackboneDAO):
         found_events, retcode = self.ds_api_instance.download_derivative_samples_by_attr(attr_type,
                                                                                          urllib.parse.quote_plus(
                                                                                              attr_value),
+                                                                                         value_type=value_type,
+                                                                                         start=start,
+                                                                                         count=count,
                                                                                          user=user, auths=self._auths)
 
         self._logger.debug("GET /v1/derivativeSamples/attr/{}/{} {}".format(attr_type,
@@ -661,8 +717,26 @@ class LocalBackboneDAO(AbstractBackboneDAO):
 
         return found_events
 
+    def download_derivative_samples_by_study(self, study_name, start=None, count=None, studies=None, user=None):
+
+        if not user:
+            user = self._user
+
+        found_events, retcode = self.ds_api_instance.download_derivative_samples_by_study(study_name,
+                                                                                          start=start,
+                                                                                          count=count,
+                                                                                          user=user, auths=self._auths)
+
+        self._logger.debug("GET /v1/derivativeSamples/study/{} {}".format(study_name, retcode))
+        if retcode >= 400:
+            raise ApiException(http_resp=HTTPResponse(
+                body=found_events, status=retcode))
+
+        return found_events
+
     def download_derivative_samples_by_os_attr(self, attr_type, attr_value,
-                                               user=None):
+                                               value_type=None, start=None,
+                                               count=None, user=None):
 
         if not user:
             user = self._user
@@ -670,6 +744,9 @@ class LocalBackboneDAO(AbstractBackboneDAO):
         found_events, retcode = self.ds_api_instance.download_derivative_samples_by_os_attr(attr_type,
                                                                                             urllib.parse.quote_plus(
                                                                                                 attr_value),
+                                                                                            value_type=value_type,
+                                                                                            start=start,
+                                                                                            count=count,
                                                                                             user=user, auths=self._auths)
 
         self._logger.debug("GET /v1/derivativeSamples/os/attr/{}/{} {}".format(attr_type,
@@ -745,7 +822,8 @@ class LocalBackboneDAO(AbstractBackboneDAO):
 
         return found_events
 
-    def download_assay_data_by_attr(self, attr_type, attr_value, user=None):
+    def download_assay_data_by_attr(self, attr_type, attr_value,
+                                    value_type=None, start=None, count=None, user=None):
 
         if not user:
             user = self._user
@@ -753,6 +831,9 @@ class LocalBackboneDAO(AbstractBackboneDAO):
         found_events, retcode = self.ad_api_instance.download_assay_data_by_attr(attr_type,
                                                                                  urllib.parse.quote_plus(
                                                                                      attr_value),
+                                                                                 value_type=value_type,
+                                                                                 start=start,
+                                                                                 count=count,
                                                                                  user=user, auths=self._auths)
 
         self._logger.debug("GET /v1/derivativeSamples/attr/{}/{} {}".format(attr_type,
@@ -903,7 +984,7 @@ class LocalBackboneDAO(AbstractBackboneDAO):
         return found_events
 
     def download_individuals_by_attr(self, prop_name, prop_value, study_name,
-                                     user=None):
+                                     value_type=None, start=None, count=None, user=None):
 
         if not user:
             user = self._user
@@ -912,6 +993,9 @@ class LocalBackboneDAO(AbstractBackboneDAO):
                                                                                  urllib.parse.quote_plus(
                                                                                      prop_value),
                                                                                  study_name,
+                                                                                 value_type=value_type,
+                                                                                 start=start,
+                                                                                 count=count,
                                                                                  user=user, auths=self._auths)
 
         self._logger.debug("GET /v1/individuals/attr/{}/{} {}".format(prop_name,
@@ -936,3 +1020,74 @@ class LocalBackboneDAO(AbstractBackboneDAO):
                 body=history, status=retcode))
 
         return history
+
+    def create_manifest(self, manifest_id, studies=None, user=None, auths=None):  # noqa: E501
+        if not user:
+            user = self._user
+
+        rel, retcode = self.r_api_instance.create_manifest(manifest_id, studies=studies,
+                                                           user=user, auths=self._auths)
+        if retcode >= 400:
+            raise ApiException(http_resp=HTTPResponse(body=rel, status=retcode))
+
+        return rel
+
+
+
+    def download_manifest(self, manifest_id, start=None, count=None, studies=None, user=None, auths=None):  # noqa: E501
+        if not user:
+            user = self._user
+
+        rel, retcode = self.r_api_instance.download_manifest(manifest_id, start=start,
+                                                             count=count, studies=studies,
+                                                             user=user,
+                                                             auths=self._auths)
+        if retcode >= 400:
+            raise ApiException(http_resp=HTTPResponse(body=rel, status=retcode))
+
+        return rel
+
+
+    def create_manifest_item(self, manifest_id, manifest_item, studies=None, user=None, auths=None):  # noqa: E501
+        if not user:
+            user = self._user
+
+        rel, retcode = self.r_api_instance.create_manifest_item(manifest_id, manifest_item, studies=studies,
+                                                                user=user,
+                                                                auths=self._auths)
+        if retcode >= 400:
+            raise ApiException(http_resp=HTTPResponse(body=rel, status=retcode))
+
+        return rel
+
+    def update_manifest_item(self, manifest_item_id, manifest_item,
+                             update_samples=None, studies=None, user=None,
+                             auths=None):  # noqa: E501
+        if not user:
+            user = self._user
+
+        rel, retcode = self.r_api_instance.update_manifest_item(manifest_item_id,
+                                                                manifest_item,
+                                                                update_samples=update_samples, studies=studies,
+                                                                user=user,
+                                                                auths=self._auths)
+        if retcode >= 400:
+            raise ApiException(http_resp=HTTPResponse(body=rel, status=retcode))
+
+        return rel
+
+    def update_manifest(self, manifest_id, manifest,
+                        update_studies=None, studies=None, user=None,
+                        auths=None):  # noqa: E501
+        if not user:
+            user = self._user
+
+        rel, retcode = self.r_api_instance.update_manifest(manifest_id,
+                                                           manifest,
+                                                           update_studies=update_studies, studies=studies,
+                                                           user=user,
+                                                           auths=self._auths)
+        if retcode >= 400:
+            raise ApiException(http_resp=HTTPResponse(body=rel, status=retcode))
+
+        return rel

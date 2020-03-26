@@ -29,6 +29,8 @@ components:
         original_sample_id:
           type: string
   #        format: uuid
+        version:
+          type: integer
         sampling_event_id:
           type: string
   #        format: uuid
@@ -51,10 +53,10 @@ components:
           items:
               type: object
               $ref: './attr.yaml#/components/schemas/Attr'
-        derivative_samples:
-          type: object
-          description: 'The samples derivative from this original sample'
-          $ref: './derivative_sample.yaml#/components/schemas/DerivativeSamples'
+              #        derivative_samples:
+              #          type: object
+              #          description: 'The samples derivative from this original sample'
+              #          $ref: './derivative_sample.yaml#/components/schemas/DerivativeSamples'
     PartnerSpecies:
       type: object
       properties:
@@ -84,3 +86,11 @@ components:
           type: string
         rank:
           type: string
+        num_original_samples:
+          type: integer
+          description: Number of original samples
+          readOnly: true
+        num_derivative_samples:
+          type: integer
+          description: Number of derivative samples
+          readOnly: true

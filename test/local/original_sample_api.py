@@ -70,7 +70,8 @@ class LocalOriginalSampleApi(BaseLocalApi):
 
         return self.create_response(ret, retcode, 'OriginalSample')
 
-    def download_original_samples(self, search_filter=None, start=None,
+    def download_original_samples(self, search_filter=None,
+                                  value_type=None, start=None,
                                   count=None, studies=None):
         """
         fetches an samplingEvent
@@ -80,8 +81,10 @@ class LocalOriginalSampleApi(BaseLocalApi):
 
         :rtype: OriginalSample
         """
-        (ret, retcode) = self.original_sample_controller.download_original_samples(search_filter, start,
-                                                                                   count,
+        (ret, retcode) = self.original_sample_controller.download_original_samples(search_filter,
+                                                                                   value_type=value_type,
+                                                                                   start=start,
+                                                                                   count=count,
                                                                                    studies=studies,
                                                                                    user=self._user,
                                                                                    auths=self.original_sample_controller.token_info(self.auth_tokens()))
@@ -111,7 +114,8 @@ class LocalOriginalSampleApi(BaseLocalApi):
         return self.create_response(ret, retcode, 'OriginalSamples')
 
     def download_original_samples_by_attr(self, prop_name, prop_value,
-                                          study_name=None, studies=None):
+                                          study_name=None, value_type=None,
+                                          start=None, count=None, studies=None):
         """
         fetches a samplingEvent by property value
 
@@ -124,6 +128,9 @@ class LocalOriginalSampleApi(BaseLocalApi):
         """
         (ret, retcode) = self.original_sample_controller.download_original_samples_by_attr(prop_name, prop_value,
                                                                                            study_name,
+                                                                                           value_type=value_type,
+                                                                                           start=start,
+                                                                                           count=count,
                                                                                            studies=studies,
                                                                                            user=self._user,
                                                                                            auths=self.original_sample_controller.token_info(self.auth_tokens()))

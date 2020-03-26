@@ -11,7 +11,7 @@ from backbone_server.controllers.assay_datum_controller  import AssayDatumContro
 
 assay_datum_controller = AssayDatumController()
 
-def create_assay_datum(body, user=None, token_info=None):  # noqa: E501
+def create_assay_datum(body, studies=None, user=None, token_info=None):  # noqa: E501
     """create_assay_datum
 
     Create a AssayDatum # noqa: E501
@@ -23,11 +23,11 @@ def create_assay_datum(body, user=None, token_info=None):  # noqa: E501
     """
     if connexion.request.is_json:
         assay_datum = AssayDatum.from_dict(connexion.request.get_json())  # noqa: E501
-    return assay_datum_controller.create_assay_datum(assay_datum, user,
-                                                     assay_datum_controller.token_info(token_info))
+    return assay_datum_controller.create_assay_datum(assay_datum, studies=studies, user=user,
+                                                     auths=assay_datum_controller.token_info(token_info))
 
 
-def delete_assay_datum(assay_datum_id, user=None, token_info=None):  # noqa: E501
+def delete_assay_datum(assay_datum_id, studies=None, user=None, token_info=None):  # noqa: E501
     """deletes an AssayDatum
 
      # noqa: E501
@@ -37,11 +37,11 @@ def delete_assay_datum(assay_datum_id, user=None, token_info=None):  # noqa: E50
 
     :rtype: None
     """
-    return assay_datum_controller.delete_assay_datum(assay_datum_id, user,
-                                                     assay_datum_controller.token_info(token_info))
+    return assay_datum_controller.delete_assay_datum(assay_datum_id, studies=studies, user=user,
+                                                     auths=assay_datum_controller.token_info(token_info))
 
 
-def download_assay_datum(assay_datum_id, user=None, token_info=None):  # noqa: E501
+def download_assay_datum(assay_datum_id, studies=None, user=None, token_info=None):  # noqa: E501
     """fetches an AssayDatum
 
      # noqa: E501
@@ -51,11 +51,13 @@ def download_assay_datum(assay_datum_id, user=None, token_info=None):  # noqa: E
 
     :rtype: AssayDatum
     """
-    return assay_datum_controller.download_assay_datum(assay_datum_id, user,
-                                                       assay_datum_controller.token_info(token_info))
+    return assay_datum_controller.download_assay_datum(assay_datum_id, studies=studies, user=user,
+                                                       auths=assay_datum_controller.token_info(token_info))
 
 
-def download_assay_data_by_attr(prop_name, prop_value, study_name=None, user=None, token_info=None):  # noqa: E501
+def download_assay_data_by_attr(prop_name, prop_value, study_name=None,
+                                start=None, count=None,
+                                value_type=None, studies=None, user=None, token_info=None):  # noqa: E501
     """fetches one or more AssayDatum by property value
 
      # noqa: E501
@@ -69,11 +71,19 @@ def download_assay_data_by_attr(prop_name, prop_value, study_name=None, user=Non
 
     :rtype: AssayData
     """
-    return assay_datum_controller.download_assay_data_by_attr(prop_name, prop_value, study_name, user,
-                                                              assay_datum_controller.token_info(token_info))
+    return assay_datum_controller.download_assay_data_by_attr(prop_name,
+                                                              prop_value,
+                                                              study_name,
+                                                              start=start,
+                                                              count=count,
+                                                              value_type=value_type,
+                                                              studies=studies, user=user,
+                                                              auths=assay_datum_controller.token_info(token_info))
 
 
-def download_assay_data_by_os_attr(prop_name, prop_value, study_name=None, user=None, token_info=None):  # noqa: E501
+def download_assay_data_by_os_attr(prop_name, prop_value, study_name=None,
+                                   start=None, count=None,
+                                   value_type=None, studies=None, user=None, token_info=None):  # noqa: E501
     """fetches one or more assayData by property value of associated original samples
 
      # noqa: E501
@@ -87,11 +97,16 @@ def download_assay_data_by_os_attr(prop_name, prop_value, study_name=None, user=
 
     :rtype: AssayData
     """
-    return assay_datum_controller.download_assay_data_by_os_attr(prop_name, prop_value, study_name, user,
-                                                                 assay_datum_controller.token_info(token_info))
+    return assay_datum_controller.download_assay_data_by_os_attr(prop_name,
+                                                                 prop_value,
+                                                                 study_name=study_name,
+                                                                 start=start, count=count,
+                                                                 value_type=value_type,
+                                                                 studies=studies, user=user,
+                                                                 auths=assay_datum_controller.token_info(token_info))
 
 
-def update_assay_datum(assay_datum_id, body, user=None, token_info=None):  # noqa: E501
+def update_assay_datum(assay_datum_id, body, studies=None, user=None, token_info=None):  # noqa: E501
     """updates an AssayDatum
 
      # noqa: E501
@@ -105,5 +120,5 @@ def update_assay_datum(assay_datum_id, body, user=None, token_info=None):  # noq
     """
     if connexion.request.is_json:
         assay_datum = AssayDatum.from_dict(connexion.request.get_json())  # noqa: E501
-    return assay_datum_controller.update_assay_datum(assay_datum_id, assay_datum, user,
-                                                     assay_datum_controller.token_info(token_info))
+    return assay_datum_controller.update_assay_datum(assay_datum_id, assay_datum, studies=studies, user=user,
+                                                     auths=assay_datum_controller.token_info(token_info))

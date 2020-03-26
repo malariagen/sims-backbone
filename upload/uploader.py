@@ -1,24 +1,13 @@
-from __future__ import print_function
+import os
 import json
 import csv
 import re
 import time
 import datetime
 import logging
-import sys
 
 import openapi_client
 from openapi_client.rest import ApiException
-
-from decimal import *
-
-from copy import deepcopy
-
-from pprint import pprint
-from pprint import pformat
-
-import os
-import requests
 
 from remote_backbone_dao import RemoteBackboneDAO
 from local_backbone_dao import LocalBackboneDAO
@@ -27,6 +16,7 @@ from base_entity import BaseEntity
 from sampling_event import SamplingEventProcessor
 from original_sample import OriginalSampleProcessor
 from derivative_sample import DerivativeSampleProcessor
+from manifest import ManifestProcessor
 from assay_data import AssayDataProcessor
 from individual import IndividualProcessor
 
@@ -102,23 +92,26 @@ class Uploader():
         self.ds_processor = DerivativeSampleProcessor(self._dao, self._event_set)
         self.ad_processor = AssayDataProcessor(self._dao, self._event_set)
         self.i_processor = IndividualProcessor(self._dao, self._event_set)
+        self.r_processor = ManifestProcessor(self._dao, self._event_set)
 
         api_response = self._dao.create_event_set(event_set_id)
 
-    def load_data_file(self, data_def, filename):
+    def load_data_file(self, data_def, filename, manifest=None):
 
         self.setup(filename)
 
+        profile = self._logger.isEnabledFor(logging.DEBUG)
+
         input_stream = open(filename)
 
-        if self._logger.isEnabledFor(logging.DEBUG):
+        if profile:
             import cProfile
             profile = cProfile.Profile()
             profile.enable()
 
-        ret = self.load_data(data_def, input_stream, True, False)
+        self.load_data(data_def, input_stream, True, False, manifest)
 
-        if self._logger.isEnabledFor(logging.DEBUG):
+        if profile:
             profile.disable()
             #profile.print_stats()
             import io,pstats
@@ -127,10 +120,11 @@ class Uploader():
             ps = pstats.Stats(profile, stream=s).sort_stats(sortby)
             ps.print_stats(.1)
             self._logger.debug(s.getvalue())
+            print(s.getvalue())
             profile.dump_stats('upload_source_stats.cprof')
 
 
-        return ret
+        return None
 
 
     def parse_date(self, defn, date_value):
@@ -169,7 +163,8 @@ class Uploader():
 
         return data_value, accuracy
 
-    def load_data(self, data_def, input_stream, skip_header, update_only):
+    def load_data(self, data_def, input_stream, skip_header, update_only,
+                  manifest=None):
 
         processed = 0
 
@@ -180,14 +175,11 @@ class Uploader():
                 next(data_reader)
 
             for row in data_reader:
-                entity_id = None
                 values = {}
-                prop_by_column = {}
                 processed = processed + 1
                 #Ensure columns are processed in order - see also doc_accuracy comment below
                 #For more predictable behaviour
                 for name, defn in sorted(data_def['values'].items(), key=lambda x: x[1]['column']):
-                    identity = False
                     #print(repr(defn))
                     #print(repr(row))
                     data_value = row[defn['column']]
@@ -198,18 +190,19 @@ class Uploader():
                         if 'regex' in defn:
                             re_match = re.search(defn['regex'], data_value)
                             if re_match:
-                                #print("Groupdict:" + repr(re_match.groupdict()))
+                                # print("Groupdict:" + repr(re_match.groupdict()))
                                 try:
                                     data_value = re_match.group(1)
                                 except IndexError as iere:
-                                        raise InvalidDataValueException("Failed to parse {} using {}"
-                                                                        .format(data_value, defn['regex'])) from iere
-                                #print("Transformed value is:" + data_value + " from " + row[defn['column']])
-                                #print(repr(re_match.groupdict()))
-                                #if row[defn['column']] != "" and data_value == "":
-                                #    print("Empty match: {} {}".format(defn['regex'], row[defn['column']]))
-                            #else:
-                            #    print("No match: {} {}".format(defn['regex'], data_value))
+                                    raise InvalidDataValueException("Failed to parse {} using {}"
+                                                                    .format(data_value, defn['regex'])) from iere
+                                # print("Transformed value is:" + data_value + " from " + row[defn['column']])
+                                # print(repr(re_match.groupdict()))
+                                # if row[defn['column']] != "" and data_value == "":
+                                #     print("Empty match: {} {}".format(defn['regex'], row[defn['column']]))
+                            else:
+                                # print("No match: {} {}".format(defn, data_value))
+                                data_value = None
                         if defn['type'] == 'datetime':
                             if not (data_value == '' or
                                     data_value == 'NULL' or
@@ -218,8 +211,7 @@ class Uploader():
                                 try:
                                     data_value, values[name + '_accuracy'] = self.parse_date(defn, data_value)
                                 except ValueError as dpe:
-                                    self.se_processor.report("Failed to parse date '{}'".format(data_value),
-                                                                                   values)
+                                    self.se_processor.report("Failed to parse date '{}'".format(data_value), values)
                                     continue
                             else:
                                 #Skip this property
@@ -246,6 +238,8 @@ class Uploader():
                     else:
                         values[name] = data_value
 
+                if manifest:
+                    values['release'] = manifest
                 self.process_item(values)
 
 
@@ -311,18 +305,36 @@ class Uploader():
         original_sample = self.os_processor.process_original_sample(values, o_sample, o_existing)
 
 
-        d_sample = self.ds_processor.create_derivative_sample_from_values(values)
+        d_sample = self.ds_processor.create_derivative_sample_from_values(values,
+                                                                          original_sample)
 
         dsamp = self.ds_processor.lookup_derivative_sample(d_sample, values)
 
+        if not original_sample:
+            if dsamp:
+                # Might have the values to lookup the derivative sample but not
+                # the original sample so handle that here
+                print(f'Using derivative sample to find original sample {values}')
+                original_sample = self.os_processor.process_original_sample(values, o_sample, dsamp.original_sample)
+            else:
+                # Because derivative samples must have an original sample
+                d_sample = None
+
         derivative_sample = self.ds_processor.process_derivative_sample(d_sample, dsamp, original_sample, values)
 
-        ad_sample = self.ad_processor.create_assay_datum_from_values(values)
+        ad_sample = self.ad_processor.create_assay_datum_from_values(values,
+                                                                     derivative_sample)
 
         adsamp = self.ad_processor.lookup_assay_datum(ad_sample, values)
 
         self.ad_processor.process_assay_datum(ad_sample, adsamp, derivative_sample, values)
 
+        r_sample = self.ds_processor.create_derivative_sample_from_values(values,
+                                                                          original_sample)
+
+        rsamp = self.r_processor.lookup_manifest_item(r_sample, values)
+
+        self.r_processor.process_manifest_item(r_sample, rsamp, original_sample, values)
         #print(existing)
         #print(sampling_event)
         #print(values)
@@ -334,9 +346,16 @@ class Uploader():
 
 
 if __name__ == '__main__':
-    sd = Uploader(sys.argv[3])
-    with open(sys.argv[2]) as json_file:
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument("data_file")
+    parser.add_argument("data_config")
+    parser.add_argument("config")
+    parser.add_argument('--release')
+    args = parser.parse_args()
+    sd = Uploader(args.config)
+    with open(args.data_config) as json_file:
         json_data = json.load(json_file)
-        sd.load_data_file(json_data, sys.argv[1])
+        sd.load_data_file(json_data, args.data_file, args.release)
 
     #print(repr(sd.fetch_entity_by_source('test',1)))

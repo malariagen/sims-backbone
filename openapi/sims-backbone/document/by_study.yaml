@@ -1,0 +1,20 @@
+    get:
+      tags:
+        - Document
+      summary: fetches Documents for a study
+      description: ""
+      operationId: downloadDocumentsByStudy
+      parameters:
+        - name: study_name
+          in: path
+          description: 4 digit study code
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "./sims-backbone/definitions/document.yaml#/components/schemas/Documents"

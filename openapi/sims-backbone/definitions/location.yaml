@@ -5,6 +5,8 @@ components:
       properties:
         location_id:
           type: string
+        version:
+          type: integer
         latitude:
           type: number
         longitude:

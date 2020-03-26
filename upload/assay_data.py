@@ -1,6 +1,4 @@
 import sys
-from copy import deepcopy
-
 import logging
 
 import openapi_client
@@ -16,29 +14,57 @@ class AssayDataProcessor(BaseEntity):
         super().__init__(dao, event_set)
         self._logger = logging.getLogger(__name__)
 
-    def create_assay_datum_from_values(self, values):
+        self._lookup_attrs = ['assay_datum_id', 'irods_path']
+        self.attrs = [
+            {
+                'from': 'assay_datum_id'
+            },
+            {
+                'from': 'assay_datum_source'
+            },
+            {
+                'from': 'irods_path'
+            },
+            {
+                'from': 'tag_index'
+            },
+            {
+                'from': 'manual_qc'
+            },
+            {
+                'from': 'qc_complete'
+            },
+            {
+                'from': 'id_run'
+            },
+            {
+                'from': 'position'
+            },
+            {
+                'from': 'reads'
+            }
+        ]
 
-        d_sample = openapi_client.AssayDatum(None)
+    def create_assay_datum_from_values(self, values, derivative_sample):
 
-        idents = []
-        if 'assay_datum_id' in values:
-            idents.append(openapi_client.Attr('assay_datum_id', values['assay_datum_id'],
-                                              self._event_set))
+        if not derivative_sample:
+            return None
 
-        if 'assay_datum_source' in values:
-            idents.append(openapi_client.Attr('assay_datum_source',
-                                              values['assay_datum_source'],
-                                              self._event_set))
+        d_sample = openapi_client.AssayDatum(None,
+                                             derivative_sample_id=derivative_sample.derivative_sample_id)
 
+        d_sample.attrs = self.attrs_from_values(values)
 
         if 'ebi_run_acc' in values:
             d_sample.ebi_run_acc = values['ebi_run_acc']
 
-        d_sample.attrs = idents
 
         return d_sample
 
     def lookup_assay_datum(self, samp, values):
+
+        if not samp:
+            return None
 
         existing = None
 
@@ -48,10 +74,13 @@ class AssayDataProcessor(BaseEntity):
                 existing = self._dao.download_assay_datum(existing_sample_id)
                 return existing
 
+
         #print ("not in cache: {}".format(samp))
         if len(samp.attrs) > 0:
             #print("Checking attrs {}".format(samp.attrs))
             for ident in samp.attrs:
+                if ident.attr_type not in self._lookup_attrs:
+                    continue
                 try:
                     #print("Looking for {} {}".format(ident.attr_type, ident.attr_value))
 
@@ -78,7 +107,22 @@ class AssayDataProcessor(BaseEntity):
 
     def process_assay_datum(self, samp, existing, derivative_sample, values):
 
-        #print('process_assay data {} {} {} {}'.format(samp, existing, derivative_sample, values))
+        if not samp:
+            return None
+
+        #
+        #if 'reads' in values:
+        #    if values['reads'] < 0:
+        #        return None
+
+# There are 4 samples in mlwh where irods_path is not unique
+# These are:
+        if 'irods_path' in values and\
+           values['irods_path'] in ['5970_1_nonhuman.bam', '5970_2_nonhuman.bam', '5970_3_nonhuman.bam', '5970_5_nonhuman.bam']:
+            if values['reads'] < 0:
+                return None
+
+        # print('process_assay data {} {} {} {}'.format(samp, existing, derivative_sample, values))
 
         user = None
         if 'updated_by' in values:
@@ -87,13 +131,9 @@ class AssayDataProcessor(BaseEntity):
         if existing:
             ret = self.merge_assay_data(existing, samp, values)
         else:
-            #print("Creating {}".format(samp))
-            if len(samp.attrs) == 0:
-                return None
+            # print("Creating {}".format(samp))
 
             try:
-                if derivative_sample:
-                    samp.derivative_sample_id = derivative_sample.derivative_sample_id
                 created = self._dao.create_assay_datum(samp, user)
 
                 ret = created
@@ -103,7 +143,7 @@ class AssayDataProcessor(BaseEntity):
                 self._logger.error("Error inserting {}".format(samp))
                 sys.exit(1)
 
-            if 'unique_ds_id' in values:
+            if 'unique_ad_id' in values:
                 self._assay_datum_cache[values['unique_ad_id']] = created.assay_datum_id
 
         return ret
@@ -155,7 +195,6 @@ class AssayDataProcessor(BaseEntity):
 
     def merge_assay_datum_objects(self, existing, samp, values):
 
-        orig = deepcopy(existing)
         changed = False
 
         change_reasons = []
@@ -194,4 +233,3 @@ class AssayDataProcessor(BaseEntity):
         #print('\n'.join(change_reasons))
 
         return existing, changed
-

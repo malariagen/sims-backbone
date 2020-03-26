@@ -7,19 +7,29 @@
         </a>
       </div>
       <div fxFlex="10%">
-        <a i18n="@@simsSamplingEvents" [routerLink]="['/study/events', study.code]">
-          Sampling Events
+        <a i18n="@@simsCollections" [routerLink]="['/study/events', study.code]">
+          {{study.num_collections}} Collection Events
         </a>
       </div>
       <div fxFlex="10%">
         <a i18n="@@simsOriginalSamples" [routerLink]="['/study/os', study.code]">
-          Original Samples
+          {{study.num_original_samples}} Original Samples
         </a>
       </div>
       <div fxFlex="10%">
         <a i18n="@@simsDerivativeSamples" [routerLink]="['/study/ds', study.code]">
-          Derivative Samples
+          {{study.num_derivative_samples}} Derivative Samples
         </a>
+        ({{ study.num_original_derivative_samples}})
+      </div>
+      <div fxFlex="10%">
+        <a i18n="@@simsAssayData" [routerLink]="['/study/ad', study.code]">
+          {{study.assay_data}} Assay Data
+        </a>
+        ({{ study.num_original_assay_data}})
+      </div>
+      <div fxFlex="10%">
+          {{study.num_released}} Released
       </div>
     </div>
   </div>

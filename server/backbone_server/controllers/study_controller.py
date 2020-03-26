@@ -3,9 +3,7 @@ import logging
 from backbone_server.errors.missing_key_exception import MissingKeyException
 from backbone_server.errors.integrity_exception import IntegrityException
 from backbone_server.errors.permission_exception import PermissionException
-from backbone_server.study.gets import StudiesGet
-from backbone_server.study.get import StudyGet
-from backbone_server.study.put import StudyPut
+from backbone_server.model.study import BaseStudy
 
 from backbone_server.controllers.base_controller import BaseController
 
@@ -27,9 +25,9 @@ class StudyController(BaseController):
         :rtype: Studies
         """
 
-        get = StudiesGet(self.get_connection())
+        get = BaseStudy(self.get_engine(), self.get_session())
 
-        studies = get.get(studies)
+        studies = get.gets(studies, start, count)
 
         return studies, 200
 
@@ -43,23 +41,22 @@ class StudyController(BaseController):
         :rtype: Study
         """
 
-        get = StudyGet(self.get_connection())
+        get = BaseStudy(self.get_engine(), self.get_session())
 
         study = None
         retcode = 200
         try:
             study = get.get(study_name, studies)
         except MissingKeyException as dme:
-            logging.getLogger(__name__).debug(
-                "update_study: {}".format(repr(dme)))
+            logging.getLogger(__name__).debug("update_study: %s", repr(dme))
             retcode = 404
             study = str(dme)
         except PermissionException as pme:
-            logging.getLogger(__name__).debug(
-                "download_study: {}, {}".format(repr(pme), user))
+            logging.getLogger(__name__).debug("download_study: %s, %s", repr(pme), user)
             retcode = 403
             study = str(pme)
 
+        # print(f'returning {study}')
 
         return study, retcode
 
@@ -79,22 +76,19 @@ class StudyController(BaseController):
         updated_study = None
 
         try:
-            put = StudyPut(self.get_connection())
+            put = BaseStudy(self.get_engine(), self.get_session())
 
-            updated_study = put.put(study_name, study, studies)
+            updated_study = put.put(study_name, study, study_name, studies, user)
         except IntegrityException as dme:
-            logging.getLogger(__name__).debug(
-                "update_study: {}".format(repr(dme)))
+            logging.getLogger(__name__).debug("update_study: %s", repr(dme))
             retcode = 422
             updated_study = str(dme)
         except MissingKeyException as dme:
-            logging.getLogger(__name__).debug(
-                "update_study: {}".format(repr(dme)))
+            logging.getLogger(__name__).debug("update_study: %s", repr(dme))
             retcode = 404
             updated_study = str(dme)
         except PermissionException as pme:
-            logging.getLogger(__name__).debug(
-                "update_study: {}, {}".format(repr(pme), user))
+            logging.getLogger(__name__).debug("update_study: %s, %s", repr(pme), user)
             retcode = 403
             updated_study = str(pme)
 

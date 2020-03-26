@@ -46,5 +46,5 @@ psql=( psql -v ON_ERROR_STOP=1 -h ${POSTGRES_HOST} --username "$POSTGRES_USER" -
 psql+=( --dbname "$POSTGRES_DB" )
 #Rebuilding an existing db as empty - not changing the structure
 "${psql[@]}" << +++EOF
-DELETE FROM taxonomies WHERE id=7227;
+DELETE FROM taxonomy WHERE id=7227;
 +++EOF

@@ -43,6 +43,7 @@ class TestLocation(TestBase):
             fetched = api_instance.download_location(created.location_id)
             assert created == fetched, "create response != download response"
             fetched.location_id = None
+            fetched.version = None
             assert loc == fetched, "upload != download response"
             api_instance.delete_location(created.location_id)
 
@@ -73,6 +74,7 @@ class TestLocation(TestBase):
             fetched = api_instance.download_location(created.location_id)
             assert created == fetched, "create response != download response"
             fetched.location_id = None
+            fetched.version = None
             assert loc == fetched, "upload != download response"
 
             downloaded = api_instance.download_locations_by_attr(loc.attrs[1].attr_type,
@@ -238,7 +240,7 @@ class TestLocation(TestBase):
 
         try:
 
-            loc = openapi_client.Location(None, 15.82083, -9.4145, None, None, None, None)
+            loc = openapi_client.Location(None, latitude=15.82083, longitude=-9.4145)
             loc.attrs = [
                 openapi_client.Attr(attr_type='partner_name', attr_value='Kobeni', study_name='5002-PF-MR-ANON')
             ]
@@ -250,6 +252,7 @@ class TestLocation(TestBase):
 
             assert created == fetched, "create response != download response"
             fetched.location_id = None
+            fetched.version = None
             assert loc == fetched, "upload != download response"
             api_instance.delete_location(created.location_id)
 
@@ -275,6 +278,7 @@ class TestLocation(TestBase):
 
             assert created == fetched, "create response != download response"
             fetched.location_id = None
+            fetched.version = None
             assert loc == fetched, "upload != download response"
             api_instance.delete_location(created.location_id)
 
@@ -333,6 +337,7 @@ class TestLocation(TestBase):
             fetched = api_instance.download_location(looked_up.location_id)
             assert created == fetched, "create response != download response"
             fetched.location_id = None
+            fetched.version = None
             assert loc == fetched, "upload != download response"
             api_instance.delete_location(created.location_id)
 
@@ -454,7 +459,7 @@ class TestLocation(TestBase):
 
     """
     """
-    def test_update(self, api_factory):
+    def test_location_update(self, api_factory):
 
         api_instance = api_factory.LocationApi()
 
@@ -468,15 +473,19 @@ class TestLocation(TestBase):
             looked_up_locs = api_instance.download_partner_location(loc.attrs[0].attr_value)
             looked_up = looked_up_locs.locations[0]
             newloc = self.get_next_location()
-            newloc.country = 'IND'
+            newloc.country = 'MDG'
             newloc.accuracy = 'region'
+            newloc.latitude = -16.94223
+            newloc.longitude = 46.83144
             newloc.attrs = [
                 openapi_client.Attr(attr_type='partner_name', attr_value='nepal', study_name='1235-PV')
             ]
+            newloc.location_id = looked_up.location_id
+            newloc.version = looked_up.version
             updated = api_instance.update_location(looked_up.location_id, newloc)
             fetched = api_instance.download_location(looked_up.location_id)
             assert updated == fetched, "update response != download response"
-            fetched.location_id = None
+            newloc.version = fetched.version
             assert newloc == fetched, "update != download response"
             api_instance.delete_location(looked_up.location_id)
 
@@ -498,14 +507,17 @@ class TestLocation(TestBase):
             created = api_instance.create_location(loc)
             looked_up_locs = api_instance.download_partner_location(loc.attrs[0].attr_value)
             looked_up = looked_up_locs.locations[0]
-            newloc = copy.deepcopy(loc)
+            newloc = self.get_next_location()
+            newloc.curated_name = loc.curated_name
             newloc.attrs = [
                 openapi_client.Attr(attr_type='partner_name', attr_value='nepal', study_name='1235-PV')
             ]
+            newloc.location_id = looked_up.location_id
+            newloc.version = looked_up.version
             updated = api_instance.update_location(looked_up.location_id, newloc)
             fetched = api_instance.download_location(looked_up.location_id)
             assert updated == fetched, "update response != download response"
-            fetched.location_id = None
+            newloc.version = fetched.version
             assert newloc == fetched, "update != download response"
             api_instance.delete_location(looked_up.location_id)
 
@@ -537,9 +549,12 @@ class TestLocation(TestBase):
                                              notes='new_pv_3_locations.txt',
                                              country='IND')
             new_created = api_instance.create_location(newloc)
-            with pytest.raises(ApiException, status=422):
-                created.location_id = new_created.location_id
-                updated = api_instance.update_location(new_created.location_id, created)
+            created.location_id = new_created.location_id
+            # Duplicates currently allowed
+            # with pytest.raises(ApiException, status=422):
+            created.location_id = new_created.location_id
+            newloc.version = looked_up.version
+            updated = api_instance.update_location(new_created.location_id, created)
 
 
             api_instance.delete_location(looked_up.location_id)
@@ -615,4 +630,3 @@ class TestLocation(TestBase):
 
         except ApiException as error:
             self.check_api_exception(api_factory, "LocationApi->create_location", error)
-

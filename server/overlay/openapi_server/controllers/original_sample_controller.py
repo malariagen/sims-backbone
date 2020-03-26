@@ -56,7 +56,8 @@ def download_original_sample(original_sample_id, user=None, token_info=None):
                                                                auths=original_sample_controller.token_info(token_info))
 
 
-def download_original_samples(search_filter=None, start=None, count=None, user=None, token_info=None):  # noqa: E501
+def download_original_samples(search_filter=None, value_type=None, start=None, count=None,
+                              studies=None, user=None, token_info=None):  # noqa: E501
     """fetches originalSamples
 
      # noqa: E501
@@ -70,8 +71,11 @@ def download_original_samples(search_filter=None, start=None, count=None, user=N
 
     :rtype: OriginalSamples
     """
-    return original_sample_controller.download_original_samples(search_filter, start,
-                                                                count, studies=None, user=user,
+    return original_sample_controller.download_original_samples(search_filter,
+                                                                value_type=value_type,
+                                                                start=start,
+                                                                count=count,
+                                                                studies=studies, user=user,
                                                                 auths=original_sample_controller.token_info(token_info))
 
 
@@ -93,7 +97,9 @@ def download_original_samples_by_event_set(event_set_id, start=None, count=None,
                                                                              auths=original_sample_controller.token_info(token_info))
 
 
-def download_original_samples_by_attr(prop_name, prop_value, study_name=None, user=None, token_info=None):
+def download_original_samples_by_attr(prop_name, prop_value, study_name=None, value_type=None,
+                                      start=None, count=None,
+                                      studies=None, user=None, token_info=None):
     """
     fetches a originalSample by property value
 
@@ -106,11 +112,15 @@ def download_original_samples_by_attr(prop_name, prop_value, study_name=None, us
     """
     return original_sample_controller.download_original_samples_by_attr(prop_name, prop_value,
                                                                         study_name,
-                                                                        studies=None, user=user,
+                                                                        value_type=value_type,
+                                                                        start=start,
+                                                                        count=count,
+                                                                        studies=studies, user=user,
                                                                         auths=original_sample_controller.token_info(token_info))
 
 
-def download_original_samples_by_location(location_id, start=None, count=None, user=None, token_info=None):
+def download_original_samples_by_location(location_id, start=None, count=None,
+                                          studies=None, user=None, token_info=None):
     """
     fetches originalSamples for a location
 
@@ -124,11 +134,34 @@ def download_original_samples_by_location(location_id, start=None, count=None, u
     :rtype: OriginalSamples
     """
     return original_sample_controller.download_original_samples_by_location(location_id, start,
-                                                                            count, studies=None, user=user,
+                                                                            count,
+                                                                            studies=studies, user=user,
                                                                             auths=original_sample_controller.token_info(token_info))
 
 
-def download_original_samples_by_study(study_name, start=None, count=None, user=None, token_info=None):
+def download_original_samples_by_manifest(release_id, start=None,
+                                          count=None, studies=None, user=None,
+                                          token_info=None):  # noqa: E501
+    """fetches OriginalSamples in a given release
+
+     # noqa: E501
+
+    :param release_id: release name
+    :type release_id: str
+    :param start: for pagination start the result set at a record x
+    :type start: int
+    :param count: for pagination the number of entries to return
+    :type count: int
+
+    :rtype: OriginalSamples
+    """
+    return original_sample_controller.download_original_samples_by_manifest(release_id, start,
+                                                                            count,
+                                                                            studies=studies, user=user,
+                                                                            auths=original_sample_controller.token_info(token_info))
+
+def download_original_samples_by_study(study_name, start=None, count=None,
+                                       studies=None, user=None, token_info=None):
     """
     fetches originalSamples for a study
 
@@ -142,11 +175,13 @@ def download_original_samples_by_study(study_name, start=None, count=None, user=
     :rtype: OriginalSamples
     """
     return original_sample_controller.download_original_samples_by_study(study_name, start,
-                                                                         count, studies=None, user=user,
+                                                                         count,
+                                                                         studies=studies, user=user,
                                                                          auths=original_sample_controller.token_info(token_info))
 
 
-def download_original_samples_by_taxa(taxa_id, start=None, count=None, user=None, token_info=None):
+def download_original_samples_by_taxa(taxa_id, start=None, count=None,
+                                      studies=None, user=None, token_info=None):
     """
     fetches originalSamples for a given taxonomy classification code
 
@@ -160,7 +195,8 @@ def download_original_samples_by_taxa(taxa_id, start=None, count=None, user=None
     :rtype: OriginalSamples
     """
     return original_sample_controller.download_original_samples_by_taxa(taxa_id, start,
-                                                                        count, studies=None, user=user,
+                                                                        count,
+                                                                        studies=studies, user=user,
                                                                         auths=original_sample_controller.token_info(token_info))
 
 
@@ -180,7 +216,7 @@ def merge_original_samples(into, merged, user=None, token_info=None):  # noqa: E
                                                              auths=original_sample_controller.token_info(token_info))
 
 
-def update_original_sample(original_sample_id, body, user=None, token_info=None):
+def update_original_sample(original_sample_id, body, studies=None, user=None, token_info=None):
     """
     updates an originalSample
 
@@ -194,5 +230,7 @@ def update_original_sample(original_sample_id, body, user=None, token_info=None)
     if connexion.request.is_json:
         original_sample = OriginalSample.from_dict(
             connexion.request.get_json())
-    return original_sample_controller.update_original_sample(original_sample_id, original_sample, studies=None, user=user,
+    return original_sample_controller.update_original_sample(original_sample_id,
+                                                             original_sample,
+                                                             studies=studies, user=user,
                                                              auths=original_sample_controller.token_info(token_info))

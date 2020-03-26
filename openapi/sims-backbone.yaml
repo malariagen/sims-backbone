@@ -83,6 +83,8 @@ paths:
     $ref: './sims-backbone/original_sample/by_taxa.yaml'
   '/originalSamples/eventSet/{event_set_id}':
     $ref: './sims-backbone/original_sample/by_set.yaml'
+  '/originalSamples/manifest/{manifest_id}':
+    $ref: './sims-backbone/original_sample/by_manifest.yaml'
   '/derivativeSample':
     $ref: './sims-backbone/derivative_sample/create.yaml'
   '/derivativeSamples':
@@ -95,6 +97,8 @@ paths:
     $ref: './sims-backbone/derivative_sample/by_os_attr.yaml'
   '/derivativeSamples/taxa/{taxa_id}':
     $ref: './sims-backbone/derivative_sample/by_taxa.yaml'
+  '/derivativeSamples/partner_taxa/{taxa_id}':
+    $ref: './sims-backbone/derivative_sample/by_partner_taxa.yaml'
   '/derivativeSamples/eventSet/{event_set_id}':
     $ref: './sims-backbone/derivative_sample/by_set.yaml'
   '/derivativeSamples/study/{study_name}':
@@ -121,6 +125,14 @@ paths:
     $ref: './sims-backbone/study/items.yaml'
   '/study/{study_name}':
     $ref: './sims-backbone/study/item.yaml'
+  '/document':
+    $ref: './sims-backbone/document/create.yaml'
+  '/document/{document_id}':
+    $ref: './sims-backbone/document/item.yaml'
+  '/document/content/{document_id}':
+    $ref: './sims-backbone/document/content.yaml'
+  '/documents/study/{study_name}':
+    $ref: './sims-backbone/document/by_study.yaml'
   '/eventSet/{event_set_id}':
     $ref: './sims-backbone/event_set/item.yaml'
   '/eventSet/{event_set_id}/{sampling_event_id}':
@@ -129,6 +141,16 @@ paths:
     $ref: './sims-backbone/event_set/note.yaml'
   '/eventSets':
     $ref: './sims-backbone/event_set/items.yaml'
+  '/manifest/{manifest_id}':
+    $ref: './sims-backbone/manifest/item.yaml'
+  '/manifest/{manifest_id}/{original_sample_id}':
+    $ref: './sims-backbone/manifest/manifest_item.yaml'
+  '/manifest_item/{manifest_item_id}':
+    $ref: './sims-backbone/manifest_item/item.yaml'
+  '/manifest/{manifest_id}/notes/{note_id}':
+    $ref: './sims-backbone/manifest/note.yaml'
+  '/manifests':
+    $ref: './sims-backbone/manifest/items.yaml'
   '/missingTaxon':
     get:
       tags:
@@ -210,6 +232,9 @@ paths:
 servers:
   - url: http://localhost/v1
 components:
+  schemas:
+    AnyValue:
+      description: Can be any value - string, number, boolean, array or object.
   requestBodies:
     AssayDatum:
       content:
@@ -251,6 +276,24 @@ components:
         application/json:
           schema:
             $ref: "./sims-backbone/definitions/original_sample.yaml#/components/schemas/OriginalSample"
+      required: true
+    ManifestItem:
+      content:
+        application/json:
+          schema:
+            $ref: "./sims-backbone/definitions/manifest.yaml#/components/schemas/ManifestItem"
+      required: true
+    ManifestNote:
+      content:
+        application/json:
+          schema:
+            $ref: "./sims-backbone/definitions/manifest.yaml#/components/schemas/ManifestNote"
+      required: true
+    Document:
+      content:
+        multipart/form-data:
+          schema:
+            $ref: "./sims-backbone/definitions/document.yaml#/components/schemas/Document"
       required: true
   securitySchemes:
     OAuthSecurity:

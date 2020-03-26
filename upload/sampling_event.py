@@ -1,11 +1,11 @@
 
-import sys
 from copy import deepcopy
 import datetime
 
+from decimal import Decimal
+
 import logging
 
-from decimal import *
 
 import openapi_client
 from openapi_client.rest import ApiException
@@ -14,11 +14,11 @@ from base_entity import BaseEntity
 
 class SamplingEventProcessor(BaseEntity):
 
-    _sample_cache = {}
 
     def __init__(self, dao, event_set):
         super().__init__(dao, event_set)
         self._logger = logging.getLogger(__name__)
+        self._sample_cache = {}
 
     """
         returns true if the attr is already in, or successfully added to, the location
@@ -47,10 +47,10 @@ class SamplingEventProcessor(BaseEntity):
             #print("values: {} {}".format(study_id, partner_name))
             if study_id and partner_name:
 #                print("adding attr {}".format(looked_up.attrs))
-                new_ident = openapi_client.Attr( attr_type = 'partner_name',
-                                                      attr_value = partner_name,
-                                                      attr_source = self._event_set,
-                                                      study_name = study_id)
+                new_ident = openapi_client.Attr(attr_type='partner_name',
+                                                attr_value=partner_name,
+                                                attr_source=self._event_set,
+                                                study_name=study_id)
                 #print("adding attr2 {}".format(new_ident))
                 looked_up.attrs.append(new_ident)
                 #print("adding attr3 {}".format(looked_up))
@@ -59,13 +59,13 @@ class SamplingEventProcessor(BaseEntity):
                     ret = True
                 except ApiException as err:
                     #print("Error adding location attr {} {}".format(looked_up, err))
-                    message = 'duplicate location:{}:{}'.format(ident_type,partner_name)
+                    message = 'duplicate location:{}:{}'.format(ident_type, partner_name)
                     try:
                         conflict = self._dao.download_partner_location(partner_name)
                         if conflict and conflict.locations:
                             conflict_loc = self._dao.download_location(conflict.locations[0].location_id)
                             conflict_loc = self._dao.download_gps_location(looked_up.latitude,
-                                                                              looked_up.longitude)
+                                                                           looked_up.longitude)
                             self.report_conflict(None, "Location name", existing_location,
                                                  conflict_loc, message, values)
                         else:
@@ -73,7 +73,7 @@ class SamplingEventProcessor(BaseEntity):
                     except ApiException as err:
                         try:
                             conflict_loc = self._dao.download_gps_location(looked_up.latitude,
-                                                                              looked_up.longitude)
+                                                                           looked_up.longitude)
                             for loc in conflict_loc.locations:
                                 for cname in loc.attrs:
                                     if cname.study_name[:4] == study_id[:4]:
@@ -117,7 +117,7 @@ class SamplingEventProcessor(BaseEntity):
 
         if not partner_name:
             if prefix + 'latitude' in values and values[prefix + 'latitude']:
-                self.report("No location name: ",values)
+                self.report("No location name: ", values)
             return None, None
 
         #Will have been set to 0000 if not present
@@ -128,20 +128,20 @@ class SamplingEventProcessor(BaseEntity):
 
         loc.attrs = [
             openapi_client.Attr(attr_type='partner_name',
-                                      attr_value=partner_name,
-                                      attr_source=self._event_set, study_name=study_id)
+                                attr_value=partner_name,
+                                attr_source=self._event_set, study_name=study_id)
         ]
         if prefix + "src_location_id" in values:
             src_lid = openapi_client.Attr(attr_type='src_location_id',
-                                      attr_value=values[prefix + 'src_location_id'],
-                                      attr_source=self._event_set, study_name=study_id)
+                                          attr_value=values[prefix + 'src_location_id'],
+                                          attr_source=self._event_set, study_name=study_id)
             loc.attrs.append(src_lid)
 
         try:
             if prefix + 'latitude' in values and values[prefix + 'latitude']:
-                loc.latitude = round(float(Decimal(values[prefix + 'latitude'])),7)
+                loc.latitude = round(float(Decimal(values[prefix + 'latitude'])), 7)
             if prefix + 'longitude' in values and values[prefix + 'longitude']:
-                loc.longitude = round(float(Decimal(values[prefix + 'longitude'])),7)
+                loc.longitude = round(float(Decimal(values[prefix + 'longitude'])), 7)
         except Exception as excp:
             print(excp)
             pass
@@ -310,8 +310,6 @@ class SamplingEventProcessor(BaseEntity):
 
         doc = None
         doc_accuracy = None
-        study_id = None
-        ret = None
 
         idents = []
         if 'sample_individual_id' in values:
@@ -361,11 +359,10 @@ class SamplingEventProcessor(BaseEntity):
         try:
 
             ret = self._dao.merge_sampling_events(existing.sampling_event_id,
-                                               found.sampling_event_id)
+                                                  found.sampling_event_id)
         except ApiException as err:
             msg = "Error updating merged sampling events {} {} {}".format(values, found, existing)
-            self.report_conflict(existing, "SamplingEvent", existing,
-                                                 found, err.body, values)
+            self.report_conflict(existing, "SamplingEvent", existing, found, err.body, values)
             #self._logger.error(msg)
             if err.status == 422:
                 if err.body.startswith('"Incompatible location_id '):
@@ -497,7 +494,6 @@ class SamplingEventProcessor(BaseEntity):
 
     def merge_sampling_event_objects(self, existing, samp, values):
 
-        orig = deepcopy(existing)
         new_ident_value = False
 
         change_reasons = []
@@ -573,7 +569,11 @@ class SamplingEventProcessor(BaseEntity):
                 change_reasons.append('Set proxy location')
 
 
-        #print('\n'.join(change_reasons))
+        # print('merge_sampling_events')
+        # print(existing)
+        # print(samp)
+        # print('\n'.join(change_reasons))
+        # print('######################')
 
         return existing, new_ident_value
 
@@ -606,9 +606,10 @@ class SamplingEventProcessor(BaseEntity):
                     #Make sure no implied edit - location should have been updated before here
                     existing.location = None
                     existing.proxy_location = None
-                    #print("Updating {} to {}".format(orig, existing))
+                    # print("Updating {} to {}".format(orig, existing))
                     ret = self._dao.update_sampling_event(existing.sampling_event_id,
                                                           existing, user)
+                    # print("Updated {} to {}".format(existing, ret))
 
                 if not existing.event_sets or self._event_set not in existing.event_sets:
                     self._dao.create_event_set_item(self._event_set,

@@ -6,6 +6,8 @@ components:
         expected_samples_id:
           type: string
   #        format: uuid
+        version:
+          type: integer
         date_of_arrival:
           type: string
           format: date
