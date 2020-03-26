@@ -18,7 +18,6 @@ ${SUDO} ${INSTALL_CMD} remove -y java-1.7.0-openjdk
 java -version
 git clone https://github.com/malariagen/sims-backbone.git
 cd sims-backbone
-git checkout sqlalchemy
 ./generate.sh
 PIP_CMD="${SUDO} /usr/bin/pip-3.6"
 #${PIP_CMD} install --upgrade pip
