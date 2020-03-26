@@ -8,5 +8,12 @@ export PYTHONPATH=${DIR}:${DIR}/../python_client:${DIR}/../server:${DIR}/../serv
 set -o allexport
 source ${DIR}/../.envs/.local/.postgres
 set +o allexport
-export POSTGRES_HOST=localhost
-export POSTGRES_DB=backbone_test
+if [ ! -z "${LOCAL_TEST}" ]
+then
+    if [ "${LOCAL_TEST}" -eq 1 ]
+    then
+        export POSTGRES_HOST=localhost
+        export POSTGRES_DB=backbone_test
+    fi
+fi
+
