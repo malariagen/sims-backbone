@@ -1,12 +1,11 @@
 import json
 
-from sqlalchemy import Integer, String, ForeignKey, DateTime, Date, func, UniqueConstraint
-from sqlalchemy import MetaData, Column
+from sqlalchemy import Integer, String, ForeignKey, Date
+from sqlalchemy import Column
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm import relationship, backref, foreign
-from sqlalchemy.exc import IntegrityError
-from sqlalchemy import and_
-from sqlalchemy.types import ARRAY, JSON
+from sqlalchemy.orm import relationship, backref
+from sqlalchemy import and_, Sequence
+from sqlalchemy.types import JSON
 from sqlalchemy.ext.declarative import declared_attr
 
 from openapi_server.encoder import JSONEncoder
@@ -32,7 +31,7 @@ from backbone_server.model.manifest_note import ManifestNote
 from backbone_server.model.derivative_sample import DerivativeSample
 from backbone_server.model.original_sample import OriginalSample, BaseOriginalSample
 from backbone_server.model.assay_data import AssayDatum, BaseAssayDatum
-from backbone_server.model.history_meta import Versioned, versioned_session
+from backbone_server.model.history_meta import Versioned
 from backbone_server.model.base import SimsDbBase
 
 from backbone_server.errors.duplicate_key_exception import DuplicateKeyException
@@ -115,7 +114,7 @@ class Manifest(Versioned, Base):
     manifest_date = Column(Date)
     studies = Column(JSON)
 
-    manifest_number = Column(Integer, autoincrement=True)
+    manifest_number = Column(Integer, Sequence('sims_manifest_num'), autoincrement="auto")
 
     manifest_doc = Column('document_id',
                           UUID(as_uuid=True),

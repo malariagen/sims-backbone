@@ -1,7 +1,7 @@
 from sqlalchemy import MetaData, Column
 from sqlalchemy import Integer, String, ForeignKey, Date, func, UniqueConstraint
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy import and_
+from sqlalchemy import and_, Sequence
 from sqlalchemy.sql import text
 from sqlalchemy.orm import relationship, backref
 from sqlalchemy.orm import joinedload
@@ -61,6 +61,9 @@ class OriginalSample(Versioned, Base):
                                 ForeignKey('partner_species_identifier.id'))
     acc_date = Column(Date)
     days_in_culture = Column(Integer)
+
+    sims_sample_num = Column(Integer, Sequence('sims_sample_num'), autoincrement="auto")
+    sims_id = Column(String(16), unique=True, index=True)
 
     # If uselist is False then only one original sample can link to a given
     # xxxx
