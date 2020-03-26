@@ -132,6 +132,7 @@ class Study(Base):
 
     name = Column(String(64), index=True)
     code = Column(String(4), index=True)
+    sequencescape_code = Column(String(64), index=True)
     ethics_expiry = Column(Date())
 
 #    documents = relationship("Document")
