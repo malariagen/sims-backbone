@@ -16,6 +16,7 @@ class ManifestProcessor(BaseEntity):
         self._dao = dao
         self._event_set = event_set
         self._manifest_cache = []
+        self._manifest_studies_cache = {}
         self._item_cache = {}
 
     def create_manifest_item_from_values(self, values, original_sample):
@@ -36,10 +37,17 @@ class ManifestProcessor(BaseEntity):
 
         existing = None
 
-        if not samp or 'release' not in values:
+        if not samp:
             return existing
 
-        manifest = values['release']
+        manifest = None
+        if 'release' in values:
+            manifest = values['release']
+        elif 'manifest' in values:
+            manifest = values['manifest']
+        else:
+            return existing
+
         if manifest not in self._manifest_cache:
             self._item_cache[manifest] = {}
             try:
@@ -71,7 +79,17 @@ class ManifestProcessor(BaseEntity):
             print(f'No original sample {values}')
             return
 
-        manifest = values['release']
+        manifest = None
+        manifest_type = None
+        if 'release' in values:
+            manifest = values['release']
+            manifest_type = 'release'
+        elif 'manifest' in values:
+            manifest = values['manifest']
+            manifest_type = 'manifest'
+        else:
+            return existing
+
         manifest_item = None
         if not existing:
             manifest_item = self._dao.create_manifest_item(manifest, original_sample.original_sample_id)
@@ -100,3 +118,16 @@ class ManifestProcessor(BaseEntity):
             manifest_item = self._dao.update_manifest_item(manifest_item.manifest_item_id,
                                                            manifest_item, update_samples=True)
             self._item_cache[manifest][original_sample.original_sample_id] = manifest_item
+
+        update_studies = False
+        if manifest not in self._manifest_studies_cache:
+            self._manifest_studies_cache[manifest] = []
+            update_studies = True
+        elif original_sample.study_name[:4] not in self._manifest_studies_cache[manifest]:
+            update_studies = True
+
+        if update_studies:
+            self._manifest_studies_cache[manifest].append(original_sample.study_name[:4])
+            download_manifest = self._dao.download_manifest(manifest)
+            download_manifest.manifest_type = manifest_type
+            self._dao.update_manifest(manifest, download_manifest, update_studies=True)

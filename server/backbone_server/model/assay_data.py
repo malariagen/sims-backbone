@@ -94,7 +94,7 @@ class BaseAssayDatum(SimsDbBase):
         self.db_class = AssayDatum
         self.attr_link = AssayDatumAttr
         self.api_id = 'assay_datum_id'
-        self.unique_attrs = ['assay_datum_id']
+        self.unique_attrs = ['assay_datum_id', 'irods_path']
 
     def expand_results(self, db, simple_results, studies):
 

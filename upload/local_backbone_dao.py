@@ -1075,3 +1075,19 @@ class LocalBackboneDAO(AbstractBackboneDAO):
             raise ApiException(http_resp=HTTPResponse(body=rel, status=retcode))
 
         return rel
+
+    def update_manifest(self, manifest_id, manifest,
+                        update_studies=None, studies=None, user=None,
+                        auths=None):  # noqa: E501
+        if not user:
+            user = self._user
+
+        rel, retcode = self.r_api_instance.update_manifest(manifest_id,
+                                                           manifest,
+                                                           update_studies=update_studies, studies=studies,
+                                                           user=user,
+                                                           auths=self._auths)
+        if retcode >= 400:
+            raise ApiException(http_resp=HTTPResponse(body=rel, status=retcode))
+
+        return rel

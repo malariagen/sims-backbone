@@ -389,3 +389,8 @@ class AbstractBackboneDAO(abc.ABC):
                                                         manifest_item,
                                                         update_samples=update_samples, studies=studies,
                                                         user=user)
+
+    def update_manifest(self, manifest_id, manifest, update_studies=None, studies=None, user=None):  # noqa: E501
+        return self.r_api_instance.update_manifest(manifest_id, manifest,
+                                                   update_studies=update_studies,
+                                                   user=user)

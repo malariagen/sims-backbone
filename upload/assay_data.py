@@ -14,7 +14,7 @@ class AssayDataProcessor(BaseEntity):
         super().__init__(dao, event_set)
         self._logger = logging.getLogger(__name__)
 
-        self._lookup_attrs = ['irods_path']
+        self._lookup_attrs = ['assay_datum_id', 'irods_path']
         self.attrs = [
             {
                 'from': 'assay_datum_id'
@@ -79,8 +79,6 @@ class AssayDataProcessor(BaseEntity):
         if len(samp.attrs) > 0:
             #print("Checking attrs {}".format(samp.attrs))
             for ident in samp.attrs:
-                if ident.attr_type not in ['assay_datum_id']:
-                    continue
                 if ident.attr_type not in self._lookup_attrs:
                     continue
                 try:

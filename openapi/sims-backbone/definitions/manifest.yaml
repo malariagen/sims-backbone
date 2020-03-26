@@ -58,6 +58,8 @@ components:
       properties:
         manifest_name:
           type: string
+        manifest_type:
+          type: string
         version:
           type: integer
           readOnly: true
