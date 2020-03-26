@@ -25,6 +25,11 @@ class IndividualAttr(Base):
 
     __tablename__ = 'individual_attr'
 
+    id = None
+    created_by = None
+    updated_by = None
+    action_date = None
+
     individual_id = Column(UUID(as_uuid=True),
                            ForeignKey('individual.id'),
                            primary_key=True)

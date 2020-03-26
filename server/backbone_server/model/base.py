@@ -76,17 +76,21 @@ class SimsDbBase():
                 if check:
                     from backbone_server.model.attr import Attr
                     from backbone_server.model.study import Study
-                    for db_attr in Attr.get_all(db, attr):
-                        if db_attr.study:
-                            if db.query(self.attr_link).\
-                               join(Attr).\
-                               join(Study).\
-                               filter(and_(self.attr_link.attr_id == db_attr.id,\
-                                           Study.code == attr.study_name[:4])).first():
-                                raise DuplicateKeyException(f"Error inserting {self.api_id} attr {attr.attr_type} {api_item}")
-                        else:
-                            if db.query(self.attr_link).filter(self.attr_link.attr_id == db_attr.id).first():
-                                raise DuplicateKeyException(f"Error inserting {self.api_id} attr {attr.attr_type} {api_item}")
+
+                    all_query = Attr.get_all(db, attr)
+
+                    if all_query:
+                        for db_attr in all_query:
+                            if db_attr.study:
+                                if db.query(self.attr_link).\
+                                   join(Attr).\
+                                   join(Study).\
+                                   filter(and_(self.attr_link.attr_id == db_attr.id,\
+                                               Study.code == attr.study_name[:4])).first():
+                                    raise DuplicateKeyException(f"Error inserting {self.api_id} attr {attr.attr_type} {api_item}")
+                            else:
+                                if db.query(self.attr_link).filter(self.attr_link.attr_id == db_attr.id).first():
+                                    raise DuplicateKeyException(f"Error inserting {self.api_id} attr {attr.attr_type} {api_item}")
 
     def post_extra_actions(self, api_item):
         pass

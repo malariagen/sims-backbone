@@ -36,6 +36,11 @@ class SamplingEventAttr(Base):
 
     __tablename__ = 'sampling_event_attr'
 
+    id = None
+    created_by = None
+    updated_by = None
+    action_date = None
+
     sampling_event_id = Column(UUID(as_uuid=True),
                                ForeignKey('sampling_event.id'),
                                primary_key=True)

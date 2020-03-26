@@ -57,6 +57,11 @@ class LocationAttr(Base):
 
     __tablename__ = 'location_attr'
 
+    id = None
+    created_by = None
+    updated_by = None
+    action_date = None
+
     location_id = Column(UUID(as_uuid=True),
                          ForeignKey('location.id'),
                          primary_key=True)

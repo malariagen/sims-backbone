@@ -43,6 +43,8 @@ class Attr(Base):
     def get_query(db, api_attr, value_type=None):
 
         study_id = None
+        if not api_attr.attr_value:
+            return None
         if value_type:
             value_type = 'attr_value_' + value_type
         else:
@@ -67,7 +69,11 @@ class Attr(Base):
     @staticmethod
     def get(db, api_attr, value_type=None):
 
-        return Attr.get_query(db, api_attr, value_type).first()
+        query = Attr.get_query(db, api_attr, value_type)
+
+        if query:
+            return query.first()
+        return None
 
     @staticmethod
     def get_or_create(db, api_attr, value_type=None):
@@ -94,7 +100,13 @@ class Attr(Base):
     @staticmethod
     def get_all(db, api_attr, value_type=None):
 
-        for attr in Attr.get_query(db, api_attr, value_type).all():
+
+        query = Attr.get_query(db, api_attr, value_type)
+
+        if not query:
+            return
+
+        for attr in query.all():
             yield attr
 
     study = relationship("Study")

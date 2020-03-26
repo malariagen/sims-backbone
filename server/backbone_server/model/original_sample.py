@@ -31,6 +31,11 @@ class OriginalSampleAttr(Base):
 
     __tablename__ = 'original_sample_attr'
 
+    id = None
+    created_by = None
+    updated_by = None
+    action_date = None
+
     original_sample_id = Column(UUID(as_uuid=True),
                                 ForeignKey('original_sample.id'),
                                 primary_key=True)

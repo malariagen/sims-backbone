@@ -30,6 +30,11 @@ class EventSetAttr(Base):
 
     __tablename__ = 'event_set_attr'
 
+    id = None
+    created_by = None
+    updated_by = None
+    action_date = None
+
     event_set_id = Column(UUID(as_uuid=True), ForeignKey('event_set.id'),
                           primary_key=True)
     attr_id = Column(UUID(as_uuid=True),

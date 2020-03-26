@@ -32,6 +32,11 @@ class DerivativeSampleAttr(Base):
 
     __tablename__ = 'derivative_sample_attr'
 
+    id = None
+    created_by = None
+    updated_by = None
+    action_date = None
+
     derivative_sample_id = Column(UUID(as_uuid=True),
                                   ForeignKey('derivative_sample.id'),
                                   primary_key=True)

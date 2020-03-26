@@ -41,15 +41,25 @@ class ManifestItemAttr(Base):
 
     __tablename__ = 'manifest_item_attr'
 
+    id = None
+    created_by = None
+    updated_by = None
+    action_date = None
+
     manifest_item_id = Column(UUID(as_uuid=True),
-                         ForeignKey('manifest_item.id'),
-                         primary_key=True)
+                              ForeignKey('manifest_item.id'),
+                              primary_key=True)
     attr_id = Column(UUID(as_uuid=True),
                      ForeignKey('attr.id'), primary_key=True)
 
 class ManifestAttr(Base):
 
     __tablename__ = 'manifest_attr'
+
+    id = None
+    created_by = None
+    updated_by = None
+    action_date = None
 
     manifest_id = Column(UUID(as_uuid=True),
                          ForeignKey('manifest.id'),

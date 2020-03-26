@@ -33,6 +33,11 @@ class AssayDatumAttr(Base):
 
     __tablename__ = 'assay_datum_attr'
 
+    id = None
+    created_by = None
+    updated_by = None
+    action_date = None
+
     assay_datum_id = Column(UUID(as_uuid=True),
                             ForeignKey('assay_datum.id'),
                             primary_key=True)

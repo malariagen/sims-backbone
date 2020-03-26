@@ -19,6 +19,11 @@ class DocumentAttr(Base):
 
     __tablename__ = 'document_attr'
 
+    id = None
+    created_by = None
+    updated_by = None
+    action_date = None
+
     document_id = Column(UUID(as_uuid=True),
                          ForeignKey('document.id'),
                          primary_key=True)
