@@ -19,6 +19,37 @@ class DerivativeSampleProcessor(BaseEntity):
         self._derivative_sample_cache = {}
         self._studies_cache = {}
 
+        self._lookup_attrs = [
+            'derivative_sample_id',
+            'sanger_sample_id',
+            'sequencescape_id',
+            'sample_lims_id',
+            'sims_tmp_ds_id'
+        ]
+        self.attrs = [
+            {
+                'from': 'derivative_sample_id'
+            },
+            {
+                'from': 'sanger_sample_id'
+            },
+            {
+                'from': 'sequencescape_id'
+            },
+            {
+                'from': 'sample_lims_id'
+            },
+            {
+                'from': 'derivative_sample_source'
+            },
+            {
+                'from': 'plate_position'
+            },
+            {
+                'from': 'plate_name'
+            }
+        ]
+
     def create_derivative_sample_from_values(self, values, original_sample):
 
         if not original_sample:
@@ -28,39 +59,6 @@ class DerivativeSampleProcessor(BaseEntity):
 
         d_sample = openapi_client.DerivativeSample(None,
                                                    original_sample_id=original_sample_id)
-
-        idents = []
-        if 'derivative_sample_id' in values:
-            idents.append(openapi_client.Attr('derivative_sample_id', values['derivative_sample_id'],
-                                              self._event_set))
-
-        if 'derivative_sample_source' in values:
-            idents.append(openapi_client.Attr('derivative_sample_source',
-                                              values['derivative_sample_source'],
-                                              self._event_set))
-
-        if 'sanger_sample_id' in values:
-            idents.append(openapi_client.Attr('sanger_sample_id',
-                                              values['sanger_sample_id'],
-                                              self._event_set))
-
-        if 'sequencescape_id' in values:
-            idents.append(openapi_client.Attr('sequencescape_id',
-                                              values['sequencescape_id'],
-                                              self._event_set))
-
-        if 'sample_lims_id' in values and values['sample_lims_id']:
-            idents.append(openapi_client.Attr('sanger_lims_id', values['sample_lims_id'],
-                                              self._event_set))
-
-        if 'plate_position' in values and values['plate_position']:
-            idents.append(openapi_client.Attr('plate_position',
-                                              values['plate_position'],
-                                              self._event_set))
-
-        if 'plate_name' in values and values['plate_name']:
-            idents.append(openapi_client.Attr('plate_name', values['plate_name'],
-                                              self._event_set))
 
         if 'dna_prep' in values:
             d_sample.dna_prep = values['dna_prep']
@@ -79,8 +77,21 @@ class DerivativeSampleProcessor(BaseEntity):
             else:
                 self.report(f"Failed to find parent {values['unique_ds_id']} {values['parent_unique_ds_id']}", values)
 
-        d_sample.attrs = idents
+        d_sample.attrs = self.attrs_from_values(values)
 
+        found = False
+        for la in self._lookup_attrs:
+            if la in values:
+                found = True
+
+        # Sometimes mlwh doesn't have a sample id so we make one up
+        # otherwise can't log the assay data
+        if not found:
+            if 'irods_path' in values:
+                value = values['irods_path']
+            d_sample.attrs.append(openapi_client.Attr('sims_tmp_ds_id',
+                                                      value,
+                                                      self._event_set))
         return d_sample
 
     def load_attr_cache(self, study_id, values):
@@ -146,6 +157,10 @@ class DerivativeSampleProcessor(BaseEntity):
         if samp.attrs:
             #print("Checking attrs {}".format(samp.attrs))
             for ident in samp.attrs:
+
+                if ident.attr_type not in self._lookup_attrs:
+                    continue
+
                 existing = self.attr_cache_lookup(study_id, existing, values, ident)
 
                 cache_existing = existing
@@ -201,7 +216,7 @@ class DerivativeSampleProcessor(BaseEntity):
 
     def process_derivative_sample(self, samp, existing, original_sample, values):
 
-        #print('process_derivative_sample {} {} {}'.format(values, samp, existing))
+        # print('process_derivative_sample {} {} {}'.format(values, samp, existing))
 
         user = None
         if 'updated_by' in values:
