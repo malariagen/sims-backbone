@@ -14,6 +14,7 @@ class AssayDataProcessor(BaseEntity):
         super().__init__(dao, event_set)
         self._logger = logging.getLogger(__name__)
 
+        self._lookup_attrs = ['irods_path']
         self.attrs = [
             {
                 'from': 'assay_datum_id'
@@ -38,6 +39,9 @@ class AssayDataProcessor(BaseEntity):
             },
             {
                 'from': 'position'
+            },
+            {
+                'from': 'reads'
             }
         ]
 
@@ -49,20 +53,11 @@ class AssayDataProcessor(BaseEntity):
         d_sample = openapi_client.AssayDatum(None,
                                              derivative_sample_id=derivative_sample.derivative_sample_id)
 
-        idents = []
-        for attr_descrip in self.attrs:
-            if attr_descrip['from'] in values:
-                from_key = attr_descrip['from']
-                to = from_key
-                if 'to' in values:
-                    to = attr_descrip['to']
-                idents.append(openapi_client.Attr(to, values[from_key],
-                                                  self._event_set))
+        d_sample.attrs = self.attrs_from_values(values)
 
         if 'ebi_run_acc' in values:
             d_sample.ebi_run_acc = values['ebi_run_acc']
 
-        d_sample.attrs = idents
 
         return d_sample
 
@@ -79,11 +74,14 @@ class AssayDataProcessor(BaseEntity):
                 existing = self._dao.download_assay_datum(existing_sample_id)
                 return existing
 
+
         #print ("not in cache: {}".format(samp))
         if len(samp.attrs) > 0:
             #print("Checking attrs {}".format(samp.attrs))
             for ident in samp.attrs:
                 if ident.attr_type not in ['assay_datum_id']:
+                    continue
+                if ident.attr_type not in self._lookup_attrs:
                     continue
                 try:
                     #print("Looking for {} {}".format(ident.attr_type, ident.attr_value))
@@ -113,6 +111,18 @@ class AssayDataProcessor(BaseEntity):
 
         if not samp:
             return None
+
+        #
+        #if 'reads' in values:
+        #    if values['reads'] < 0:
+        #        return None
+
+# There are 4 samples in mlwh where irods_path is not unique
+# These are:
+        if 'irods_path' in values and\
+           values['irods_path'] in ['5970_1_nonhuman.bam', '5970_2_nonhuman.bam', '5970_3_nonhuman.bam', '5970_5_nonhuman.bam']:
+            if values['reads'] < 0:
+                return None
 
         # print('process_assay data {} {} {} {}'.format(samp, existing, derivative_sample, values))
 
@@ -225,4 +235,3 @@ class AssayDataProcessor(BaseEntity):
         #print('\n'.join(change_reasons))
 
         return existing, changed
-

@@ -4,6 +4,8 @@ from pprint import pformat
 
 import logging
 
+import openapi_client
+
 class BaseEntityProperties(type):
 
     @property
@@ -24,6 +26,20 @@ class BaseEntity(object, metaclass=BaseEntityProperties):
         self._logger = logging.getLogger(__name__)
         self._dao = dao
         self._event_set = event_set
+        self.attrs = []
+
+    def attrs_from_values(self, values):
+        idents = []
+        for attr_descrip in self.attrs:
+            if attr_descrip['from'] in values:
+                from_key = attr_descrip['from']
+                to_attr = from_key
+                if 'to' in attr_descrip:
+                    to_attr = attr_descrip['to']
+                if values[from_key]:
+                    idents.append(openapi_client.Attr(to_attr, values[from_key],
+                                                      self._event_set))
+        return idents
 
     @classmethod
     def set_use_message_buffer(cls, use_buffer):

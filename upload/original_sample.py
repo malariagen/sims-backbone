@@ -15,6 +15,41 @@ class OriginalSampleProcessor(BaseEntity):
         self._logger = logging.getLogger(__name__)
         self._original_sample_cache = {}
         self._studies_cache = {}
+        self._lookup_attrs = ['roma_id', 'oxford_id']
+        self.attrs = [
+            {
+                'from': 'sample_roma_id',
+                'to': 'roma_id'
+            },
+            {
+                'from': 'sample_partner_id',
+                'to': 'partner_id'
+            },
+            {
+                'from': 'sample_partner_id_1',
+                'to': 'partner_id_1'
+            },
+            {
+                'from': 'sample_oxford_id',
+                'to': 'oxford_id'
+            },
+            {
+                'from': 'sample_alternate_oxford_id',
+                'to': 'alt_oxford_id'
+            },
+            {
+                'from': 'sample_source_id',
+                'to': 'sample_source_id'
+            },
+            {
+                'from': 'sample_source_id1',
+                'to': 'sample_source_id_1'
+            },
+            {
+                'from': 'sample_source_id2',
+                'to': 'sample_source_id_2'
+            }
+        ]
 
 
     def create_original_sample_from_values(self, values):
@@ -23,36 +58,6 @@ class OriginalSampleProcessor(BaseEntity):
             study_id = values['study_id']
 
         o_sample = openapi_client.OriginalSample(None, study_name=study_id)
-
-        idents = []
-        if 'sample_roma_id' in values:
-            idents.append(openapi_client.Attr('roma_id', values['sample_roma_id'],
-                                              self._event_set))
-        if 'sample_partner_id' in values and values['sample_partner_id']:
-            idents.append(openapi_client.Attr('partner_id', values['sample_partner_id'],
-                                              self._event_set))
-        if 'sample_partner_id_1' in values and values['sample_partner_id_1']:
-            idents.append(openapi_client.Attr('partner_id', values['sample_partner_id_1'],
-                                              self._event_set))
-        if 'sample_oxford_id' in values and values['sample_oxford_id']:
-            idents.append(openapi_client.Attr('oxford_id', values['sample_oxford_id'],
-                                              self._event_set))
-        if 'sample_alternate_oxford_id' in values and values['sample_alternate_oxford_id']:
-            idents.append(openapi_client.Attr('alt_oxford_id',
-                                              values['sample_alternate_oxford_id'],
-                                              self._event_set))
-        if 'sample_source_id' in values and values['sample_source_id'] and values['sample_source_type']:
-            idents.append(openapi_client.Attr(values['sample_source_type'],
-                                              values['sample_source_id'],
-                                              self._event_set))
-        if 'sample_source_id1' in values and values['sample_source_id1'] and values['sample_source_type1']:
-            idents.append(openapi_client.Attr(values['sample_source_type1'],
-                                              values['sample_source_id1'],
-                                              self._event_set))
-        if 'sample_source_id2' in values and values['sample_source_id2'] and values['sample_source_type2']:
-            idents.append(openapi_client.Attr(values['sample_source_type2'],
-                                              values['sample_source_id2'],
-                                              self._event_set))
 
         if 'days_in_culture' in values:
             o_sample.days_in_culture = int(float(values['days_in_culture']))
@@ -63,7 +68,7 @@ class OriginalSampleProcessor(BaseEntity):
         if 'os_acc_date' in values:
             o_sample.acc_date = values['os_acc_date']
 
-        o_sample.attrs = idents
+        o_sample.attrs = self.attrs_from_values(values)
 
         return o_sample
 
@@ -148,6 +153,8 @@ class OriginalSampleProcessor(BaseEntity):
                             # and is not a unique ident
                             continue
 
+                        if ident.attr_type not in self._lookup_attrs:
+                            continue
                         found_events = self._dao.download_original_samples_by_attr(ident.attr_type,
                                                                                    ident.attr_value)
 
