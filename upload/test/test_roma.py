@@ -32,6 +32,7 @@ class TestROMA(TestBase):
 
         looked_up = TestBase.getDAO().download_derivative_samples_by_os_attr('roma_id', 'TST00001')
 
+        TestBase.removeManifestItems(['roma_MNF00001', 'roma_MNF00002', 'roma_MNF00003'])
         for derived_sample in looked_up.derivative_samples:
             TestBase.getDAO().delete_derivative_sample(derived_sample.derivative_sample_id)
         TestBase.deleteEventSets(['roma_dump', 'roma_MNF00001', 'roma_MNF00002', 'roma_MNF00003'],
@@ -189,7 +190,7 @@ class TestROMA(TestBase):
             indiv = self._dao.download_individual(looked_up.individual_id)
 
             assert indiv.attrs[0].attr_type == 'patient_id'
-            assert indiv.attrs[0].attr_value == '103335'
+            assert indiv.attrs[0].attr_value == 103335
             assert indiv.attrs[0].attr_source == 'roma_dump'
             assert indiv.attrs[0].study_name == '9030'
 

@@ -22,6 +22,7 @@ def roma_03():
 
     locations = []
 
+    TestBase.removeManifestItems(['roma3_MNF00004'])
     TestBase.deleteEventSets(['roma3_dump', 'roma3_MNF00004'],
                              locations)
     TestBase.deleteStudies(['3030'], locations)

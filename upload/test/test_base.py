@@ -129,9 +129,6 @@ class TestBase(unittest.TestCase):
     @classmethod
     def deleteEventSets(self, event_sets, locations):
 
-        api_instance = openapi_client.EventSetApi(TestBase.getApiClient())
-        event_api_instance = openapi_client.SamplingEventApi(TestBase.getApiClient())
-
         sampling_events = []
         sampling_event_ids = []
         original_sample_ids = []
@@ -166,6 +163,19 @@ class TestBase(unittest.TestCase):
 
         for event_set in event_sets:
             TestBase.getDAO().delete_event_set(event_set)
+
+    """
+    """
+    @classmethod
+    def removeManifestItems(self, manifests):
+
+        for manifest in manifests:
+            manifest_detail = TestBase.getDAO().download_manifest(manifest)
+            for mi in manifest_detail.members.manifest_items:
+                TestBase.getDAO().delete_manifest_item(manifest,
+                                                       mi.original_sample_id)
+
+            TestBase.getDAO().delete_manifest(manifest)
 
     """
     """

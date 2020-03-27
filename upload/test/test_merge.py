@@ -245,6 +245,7 @@ class TestMerge(TestBase):
 
         looked_up = TestBase.getDAO().download_derivative_samples_by_os_attr('roma_id', 'TST00001')
 
+        TestBase.removeManifestItems(['roma_MNF00002', 'roma_MNF00003'])
         for derived_sample in looked_up.derivative_samples:
             TestBase.getDAO().delete_derivative_sample(derived_sample.derivative_sample_id)
         TestBase.tearDownSSR(['oxford_merge', 'pf6_merge', 'pv3_merge',
@@ -269,7 +270,7 @@ class TestMerge(TestBase):
 
 
         looked_up = self._dao.download_original_samples_by_attr('oxford_id',
-                                                                             'EXTST000002')
+                                                                'EXTST000002')
         looked_up = looked_up.original_samples[0]
         self.assertEquals(looked_up.partner_species, 'Plasmodium falciparum')
 

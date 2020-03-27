@@ -21,10 +21,12 @@ class IndividualProcessor(BaseEntity):
         ]
         self.attrs = [
             {
-                'from': 'patient_id'
+                'from': 'patient_id',
+                'use_study': True
             },
             {
-                'from': 'donor_source_code'
+                'from': 'donor_source_code',
+                'use_study': True
             }
         ]
 
@@ -37,7 +39,7 @@ class IndividualProcessor(BaseEntity):
 
         o_sample = openapi_client.Individual(None)
 
-        o_sample.attrs = self.attrs_from_values(values)
+        o_sample.attrs = self.attrs_from_values(values, study_id)
 
         return o_sample
 

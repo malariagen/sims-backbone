@@ -72,7 +72,7 @@ class BaseIndividual(SimsDbBase):
         self.db_class = Individual
         self.attr_link = IndividualAttr
         self.api_id = 'individual_id'
-        self.duplicate_attrs = []
+        self.duplicate_attrs = ['patient_id']
 
     def get_by_study(self, study_name, start, count, studies):
 

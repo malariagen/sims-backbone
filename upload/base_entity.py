@@ -28,7 +28,7 @@ class BaseEntity(object, metaclass=BaseEntityProperties):
         self._event_set = event_set
         self.attrs = []
 
-    def attrs_from_values(self, values):
+    def attrs_from_values(self, values, study_name=None):
         idents = []
         for attr_descrip in self.attrs:
             if attr_descrip['from'] in values:
@@ -37,8 +37,12 @@ class BaseEntity(object, metaclass=BaseEntityProperties):
                 if 'to' in attr_descrip:
                     to_attr = attr_descrip['to']
                 if values[from_key]:
-                    idents.append(openapi_client.Attr(to_attr, values[from_key],
-                                                      self._event_set))
+                    attr = openapi_client.Attr(to_attr, values[from_key],
+                                                  self._event_set)
+                    if 'use_study' in attr_descrip and attr_descrip['use_study']:
+                        if study_name:
+                            attr.study_name = study_name
+                    idents.append(attr)
         return idents
 
     @classmethod

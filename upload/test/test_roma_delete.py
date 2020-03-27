@@ -33,12 +33,12 @@ class TestROMADelete(TestBase):
     @classmethod
     def tearDownClass(self):
 
-        pass
-
         looked_up = TestBase.getDAO().download_derivative_samples_by_os_attr('roma_id', 'TST00001')
 
         for derived_sample in looked_up.derivative_samples:
             TestBase.getDAO().delete_derivative_sample(derived_sample.derivative_sample_id)
+        TestBase.removeManifestItems(['roma_MNF00003'])
+
         TestBase.deleteEventSets(['roma_dump', 'roma_MNF00003'],
                                  TestROMADelete._locations)
         TestBase.deleteStudies(['9030', '9032', '9033'], TestROMADelete._locations)

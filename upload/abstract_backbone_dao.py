@@ -382,6 +382,10 @@ class AbstractBackboneDAO(abc.ABC):
         return self.r_api_instance.create_manifest_item(manifest_id, manifest_item, studies=studies,
                                                         user=user)
 
+    def delete_manifest_item(self, manifest_id, manifest_item, studies=None, user=None):  # noqa: E501
+        return self.r_api_instance.delete_manifest_item(manifest_id, manifest_item, studies=studies,
+                                                        user=user)
+
     def update_manifest_item(self, manifest_item_id, manifest_item,
                              update_samples=None, studies=None, user=None,
                              token_info=None):  # noqa: E501
@@ -393,4 +397,10 @@ class AbstractBackboneDAO(abc.ABC):
     def update_manifest(self, manifest_id, manifest, update_studies=None, studies=None, user=None):  # noqa: E501
         return self.r_api_instance.update_manifest(manifest_id, manifest,
                                                    update_studies=update_studies,
+                                                   studies=studies,
+                                                   user=user)
+
+    def delete_manifest(self, manifest_name, studies=None, user=None):  # noqa: E501
+        return self.r_api_instance.delete_manifest(manifest_name,
+                                                   studies=studies,
                                                    user=user)

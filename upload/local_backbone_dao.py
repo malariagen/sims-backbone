@@ -1060,6 +1060,18 @@ class LocalBackboneDAO(AbstractBackboneDAO):
 
         return rel
 
+    def delete_manifest_item(self, manifest_id, manifest_item, studies=None, user=None, auths=None):  # noqa: E501
+        if not user:
+            user = self._user
+
+        rel, retcode = self.r_api_instance.delete_manifest_item(manifest_id, manifest_item, studies=studies,
+                                                                user=user,
+                                                                auths=self._auths)
+        if retcode >= 400:
+            raise ApiException(http_resp=HTTPResponse(body=rel, status=retcode))
+
+        return rel
+
     def update_manifest_item(self, manifest_item_id, manifest_item,
                              update_samples=None, studies=None, user=None,
                              auths=None):  # noqa: E501
@@ -1085,6 +1097,21 @@ class LocalBackboneDAO(AbstractBackboneDAO):
         rel, retcode = self.r_api_instance.update_manifest(manifest_id,
                                                            manifest,
                                                            update_studies=update_studies, studies=studies,
+                                                           user=user,
+                                                           auths=self._auths)
+        if retcode >= 400:
+            raise ApiException(http_resp=HTTPResponse(body=rel, status=retcode))
+
+        return rel
+
+    def delete_manifest(self, manifest_name,
+                        studies=None, user=None,
+                        auths=None):  # noqa: E501
+        if not user:
+            user = self._user
+
+        rel, retcode = self.r_api_instance.delete_manifest(manifest_name,
+                                                           studies=studies,
                                                            user=user,
                                                            auths=self._auths)
         if retcode >= 400:

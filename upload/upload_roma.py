@@ -15,13 +15,38 @@ class Upload_ROMA(uploader.Uploader):
         original_samples_to_delete = []
         sampling_events_to_delete = []
         event_sets_to_delete = []
+        manifest_prefix = 'MNF'
+        if instance == 'spotmalaria':
+            manifest_prefix = 'SMF'
+        elif instance == 'genre':
+            manifest_prefix = 'RMF'
+        elif instance == 'vivax':
+            manifest_prefix = 'XMF'
+        elif instance == 'vobs':
+            manifest_prefix = 'VMF'
         for manifest_id in range(1, max_manifest + 1):
             if manifest_id not in items['samples.manifest']:
-                event_set_name = f'{instance}_MNF{str(manifest_id).zfill(5)}'
+                manifest_name = f'{manifest_prefix}{str(manifest_id).zfill(5)}'
+                event_set_name = f'{instance}_{manifest_name}'
+                print(event_set_name)
+                try:
+                    manifest = self._dao.download_manifest(manifest_name)
+                    for manifest_item in manifest.members.manifest_items:
+                        original_samples_to_delete.append(manifest_item.original_sample_id)
+                        # print(f'Deleting {self._dao.download_original_sample(manifest_item.original_sample_id)}')
+                        self._dao.delete_manifest_item(manifest_name,
+                                                       manifest_item.original_sample_id)
+                    self._dao.delete_manifest(manifest_name)
+                except ApiException as e:
+                    print(e)
+                    pass #Already gone
+
+
                 try:
                     samples = self._dao.download_original_samples_by_event_set(event_set_name)
                     for sample in samples.original_samples:
-                        original_samples_to_delete.append(sample.original_sample_id)
+                        if sample.original_sample_id not in original_samples_to_delete:
+                            original_samples_to_delete.append(sample.original_sample_id)
                         if sample.sampling_event_id not in sampling_events_to_delete:
                             sampling_events_to_delete.append(sample.sampling_event_id)
                     samples = self._dao.download_sampling_events_by_event_set(event_set_name)
@@ -243,7 +268,8 @@ class Upload_ROMA(uploader.Uploader):
             try:
                 self._dao.delete_location(location_id)
             except ApiException as e:
-                print(e)
+                print(f'Failed to delete location probably referenced by another sampling event {e}')
+                print(self._dao.download_location(location_id))
                 pass
 
 

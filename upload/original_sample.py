@@ -15,7 +15,7 @@ class OriginalSampleProcessor(BaseEntity):
         self._logger = logging.getLogger(__name__)
         self._original_sample_cache = {}
         self._studies_cache = {}
-        self._lookup_attrs = ['roma_id', 'oxford_id']
+        self._lookup_attrs = ['roma_id', 'oxford_id', 'partner_id']
         self.attrs = [
             {
                 'from': 'sample_roma_id',
@@ -27,7 +27,7 @@ class OriginalSampleProcessor(BaseEntity):
             },
             {
                 'from': 'sample_partner_id_1',
-                'to': 'partner_id_1'
+                'to': 'partner_id'
             },
             {
                 'from': 'sample_oxford_id',
@@ -36,18 +36,6 @@ class OriginalSampleProcessor(BaseEntity):
             {
                 'from': 'sample_alternate_oxford_id',
                 'to': 'alt_oxford_id'
-            },
-            {
-                'from': 'sample_source_id',
-                'to': 'sample_source_id'
-            },
-            {
-                'from': 'sample_source_id1',
-                'to': 'sample_source_id_1'
-            },
-            {
-                'from': 'sample_source_id2',
-                'to': 'sample_source_id_2'
             }
         ]
 
@@ -59,6 +47,20 @@ class OriginalSampleProcessor(BaseEntity):
 
         o_sample = openapi_client.OriginalSample(None, study_name=study_id)
 
+        idents = self.attrs_from_values(values)
+        if 'sample_source_id' in values and values['sample_source_id'] and values['sample_source_type']:
+            idents.append(openapi_client.Attr(values['sample_source_type'],
+                                              values['sample_source_id'],
+                                              self._event_set))
+        if 'sample_source_id1' in values and values['sample_source_id1'] and values['sample_source_type1']:
+            idents.append(openapi_client.Attr(values['sample_source_type1'],
+                                              values['sample_source_id1'],
+                                              self._event_set))
+        if 'sample_source_id2' in values and values['sample_source_id2'] and values['sample_source_type2']:
+            idents.append(openapi_client.Attr(values['sample_source_type2'],
+                                              values['sample_source_id2'],
+                                              self._event_set))
+
         if 'days_in_culture' in values:
             o_sample.days_in_culture = int(float(values['days_in_culture']))
 
@@ -68,7 +70,7 @@ class OriginalSampleProcessor(BaseEntity):
         if 'os_acc_date' in values:
             o_sample.acc_date = values['os_acc_date']
 
-        o_sample.attrs = self.attrs_from_values(values)
+        o_sample.attrs = idents
 
         return o_sample
 
@@ -179,12 +181,12 @@ class OriginalSampleProcessor(BaseEntity):
                                 msg = ("Merging into {} using {}"
                                        .format(existing.sampling_event_id,
                                                ident.attr_type), values)
-                                #print(msg)
+                                # print(msg)
                                 found = self.merge_original_samples(existing, found, values)
                             existing = found
                             if samp.study_name[:4] == '0000':
                                 samp.study_name = existing.study_name
-                            #print ("found: {} {}".format(samp, found))
+                            # print ("found: {} {}".format(samp, found))
                     except ApiException as err:
                         #self._logger.debug("Error looking for {}".format(ident))
                         #print("Not found")
@@ -196,7 +198,7 @@ class OriginalSampleProcessor(BaseEntity):
                 # print(f'Existing {existing} from individual_lookup')
 
         # if not existing:
-        #     print('Not found {}'.format(samp))
+        #     print(f'Not found {samp} {values}')
         return existing
 
     def process_original_sample(self, values, samp, existing):
