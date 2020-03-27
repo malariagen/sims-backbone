@@ -121,8 +121,8 @@ class SetCountry(upload_ssr.Upload_SSR):
                 except ApiException as exp:
                     lat = round(float(Decimal(cached_country['latitude'])), 7)
                     lng = round(float(Decimal(cached_country['longitude'])), 7)
-                    loc = openapi_client.Location(None, lat,
-                                                  lng,
+                    loc = openapi_client.Location(None, latitude=lat,
+                                                  longitude=lng,
                                                   accuracy='country',
                                                   country=self._country_cache[country_value].alpha3)
                     loc.attrs = [

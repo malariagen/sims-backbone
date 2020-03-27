@@ -89,9 +89,9 @@ class DerivativeSampleProcessor(BaseEntity):
         if not found:
             if 'irods_path' in values:
                 value = values['irods_path']
-            d_sample.attrs.append(openapi_client.Attr('sims_tmp_ds_id',
-                                                      value,
-                                                      self._event_set))
+                d_sample.attrs.append(openapi_client.Attr('sims_tmp_ds_id',
+                                                          value,
+                                                          self._event_set))
         return d_sample
 
     def load_attr_cache(self, study_id, values):

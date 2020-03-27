@@ -249,10 +249,10 @@ class TestCountry(TestBase):
             self.assertEqual(looked_up.proxy_location.attrs[0].attr_value, 'Madagascar')
 
             msgs = [
-                "Conflicting Country value\tnot updated {{'accuracy': None, 'attrs': [{{'attr_source': 'countries', 'attr_type': 'partner_name', 'attr_value': 'Maevatanana', 'study_name': '9052'}}], 'country': 'MDG', 'curated_name': None, 'curation_method': None, 'latitude': -16.94223, 'location_id': '{location_id}', 'longitude': 46.83144, 'notes': 'countries', 'proxy_location': {proxy_location}, 'proxy_location_id': '{proxy_location_id}'}}\t{event_id}\t\tMDG\tIN\t[('id_value', 'CT0004-C')]".format(location_id=looked_up.location_id,
+                "Conflicting Country value\tnot updated {{'accuracy': None, 'attrs': [{{'attr_source': 'countries', 'attr_type': 'partner_name', 'attr_value': 'Maevatanana', 'study_name': '9052'}}], 'country': 'MDG', 'curated_name': None, 'curation_method': None, 'latitude': -16.94223, 'location_id': '{location_id}', 'longitude': 46.83144, 'notes': 'countries', 'proxy_location': {proxy_location}, 'proxy_location_id': '{proxy_location_id}', 'version': 1}}\t{event_id}\t\tMDG\tIN\t[('id_value', 'CT0004-C')]".format(location_id=looked_up.location_id,
                 event_id=looked_up.sampling_event_id, proxy_location=None,
                 proxy_location_id=looked_up.proxy_location_id),
-                "Conflicting Country value\tproxy not updated {{'accuracy': None, 'attrs': [{{'attr_source': 'countries', 'attr_type': 'partner_name', 'attr_value': 'Madagascar', 'study_name': '9052'}}], 'country': 'MDG', 'curated_name': None, 'curation_method': None, 'latitude': -19.0, 'location_id': '{location_id}', 'longitude': 47.0, 'notes': 'countries', 'proxy_location': None, 'proxy_location_id': None}}\t{event_id}\t\tMDG\tIN\t[('id_value', 'CT0004-C')]".format(location_id=looked_up.proxy_location_id, event_id=looked_up.sampling_event_id)
+                "Conflicting Country value\tproxy not updated {{'accuracy': None, 'attrs': [{{'attr_source': 'countries', 'attr_type': 'partner_name', 'attr_value': 'Madagascar', 'study_name': '9052'}}], 'country': 'MDG', 'curated_name': None, 'curation_method': None, 'latitude': -19.0, 'location_id': '{location_id}', 'longitude': 47.0, 'notes': 'countries', 'proxy_location': None, 'proxy_location_id': None, 'version': 1}}\t{event_id}\t\tMDG\tIN\t[('id_value', 'CT0004-C')]".format(location_id=looked_up.proxy_location_id, event_id=looked_up.sampling_event_id)
             ]
 
             for msg in msgs:
