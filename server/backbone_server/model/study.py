@@ -339,9 +339,42 @@ class BaseStudy(SimsDbBase):
                     for taxa in remove_taxa:
                         db_ps.taxa.remove(taxa)
 
-    def db_map_counts(self, db, db_item, api_item):
+    def expand_results(self, db, simple_results, studies):
 
-        api_item_code = "'" + str(api_item.code) + "'"
+        results = self.collect_counts(None)
+
+        for study in simple_results.studies:
+            self.map_counts(study, results)
+
+        return simple_results
+
+    def map_count(self, api_item):
+        results = self.collect_counts(api_item)
+
+        self.map_counts(api_item, results)
+
+    def map_counts(self, api_item, results):
+
+        for count in [
+                'num_collections',
+                'num_original_samples',
+                'num_derivative_samples',
+                'num_assay_data',
+                'num_original_derivative_samples',
+                'num_original_assay_data',
+                'num_released'
+        ]:
+            if count in results[api_item.code]:
+                setattr(api_item, count, results[api_item.code][count])
+
+
+    def collect_counts(self, api_item):
+
+        results = {}
+
+        api_item_code = None
+        if api_item:
+            api_item_code = "'" + str(api_item.code) + "'"
 
         stmt = '''SELECT COUNT(*), code FROM
             (SELECT code, COUNT(*) FROM sampling_event se
@@ -349,61 +382,55 @@ class BaseStudy(SimsDbBase):
             LEFT JOIN study s ON s.id = os.study_id group by code, doc) AS
             collections'''
 
-        stmt += ' WHERE code = ' + api_item_code
+        if api_item_code:
+            stmt += ' WHERE code = ' + api_item_code
         stmt += ' GROUP BY code'
 
         result = self.engine.execute(text(stmt))
 
-        sample_count = 0
         for (count, code) in result:
-            sample_count = count
-
-        api_item.num_collections = sample_count
+            results[code] = {}
+            results[code]['num_collections'] = count
 
         stmt = '''SELECT COUNT(*), code FROM original_sample os
                     JOIN study s ON s.id = os.study_id'''
 
-        stmt += ' WHERE code = ' + api_item_code
+        if api_item_code:
+            stmt += ' WHERE code = ' + api_item_code
         stmt += ' GROUP BY code'
 
         result = self.engine.execute(text(stmt))
 
-        sample_count = 0
         for (count, code) in result:
-            sample_count = count
-
-        api_item.num_original_samples = sample_count
+            results[code]['num_original_samples'] = count
 
         stmt = '''SELECT COUNT(*), code FROM derivative_sample ds
                     JOIN original_sample os ON os.id = ds.original_sample_id
                     JOIN study s ON s.id = os.study_id'''
 
-        stmt += ' WHERE code = ' + api_item_code
+        if api_item_code:
+            stmt += ' WHERE code = ' + api_item_code
         stmt += ' GROUP BY code'
 
         result = self.engine.execute(text(stmt))
 
-        sample_count = 0
         for (count, code) in result:
-            sample_count = count
-
-        api_item.num_derivative_samples = sample_count
+            results[code]['num_derivative_samples'] = count
 
         stmt = '''SELECT COUNT(*), code FROM assay_datum ad
                     JOIN derivative_sample ds ON ds.id = ad.derivative_sample_id
                     JOIN original_sample os ON os.id = ds.original_sample_id
                     JOIN study s ON s.id = os.study_id'''
 
-        stmt += ' WHERE code = ' + api_item_code
+        if api_item_code:
+            stmt += ' WHERE code = ' + api_item_code
         stmt += ' GROUP BY code'
 
         result = self.engine.execute(text(stmt))
 
-        sample_count = 0
         for (count, code) in result:
-            sample_count = count
+            results['num_assay_data'] = count
 
-        api_item.num_assay_data = sample_count
 
         stmt = '''SELECT COUNT(*), code FROM original_sample os
                     JOIN study s ON os.study_id = s.id
@@ -411,16 +438,14 @@ class BaseStudy(SimsDbBase):
                           original_sample_id FROM derivative_sample) AS ds ON
                     ds.original_sample_id = os.id'''
 
-        stmt += ' WHERE code = ' + api_item_code
+        if api_item_code:
+            stmt += ' WHERE code = ' + api_item_code
         stmt += ' GROUP BY code'
 
         result = self.engine.execute(text(stmt))
 
-        sample_count = 0
         for (count, code) in result:
-            sample_count = count
-
-        api_item.num_original_derivative_samples = sample_count
+            results[code]['num_original_derivative_samples'] = count
 
         stmt = '''SELECT COUNT(*), code FROM original_sample os
             JOIN study s ON os.study_id = s.id
@@ -428,15 +453,14 @@ class BaseStudy(SimsDbBase):
             JOIN (SELECT distinct ON (derivative_sample_id) derivative_sample_id FROM assay_datum) AS ad
                     ON ad.derivative_sample_id = ds.id'''
 
-        stmt += ' WHERE code = ' + api_item_code
+        if api_item_code:
+            stmt += ' WHERE code = ' + api_item_code
         stmt += ' GROUP BY code'
 
         result = self.engine.execute(text(stmt))
 
-        sample_count = 0
         for (count, code) in result:
-            sample_count = count
-        api_item.num_original_assay_data = sample_count
+            results[code]['num_original_assay_data'] = count
 
         stmt = '''SELECT COUNT(*), code FROM
                     (SELECT DISTINCT ON (original_sample_id) original_sample_id FROM manifest_item mi
@@ -444,17 +468,16 @@ class BaseStudy(SimsDbBase):
                     WHERE manifest_type='release') AS released
                 JOIN original_sample os ON released.original_sample_id = os.id
                 JOIN study s ON s.id = os.study_id'''
-        stmt += ' WHERE code = ' + api_item_code
+        if api_item_code:
+            stmt += ' WHERE code = ' + api_item_code
         stmt += ' GROUP BY code'
 
         result = self.engine.execute(text(stmt))
 
-        sample_count = 0
         for (count, code) in result:
-            sample_count = count
+            results[code]['num_released'] = count
 
-        api_item.num_released = sample_count
-
+        return results
 
     def db_map_actions(self, db, db_item, api_item, studies):
 
@@ -467,10 +490,10 @@ class BaseStudy(SimsDbBase):
 
     def post_get_action(self, db, db_item, api_item, studies, multiple=False):
 
-        self.db_map_counts(db, db_item, api_item)
         if multiple:
             return api_item
 
+        self.map_count(api_item)
         from backbone_server.model.location import Location, BaseLocation
         locs = BaseLocation(self.engine, self.session)
 
