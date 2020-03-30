@@ -9,7 +9,7 @@ for include_path in paths:
          sys.path.insert(0, cmd_subfolder)
 
 from util.response_util import create_response
-from util.request_util import get_body,get_user,get_auths
+from util.request_util import get_body, get_user, get_auths
 
 from backbone_server.controllers.report_controller import ReportController
 
@@ -31,7 +31,7 @@ def missing_locations(event, context):
         if 'include_country' in event["queryStringParameters"]:
             include_country = event["queryStringParameters"]["include_country"]
 
-    value, retcode = report_controller.missing_locations(include_country, user, auths)
+    value, retcode = report_controller.missing_locations(include_country, user=user, auths=auths)
 
     return create_response(event, retcode, value)
 
@@ -45,7 +45,7 @@ def missing_taxon(event, context):
 
     auths = get_auths(report_controller, event)
 
-    value, retcode = report_controller.missing_taxon(user, auths)
+    value, retcode = report_controller.missing_taxon(user=user, auths=auths)
 
     return create_response(event, retcode, value)
 
@@ -59,7 +59,7 @@ def multiple_location_gps(event, context):
 
     auths = get_auths(report_controller, event)
 
-    value, retcode = report_controller.multiple_location_gps(user, auths)
+    value, retcode = report_controller.multiple_location_gps(user=user, auths=auths)
 
     return create_response(event, retcode, value)
 
@@ -72,7 +72,7 @@ def multiple_location_names(event, context):
 
     auths = get_auths(report_controller, event)
 
-    value, retcode = report_controller.multiple_location_names(user, auths)
+    value, retcode = report_controller.multiple_location_names(user=user, auths=auths)
 
     return create_response(event, retcode, value)
 
@@ -85,6 +85,6 @@ def uncurated_locations(event, context):
 
     auths = get_auths(report_controller, event)
 
-    value, retcode = report_controller.uncurated_locations(user, auths)
+    value, retcode = report_controller.uncurated_locations(user=user, auths=auths)
 
     return create_response(event, retcode, value)

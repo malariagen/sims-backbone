@@ -13,6 +13,7 @@ phases:
         commands:
             - echo Build started on `date`
             - ng build --env=${BUILD_ENV}
+            - ng build sims-backbone --delete-output-path=false -c ${BUILD_ENV} --aot
     post_build:
          commands:
             - aws s3 website s3://${S3_BUCKET} --index-document index.html --error-document index.html

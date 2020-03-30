@@ -10,7 +10,7 @@ for include_path in paths:
          sys.path.insert(0, cmd_subfolder)
 
 from util.response_util import create_response
-from util.request_util import get_body,get_user,get_auths
+from util.request_util import get_body, get_user, get_auths
 
 from openapi_server.models.studies import Studies
 from openapi_server.models.study import Study
@@ -26,7 +26,7 @@ def download_studies(event, context):
     user = get_user(event)
 
     if user is None:
-        return create_response(event, 200, {})
+        return create_response(event, 401, {})
 
     auths = get_auths(study_controller, event)
 
@@ -57,7 +57,7 @@ def download_study(event, context):
     if 'pathParameters' in event:
         study_id = event["pathParameters"]["study_name"]
 
-    value, retcode = study_controller.download_study(study_id, user, auths)
+    value, retcode = study_controller.download_study(study_id, user=user, auths=auths)
 
     return create_response(event, retcode, value)
 
@@ -74,9 +74,8 @@ def update_study(event, context):
     if 'pathParameters' in event:
         study_id = event["pathParameters"]["study_name"]
 
-    study = Study.from_dict(json.loads(event["body"]))
+    study = Study.from_dict(get_body(event))
 
-    value, retcode = study_controller.update_study(study_id, study, user, auths)
+    value, retcode = study_controller.update_study(study_id, study, user=user, auths=auths)
 
     return create_response(event, retcode, value)
-

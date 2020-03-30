@@ -198,7 +198,7 @@ class EventSetController(BaseController):
             with session_scope(self.get_session()) as db:
                 evnt_set_id = event_set.convert_to_id(db, event_set_id)
 
-            evnt_st = delete.delete(evnt_set_id, note_id, studies)
+            delete.delete(evnt_set_id, note_id, studies)
         except MissingKeyException as dke:
             logging.getLogger(__name__).debug("delete_event_set_note: %s", repr(dke))
             retcode = 404
@@ -206,7 +206,8 @@ class EventSetController(BaseController):
 
         return evnt_st, retcode
 
-    def download_event_set(self, event_set_id, studies=None, start=None, count=None, user=None, auths=None):
+    def download_event_set(self, event_set_id, start=None,
+                           count=None, studies=None, user=None, auths=None):
         """
         fetches an eventSet
 

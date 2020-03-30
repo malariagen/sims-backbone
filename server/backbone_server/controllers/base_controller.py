@@ -125,41 +125,41 @@ class BaseController():
         resp = list(authorizer.keys())
         return resp
 
-    @staticmethod
-    def study_filter(studies):
-
-        study_filter = None
-
-        if studies is not None:
-            study_codes = [i['study'] for i in studies if i['bucket'] == 'pi' or i['bucket'] == 'data' or i['bucket'] == 'all']
-            if 'all' not in study_codes:
-                codes = ",".join(f"'{w}'" for w in study_codes)
-                study_filter = f' study_code in ({codes})'
-
-        return study_filter
-
-    @staticmethod
-    def has_study_permission(studies, study_code, perm_type):
-
-        found = False
-
-        if isinstance(study_code, list):
-            for sc in study_code:
-                BaseController.has_study_permission(studies, sc, perm_type)
-            return True
-        if studies is not None:
-            for study in studies:
-                if 'all' in study['study']:
-                    found = True
-                    break
-                if study['study'].startswith(study_code[:4]):
-                    found = True
-                    break
-
-        if not found:
-            raise PermissionException(f'No permission for study {study_code}')
-
-        return found
+#     @staticmethod
+#     def study_filter(studies):
+#
+#         study_filter = None
+#
+#         if studies is not None:
+#             study_codes = [i['study'] for i in studies if i['bucket'] == 'pi' or i['bucket'] == 'data' or i['bucket'] == 'all']
+#             if 'all' not in study_codes:
+#                 codes = ",".join(f"'{w}'" for w in study_codes)
+#                 study_filter = f' study_code in ({codes})'
+#
+#         return study_filter
+#
+#     @staticmethod
+#     def has_study_permission(studies, study_code, perm_type):
+#
+#         found = False
+#
+#         if isinstance(study_code, list):
+#             for sc in study_code:
+#                 BaseController.has_study_permission(studies, sc, perm_type)
+#             return True
+#         if studies is not None:
+#             for study in studies:
+#                 if 'all' in study['study']:
+#                     found = True
+#                     break
+#                 if study['study'].startswith(study_code[:4]):
+#                     found = True
+#                     break
+#
+#         if not found:
+#             raise PermissionException(f'No permission for study {study_code}')
+#
+#         return found
 
     def dumps(self, item):
 
@@ -201,4 +201,4 @@ class BaseController():
             # Don't want to fail if it's just a logging problem
             args = (user, action, entity_id, content, result, retcode)
             print("failed log_action {} {}".format(err, stmt % args))
-            self._logger.exception('Failed to log action {}'.format(err))
+            self._logger.exception('Failed to log action %s', err)

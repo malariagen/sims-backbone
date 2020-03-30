@@ -23,54 +23,76 @@ import datetime
 from backbone_server.controllers.sampling_event_controller import SamplingEventController
 
 from util.response_util import create_response
+from util.request_util import get_body, get_user, get_auths
 
 sampling_event_controller = SamplingEventController()
 
 def create_sampling_event(event, context):
 
-    user = event['requestContext']['authorizer']['principalId']
+    user = get_user(event)
 
-    sampling_event = SamplingEvent.from_dict(json.loads(event["body"]))
+    if user is None:
+        return create_response(event, 401, {})
 
-    value, retcode = sampling_event_controller.create_sampling_event(sampling_event, user,
-                                                                     sampling_event_controller.authorizer(event['requestContext']['authorizer']))
+    auths = get_auths(sampling_event_controller, event)
+
+    sampling_event = SamplingEvent.from_dict(get_body(event))
+
+    value, retcode = sampling_event_controller.create_sampling_event(sampling_event, user=user,
+                                                                     auths=auths)
 
     return create_response(event, retcode, value)
 
 
 def delete_sampling_event(event, context):
 
-    user = event['requestContext']['authorizer']['principalId']
+    user = get_user(event)
+
+    if user is None:
+        return create_response(event, 401, {})
+
+    auths = get_auths(sampling_event_controller, event)
 
     if 'pathParameters' in event:
         sampling_event_id = event["pathParameters"]["sampling_event_id"]
 
-    value, retcode =  sampling_event_controller.delete_sampling_event(sampling_event_id, user,
-                                                                      sampling_event_controller.authorizer(event['requestContext']['authorizer']))
+    value, retcode = sampling_event_controller.delete_sampling_event(sampling_event_id, user=user,
+                                                                      auths=auths)
 
     return create_response(event, retcode, value)
 
 
 def download_sampling_event(event, context):
 
-    user = event['requestContext']['authorizer']['principalId']
+    user = get_user(event)
+
+    if user is None:
+        return create_response(event, 401, {})
+
+    auths = get_auths(sampling_event_controller, event)
 
     if 'pathParameters' in event:
         sampling_event_id = event["pathParameters"]["sampling_event_id"]
 
-    value, retcode =  sampling_event_controller.download_sampling_event(sampling_event_id, user,
-                                                                        sampling_event_controller.authorizer(event['requestContext']['authorizer']))
+    value, retcode = sampling_event_controller.download_sampling_event(sampling_event_id, user=user,
+                                                                        auths=auths)
 
     return create_response(event, retcode, value)
 
 
 def download_sampling_events(event, context):
 
-    user = event['requestContext']['authorizer']['principalId']
+    user = get_user(event)
 
-    start =  None
-    count =  None
+    if user is None:
+        return create_response(event, 401, {})
+
+    auths = get_auths(sampling_event_controller, event)
+
+    start = None
+    count = None
     search_filter = None
+    value_type = None
 
     if 'queryStringParameters' in event and event["queryStringParameters"]:
         if 'start' in event["queryStringParameters"]:
@@ -79,63 +101,107 @@ def download_sampling_events(event, context):
             count = int(event["queryStringParameters"]["count"])
         if 'search_filter' in event['queryStringParameters']:
             search_filter = event["queryStringParameters"]["search_filter"]
+        if 'value_type' in event["queryStringParameters"]:
+            value_type = event["queryStringParameters"]["value_type"]
 
-    value, retcode = sampling_event_controller.download_sampling_events(search_filter, start,
-                                                                                 count, user,
-                                                                                sampling_event_controller.authorizer(event['requestContext']['authorizer']))
+    value, retcode = sampling_event_controller.download_sampling_events(search_filter,
+                                                                        value_type=value_type,
+                                                                        start=start,
+                                                                        count=count,
+                                                                        user=user,
+                                                                        auths=auths)
 
     return create_response(event, retcode, value)
 
 def download_sampling_events_by_attr(event, context):
 
-    user = event['requestContext']['authorizer']['principalId']
+    user = get_user(event)
+
+    if user is None:
+        return create_response(event, 401, {})
+
+    auths = get_auths(sampling_event_controller, event)
 
     if 'pathParameters' in event:
         prop_name = event["pathParameters"]["prop_name"]
         prop_value = event["pathParameters"]["prop_value"]
 
     study_name = None
+    start = None
+    count = None
+    value_type = None
     if 'queryStringParameters' in event and event["queryStringParameters"]:
         if 'study_name' in event["queryStringParameters"]:
             study_name = event["queryStringParameters"]["study_name"]
+        if 'start' in event["queryStringParameters"]:
+            start = event["queryStringParameters"]["start"]
+        if 'count' in event["queryStringParameters"]:
+            count = event["queryStringParameters"]["count"]
+        if 'value_type' in event["queryStringParameters"]:
+            value_type = event["queryStringParameters"]["value_type"]
 
     value, retcode = sampling_event_controller.download_sampling_events_by_attr(prop_name,
-                                                                                     prop_value,
-                                                                                     study_name,
-                                                                                     user,
-                                                                                     sampling_event_controller.authorizer(event['requestContext']['authorizer']))
+                                                                                prop_value,
+                                                                                study_name,
+                                                                                value_type=value_type,
+                                                                                start=start,
+                                                                                count=count,
+                                                                                user=user,
+                                                                                auths=auths)
 
 
     return create_response(event, retcode, value)
 
 def download_sampling_events_by_os_attr(event, context):
 
-    user = event['requestContext']['authorizer']['principalId']
+    user = get_user(event)
+
+    if user is None:
+        return create_response(event, 401, {})
+
+    auths = get_auths(sampling_event_controller, event)
 
     if 'pathParameters' in event:
         prop_name = event["pathParameters"]["prop_name"]
         prop_value = event["pathParameters"]["prop_value"]
 
     study_name = None
+    start = None
+    count = None
+    value_type = None
     if 'queryStringParameters' in event and event["queryStringParameters"]:
         if 'study_name' in event["queryStringParameters"]:
             study_name = event["queryStringParameters"]["study_name"]
+        if 'start' in event["queryStringParameters"]:
+            start = event["queryStringParameters"]["start"]
+        if 'count' in event["queryStringParameters"]:
+            count = event["queryStringParameters"]["count"]
+        if 'value_type' in event["queryStringParameters"]:
+            value_type = event["queryStringParameters"]["value_type"]
 
     value, retcode = sampling_event_controller.download_sampling_events_by_os_attr(prop_name,
-                                                                                     prop_value,
-                                                                                     study_name,
-                                                                                     user,
-                                                                                     sampling_event_controller.authorizer(event['requestContext']['authorizer']))
+                                                                                   prop_value,
+                                                                                   study_name,
+                                                                                   value_type=value_type,
+                                                                                   start=start,
+                                                                                   count=count,
+                                                                                   user=user,
+                                                                                   auths=auths)
 
 
     return create_response(event, retcode, value)
 
 def download_sampling_events_by_location(event, context):
 
-    user = event['requestContext']['authorizer']['principalId']
+    user = get_user(event)
 
-    start =  None
-    count =  None
+    if user is None:
+        return create_response(event, 401, {})
+
+    auths = get_auths(sampling_event_controller, event)
+
+    start = None
+    count = None
 
     if 'queryStringParameters' in event and event["queryStringParameters"]:
         if 'start' in event["queryStringParameters"]:
@@ -148,18 +214,23 @@ def download_sampling_events_by_location(event, context):
 
     value, retcode = sampling_event_controller.download_sampling_events_by_location(location_id,
                                                                                     start, count,
-                                                                                    user,
-                                                                                    sampling_event_controller.authorizer(event['requestContext']['authorizer']))
+                                                                                    user=user,
+                                                                                    auths=auths)
 
     return create_response(event, retcode, value)
 
 
 def download_sampling_events_by_study(event, context):
 
-    user = event['requestContext']['authorizer']['principalId']
+    user = get_user(event)
 
-    start =  None
-    count =  None
+    if user is None:
+        return create_response(event, 401, {})
+
+    auths = get_auths(sampling_event_controller, event)
+
+    start = None
+    count = None
 
     if 'queryStringParameters' in event and event["queryStringParameters"]:
         if 'start' in event["queryStringParameters"]:
@@ -171,17 +242,22 @@ def download_sampling_events_by_study(event, context):
         study_name = event["pathParameters"]["study_name"]
 
     value, retcode = sampling_event_controller.download_sampling_events_by_study(study_name, start,
-                                                                                 count, user,
-                                                                                sampling_event_controller.authorizer(event['requestContext']['authorizer']))
+                                                                                 count, user=user,
+                                                                                 auths=auths)
 
     return create_response(event, retcode, value)
 
 def download_sampling_events_by_taxa(event, context):
 
-    user = event['requestContext']['authorizer']['principalId']
+    user = get_user(event)
 
-    start =  None
-    count =  None
+    if user is None:
+        return create_response(event, 401, {})
+
+    auths = get_auths(sampling_event_controller, event)
+
+    start = None
+    count = None
 
     if 'queryStringParameters' in event and event["queryStringParameters"]:
         if 'start' in event["queryStringParameters"]:
@@ -193,17 +269,22 @@ def download_sampling_events_by_taxa(event, context):
         taxa_id = event["pathParameters"]["taxa_id"]
 
     value, retcode = sampling_event_controller.download_sampling_events_by_taxa(taxa_id, start,
-                                                                                count, user,
-                                                                                sampling_event_controller.authorizer(event['requestContext']['authorizer']))
+                                                                                count, user=user,
+                                                                                auths=auths)
 
     return create_response(event, retcode, value)
 
 def download_sampling_events_by_event_set(event, context):
 
-    user = event['requestContext']['authorizer']['principalId']
+    user = get_user(event)
 
-    start =  None
-    count =  None
+    if user is None:
+        return create_response(event, 401, {})
+
+    auths = get_auths(sampling_event_controller, event)
+
+    start = None
+    count = None
 
     if 'queryStringParameters' in event and event["queryStringParameters"]:
         if 'start' in event["queryStringParameters"]:
@@ -216,30 +297,40 @@ def download_sampling_events_by_event_set(event, context):
 
     value, retcode = sampling_event_controller.download_sampling_events_by_event_set(event_set_id,
                                                                                      start, count,
-                                                                                    user,
-                                                                                     sampling_event_controller.authorizer(event['requestContext']['authorizer']))
+                                                                                     user=user,
+                                                                                     auths=auths)
 
     return create_response(event, retcode, value)
 
 def update_sampling_event(event, context):
 
-    user = event['requestContext']['authorizer']['principalId']
+    user = get_user(event)
+
+    if user is None:
+        return create_response(event, 401, {})
+
+    auths = get_auths(sampling_event_controller, event)
 
     if 'pathParameters' in event:
         sampling_event_id = event["pathParameters"]["sampling_event_id"]
 
-    sampling_event = SamplingEvent.from_dict(json.loads(event["body"]))
+    sampling_event = SamplingEvent.from_dict(get_body(event))
 
     value, retcode = sampling_event_controller.update_location(sampling_event_id, sampling_event,
-                                                               user,
-                                                               sampling_event_controller.authorizer(event['requestContext']['authorizer']))
+                                                               user=user,
+                                                               auths=auths)
 
     return create_response(event, retcode, value)
 
 
 def merge_sampling_events(event, context):
 
-    user = event['requestContext']['authorizer']['principalId']
+    user = get_user(event)
+
+    if user is None:
+        return create_response(event, 401, {})
+
+    auths = get_auths(sampling_event_controller, event)
 
     if 'pathParameters' in event:
         into = event["pathParameters"]["into"]
@@ -247,9 +338,8 @@ def merge_sampling_events(event, context):
 
     value, retcode = sampling_event_controller.merge_sampling_events(into,
                                                                      merged,
-                                                                     user,
-                                                                     sampling_event_controller.authorizer(event['requestContext']['authorizer']))
+                                                                     user=user,
+                                                                     auths=auths)
 
 
     return create_response(event, retcode, value)
-

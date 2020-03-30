@@ -34,7 +34,7 @@
             "securityGroupIds": "",
             "instanceType": "t1.micro",
             "type": "Ec2Resource",
-            "terminateAfter": "2 Days"
+            "terminateAfter": "4 Days"
         },
         {
             "id": "ShellCommandActivityObj",

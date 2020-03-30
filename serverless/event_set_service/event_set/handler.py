@@ -9,7 +9,7 @@ for include_path in paths:
          sys.path.insert(0, cmd_subfolder)
 
 from util.response_util import create_response
-from util.request_util import get_body,get_user,get_auths
+from util.request_util import get_body, get_user, get_auths
 
 from openapi_server.models.event_set import EventSet
 from openapi_server.models.event_set_note import EventSetNote
@@ -39,7 +39,7 @@ def create_event_set(event, context):
     if 'pathParameters' in event:
         event_set_id = event["pathParameters"]["event_set_id"]
 
-    value, retcode = event_set_controller.create_event_set(event_set_id, user, auths)
+    value, retcode = event_set_controller.create_event_set(event_set_id, user=user, auths=auths)
 
     return create_response(event, retcode, value)
 
@@ -68,7 +68,7 @@ def create_event_set_item(event, context):
         sampling_event_id = event["pathParameters"]["sampling_event_id"]
 
     (value, retcode) = event_set_controller.create_event_set_item(event_set_id, sampling_event_id,
-                                                                  user, auths)
+                                                                  user=user, auths=auths)
 
     return create_response(event, retcode, value)
 
@@ -98,10 +98,10 @@ def create_event_set_note(event, context):
         event_set_id = event["pathParameters"]["event_set_id"]
         note_id = event["pathParameters"]["note_id"]
 
-    note = EventSetNote.from_dict(json.loads(event["body"]))
+    note = EventSetNote.from_dict(get_body(event))
 
-    value, retcode = event_set_controller.create_event_set_note(event_set_id, note_id, note, user,
-                                                                auths)
+    value, retcode = event_set_controller.create_event_set_note(event_set_id, note_id, note, user=user,
+                                                                auths=auths)
 
     return create_response(event, retcode, value)
 
@@ -125,7 +125,7 @@ def delete_event_set(event, context):
     if 'pathParameters' in event:
         event_set_id = event["pathParameters"]["event_set_id"]
 
-    value, retcode = event_set_controller.delete_event_set(event_set_id, user, auths)
+    value, retcode = event_set_controller.delete_event_set(event_set_id, user=user, auths=auths)
 
     return create_response(event, retcode, value)
 
@@ -153,7 +153,7 @@ def delete_event_set_item(event, context):
         sampling_event_id = event["pathParameters"]["sampling_event_id"]
 
     value, retcode = event_set_controller.delete_event_set_item(event_set_id, sampling_event_id,
-                                                                user, auths)
+                                                                user=user, auths=auths)
 
     return create_response(event, retcode, value)
 
@@ -180,7 +180,7 @@ def delete_event_set_note(event, context):
         event_set_id = event["pathParameters"]["event_set_id"]
         note_id = event["pathParameters"]["note_id"]
 
-    value, retcode = event_set_controller.delete_event_set_note(event_set_id, note_id, user, auths)
+    value, retcode = event_set_controller.delete_event_set_note(event_set_id, note_id, user=user, auths=auths)
 
     return create_response(event, retcode, value)
 
@@ -201,8 +201,8 @@ def download_event_set(event, context):
 
     auths = get_auths(event_set_controller, event)
 
-    start =  None
-    count =  None
+    start = None
+    count = None
 
     if 'queryStringParameters' in event and event["queryStringParameters"]:
         if 'start' in event["queryStringParameters"]:
@@ -213,8 +213,10 @@ def download_event_set(event, context):
     if 'pathParameters' in event:
         event_set_id = event["pathParameters"]["event_set_id"]
 
-    value, retcode = event_set_controller.download_event_set(event_set_id, start, count, user,
-                                                             auths)
+    value, retcode = event_set_controller.download_event_set(event_set_id,
+                                                             start=start,
+                                                             count=count, user=user,
+                                                             auths=auths)
 
     return create_response(event, retcode, value)
 
@@ -233,7 +235,7 @@ def download_event_sets(event, context):
 
     auths = get_auths(event_set_controller, event)
 
-    value, retcode = event_set_controller.download_event_sets(user, auths)
+    value, retcode = event_set_controller.download_event_sets(user=user, auths=auths)
 
     return create_response(event, retcode, value)
 
@@ -259,9 +261,9 @@ def update_event_set(event, context):
     if 'pathParameters' in event:
         event_set_id = event["pathParameters"]["event_set_id"]
 
-    event_set = EventSet.from_dict(json.loads(event["body"]))
+    event_set = EventSet.from_dict(get_body(event))
 
-    value, retcode = event_set_controller.update_event_set(event_set_id, event_set, user, auths)
+    value, retcode = event_set_controller.update_event_set(event_set_id, event_set, user=user, auths=auths)
 
     return create_response(event, retcode, value)
 
@@ -290,9 +292,9 @@ def update_event_set_note(event, context):
         event_set_id = event["pathParameters"]["event_set_id"]
         note_id = event["pathParameters"]["note_id"]
 
-    note = EventSetNote.from_dict(json.loads(event["body"]))
+    note = EventSetNote.from_dict(get_body(event))
 
-    value, retcode = event_set_controller.update_event_set_note(event_set_id, note_id, note, user,
-                                                                auths)
+    value, retcode = event_set_controller.update_event_set_note(event_set_id, note_id, note, user=user,
+                                                                auths=auths)
 
     return create_response(event, retcode, value)

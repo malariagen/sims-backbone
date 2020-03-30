@@ -24,53 +24,76 @@ import datetime
 from backbone_server.controllers.derivative_sample_controller import DerivativeSampleController
 
 from util.response_util import create_response
+from util.request_util import get_body, get_user, get_auths
 
 derivative_sample_controller = DerivativeSampleController()
 
 def create_derivative_sample(event, context):
 
-    user = event['requestContext']['authorizer']['principalId']
+    user = get_user(event)
 
-    derivative_sample = DerivativeSample.from_dict(json.loads(event["body"]))
+    if user is None:
+        return create_response(event, 401, {})
 
-    value, retcode = derivative_sample_controller.create_derivative_sample(derivative_sample, user,
-                                                                       derivative_sample_controller.authorizer(event['requestContext']['authorizer']))
+    auths = get_auths(derivative_sample_controller, event)
+
+
+    derivative_sample = DerivativeSample.from_dict(get_body(event))
+
+    value, retcode = derivative_sample_controller.create_derivative_sample(derivative_sample, user=user,
+                                                                       auths=auths)
 
     return create_response(event, retcode, value)
 
 
 def delete_derivative_sample(event, context):
 
-    user = event['requestContext']['authorizer']['principalId']
+    user = get_user(event)
+
+    if user is None:
+        return create_response(event, 401, {})
+
+    auths = get_auths(derivative_sample_controller, event)
 
     if 'pathParameters' in event:
         derivative_sample_id = event["pathParameters"]["derivative_sample_id"]
 
-    value, retcode =  derivative_sample_controller.delete_derivative_sample(derivative_sample_id, user,
-                                                                        derivative_sample_controller.authorizer(event['requestContext']['authorizer']))
+    value, retcode =  derivative_sample_controller.delete_derivative_sample(derivative_sample_id, user=user,
+                                                                        auths=auths)
 
     return create_response(event, retcode, value)
 
 
 def download_derivative_sample(event, context):
 
-    user = event['requestContext']['authorizer']['principalId']
+    user = get_user(event)
+
+    if user is None:
+        return create_response(event, 401, {})
+
+    auths = get_auths(derivative_sample_controller, event)
 
     if 'pathParameters' in event:
         derivative_sample_id = event["pathParameters"]["derivative_sample_id"]
 
-    value, retcode =  derivative_sample_controller.download_derivative_sample(derivative_sample_id, user,
-                                                                          derivative_sample_controller.authorizer(event['requestContext']['authorizer']))
+    value, retcode =  derivative_sample_controller.download_derivative_sample(derivative_sample_id, user=user,
+                                                                          auths=auths)
 
     return create_response(event, retcode, value)
 
 def download_derivative_samples(event, context):
 
-    user = event['requestContext']['authorizer']['principalId']
+    user = get_user(event)
+
+    if user is None:
+        return create_response(event, 401, {})
+
+    auths = get_auths(derivative_sample_controller, event)
 
     search_filter = None
     start = None
     count = None
+    value_type = None
     if 'queryStringParameters' in event and event["queryStringParameters"]:
         if 'search_filter' in event["queryStringParameters"]:
             search_filter = event["queryStringParameters"]["search_filter"]
@@ -78,22 +101,30 @@ def download_derivative_samples(event, context):
             start = event["queryStringParameters"]["start"]
         if 'count' in event["queryStringParameters"]:
             count = event["queryStringParameters"]["count"]
+        if 'value_type' in event["queryStringParameters"]:
+            value_type = event["queryStringParameters"]["value_type"]
 
-    value, retcode =  derivative_sample_controller.download_derivative_samples(search_filter,
-                                                                               start, count,
-                                                                               user,
-                                                                               derivative_sample_controller.authorizer(event['requestContext']['authorizer']))
+    value, retcode = derivative_sample_controller.download_derivative_samples(search_filter,
+                                                                              value_type=value_type,
+                                                                              start=start,
+                                                                              count=count,
+                                                                              user=user,
+                                                                              auths=auths)
 
     return create_response(event, retcode, value)
 
 
 def download_derivative_samples_by_taxa(event, context):
 
-    user = event['requestContext']['authorizer']['principalId']
+    user = get_user(event)
+
+    if user is None:
+        return create_response(event, 401, {})
+
+    auths = get_auths(derivative_sample_controller, event)
 
     if 'pathParameters' in event:
         taxa_id = event["pathParameters"]["taxaId"]
-        prop_value = event["pathParameters"]["prop_value"]
 
     start = None
     count = None
@@ -104,64 +135,103 @@ def download_derivative_samples_by_taxa(event, context):
             count = event["queryStringParameters"]["count"]
 
     value, retcode = derivative_sample_controller.download_derivative_samples_by_taxa(taxa_id,
-                                                                                  start,
-                                                                                  count,
-                                                                                  user,
-                                                                                  derivative_sample_controller.authorizer(event['requestContext']['authorizer']))
+                                                                                      start,
+                                                                                      count,
+                                                                                      user=user,
+                                                                                      auths=auths)
 
 
     return create_response(event, retcode, value)
 
 def download_derivative_samples_by_attr(event, context):
 
-    user = event['requestContext']['authorizer']['principalId']
+    user = get_user(event)
+
+    if user is None:
+        return create_response(event, 401, {})
+
+    auths = get_auths(derivative_sample_controller, event)
 
     if 'pathParameters' in event:
         prop_name = event["pathParameters"]["prop_name"]
         prop_value = event["pathParameters"]["prop_value"]
 
     study_name = None
+    start = None
+    count = None
+    value_type = None
     if 'queryStringParameters' in event and event["queryStringParameters"]:
         if 'study_name' in event["queryStringParameters"]:
             study_name = event["queryStringParameters"]["study_name"]
+        if 'start' in event["queryStringParameters"]:
+            start = event["queryStringParameters"]["start"]
+        if 'count' in event["queryStringParameters"]:
+            count = event["queryStringParameters"]["count"]
+        if 'value_type' in event["queryStringParameters"]:
+            value_type = event["queryStringParameters"]["value_type"]
 
     value, retcode = derivative_sample_controller.download_derivative_samples_by_attr(prop_name,
-                                                                                  prop_value,
-                                                                                  study_name,
-                                                                                  user,
-                                                                                  derivative_sample_controller.authorizer(event['requestContext']['authorizer']))
+                                                                                      prop_value,
+                                                                                      study_name,
+                                                                                      value_type=value_type,
+                                                                                      start=start,
+                                                                                      count=count,
+                                                                                      user=user,
+                                                                                      auths=auths)
 
 
     return create_response(event, retcode, value)
 
 def download_derivative_samples_by_os_attr(event, context):
 
-    user = event['requestContext']['authorizer']['principalId']
+    user = get_user(event)
+
+    if user is None:
+        return create_response(event, 401, {})
+
+    auths = get_auths(derivative_sample_controller, event)
 
     if 'pathParameters' in event:
         prop_name = event["pathParameters"]["prop_name"]
         prop_value = event["pathParameters"]["prop_value"]
 
     study_name = None
+    start = None
+    count = None
+    value_type = None
     if 'queryStringParameters' in event and event["queryStringParameters"]:
         if 'study_name' in event["queryStringParameters"]:
             study_name = event["queryStringParameters"]["study_name"]
+        if 'start' in event["queryStringParameters"]:
+            start = event["queryStringParameters"]["start"]
+        if 'count' in event["queryStringParameters"]:
+            count = event["queryStringParameters"]["count"]
+        if 'value_type' in event["queryStringParameters"]:
+            value_type = event["queryStringParameters"]["value_type"]
 
     value, retcode = derivative_sample_controller.download_derivative_samples_by_os_attr(prop_name,
-                                                                                     prop_value,
-                                                                                     study_name,
-                                                                                     user,
-                                                                                     derivative_sample_controller.authorizer(event['requestContext']['authorizer']))
+                                                                                         prop_value,
+                                                                                         study_name,
+                                                                                         value_type=value_type,
+                                                                                         start=start,
+                                                                                         count=count,
+                                                                                         user=user,
+                                                                                         auths=auths)
 
 
     return create_response(event, retcode, value)
 
 def download_derivative_samples_by_study(event, context):
 
-    user = event['requestContext']['authorizer']['principalId']
+    user = get_user(event)
 
-    start =  None
-    count =  None
+    if user is None:
+        return create_response(event, 401, {})
+
+    auths = get_auths(derivative_sample_controller, event)
+
+    start = None
+    count = None
 
     if 'queryStringParameters' in event and event["queryStringParameters"]:
         if 'start' in event["queryStringParameters"]:
@@ -173,17 +243,22 @@ def download_derivative_samples_by_study(event, context):
         study_name = event["pathParameters"]["study_name"]
 
     value, retcode = derivative_sample_controller.download_derivative_samples_by_study(study_name, start,
-                                                                                       count, user,
-                                                                                       derivative_sample_controller.authorizer(event['requestContext']['authorizer']))
+                                                                                       count, user=user,
+                                                                                       auths=auths)
 
     return create_response(event, retcode, value)
 
 def download_derivative_samples_by_event_set(event, context):
 
-    user = event['requestContext']['authorizer']['principalId']
+    user = get_user(event)
 
-    start =  None
-    count =  None
+    if user is None:
+        return create_response(event, 401, {})
+
+    auths = get_auths(derivative_sample_controller, event)
+
+    start = None
+    count = None
 
     if 'queryStringParameters' in event and event["queryStringParameters"]:
         if 'start' in event["queryStringParameters"]:
@@ -196,22 +271,27 @@ def download_derivative_samples_by_event_set(event, context):
 
     value, retcode = derivative_sample_controller.download_derivative_samples_by_event_set(event_set_id,
                                                                                            start, count,
-                                                                                           user,
-                                                                                           derivative_sample_controller.authorizer(event['requestContext']['authorizer']))
+                                                                                           user=user,
+                                                                                           auths=auths)
+
+    return create_response(event, retcode, value)
 
 def update_derivative_sample(event, context):
 
-    user = event['requestContext']['authorizer']['principalId']
+    user = get_user(event)
+
+    if user is None:
+        return create_response(event, 401, {})
+
+    auths = get_auths(derivative_sample_controller, event)
 
     if 'pathParameters' in event:
         derivative_sample_id = event["pathParameters"]["derivative_sample_id"]
 
-    derivative_sample = DerivativeSample.from_dict(json.loads(event["body"]))
+    derivative_sample = DerivativeSample.from_dict(get_body(event))
 
     value, retcode = derivative_sample_controller.update_location(derivative_sample_id, derivative_sample,
-                                                                user,
-                                                                derivative_sample_controller.authorizer(event['requestContext']['authorizer']))
+                                                                  user=user,
+                                                                  auths=auths)
 
     return create_response(event, retcode, value)
-
-

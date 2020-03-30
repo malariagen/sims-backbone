@@ -1,10 +1,11 @@
+
+from backbone_server.controllers.base_controller import BaseController
+
 from backbone_server.metadata.country import CountryGet
 from backbone_server.metadata.taxonomies import TaxonomiesGet
 from backbone_server.metadata.taxonomy_post import TaxonomyPost
 from backbone_server.metadata.attr_types import AttrTypesGet
 from backbone_server.metadata.history import History
-
-from backbone_server.controllers.base_controller import BaseController
 
 from backbone_server.errors.missing_key_exception import MissingKeyException
 
@@ -17,7 +18,7 @@ from backbone_server.controllers.decorators import apply_decorators
 @apply_decorators
 class MetadataController(BaseController):
 
-    def create_taxonomy(self, taxonomy, user=None, auths=None):
+    def create_taxonomy(self, taxonomy, studies=None, user=None, auths=None):
         """
         create_taxonomy
         Create a Taxonomy
@@ -87,7 +88,7 @@ class MetadataController(BaseController):
             country = get.get(country_id)
         except MissingKeyException as dme:
             logging.getLogger(__name__).debug(
-                "get_country_metadata: {}".format(repr(dme)))
+                "get_country_metadata: %s", repr(dme))
             retcode = 404
             country = str(dme)
 

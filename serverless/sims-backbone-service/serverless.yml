@@ -34,6 +34,7 @@ provider:
     POSTGRES_USER: ${file(../config.${self:provider.stage}.json):db_user}
     POSTGRES_DB: ${file(../config.${self:provider.stage}.json):database}
     POSTGRES_PASSWORD: ${file(../config.${self:provider.stage}.json):db_password}
+    POSTGRES_PORT: ${file(../config.${self:provider.stage}.json):db_port}
     POSTGRES_HOST:
       Fn::GetAtt: [ ServerlessRDSCluster, Endpoint.Address ]
     AUTH_PROFILE_URL: ${file(../config.${self:provider.stage}.json):auth_profile}
@@ -98,7 +99,6 @@ package:
         - ../../server/backbone_server/connect.py
     include:
         - metadata/handler.py
-        - sampling_event/handler.py
         - studies/handler.py
         - ../../server/bb_server/**
         - ../../server/backbone_server/**/**
@@ -147,6 +147,10 @@ functions:
             name: authFunc
             type: request
             identitySource: method.request.header.Authorization
+          request:
+            parameters:
+              paths:
+                parent_type: false
 
   getLocationAttrTypes:
     handler: metadata/handler.get_location_attr_types

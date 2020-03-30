@@ -11,7 +11,6 @@ from backbone_server.errors.duplicate_key_exception import DuplicateKeyException
 from backbone_server.errors.permission_exception import PermissionException
 from backbone_server.errors.integrity_exception import IntegrityException
 
-from backbone_server.controllers.base_controller import BaseController
 from backbone_server.model.scope import session_scope
 from backbone_server.model.mixins import Base
 
@@ -281,9 +280,9 @@ class SimsDbBase():
                 api_delete = delete_item.map_to_openapi()
                 if studies:
                     study_code = self.get_study_code(delete_item)
-                    BaseController.has_study_permission(studies,
-                                                        study_code,
-                                                        BaseController.DELETE_PERMISSION)
+                    self.has_study_permission(studies,
+                                              study_code,
+                                              self.DELETE_PERMISSION)
 
                 self.delete_extra_actions(db, delete_item, api_delete)
 
