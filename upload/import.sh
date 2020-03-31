@@ -18,7 +18,7 @@ exec &> >(tee -i ${OUTFILE})
 ARCHIVE_DIR=${OUTPUT1_STAGING_DIR}/archive
 
 shopt -s nullglob
-for i in $INPUT1_STAGING_DIR}/import/oxford_11JAN2018.csv
+for i in ${INPUT1_STAGING_DIR}/import/oxford_11JAN2018.csv
 do
     if [ -f $i ]
     then
@@ -34,14 +34,14 @@ do
     fi
 done
 SSR=2017_06_07_report_sample_status.xls
-if [ -f $INPUT1_STAGING_DIR}/import/${SSR} ]
+if [ -f ${INPUT1_STAGING_DIR}/import/${SSR} ]
 then
     python3 upload_ssr.py ${IMPORT_CONFIG} $INPUT1_STAGING_DIR}/import/${SSR}
     aws s3 mv "s3://malariagen-sims-import-${ENVIRON}/import/${SSR}" "s3://malariagen-sims-import-${ENVIRON}/output/archive/"
 fi
 for i in ${INPUT1_STAGING_DIR}/import/roma/*
 do
-    if [ $i != "_dummy" ]
+    if [ $i != ".empty" ]
     then
         test -d ${ARCHIVE_DIR}/roma || mkdir -p ${ARCHIVE_DIR}/roma
         INSTANCE=$(basename ${i} | awk -F_ '{print $1}')
@@ -57,7 +57,7 @@ do
 done
 for i in ${INPUT1_STAGING_DIR}/import/access/*.accdb
 do
-    if [ ${i} != "_dummy" ]
+    if [ ${i} != ".empty" ]
     then
         test -d ${ARCHIVE_DIR}/access || mkdir -p ${ARCHIVE_DIR}/access
         INSTANCE=$(basename ${i})
