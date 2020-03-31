@@ -413,10 +413,10 @@ class SimsDbBase():
         if order_by:
             db_query = db_query.order_by(order_by)
 
-        if start:
+        if start or start is not None:
             db_query = db_query.offset(start)
 
-        if count:
+        if count or count is not None:
             db_query = db_query.limit(count)
 
         # print(study_codes)
