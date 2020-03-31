@@ -37,20 +37,6 @@ echo ${POSTGRES_NAME}
 export PGPASSWORD="${PGPASSWORD:-$POSTGRES_PASSWORD}"
 dropdb -h ${POSTGRES_HOST} --username "$POSTGRES_USER" ${POSTGRES_NAME}
 createdb -h ${POSTGRES_HOST} --username "$POSTGRES_USER" ${POSTGRES_NAME}
-psql=( psql -v ON_ERROR_STOP=1 -h ${POSTGRES_HOST} --username "$POSTGRES_USER" --no-password )
-psql+=( --dbname "$POSTGRES_NAME" )
-#Rebuilding an existing db as empty - not changing the structure
-"${psql[@]}" << +++EOF
-ALTER DATABASE ${POSTGRES_NAME} SET search_path=${POSTGRES_NAME}, public, contrib;
-create extension postgis;
-+++EOF
-"${psql[@]}" << +++EOF
-\i ${REBUILD_FILE};
-\connect ${POSTGRES_NAME};
-SELECT postgis_full_version();
-\copy countries (English, French, alpha2, alpha3, numeric_code) FROM '${REBUILD_PREFIX}/country_codes.tsv' DELIMITER E'\t'  HEADER CSV;
-\copy taxonomies (id, rank, name) FROM '${REBUILD_PREFIX}/taxa.tsv' DELIMITER E'\t'  HEADER CSV;
-+++EOF
 if [ ${TMP_REBUILD} -eq 1 ]
 then
     rm ${REBUILD_FILE}

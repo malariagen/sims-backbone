@@ -41,6 +41,7 @@ before_install:
 before_script:
     - export POSTGRES_USER="postgres"
     - export POSTGRES_DB="backbone_test"
+    - database/rebuild.sh test clean
 
 after_success:
   - coverage combine test/.coverage upload/test/.coverage
