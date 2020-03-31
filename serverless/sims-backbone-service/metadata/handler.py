@@ -66,8 +66,9 @@ def get_attr_types(event, context):
     auths = get_auths(metadata_controller, event)
 
     parent_type = None
-    if 'pathParameters' in event:
-        parent_type = event["pathParameters"]["parent_type"]
+    if 'queryStringParameters' in event and event["queryStringParameters"]:
+        if 'parent_type' in event["queryStringParameters"]:
+            parent_type = event["queryStringParameters"]["parent_type"]
 
     value, retcode = metadata_controller.get_attr_types(parent_type, user=user,
                                                         auths=auths)
