@@ -86,7 +86,7 @@ describe('EventListComponent', () => {
     (http: HttpClient, backend: HttpTestingController) => {
 
       const req = backend.expectOne({
-        url: 'http://localhost/v1/samplingEvents?search_filter=' + component.filter + '&start=0&count=50',
+        url: 'http://localhost/v1/samplingEvents?search_filter=' + encodeURIComponent(component.filter) + '&value_type=str&start=0&count=50',
         method: 'GET'
       });
 
@@ -104,7 +104,7 @@ describe('EventListComponent', () => {
     (http: HttpClient, backend: HttpTestingController) => {
 
       const req = backend.expectOne({
-        url: 'http://localhost/v1/samplingEvents?search_filter=' + component.filter + '&start=0&count=50',
+        url: 'http://localhost/v1/samplingEvents?search_filter=' + encodeURIComponent(component.filter) + '&value_type=str&start=0&count=50',
         method: 'GET'
       });
 
@@ -123,7 +123,7 @@ describe('EventListComponent', () => {
     (http: HttpClient, backend: HttpTestingController) => {
 
       const req = backend.expectOne({
-        url: 'http://localhost/v1/samplingEvents?search_filter=' + component.filter + '&start=0&count=50',
+        url: 'http://localhost/v1/samplingEvents?search_filter=' + encodeURIComponent(component.filter) + '&value_type=str&start=0&count=50',
         method: 'GET'
       });
 

@@ -119,17 +119,17 @@ describe('LocationEditComponent', () => {
         accuracy: 'region',
         latitude: 1,
         longitude: 2,
-        attrs: [<Attr>{
-          attr_source: 'test_src',
-          attr_type: 'partner_name',
-          attr_value: 'test_val',
-          study_name: '9999'
-        }, <Attr>{
-          attr_source: 'test_src',
-          attr_type: 'partner_name',
-          attr_value: 'test_val',
-          study_name: '9998'
-        }]
+        attrs: [<Attr><unknown>{
+            attr_source: 'test_src',
+            attr_type: 'partner_name',
+            attr_value: 'test_val',
+            study_name: '9999'
+          }, <Attr><unknown>{
+            attr_source: 'test_src',
+            attr_type: 'partner_name',
+            attr_value: 'test_val',
+            study_name: '9998'
+          }]
       };
 
       req.flush(testData);
@@ -174,17 +174,17 @@ describe('LocationEditComponent', () => {
         accuracy: 'region',
         latitude: 1,
         longitude: 2,
-        attrs: [<Attr>{
-          attr_source: 'test_src',
-          attr_type: 'partner_name',
-          attr_value: 'test_val',
-          study_name: '9999'
-        }, <Attr>{
-          attr_source: 'test_src',
-          attr_type: 'partner_name',
-          attr_value: 'test_val',
-          study_name: '9998'
-        }]
+        attrs: [<Attr><unknown>{
+            attr_source: 'test_src',
+            attr_type: 'partner_name',
+            attr_value: 'test_val',
+            study_name: '9999'
+          }, <Attr><unknown>{
+            attr_source: 'test_src',
+            attr_type: 'partner_name',
+            attr_value: 'test_val',
+            study_name: '9998'
+          }]
       };
 
       req.flush(testData);

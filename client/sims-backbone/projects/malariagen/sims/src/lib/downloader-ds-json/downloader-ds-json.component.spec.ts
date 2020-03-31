@@ -95,7 +95,7 @@ describe('DownloaderDsJsonComponent', () => {
       fixture.detectChanges();
 
       const result = {
-        url: 'http://localhost/v1/derivativeSamples?search_filter=' + component.filter + '&start=0&count=' + component.pageSize,
+        url: 'http://localhost/v1/derivativeSamples?search_filter=' + encodeURIComponent(component.filter) + '&value_type=str&start=0&count=' + component.pageSize,
         method: 'GET'
       };
       const req = backend.expectOne(result);
@@ -151,7 +151,7 @@ describe('DownloaderDsJsonComponent', () => {
       fixture.detectChanges();
 
       const result = {
-        url: 'http://localhost/v1/derivativeSamples?search_filter=' + component.filter + '&start=' + component.pageNumber * component.pageSize + '&count=' + component.pageSize,
+        url: 'http://localhost/v1/derivativeSamples?search_filter=' + encodeURIComponent(component.filter) + '&value_type=str&start=' + component.pageNumber * component.pageSize + '&count=' + component.pageSize,
         method: 'GET'
       };
       const req = backend.expectOne(result);
@@ -163,7 +163,7 @@ describe('DownloaderDsJsonComponent', () => {
       expect(component.pageNumber).toBe(1);
 
       const result1 = {
-        url: 'http://localhost/v1/derivativeSamples?search_filter=' + component.filter + '&start=' + component.pageNumber * component.pageSize + '&count=' + component.pageSize,
+        url: 'http://localhost/v1/derivativeSamples?search_filter=' + encodeURIComponent(component.filter) + '&value_type=str&start=' + component.pageNumber * component.pageSize + '&count=' + component.pageSize,
         method: 'GET'
       };
       const req1 = backend.expectOne(result1);

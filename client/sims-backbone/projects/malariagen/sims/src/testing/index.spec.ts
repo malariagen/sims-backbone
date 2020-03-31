@@ -32,7 +32,7 @@ export function createAuthServiceSpy() {
 }
 
 export function getTestSamplingEvents() {
-  let test_entries = <SamplingEvents>{
+  let test_entries = <SamplingEvents><unknown>{
     'count': 2,
     'attr_types': [
       'partner_id',
@@ -99,7 +99,7 @@ export function getTestSamplingEvents() {
 }
 
 export function getTestOriginalSamples() {
-  let test_entries = <OriginalSamples>{
+  let test_entries = <OriginalSamples><unknown>{
     'original_samples': [
       {
         'attrs': [
@@ -237,7 +237,7 @@ export function getTestOriginalSamples() {
 }
 
 export function getTestDerivativeSamples() {
-  const test_entries = <DerivativeSamples>{
+  const test_entries = <DerivativeSamples><unknown>{
     'derivative_samples': [
       {
         'derivative_sample_id': '0f1aaffe-7de2-4adc-b593-c53c37a1ab1c',
