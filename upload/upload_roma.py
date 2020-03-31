@@ -27,8 +27,7 @@ class Upload_ROMA(uploader.Uploader):
         for manifest_id in range(1, max_manifest + 1):
             if manifest_id not in items['samples.manifest']:
                 manifest_name = f'{manifest_prefix}{str(manifest_id).zfill(5)}'
-                event_set_name = f'{instance}_{manifest_name}'
-                print(event_set_name)
+                event_set_name = f'{manifest_name}'
                 try:
                     manifest = self._dao.download_manifest(manifest_name)
                     for manifest_item in manifest.members.manifest_items:
@@ -38,7 +37,7 @@ class Upload_ROMA(uploader.Uploader):
                                                        manifest_item.original_sample_id)
                     self._dao.delete_manifest(manifest_name)
                 except ApiException as e:
-                    print(e)
+                    # print(e)
                     pass #Already gone
 
 
@@ -55,7 +54,7 @@ class Upload_ROMA(uploader.Uploader):
                             sampling_events_to_delete.append(sample)
                     event_sets_to_delete.append(event_set_name)
                 except ApiException as e:
-                    print(e)
+                    # print(e)
                     pass #Already gone
 
         locations_to_delete = []
@@ -81,8 +80,12 @@ class Upload_ROMA(uploader.Uploader):
 
         items = {}
         event_sets = []
+        new_manifests = []
+        missing_manifests = []
         max_manifest = 1
         max_location = 1
+        existing_manifests = {}
+        ignored_manifests = []
 
         for item in data:
             if not item['model'] in items:
@@ -91,6 +94,16 @@ class Upload_ROMA(uploader.Uploader):
             if item['model'] == 'samples.manifest':
                 if item['pk'] > max_manifest:
                     max_manifest = item['pk']
+                    manifest = item['fields']['name']
+                    if manifest not in existing_manifests and\
+                       manifest not in missing_manifests:
+                        try:
+                            dl_manifest = self._dao.download_manifest(manifest)
+                            existing_manifests[manifest] = dl_manifest
+                        except ApiException as e:
+                            missing_manifests.append(manifest)
+                            pass #Does not exist
+
             if item['model'] == 'locations.location':
                 if item['pk'] > max_location:
                     max_location = item['pk']
@@ -154,7 +167,8 @@ class Upload_ROMA(uploader.Uploader):
 
             roma_manifest_id = fields['manifest']
             roma_study_id = items['samples.manifest'][roma_manifest_id]['fields']['study']
-            manifest = instance + '_' + items['samples.manifest'][roma_manifest_id]['fields']['name']
+            manifest = items['samples.manifest'][roma_manifest_id]['fields']['name']
+            manifest_date = items['samples.manifest'][roma_manifest_id]['fields']['creation_date']
             updated_by = items['samples.manifest'][roma_manifest_id]['fields']['updated_by'][0]
             study_id = items['managements.study'][roma_study_id]['fields']['project_code'][1:]
 
@@ -225,13 +239,36 @@ class Upload_ROMA(uploader.Uploader):
                     'proxy_location_name': proxy_loc_name,
                     'proxy_country': proxy_country,
                     'manifest': manifest,
+                    'manifest_date': manifest_date,
                     'updated_by': updated_by,
                     'unique_ds_id': well['well_pk_id'],
                     'plate_name': well['plate_name'],
                     'plate_position': well['plate_position']
                 }
 
+                if manifest in existing_manifests:
+                    if existing_manifests[manifest].manifest_date.isoformat() == manifest_date:
+                        if manifest not in ignored_manifests:
+                            print(f'Ignoring manifest {manifest}')
+                            ignored_manifests.append(manifest)
+                        continue
+                    else:
+                        print(f'Replacing manifest {manifest}')
+                        del existing_manifests[manifest]
+
                 sampling_event = self.process_item(values)
+
+                if manifest not in existing_manifests and\
+                   manifest not in new_manifests:
+                    try:
+                        dl_manifest = self._dao.download_manifest(manifest)
+                        dl_manifest.manifest_date = manifest_date
+                        dl_manifest.manifest_type = 'manifest'
+                        dl_manifest = self._dao.update_manifest(manifest, dl_manifest, update_studies=True)
+                        new_manifests.append(manifest)
+                    except ApiException as e:
+                        print(e)
+                        pass #Does not exist
 
                 if values['manifest'] not in event_sets:
                     self._dao.create_event_set(values['manifest'])

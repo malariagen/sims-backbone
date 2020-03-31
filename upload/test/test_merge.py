@@ -245,12 +245,12 @@ class TestMerge(TestBase):
 
         looked_up = TestBase.getDAO().download_derivative_samples_by_os_attr('roma_id', 'TST00001')
 
-        TestBase.removeManifestItems(['roma_MNF00002', 'roma_MNF00003'])
+        TestBase.removeManifestItems(['MNF00001', 'MNF00002', 'MNF00003'])
         for derived_sample in looked_up.derivative_samples:
             TestBase.getDAO().delete_derivative_sample(derived_sample.derivative_sample_id)
         TestBase.tearDownSSR(['oxford_merge', 'pf6_merge', 'pv3_merge',
-                              'roma_dump', 'roma_MNF00001', 'roma_MNF00002',
-                              'roma_MNF00003', 'sanger-lims_merge'], locations)
+                              'roma_dump', 'MNF00001', 'MNF00002',
+                              'MNF00003', 'sanger-lims_merge'], locations)
 
 
         TestBase.deleteStudies(['9030', '9031', '9032', '9033'], locations)

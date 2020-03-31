@@ -62,21 +62,21 @@ class ManifestProcessor(BaseEntity):
         if samp.original_sample_id in self._item_cache[manifest]:
             existing = self._item_cache[manifest][samp.original_sample_id]
 
-        #if not existing:
-        #    print('Not found {}'.format(samp))
+        # if not existing:
+        #     print('Not found {}'.format(samp))
+        # else:
+        #     print(f'found {samp} {existing}')
         return existing
 
     def process_manifest_item(self, samp, existing, original_sample, values):
 
+        # print(f'process_manifest_item {samp} {existing} {original_sample} {values}')
         user = None
         if 'updated_by' in values:
             user = values['updated_by']
 
-        if 'release' not in values:
-            return
-
         if not original_sample:
-            print(f'No original sample {values}')
+            # print(f'No original sample {values}')
             return
 
         manifest = None
@@ -93,6 +93,7 @@ class ManifestProcessor(BaseEntity):
         manifest_item = None
         if not existing:
             manifest_item = self._dao.create_manifest_item(manifest, original_sample.original_sample_id)
+            # print(f'created item {manifest_item}')
             self._item_cache[manifest][original_sample.original_sample_id] = manifest_item
         manifest_item = self._item_cache[manifest][original_sample.original_sample_id]
 
@@ -126,8 +127,11 @@ class ManifestProcessor(BaseEntity):
         elif original_sample.study_name[:4] not in self._manifest_studies_cache[manifest]:
             update_studies = True
 
+        # print(f'{manifest} {update_studies}')
         if update_studies:
             self._manifest_studies_cache[manifest].append(original_sample.study_name[:4])
             download_manifest = self._dao.download_manifest(manifest)
             download_manifest.manifest_type = manifest_type
+            if 'manifest_date' in values:
+                download_manifest.manifest_date = values['manifest_date']
             self._dao.update_manifest(manifest, download_manifest, update_studies=True)

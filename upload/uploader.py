@@ -329,8 +329,7 @@ class Uploader():
 
         self.ad_processor.process_assay_datum(ad_sample, adsamp, derivative_sample, values)
 
-        r_sample = self.ds_processor.create_derivative_sample_from_values(values,
-                                                                          original_sample)
+        r_sample = self.r_processor.create_manifest_item_from_values(values, original_sample)
 
         rsamp = self.r_processor.lookup_manifest_item(r_sample, values)
 

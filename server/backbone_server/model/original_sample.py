@@ -310,6 +310,8 @@ class BaseOriginalSample(SimsDbBase):
 
             u = text("UPDATE derivative_sample SET original_sample_id = :into WHERE original_sample_id = :os2")
             self.engine.execute(u, into=into, os2=merged)
+            u = text("DELETE FROM manifest_item WHERE original_sample_id = :os2")
+            self.engine.execute(u, os2=merged)
             self.delete(merged, studies)
             db.commit()
 
