@@ -616,7 +616,6 @@ class TestDerivativeSample(TestBase):
 
             results1 = ds_api_instance.download_derivative_samples_by_taxa(5855, start=0, count=1)
 
-            print(results1)
             assert results1.count == 2
             assert len(results1.derivative_samples) == 1
             assert results1.derivative_samples[0].derivative_sample_id == results.derivative_samples[0].derivative_sample_id
@@ -833,7 +832,7 @@ class TestDerivativeSample(TestBase):
 
     """
     """
-    def test_ds_event_set_lookup_missing(self, api_factory):
+    def test_os_event_set_lookup_missing(self, api_factory):
 
         api_instance = api_factory.OriginalSampleApi()
 
@@ -894,7 +893,6 @@ class TestDerivativeSample(TestBase):
             assert results.attr_types == ['test1', 'test2']
 
             assert len(results.derivative_samples) == 1
-            print(results)
             assert results.count == 2
 
             es_api_instance.delete_event_set_item(event_set_name,

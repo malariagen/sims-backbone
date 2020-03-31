@@ -1414,8 +1414,6 @@ class TestSample(TestBase):
             results1 = se_api_instance.download_sampling_events_by_os_attr('oxford', '12345678',
                                                                            study_name='4024-MD-UP')
 
-            print(results)
-            print(results1)
             assert results == results1
 
             ffetched = se_api_instance.download_sampling_events(search_filter='os_attr:oxford:12345678:4024')
@@ -1439,20 +1437,20 @@ class TestSample(TestBase):
 
             #Uses partner_id because only partner_id and individual_id are allowed to
             #have the same value assigned to different sampling events
-            samp1 = openapi_client.SamplingEvent(None, doc=date(2017, 10, 16))
-            samp1.attrs = [
-                openapi_client.Attr (attr_type='partner_id', attr_value='mrg1-12345678',
-                                     attr_source='mrg')
-            ]
-            samp1.doc_accuracy = 'day'
-            samp2 = openapi_client.SamplingEvent(None, doc=date(2017, 10, 16))
-            samp2.attrs = [
-                openapi_client.Attr (attr_type='partner_id', attr_value='mrg2-12345678',
-                                     attr_source='mrg')
-            ]
-            samp2.doc_accuracy = 'day'
+        samp1 = openapi_client.SamplingEvent(None, doc=date(2017, 10, 16))
+        samp1.attrs = [
+            openapi_client.Attr(attr_type='partner_id', attr_value='mrg1-12345678',
+                                attr_source='mrg')
+        ]
+        samp1.doc_accuracy = 'day'
+        samp2 = openapi_client.SamplingEvent(None, doc=date(2017, 10, 16))
+        samp2.attrs = [
+            openapi_client.Attr(attr_type='partner_id', attr_value='mrg2-12345678',
+                                attr_source='mrg')
+        ]
+        samp2.doc_accuracy = 'day'
 
-            return samp1, samp2
+        return samp1, samp2
 
     """
     """

@@ -395,7 +395,6 @@ class TestManifests(TestBase):
                 created = api_instance.create_manifest(evset)
             downloaded = api_instance.download_manifests()
 
-            print(downloaded)
             assert len(downloaded.manifests) == 2
 
             for evset in sets:
