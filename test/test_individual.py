@@ -17,7 +17,7 @@ class TestIndividual(TestBase):
 
         indiv = openapi_client.Individual(None)
 
-        ident = openapi_client.Attr(attr_type='patient_id',
+        ident = openapi_client.Attr(attr_type='ident',
                                     attr_value=f'Patient{self._individual_number}',
                                     attr_source='TestIndividual',
                                     study_name='6003-PF-MR-ANON')

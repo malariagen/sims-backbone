@@ -364,7 +364,7 @@ class BaseStudy(SimsDbBase):
                 'num_original_assay_data',
                 'num_released'
         ]:
-            if count in results[api_item.code]:
+            if api_item.code in results and count in results[api_item.code]:
                 setattr(api_item, count, results[api_item.code][count])
 
 
@@ -402,6 +402,8 @@ class BaseStudy(SimsDbBase):
         result = self.engine.execute(text(stmt))
 
         for (count, code) in result:
+            if code not in results:
+                results[code] = {}
             results[code]['num_original_samples'] = count
 
         stmt = '''SELECT COUNT(*), code FROM derivative_sample ds
