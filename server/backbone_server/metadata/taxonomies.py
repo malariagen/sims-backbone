@@ -21,7 +21,7 @@ class TaxonomiesGet():
                 LEFT JOIN (SELECT taxonomy_id, COUNT(*) AS os_count FROM original_sample os
                 JOIN partner_species_identifier psi ON os.partner_species_id = psi.id
                 JOIN taxonomy_identifier ti ON ti.partner_species_identifier_id = psi.id
-                JOIN study s ON s.id = os.study_id GROUP BY taxonomy_id) os ON os.taxonomy_id = taxonomy_id
+                JOIN study s ON s.id = os.study_id GROUP BY taxonomy_id) os ON os.taxonomy_id = taxonomy.id
                 ;'''
                 cursor.execute( stmt, )
 
