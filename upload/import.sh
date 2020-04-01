@@ -24,7 +24,7 @@ do
     then
         INSTANCE=$(basename ${i} | awk -F_ '{print $1}')
         UPLOAD_LOG=${OUTPUT1_STAGING_DIR}/${INSTANCE}_$(date +%Y-%m-%d-%H%M%S).log
-        python3 uploader.py $i {INSTANCE}.json ${IMPORT_CONFIG} 2>&1 | tee -i ${UPLOAD_LOG}
+        python3 uploader.py $i ${INSTANCE}.json ${IMPORT_CONFIG} 2>&1 | tee -i ${UPLOAD_LOG}
         if [ -s ${UPLOAD_LOG} ]
         then
             python3 upload_log.py ${CMIS_CONFIG} ${ENVIRON} ${UPLOAD_LOG}
@@ -36,7 +36,7 @@ done
 SSR=2017_06_07_report_sample_status.xls
 if [ -f ${INPUT1_STAGING_DIR}/import/${SSR} ]
 then
-    python3 upload_ssr.py ${IMPORT_CONFIG} $INPUT1_STAGING_DIR}/import/${SSR}
+    python3 upload_ssr.py ${IMPORT_CONFIG} ${INPUT1_STAGING_DIR}/import/${SSR}
     aws s3 mv "s3://malariagen-sims-import-${ENVIRON}/import/${SSR}" "s3://malariagen-sims-import-${ENVIRON}/output/archive/"
 fi
 for i in ${INPUT1_STAGING_DIR}/import/roma/*
