@@ -1,4 +1,4 @@
-connexion==2.6.0
+connexion >= 2.6.0; python_version>="3.6"
 pytest==3.5.0
 pytest-cov==2.5.1
 
