@@ -43,11 +43,13 @@ class TestAssayDatum(TestBase):
 
         try:
 
-            api_instance.delete_assay_datum(samp.assay_datum_id)
+            if samp.assay_datum_id:
+                api_instance.delete_assay_datum(samp.assay_datum_id)
             ds_api_instance.delete_derivative_sample(samp.derivative_sample_id)
             os_api_instance.delete_original_sample(samp.derivative_sample.original_sample_id)
 
         except ApiException as error:
+            print(error)
             self.check_api_exception(api_factory, "AssayDataApi->create_assay_datum", error)
     """
     """
@@ -343,6 +345,7 @@ class TestAssayDatum(TestBase):
 
             self.delete_assay_datum(api_factory, created1)
             self.delete_assay_datum(api_factory, created2)
+            self.delete_assay_datum(api_factory, samp3)
 
 
         except ApiException as error:

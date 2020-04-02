@@ -266,7 +266,7 @@ class TestStudies(TestBase):
 
             study1.partner_species[0].taxa = [taxa]
             with pytest.raises(ApiException, status=422):
-                study2 = study_api.update_study('2004-MD-UP', study1)
+                study2 = study_api.update_study('2005-MD-UP', study1)
             #assert study2.partner_species[0].taxa[0].taxonomy_id == 999999, 'taxa not updated'
 
             api_instance.delete_original_sample(created.original_sample_id)

@@ -421,6 +421,7 @@ class TestEventSets(TestBase):
 
             api_instance.delete_event_set_item(event_set, created.sampling_event_id)
             api_instance.delete_event_set_item(event_set, created2.sampling_event_id)
+            api_instance.delete_event_set_note(event_set, evsn.note_name)
 
             fetched_set = api_instance.download_event_set(event_set)
 

@@ -619,6 +619,7 @@ class TestSample(TestBase):
             new_se = api_instance.update_sampling_event(created.sampling_event_id, created)
 
             new_se.location = None
+            assert new_se.version == created.version + 1
             created.version = new_se.version
             assert new_se == created
 
@@ -627,6 +628,7 @@ class TestSample(TestBase):
 
             location_api_instance.delete_location(loc.location_id)
             location_api_instance.delete_location(proxy_loc.location_id)
+            location_api_instance.delete_location(new_loc.location_id)
 
 
         except ApiException as error:

@@ -327,9 +327,9 @@ class BaseStudy(SimsDbBase):
                                 if db_taxa.id == taxa.taxonomy_id:
                                     taxa_found = True
                             if not taxa_found:
-                                new_taxa = Taxonomy.get_or_create(db,
-                                                                  taxa.taxonomy_id,
-                                                                 user)
+                                new_taxa = db.query(Taxonomy).get(taxa.taxonomy_id)
+                                if not new_taxa:
+                                    raise MissingKeyException(f'No such taxonomy {taxa.taxonomy_id}')
                                 if new_taxa not in missing_taxa:
                                     missing_taxa.append(new_taxa)
                                 if new_taxa not in all_taxa:

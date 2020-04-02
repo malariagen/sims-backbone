@@ -168,9 +168,9 @@ class BaseEventSet(SimsDbBase):
 
         # print(api_item)
         # print(db_item)
-        self.db_map_notes(db, db_item, api_item)
+        self.db_map_notes(db, db_item, api_item, user)
 
-    def db_map_notes(self, db, db_item, api_item):
+    def db_map_notes(self, db, db_item, api_item, user):
 
         if api_item.notes:
             new_notes = []
@@ -191,7 +191,7 @@ class BaseEventSet(SimsDbBase):
                     new_note = EventSetNote()
                     new_note.note_name = note.note_name
                     new_note.note_text = note.note_text
-                    #new_note.created_by = user
+                    new_note.created_by = user
                     new_notes.append(new_note)
             if new_existing_notes:
                 db_item.notes.extend(new_existing_notes)
