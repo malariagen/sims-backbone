@@ -1,4 +1,3 @@
-from __future__ import print_function
 import json
 import os
 import requests
@@ -9,17 +8,7 @@ from api_factory import ApiFactory
 import openapi_client
 import logging
 
-
-@pytest.fixture(params=['user1'])
-def user(request):
-    yield request.param
-
-
-"""
-"""
-
-
-@pytest.fixture(params=[
+auth_test_params=[
     {
         'memberOf': ['cn=editor,ou=sims,ou=projects,ou=groups,dc=malariagen,dc=net',
                      'cn=editor,ou=otherproject,ou=projects,ou=groups,dc=malariagen,dc=net',
@@ -145,7 +134,34 @@ def user(request):
     },
     {
     },
-])
+]
+
+if os.getenv('TOKEN_URL') and not os.getenv('LOCAL_TEST'):
+
+    with open('../upload/config_dev.json') as json_file:
+        args = json.load(json_file)
+        token_request = requests.get(os.getenv('TOKEN_URL'),
+                                     args,
+                                     headers={'service': 'http://localhost/'})
+        token_response = token_request.text.split('=')
+        token = token_response[1].split('&')[0]
+
+    auth_test_params = [
+        {
+            'auth_token': token
+        }
+    ]
+
+@pytest.fixture(params=['user1'])
+def user(request):
+    yield request.param
+
+
+"""
+"""
+
+
+@pytest.fixture(params=auth_test_params)
 def auths(request):
     yield request.param
 
@@ -157,9 +173,6 @@ def method(request):
     yield 'custom'
 
 
-access_token_cache = {}
-
-
 @pytest.fixture()
 def api_factory(request, user, auths, method):
 
@@ -167,22 +180,9 @@ def api_factory(request, user, auths, method):
 
     # Not allowed to be None
     configuration.access_token = 'abcd'
-    if not auths or 'editor' in auths:
-        if os.getenv('TOKEN_URL') and not os.getenv('LOCAL_TEST'):
-            # Could be str(auths) if want separate tokens
-            cache_key = 'cache_key'
-            if cache_key in access_token_cache:
-                configuration.access_token = access_token_cache[cache_key]
-            else:
-                with open('../upload/config_dev.json') as json_file:
-                    args = json.load(json_file)
-                    token_request = requests.get(os.getenv('TOKEN_URL'),
-                                                 args,
-                                                 headers={'service': 'http://localhost/'})
-                    token_response = token_request.text.split('=')
-                    token = token_response[1].split('&')[0]
-                    configuration.access_token = token
-                    access_token_cache[cache_key] = token
+
+    if 'auth_token' in auths:
+        configuration.access_token = auths['auth_token']
 
     if os.getenv('REMOTE_HOST_URL'):
         configuration.host = os.getenv('REMOTE_HOST_URL')
