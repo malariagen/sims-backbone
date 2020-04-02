@@ -135,11 +135,11 @@ class BaseOriginalSample(SimsDbBase):
             self.old_study_id = db_item.study.id
 
 
-    def db_map_actions(self, db, db_item, api_item, studies):
+    def db_map_actions(self, db, db_item, api_item, studies, user):
         # print('db_map_actions')
         # print(api_item)
 
-        study = Study.get_or_create_study(db, api_item.study_name)
+        study = Study.get_or_create_study(db, api_item.study_name, user)
         db_item.study_id = study.id
 
         # If we change the study then need to update all the attributes
@@ -250,7 +250,8 @@ class BaseOriginalSample(SimsDbBase):
                                           self.GET_PERMISSION)
                 if original_sample2.study:
                     if original_sample1.study.name[:4] == '0000':
-                        original_sample1.study.name = original_sample2.study.name
+                        original_sample1.study = original_sample2.study
+                        original_sample1.study_id = original_sample2.study_id
                     elif original_sample2.study.name[:4] == '0000':
                         pass
                     elif original_sample1.study.name != original_sample2.study.name:

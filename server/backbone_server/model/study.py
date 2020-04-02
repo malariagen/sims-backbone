@@ -46,14 +46,17 @@ class ExpectedSamples(Base):
                                                    uselist=True))
 
     @staticmethod
-    def get_or_create(db, e_sample, study_id):
+    def get_or_create(db, e_sample, study_id, user):
 
         expected_sample = None
         if e_sample is None or e_sample.expected_samples_id is None:
             expected_sample = ExpectedSamples(sample_count=e_sample.sample_count,
                                               date_of_arrival=e_sample.date_of_arrival,
-                                              study_id=study_id)
-            psi = PartnerSpeciesIdentifier.get_or_create(db, e_sample.expected_species, study_id)
+                                              study_id=study_id,
+                                              created_by=user)
+            psi = PartnerSpeciesIdentifier.get_or_create(db,
+                                                         e_sample.expected_species,
+                                                         study_id, user)
             expected_sample.partner_species_id = psi.id
             expected_sample.partner_species = psi
             db.add(expected_sample)
@@ -63,7 +66,9 @@ class ExpectedSamples(Base):
             expected_sample.sample_count = e_sample.sample_count
             expected_sample.date_of_arrival = e_sample.date_of_arrival
             expected_sample.study_id = study_id
-            psi = PartnerSpeciesIdentifier.get_or_create(db, e_sample.expected_species, study_id)
+            psi = PartnerSpeciesIdentifier.get_or_create(db,
+                                                         e_sample.expected_species,
+                                                         study_id, user)
             expected_sample.partner_species_id = psi.id
             expected_sample.partner_species = psi
 
@@ -93,7 +98,7 @@ class Taxonomy(Base):
     name = Column(String(128))
 
     @staticmethod
-    def get_or_create(db, tid):
+    def get_or_create(db, tid, user):
 
         taxa = db.query(Taxonomy).filter_by(id=tid).first()
 
@@ -130,8 +135,8 @@ def insert_taxa(mapper, connection, checkfirst, _ddl_runner,
 
 class Study(Base):
 
-    name = Column(String(64), index=True)
-    code = Column(String(4), index=True)
+    name = Column(String(64), index=True, unique=True)
+    code = Column(String(4), index=True, unique=True)
     sequencescape_code = Column(String(64), index=True)
     ethics_expiry = Column(Date())
 
@@ -141,12 +146,12 @@ class Study(Base):
     expected_samples = relationship("ExpectedSamples",
                                     backref=backref("study", uselist=True))
     @staticmethod
-    def get_or_create_study(db, study_name):
+    def get_or_create_study(db, study_name, user):
 
         study = db.query(Study).filter_by(code=study_name[:4]).first()
 
         if study is None:
-            study = Study(name=study_name, code=study_name[:4])
+            study = Study(name=study_name, code=study_name[:4], created_by=user)
             db.add(study)
             db.commit()
             study = db.query(Study).filter_by(code=study_name[:4]).first()
@@ -218,7 +223,7 @@ class PartnerSpeciesIdentifier(Base):
     openapi_class = PartnerSpecies
 
     @staticmethod
-    def get_or_create(db, partner_species, study_id):
+    def get_or_create(db, partner_species, study_id, user=None):
         ps_item_query = db.query(PartnerSpeciesIdentifier).\
                             filter(and_(PartnerSpeciesIdentifier.partner_species == partner_species,
                                         PartnerSpeciesIdentifier.study_id == study_id))
@@ -226,7 +231,8 @@ class PartnerSpeciesIdentifier(Base):
 
         if not ps_item:
             ps_item = PartnerSpeciesIdentifier(partner_species=partner_species,
-                                               study_id=study_id)
+                                               study_id=study_id,
+                                               created_by=user)
             db.add(ps_item)
 
         return ps_item
@@ -275,13 +281,14 @@ class BaseStudy(SimsDbBase):
 
         return self.db_class.code
 
-    def db_map_expected_samples(self, db, db_item, api_item):
+    def db_map_expected_samples(self, db, db_item, api_item, user):
         if hasattr(api_item, 'expected_samples') and api_item.expected_samples:
             new_expected_samples = []
             for expected_sample in api_item.expected_samples:
                 db_expected_sample = ExpectedSamples.get_or_create(db,
                                                                    expected_sample,
-                                                                   db_item.id)
+                                                                   db_item.id,
+                                                                   user=user)
                 if db_expected_sample in new_expected_samples:
                     raise DuplicateKeyException(f'Error duplicate expected_sample {expected_sample}')
                 new_expected_samples.append(db_expected_sample)
@@ -301,7 +308,7 @@ class BaseStudy(SimsDbBase):
             for expected_sample in expected_sample_to_remove:
                 db_item.expected_samples.remove(expected_sample)
 
-    def db_map_partner_species(self, db, db_item, api_item):
+    def db_map_partner_species(self, db, db_item, api_item, user):
 
         for ps in api_item.partner_species:
             found = False
@@ -321,7 +328,8 @@ class BaseStudy(SimsDbBase):
                                     taxa_found = True
                             if not taxa_found:
                                 new_taxa = Taxonomy.get_or_create(db,
-                                                                  taxa.taxonomy_id)
+                                                                  taxa.taxonomy_id,
+                                                                 user)
                                 if new_taxa not in missing_taxa:
                                     missing_taxa.append(new_taxa)
                                 if new_taxa not in all_taxa:
@@ -481,10 +489,10 @@ class BaseStudy(SimsDbBase):
 
         return results
 
-    def db_map_actions(self, db, db_item, api_item, studies):
+    def db_map_actions(self, db, db_item, api_item, studies, user):
 
-        self.db_map_partner_species(db, db_item, api_item)
-        self.db_map_expected_samples(db, db_item, api_item)
+        self.db_map_partner_species(db, db_item, api_item, user)
+        self.db_map_expected_samples(db, db_item, api_item, user)
         # print('db_map_actions')
         # print(api_item)
         # print(db_item)
