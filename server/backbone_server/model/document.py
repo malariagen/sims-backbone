@@ -78,9 +78,9 @@ class BaseDocument(SimsDbBase):
         self.db_class = Document
         self.attr_link = DocumentAttr
 
-    def db_map_actions(self, db, db_item, api_item, studies):
+    def db_map_actions(self, db, db_item, api_item, studies, user):
 
-        study = Study.get_or_create_study(db, api_item.study_name)
+        study = Study.get_or_create_study(db, api_item.study_name, user)
         db_item.study_id = study.id
 
     def post_get_action(self, db, db_item, api_item, studies, multiple=False):

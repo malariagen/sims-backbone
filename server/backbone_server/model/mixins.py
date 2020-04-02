@@ -50,10 +50,10 @@ class Base(object):
     def submapped_items(self):
         return {}
 
-    def map_from_openapi_actions(self, api_item):
+    def map_from_openapi_actions(self, api_item, user=None, **kwargs):
         pass
 
-    def map_from_openapi(self, openapi_type):
+    def map_from_openapi(self, openapi_type, user=None, **kwargs):
         if not openapi_type:
             return
         id_val = self.get_id_key()
@@ -73,7 +73,7 @@ class Base(object):
                                 self.logger.debug(f'Mapping List {key} {value}')
                                 for item in getattr(openapi_type, key):
                                     db_item = subitem_descrip()
-                                    db_item.map_from_openapi(item)
+                                    db_item.map_from_openapi(item, user=user, **kwargs)
                             else:
                                 self.logger.debug(f'Mapping {key} {value}')
                                 setattr(self, key, getattr(openapi_type,
@@ -84,9 +84,9 @@ class Base(object):
                         db_item = subitem_descrip()
                         val = getattr(openapi_type, key)
                         if isinstance(val, object):
-                            db_item.map_from_openapi(val)
+                            db_item.map_from_openapi(val, user=user, **kwargs)
                         else:
-                            db_item.map_from_openapi(openapi_type)
+                            db_item.map_from_openapi(openapi_type, user=user, **kwargs)
                         self.logger.debug(f'Recurse {key} {subitem_descrip} {type(val)} {val} {db_item}')
                         if val:
                             setattr(self, key, db_item)
@@ -102,7 +102,8 @@ class Base(object):
                                 self.logger.debug(api_subitem)
                                 if isinstance(api_subitem, object):
                                     db_subitem = subitem_descrip()
-                                    db_subitem.map_from_openapi(api_subitem)
+                                    db_subitem.map_from_openapi(api_subitem,
+                                                                user=user, **kwargs)
                                     sub_item_list.append(db_subitem)
                                     self.logger.debug(db_subitem)
                                 self.logger.debug(db_subitem)
@@ -119,7 +120,7 @@ class Base(object):
                 setattr(self, key, getattr(openapi_type, key))
             else:
                 self.logger.debug(f'No mapping: {self.__class__.__name__}:' + key)
-        self.map_from_openapi_actions(openapi_type)
+        self.map_from_openapi_actions(openapi_type, user=user, **kwargs)
 
     def openapi_map_actions(self, api_item):
         pass

@@ -40,7 +40,7 @@ class Attr(Base):
         }
 
     @staticmethod
-    def get_query(db, api_attr, value_type=None):
+    def get_query(db, api_attr, value_type=None, user=None):
 
         study_id = None
         if not api_attr.attr_value:
@@ -60,30 +60,30 @@ class Attr(Base):
         if api_attr.attr_source:
             attr_query = attr_query.filter(or_(Attr.attr_source == api_attr.attr_source, Attr.attr_source == None))
         if api_attr.study_name:
-            study = Study.get_or_create_study(db, api_attr.study_name)
+            study = Study.get_or_create_study(db, api_attr.study_name, user)
             study_id = study.id
             attr_query = attr_query.filter(or_(Attr.study_id == study_id, Attr.study_id == None))
 
         return attr_query
 
     @staticmethod
-    def get(db, api_attr, value_type=None):
+    def get(db, api_attr, value_type=None, user=None):
 
-        query = Attr.get_query(db, api_attr, value_type)
+        query = Attr.get_query(db, api_attr, value_type, user=user)
 
         if query:
             return query.first()
         return None
 
     @staticmethod
-    def get_or_create(db, api_attr, value_type=None):
+    def get_or_create(db, api_attr, value_type=None, user=None):
 
-        attr = Attr.get(db, api_attr, value_type)
+        attr = Attr.get(db, api_attr, value_type, user=user)
 
         if attr is None:
             study_id = None
             if api_attr.study_name:
-                study = Study.get_or_create_study(db, api_attr.study_name)
+                study = Study.get_or_create_study(db, api_attr.study_name, user)
                 study_id = study.id
             attr = Attr(attr_type=api_attr.attr_type,
                         attr_source=api_attr.attr_source,
@@ -98,10 +98,10 @@ class Attr(Base):
         return attr
 
     @staticmethod
-    def get_all(db, api_attr, value_type=None):
+    def get_all(db, api_attr, value_type=None, user=None):
 
 
-        query = Attr.get_query(db, api_attr, value_type)
+        query = Attr.get_query(db, api_attr, value_type, user=user)
 
         if not query:
             return

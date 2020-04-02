@@ -190,7 +190,7 @@ class BaseManifestItem(SimsDbBase):
 
         return api_item
 
-    def db_map_actions(self, db, db_item, api_item, studies, **kwargs):
+    def db_map_actions(self, db, db_item, api_item, studies, user, **kwargs):
         if 'update_samples' in kwargs and kwargs['update_samples']:
             os_base = BaseOriginalSample(self.engine, self.session)
             os_item = os_base.get_no_close(db, api_item.original_sample_id, studies)
@@ -295,7 +295,7 @@ class BaseManifest(SimsDbBase):
 
         return api_item
 
-    def db_map_actions(self, db, db_item, api_item, studies, **kwargs):
+    def db_map_actions(self, db, db_item, api_item, studies, user, **kwargs):
         if 'update_studies' in kwargs and kwargs['update_studies']:
             from backbone_server.model.study import BaseStudy
             db_items = db.query(OriginalSample.study_id).\
@@ -376,7 +376,7 @@ class BaseManifest(SimsDbBase):
             ri_item.created_by = user
             api_item = ManifestItemApi(None,
                                        original_sample_id=original_sample_id)
-            bse.db_map_actions(db, ri_item, api_item, studies,
+            bse.db_map_actions(db, ri_item, api_item, studies, user,
                                update_samples=True)
 
 

@@ -94,12 +94,12 @@ class SimsDbBase():
     def post_extra_actions(self, api_item):
         pass
 
-    def db_map_attrs(self, db, db_item, api_item):
+    def db_map_attrs(self, db, db_item, api_item, user):
         if hasattr(api_item, 'attrs') and api_item.attrs:
             new_attrs = []
             from backbone_server.model.attr import Attr
             for attr in api_item.attrs:
-                db_attr = Attr.get_or_create(db, attr)
+                db_attr = Attr.get_or_create(db, attr, user=user)
                 if db_attr in new_attrs:
                     raise DuplicateKeyException(f'Error duplicate attr {attr}')
                 new_attrs.append(db_attr)
@@ -119,10 +119,10 @@ class SimsDbBase():
             for attr in attr_to_remove:
                 db_item.attrs.remove(attr)
 
-    def db_map_actions(self, db, db_item, api_item, studies, **kwargs):
+    def db_map_actions(self, db, db_item, api_item, studies, user, **kwargs):
         pass
 
-    def post(self, api_item, study_name, studies, user):
+    def post(self, api_item, study_name, studies, user, **kwargs):
 
         if study_name and studies:
             self.has_study_permission(studies,
@@ -137,10 +137,11 @@ class SimsDbBase():
             self.post_duplicate_attr_check(db, api_item)
 
             db_item = self.db_class()
-            db_item.map_from_openapi(api_item)
+            db_item.map_from_openapi(api_item, user=user, **kwargs)
 
-            self.db_map_actions(db, db_item, api_item, studies)
-            self.db_map_attrs(db, db_item, api_item)
+            self.db_map_actions(db, db_item, api_item, studies, user=user,
+                                **kwargs)
+            self.db_map_attrs(db, db_item, api_item, user)
 
             db_item.created_by = user
 
@@ -232,7 +233,7 @@ class SimsDbBase():
 
             self.put_premap(db, api_item, update_item)
 
-            update_item.map_from_openapi(api_item)
+            update_item.map_from_openapi(api_item, user=user, **kwargs)
 
             if update_item.id != item_id:
                 raise MissingKeyException(f"Id in item does not match id in call {self.db_class.__table__} {item_id} {update_item.id}")
@@ -241,8 +242,8 @@ class SimsDbBase():
                 if api_item.version != old_version:
                     raise MissingKeyException(f"Version in item to update does not match stored version in call {self.db_class.__table__} {item_id} {update_item.id}")
 
-            self.db_map_actions(db, update_item, api_item, studies, **kwargs)
-            self.db_map_attrs(db, update_item, api_item)
+            self.db_map_actions(db, update_item, api_item, studies, user=user, **kwargs)
+            self.db_map_attrs(db, update_item, api_item, user)
             update_item.updated_by = user
 
             self.put_extra_actions(api_item)

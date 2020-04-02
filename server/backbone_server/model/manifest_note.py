@@ -75,10 +75,9 @@ class BaseManifestNote(SimsDbBase):
             api_item = self.pre_post_check(db, manifest_id, api_item, studies)
 
             db_item = self.db_class()
-            db_item.map_from_openapi(api_item)
+            db_item.map_from_openapi(api_item, user=user)
 
-            self.db_map_actions(db, db_item, api_item, studies)
-            self.db_map_attrs(db, db_item, api_item)
+            self.db_map_actions(db, db_item, api_item, studies, user)
 
             db_item.manifest_id = manifest_id
             db_item.created_by = user
@@ -123,10 +122,9 @@ class BaseManifestNote(SimsDbBase):
 
             self.pre_put_check(db, api_item, update_item)
 
-            update_item.map_from_openapi(api_item)
+            update_item.map_from_openapi(api_item, user=user)
 
-            self.db_map_actions(db, update_item, api_item, studies)
-            self.db_map_attrs(db, update_item, api_item)
+            self.db_map_actions(db, update_item, api_item, studies, user)
             update_item.updated_by = user
 
             self.put_extra_actions(api_item)
