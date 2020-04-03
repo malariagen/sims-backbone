@@ -144,6 +144,14 @@ class TestTaxa(TestBase):
             for species in study_detail.partner_species:
                 species.taxa = []
 
+            study_detail.num_collections = None
+            study_detail.num_original_samples = None
+            study_detail.num_derivative_samples = None
+            study_detail.num_original_derivative_samples = None
+            study_detail.num_assay_data = None
+            study_detail.num_original_assay_data = None
+            study_detail.num_released = None
+
             study_api_instance.update_study(study_ident, study_detail)
             study_detail = study_api_instance.download_study(study_ident)
 
@@ -191,6 +199,14 @@ class TestTaxa(TestBase):
                 else:
                     species.taxa = [openapi_client.Taxonomy(taxonomy_id=5833),
                                     openapi_client.Taxonomy(taxonomy_id=5855)]
+
+            study_detail.num_collections = None
+            study_detail.num_original_samples = None
+            study_detail.num_derivative_samples = None
+            study_detail.num_original_derivative_samples = None
+            study_detail.num_assay_data = None
+            study_detail.num_original_assay_data = None
+            study_detail.num_released = None
 
             study_api_instance.update_study(study_ident, study_detail)
 

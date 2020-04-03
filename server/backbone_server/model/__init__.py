@@ -1,6 +1,7 @@
 
 from backbone_server.model.study import PartnerSpeciesIdentifier
 from backbone_server.model.study import Taxonomy
+from backbone_server.model.study import ExpectedSamples
 from backbone_server.model.study import Study
 from backbone_server.model.attr import Attr
 from backbone_server.model.individual import Individual

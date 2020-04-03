@@ -206,17 +206,40 @@ class TestStudies(TestBase):
                                                           expected_species='P.  vivax',
                                                           expected_taxonomies=[])
                 study1.expected_samples = [shipment]
+                study1.num_collections = None
+                study1.num_original_samples = None
+                study1.num_derivative_samples = None
+                study1.num_original_derivative_samples = None
+                study1.num_assay_data = None
+                study1.num_original_assay_data = None
+                study1.num_released = None
+
                 study2 = study_api.update_study('2004-MD-UP', study1)
+                assert study2.version > study1.version
                 assert study2.name == '2004-PF-MD-UP'
                 assert study2.partner_species[0].taxa[0].taxonomy_id == 5833, 'taxa not updated'
 
                 assert study1.ethics_expiry == study2.ethics_expiry
 
                 study2.expected_samples[0].expected_samples_id = None
+                study2.expected_samples[0].version = None
                 assert study1.expected_samples[0] == study2.expected_samples[0]
 
                 assert len(study2.partner_species) == 2
                 api_instance.delete_original_sample(created.original_sample_id)
+                # Need to reset for test to work next time as it's not possible
+                # to delete studies
+                study2.expected_samples = []
+                study2.partner_species[0].taxa = []
+                study2.ethics_expiry = None
+                study2.num_collections = None
+                study2.num_original_samples = None
+                study2.num_derivative_samples = None
+                study2.num_original_derivative_samples = None
+                study2.num_assay_data = None
+                study2.num_original_assay_data = None
+                study2.num_released = None
+                study_api.update_study('2004-MD-UP', study2)
 
         except ApiException as error:
             self.check_api_exception(
@@ -266,6 +289,14 @@ class TestStudies(TestBase):
 
             study1.partner_species[0].taxa = [taxa]
             with pytest.raises(ApiException, status=422):
+                study1.num_collections = None
+                study1.num_original_samples = None
+                study1.num_derivative_samples = None
+                study1.num_original_derivative_samples = None
+                study1.num_assay_data = None
+                study1.num_original_assay_data = None
+                study1.num_released = None
+
                 study2 = study_api.update_study('2005-MD-UP', study1)
             #assert study2.partner_species[0].taxa[0].taxonomy_id == 999999, 'taxa not updated'
 

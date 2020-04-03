@@ -14,7 +14,7 @@ from openapi_server.models.study import Study as ApiStudy
 from openapi_server.models.studies import Studies as ApiStudies
 from openapi_server.models.partner_species import PartnerSpecies
 from openapi_server.models.taxonomy import Taxonomy as ApiTaxonomy
-from openapi_server.models.expected_samples import ExpectedSamples
+from openapi_server.models.expected_samples import ExpectedSamples as ApiExpectedSamples
 
 from backbone_server.errors.missing_key_exception import MissingKeyException
 from backbone_server.errors.duplicate_key_exception import DuplicateKeyException
@@ -23,73 +23,6 @@ from backbone_server.model.history_meta import Versioned
 from backbone_server.model.base import SimsDbBase
 from backbone_server.model.mixins import Base
 
-taxonomy_identifier_table = Table('taxonomy_identifier', Base.metadata,
-                                  Column('taxonomy_id', Integer(), ForeignKey('taxonomy.id')),
-                                  Column('partner_species_identifier_id', UUID(as_uuid=True), ForeignKey('partner_species_identifier.id'))
-                                  )
-
-class ExpectedSamples(Base):
-    @declared_attr
-    def __tablename__(cls):
-        return 'expected_samples'
-
-    sample_count = Column(Integer())
-    date_of_arrival = Column(DateTime())
-    study_id = Column('study_id',
-                      UUID(as_uuid=True),
-                      ForeignKey('study.id'))
-    partner_species_id = Column('partner_species_id',
-                                UUID(as_uuid=True),
-                                ForeignKey('partner_species_identifier.id'))
-    partner_species = relationship("PartnerSpeciesIdentifier",
-                                   backref=backref("expected_sample",
-                                                   uselist=True))
-
-    @staticmethod
-    def get_or_create(db, e_sample, study_id, user):
-
-        expected_sample = None
-        if e_sample is None or e_sample.expected_samples_id is None:
-            expected_sample = ExpectedSamples(sample_count=e_sample.sample_count,
-                                              date_of_arrival=e_sample.date_of_arrival,
-                                              study_id=study_id,
-                                              created_by=user)
-            psi = PartnerSpeciesIdentifier.get_or_create(db,
-                                                         e_sample.expected_species,
-                                                         study_id, user)
-            expected_sample.partner_species_id = psi.id
-            expected_sample.partner_species = psi
-            db.add(expected_sample)
-            db.commit()
-        else:
-            expected_sample = db.query(ExpectedSamples).filter_by(id=e_sample.expected_sample_id).first()
-            expected_sample.sample_count = e_sample.sample_count
-            expected_sample.date_of_arrival = e_sample.date_of_arrival
-            expected_sample.study_id = study_id
-            psi = PartnerSpeciesIdentifier.get_or_create(db,
-                                                         e_sample.expected_species,
-                                                         study_id, user)
-            expected_sample.partner_species_id = psi.id
-            expected_sample.partner_species = psi
-
-        return expected_sample
-
-    openapi_class = ExpectedSamples
-
-    def submapped_items(self):
-        return {
-            'partner_species': PartnerSpeciesIdentifier,
-            'study_name': 'study'
-        }
-
-    def __repr__(self):
-        return f'''<ExpectedSamples ID {self.id}
-    Study {self.study_id}
-    Partner Species {self.partner_species}
-    Partner Species Id {self.partner_species_id}
-    {self.sample_count}
-    {self.date_of_arrival}
-    >'''
 
 class Taxonomy(Base):
 
@@ -132,8 +65,115 @@ def insert_taxa(mapper, connection, checkfirst, _ddl_runner,
             cur.copy_from(fp, 'taxonomy', columns=('id', 'rank', 'name'))
     connection.connection.commit()
 
+taxonomy_identifier_table = Table('taxonomy_identifier', Base.metadata,
+                                  Column('taxonomy_id', Integer(), ForeignKey('taxonomy.id')),
+                                  Column('partner_species_identifier_id', UUID(as_uuid=True), ForeignKey('partner_species_identifier.id'))
+                                  )
 
-class Study(Base):
+class PartnerSpeciesIdentifier(Base, Versioned):
+    @declared_attr
+    def __tablename__(cls):
+        return 'partner_species_identifier'
+
+    partner_species = Column(String(128))
+    study_id = Column('study_id',
+                      UUID(as_uuid=True),
+                      ForeignKey('study.id'))
+    taxa = relationship('Taxonomy',
+                        secondary=taxonomy_identifier_table)
+
+    openapi_class = PartnerSpecies
+
+    @staticmethod
+    def get_or_create(db, partner_species, study_id, user=None):
+        ps_item_query = db.query(PartnerSpeciesIdentifier).\
+                            filter(and_(PartnerSpeciesIdentifier.partner_species == partner_species,
+                                        PartnerSpeciesIdentifier.study_id == study_id))
+        ps_item = ps_item_query.first()
+
+        if not ps_item:
+            ps_item = PartnerSpeciesIdentifier(partner_species=partner_species,
+                                               study_id=study_id,
+                                               created_by=user)
+            db.add(ps_item)
+
+        return ps_item
+
+    def submapped_items(self):
+        return {
+            'taxa': Taxonomy,
+        }
+    def __repr__(self):
+        return f'''<PartnerSpeciesIdentifier ID {self.id}
+    Study Id {self.study_id}
+    Partner Species {self.partner_species}
+    {self.taxa}
+    >'''
+
+class ExpectedSamples(Base, Versioned):
+    @declared_attr
+    def __tablename__(cls):
+        return 'expected_samples'
+
+    sample_count = Column(Integer())
+    date_of_arrival = Column(DateTime())
+    study_id = Column('study_id',
+                      UUID(as_uuid=True),
+                      ForeignKey('study.id'))
+    partner_species_id = Column('partner_species_id',
+                                UUID(as_uuid=True),
+                                ForeignKey('partner_species_identifier.id'))
+    partner_species = relationship("PartnerSpeciesIdentifier",
+                                   backref=backref("expected_samples",
+                                                   uselist=True))
+
+    @staticmethod
+    def get_or_create(db, e_sample, study_id, user):
+
+        expected_sample = None
+        if e_sample is None or e_sample.expected_samples_id is None:
+            expected_sample = ExpectedSamples(sample_count=e_sample.sample_count,
+                                              date_of_arrival=e_sample.date_of_arrival,
+                                              study_id=study_id,
+                                              created_by=user)
+            psi = PartnerSpeciesIdentifier.get_or_create(db,
+                                                         e_sample.expected_species,
+                                                         study_id, user)
+            expected_sample.partner_species_id = psi.id
+            expected_sample.partner_species = psi
+            db.add(expected_sample)
+            db.commit()
+        else:
+            expected_sample = db.query(ExpectedSamples).filter_by(id=e_sample.expected_sample_id).first()
+            expected_sample.sample_count = e_sample.sample_count
+            expected_sample.date_of_arrival = e_sample.date_of_arrival
+            expected_sample.study_id = study_id
+            psi = PartnerSpeciesIdentifier.get_or_create(db,
+                                                         e_sample.expected_species,
+                                                         study_id, user)
+            expected_sample.partner_species_id = psi.id
+            expected_sample.partner_species = psi
+
+        return expected_sample
+
+    openapi_class = ApiExpectedSamples
+
+    def submapped_items(self):
+        return {
+            'partner_species': PartnerSpeciesIdentifier,
+            'study_name': 'study'
+        }
+
+    def __repr__(self):
+        return f'''<ExpectedSamples ID {self.id}
+    Study {self.study_id}
+    Partner Species {self.partner_species}
+    Partner Species Id {self.partner_species_id}
+    {self.sample_count}
+    {self.date_of_arrival}
+    >'''
+
+class Study(Base, Versioned):
 
     name = Column(String(64), index=True, unique=True)
     code = Column(String(4), index=True, unique=True)
@@ -142,7 +182,7 @@ class Study(Base):
 
 #    documents = relationship("Document")
     partner_species = relationship('PartnerSpeciesIdentifier',
-                                   back_populates='study')
+                                   backref=backref('study', uselist=True))
     expected_samples = relationship("ExpectedSamples",
                                     backref=backref("study", uselist=True))
     @staticmethod
@@ -204,49 +244,6 @@ class Study(Base):
     {self.partner_species}
     {self.expected_samples}
     {self.ethics_expiry}>'''
-
-
-class PartnerSpeciesIdentifier(Base):
-    @declared_attr
-    def __tablename__(cls):
-        return 'partner_species_identifier'
-
-    partner_species = Column(String(128))
-    study_id = Column('study_id',
-                      UUID(as_uuid=True),
-                      ForeignKey('study.id'))
-    study = relationship('Study',
-                         back_populates='partner_species')
-    taxa = relationship('Taxonomy',
-                              secondary=taxonomy_identifier_table)
-
-    openapi_class = PartnerSpecies
-
-    @staticmethod
-    def get_or_create(db, partner_species, study_id, user=None):
-        ps_item_query = db.query(PartnerSpeciesIdentifier).\
-                            filter(and_(PartnerSpeciesIdentifier.partner_species == partner_species,
-                                        PartnerSpeciesIdentifier.study_id == study_id))
-        ps_item = ps_item_query.first()
-
-        if not ps_item:
-            ps_item = PartnerSpeciesIdentifier(partner_species=partner_species,
-                                               study_id=study_id,
-                                               created_by=user)
-            db.add(ps_item)
-
-        return ps_item
-
-    def submapped_items(self):
-        return {
-            'taxa': Taxonomy,
-        }
-    def __repr__(self):
-        return f'''<PartnerSpeciesIdentifier ID {self.id}
-    Study Id {self.study_id}
-    Partner Species {self.partner_species}
-    {self.taxa}
-    >'''
 
 class BaseStudy(SimsDbBase):
 

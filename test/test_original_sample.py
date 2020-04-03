@@ -79,6 +79,14 @@ class TestOriginalSample(TestBase):
 
             study_detail = study_api.download_study(study_code)
             study_detail.partner_species[0].taxa = [ openapi_client.Taxonomy(taxonomy_id=5833) ]
+            study_detail.num_collections = None
+            study_detail.num_original_samples = None
+            study_detail.num_derivative_samples = None
+            study_detail.num_original_derivative_samples = None
+            study_detail.num_assay_data = None
+            study_detail.num_original_assay_data = None
+            study_detail.num_released = None
+
             study_api.update_study(study_code, study_detail)
 
             created2 = api_instance.create_original_sample(samp)
@@ -549,6 +557,14 @@ class TestOriginalSample(TestBase):
 
             study_detail = study_api.download_study(study_code)
             study_detail.partner_species[0].taxa = [ openapi_client.Taxonomy(taxonomy_id=5833) ]
+            study_detail.num_collections = None
+            study_detail.num_original_samples = None
+            study_detail.num_derivative_samples = None
+            study_detail.num_original_derivative_samples = None
+            study_detail.num_assay_data = None
+            study_detail.num_original_assay_data = None
+            study_detail.num_released = None
+
             study_api.update_study(study_code, study_detail)
 
             fetched = api_instance.download_original_samples_by_study(study_code)
@@ -928,6 +944,14 @@ class TestOriginalSample(TestBase):
 
             study_detail = study_api.download_study('4025')
             study_detail.partner_species[0].taxa = [ openapi_client.Taxonomy(taxonomy_id=5833) ]
+            study_detail.num_collections = None
+            study_detail.num_original_samples = None
+            study_detail.num_derivative_samples = None
+            study_detail.num_original_derivative_samples = None
+            study_detail.num_assay_data = None
+            study_detail.num_original_assay_data = None
+            study_detail.num_released = None
+
             study_api.update_study('4025', study_detail)
 
             created.partner_taxonomies = study_detail.partner_species[0].taxa
@@ -979,6 +1003,14 @@ class TestOriginalSample(TestBase):
                 created1 = api_instance.create_original_sample(samp1)
                 study_detail = study_api.download_study(study_code)
                 study_detail.partner_species[0].taxa = [openapi_client.Taxonomy(taxonomy_id=5833)]
+                study_detail.num_collections = None
+                study_detail.num_original_samples = None
+                study_detail.num_derivative_samples = None
+                study_detail.num_original_derivative_samples = None
+                study_detail.num_assay_data = None
+                study_detail.num_original_assay_data = None
+                study_detail.num_released = None
+
                 study_api.update_study(study_code, study_detail)
 
             results = api_instance.download_original_samples_by_taxa(5833,

@@ -804,6 +804,14 @@ class TestSample(TestBase):
             study_detail = study_api.download_study(study_code)
 
             study_detail.partner_species[0].taxa = [openapi_client.Taxonomy(taxonomy_id=5833)]
+            study_detail.num_collections = None
+            study_detail.num_original_samples = None
+            study_detail.num_derivative_samples = None
+            study_detail.num_original_derivative_samples = None
+            study_detail.num_assay_data = None
+            study_detail.num_original_assay_data = None
+            study_detail.num_released = None
+
             study_api.update_study(study_code, study_detail)
 
             fetched = api_instance.download_sampling_events_by_taxa(5833)
@@ -864,6 +872,14 @@ class TestSample(TestBase):
                 original_samples.append(created_os.original_sample_id)
                 study_detail = study_api.download_study(study_code)
                 study_detail.partner_species[0].taxa = [ openapi_client.Taxonomy(taxonomy_id=5833) ]
+                study_detail.num_collections = None
+                study_detail.num_original_samples = None
+                study_detail.num_derivative_samples = None
+                study_detail.num_original_derivative_samples = None
+                study_detail.num_assay_data = None
+                study_detail.num_original_assay_data = None
+                study_detail.num_released = None
+
                 study_api.update_study(study_code, study_detail)
 
 
