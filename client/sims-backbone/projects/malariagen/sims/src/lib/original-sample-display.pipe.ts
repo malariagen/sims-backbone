@@ -33,20 +33,22 @@ export class OriginalSampleDisplayPipe implements PipeTransform {
       }
     } else {
 
-      value.attrs.forEach(ident => {
-        if (ident.attr_type === key) {
-          if (ret === '') {
-            ret = String(ident.attr_value);
-          } else {
-            const ids: Array<String> = ret.split(';');
-            // Avoid duplicates from different sources
-            if (!ids.includes(String(ident.attr_value))) {
-              ret = [ret, String(ident.attr_value)].join(';');
+      if (value.attrs) {
+        value.attrs.forEach(ident => {
+          if (ident.attr_type === key) {
+            if (ret === '') {
+              ret = String(ident.attr_value);
+            } else {
+              const ids: Array<String> = ret.split(';');
+              // Avoid duplicates from different sources
+              if (!ids.includes(String(ident.attr_value))) {
+                ret = [ret, String(ident.attr_value)].join(';');
+              }
             }
           }
-        }
 
-      });
+        });
+      }
     }
 
     return ret;
