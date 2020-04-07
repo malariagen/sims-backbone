@@ -140,7 +140,7 @@ class IndividualProcessor(BaseEntity):
                                                   parsed.individual_id, user)
 
             except ApiException as err:
-                msg = "Error updating merged original sample {} {} {} {}".format(values, parsed, existing, err)
+                msg = "Error updating merged individual {} {} {} {}".format(values, parsed, existing, err)
                 self._logger.error(msg)
                 #sys.exit(1)
 
@@ -169,7 +169,7 @@ class IndividualProcessor(BaseEntity):
 
     def merge_individual_objects(self, existing, samp, values):
 
-        #print('Merging original samples {} {} {}'.format(existing, samp, values))
+        # print('Merging individual {} {} {}'.format(existing, samp, values))
         new_ident_value = False
 
         change_reasons = []
@@ -182,11 +182,11 @@ class IndividualProcessor(BaseEntity):
                 if existing_ident.attr_source == new_ident.attr_source and \
                    existing_ident.attr_type == new_ident.attr_type and \
                    existing_ident.attr_value == new_ident.attr_value and \
-                   existing_ident.study_name == new_ident.study_name:
+                   existing_ident.study_name[:4] == new_ident.study_name[:4]:
                     found = True
                 elif existing_ident.attr_type == new_ident.attr_type and \
                    existing_ident.attr_value == new_ident.attr_value and \
-                   existing_ident.study_name == new_ident.study_name:
+                        existing_ident.study_name[:4] == new_ident.study_name[:4]:
                     #This section ignores anything after _ in the attr_source
                     #This avoids having many duplicate attrs
                     #when the date is part of the source
@@ -200,6 +200,7 @@ class IndividualProcessor(BaseEntity):
                                 found = True
             if not found:
                 new_ident_value = True
+                # print("Adding ident {}".format(new_ident))
                 change_reasons.append("Adding ident {}".format(new_ident))
                 existing.attrs.append(new_ident)
 
