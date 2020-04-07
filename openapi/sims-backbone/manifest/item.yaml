@@ -2,7 +2,7 @@
       tags:
         - manifest
       summary: creates an manifest
-      description: ""
+      description: "Create an empty manifest"
       operationId: createManifest
       parameters:
         - name: manifest_id
