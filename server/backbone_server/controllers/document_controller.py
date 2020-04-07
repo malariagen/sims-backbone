@@ -15,7 +15,7 @@ from backbone_server.controllers.decorators import apply_decorators
 @apply_decorators
 class DocumentController(BaseController):
 
-    def create_document(self, document, studies=None, user=None, auths=None):  # noqa: E501
+    def create_document(self, study_name, document, studies=None, user=None, auths=None):  # noqa: E501
         """create_document
 
         Create a Document # noqa: E501
@@ -31,7 +31,7 @@ class DocumentController(BaseController):
         try:
             post = BaseDocument(self.get_engine(), self.get_session())
 
-            doc = post.post(document, document.study_name, studies, user)
+            doc = post.post(document, study_name, studies, user)
         except DuplicateKeyException as dke:
             logging.getLogger(__name__).debug("create_document: %s", repr(dke))
             retcode = 422

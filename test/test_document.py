@@ -31,7 +31,7 @@ class TestDocument(TestBase):
                                           doc_type='misc',
                                           study_name='1100-MD-UP',
                                           content=encoded)
-            created = api_instance.create_document(doc)
+            created = api_instance.create_document(doc.study_name, doc)
             if not api_factory.is_authorized(None):
                 pytest.fail('Unauthorized call to create_document succeeded')
 
@@ -63,7 +63,7 @@ class TestDocument(TestBase):
                                           doc_name='doc1',
                                           doc_type='misc',
                                           study_name='1101-MD-UP')
-            created = api_instance.create_document(doc)
+            created = api_instance.create_document(doc.study_name, doc)
             api_instance.delete_document(created.document_id)
             with pytest.raises(ApiException, status=114):
                 fetched = api_instance.download_document(created.document_id)
@@ -100,10 +100,10 @@ class TestDocument(TestBase):
 
             doc = openapi_client.Document(None, doc_name='Test dup doc',
                                           doc_type='manifest', study_name='1102-MD-UP')
-            created = api_instance.create_document(doc)
+            created = api_instance.create_document(doc.study_name, doc)
 
             with pytest.raises(ApiException, status=422):
-                created = api_instance.create_document(doc)
+                created = api_instance.create_document(doc.study_name, doc)
 
             api_instance.delete_document(created.document_id)
 
@@ -122,7 +122,7 @@ class TestDocument(TestBase):
             doc = openapi_client.Document(None, doc_name='My Test Doc',
                                           doc_type='misc',
                                           doc_version="1", study_name='1105-MD-UP',)
-            created = api_instance.create_document(doc)
+            created = api_instance.create_document(doc.study_name, doc)
             created.doc_version = "2"
             updated = api_instance.update_document(created.document_id,
                                                    created)
@@ -149,13 +149,13 @@ class TestDocument(TestBase):
                                           doc_name='test_doc_update_duplicate',
                                           doc_type='misc',
                                           study_name='1106-MD-UP')
-            created = api_instance.create_document(doc)
+            created = api_instance.create_document(doc.study_name, doc)
             looked_up = api_instance.download_document(created.document_id)
             new_doc = openapi_client.Document(None,
                                               doc_name='doc1',
                                               doc_type='misc',
                                               study_name='0001-MD-UP')
-            new_created = api_instance.create_document(new_doc)
+            new_created = api_instance.create_document(doc.study_name, new_doc)
             new_doc.document_id = looked_up.document_id
             with pytest.raises(ApiException, status=422):
                 updated = api_instance.update_document(looked_up.document_id,
@@ -210,7 +210,7 @@ class TestDocument(TestBase):
                                           doc_type='misc',
                                           study_name=study_code)
 
-            created = api_instance.create_document(doc)
+            created = api_instance.create_document(doc.study_name, doc)
 
             fetched = api_instance.download_documents_by_study(study_code)
 
@@ -262,7 +262,7 @@ class TestDocument(TestBase):
                                           doc_type='misc',
                                           study_name=old_study)
 
-            created = api_instance.create_document(doc)
+            created = api_instance.create_document(doc.study_name, doc)
             looked_up = api_instance.download_document(created.document_id)
             looked_up.study_name = new_study
             updated = api_instance.update_document(looked_up.document_id, looked_up)
@@ -293,8 +293,8 @@ class TestDocument(TestBase):
                                            doc_type='misc',
                                            study_name=new_study)
 
-            created = api_instance.create_document(doc)
-            created1 = api_instance.create_document(doc1)
+            created = api_instance.create_document(doc.study_name, doc)
+            created1 = api_instance.create_document(doc1.study_name, doc1)
             looked_up = api_instance.download_documents_by_study(old_study)
 
             assert looked_up.count == 1

@@ -125,14 +125,14 @@ paths:
     $ref: './sims-backbone/study/items.yaml'
   '/study/{study_name}':
     $ref: './sims-backbone/study/item.yaml'
-  '/document':
+  '/study/{study_name}/document':
     $ref: './sims-backbone/document/create.yaml'
+  '/study/{study_name}/documents':
+    $ref: './sims-backbone/document/by_study.yaml'
   '/document/{document_id}':
     $ref: './sims-backbone/document/item.yaml'
   '/document/content/{document_id}':
     $ref: './sims-backbone/document/content.yaml'
-  '/documents/study/{study_name}':
-    $ref: './sims-backbone/document/by_study.yaml'
   '/eventSet/{event_set_id}':
     $ref: './sims-backbone/event_set/item.yaml'
   '/eventSet/{event_set_id}/{sampling_event_id}':

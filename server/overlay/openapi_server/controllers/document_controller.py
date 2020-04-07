@@ -11,7 +11,7 @@ from backbone_server.controllers.document_controller  import DocumentController
 
 document_controller = DocumentController()
 
-def create_document(document, user=None, token_info=None):  # noqa: E501
+def create_document(study_name, document, user=None, token_info=None):  # noqa: E501
     """create_document
 
     Create a Document # noqa: E501
@@ -24,7 +24,7 @@ def create_document(document, user=None, token_info=None):  # noqa: E501
     if connexion.request.is_json:
         document = Document.from_dict(
             connexion.request.get_json())  # noqa: E501
-    return document_controller.create_document(document, studies=None,
+    return document_controller.create_document(study_name, document, studies=None,
                                                user=user,
                                                auths=document_controller.token_info(token_info))
 

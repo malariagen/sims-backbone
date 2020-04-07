@@ -19,8 +19,7 @@ class LocalDocumentApi(BaseLocalApi):
 
         self.document_controller = DocumentController()
 
-    def create_document(self, document, uuid_val=None,
-                               studies=None):
+    def create_document(self, study_name, document, uuid_val=None, studies=None):
         """
         create_document
         Create a document
@@ -30,7 +29,7 @@ class LocalDocumentApi(BaseLocalApi):
         :rtype: Document
         """
 
-        (ret, retcode) = self.document_controller.create_document(document,
+        (ret, retcode) = self.document_controller.create_document(study_name, document,
                                                                   studies=studies,
                                                                   user=self._user,
                                                                   auths=self.document_controller.token_info(self.auth_tokens()))
@@ -79,9 +78,9 @@ class LocalDocumentApi(BaseLocalApi):
         :rtype: Document
         """
         (ret, retcode) = self.document_controller.download_document_content(document_id,
-                                                                    studies=studies,
-                                                                    user=self._user,
-                                                                    auths=self.document_controller.token_info(self.auth_tokens()))
+                                                                            studies=studies,
+                                                                            user=self._user,
+                                                                            auths=self.document_controller.token_info(self.auth_tokens()))
 
         return ret
 

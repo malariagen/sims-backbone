@@ -3,6 +3,13 @@
         - Document
       description: Create a Document
       operationId: createDocument
+      parameters:
+        - name: study_name
+          in: path
+          description: 4 digit study code
+          required: true
+          schema:
+            type: string
       requestBody:
         $ref: "./sims-backbone.yaml#/components/requestBodies/Document"
         description: The document to create

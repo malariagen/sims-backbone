@@ -20,10 +20,6 @@ components:
     Document:
       type: object
       description: 'Document details'
-      required:
-        - doc_name
-        - doc_type
-        - study_name
       properties:
         document_id:
           type: string
@@ -42,15 +38,19 @@ components:
           type: string
           format: byte
           description: 'This is only to be used when creating a file, otherwise use the content endpoints'
+          writeOnly: True
         created_by:
           type: string
           description: 'Automatically assigned by the server'
+          readOnly: True
         updated_by:
           type: string
           description: 'Automatically assigned by the server'
+          readOnly: True
         note:
           type: string
         creation_date:
           type: string
           format: date
           description: 'Automatically assigned by the server and applies to the first version'
+          readOnly: True
