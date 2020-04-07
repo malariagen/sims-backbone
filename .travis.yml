@@ -27,8 +27,8 @@ install:
 script:
   - (cd test;LOCAL_TEST=1 ./run.sh)
   - (cd upload/test;LOCAL_TEST=1 ./run.sh)
-  - (cd client/sims-backbone;xvfb-run -a ng test @malariagen/sims --no-watch --no-progress --browsers=ChromeNoSandbox --code-coverage)
-  - (cd client/sims-backbone;xvfb-run -a ng test sims-backbone --no-watch --no-progress --browsers=ChromeNoSandbox --code-coverage)
+  - (cd client/sims-backbone;ng test @malariagen/sims --no-watch --no-progress --browsers=ChromeNoSandbox --code-coverage)
+  - (cd client/sims-backbone;ng test sims-backbone --no-watch --no-progress --browsers=ChromeNoSandbox --code-coverage)
     #  - (cd client/sims-backbone;xvfb-run -a ng e2e --no-progress --config=protractor-ci.conf.js)
 
 services:
