@@ -33,10 +33,24 @@
             type: string
       requestBody:
         content:
-          application/json:
+          multipart/form-data:
             schema:
-              $ref: "./sims-backbone/definitions/document.yaml#/components/schemas/Document"
-        required: true
+              type: object
+              description: 'Document update'
+              properties:
+                doc_type:
+                  type: string
+                version:
+                  type: integer
+                document:
+                  type: string
+                  format: binary
+                doc_version:
+                  type: string
+                  default: ''
+                note:
+                  type: string
+                  default: ''
       responses:
         "200":
           description: successful operation

@@ -11,20 +11,29 @@ from backbone_server.controllers.document_controller  import DocumentController
 
 document_controller = DocumentController()
 
-def create_document(study_name, document, user=None, token_info=None):  # noqa: E501
+def create_document(study_code,
+                    body=None,
+                    document=None,
+                    user=None, token_info=None):  # noqa: E501
     """create_document
 
     Create a Document # noqa: E501
 
+    :param study_code: 4 digit study code
+    :type study_code: str
+    :param body:
+    :type body: dict
     :param document:
-    :type document: dict | bytes
+    :type document: werzeug.FileStorage
 
     :rtype: Document
     """
-    if connexion.request.is_json:
-        document = Document.from_dict(
-            connexion.request.get_json())  # noqa: E501
-    return document_controller.create_document(study_name, document, studies=None,
+
+    if body:
+        doc = Document.from_dict(body)
+
+    return document_controller.create_document(study_code, doc, document,
+                                               studies=None,
                                                user=user,
                                                auths=document_controller.token_info(token_info))
 
@@ -88,7 +97,11 @@ def download_documents_by_study(study_name, user=None, token_info=None):  # noqa
                                                            auths=document_controller.token_info(token_info))
 
 
-def update_document(document_id, document, user=None, token_info=None):  # noqa: E501
+def update_document(document_id,
+                    body=None,
+                    document=None,
+                    user=None,
+                    token_info=None):  # noqa: E501
     """updates an Document
 
      # noqa: E501
@@ -100,25 +113,11 @@ def update_document(document_id, document, user=None, token_info=None):  # noqa:
 
     :rtype: Document
     """
-    if connexion.request.is_json:
-        document = Document.from_dict(
-            connexion.request.get_json())  # noqa: E501
-    return document_controller.update_document(document_id, document, studies=None,
+    if body:
+        doc = Document.from_dict(body)
+
+    doc.document_id = document_id
+    return document_controller.update_document(document_id, doc,
+                                               document, studies=None,
                                                user=user,
                                                auths=document_controller.token_info(token_info))
-
-def update_document_content(document_id, body, user=None, token_info=None):  # noqa: E501
-    """updates an Document
-
-     # noqa: E501
-
-    :param document_id: ID of Document to update
-    :type document_id: str
-    :param body:
-    :type body: str
-
-    :rtype: Document
-    """
-    return document_controller.update_document_content(document_id, body, studies=None,
-                                                       user=user,
-                                                       auths=document_controller.token_info(token_info))

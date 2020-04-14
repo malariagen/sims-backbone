@@ -141,7 +141,7 @@ class BaseEventSet(SimsDbBase):
     # This is more complicated than usual
     # Possible to add sampling event members via post/put
     # Possible to create/remove new notes via post/put
-    def db_map_actions(self, db, db_item, api_item, studies, user):
+    def db_map_actions(self, db, db_item, api_item, studies, user, **kwargs):
 
         if api_item.members:
             new_members = []
@@ -168,7 +168,7 @@ class BaseEventSet(SimsDbBase):
 
         # print(api_item)
         # print(db_item)
-        self.db_map_notes(db, db_item, api_item, user)
+        # self.db_map_notes(db, db_item, api_item, user)
 
     def db_map_notes(self, db, db_item, api_item, user):
 

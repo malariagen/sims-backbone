@@ -1,3 +1,4 @@
+import json
 from sqlalchemy import MetaData, Column
 from sqlalchemy import Integer, String, ForeignKey, DateTime, func, UniqueConstraint
 from sqlalchemy.dialects.postgresql import UUID
@@ -7,6 +8,9 @@ from sqlalchemy.ext.declarative import declarative_base
 
 from openapi_server.models.document import Document as Doc
 from openapi_server.models.documents import Documents
+
+from backbone_server.errors.missing_key_exception import MissingKeyException
+from backbone_server.model.scope import session_scope
 from backbone_server.model.mixins import Base
 from backbone_server.model.attr import Attr
 from backbone_server.document.file_util import FileUtil
@@ -38,11 +42,10 @@ class Document(Versioned, Base):
     doc_name = Column(String(50))
     doc_type = Column(String(50))
     doc_version = Column(String(50))
-    created_by = Column(String(50))
-    updated_by = Column(String(50))
-    note = Column(String(50))
-    created_at = Column(DateTime, default=func.now())
-    updated_at = Column(DateTime, default=func.now())
+    mimetype = Column(String(256))
+    content_type = Column(String(256))
+    file_reference = Column(String(256))
+    note = Column(String(256))
 
 
     __table_args__ = (UniqueConstraint('doc_name', 'doc_type',
@@ -64,7 +67,10 @@ class Document(Versioned, Base):
     Study Id {self.study_id}
     Study {self.study}
     Type {self.doc_type}
-    Version {self.doc_version}
+    Doc Version {self.doc_version}
+    Version {self.version}
+    Created by {self.created_by}
+    Updated by {self.updated_by}
     >'''
 
 class BaseDocument(SimsDbBase):
@@ -78,10 +84,12 @@ class BaseDocument(SimsDbBase):
         self.db_class = Document
         self.attr_link = DocumentAttr
 
-    def db_map_actions(self, db, db_item, api_item, studies, user):
+    def db_map_actions(self, db, db_item, api_item, studies, user, **kwargs):
 
-        study = Study.get_or_create_study(db, api_item.study_name, user)
-        db_item.study_id = study.id
+        # Create
+        if api_item.study_name:
+            study = Study.get_or_create_study(db, api_item.study_name, user)
+            db_item.study_id = study.id
 
     def post_get_action(self, db, db_item, api_item, studies, multiple=False):
 
@@ -94,7 +102,7 @@ class BaseDocument(SimsDbBase):
         api_item.study_name = delete_item.study.name
         util = FileUtil()
 
-        util.delete_file(api_item)
+        util.delete_file(delete_item)
 
     def delete_get_study_name(self, delete_item):
 
@@ -103,22 +111,40 @@ class BaseDocument(SimsDbBase):
 
     def get_content(self, document_id, studies):
 
-        doc = super().get(document_id, studies)
+        doc = None
+        with session_scope(self.session) as db:
+            doc = db.query(Document).filter_by(id=document_id).first()
 
-        util = FileUtil()
+            if not doc:
+                raise MissingKeyException(f"Could not find {self.db_class.__table__} to get {document_id}")
 
-        return util.get_content(doc)
+            self.has_study_permission(studies,
+                                      doc.study.code,
+                                      self.GET_PERMISSION)
 
-    def post_extra_actions(self, document):
+            util = FileUtil()
 
-        util = FileUtil()
+            return util.get_content(doc)
 
-        util.save_file(document)
+        return None
 
-    def put_content(self, document_id, studies):
+    def post_extra_actions(self, document, db_item, **kwargs):
 
-        #doc = super().put(document_id, None, studies=studies)
+        if 'file_storage' in kwargs:
+            util = FileUtil()
 
-        util = FileUtil()
+            util.save_file(db_item, kwargs['file_storage'])
 
-        #return util.put_content(doc)
+    def put_extra_actions(self, api_item, db_item, **kwargs):
+
+        if 'file_storage' in kwargs and kwargs['file_storage']:
+            util = FileUtil()
+
+            util.save_file(db_item, kwargs['file_storage'])
+        else:
+            old_values = json.loads(db_item.pre_update_json)
+            db_item.doc_name = old_values['doc_name']
+            if 'content_type' in old_values:
+                db_item.content_type = old_values['content_type']
+            if 'mimetype' in old_values:
+                db_item.mimetype = old_values['mimetype']

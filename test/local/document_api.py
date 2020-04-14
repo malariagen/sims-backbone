@@ -1,5 +1,6 @@
 import six
 
+from werkzeug.datastructures import FileStorage
 from openapi_server.models.document import Document  # noqa: E501
 from openapi_server.models.documents import Documents  # noqa: E501
 from openapi_server import util
@@ -19,20 +20,47 @@ class LocalDocumentApi(BaseLocalApi):
 
         self.document_controller = DocumentController()
 
-    def create_document(self, study_name, document, uuid_val=None, studies=None):
-        """
-        create_document
-        Create a document
+    def create_document(self, study_code,
+                        doc_type=None,
+                        document=None,
+                        doc_version=None,
+                        note=None,
+                        studies=None):  # noqa: E501
+        """create_document
+
+        Create a Document # noqa: E501
+
+        :param study_code: 4 digit study code
+        :type study_code: str
+        :param doc_name:
+        :type doc_name: str
+        :param doc_type:
+        :type doc_type: str
         :param document:
-        :type document: dict | bytes
+        :type document: str
+        :param doc_version:
+        :type doc_version: str
+        :param note:
+        :type note: str
 
         :rtype: Document
         """
+        doc_file = None
+        with open(document, 'rb') as fp:
+            doc_file = FileStorage(fp)
+            doc_file.filename = document
 
-        (ret, retcode) = self.document_controller.create_document(study_name, document,
-                                                                  studies=studies,
-                                                                  user=self._user,
-                                                                  auths=self.document_controller.token_info(self.auth_tokens()))
+            doc = Document.from_dict({
+                'doc_type': doc_type,
+                'doc_version': doc_version,
+                'note': note
+            })
+            (ret, retcode) = self.document_controller.create_document(study_code,
+                                                                      doc,
+                                                                      document=doc_file,
+                                                                      studies=studies,
+                                                                      user=self._user,
+                                                                      auths=self.document_controller.token_info(self.auth_tokens()))
 
         return self.create_response(ret, retcode, 'Document')
 
@@ -68,7 +96,8 @@ class LocalDocumentApi(BaseLocalApi):
 
         return self.create_response(ret, retcode, 'Document')
 
-    def download_document_content(self, document_id, studies=None):
+    def download_document_content(self, document_id, studies=None,
+                                  _preload_content=True):
         """
         fetches an document
 
@@ -122,8 +151,12 @@ class LocalDocumentApi(BaseLocalApi):
 
         return self.create_response(ret, retcode, 'Documents')
 
-    def update_document(self, document_id, document,
-                               studies=None):
+    def update_document(self, document_id,
+                        version,
+                        doc_type=None,
+                        document=None,
+                        doc_version=None,
+                        note=None, studies=None):  # noqa: E501
         """
         updates an document
 
@@ -134,10 +167,30 @@ class LocalDocumentApi(BaseLocalApi):
 
         :rtype: Document
         """
-        (ret, retcode) = self.document_controller.update_document(document_id,
-                                                                  document,
-                                                                  studies=studies,
-                                                                  user=self._user,
-                                                                  auths=self.document_controller.token_info(self.auth_tokens()))
+        doc = Document.from_dict({
+            'document_id': document_id,
+            'version': version,
+            'doc_type': doc_type,
+            'doc_version': doc_version,
+            'note': note
+        })
+        if document:
+            with open(document, 'rb') as fp:
+                doc_file = FileStorage(fp)
+                doc_file.filename = document
+
+                (ret, retcode) = self.document_controller.update_document(document_id,
+                                                                          doc,
+                                                                          doc_file,
+                                                                          studies=studies,
+                                                                          user=self._user,
+                                                                          auths=self.document_controller.token_info(self.auth_tokens()))
+        else:
+            (ret, retcode) = self.document_controller.update_document(document_id,
+                                                                      doc,
+                                                                      None,
+                                                                      studies=studies,
+                                                                      user=self._user,
+                                                                      auths=self.document_controller.token_info(self.auth_tokens()))
 
         return self.create_response(ret, retcode, 'Document')

@@ -1,4 +1,5 @@
 import typing
+import datetime
 
 import sqlalchemy
 from sqlalchemy import and_
@@ -91,7 +92,7 @@ class SimsDbBase():
                                 if db.query(self.attr_link).filter(self.attr_link.attr_id == db_attr.id).first():
                                     raise DuplicateKeyException(f"Error inserting {self.api_id} attr {attr.attr_type} {api_item}")
 
-    def post_extra_actions(self, api_item):
+    def post_extra_actions(self, api_item, db_item, **kwargs):
         pass
 
     def db_map_attrs(self, db, db_item, api_item, user):
@@ -139,7 +140,7 @@ class SimsDbBase():
             db_item = self.db_class()
             db_item.map_from_openapi(api_item, user=user, **kwargs)
 
-            self.db_map_actions(db, db_item, api_item, studies, user=user,
+            self.db_map_actions(db, db_item, api_item, studies, user,
                                 **kwargs)
             self.db_map_attrs(db, db_item, api_item, user)
 
@@ -147,11 +148,14 @@ class SimsDbBase():
 
             db.add(db_item)
 
-            self.post_extra_actions(api_item)
             try:
+                db.flush()
+
+                self.post_extra_actions(api_item, db_item, **kwargs)
                 db.commit()
             except IntegrityError as int_error:
-                if 'already exists' in str(int_error):
+                if 'duplicate key value violates unique constraint' in str(int_error) or \
+                    'already exists' in str(int_error):
                     raise DuplicateKeyException(f'{str(int_error)}')
                 raise int_error
 
@@ -196,7 +200,7 @@ class SimsDbBase():
                             if i_with_attr.first():
                                 raise DuplicateKeyException(f"Error updating {self.api_id} attr {attr.attr_type} {attr.attr_value} {my_db_id} {api_item}")
 
-    def put_extra_actions(self, api_item):
+    def put_extra_actions(self, api_item, db_item, **kwargs):
 
         pass
 
@@ -230,10 +234,14 @@ class SimsDbBase():
             old_version = None
             if hasattr(update_item, 'version'):
                 old_version = update_item.version
+            if hasattr(update_item, 'created_by'):
+                old_created_by = update_item.created_by
 
             self.put_premap(db, api_item, update_item)
 
+            # print(f'updating {update_item} from {api_item}')
             update_item.map_from_openapi(api_item, user=user, **kwargs)
+            # print(f'mapped {update_item}')
 
             if update_item.id != item_id:
                 raise MissingKeyException(f"Id in item does not match id in call {self.db_class.__table__} {item_id} {update_item.id}")
@@ -242,16 +250,21 @@ class SimsDbBase():
                 if api_item.version != old_version:
                     raise MissingKeyException(f"Version in item to update does not match stored version in call {self.db_class.__table__} {item_id} {update_item.id}")
 
-            self.db_map_actions(db, update_item, api_item, studies, user=user, **kwargs)
+            self.db_map_actions(db, update_item, api_item, studies, user, **kwargs)
             self.db_map_attrs(db, update_item, api_item, user)
             update_item.updated_by = user
-
-            self.put_extra_actions(api_item)
+            update_item.created_by = old_created_by
+            update_item.action_date = datetime.datetime.now()
 
             try:
+                db.flush()
+
+                self.put_extra_actions(api_item, update_item, **kwargs)
+
                 db.commit()
             except IntegrityError as int_error:
-                if 'already exists' in str(int_error):
+                if 'duplicate key value violates unique constraint' in str(int_error) or \
+                    'already exists' in str(int_error):
                     raise DuplicateKeyException(f'{str(int_error)}')
                 raise int_error
 

@@ -486,7 +486,7 @@ class BaseStudy(SimsDbBase):
 
         return results
 
-    def db_map_actions(self, db, db_item, api_item, studies, user):
+    def db_map_actions(self, db, db_item, api_item, studies, user, **kwargs):
 
         self.db_map_partner_species(db, db_item, api_item, user)
         self.db_map_expected_samples(db, db_item, api_item, user)

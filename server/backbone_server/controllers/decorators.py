@@ -4,6 +4,8 @@ import os
 import types
 import re
 
+import flask
+
 def get_class_that_defined_method(meth):
     if inspect.ismethod(meth):
         for cls in inspect.getmro(meth.__self__.__class__):
@@ -33,7 +35,15 @@ def log_this(controller, original_function):
         #        print("%s == %s"%(key,value))
         x = original_function(*args, **kwargs)
 
-        controller.log_action(user, func_name, None, log_args, x[0], x[1])
+        if isinstance(x, flask.Response):
+            # Likely to be a streamed file response
+            status = x.status
+            resp = ''
+        else:
+            status = x[1]
+            resp = x[0]
+
+        controller.log_action(user, func_name, None, log_args, resp, status)
 
         return x
     return new_function

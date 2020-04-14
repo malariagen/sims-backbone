@@ -125,7 +125,7 @@ paths:
     $ref: './sims-backbone/study/items.yaml'
   '/study/{study_name}':
     $ref: './sims-backbone/study/item.yaml'
-  '/study/{study_name}/document':
+  '/study/{study_code}/document':
     $ref: './sims-backbone/document/create.yaml'
   '/study/{study_name}/documents':
     $ref: './sims-backbone/document/by_study.yaml'

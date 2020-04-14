@@ -77,14 +77,11 @@ class BaseEventSetNote(SimsDbBase):
             db_item = self.db_class()
             db_item.map_from_openapi(api_item, user=user)
 
-            self.db_map_actions(db, db_item, api_item, studies, user)
-
             db_item.event_set_id = event_set_id
             db_item.created_by = user
 
             db.add(db_item)
 
-            self.post_extra_actions(api_item)
             db.commit()
 
             ret = self.get(self.convert_from_id(db, db_item.id), studies)
@@ -124,10 +121,7 @@ class BaseEventSetNote(SimsDbBase):
 
             update_item.map_from_openapi(api_item, user=user)
 
-            self.db_map_actions(db, update_item, api_item, studies, user)
             update_item.updated_by = user
-
-            self.put_extra_actions(api_item)
 
             db.commit()
 
@@ -149,7 +143,5 @@ class BaseEventSetNote(SimsDbBase):
                 raise MissingKeyException(f"Could not find {self.db_class.__table__} to delete {input_item_id}")
 
             api_delete = delete_item.map_to_openapi()
-
-            self.delete_extra_actions(db, delete_item, api_delete)
 
             db.delete(delete_item)

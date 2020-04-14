@@ -32,13 +32,12 @@ components:
           type: string
         doc_type:
           type: string
+        content_type:
+          type: string
+        mimetype:
+          type: string
         doc_version:
           type: string
-        content:
-          type: string
-          format: byte
-          description: 'This is only to be used when creating a file, otherwise use the content endpoints'
-          writeOnly: True
         created_by:
           type: string
           description: 'Automatically assigned by the server'
@@ -49,8 +48,8 @@ components:
           readOnly: True
         note:
           type: string
-        creation_date:
+        action_date:
           type: string
           format: date
-          description: 'Automatically assigned by the server and applies to the first version'
+          description: 'Automatically assigned by the server and applies to the most recent change'
           readOnly: True

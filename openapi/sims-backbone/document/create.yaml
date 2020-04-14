@@ -4,16 +4,30 @@
       description: Create a Document
       operationId: createDocument
       parameters:
-        - name: study_name
+        - name: study_code
           in: path
           description: 4 digit study code
           required: true
           schema:
             type: string
       requestBody:
-        $ref: "./sims-backbone.yaml#/components/requestBodies/Document"
-        description: The document to create
-        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              description: 'Document upload'
+              properties:
+                doc_type:
+                  type: string
+                document:
+                  type: string
+                  format: binary
+                doc_version:
+                  type: string
+                  default: ''
+                note:
+                  type: string
+                  default: ''
       responses:
         "200":
           description: successful operation

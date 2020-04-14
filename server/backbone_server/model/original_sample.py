@@ -135,7 +135,7 @@ class BaseOriginalSample(SimsDbBase):
             self.old_study_id = db_item.study.id
 
 
-    def db_map_actions(self, db, db_item, api_item, studies, user):
+    def db_map_actions(self, db, db_item, api_item, studies, user, **kwargs):
         # print('db_map_actions')
         # print(api_item)
 
