@@ -5,6 +5,7 @@ from sqlalchemy import Integer, String, Date, ForeignKey, DateTime
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship, backref
 from sqlalchemy.sql import text
+from sqlalchemy.types import ARRAY
 
 from sqlalchemy.ext.declarative import declared_attr
 
@@ -177,7 +178,7 @@ class Study(Base, Versioned):
 
     name = Column(String(64), index=True, unique=True)
     code = Column(String(4), index=True, unique=True)
-    sequencescape_code = Column(String(64), index=True)
+    sequencescape_code = Column(ARRAY(String(64)), index=True)
     ethics_expiry = Column(Date())
 
 #    documents = relationship("Document")

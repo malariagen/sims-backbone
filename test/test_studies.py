@@ -86,7 +86,6 @@ class TestStudies(TestBase):
 
     """
     """
-
     def test_location_study(self, api_factory):
 
         api_instance = api_factory.LocationApi()
@@ -200,6 +199,7 @@ class TestStudies(TestBase):
 
                 study1.partner_species[0].taxa = [taxa]
                 study1.ethics_expiry = date(2019, 11, 4)
+                study1.sequencescape_code = ['1234', '1235']
 
                 shipment = openapi_client.ExpectedSamples(None, date_of_arrival=date(2019, 1, 4),
                                                           sample_count=42,
@@ -215,6 +215,7 @@ class TestStudies(TestBase):
                 study1.num_released = None
 
                 study2 = study_api.update_study('2004-MD-UP', study1)
+
                 assert study2.version > study1.version
                 assert study2.name == '2004-PF-MD-UP'
                 assert study2.partner_species[0].taxa[0].taxonomy_id == 5833, 'taxa not updated'
@@ -224,6 +225,8 @@ class TestStudies(TestBase):
                 study2.expected_samples[0].expected_samples_id = None
                 study2.expected_samples[0].version = None
                 assert study1.expected_samples[0] == study2.expected_samples[0]
+
+                assert study1.sequencescape_code == study2.sequencescape_code
 
                 assert len(study2.partner_species) == 2
                 api_instance.delete_original_sample(created.original_sample_id)
