@@ -82,8 +82,11 @@ class DerivativeSample(Versioned, Base):
 
     def __repr__(self):
         return f'''<DerivativeSample ID {self.id}
-    {self.dna_prep}
-    {self.attrs}
+    DNA prep {self.dna_prep}
+    OS id {self.original_sample_id}
+    taxon {self.taxon}
+    acc_date {self.acc_date}
+    attrs {self.attrs}
     >'''
 
 class BaseDerivativeSample(SimsDbBase):

@@ -78,38 +78,44 @@ class Base(object):
                                 self.logger.debug(f'Mapping {key} {value}')
                                 setattr(self, key, getattr(openapi_type,
                                                            subitem_descrip))
-                    elif not key == 'attr' and\
-                            not isinstance(value, str) and issubclass(value, Model) and\
-                            subitem_descrip and issubclass(subitem_descrip, Base):
-                        db_item = subitem_descrip()
-                        val = getattr(openapi_type, key)
-                        if isinstance(val, object):
-                            db_item.map_from_openapi(val, user=user, **kwargs)
-                        else:
-                            db_item.map_from_openapi(openapi_type, user=user, **kwargs)
-                        self.logger.debug(f'Recurse {key} {subitem_descrip} {type(val)} {val} {db_item}')
-                        if val:
-                            setattr(self, key, db_item)
-                    elif key not in ['attrs', 'members', 'partner_species'] and\
-                             ((isinstance(value, str) and value.startswith('list['))
-                              or (inspect.isclass(value) and issubclass(value, typing.List))):
-                        self.logger.debug(f'Recurse list {key} {subitem_descrip} {type(getattr(openapi_type, key))} {value}')
-                        sub_items = getattr(openapi_type, key)
-                        self.logger.debug(f'{openapi_type} sub_items {sub_items}')
-                        if sub_items:
-                            sub_item_list = []
-                            for api_subitem in sub_items:
-                                self.logger.debug(api_subitem)
-                                if isinstance(api_subitem, object):
-                                    db_subitem = subitem_descrip()
-                                    db_subitem.map_from_openapi(api_subitem,
-                                                                user=user, **kwargs)
-                                    sub_item_list.append(db_subitem)
-                                    self.logger.debug(db_subitem)
-                                self.logger.debug(db_subitem)
-                            self.logger.debug(sub_item_list)
-                            if sub_item_list:
-                                setattr(self, key, sub_item_list)
+# Left here as documentation
+# This recursion does work, when called as a service at least, however
+# it's only filling in the values, not linking the model to the database so if
+# you use it then you'll find that it attempts to recreate the existing records
+# so you end up with insertion errors
+# It's probably not what you want anyway...
+#                    elif not key == 'attr' and\
+#                            not isinstance(value, str) and issubclass(value, Model) and\
+#                            subitem_descrip and issubclass(subitem_descrip, Base):
+#                        db_item = subitem_descrip()
+#                        val = getattr(openapi_type, key)
+#                        if isinstance(val, object):
+#                            db_item.map_from_openapi(val, user=user, **kwargs)
+#                        else:
+#                            db_item.map_from_openapi(openapi_type, user=user, **kwargs)
+#                        self.logger.debug(f'Recurse {key} {subitem_descrip} {type(val)} {val} {db_item}')
+#                        if val:
+#                            setattr(self, key, db_item)
+#                    elif key not in ['attrs', 'members', 'partner_species'] and\
+#                             ((isinstance(value, str) and value.startswith('list['))
+#                              or (inspect.isclass(value) and issubclass(value, typing.List))):
+#                        self.logger.debug(f'Recurse list {key} {subitem_descrip} {type(getattr(openapi_type, key))} {value}')
+#                        sub_items = getattr(openapi_type, key)
+#                        self.logger.debug(f'{openapi_type} sub_items {sub_items}')
+#                        if sub_items:
+#                            sub_item_list = []
+#                            for api_subitem in sub_items:
+#                                self.logger.debug(api_subitem)
+#                                if isinstance(api_subitem, object):
+#                                    db_subitem = subitem_descrip()
+#                                    db_subitem.map_from_openapi(api_subitem,
+#                                                                user=user, **kwargs)
+#                                    sub_item_list.append(db_subitem)
+#                                    self.logger.debug(db_subitem)
+#                                self.logger.debug(db_subitem)
+#                            self.logger.debug(sub_item_list)
+#                            if sub_item_list:
+#                                setattr(self, key, sub_item_list)
                     else:
                         self.logger.debug(f'Mapping failed for {key} {value} {type(value)}')
             elif key not in ['version'] and (hasattr(self, key) and

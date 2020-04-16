@@ -310,6 +310,41 @@ class BaseManifest(SimsDbBase):
             os_json = json.dumps(study_recs, ensure_ascii=False, cls=JSONEncoder)
             db_item.studies = os_json
 
+        self.db_map_notes(db, db_item, api_item, user)
+
+    def db_map_notes(self, db, db_item, api_item, user):
+
+        if api_item.notes:
+            new_notes = []
+            new_existing_notes = []
+            note_ids = []
+            notes = []
+            remove_notes = []
+            for note in api_item.notes:
+                if note.note_name in notes:
+                    raise DuplicateKeyException(f"Duplicate note {note.note_name}")
+                db_note = db.query(ManifestNote).filter(and_(ManifestNote.note_name == note.note_name,
+                                                             ManifestNote.manifest_id == db_item.id)).first()
+                if db_note:
+                    note_ids.append(db_note.id)
+                    if db_note not in db_item.notes:
+                        new_existing_notes.append(db_note)
+                else:
+                    new_note = ManifestNote()
+                    new_note.note_name = note.note_name
+                    new_note.note_text = note.note_text
+                    new_note.created_by = user
+                    new_notes.append(new_note)
+            if new_existing_notes:
+                db_item.notes.extend(new_existing_notes)
+            for note in db_item.notes:
+                if note.id not in note_ids:
+                    remove_notes.append(note)
+            for note in remove_notes:
+                db_item.notes.remove(note)
+            if new_notes:
+                db_item.notes.extend(new_notes)
+
 
     def put_premap(self, db, api_item, db_item):
         # This is to ensure not mapped and as shouldn't be updated by put

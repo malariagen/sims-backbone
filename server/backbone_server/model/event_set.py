@@ -168,7 +168,7 @@ class BaseEventSet(SimsDbBase):
 
         # print(api_item)
         # print(db_item)
-        # self.db_map_notes(db, db_item, api_item, user)
+        self.db_map_notes(db, db_item, api_item, user)
 
     def db_map_notes(self, db, db_item, api_item, user):
 
