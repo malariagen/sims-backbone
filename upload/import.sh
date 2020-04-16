@@ -65,7 +65,7 @@ do
         JAR="lims-sims/target/lims-transform-1.0-SNAPSHOT.jar"
         if [ ! -f ${JAR} ]
         then
-            (cd $(dirname ${JAR})/..;
+            (cd lims-sims;
             mvn package)
         fi
         java -jar ${JAR} net.malariagen.sims.lims.Transform ${i} ${i}.csv
