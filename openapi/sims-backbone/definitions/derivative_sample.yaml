@@ -20,6 +20,7 @@ components:
               description: 'Attr types used in this set of DerivativeSamples'
     DerivativeSample:
       type: object
+      description: 'Derivative sample details'
       required:
         - original_sample_id
       properties:

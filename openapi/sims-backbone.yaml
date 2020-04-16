@@ -247,6 +247,7 @@ components:
         application/json:
           schema:
             $ref: "./sims-backbone/definitions/derivative_sample.yaml#/components/schemas/DerivativeSample"
+      required: true
     SamplingEvent:
       content:
         application/json:
