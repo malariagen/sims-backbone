@@ -21,8 +21,10 @@ import { MatInputModule } from '@angular/material/input';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTableModule } from '@angular/material/table';
+import { MatListModule } from '@angular/material/list';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FlexLayoutModule } from '@angular/flex-layout';
+
 import { StudyEventListComponent } from './study-event-list/study-event-list.component';
 import { EventListComponent } from './event-list/event-list.component';
 import { TaxaEventListComponent } from './taxa-event-list/taxa-event-list.component';
@@ -168,6 +170,7 @@ export function getConfiguration(authService: SimsAuthService): Configuration {
     MatAutocompleteModule,
     MatTableModule,
     MatPaginatorModule,
+    MatListModule,
     FlexLayoutModule,
     LeafletModule,
     OAuthModule.forRoot(),

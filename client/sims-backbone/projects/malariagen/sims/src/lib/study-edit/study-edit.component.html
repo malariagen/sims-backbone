@@ -24,8 +24,36 @@
           <button mat-raised-button i18n="@@simsSave" type="submit" [disabled]="!studyForm.valid">Submit</button>
         </p>
 
-        <a i18n="@@simsSamplingEvents" mat-raised-button color="accent" [routerLink]="[studyEvents,studyCode]">Sampling Events</a>
+        <a i18n="@@simsSamplingEvents" mat-raised-button color="accent" [routerLink]="[studyEvents,studyCode]">Sampling
+          Events</a>
       </form>
+    </div>
+    <div fxLayout="row">
+      <div fxFlex="50%">
+        <form [formGroup]="fileForm" (ngSubmit)="onSubmitFile(fileForm)">
+          <div class="form-group">
+            <!--
+          <label i18n="@@simsUploadFileName" for="doc_name">File name</label>
+          <input matInput type="text" class="form-control" id="doc_name" formControlName="doc_name">
+          -->
+            <label i18n="@@simsUploadFileType" for="doc_type">File type</label>
+            <input matInput type="text" class="form-control" id="doc_type" formControlName="doc_type">
+          </div>
+          <div class="form-group">
+            <label>File</label>
+            <input type="file" #fileUpload id="fileUpload" name="fileUpload" (change)="onFilesAdded()">
+          </div>
+          <button mat-raised-button i18n="@@simsSave" type="submit">Submit</button>
+        </form>
+      </div>
+      <div *ngIf="documents">
+        <mat-nav-list>
+          <mat-list-item *ngFor="let doc of documents.documents">
+            <a matLine class="mat-focus-indicator mat-button mat-button-base"
+              (click)="download(doc)">{{ doc.doc_name }}</a>&nbsp;<span>{{ doc.doc_type}}</span>
+          </mat-list-item>
+        </mat-nav-list>
+      </div>
     </div>
     <ng-content select="[study-edit-left-col-bottom]"></ng-content>
   </div>
