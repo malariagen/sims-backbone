@@ -1,5 +1,4 @@
 #!/bin/bash
-set -x
 INSTALL_CMD=yum
 ${INSTALL_CMD} install -y sudo
 test -x /usr/bin/sudo && export SUDO=/usr/bin/sudo
@@ -7,7 +6,8 @@ test -x /usr/bin/sudo && export SUDO=/usr/bin/sudo
 curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.34.0/install.sh | bash
 source ~/.nvm/nvm.sh
 nvm install 11
-${SUDO} pip install yapf
+set -x
+${SUDO} pip3 install yapf
 java -version
 yum whatprovides mvn
 yum whatprovides yapf
@@ -17,8 +17,10 @@ ${SUDO} sed -i s/\$releasever/7/g /etc/yum.repos.d/epel-apache-maven.repo
 ${SUDO} ${INSTALL_CMD} install -y git python36 python36-pip apache-maven java-1.8.0
 #${SUDO} ${INSTALL_CMD} install -y aws-apitools*
 ${SUDO} alternatives --set java /usr/lib/jvm/jre-1.8.0-openjdk.x86_64/bin/java
-${SUDO} alternatives --set javac /usr/lib/jvm/jre-1.8.0-openjdk.x86_64/bin/javac
+${SUDO} alternatives --set javac /usr/lib/jvm/jdk-1.8.0-openjdk.x86_64/bin/javac
 java -version
+ls /usr/lib/jvm
+javac -version
 mvn -version
 git clone https://github.com/malariagen/sims-backbone.git
 cd sims-backbone
