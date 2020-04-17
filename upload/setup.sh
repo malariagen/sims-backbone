@@ -16,7 +16,8 @@ ${SUDO} sed -i s/\$releasever/7/g /etc/yum.repos.d/epel-apache-maven.repo
 #${SUDO} ${INSTALL_CMD} remove -y java-1.7.0-openjdk
 ${SUDO} ${INSTALL_CMD} install -y git python36 python36-pip apache-maven java-1.8.0
 #${SUDO} ${INSTALL_CMD} install -y aws-apitools*
-${SUDO} alternatives --set java /usr/lib/jvm/jdk-1.8.0-openjdk.x86_64/bin/java
+${SUDO} alternatives --set java /usr/lib/jvm/jre-1.8.0-openjdk.x86_64/bin/java
+${SUDO} alternatives --set javac /usr/lib/jvm/jre-1.8.0-openjdk.x86_64/bin/javac
 java -version
 mvn -version
 git clone https://github.com/malariagen/sims-backbone.git
