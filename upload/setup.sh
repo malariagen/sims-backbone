@@ -20,6 +20,7 @@ ${SUDO} alternatives --set java /usr/lib/jvm/jre-1.8.0-openjdk.x86_64/bin/java
 ${SUDO} alternatives --set javac /usr/lib/jvm/jdk-1.8.0-openjdk.x86_64/bin/javac
 java -version
 ls /usr/lib/jvm
+find / -name javac
 javac -version
 mvn -version
 git clone https://github.com/malariagen/sims-backbone.git
