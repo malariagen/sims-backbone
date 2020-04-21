@@ -3,7 +3,7 @@ import { async, ComponentFixture, TestBed, inject } from '@angular/core/testing'
 import { StudyEditComponent } from './study-edit.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatFormField } from '@angular/material/form-field';
-import { Taxonomy, Study, PartnerSpecies, Taxonomies } from '../typescript-angular-client';
+import { Taxonomy, Study, PartnerSpecies, Taxonomies, Documents } from '../typescript-angular-client';
 import { createAuthServiceSpy, ActivatedRouteStub, createOAuthServiceSpy, ActivatedRoute } from '../../testing/index.spec';
 import { OAuthService } from 'angular-oauth2-oidc';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
@@ -116,6 +116,20 @@ describe('StudyEditComponent', () => {
 
       req.flush(testData);
 
+      const docsData: Documents = <Documents> {
+        "attr_types": [],
+        "count": 0,
+        "documents": [
+        ]
+      }
+      
+      const req2 = backend.expectOne({
+        url: 'http://localhost/v1/documents/study/' + testData.code,
+        method: 'GET'
+      });
+
+      req2.flush(docsData);
+
       // Finally, assert that there are no outstanding requests.
       // backend.verify();
       expect(component.studyForm.controls['name'].value).toBe(testData.name);
@@ -169,6 +183,20 @@ describe('StudyEditComponent', () => {
 
       req.flush(testData);
 
+      const docsData: Documents = <Documents> {
+        "attr_types": [],
+        "count": 0,
+        "documents": [
+        ]
+      }
+      
+      const req2 = backend.expectOne({
+        url: 'http://localhost/v1/documents/study/' + testData.code,
+        method: 'GET'
+      });
+
+      req2.flush(docsData);
+      
       backend.verify();
 
       testData.name = '0001 updated name';
