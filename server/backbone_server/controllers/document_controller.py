@@ -21,6 +21,7 @@ class DocumentController(BaseController):
     def create_document(self, study_code,
                         doc1,
                         document=None,
+                        doc_content=None,
                         studies=None,
                         user=None, auths=None):  # noqa: E501
         """create_document
@@ -46,13 +47,15 @@ class DocumentController(BaseController):
         doc = None
 
         post = BaseDocument(self.get_engine(), self.get_session())
-        doc1.doc_name = document.filename
-        doc1.content_type = document.content_type
-        doc1.mimetype = document.mimetype
+        if document:
+            doc1.doc_name = document.filename
+            doc1.content_type = document.content_type
+            doc1.mimetype = document.mimetype
         doc1.study_name = study_code
 
         try:
             doc = post.post(doc1, study_code, file_storage=document,
+                            doc_content=doc_content,
                             studies=studies, user=user)
         except DuplicateKeyException as dke:
             logging.getLogger(__name__).debug("create_document: %s", repr(dke))
@@ -149,20 +152,23 @@ class DocumentController(BaseController):
             retcode = 403
             doc = str(dke)
 
-        resp = doc
-#        resp = make_response()
-#        resp.data = doc
-        resp.headers = headers
-#        if 'content_type' in headers:
-#            resp.content_type = headers['content_type']
-#            del headers['content_type']
-#        if 'mimetype' in headers:
-#            resp.content_type = headers['mimetype']
-#            del headers['mimetype']
-#        resp.status = status
-#
+        if doc:
+            resp = doc
+    #        resp = make_response()
+    #        resp.data = doc
+            resp.headers = headers
+    #        if 'content_type' in headers:
+    #            resp.content_type = headers['content_type']
+    #            del headers['content_type']
+    #        if 'mimetype' in headers:
+    #            resp.content_type = headers['mimetype']
+    #            del headers['mimetype']
+    #        resp.status = status
+    #
 
-        return resp
+            return resp
+        else:
+            return doc, status, headers
 
     def download_documents_by_study(self, study_name, studies=None, user=None, auths=None):  # noqa: E501
         """fetches Documents for a study
@@ -198,8 +204,9 @@ class DocumentController(BaseController):
 
 
     def update_document(self, document_id,
-                        doc1=None,
+                        doc1,
                         document=None,
+                        doc_content=None,
                         studies=None,
                         user=None, auths=None):  # noqa: E501
         """updates an Document
@@ -224,7 +231,8 @@ class DocumentController(BaseController):
                 doc1.content_type = document.content_type
                 doc1.mimetype = document.mimetype
 
-            doc = put.put(document_id, doc1, None, file_storage=document,
+            doc = put.put(document_id, doc1, doc1.study_name, file_storage=document,
+                          doc_content=doc_content,
                           studies=studies, user=user)
         except DuplicateKeyException as dke:
             logging.getLogger(__name__).debug(

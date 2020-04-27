@@ -1,0 +1,279 @@
+# Welcome to Serverless!
+#
+# This file is the main config file for your service.
+# It's very minimal at this point and uses default values.
+# You can always add more config options for more control.
+# We've included some commented out config examples here.
+# Just uncomment any of them to get that config option.
+#
+# For full config options, check the docs:
+#    docs.serverless.com
+#
+# Happy Coding!
+
+service: sims-document-service
+#service: sims-backbone-service
+
+# You can pin your service to only deploy with a specific Serverless version
+# Check out our docs for more details
+# frameworkVersion: "=X.X.X"
+
+provider:
+  name: aws
+  runtime: python3.6
+  region: ${opt:region, 'eu-west-1'}
+  stage: ${opt:stage, 'dev'}
+  documentsBucket: 'malariagen-sims-${self:provider.stage}-documents'
+  tempBucket: 'malariagen-sims-${self:provider.stage}-temp-documents'
+  versionFunctions: false
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - ec2:CreateNetworkInterface
+        - ec2:DescribeNetworkInterfaces
+        - ec2:DeleteNetworkInterface
+      Resource: "*"
+    - Effect: Allow
+      Action:
+        - s3:GetObject
+        - s3:PutObject
+      Resource:
+        - "arn:aws:s3:::${self:provider.documentsBucket}/*"
+        - "arn:aws:s3:::${self:provider.tempBucket}/*"
+    - Effect: Allow
+      Action:
+        - s3:CreateBucket
+        - s3:ListBucket
+      Resource:
+        - "arn:aws:s3:::${self:provider.documentsBucket}"
+        - "arn:aws:s3:::${self:provider.tempBucket}"
+
+  environment:
+    POSTGRES_USER: ${file(../config.${self:provider.stage}.json):db_user}
+    POSTGRES_DB: ${file(../config.${self:provider.stage}.json):database}
+    POSTGRES_PASSWORD: ${file(../config.${self:provider.stage}.json):db_password}
+    POSTGRES_PORT: ${file(../config.${self:provider.stage}.json):db_port}
+    POSTGRES_HOST: ${cf:sims-backbone-service-${self:provider.stage}.DbHostOutput}
+    AUTH_PROFILE_URL: ${file(../config.${self:provider.stage}.json):auth_profile}
+    PYTHON_PATH: '.:../server:../server/bb_server'
+    S3_DOCUMENT_BUCKET: ${self:provider.documentsBucket}
+    S3_TEMP_BUCKET: ${self:provider.tempBucket}
+  vpc:
+    securityGroupIds:
+      - ${cf:sims-backbone-service-${self:provider.stage}.ServerlessSecurityGroupOutput}
+    subnetIds:
+      - 'Fn::ImportValue': sims-backbone-service:PublicSubnetA-${self:provider.stage}
+      - 'Fn::ImportValue': sims-backbone-service:PublicSubnetB-${self:provider.stage}
+      - 'Fn::ImportValue': sims-backbone-service:PublicSubnetC-${self:provider.stage}
+  apiGateway:
+    restApiId: ${cf:sims-backbone-service-${self:provider.stage}.ApiGatewayRestApi}
+    restApiRootResourceId: ${cf:sims-backbone-service-${self:provider.stage}.ApiGatewayRestApiRootResource}
+
+plugins:
+      - serverless-python-requirements
+      - serverless-apigw-binary
+
+custom:
+  pythonRequirements:
+    dockerizePip: true
+  apigwBinary:
+    types:           #list of mime-types
+      - 'multipart/form-data'
+
+package:
+    exclude:
+        - requirements.txt
+        - serverless.yml
+        - node_modules/**
+        - venv/**
+        - package.json
+        - package-lock.json
+        - endpoints.txt
+        - updateall.sh
+        - ../../server/backbone_server/connect.py
+    include:
+        - ../util/**
+        - document/handler.py
+        - ../../server/bb_server/**
+        - ../../server/backbone_server/**/**
+        - ../client_secrets.${self:provider.stage}.json
+
+functions:
+
+  createDocument:
+    handler: document/handler.create_document
+    events:
+      - http:
+          path: /document/study/{study_code}
+          method: post
+          cors: true
+          timeout: 20
+          authorizer:
+            name: docAuthFunc
+            arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
+            type: request
+            identitySource: method.request.header.Authorization
+            identityValidationExpression: .*
+          request:
+            parameters:
+              paths:
+                study_code: true
+
+            #            contentHandling: CONVERT_TO_TEXT
+            #            passThrough: WHEN_NO_TEMPLATES
+            #            template:
+            #              multipart/form-data: "{'body': $input.json('$')}"
+                #          response:
+                #            contentHandling: CONVERT_TO_BINARY
+                #            headers:
+                #              Content-Type: "'application/json'"
+
+
+
+  downloadDocument:
+    handler: document/handler.download_document
+    events:
+      - http:
+          path: document/{document_id}
+          method: get
+          cors: true
+          timeout: 20
+          authorizer:
+            name: docAuthFunc
+            arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
+            type: request
+            identitySource: method.request.header.Authorization
+            identityValidationExpression: .*
+          request:
+            parameters:
+              paths:
+                document_id: true
+  updateDocument:
+    handler: document/handler.update_document
+    events:
+      - http:
+          path: document/{document_id}
+          method: put
+          cors: true
+          timeout: 20
+          authorizer:
+            name: docAuthFunc
+            arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
+            type: request
+            identitySource: method.request.header.Authorization
+            identityValidationExpression: .*
+          request:
+            parameters:
+              paths:
+                document_id: true
+  deleteDocument:
+    handler: document/handler.delete_document
+    events:
+      - http:
+          path: document/{document_id}
+          method: delete
+          cors: true
+          timeout: 20
+          authorizer:
+            name: docAuthFunc
+            arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
+            type: request
+            identitySource: method.request.header.Authorization
+            identityValidationExpression: .*
+          request:
+            parameters:
+              paths:
+                document_id: true
+  downloadDocumentContent:
+    handler: document/handler.download_document_content
+    events:
+      - http:
+          path: document/content/{document_id}
+          method: get
+          cors: true
+          timeout: 20
+          authorizer:
+            name: docAuthFunc
+            arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
+            type: request
+            identitySource: method.request.header.Authorization
+            identityValidationExpression: .*
+          request:
+            parameters:
+              paths:
+                document_id: true
+  downloadDocumentsByStudy:
+    handler: document/handler.download_documents_by_study
+    events:
+      - http:
+          path: documents/study/{study_code}
+          method: get
+          cors: true
+          timeout: 20
+          authorizer:
+            name: docAuthFunc
+            arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
+            type: request
+            identitySource: method.request.header.Authorization
+            identityValidationExpression: .*
+          request:
+            parameters:
+              paths:
+                study_code: true
+resources:
+  Resources:
+  # https://forum.serverless.com/t/add-additional-configuration-to-an-s3-bucket-with-a-dynamic-name/705
+  # https://github.com/serverless/serverless/issues/3448
+    DocumentsBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        # Set the CORS policy
+        BucketName: ${self:provider.documentsBucket}
+        CorsConfiguration:
+          CorsRules:
+            - AllowedHeaders:
+                - "*"
+              AllowedMethods:
+                - GET
+              AllowedOrigins:
+                - "*"
+    TempBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        # Set the CORS policy
+        BucketName: ${self:provider.tempBucket}
+    S3AccessDocs:
+      Type: AWS::EC2::VPCEndpoint
+      Properties: 
+        ServiceName: 'com.amazonaws.eu-west-1.s3'
+        RouteTableIds:
+          - 'Fn::ImportValue': sims-backbone-service:PublicRouteTableA-${self:provider.stage}
+          - 'Fn::ImportValue': sims-backbone-service:PublicRouteTableB-${self:provider.stage}
+          - 'Fn::ImportValue': sims-backbone-service:PublicRouteTableC-${self:provider.stage}
+        VpcEndpointType: Gateway
+        VpcId:
+          'Fn::ImportValue': !Sub sims-backbone-service:ServerlessVPC-${self:provider.stage}
+    CreateDocumentLogGroup:
+      Type: AWS::Logs::LogGroup
+      Properties:
+        RetentionInDays: "30"
+    DownloadDocumentLogGroup:
+      Type: AWS::Logs::LogGroup
+      Properties:
+        RetentionInDays: "30"
+    DownloadDocumentContentLogGroup:
+      Type: AWS::Logs::LogGroup
+      Properties:
+        RetentionInDays: "30"
+    UpdateDocumentLogGroup:
+      Type: AWS::Logs::LogGroup
+      Properties:
+        RetentionInDays: "30"
+    DeleteDocumentLogGroup:
+      Type: AWS::Logs::LogGroup
+      Properties:
+        RetentionInDays: "30"
+    DownloadDocumentsByStudyLogGroup:
+      Type: AWS::Logs::LogGroup
+      Properties:
+        RetentionInDays: "30"

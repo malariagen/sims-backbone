@@ -128,20 +128,36 @@ class BaseDocument(SimsDbBase):
 
         return None
 
-    def post_extra_actions(self, document, db_item, **kwargs):
-
-        if 'file_storage' in kwargs:
+    def save_file(self, db_item, **kwargs):
+        has_file = False
+        file_storage = None
+        doc_content = None
+        validate_only = False
+        if 'file_storage' in kwargs and kwargs['file_storage']:
+            file_storage = kwargs['file_storage']
+            has_file = True
+        if 'doc_content' in kwargs and kwargs['doc_content']:
+            doc_content = kwargs['doc_content']
+            has_file = True
+        if 'validate_only' in kwargs and kwargs['validate_only']:
+            validate_only = kwargs['validate_only']
+        if has_file:
             util = FileUtil()
 
-            util.save_file(db_item, kwargs['file_storage'])
+            util.save_file(db_item, file_storage, doc_content, validate_only)
+
+        return has_file
+
+    def post_extra_actions(self, document, db_item, **kwargs):
+
+        self.save_file(db_item, **kwargs)
 
     def put_extra_actions(self, api_item, db_item, **kwargs):
 
-        if 'file_storage' in kwargs and kwargs['file_storage']:
-            util = FileUtil()
+        has_file = self.save_file(db_item, **kwargs)
 
-            util.save_file(db_item, kwargs['file_storage'])
-        else:
+        #Only changed the metadata so make sure we keep document related values
+        if not has_file:
             old_values = json.loads(db_item.pre_update_json)
             db_item.doc_name = old_values['doc_name']
             if 'content_type' in old_values:
