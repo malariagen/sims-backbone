@@ -206,6 +206,22 @@ class TestStudies(TestBase):
                                                           expected_species='P.  vivax',
                                                           expected_taxonomies=[])
                 study1.expected_samples = [shipment]
+
+                study1.countries = [openapi_client.Country(alpha3='AFG')]
+                study1.title = 'Title of study'
+                study1.status = 'enquiry'
+                study1.study_ethics = 'ethics hsaighignsfg'
+                study1.rag_status = 'amber'
+                study1.legacy_id = 'PV3'
+                study1.description = 'vnasvnafnvf'
+                study1.description_approved = True
+                study1.web_title = 'vnasvnafnvf'
+                study1.web_title_approved = True
+                study1.sample_types = 'DBS'
+                study1.notes = 'Some notes'
+                # Shouldn't really reference ourself but we know that it
+                # exists
+                study1.web_study = study1.name
                 study1.num_collections = None
                 study1.num_original_samples = None
                 study1.num_derivative_samples = None
@@ -222,6 +238,9 @@ class TestStudies(TestBase):
 
                 assert study1.ethics_expiry == study2.ethics_expiry
 
+                study3 = study_api.download_study('2004-MD-UP')
+                # print(study3)
+
                 study2.expected_samples[0].expected_samples_id = None
                 study2.expected_samples[0].version = None
                 assert study1.expected_samples[0] == study2.expected_samples[0]
@@ -229,6 +248,7 @@ class TestStudies(TestBase):
                 assert study1.sequencescape_code == study2.sequencescape_code
 
                 assert len(study2.partner_species) == 2
+
                 api_instance.delete_original_sample(created.original_sample_id)
                 # Need to reset for test to work next time as it's not possible
                 # to delete studies

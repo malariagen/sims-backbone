@@ -13,15 +13,52 @@ components:
             type: string
         name:
           type: string
+        title:
+          type: string
+        status:
+          description: e.g. enquiry, active, closed
+          type: string
+          enum: ['enquiry', 'active', 'closed']
         version:
           type: integer
         partner_species:
             type: array
             items:
               $ref: './original_sample.yaml#/components/schemas/PartnerSpecies'
+        countries:
+            description: The countries specified during on boarding
+            type: array
+            items:
+              $ref: './country.yaml#/components/schemas/Country'
         ethics_expiry:
           type: string
           format: date
+        study_ethics:
+          description: Notes connected to the study ethics
+          type: string
+        rag_status:
+          type: string
+          enum: ['red', 'amber', 'green']
+        legacy_id:
+          description: ID predating numbering
+          type: string
+        web_study:
+          description: Sometimes studies are merged for display purposes
+          type: string
+        description:
+          description: The text to be shown when the study is represented on the web
+          type: string
+        description_approved:
+          type: boolean
+        web_title:
+          type: string
+        web_title_approved:
+          type: boolean
+        sample_types:
+          description: e.g. DBS, Mosquito, Extracted DNA
+          type: string
+        notes:
+          type: string
         num_collections:
           type: integer
           description: Number of unique by date/location sampling points

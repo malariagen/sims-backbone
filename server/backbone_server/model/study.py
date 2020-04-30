@@ -1,7 +1,7 @@
 import os
 
 from sqlalchemy import Table, Column
-from sqlalchemy import Integer, String, Date, ForeignKey, DateTime
+from sqlalchemy import Integer, String, Date, ForeignKey, DateTime, Boolean
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship, backref
 from sqlalchemy.sql import text
@@ -23,6 +23,7 @@ from backbone_server.errors.duplicate_key_exception import DuplicateKeyException
 from backbone_server.model.history_meta import Versioned
 from backbone_server.model.base import SimsDbBase
 from backbone_server.model.mixins import Base
+from backbone_server.model.country import Country
 
 
 class Taxonomy(Base):
@@ -174,18 +175,51 @@ class ExpectedSamples(Base, Versioned):
     {self.date_of_arrival}
     >'''
 
+class StudyCountry(Base):
+
+    __tablename__ = 'study_country'
+
+    id = None
+    created_by = None
+    updated_by = None
+    action_date = None
+
+    study_id = Column(UUID(as_uuid=True),
+                      ForeignKey('study.id'),
+                      primary_key=True)
+    country_id = Column(String(3),
+                        ForeignKey('country.alpha3'), primary_key=True)
+
+
 class Study(Base, Versioned):
 
     name = Column(String(64), index=True, unique=True)
+    title = Column(String())
+    status = Column(String(16), index=True)
+    rag_status = Column(String(8), index=True)
     code = Column(String(4), index=True, unique=True)
     sequencescape_code = Column(ARRAY(String(64)), index=True)
+    legacy_id = Column(String(16))
+    web_study = Column('web_study',
+                       UUID(as_uuid=True),
+                       ForeignKey('study.id'),
+                       index=True)
     ethics_expiry = Column(Date())
+    study_ethics = Column(String())
+    web_title = Column(String())
+    web_title_approved = Column(Boolean())
+    description = Column(String())
+    description_approved = Column(Boolean())
+    notes = Column(String())
+    sample_types = Column(String(32))
 
 #    documents = relationship("Document")
     partner_species = relationship('PartnerSpeciesIdentifier',
                                    backref=backref('study', uselist=True))
     expected_samples = relationship("ExpectedSamples",
                                     backref=backref("study", uselist=True))
+    countries = relationship("Country",
+                             secondary=StudyCountry.__table__)
     @staticmethod
     def get_or_create_study(db, study_name, user):
 
@@ -237,14 +271,17 @@ class Study(Base, Versioned):
     def submapped_items(self):
         return {
             'partner_species': PartnerSpeciesIdentifier,
-            'expected_samples': ExpectedSamples
+            'expected_samples': ExpectedSamples,
+            'countries': None
         }
 
     def __repr__(self):
         return f'''<Study {self.name} {self.code}
     {self.partner_species}
     {self.expected_samples}
-    {self.ethics_expiry}>'''
+    {self.ethics_expiry}
+    {self.countries}
+    >'''
 
 class BaseStudy(SimsDbBase):
 
@@ -278,6 +315,30 @@ class BaseStudy(SimsDbBase):
     def order_by(self):
 
         return self.db_class.code
+
+    def db_map_countries(self, db, db_item, api_item, user):
+        if hasattr(api_item, 'countries') and api_item.countries:
+            countries = []
+            for country in api_item.countries:
+                if country.alpha3 in countries:
+                    raise DuplicateKeyException(f'Error duplicate country {country}')
+                countries.append(country.alpha3)
+                db_country = db.query(Country).filter_by(alpha3=country.alpha3).first()
+                if db_country not in db_item.countries:
+                    db_item.countries.append(db_country)
+            if countries:
+                countries_to_remove = []
+                for country in db_item.countries:
+                    if country.alpha3 not in countries:
+                        countries_to_remove.append(country)
+                for country in countries_to_remove:
+                    db_item.countries.remove(country)
+        elif hasattr(db_item, 'countries'):
+            countries_to_remove = []
+            for country in db_item.countries:
+                countries_to_remove.append(country)
+            for country in countries_to_remove:
+                db_item.countries.remove(country)
 
     def db_map_expected_samples(self, db, db_item, api_item, user):
         if hasattr(api_item, 'expected_samples') and api_item.expected_samples:
@@ -489,8 +550,15 @@ class BaseStudy(SimsDbBase):
 
     def db_map_actions(self, db, db_item, api_item, studies, user, **kwargs):
 
+        if api_item.web_study:
+            web_study_item = db.query(Study).filter_by(code=api_item.web_study[:4]).first()
+            if web_study_item:
+                db_item.web_study = web_study_item.id
+            else:
+                raise MissingKeyException(f'web study {api_item.web_study} does not exist')
         self.db_map_partner_species(db, db_item, api_item, user)
         self.db_map_expected_samples(db, db_item, api_item, user)
+        self.db_map_countries(db, db_item, api_item, user)
         # print('db_map_actions')
         # print(api_item)
         # print(db_item)
@@ -501,6 +569,9 @@ class BaseStudy(SimsDbBase):
         if multiple:
             return api_item
 
+        if db_item.web_study:
+            web_study_item = db.query(Study).get(db_item.web_study)
+            api_item.web_study = web_study_item.name
         self.map_count(api_item)
         from backbone_server.model.location import Location, BaseLocation
         locs = BaseLocation(self.engine, self.session)

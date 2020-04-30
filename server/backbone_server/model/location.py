@@ -10,7 +10,6 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.ext.declarative import declared_attr
 
 from sqlalchemy import event, DDL
-from sqlalchemy.event import listen
 
 from geoalchemy2 import Geometry
 from openapi_server.models.location import Location as ApiLocation
@@ -23,35 +22,12 @@ from backbone_server.model.scope import session_scope
 
 from backbone_server.model.mixins import Base
 from backbone_server.model.attr import Attr
+from backbone_server.model.country import Country
 from backbone_server.model.study import Study, PartnerSpeciesIdentifier
 
 from backbone_server.model.history_meta import Versioned, versioned_session
 from backbone_server.model.base import SimsDbBase
 
-
-class Country(Base):
-
-    id = None
-    english = Column(String())
-    french = Column(String())
-    alpha2 = Column(String(2))
-    alpha3 = Column(String(3), primary_key=True)
-    numeric_code = Column(Integer())
-
-
-@event.listens_for(Country.__table__, "after_create")
-def insert_countries(mapper, connection, checkfirst, _ddl_runner,
-                     _is_metadata_operation):
-    dir_path = os.path.dirname(os.path.realpath(__file__))
-    file_path = os.path.join(dir_path, '..', 'data', 'country_codes.tsv')
-
-    with connection.connection.cursor() as cur:
-        with open(file_path) as fp:
-            fp.readline()
-            # Default sep is tab
-            cur.copy_from(fp, 'country', columns=('english', 'french', 'alpha2',
-                                                  'alpha3', 'numeric_code'))
-    connection.connection.commit()
 
 class LocationAttr(Base):
 
