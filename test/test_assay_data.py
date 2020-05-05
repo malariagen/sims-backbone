@@ -299,7 +299,7 @@ class TestAssayDatum(TestBase):
             fetched.derivative_sample = None
             assert ad_samp == fetched, "upload != download response"
 
-            assert looked_up == ad_created
+            assert looked_up.derivative_sample_id == ad_created.derivative_sample_id
 
             api_instance.delete_assay_datum(ad_created.assay_datum_id)
             ds_api_instance.delete_derivative_sample(created1.derivative_sample_id)
