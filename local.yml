@@ -2,24 +2,10 @@ version: '2.4'
 
 volumes:
   local_postgres_data: {}
+  ldap_data_local: {}
+  ldap_config_local: {}
 
 services:
-  backbone_server: &backbone_server
-    build:
-      context: .
-      dockerfile: ./compose/local/backbone_server/Dockerfile
-    image: local_backbone_server
-    volumes:
-      - .:/app
-    depends_on:
-      - postgres
-    env_file:
-      - ./.envs/.local/.backbone_server
-      - ./.envs/.local/.postgres
-    ports:
-      - "8100:8080"
-    command: /start
-
   import: &import
     build:
       context: .
@@ -69,6 +55,16 @@ services:
       - 5432:5432
     env_file:
       - ./.envs/.local/.postgres
+
+  ldap:
+    image: osixia/openldap:1.2.4
+    env_file:
+      - ./.envs/.local/.ldap
+    volumes:
+      - ldap_data_local:/var/lib/ldap
+      - ldap_config_local:/etc/ldap/slap.d
+      - ../malariagen-cas/util/ldap/bootstrap/custom:/container/service/slapd/assets/config/bootstrap/ldif/custom
+    command: --copy-service --loglevel debug
 
 networks:
   default:

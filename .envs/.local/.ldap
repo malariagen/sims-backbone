@@ -1,0 +1,9 @@
+LDAP_DOMAIN=malariagen.net
+LDAP_TLS=false
+LDAP_REMOVE_CONFIG_AFTER_SETUP=false
+LDAP_RFC2307BIS_SCHEMA=true
+LDAP_ADMIN_PASSWORD=password
+BB_LDAP_SERVER=ldap://ldap
+BB_LDAP_USER=cn=admin,dc=malariagen,dc=net
+BB_LDAP_PASSWORD=password
+BB_LDAP_READONLY=False
