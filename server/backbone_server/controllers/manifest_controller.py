@@ -48,7 +48,7 @@ class ManifestController(BaseController):
         return rel, retcode
 
 
-    def create_manifest_item(self, manifest_id, original_sample_id, studies=None, user=None, auths=None):  # noqa: E501
+    def create_manifest_item(self, manifest_id, manifest_item, studies=None, user=None, auths=None):  # noqa: E501
         """Adds an item  to a manifest
 
          # noqa: E501
@@ -68,7 +68,7 @@ class ManifestController(BaseController):
             post = BaseManifest(self.get_engine(), self.get_session())
             manifest_id = urllib.parse.unquote_plus(manifest_id)
 
-            rel_item = post.post_member(manifest_id, original_sample_id, user, studies)
+            rel_item = post.post_member(manifest_id, manifest_item, user, studies)
         except DuplicateKeyException as dke:
             logging.getLogger(__name__).debug("create_manifest_item: %s", repr(dke))
             retcode = 422

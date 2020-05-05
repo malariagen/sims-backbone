@@ -173,7 +173,7 @@ class TestBase(unittest.TestCase):
             manifest_detail = TestBase.getDAO().download_manifest(manifest)
             for mi in manifest_detail.members.manifest_items:
                 TestBase.getDAO().delete_manifest_item(manifest,
-                                                       mi.original_sample_id)
+                                                       mi.manifest_item_id)
 
             TestBase.getDAO().delete_manifest(manifest)
 

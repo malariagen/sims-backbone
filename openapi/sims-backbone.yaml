@@ -143,10 +143,8 @@ paths:
     $ref: './sims-backbone/event_set/items.yaml'
   '/manifest/{manifest_id}':
     $ref: './sims-backbone/manifest/item.yaml'
-  '/manifest/{manifest_id}/os/{original_sample_id}':
+  '/manifest/{manifest_id}/item':
     $ref: './sims-backbone/manifest/manifest_item.yaml'
-  '/manifest/{manifest_id}/ds/{original_sample_id}':
-    $ref: './sims-backbone/manifest/ds_manifest_item.yaml'
   '/manifest_item/{manifest_item_id}':
     $ref: './sims-backbone/manifest_item/item.yaml'
   '/manifest/{manifest_id}/notes/{note_id}':

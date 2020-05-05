@@ -11,12 +11,9 @@
           required: true
           schema:
             type: string
-        - name: original_sample_id
-          in: path
-          description: ID of original_sample to add
-          required: true
-          schema:
-            type: string
+      requestBody:
+        $ref: "./sims-backbone.yaml#/components/requestBodies/ManifestItem"
+        description: The manifest item to create
       responses:
         "201":
           description: successful operation

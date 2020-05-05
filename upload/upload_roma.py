@@ -34,7 +34,7 @@ class Upload_ROMA(uploader.Uploader):
                         original_samples_to_delete.append(manifest_item.original_sample_id)
                         # print(f'Deleting {self._dao.download_original_sample(manifest_item.original_sample_id)}')
                         self._dao.delete_manifest_item(manifest_name,
-                                                       manifest_item.original_sample_id)
+                                                       manifest_item.manifest_item_id)
                     self._dao.delete_manifest(manifest_name)
                 except ApiException as e:
                     # print(e)

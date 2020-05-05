@@ -243,14 +243,13 @@ class TestROMA(TestBase):
 
             assert looked_up.count == 1
 
-            assert len(ds_looked_up.attrs) == 2
+            assert len(ds_looked_up.attrs) == 3
 
-            if ds_looked_up.attrs[0].attr_type == 'plate_position':
-                pl_attr = ds_looked_up.attrs[0]
-                pn_attr = ds_looked_up.attrs[1]
-            else:
-                pl_attr = ds_looked_up.attrs[1]
-                pn_attr = ds_looked_up.attrs[0]
+            for attr in ds_looked_up.attrs:
+                if attr.attr_type == 'plate_position':
+                    pl_attr = attr
+                if attr.attr_type == 'plate_name':
+                    pn_attr = attr
 
             assert pn_attr.attr_type == 'plate_name'
             assert pn_attr.attr_value == 'PLATE_ROM_00001'

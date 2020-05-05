@@ -86,7 +86,7 @@ class TestManifests(TestBase):
 
     """
     """
-    def test_create_member(self, api_factory):
+    def test_create_manifest_item(self, api_factory):
 
         api_instance = api_factory.ManifestApi()
 
@@ -97,7 +97,10 @@ class TestManifests(TestBase):
 
             os_created, created = self.create_original_sample(api_factory)
 
-            created_set = api_instance.create_manifest_item(manifest, os_created.original_sample_id)
+            manifest_item = openapi_client.ManifestItem(None,
+                                                        original_sample_id=os_created.original_sample_id)
+            created_set = api_instance.create_manifest_item(manifest,
+                                                            manifest_item)
             if not api_factory.is_authorized(None):
                 pytest.fail('Unauthorized call to create_manifest_item succeeded')
             fetched_set = api_instance.download_manifest(manifest)
@@ -106,9 +109,11 @@ class TestManifests(TestBase):
                 pytest.fail('Unauthorized call to download_manifest succeeded')
 
             assert fetched_set.members.count == 1
-            assert fetched_set.members.manifest_items[0].original_sample_id == os_created.original_sample_id
+            new_manifest_item = fetched_set.members.manifest_items[0]
+            assert new_manifest_item.original_sample_id == os_created.original_sample_id
 
-            api_instance.delete_manifest_item(manifest, os_created.original_sample_id)
+            api_instance.delete_manifest_item(manifest,
+                                              new_manifest_item.manifest_item_id)
 
             fetched_set = api_instance.download_manifest(manifest)
 
@@ -135,7 +140,10 @@ class TestManifests(TestBase):
 
             os_created, created = self.create_original_sample(api_factory)
 
-            created_item = api_instance.create_manifest_item(manifest, os_created.original_sample_id)
+            manifest_item = openapi_client.ManifestItem(None,
+                                                        original_sample_id=os_created.original_sample_id)
+            created_item = api_instance.create_manifest_item(manifest,
+                                                             manifest_item)
             if not api_factory.is_authorized(None):
                 pytest.fail('Unauthorized call to create_manifest_item succeeded')
             fetched_set = api_instance.download_manifest(manifest)
@@ -156,7 +164,8 @@ class TestManifests(TestBase):
 
             assert created_item == looked_up
 
-            api_instance.delete_manifest_item(manifest, os_created.original_sample_id)
+            api_instance.delete_manifest_item(manifest,
+                                              created_item.manifest_item_id)
 
             fetched_set = api_instance.download_manifest(manifest)
 
@@ -182,7 +191,9 @@ class TestManifests(TestBase):
 
             os_created, created = self.create_original_sample(api_factory)
 
-            created_item = api_instance.create_manifest_item(manifest, os_created.original_sample_id)
+            manifest_item = openapi_client.ManifestItem(None,
+                                                        original_sample_id=os_created.original_sample_id)
+            created_item = api_instance.create_manifest_item(manifest, manifest_item)
             if not api_factory.is_authorized(None):
                 pytest.fail('Unauthorized call to create_manifest_item succeeded')
             fetched_set = api_instance.download_manifest(manifest)
@@ -209,7 +220,8 @@ class TestManifests(TestBase):
 
             assert created_item == updated_item
 
-            api_instance.delete_manifest_item(manifest, os_created.original_sample_id)
+            api_instance.delete_manifest_item(manifest,
+                                              created_item.manifest_item_id)
 
             fetched_set = api_instance.download_manifest(manifest)
 
@@ -418,8 +430,13 @@ class TestManifests(TestBase):
 
             os_created2, created2 = self.create_original_sample(api_factory)
 
-            created_set = api_instance.create_manifest_item(manifest, os_created.original_sample_id)
-            created_set2 = api_instance.create_manifest_item(manifest, os_created2.original_sample_id)
+            manifest_item = openapi_client.ManifestItem(None,
+                                                        original_sample_id=os_created.original_sample_id)
+            created_set = api_instance.create_manifest_item(manifest, manifest_item)
+            manifest_item2 = openapi_client.ManifestItem(None,
+                                                        original_sample_id=os_created2.original_sample_id)
+            created_set2 = api_instance.create_manifest_item(manifest,
+                                                             manifest_item2)
             fetched_set1 = api_instance.download_manifest(manifest)
 
             assert fetched_set1.members.count == 2
@@ -443,8 +460,10 @@ class TestManifests(TestBase):
             assert fetched_set2.members.count == 2
             assert len(fetched_set2.notes) == 1
 
-            api_instance.delete_manifest_item(manifest, os_created.original_sample_id)
-            api_instance.delete_manifest_item(manifest, os_created2.original_sample_id)
+            api_instance.delete_manifest_item(manifest,
+                                              created_set.manifest_item_id)
+            api_instance.delete_manifest_item(manifest,
+                                              created_set2.manifest_item_id)
 
             fetched_set = api_instance.download_manifest(manifest)
 
@@ -512,12 +531,16 @@ class TestManifests(TestBase):
 
             os_created, created = self.create_original_sample(api_factory)
 
-            created_set = api_instance.create_manifest_item(manifest, os_created.original_sample_id)
+            manifest_item = openapi_client.ManifestItem(None,
+                                                        original_sample_id=os_created.original_sample_id)
+            created_set = api_instance.create_manifest_item(manifest, manifest_item)
 
             with pytest.raises(ApiException, status=422):
-                created_set = api_instance.create_manifest_item(manifest, os_created.original_sample_id)
+                created_set = api_instance.create_manifest_item(manifest,
+                                                                manifest_item)
 
-            api_instance.delete_manifest_item(manifest, os_created.original_sample_id)
+            api_instance.delete_manifest_item(manifest,
+                                              created_set.manifest_item_id)
 
             self.delete_original_sample(api_factory, os_created, created)
             api_instance.delete_manifest(manifest)
@@ -539,9 +562,12 @@ class TestManifests(TestBase):
 
             os_created, created = self.create_original_sample(api_factory)
 
-            created_set = api_instance.create_manifest_item(manifest, os_created.original_sample_id)
+            manifest_item = openapi_client.ManifestItem(None,
+                                                        original_sample_id=os_created.original_sample_id)
+            created_set = api_instance.create_manifest_item(manifest, manifest_item)
 
-            api_instance.delete_manifest_item(manifest, os_created.original_sample_id)
+            api_instance.delete_manifest_item(manifest,
+                                              created_set.manifest_item_id)
 
             with pytest.raises(ApiException, status=404):
                 api_instance.delete_manifest_item(manifest, os_created.original_sample_id)

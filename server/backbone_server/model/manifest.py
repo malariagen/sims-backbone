@@ -30,6 +30,7 @@ from backbone_server.model.manifest_note import ManifestNote
 
 from backbone_server.model.derivative_sample import DerivativeSample
 from backbone_server.model.original_sample import OriginalSample, BaseOriginalSample
+from backbone_server.model.derivative_sample import DerivativeSample, BaseDerivativeSample
 from backbone_server.model.assay_data import AssayDatum, BaseAssayDatum
 from backbone_server.model.history_meta import Versioned
 from backbone_server.model.base import SimsDbBase
@@ -77,6 +78,10 @@ class ManifestItem(Versioned, Base):
     original_sample_id = Column('original_sample_id',
                                 UUID(as_uuid=True),
                                 ForeignKey('original_sample.id'))
+    derivative_sample_id = Column('derivative_sample_id',
+                                  UUID(as_uuid=True),
+                                  ForeignKey('derivative_sample.id'))
+    derivative_sample_version = Column(Integer)
     manifest_id = Column('manifest_id',
                          UUID(as_uuid=True),
                          ForeignKey('manifest.id'))
@@ -99,13 +104,31 @@ class ManifestItem(Versioned, Base):
 
     def __repr__(self):
         return f'''<Manifest Item ID {self.id}
-    {self.manifest_id}
-    {self.original_sample_id}
-    {self.original_sample_version}
+    manifest id {self.manifest_id}
+    OS id {self.original_sample_id}
+    OS version {self.original_sample_version}
     {self.original_sample}
+    DS id {self.derivative_sample_id}
+    DS version {self.derivative_sample_version}
     assay data {self.assay_data}
     {self.attrs}
     >'''
+
+class ManifestDocument(Base):
+
+    __tablename__ = 'manifest_document'
+
+    id = None
+    created_by = None
+    updated_by = None
+    action_date = None
+
+    manifest_id = Column(UUID(as_uuid=True),
+                         ForeignKey('manifest.id'),
+                         primary_key=True)
+    document_id = Column(UUID(as_uuid=True),
+                         ForeignKey('document.id'),
+                         primary_key=True)
 
 class Manifest(Versioned, Base):
 
@@ -116,13 +139,16 @@ class Manifest(Versioned, Base):
 
     manifest_number = Column(Integer, Sequence('sims_manifest_num'), autoincrement="auto")
 
-    manifest_doc = Column('document_id',
-                          UUID(as_uuid=True),
-                          ForeignKey('document.id'))
+    manifest_file = Column('document_id',
+                           UUID(as_uuid=True),
+                           ForeignKey('document.id'))
 
     attrs = relationship("Attr", secondary='manifest_attr')
     notes = relationship("ManifestNote",
                          backref=backref('manifest'))
+
+    related_docs = relationship("Document",
+                                secondary=ManifestDocument.__table__)
 
     openapi_class = ApiManifest
     openapi_multiple_class = Manifests
@@ -131,7 +157,8 @@ class Manifest(Versioned, Base):
         return {
             'manifest_item': ManifestItem,
             'attrs': Attr,
-            'notes': ManifestNote
+            'notes': ManifestNote,
+            'related_docs': None
         }
 
     def __repr__(self):
@@ -190,16 +217,48 @@ class BaseManifestItem(SimsDbBase):
 
         return api_item
 
+    def db_map_related_docs(self, db, db_item, api_item, user):
+        if hasattr(api_item, 'related_docs') and api_item.related_docs:
+            related_docs = []
+            for related_doc in api_item.related_docs:
+                if related_doc.document_id in related_docs:
+                    raise DuplicateKeyException(f'Error duplicate related_docs {related_doc}')
+                related_docs.append(related_doc.document_id)
+                db_related_doc = db.query(Document).filter_by(id=related_doc.document_id).first()
+                if db_related_doc not in db_item.related_docs:
+                    db_item.related_docs.append(db_related_doc)
+            if related_docs:
+                related_docs_to_remove = []
+                for related_doc in db_item.related_docs:
+                    if related_doc.id not in related_docs:
+                        related_docs_to_remove.append(related_doc)
+                for related_doc in related_docs_to_remove:
+                    db_item.related_docs.remove(related_doc)
+        elif hasattr(db_item, 'related_docs'):
+            related_docs_to_remove = []
+            for related_doc in db_item.related_docs:
+                related_docs_to_remove.append(related_doc)
+            for related_doc in related_docs_to_remove:
+                db_item.related_docs.remove(related_doc)
+
     def db_map_actions(self, db, db_item, api_item, studies, user, **kwargs):
+
+        self.db_map_related_docs(db, db_item, api_item, user)
+
         if 'update_samples' in kwargs and kwargs['update_samples']:
+
             os_base = BaseOriginalSample(self.engine, self.session)
             os_item = os_base.get_no_close(db, api_item.original_sample_id, studies)
             os_json = json.dumps(os_item, ensure_ascii=False, cls=JSONEncoder)
             db_item.original_sample = os_json
 
-            db_items = db.query(AssayDatum.id).\
-                    join(DerivativeSample).\
-                    filter(DerivativeSample.original_sample_id == os_item.original_sample_id)
+            if db_item.derivative_sample_id:
+                db_items = db.query(AssayDatum.id).\
+                        filter(AssayDatum.derivative_sample_id == db_item.derivative_sample_id)
+            else:
+                db_items = db.query(AssayDatum.id).\
+                        join(DerivativeSample).\
+                        filter(DerivativeSample.original_sample_id == os_item.original_sample_id)
 
             ad_ids = []
             for ad_id in db_items.all():
@@ -383,37 +442,66 @@ class BaseManifest(SimsDbBase):
 
         return api_item
 
-
-    def post_member(self, manifest_name, original_sample_id, user, studies):
+    def post_member(self, manifest_name, manifest_item, user, studies):
 
         ri_item_id = None
         os_base = BaseOriginalSample(self.engine, self.session)
+        ds_base = BaseDerivativeSample(self.engine, self.session)
         bse = BaseManifestItem(self.engine, self.session)
 
         with session_scope(self.session) as db:
 
-            os_item = os_base.get_no_close(db, original_sample_id, studies)
-
-            if not os_item:
-                raise MissingKeyException(f"original sample does not exist {original_sample_id}")
-
             manifest_id = self.convert_to_id(db, manifest_name)
 
-            member = db.query(ManifestItem).filter(and_(ManifestItem.original_sample_id == original_sample_id,
-                                                        ManifestItem.manifest_id == manifest_id)).first()
-            if member:
-                raise DuplicateKeyException(f"{original_sample_id} already in {manifest_name}")
+            if manifest_item.derivative_sample_id:
+                ds_item = ds_base.get_no_close(db, manifest_item.derivative_sample_id, studies)
+
+                if not ds_item:
+                    raise MissingKeyException(f"derivative_sample does not exist {manifest_item.derivative_sample_id}")
+
+                if manifest_item.derivative_sample_version:
+                    if manifest_item.derivative_sample_version > ds_item.version:
+                        msg = f"derivative sample version does not exist {manifest_item.derivative_sample_id} {manifest_item.derivative_sample_version}"
+                        raise MissingKeyException(msg)
+                else:
+                    manifest_item.derivative_sample_version = ds_item.version
+
+                member = db.query(ManifestItem).filter(and_(ManifestItem.derivative_sample_id == manifest_item.derivative_sample_id,
+                                                            ManifestItem.manifest_id == manifest_id)).first()
+                if member:
+                    raise DuplicateKeyException(f"{manifest_item.derivative_sample_id} already in {manifest_name}")
+
+                if not manifest_item.original_sample_id:
+                    manifest_item.original_sample_id = ds_item.original_sample_id
+
+            if manifest_item.original_sample_id:
+                os_item = os_base.get_no_close(db, manifest_item.original_sample_id, studies)
+
+                if not os_item:
+                    raise MissingKeyException(f"original sample does not exist {manifest_item.original_sample_id}")
+
+                if manifest_item.original_sample_version:
+                    if manifest_item.original_sample_version > os_item.version:
+                        msg = f"original sample version does not exist {manifest_item.original_sample_id} {manifest_item.original_sample_version}"
+                        raise MissingKeyException(msg)
+
+                else:
+                    manifest_item.original_sample_version = os_item.version
+
+                member = db.query(ManifestItem).filter(and_(ManifestItem.original_sample_id == manifest_item.original_sample_id,
+                                                            ManifestItem.manifest_id == manifest_id)).first()
+                if member:
+                    raise DuplicateKeyException(f"{manifest_item.original_sample_id} already in {manifest_name}")
 
             ri_item = ManifestItem()
             ri_item.manifest_id = manifest_id
-            ri_item.original_sample_id = os_item.original_sample_id
-            ri_item.original_sample_version = os_item.version
             ri_item.created_by = user
-            api_item = ManifestItemApi(None,
-                                       original_sample_id=original_sample_id)
-            bse.db_map_actions(db, ri_item, api_item, studies, user,
+            bse.db_map_actions(db, ri_item, manifest_item, studies, user,
                                update_samples=True)
-
+            ri_item.original_sample_id = manifest_item.original_sample_id
+            ri_item.original_sample_version = manifest_item.original_sample_version
+            ri_item.derivative_sample_id = manifest_item.derivative_sample_id
+            ri_item.derivative_sample_version = manifest_item.derivative_sample_version
 
             db.add(ri_item)
 
@@ -452,7 +540,7 @@ class BaseManifest(SimsDbBase):
         return api_item
 
 
-    def delete_member(self, manifest_name, original_sample_id, studies):
+    def delete_member(self, manifest_name, manifest_item_id, studies):
 
         with session_scope(self.session) as db:
             db_item = db.query(self.db_class).filter_by(manifest_name=manifest_name).first()
@@ -460,11 +548,10 @@ class BaseManifest(SimsDbBase):
             if not db_item:
                 raise MissingKeyException(f"event set does not exist {manifest_name}")
 
-            os_item = db.query(ManifestItem).filter(and_(ManifestItem.original_sample_id == original_sample_id,
-                                                        ManifestItem.manifest_id == db_item.id)).first()
+            os_item = db.query(ManifestItem).get(manifest_item_id)
 
             if not os_item:
-                raise MissingKeyException(f"manifest_item does not exist {original_sample_id}")
+                raise MissingKeyException(f"manifest_item does not exist {manifest_item_id}")
 
             db.delete(os_item)
 

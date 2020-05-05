@@ -92,7 +92,7 @@ class ManifestProcessor(BaseEntity):
 
         manifest_item = None
         if not existing:
-            manifest_item = self._dao.create_manifest_item(manifest, original_sample.original_sample_id)
+            manifest_item = self._dao.create_manifest_item(manifest, samp)
             # print(f'created item {manifest_item}')
             self._item_cache[manifest][original_sample.original_sample_id] = manifest_item
         manifest_item = self._item_cache[manifest][original_sample.original_sample_id]
