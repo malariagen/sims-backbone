@@ -24,7 +24,8 @@ class DerivativeSampleProcessor(BaseEntity):
             'sanger_sample_id',
             'sequencescape_id',
             'sample_lims_id',
-            'sims_tmp_ds_id'
+            'sims_tmp_ds_id',
+            'unique_ds_id'
         ]
         self.attrs = [
             {
@@ -47,6 +48,9 @@ class DerivativeSampleProcessor(BaseEntity):
             },
             {
                 'from': 'plate_name'
+            },
+            {
+                'from': 'unique_ds_id'
             }
         ]
 
