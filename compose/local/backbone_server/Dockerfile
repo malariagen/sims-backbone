@@ -6,7 +6,7 @@ WORKDIR /app
 COPY ./server/bb_server/requirements.txt /tmp
 RUN pip3 install --no-cache-dir -r /tmp/requirements.txt
 COPY ./server/backbone_server/REQUIREMENTS /tmp/backbone_requirements.txt
-RUN apt-get install -y libpq-dev
+RUN apt-get update && apt-get install -y python-dev libldap2-dev libsasl2-dev libssl-dev libpq-dev
 RUN pip3 install --no-cache-dir -r /tmp/backbone_requirements.txt
 
 #COPY ./server .

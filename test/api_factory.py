@@ -14,6 +14,7 @@ from local.assay_data_api import LocalAssayDataApi
 from local.report_api import LocalReportApi
 from local.document_api import LocalDocumentApi
 from local.manifest_api import LocalManifestApi
+from local.identity_api import LocalIdentityApi
 
 import logging
 
@@ -202,5 +203,16 @@ class ApiFactory():
             ret = LocalManifestApi(self._api_client, self._user, self._auths, self._method)
         else:
             ret = openapi_client.ManifestApi(self._api_client)
+
+        return ret
+
+    def IdentityApi(self):
+
+        ret = None
+
+        if self.isLocal():
+            ret = LocalIdentityApi(self._api_client, self._user, self._auths, self._method)
+        else:
+            ret = openapi_client.IdentityApi(self._api_client)
 
         return ret

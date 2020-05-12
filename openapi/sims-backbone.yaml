@@ -151,6 +151,10 @@ paths:
     $ref: './sims-backbone/manifest/note.yaml'
   '/manifests':
     $ref: './sims-backbone/manifest/items.yaml'
+  '/identity/people':
+    $ref: './sims-backbone/identity/items.yaml'
+  '/identity/groups':
+    $ref: './sims-backbone/identity/groups.yaml'
   '/missingTaxon':
     get:
       tags:

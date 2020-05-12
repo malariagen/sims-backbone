@@ -9,6 +9,7 @@ from test_event_sets import TestEventSets
 from test_report import TestReport
 from test_individual import TestIndividual
 from test_document import TestDocument
+from test_identity import TestIdentity
 
 
 
@@ -24,6 +25,7 @@ def my_suite():
     suite.addTest(unittest.makeSuite(TestReport))
     suite.addTest(unittest.makeSuite(TestIndividual))
     suite.addTest(unittest.makeSuite(TestDocument))
+    suite.addTest(unittest.makeSuite(TestIdentity))
 
     runner = unittest.TextTestRunner()
     print(runner.run(suite))

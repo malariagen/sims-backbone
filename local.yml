@@ -6,6 +6,23 @@ volumes:
   ldap_config_local: {}
 
 services:
+  backbone_server: &backbone_server
+    build:
+      context: .
+      dockerfile: ./compose/local/backbone_server/Dockerfile
+    image: local_backbone_server
+    volumes:
+      - .:/app
+    depends_on:
+      - postgres
+    env_file:
+      - ./.envs/.local/.backbone_server
+      - ./.envs/.local/.postgres
+      - ./.envs/.local/.ldap
+    ports:
+      - "8100:8080"
+    command: /start
+
   import: &import
     build:
       context: .

@@ -1,0 +1,51 @@
+components:
+  schemas:
+    People:
+      type: object
+      description: 'LDAP people'
+      properties:
+        people:
+          type: array
+          items:
+            type: object
+            $ref: '#/components/schemas/Person'
+        count:
+          type: integer
+          description: Used when pagination is applied to return the number of results
+    Person:
+      type: object
+      description: 'Person details'
+      properties:
+        cn:
+          type: string
+        mail:
+          type: string
+        givenName:
+          type: string
+        sn:
+          type: string
+    Groups:
+      type: object
+      description: 'LDAP groups'
+      properties:
+        groups:
+          type: array
+          items:
+            type: object
+            $ref: '#/components/schemas/Group'
+        count:
+          type: integer
+          description: Used when pagination is applied to return the number of results
+    Group:
+      type: object
+      description: 'Group details'
+      properties:
+        cn:
+          type: string
+        description:
+          type: string
+        members:
+          type: array
+          items:
+            type: object
+            $ref: '#/components/schemas/Person'
