@@ -29,7 +29,7 @@
         },
         "reads": {
             "column": 5,
-            "type": "string"
+            "type": "integer"
         },
         "paired": {
             "column": 6,
@@ -58,11 +58,11 @@
         },
         "id_run": {
             "column": 12,
-            "type": "string"
+            "type": "integer"
         },
         "position": {
             "column": 13,
-            "type": "string"
+            "type": "integer"
         },
         "tag_index": {
             "column": 14,
@@ -70,7 +70,8 @@
         },
         "qc_complete": {
             "column": 15,
-            "type": "string"
+            "type": "datetime",
+            "format": "%Y-%m-%d %H:%M:%s"
         },
         "manual_qc": {
             "column": 16,
@@ -112,12 +113,24 @@
             "column": 25,
             "type": "string"
         },
-        "ebi_run_acc": {
+        "ebi_run_acc_alt": {
             "column": 26,
             "type": "string"
         },
-        "release": {
+        "legacy_library_id": {
             "column": 27,
+            "type": "integer"
+        },
+        "flowcell_barcode": {
+            "column": 28,
+            "type": "string"
+        },
+        "ebi_run_acc": {
+            "column": 29,
+            "type": "string"
+        },
+        "release": {
+            "column": 30,
             "type": "string"
         }
     }

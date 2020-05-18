@@ -74,6 +74,12 @@ class OriginalSampleProcessor(BaseEntity):
 
         return o_sample
 
+    def update_attr_cache(self, cache, found):
+
+        for attr in found.attrs:
+            if attr.attr_type in cache:
+                cache[attr.attr_type][attr.attr_value] = found
+
     def load_attr_cache(self, study_id, values):
 
         if study_id and study_id not in self._studies_cache:
@@ -88,10 +94,9 @@ class OriginalSampleProcessor(BaseEntity):
                     if found.sampling_event_id:
                         found_sampling_event = found_events.sampling_events[found.sampling_event_id]
                         found.sampling_event = found_sampling_event
-                    for attr in found.attrs:
-                        if attr.attr_type in cache:
-                            cache[attr.attr_type][attr.attr_value] = found
-                self._studies_cache[study_id] = cache
+                    self.update_attr_cache(cache, found)
+
+                self._studies_cache[study_id[:4]] = cache
             except ApiException as err:
                 #self._logger.debug("Error looking for {}".format(ident))
                 #print("Not found")
@@ -101,8 +106,8 @@ class OriginalSampleProcessor(BaseEntity):
 
         cache = None
 
-        if study_id and study_id in self._studies_cache:
-            cache = self._studies_cache[study_id]
+        if study_id and study_id[:4] in self._studies_cache:
+            cache = self._studies_cache[study_id[:4]]
         if cache and ident.attr_type in cache:
             if ident.attr_value in cache[ident.attr_type]:
                 found = cache[ident.attr_type][ident.attr_value]
@@ -267,10 +272,17 @@ class OriginalSampleProcessor(BaseEntity):
 
         if changed:
 
-            #print("Updating {} to {}".format(parsed, existing))
+            # print("Updating {} to {}".format(parsed, existing))
             try:
                 existing = self._dao.update_original_sample(existing.original_sample_id,
                                                             existing, user)
+
+                study_id = existing.study_name
+                # print(self._studies_cache)
+                if study_id[:4] in self._studies_cache:
+                    cache = self._studies_cache[study_id[:4]]
+                    self.update_attr_cache(cache, existing)
+
             except ApiException as err:
                 msg = "Error updating merged original sample {} {} {} {}".format(values, parsed, existing, err)
                 print(msg)
@@ -285,39 +297,12 @@ class OriginalSampleProcessor(BaseEntity):
 
     def merge_original_sample_objects(self, existing, samp, values):
 
-        #print('Merging original samples {} {} {}'.format(existing, samp, values))
+        # print('Merging original samples {} {} {}'.format(existing, samp, values))
         new_ident_value = False
 
         change_reasons = []
 
-        for new_ident in samp.attrs:
-            found = False
-            for existing_ident in existing.attrs:
-                #Depending on the DAO used the attr can have a different type
-                #so can't use ==
-                if existing_ident.attr_source == new_ident.attr_source and \
-                   existing_ident.attr_type == new_ident.attr_type and \
-                   existing_ident.attr_value == new_ident.attr_value and \
-                   existing_ident.study_name == new_ident.study_name:
-                    found = True
-                elif existing_ident.attr_type == new_ident.attr_type and \
-                   existing_ident.attr_value == new_ident.attr_value and \
-                   existing_ident.study_name == new_ident.study_name:
-                    #This section ignores anything after _ in the attr_source
-                    #This avoids having many duplicate attrs
-                    #when the date is part of the source
-                    parts = new_ident.attr_source.split('_')
-                    if len(parts) > 0:
-                        new_prefix = parts[0]
-                        parts = existing_ident.attr_source.split('_')
-                        if len(parts) > 0:
-                            existing_ident_prefix = parts[0]
-                            if new_prefix == existing_ident_prefix:
-                                found = True
-            if not found:
-                new_ident_value = True
-                change_reasons.append("Adding ident {}".format(new_ident))
-                existing.attrs.append(new_ident)
+        new_ident_value = self.merge_attrs(samp, existing, change_reasons)
 
 #        print("existing {} {}".format(existing, study_id))
         if samp.study_name:
@@ -357,7 +342,7 @@ class OriginalSampleProcessor(BaseEntity):
                 se_existing = self._dao.download_sampling_event(existing.sampling_event_id)
                 if samp.sampling_event_id:
                     se_samp = self._dao.download_sampling_event(samp.sampling_event_id)
-                    se = self.sampling_event_processor.merge_events(se_samp, se_existing, values)
+                    merged_event = self.sampling_event_processor.merge_events(se_existing, se_samp, values)
                     #print(se)
             else:
                 existing.sampling_event_id = samp.sampling_event_id
@@ -388,6 +373,6 @@ class OriginalSampleProcessor(BaseEntity):
                 existing.partner_species = samp.partner_species
                 new_ident_value = True
                 change_reasons.append('Set species')
-        #print('\n'.join(change_reasons))
+        # print('\n'.join(change_reasons))
 
         return existing, new_ident_value

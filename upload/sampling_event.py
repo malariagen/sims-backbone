@@ -498,6 +498,7 @@ class SamplingEventProcessor(BaseEntity):
 
         change_reasons = []
 
+        new_ident_value = self.merge_attrs(samp, existing, change_reasons)
 #        print("existing {} {}".format(existing, study_id))
         if samp.doc:
             if existing.doc:

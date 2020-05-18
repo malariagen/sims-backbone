@@ -19,19 +19,21 @@ class ManifestProcessor(BaseEntity):
         self._manifest_studies_cache = {}
         self._item_cache = {}
 
-    def create_manifest_item_from_values(self, values, original_sample):
+    def create_manifest_item_from_values(self, values, original_sample,
+                                         derivative_sample):
 
         if not original_sample:
             return None
 
-        r_sample = openapi_client.ManifestItem(None,
-                                               original_sample_id=original_sample.original_sample_id)
+        r_mi = openapi_client.ManifestItem(None, original_sample_id=original_sample.original_sample_id)
 
+        if derivative_sample:
+            r_mi.derivative_sample_id = derivative_sample.derivative_sample_id
         idents = []
 
-        r_sample.attrs = idents
+        r_mi.attrs = idents
 
-        return r_sample
+        return r_mi
 
     def lookup_manifest_item(self, samp, values):
 

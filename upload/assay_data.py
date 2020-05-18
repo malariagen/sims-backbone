@@ -41,6 +41,15 @@ class AssayDataProcessor(BaseEntity):
                 'from': 'position'
             },
             {
+                'from': 'legacy_library_id'
+            },
+            {
+                'from': 'flowcell_barcode'
+            },
+            {
+                'from': 'ebi_run_acc_alt'
+            },
+            {
                 'from': 'reads'
             }
         ]
@@ -199,20 +208,7 @@ class AssayDataProcessor(BaseEntity):
 
         change_reasons = []
 
-        for new_ident in samp.attrs:
-            found = False
-            for existing_ident in existing.attrs:
-                #Depending on the DAO used the attr can have a different type
-                #so can't use ==
-                if existing_ident.attr_source == new_ident.attr_source and \
-                   existing_ident.attr_type == new_ident.attr_type and \
-                   existing_ident.attr_value == new_ident.attr_value and \
-                   existing_ident.study_name == new_ident.study_name:
-                    found = True
-            if not found:
-                changed = True
-                change_reasons.append("Adding ident {}".format(new_ident))
-                existing.attrs.append(new_ident)
+        changed = self.merge_attrs(samp, existing, change_reasons)
 
         if samp.derivative_sample_id != existing.derivative_sample_id:
             #print(existing)

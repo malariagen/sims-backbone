@@ -111,3 +111,37 @@ class BaseEntity(object, metaclass=BaseEntityProperties):
         self._dao.create_event_set_item(event_set_id, sampling_event_id)
 
 
+    def merge_attrs(self, samp, existing, change_reasons):
+
+        changed = False
+        for new_ident in samp.attrs:
+            found = False
+            for existing_ident in existing.attrs:
+                #Depending on the DAO used the attr can have a different type
+                #so can't use ==
+                if existing_ident.attr_source == new_ident.attr_source and \
+                   existing_ident.attr_type == new_ident.attr_type and \
+                   existing_ident.attr_value == new_ident.attr_value and \
+                   existing_ident.study_name == new_ident.study_name:
+                    found = True
+                elif existing_ident.attr_type == new_ident.attr_type and \
+                   existing_ident.attr_value == new_ident.attr_value and \
+                   existing_ident.study_name == new_ident.study_name:
+                    #This section ignores anything after _ in the attr_source
+                    #This avoids having many duplicate attrs
+                    #when the date is part of the source
+                    parts = new_ident.attr_source.split('_')
+                    if len(parts) > 0:
+                        new_prefix = parts[0]
+                        parts = existing_ident.attr_source.split('_')
+                        if len(parts) > 0:
+                            existing_ident_prefix = parts[0]
+                            if new_prefix == existing_ident_prefix:
+                                found = True
+            if not found:
+                changed = True
+                change_reasons.append("Adding ident {}".format(new_ident))
+                existing.attrs.append(new_ident)
+
+        return changed
+
