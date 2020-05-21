@@ -1,0 +1,98 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR ORGANIZATION
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: 2020-05-21 10:54+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: pygettext.py 1.5\n"
+
+
+#: ../server/APPS/bulk_upload/parser.py:149
+msgid "Missing header(s): "
+msgstr ""
+
+#: ../server/APPS/bulk_upload/parser.py:155
+msgid "Duplicate header(s): "
+msgstr ""
+
+#: ../server/APPS/bulk_upload/parser.py:156
+msgid "Note that headers are case insensitive and ignore trailing and leading whitespace."
+msgstr ""
+
+#: ../server/APPS/register_samples/validators.py:144
+msgid "Unsupported manifest file mime-type \"%(mimetype)s\".  Please save manifest file as .csv or .xlsx."
+msgstr ""
+
+#: ../server/APPS/register_samples/validators.py:196
+msgid "No study specified"
+msgstr ""
+
+#: ../server/APPS/register_samples/validators.py:203
+msgid "Sample with external id %(external_id)s already exists in the manifest"
+msgstr ""
+
+#: ../server/APPS/register_samples/validators.py:219
+msgid "Sample with external id %(external_id)s is already registered in study %(study)s"
+msgstr ""
+
+#: ../server/APPS/register_samples/validators.py:243
+msgid "%(value)s is not a location registered with study project code %(study_project_code)s. If you want to add this location, please contact the Coordinator."
+msgstr ""
+
+#: ../server/APPS/register_samples/validators.py:263
+msgid "We can only validate bulk uploaded samples for a given study.  Please specify study"
+msgstr ""
+
+#: ../server/APPS/register_samples/validators.py:274
+#: ../server/APPS/register_samples/validators.py:292
+#: ../server/APPS/register_samples/validators.py:323
+msgid "Mandatory field \"%(field)s\" is missing"
+msgstr ""
+
+#: ../server/APPS/register_samples/validators.py:300
+#: ../server/APPS/register_samples/validators.py:307
+msgid "Collection Date '%(value)s' does not match format YYYY-MM-DD"
+msgstr ""
+
+#: ../server/APPS/register_samples/validators.py:314
+msgid "Collection Date '%(value)s' is in the future"
+msgstr ""
+
+#: ../server/APPS/register_samples/validators.py:333
+msgid "Field  contains a formula {value}"
+msgstr ""
+
+#: ../server/APPS/register_samples/validators.py:392
+msgid "%(msg)s"
+msgstr ""
+
+#: ../server/APPS/register_samples/validators.py:444
+#: ../server/APPS/register_samples/validators.py:456
+msgid "Invalid value at row %(row_1idx)d , column \"%(col)s\": %(msg)s"
+msgstr ""
+
+#: ../server/APPS/register_samples/validators.py:510
+msgid "Required worksheet '%(expected_sample_sheet_name)s' doesn't exist"
+msgstr ""
+
+#: ../server/APPS/register_samples/validators.py:514
+msgid "Invalid manifest file.  Please save your manifest as .csv or .xlsx format.  %(msg)s"
+msgstr ""
+
+#: ../server/APPS/register_samples/validators.py:523
+msgid "Unable to parse header.  %(msg)s"
+msgstr ""
+
+#: ../server/APPS/register_samples/validators.py:578
+#: ../server/APPS/register_samples/validators.py:588
+msgid "Error at worksheet \"%(config_sheet_name)s\", coordinate %(coord)s,  column \"%(col)s\": %(msg)s"
+msgstr ""
+
