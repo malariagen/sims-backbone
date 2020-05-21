@@ -558,133 +558,133 @@ class TestValidateManifestExcel(TestBase):
                 print("Deleting test file " + str(workbook_fname))
                 os.remove(workbook_fname)
 
-        def test_invalid_date(self):
-            """
-            GIVEN:  I upload a sample xlsx containing a Samples worksheet with a collection date that is in wrong format
-            WHEN:  we validate the worksheet
-            THEN: we get a ValidationError with an InvalidField code
+    def test_invalid_date(self):
+        """
+        GIVEN:  I upload a sample xlsx containing a Samples worksheet with a collection date that is in wrong format
+        WHEN:  we validate the worksheet
+        THEN: we get a ValidationError with an InvalidField code
 
-            """
-            workbook_fname = None
-            try:
+        """
+        workbook_fname = None
+        try:
 
-                TOTAL_ROWS = 3
+            TOTAL_ROWS = 3
 
-                manifest_config_ini = helpers.DEFAULT_MANIFEST_CONFIG_INI
-                manifest_config = BulkUploadExcelConfig(
-                    header_config_file=manifest_config_ini)
-                nice_headers, db_to_nice_header, nice_to_db_header = manifest_config.read_header_config()
-                config_sheet_name = manifest_config.get_config_sheet_name()
+            manifest_config_ini = helpers.DEFAULT_MANIFEST_CONFIG_INI
+            manifest_config = BulkUploadExcelConfig(
+                header_config_file=manifest_config_ini)
+            nice_headers, db_to_nice_header, nice_to_db_header = manifest_config.read_header_config()
+            config_sheet_name = manifest_config.get_config_sheet_name()
 
-                # There appears to be a difference in functionality of write only vs
-                # read-write workbooks in that read-write workbooks write out the dimensions to the sheet xml.
-                wb = Workbook()
-                ws = wb.create_sheet(title=config_sheet_name)
+            # There appears to be a difference in functionality of write only vs
+            # read-write workbooks in that read-write workbooks write out the dimensions to the sheet xml.
+            wb = Workbook()
+            ws = wb.create_sheet(title=config_sheet_name)
 
-                # Set the header
-                ws.append((db_to_nice_header["external_id"], db_to_nice_header["collection_date"],
-                           db_to_nice_header["location_id"], db_to_nice_header["note"]))
+            # Set the header
+            ws.append((db_to_nice_header["external_id"], db_to_nice_header["collection_date"],
+                       db_to_nice_header["location_id"], db_to_nice_header["note"]))
 
-                # Fill in the rows
-                for irow in range(TOTAL_ROWS):
-                    external_id_cell = Cell(ws, value="Sample" + str(irow))
-                    # If we keep this as datetime.date, then openpyxl will convert to Date excel format, and display format doesn't matter
-                    # We want string so that the way it is displayed affects how its parsed.
-                    date_cell = Cell(ws, value=datetime.date(
-                        year=2000, month=1, day=19).strftime("%Y"))
-                    loc_cell = Cell(
-                        ws, value="Made up location that doesn't exist anywhere")
-                    note_cell = Cell(ws, value=None)
-                    row = (external_id_cell, date_cell, loc_cell, note_cell)
+            # Fill in the rows
+            for irow in range(TOTAL_ROWS):
+                external_id_cell = Cell(ws, value="Sample" + str(irow))
+                # If we keep this as datetime.date, then openpyxl will convert to Date excel format, and display format doesn't matter
+                # We want string so that the way it is displayed affects how its parsed.
+                date_cell = Cell(ws, value=datetime.date(
+                    year=2000, month=1, day=19).strftime("%Y"))
+                loc_cell = Cell(
+                    ws, value="Made up location that doesn't exist anywhere")
+                note_cell = Cell(ws, value=None)
+                row = (external_id_cell, date_cell, loc_cell, note_cell)
 
-                    ws.append(row)
+                ws.append(row)
 
-                tmp = tempfile.NamedTemporaryFile(
-                    suffix=".xlsx", prefix="wrongDate_SampleManifest", delete=False)
-                tmp.close()
-                workbook_fname = tmp.name
-                wb.save(tmp.name)
+            tmp = tempfile.NamedTemporaryFile(
+                suffix=".xlsx", prefix="wrongDate_SampleManifest", delete=False)
+            tmp.close()
+            workbook_fname = tmp.name
+            wb.save(tmp.name)
 
-                total_samples = 0
-                validator = BulkAddSamplesValidatorFactory.create_validator(manifest_file=workbook_fname,
-                                                                            manifest_file_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                                                                            study=self.study, sample_lookup_func=self.lookup_sample_func)
-                with pytest.raises(ValidationError) as e:
+            total_samples = 0
+            validator = BulkAddSamplesValidatorFactory.create_validator(manifest_file=workbook_fname,
+                                                                        manifest_file_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                                                                        study=self.study, sample_lookup_func=self.lookup_sample_func)
+            with pytest.raises(ValidationError) as e:
 
-                    for sample_dict in validator.validate_manifest_file():
-                        if sample_dict and len(sample_dict):
-                            total_samples += 1
-                assert e.value.code == FieldError.INVALID_DATE, "Expected invalid field exception for invalid date but got " + str(e.value.code)
-                assert all(c in string.printable for c in str(e.value)), "The Invalid Field Validation Error has not been properly interpolated"
-                assert total_samples == 0, "Expected no samples but got " + str(total_samples)
+                for sample_dict in validator.validate_manifest_file():
+                    if sample_dict and len(sample_dict):
+                        total_samples += 1
+            assert e.value.code == FieldError.INVALID_DATE, "Expected invalid field exception for invalid date but got " + str(e.value.code)
+            assert all(c in string.printable for c in str(e.value)), "The Invalid Field Validation Error has not been properly interpolated"
+            assert total_samples == 0, "Expected no samples but got " + str(total_samples)
 
-            finally:
-                if workbook_fname and os.path.exists(workbook_fname):
-                    print("Deleting test file " + str(workbook_fname))
-                    os.remove(workbook_fname)
+        finally:
+            if workbook_fname and os.path.exists(workbook_fname):
+                print("Deleting test file " + str(workbook_fname))
+                os.remove(workbook_fname)
 
-        def test_invalid_future_date(self):
-            """
-            GIVEN:  I upload a sample xlsx containing a Samples worksheet with
-            a collection date that is in the future
-            WHEN:  we validate the worksheet
-            THEN: we get a ValidationError with an InvalidField code
+    def test_invalid_future_date(self):
+        """
+        GIVEN:  I upload a sample xlsx containing a Samples worksheet with
+        a collection date that is in the future
+        WHEN:  we validate the worksheet
+        THEN: we get a ValidationError with an InvalidField code
 
-            """
-            workbook_fname = None
-            try:
+        """
+        workbook_fname = None
+        try:
 
-                TOTAL_ROWS = 3
+            TOTAL_ROWS = 3
 
-                manifest_config_ini = helpers.DEFAULT_MANIFEST_CONFIG_INI
-                manifest_config = BulkUploadExcelConfig(
-                    header_config_file=manifest_config_ini)
-                nice_headers, db_to_nice_header, nice_to_db_header = manifest_config.read_header_config()
-                config_sheet_name = manifest_config.get_config_sheet_name()
+            manifest_config_ini = helpers.DEFAULT_MANIFEST_CONFIG_INI
+            manifest_config = BulkUploadExcelConfig(
+                header_config_file=manifest_config_ini)
+            nice_headers, db_to_nice_header, nice_to_db_header = manifest_config.read_header_config()
+            config_sheet_name = manifest_config.get_config_sheet_name()
 
-                # There appears to be a difference in functionality of write only vs
-                # read-write workbooks in that read-write workbooks write out the dimensions to the sheet xml.
-                wb = Workbook()
-                ws = wb.create_sheet(title=config_sheet_name)
+            # There appears to be a difference in functionality of write only vs
+            # read-write workbooks in that read-write workbooks write out the dimensions to the sheet xml.
+            wb = Workbook()
+            ws = wb.create_sheet(title=config_sheet_name)
 
-                # Set the header
-                ws.append((db_to_nice_header["external_id"], db_to_nice_header["collection_date"],
-                           db_to_nice_header["location_id"], db_to_nice_header["note"]))
+            # Set the header
+            ws.append((db_to_nice_header["external_id"], db_to_nice_header["collection_date"],
+                       db_to_nice_header["location_id"], db_to_nice_header["note"]))
 
-                # Fill in the rows
-                for irow in range(TOTAL_ROWS):
-                    external_id_cell = Cell(ws, value="Sample" + str(irow))
-                    date_cell = Cell(ws, value=datetime.date(year=2100, month=1, day=19))
-                    loc_cell = Cell(
-                        ws, value="Made up location that doesn't exist anywhere")
-                    note_cell = Cell(ws, value=None)
-                    row = (external_id_cell, date_cell, loc_cell, note_cell)
+            # Fill in the rows
+            for irow in range(TOTAL_ROWS):
+                external_id_cell = Cell(ws, value="Sample" + str(irow))
+                date_cell = Cell(ws, value=datetime.date(year=2100, month=1, day=19))
+                loc_cell = Cell(
+                    ws, value="Made up location that doesn't exist anywhere")
+                note_cell = Cell(ws, value=None)
+                row = (external_id_cell, date_cell, loc_cell, note_cell)
 
-                    ws.append(row)
+                ws.append(row)
 
-                tmp = tempfile.NamedTemporaryFile(
-                    suffix=".xlsx", prefix="wrongDate_SampleManifest", delete=False)
-                tmp.close()
-                workbook_fname = tmp.name
-                wb.save(tmp.name)
+            tmp = tempfile.NamedTemporaryFile(
+                suffix=".xlsx", prefix="wrongDate_SampleManifest", delete=False)
+            tmp.close()
+            workbook_fname = tmp.name
+            wb.save(tmp.name)
 
-                total_samples = 0
-                validator = BulkAddSamplesValidatorFactory.create_validator(manifest_file=workbook_fname,
-                                                                            manifest_file_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                                                                            study=self.study, sample_lookup_func=self.lookup_sample_func)
-                with pytest.raises(ValidationError) as e:
+            total_samples = 0
+            validator = BulkAddSamplesValidatorFactory.create_validator(manifest_file=workbook_fname,
+                                                                        manifest_file_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                                                                        study=self.study, sample_lookup_func=self.lookup_sample_func)
+            with pytest.raises(ValidationError) as e:
 
-                    for sample_dict in validator.validate_manifest_file():
-                        if sample_dict and len(sample_dict):
-                            total_samples += 1
-                assert e.value.code == FieldError.INVALID_DATE, "Expected invalid field exception for invalid date but got " + str(e.value.code)
-                assert all(c in string.printable for c in str(e.value)), "The Invalid Field Validation Error has not been properly interpolated"
-                assert total_samples == 0, "Expected no samples but got " + str(total_samples)
+                for sample_dict in validator.validate_manifest_file():
+                    if sample_dict and len(sample_dict):
+                        total_samples += 1
+            assert e.value.code == FieldError.INVALID_DATE, "Expected invalid field exception for invalid date but got " + str(e.value.code)
+            assert all(c in string.printable for c in str(e.value)), "The Invalid Field Validation Error has not been properly interpolated"
+            assert total_samples == 0, "Expected no samples but got " + str(total_samples)
 
-            finally:
-                if workbook_fname and os.path.exists(workbook_fname):
-                    print("Deleting test file " + str(workbook_fname))
-                    os.remove(workbook_fname)
+        finally:
+            if workbook_fname and os.path.exists(workbook_fname):
+                print("Deleting test file " + str(workbook_fname))
+                os.remove(workbook_fname)
 
     def test_missing_samples_worksheet(self):
         """
@@ -1205,6 +1205,86 @@ class TestValidateManifestExcel(TestBase):
 #            self.assertTrue(all(c in string.printable for c in str(e.exception)),
 #                            msg="The Invalid Field Validation Error has not been properly interpolated")
             assert total_samples == TOTAL_ROWS, "Expected all samples but got " + str(total_samples)
+
+        finally:
+            if workbook_fname and os.path.exists(workbook_fname):
+                print("Deleting test file " + str(workbook_fname))
+                os.remove(workbook_fname)
+
+    def test_invalid_unethical_date(self):
+        """
+        GIVEN:  I upload a sample xlsx containing a Samples worksheet with
+        a collection date that is unethical
+        WHEN:  we validate the worksheet
+        THEN: we get a ValidationError with an InvalidField code
+
+        """
+        workbook_fname = None
+        try:
+
+            TOTAL_ROWS = 3
+
+            manifest_config_ini = helpers.DEFAULT_MANIFEST_CONFIG_INI
+            manifest_config = BulkUploadExcelConfig(
+                header_config_file=manifest_config_ini)
+            nice_headers, db_to_nice_header, nice_to_db_header = manifest_config.read_header_config()
+            config_sheet_name = manifest_config.get_config_sheet_name()
+
+            # There appears to be a difference in functionality of write only vs
+            # read-write workbooks in that read-write workbooks write out the dimensions to the sheet xml.
+            wb = Workbook()
+            ws = wb.create_sheet(title=config_sheet_name)
+
+            # Set the header
+            ws.append((db_to_nice_header["external_id"], db_to_nice_header["collection_date"],
+                       db_to_nice_header["location_id"], db_to_nice_header["note"]))
+
+            # Fill in the rows
+            year = 1910
+            for irow in range(TOTAL_ROWS):
+                external_id_cell = Cell(ws, value="Sample" + str(irow))
+                date_cell = Cell(ws, value=datetime.date(year=year,
+                                                         month=1, day=20))
+                year += 100
+                loc_cell = Cell(
+                    ws, value=self.location.curated_name)
+                note_cell = Cell(ws, value=None)
+                row = (external_id_cell, date_cell, loc_cell, note_cell)
+
+                ws.append(row)
+
+            tmp = tempfile.NamedTemporaryFile(
+                suffix=".xlsx", prefix="unethicalDate_SampleManifest", delete=False)
+            tmp.close()
+            workbook_fname = tmp.name
+            wb.save(tmp.name)
+
+            total_samples = 0
+            self.study.ethics_expiry = datetime.date(year=2010, month=1,
+                                                     day=19)
+            validator = BulkAddSamplesValidatorFactory.create_validator(manifest_file=workbook_fname,
+                                                                        manifest_file_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                                                                        is_raise_field_err=False,
+                                                                        study=self.study, sample_lookup_func=self.lookup_sample_func)
+
+            errors = []
+            total_errors = 0
+            for sample_dict in validator.validate_manifest_file():
+                if sample_dict["valid"]:
+                    if sample_dict and len(sample_dict):
+                        total_samples += 1
+                else:
+                    total_errors += 1
+                    errors += sample_dict["errors"]
+
+            assert total_errors == 2
+            assert total_samples == 1, "Expected no samples but got " + str(total_samples)
+            err_msgs = [
+            "Failed validation for coord = B4, field='collection_date', value='2110-01-20 00:00:00' [\"Collection Date '2110-01-20 00:00:00' is in the future,Collection Date '2110-01-20 00:00:00' is after the ethics approval has expired\"]",
+                "Failed validation for coord = B3, field='collection_date', value='2010-01-20 00:00:00' [\"Collection Date '2010-01-20 00:00:00' is after the ethics approval has expired\"]"
+            ]
+            for idx, val in enumerate(errors):
+                assert val in err_msgs
 
         finally:
             if workbook_fname and os.path.exists(workbook_fname):

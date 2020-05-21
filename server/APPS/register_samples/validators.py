@@ -310,8 +310,16 @@ class BulkAddSamplesValidator(metaclass=ABCMeta):
 
             present = datetime.datetime.date(datetime.datetime.now())
 
+            msg = ''
             if validated_value > present:
-                raise FieldError(_("Collection Date '%(value)s' is in the future"),
+                msg = _("Collection Date '%(value)s' is in the future")
+            if self.study.ethics_expiry:
+                if validated_value > self.study.ethics_expiry:
+                    if msg:
+                        msg += ","
+                    msg += _("Collection Date '%(value)s' is after the ethics approval has expired")
+            if msg:
+                raise FieldError(msg,
                                  params={"value": value},
                                  code=FieldError.INVALID_DATE)
 
@@ -330,7 +338,7 @@ class BulkAddSamplesValidator(metaclass=ABCMeta):
 
 # In theory data_only=True means this shouldn't be possible
         if cell and cell.data_type == TYPE_FORMULA:
-            raise FieldError(_('Field  contains a formula {value}'),
+            raise FieldError(_('Field contains a formula {value}'),
                              params={"value": value},
                              code=FieldError.FORMULA)
 

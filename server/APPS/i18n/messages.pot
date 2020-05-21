@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2020-05-21 10:54+0100\n"
+"POT-Creation-Date: 2020-05-21 11:48+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -53,7 +53,7 @@ msgstr ""
 
 #: ../server/APPS/register_samples/validators.py:274
 #: ../server/APPS/register_samples/validators.py:292
-#: ../server/APPS/register_samples/validators.py:323
+#: ../server/APPS/register_samples/validators.py:331
 msgid "Mandatory field \"%(field)s\" is missing"
 msgstr ""
 
@@ -62,37 +62,41 @@ msgstr ""
 msgid "Collection Date '%(value)s' does not match format YYYY-MM-DD"
 msgstr ""
 
-#: ../server/APPS/register_samples/validators.py:314
+#: ../server/APPS/register_samples/validators.py:315
 msgid "Collection Date '%(value)s' is in the future"
 msgstr ""
 
-#: ../server/APPS/register_samples/validators.py:333
-msgid "Field  contains a formula {value}"
+#: ../server/APPS/register_samples/validators.py:320
+msgid "Collection Date '%(value)s' is after the ethics approval has expired"
 msgstr ""
 
-#: ../server/APPS/register_samples/validators.py:392
+#: ../server/APPS/register_samples/validators.py:341
+msgid "Field contains a formula {value}"
+msgstr ""
+
+#: ../server/APPS/register_samples/validators.py:400
 msgid "%(msg)s"
 msgstr ""
 
-#: ../server/APPS/register_samples/validators.py:444
-#: ../server/APPS/register_samples/validators.py:456
+#: ../server/APPS/register_samples/validators.py:452
+#: ../server/APPS/register_samples/validators.py:464
 msgid "Invalid value at row %(row_1idx)d , column \"%(col)s\": %(msg)s"
 msgstr ""
 
-#: ../server/APPS/register_samples/validators.py:510
+#: ../server/APPS/register_samples/validators.py:518
 msgid "Required worksheet '%(expected_sample_sheet_name)s' doesn't exist"
 msgstr ""
 
-#: ../server/APPS/register_samples/validators.py:514
+#: ../server/APPS/register_samples/validators.py:522
 msgid "Invalid manifest file.  Please save your manifest as .csv or .xlsx format.  %(msg)s"
 msgstr ""
 
-#: ../server/APPS/register_samples/validators.py:523
+#: ../server/APPS/register_samples/validators.py:531
 msgid "Unable to parse header.  %(msg)s"
 msgstr ""
 
-#: ../server/APPS/register_samples/validators.py:578
-#: ../server/APPS/register_samples/validators.py:588
+#: ../server/APPS/register_samples/validators.py:586
+#: ../server/APPS/register_samples/validators.py:596
 msgid "Error at worksheet \"%(config_sheet_name)s\", coordinate %(coord)s,  column \"%(col)s\": %(msg)s"
 msgstr ""
 
