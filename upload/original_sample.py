@@ -82,13 +82,14 @@ class OriginalSampleProcessor(BaseEntity):
 
     def load_attr_cache(self, study_id, values):
 
-        if study_id and study_id not in self._studies_cache:
+        if study_id and study_id[:4] not in self._studies_cache:
             cache = {
                 'roma_id': {},
                 'oxford_id': {},
                 'unique_os_id': {}
             }
             try:
+                # print(f'Downloading os for study {study_id} {self._studies_cache.keys()}')
                 found_events = self._dao.download_original_samples_by_study(study_id)
                 for found in found_events.original_samples:
                     if found.sampling_event_id:
