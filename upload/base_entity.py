@@ -122,11 +122,11 @@ class BaseEntity(object, metaclass=BaseEntityProperties):
                 if existing_ident.attr_source == new_ident.attr_source and \
                    existing_ident.attr_type == new_ident.attr_type and \
                    existing_ident.attr_value == new_ident.attr_value and \
-                   existing_ident.study_name == new_ident.study_name:
+                   existing_ident.study_name[:4] == new_ident.study_name[:4]:
                     found = True
                 elif existing_ident.attr_type == new_ident.attr_type and \
-                   existing_ident.attr_value == new_ident.attr_value and \
-                   existing_ident.study_name == new_ident.study_name:
+                       existing_ident.attr_value == new_ident.attr_value and \
+                       existing_ident.study_name[:4] == new_ident.study_name[:4]:
                     #This section ignores anything after _ in the attr_source
                     #This avoids having many duplicate attrs
                     #when the date is part of the source
@@ -144,4 +144,3 @@ class BaseEntity(object, metaclass=BaseEntityProperties):
                 existing.attrs.append(new_ident)
 
         return changed
-
