@@ -1737,7 +1737,7 @@ class TestOriginalSample(TestBase):
             from decimal import Decimal
             from datetime import date
             samp = openapi_client.OriginalSample(None, study_name='4039-MD-UP')
-            samp.attrs = [
+            test_attrs = [
                 openapi_client.Attr(attr_type='oxford_str', attr_value='123456'),
                 openapi_client.Attr(attr_type='oxford_int', attr_value=12345),
                 openapi_client.Attr(attr_type='oxford_float', attr_value=123.45)
@@ -1747,9 +1747,11 @@ class TestOriginalSample(TestBase):
                 # Doesn't serialize
                 # openapi_client.Attr(attr_type='oxford_Decimal', attr_value=Decimal(1234.5))
             ]
+            import copy
+            samp.attrs = copy.deepcopy(test_attrs)
             created = api_instance.create_original_sample(samp)
 
-            for attr in samp.attrs:
+            for attr in test_attrs:
                 results = api_instance.download_original_samples_by_attr(attr.attr_type,
                                                                          attr.attr_value)
 
@@ -1769,6 +1771,8 @@ class TestOriginalSample(TestBase):
 
                 fetched.original_sample_id = None
                 fetched.version = None
+                samp.attrs = copy.deepcopy(test_attrs)
+                self.compare_attrs(samp, fetched)
                 assert samp == fetched, f"upload {samp} != download response {fetched}"
 
             # api_instance.delete_original_sample(created.original_sample_id)
