@@ -116,17 +116,23 @@ class BaseEntity(object, metaclass=BaseEntityProperties):
         changed = False
         for new_ident in samp.attrs:
             found = False
+            new_study = new_ident.study_name
+            if new_study:
+                new_study = new_ident.study_name[:4]
             for existing_ident in existing.attrs:
+                existing_study = existing_ident.study_name
+                if existing_study:
+                    existing_study = existing_ident.study_name[:4]
                 #Depending on the DAO used the attr can have a different type
                 #so can't use ==
                 if existing_ident.attr_source == new_ident.attr_source and \
                    existing_ident.attr_type == new_ident.attr_type and \
                    existing_ident.attr_value == new_ident.attr_value and \
-                   existing_ident.study_name[:4] == new_ident.study_name[:4]:
+                   existing_study == new_study:
                     found = True
                 elif existing_ident.attr_type == new_ident.attr_type and \
                        existing_ident.attr_value == new_ident.attr_value and \
-                       existing_ident.study_name[:4] == new_ident.study_name[:4]:
+                       existing_study == new_study:
                     #This section ignores anything after _ in the attr_source
                     #This avoids having many duplicate attrs
                     #when the date is part of the source
