@@ -1,6 +1,9 @@
+import os
+
 from sqlalchemy.sql import func
 from sqlalchemy import MetaData, Column
 from sqlalchemy import Integer, String, Text, DateTime
+from sqlalchemy import event
 from sqlalchemy.types import JSON
 
 
@@ -52,3 +55,19 @@ class BaseArchive():
 
         self.db_class = Archive
         self.api_id = 'id'
+
+@event.listens_for(Archive.__table__, "after_create")
+def setup_alembic(mapper, connection, checkfirst, _ddl_runner,
+                  _is_metadata_operation):
+    dir_path = os.path.dirname(os.path.realpath(__file__))
+    from alembic.config import Config
+    from alembic import command
+    file_path = os.path.join(dir_path, '..', 'alembic.ini')
+    alembic_cfg = Config(file_path)
+    script_path = os.path.join(dir_path, '..', 'alembic')
+    alembic_cfg.set_main_option("script_location", script_path)
+    from backbone_server.controllers.base_controller import BaseController
+    url = BaseController.get_connection_url()
+    alembic_cfg.set_main_option("sqlalchemy.url", url)
+
+    command.stamp(alembic_cfg, "head")

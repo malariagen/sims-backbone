@@ -46,21 +46,40 @@ class BaseController():
     def get_session(self):
         return self._session
 
+    @staticmethod
+    def get_connection_config():
+
+        config = {
+            'user': os.getenv('POSTGRES_USER', os.getenv('USER')),
+            'database': os.getenv('POSTGRES_DB', 'backbone_service'),
+            'password': os.getenv('POSTGRES_PASSWORD', None),
+            'host': os.getenv('POSTGRES_HOST', 'localhost'),
+            'port': os.getenv('POSTGRES_PORT', 5432),
+        }
+
+        return config
+
+    @staticmethod
+    def get_connection_url():
+
+        config = BaseController.get_connection_config()
+        url = 'postgresql+psycopg2://' + config['user']
+        if config['password']:
+            url += ':' + config['password']
+        url += '@' + config['host']
+        url += ':' + config['port']
+        url += '/' + config['database']
+
+        return url
+
     def _init_connection(self):
         _postgres = True
 
         if _postgres:
+            config = BaseController.get_connection_config()
             import psycopg2
             from psycopg2.extras import register_uuid
             from psycopg2.extras import LoggingConnection
-
-            config = {
-                'user': os.getenv('POSTGRES_USER', os.getenv('USER')),
-                'database': os.getenv('POSTGRES_DB', 'backbone_service'),
-                'password': os.getenv('POSTGRES_PASSWORD', None),
-                'host': os.getenv('POSTGRES_HOST', 'localhost'),
-                'port': os.getenv('POSTGRES_PORT', 5432),
-            }
 
             psycopg2.extensions.register_type(register_uuid())
             psycopg2.extensions.register_type(psycopg2.extensions.UNICODE)
@@ -72,12 +91,8 @@ class BaseController():
             log = False
             if os.getenv('SA_DEBUG'):
                 log = True
-            url = 'postgresql+psycopg2://' + config['user']
-            if config['password']:
-                url += ':' + config['password']
-            url += '@' + config['host']
-            url += ':' + config['port']
-            url += '/' + config['database']
+
+            url = BaseController.get_connection_url()
 
             global engine
 
