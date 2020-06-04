@@ -27,6 +27,7 @@ class Archive(Base):
     output_value = Column(JSON())
     result_code = Column(Integer())
     action_date = Column(DateTime(), server_default=func.now())
+    duration = Column(Integer())
 
     openapi_class = LogItem
     openapi_multiple_class = LogItems
