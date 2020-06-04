@@ -426,7 +426,7 @@ class SimsDbBase():
             from backbone_server.model.attr import Attr
             attr_items = db.query(Attr.attr_type).\
                         join(self.attr_link).\
-                        distinct(Attr.attr_type)
+                        group_by(Attr.attr_type)
             if attr_items:
                 ret.attr_types = []
                 for attr in attr_items:
