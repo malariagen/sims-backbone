@@ -33,6 +33,8 @@ def log_this(controller, original_function):
         # if kwargs is not None:
         #    for key, value in kwargs.items():
         #        print("%s == %s"%(key,value))
+        import time
+        start = time.time()
         x = original_function(*args, **kwargs)
 
         if isinstance(x, flask.Response):
@@ -43,8 +45,12 @@ def log_this(controller, original_function):
             status = x[1]
             resp = x[0]
 
-        controller.log_action(user, func_name, None, log_args, resp, status)
+        total = time.time() - start
 
+        controller.log_action(user, func_name, None, log_args, resp, status,
+                              total)
+
+        # print(f'{func_name} took {total}')
         return x
     return new_function
 

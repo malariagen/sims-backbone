@@ -180,10 +180,11 @@ class BaseController():
 
         return json.dumps(item, cls=JSONEncoder)
 
-    def log_action(self, user, action, entity_id, content, result, retcode):
+    def log_action(self, user, action, entity_id, content, result, retcode,
+                   duration):
 
-        stmt = '''INSERT INTO archive (submitter, action_id, entity_id, input_value, output_value, result_code)
-                                       VALUES (%s, %s, %s, %s, %s, %s)'''
+        stmt = '''INSERT INTO archive (submitter, action_id, entity_id, input_value, output_value, result_code, duration)
+                                       VALUES (%s, %s, %s, %s, %s, %s, %s)'''
         try:
             # content_json = None
             # if content:
@@ -203,17 +204,18 @@ class BaseController():
                 else:
                     result_json = Json(result, dumps=self.dumps)
             args = (user, action, entity_id, str(content),
-                    result_json, retcode)
+                    result_json, retcode, duration)
 
             self._logger.debug("log_action {}".format(args))
 
-            if action.startswith('create') or action.startswith('update') or \
+            if os.getenv('LOG_ALL_ACTIONS') or action.startswith('merge') or \
+               action.startswith('create') or action.startswith('update') or \
                     action.startswith('delete') or retcode != 200:
                 with self._connection:
                     with self._connection.cursor() as cursor:
                         cursor.execute(stmt, args)
         except Exception as err:
             # Don't want to fail if it's just a logging problem
-            args = (user, action, entity_id, content, result, retcode)
+            args = (user, action, entity_id, content, result, retcode, duration)
             print("failed log_action {} {}".format(err, stmt % args))
             self._logger.exception('Failed to log action %s', err)

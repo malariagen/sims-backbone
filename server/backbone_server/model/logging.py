@@ -21,6 +21,8 @@ def before_cursor_execute(conn, cursor, statement,
 def after_cursor_execute(conn, cursor, statement,
                          parameters, context, executemany):
     total = time.time() - conn.info['query_start_time'].pop(-1)
-    if total > threshold and 'pg_' not in statement:
+    if logger.isEnabledFor(logging.DEBUG) and total > threshold and 'pg_' not in statement:
         logger.debug("Query: %s %s", statement, parameters)
         logger.debug("Total Time: %f", total)
+        import traceback
+        logger.debug(repr(traceback.format_stack()))
