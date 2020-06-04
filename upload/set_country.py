@@ -142,8 +142,10 @@ class SetCountry(upload_ssr.Upload_SSR):
 
     def set_country(self, found, original_sample, country_value, filename, values):
 
-        self.os_processor = OriginalSampleProcessor(self._dao, self._event_set)
-        self.se_processor = SamplingEventProcessor(self._dao, self._event_set)
+        if not self.os_processor:
+            self.os_processor = OriginalSampleProcessor(self._dao, self._event_set)
+        if not self.se_processor:
+            self.se_processor = SamplingEventProcessor(self._dao, self._event_set)
 
         if country_value not in self._country_cache:
             try:
