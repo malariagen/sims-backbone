@@ -66,7 +66,8 @@ class AssayDataProcessor(BaseEntity):
 
         if 'ebi_run_acc' in values:
             d_sample.ebi_run_acc = values['ebi_run_acc']
-
+        elif not d_sample.attrs:
+            return None
 
         return d_sample
 
