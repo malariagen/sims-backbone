@@ -58,7 +58,7 @@ class DerivativeSample(Versioned, Base):
                                          UUID(as_uuid=True),
                                          ForeignKey('derivative_sample.id'))
     acc_date = Column(DateTime)
-    dna_prep = Column(String(20))
+    dna_prep = Column(String(64))
     taxon = Column('taxon',
                    Integer,
                    ForeignKey('taxonomy.id'))
