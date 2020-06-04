@@ -347,12 +347,15 @@ class LocalBackboneDAO(AbstractBackboneDAO):
 
         return found_events
 
-    def download_sampling_events_by_location(self, location_id, user=None):
+    def download_sampling_events_by_location(self, location_id, start=None,
+                                             count=None, user=None):
 
         if not user:
             user = self._user
 
-        found_events, retcode = self.se_api_instance.download_sampling_events_by_location(location_id, start=0, count=0,
+        found_events, retcode = self.se_api_instance.download_sampling_events_by_location(location_id,
+                                                                                          start=start,
+                                                                                          count=count,
                                                                                           user=user, auths=self._auths)
 
         self._logger.debug("GET /v1/samplingEvents/location/{} {}".format(location_id,

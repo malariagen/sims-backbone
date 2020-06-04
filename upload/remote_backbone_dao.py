@@ -208,9 +208,12 @@ class RemoteBackboneDAO(AbstractBackboneDAO):
 
         return found_events
 
-    def download_sampling_events_by_location(self, location_id, user=None):
+    def download_sampling_events_by_location(self, location_id, start=None,
+                                             count=None, user=None):
 
-        found_events = self.se_api_instance.download_sampling_events_by_location(location_id)
+        found_events = self.se_api_instance.download_sampling_events_by_location(location_id,
+                                                                                 start=start,
+                                                                                 count=count)
 
         return found_events
 

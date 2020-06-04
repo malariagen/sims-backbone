@@ -146,9 +146,13 @@ class AbstractBackboneDAO(abc.ABC):
         return found_events
 
     @abc.abstractmethod
-    def download_sampling_events_by_location(self, location_id, studies=None, user=None):
+    def download_sampling_events_by_location(self, location_id, start=None,
+                                             count=None, studies=None, user=None):
 
-        found_events = self.se_api_instance.download_sampling_events_by_location(location_id, studies=None, user=user)
+        found_events = self.se_api_instance.download_sampling_events_by_location(location_id,
+                                                                                 start=start,
+                                                                                 count=count,
+                                                                                 studies=studies, user=user)
 
         return found_events
 
