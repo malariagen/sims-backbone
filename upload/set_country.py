@@ -19,6 +19,9 @@ class SetCountry(upload_ssr.Upload_SSR):
 
     _countries_file = 'country_locations.csv'
 
+    os_processor = None
+    se_processor = None
+
     def load_location_cache(self):
 
         skip_header = True
