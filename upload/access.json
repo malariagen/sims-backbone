@@ -17,6 +17,10 @@
 			"column": 6,
 			"type": "string"
 		},
+		"sample_code": {
+			"column": 7,
+			"type": "string"
+		},
 		"os_acc_date": {
 			"column": 8,
 			"type": "datetime",
