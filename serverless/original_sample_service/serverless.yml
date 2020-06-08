@@ -24,6 +24,7 @@ provider:
   region: eu-west-1
   stage: ${opt:stage, 'dev'}
   versionFunctions: false
+  timeout: 300
   iamRoleStatements:
     - Effect: "Allow"
       Action:
@@ -84,7 +85,6 @@ functions:
           path: originalSample
           method: post
           cors: true
-          timeout: 20
           authorizer:
             name: osAuthFunc
             arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
@@ -99,7 +99,6 @@ functions:
           path: originalSample/{original_sample_id}
           method: get
           cors: true
-          timeout: 20
           authorizer:
             name: osAuthFunc
             arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
@@ -118,7 +117,6 @@ functions:
           path: originalSamples
           method: get
           cors: true
-          timeout: 300
           authorizer:
             name: osAuthFunc
             arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
@@ -140,7 +138,6 @@ functions:
           path: originalSample/{original_sample_id}
           method: put
           cors: true
-          timeout: 20
           authorizer:
             name: osAuthFunc
             arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
@@ -158,7 +155,6 @@ functions:
           path: originalSample/{original_sample_id}
           method: delete
           cors: true
-          timeout: 20
           authorizer:
             name: osAuthFunc
             arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
@@ -177,7 +173,6 @@ functions:
           path: originalSamples/attr/{prop_name}/{prop_value}
           method: get
           cors: true
-          timeout: 20
           authorizer:
             name: osAuthFunc
             arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
@@ -202,7 +197,6 @@ functions:
           path: originalSamples/location/{location_id}
           method: get
           cors: true
-          timeout: 20
           authorizer:
             name: osAuthFunc
             arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
@@ -224,7 +218,6 @@ functions:
           path: originalSamples/study/{study_name}
           method: get
           cors: true
-          timeout: 300
           authorizer:
             name: osAuthFunc
             arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
@@ -246,7 +239,6 @@ functions:
           path: originalSamples/taxa/{taxa_id}
           method: get
           cors: true
-          timeout: 300
           authorizer:
             name: osAuthFunc
             arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
@@ -268,7 +260,6 @@ functions:
           path: originalSamples/eventSet/{event_set_id}
           method: get
           cors: true
-          timeout: 300
           authorizer:
             name: osAuthFunc
             arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
@@ -290,7 +281,6 @@ functions:
           path: originalSamples/merge/{into}/{merged}
           method: put
           cors: true
-          timeout: 20
           authorizer:
             name: osAuthFunc
             arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}

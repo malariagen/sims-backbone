@@ -24,6 +24,7 @@ provider:
   region: eu-west-1
   stage: ${opt:stage, 'dev'}
   versionFunctions: false
+  timeout: 300
   iamRoleStatements:
     - Effect: "Allow"
       Action:
@@ -84,7 +85,6 @@ functions:
           path: missingLocations
           method: get
           cors: true
-          timeout: 20
           authorizer:
             name: repAuthFunc
             arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
@@ -98,7 +98,6 @@ functions:
           path: missingTaxon
           method: get
           cors: true
-          timeout: 20
           authorizer:
             name: repAuthFunc
             arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
@@ -112,7 +111,6 @@ functions:
           path: multipleLocationGPS
           method: get
           cors: true
-          timeout: 20
           authorizer:
             name: repAuthFunc
             arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
@@ -126,7 +124,6 @@ functions:
           path: multipleLocationNames
           method: get
           cors: true
-          timeout: 20
           authorizer:
             name: repAuthFunc
             arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
@@ -140,7 +137,6 @@ functions:
           path: uncuratedLocations
           method: get
           cors: true
-          timeout: 20
           authorizer:
             name: repAuthFunc
             arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}

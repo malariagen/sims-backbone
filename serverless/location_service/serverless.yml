@@ -24,6 +24,7 @@ provider:
   region: eu-west-1
   stage: ${opt:stage, 'dev'}
   versionFunctions: false
+  timeout: 300
   iamRoleStatements:
     - Effect: "Allow"
       Action:
@@ -84,7 +85,6 @@ functions:
           path: location
           method: post
           cors: true
-          timeout: 20
           authorizer:
             name: lsAuthFunc
             arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
@@ -99,7 +99,6 @@ functions:
           path: location/{location_id}
           method: get
           cors: true
-          timeout: 20
           authorizer:
             name: lsAuthFunc
             arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
@@ -117,7 +116,6 @@ functions:
           path: location/{location_id}
           method: put
           cors: true
-          timeout: 20
           authorizer:
             name: lsAuthFunc
             arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
@@ -135,7 +133,6 @@ functions:
           path: location/{location_id}
           method: delete
           cors: true
-          timeout: 20
           authorizer:
             name: lsAuthFunc
             arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
@@ -154,7 +151,6 @@ functions:
           path: location/gps/{latitude}/{longitude}
           method: get
           cors: true
-          timeout: 20
           authorizer:
             name: lsAuthFunc
             arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
@@ -174,7 +170,6 @@ functions:
           path: location/partner/{partner_id}
           method: get
           cors: true
-          timeout: 20
           authorizer:
             name: lsAuthFunc
             arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
@@ -193,7 +188,6 @@ functions:
           path: locations
           method: get
           cors: true
-          timeout: 300
           authorizer:
             name: lsAuthFunc
             arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}

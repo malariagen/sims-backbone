@@ -26,6 +26,7 @@ provider:
   documentsBucket: 'malariagen-sims-${self:provider.stage}-documents'
   tempBucket: 'malariagen-sims-${self:provider.stage}-temp-documents'
   versionFunctions: false
+  timeout: 300
   iamRoleStatements:
     - Effect: "Allow"
       Action:
@@ -107,7 +108,6 @@ functions:
           path: /document/study/{study_code}
           method: post
           cors: true
-          timeout: 20
           authorizer:
             name: docAuthFunc
             arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
@@ -137,7 +137,6 @@ functions:
           path: document/{document_id}
           method: get
           cors: true
-          timeout: 20
           authorizer:
             name: docAuthFunc
             arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
@@ -155,7 +154,6 @@ functions:
           path: document/{document_id}
           method: put
           cors: true
-          timeout: 20
           authorizer:
             name: docAuthFunc
             arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
@@ -173,7 +171,6 @@ functions:
           path: document/{document_id}
           method: delete
           cors: true
-          timeout: 20
           authorizer:
             name: docAuthFunc
             arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
@@ -191,7 +188,6 @@ functions:
           path: document/content/{document_id}
           method: get
           cors: true
-          timeout: 20
           authorizer:
             name: docAuthFunc
             arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
@@ -209,7 +205,6 @@ functions:
           path: documents/study/{study_code}
           method: get
           cors: true
-          timeout: 20
           authorizer:
             name: docAuthFunc
             arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}

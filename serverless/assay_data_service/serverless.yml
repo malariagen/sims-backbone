@@ -24,6 +24,7 @@ provider:
   region: eu-west-1
   stage: ${opt:stage, 'dev'}
   versionFunctions: false
+  timeout: 300
   iamRoleStatements:
     - Effect: "Allow"
       Action:
@@ -84,7 +85,6 @@ functions:
           path: assayDatum
           method: post
           cors: true
-          timeout: 20
           authorizer:
             name: adAuthFunc
             arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
@@ -99,7 +99,6 @@ functions:
           path: assayDatum/{assay_datum_id}
           method: get
           cors: true
-          timeout: 20
           authorizer:
             name: adAuthFunc
             arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
@@ -118,7 +117,6 @@ functions:
           path: assayDatum/{assay_datum_id}
           method: put
           cors: true
-          timeout: 20
           authorizer:
             name: adAuthFunc
             arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
@@ -136,7 +134,6 @@ functions:
           path: assayDatum/{assay_datum_id}
           method: delete
           cors: true
-          timeout: 20
           authorizer:
             name: adAuthFunc
             arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
@@ -155,7 +152,6 @@ functions:
           path: assayData/attr/{prop_name}/{prop_value}
           method: get
           cors: true
-          timeout: 20
           authorizer:
             name: adAuthFunc
             arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
@@ -181,7 +177,6 @@ functions:
           path: assayData/os/attr/{prop_name}/{prop_value}
           method: get
           cors: true
-          timeout: 20
           authorizer:
             name: adAuthFunc
             arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}

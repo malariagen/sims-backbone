@@ -23,6 +23,7 @@ provider:
   region: eu-west-1
   stage: ${opt:stage, 'dev'}
   versionFunctions: false
+  timeout: 300
   iamRoleStatements:
     - Effect: "Allow"
       Action:
@@ -124,7 +125,6 @@ functions:
           path: sims-backbone-service/v1/metadata/country/{country_id}
           method: get
           cors: true
-          timeout: 20
           authorizer:
             name: authFunc
             type: request
@@ -142,7 +142,6 @@ functions:
           path: sims-backbone-service/v1/metadata/attr_types
           method: get
           cors: true
-          timeout: 20
           authorizer:
             name: authFunc
             type: request
@@ -159,7 +158,6 @@ functions:
           path: sims-backbone-service/v1/metadata/location_attr_types
           method: get
           cors: true
-          timeout: 20
           authorizer:
             name: authFunc
             type: request
@@ -172,7 +170,6 @@ functions:
           path: sims-backbone-service/v1/metadata/taxonomy
           method: get
           cors: true
-          timeout: 20
           authorizer:
             name: authFunc
             type: request
@@ -185,7 +182,6 @@ functions:
           path: sims-backbone-service/v1/metadata/taxonomy
           method: post
           cors: true
-          timeout: 20
           authorizer:
             name: authFunc
             type: request
@@ -199,7 +195,6 @@ functions:
           path: sims-backbone-service/v1/studies
           method: get
           cors: true
-          timeout: 20
           authorizer:
             name: authFunc
             type: request
@@ -218,7 +213,6 @@ functions:
           path: sims-backbone-service/v1/study/{study_name}
           method: get
           cors: true
-          timeout: 20
           authorizer:
             name: authFunc
             type: request
@@ -235,7 +229,6 @@ functions:
           path: sims-backbone-service/v1/study/{study_name}
           method: put
           cors: true
-          timeout: 20
           authorizer:
             name: authFunc
             type: request

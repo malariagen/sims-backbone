@@ -24,6 +24,7 @@ provider:
   region: eu-west-1
   stage: ${opt:stage, 'dev'}
   versionFunctions: false
+  timeout: 300
   iamRoleStatements:
     - Effect: "Allow"
       Action:
@@ -84,7 +85,6 @@ functions:
           path: samplingEvent
           method: post
           cors: true
-          timeout: 20
           authorizer:
             name: seAuthFunc
             arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
@@ -99,7 +99,6 @@ functions:
           path: samplingEvent/{sampling_event_id}
           method: get
           cors: true
-          timeout: 20
           authorizer:
             name: seAuthFunc
             arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
@@ -118,7 +117,6 @@ functions:
           path: samplingEvents
           method: get
           cors: true
-          timeout: 300
           authorizer:
             name: seAuthFunc
             arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
@@ -140,7 +138,6 @@ functions:
           path: samplingEvent/{sampling_event_id}
           method: put
           cors: true
-          timeout: 20
           authorizer:
             name: seAuthFunc
             arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
@@ -158,7 +155,6 @@ functions:
           path: samplingEvent/{sampling_event_id}
           method: delete
           cors: true
-          timeout: 20
           authorizer:
             name: seAuthFunc
             arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
@@ -177,7 +173,6 @@ functions:
           path: samplingEvents/attr/{prop_name}/{prop_value}
           method: get
           cors: true
-          timeout: 20
           authorizer:
             name: seAuthFunc
             arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
@@ -202,7 +197,6 @@ functions:
           path: samplingEvents/os/attr/{prop_name}/{prop_value}
           method: get
           cors: true
-          timeout: 20
           authorizer:
             name: seAuthFunc
             arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
@@ -227,7 +221,6 @@ functions:
           path: samplingEvents/location/{location_id}
           method: get
           cors: true
-          timeout: 20
           authorizer:
             name: seAuthFunc
             arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
@@ -249,7 +242,6 @@ functions:
           path: samplingEvents/study/{study_name}
           method: get
           cors: true
-          timeout: 300
           authorizer:
             name: seAuthFunc
             arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
@@ -271,7 +263,6 @@ functions:
           path: samplingEvents/taxa/{taxa_id}
           method: get
           cors: true
-          timeout: 300
           authorizer:
             name: seAuthFunc
             arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
@@ -293,7 +284,6 @@ functions:
           path: samplingEvents/eventSet/{event_set_id}
           method: get
           cors: true
-          timeout: 300
           authorizer:
             name: seAuthFunc
             arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
@@ -315,7 +305,6 @@ functions:
           path: samplingEvents/merge/{into}/{merged}
           method: put
           cors: true
-          timeout: 20
           authorizer:
             name: seAuthFunc
             arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}

@@ -24,6 +24,7 @@ provider:
   region: eu-west-1
   stage: ${opt:stage, 'dev'}
   versionFunctions: false
+  timeout: 300
   iamRoleStatements:
     - Effect: "Allow"
       Action:
@@ -84,7 +85,6 @@ functions:
           path: eventSet/{event_set_id}
           method: post
           cors: true
-          timeout: 20
           authorizer:
             name: esAuthFunc
             arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
@@ -102,7 +102,6 @@ functions:
           path: eventSet/{event_set_id}
           method: get
           cors: true
-          timeout: 20
           authorizer:
             name: esAuthFunc
             arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
@@ -120,7 +119,6 @@ functions:
           path: eventSet/{event_set_id}
           method: put
           cors: true
-          timeout: 20
           authorizer:
             name: esAuthFunc
             arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
@@ -138,7 +136,6 @@ functions:
           path: eventSet/{event_set_id}
           method: delete
           cors: true
-          timeout: 20
           authorizer:
             name: esAuthFunc
             arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
@@ -157,7 +154,6 @@ functions:
           path: eventSet/{event_set_id}/{sampling_event_id}
           method: post
           cors: true
-          timeout: 20
           authorizer:
             name: esAuthFunc
             arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
@@ -176,7 +172,6 @@ functions:
           path: eventSet/{event_set_id}/{sampling_event_id}
           method: delete
           cors: true
-          timeout: 20
           authorizer:
             name: esAuthFunc
             arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
@@ -196,7 +191,6 @@ functions:
           path: eventSet/{event_set_id}/notes/{note_id}
           method: post
           cors: true
-          timeout: 20
           authorizer:
             name: esAuthFunc
             arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
@@ -215,7 +209,6 @@ functions:
           path: eventSet/{event_set_id}/notes/{note_id}
           method: put
           cors: true
-          timeout: 20
           authorizer:
             name: esAuthFunc
             arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
@@ -234,7 +227,6 @@ functions:
           path: eventSet/{event_set_id}/notes/{note_id}
           method: delete
           cors: true
-          timeout: 20
           authorizer:
             name: esAuthFunc
             arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
@@ -254,7 +246,6 @@ functions:
           path: eventSets
           method: get
           cors: true
-          timeout: 20
           authorizer:
             name: esAuthFunc
             arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}

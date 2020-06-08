@@ -24,6 +24,7 @@ provider:
   region: eu-west-1
   stage: ${opt:stage, 'dev'}
   versionFunctions: false
+  timeout: 300
   iamRoleStatements:
     - Effect: "Allow"
       Action:
@@ -84,7 +85,6 @@ functions:
           path: derivativeSample
           method: post
           cors: true
-          timeout: 20
           authorizer:
             name: dsAuthFunc
             arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
@@ -99,7 +99,6 @@ functions:
           path: derivativeSample/{derivative_sample_id}
           method: get
           cors: true
-          timeout: 20
           authorizer:
             name: dsAuthFunc
             arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
@@ -118,7 +117,6 @@ functions:
           path: derivativeSamples
           method: get
           cors: true
-          timeout: 20
           authorizer:
             name: dsAuthFunc
             arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
@@ -140,7 +138,6 @@ functions:
           path: derivativeSamples/study/{study_name}
           method: get
           cors: true
-          timeout: 300
           authorizer:
             name: dsAuthFunc
             arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
@@ -162,7 +159,6 @@ functions:
           path: derivativeSamples/eventSet/{event_set_id}
           method: get
           cors: true
-          timeout: 300
           authorizer:
             name: dsAuthFunc
             arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
@@ -184,7 +180,6 @@ functions:
           path: derivativeSample/{derivative_sample_id}
           method: put
           cors: true
-          timeout: 20
           authorizer:
             name: dsAuthFunc
             arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
@@ -202,7 +197,6 @@ functions:
           path: derivativeSample/{derivative_sample_id}
           method: delete
           cors: true
-          timeout: 20
           authorizer:
             name: dsAuthFunc
             arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
@@ -222,7 +216,6 @@ functions:
           path: derivativeSamples/taxa/{taxa_id}
           method: get
           cors: true
-          timeout: 20
           authorizer:
             name: dsAuthFunc
             arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
@@ -245,7 +238,6 @@ functions:
           path: derivativeSamples/attr/{prop_name}/{prop_value}
           method: get
           cors: true
-          timeout: 20
           authorizer:
             name: dsAuthFunc
             arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
@@ -271,7 +263,6 @@ functions:
           path: derivativeSamples/os/attr/{prop_name}/{prop_value}
           method: get
           cors: true
-          timeout: 20
           authorizer:
             name: dsAuthFunc
             arn: ${cf:sims-backbone-service-${self:provider.stage}.AuthFunc}
