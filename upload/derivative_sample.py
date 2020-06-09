@@ -71,7 +71,8 @@ class DerivativeSampleProcessor(BaseEntity):
             d_sample.taxon = values['taxon']
 
         if 'parent_unique_ds_id' in values:
-            pds = openapi_client.DerivativeSample(None)
+            pds = openapi_client.DerivativeSample(None,
+                                                  original_sample_id=original_sample_id)
             parent = self.lookup_derivative_sample(pds, {
                 'unique_ds_id': values['parent_unique_ds_id']
             })
