@@ -253,7 +253,8 @@ class Uploader():
         if 'study_id' not in values:
             values['study_id'] = '0000-Unknown'
 
-        if 'sample_code' in values and values['sample_code'] == 'BLANK':
+        if 'sample_code' in values and \
+           (values['sample_code'] == 'BLANK' or values['sample_code'] == 'EMPTY'):
             return None
 
         o_sample = self.os_processor.create_original_sample_from_values(values)
