@@ -72,7 +72,7 @@ class BaseEntity(object, metaclass=BaseEntityProperties):
             old_value = pformat(old_val.to_dict(), width=1000, compact=True)
             new_value = pformat(new_val.to_dict(), width=1000, compact=True)
 
-        if report_type == "Location name":
+        if report_type in ("Location name", "OriginalSample"):
             if old_val:
                 old_value = pformat(old_val.to_dict(), width=1000, compact=True)
             if new_val:

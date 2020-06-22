@@ -333,12 +333,19 @@ class DerivativeSampleProcessor(BaseEntity):
             # print(existing)
             # print(samp)
             if existing.original_sample_id:
-                # se_existing = self._dao.download_original_sample(existing.original_sample_id)
                 if samp.original_sample_id:
-                    # se_samp = self._dao.download_original_sample(samp.original_sample_id)
                     # print('Need to merge original samples? {} {} {}'.format(se_samp, se_existing, values))
                     # merged_os =
-                    self._dao.merge_original_samples(existing.original_sample_id, samp.original_sample_id)
+                    try:
+                        self._dao.merge_original_samples(existing.original_sample_id, samp.original_sample_id)
+                    except ApiException as mos:
+                        os_existing = self._dao.download_original_sample(existing.original_sample_id)
+                        os_samp = self._dao.download_original_sample(samp.original_sample_id)
+                        self.report_conflict(None, "OriginalSample",
+                                             os_existing,
+                                             os_samp,
+                                             mos.body, values)
+
                     # print(merged_os)
             else:
                 existing.original_sample_id = samp.original_sample_id

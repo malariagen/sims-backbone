@@ -21,7 +21,11 @@
         "sample_roma_id": {
             "column": 3,
             "type": "string",
-            "regex": "([A-Z]{3}\\d{5})$"
+            "regex": "((SPT|RCN|VVX|VBS)\\d{5})$"
+        },
+        "sample_unknown_id": {
+            "column": 3,
+            "type": "string"
         },
         "lane": {
             "column": 4,

@@ -47,6 +47,18 @@ class OriginalSampleProcessor(BaseEntity):
 
         o_sample = openapi_client.OriginalSample(None, study_name=study_id)
 
+        # Possibly better to do this with regex in the config
+        if 'sample_unknown_id' in values:
+            if 'sample_roma_id' in values and \
+               values['sample_unknown_id'] == values['sample_roma_id']:
+                del values['sample_unknown_id']
+            elif 'sample_oxford_id' in values and \
+               values['sample_unknown_id'] == values['sample_oxford_id']:
+                del values['sample_unknown_id']
+            else:
+                values['sample_partner_id'] = values['sample_unknown_id']
+                del values['sample_unknown_id']
+
         idents = self.attrs_from_values(values)
         if 'sample_source_id' in values and values['sample_source_id'] and values['sample_source_type']:
             idents.append(openapi_client.Attr(values['sample_source_type'],
