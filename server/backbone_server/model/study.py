@@ -1,7 +1,7 @@
 import os
 
 from sqlalchemy import Table, Column
-from sqlalchemy import Integer, String, Date, ForeignKey, DateTime, Boolean
+from sqlalchemy import Integer, String, Text, Date, ForeignKey, DateTime, Boolean
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship, backref
 from sqlalchemy.sql import text
@@ -15,7 +15,7 @@ from openapi_server.models.study import Study as ApiStudy
 from openapi_server.models.studies import Studies as ApiStudies
 from openapi_server.models.partner_species import PartnerSpecies
 from openapi_server.models.taxonomy import Taxonomy as ApiTaxonomy
-from openapi_server.models.expected_samples import ExpectedSamples as ApiExpectedSamples
+from openapi_server.models.batch import Batch as ApiBatch
 
 from backbone_server.errors.missing_key_exception import MissingKeyException
 from backbone_server.errors.duplicate_key_exception import DuplicateKeyException
@@ -112,12 +112,11 @@ class PartnerSpeciesIdentifier(Base, Versioned):
     {self.taxa}
     >'''
 
-class ExpectedSamples(Base, Versioned):
-    @declared_attr
-    def __tablename__(cls):
-        return 'expected_samples'
+class Batch(Base, Versioned):
 
     sample_count = Column(Integer())
+    expected_sample_count = Column(Integer())
+    expected_date_of_arrival = Column(DateTime())
     date_of_arrival = Column(DateTime())
     study_id = Column('study_id',
                       UUID(as_uuid=True),
@@ -126,15 +125,18 @@ class ExpectedSamples(Base, Versioned):
                                 UUID(as_uuid=True),
                                 ForeignKey('partner_species_identifier.id'))
     partner_species = relationship("PartnerSpeciesIdentifier",
-                                   backref=backref("expected_samples",
+                                   backref=backref("batch",
                                                    uselist=True))
+    description = Column(Text())
+    source = Column(Text())
+    shipment_notes = Column(Text())
 
     @staticmethod
     def get_or_create(db, e_sample, study_id, user):
 
         expected_sample = None
-        if e_sample is None or e_sample.expected_samples_id is None:
-            expected_sample = ExpectedSamples(sample_count=e_sample.sample_count,
+        if e_sample is None or e_sample.batch_id is None:
+            expected_sample = Batch(sample_count=e_sample.sample_count,
                                               date_of_arrival=e_sample.date_of_arrival,
                                               study_id=study_id,
                                               created_by=user)
@@ -146,7 +148,7 @@ class ExpectedSamples(Base, Versioned):
             db.add(expected_sample)
             db.commit()
         else:
-            expected_sample = db.query(ExpectedSamples).filter_by(id=e_sample.expected_sample_id).first()
+            expected_sample = db.query(Batch).filter_by(id=e_sample.expected_sample_id).first()
             expected_sample.sample_count = e_sample.sample_count
             expected_sample.date_of_arrival = e_sample.date_of_arrival
             expected_sample.study_id = study_id
@@ -158,7 +160,7 @@ class ExpectedSamples(Base, Versioned):
 
         return expected_sample
 
-    openapi_class = ApiExpectedSamples
+    openapi_class = ApiBatch
 
     def submapped_items(self):
         return {
@@ -167,7 +169,7 @@ class ExpectedSamples(Base, Versioned):
         }
 
     def __repr__(self):
-        return f'''<ExpectedSamples ID {self.id}
+        return f'''<Batch ID {self.id}
     Study {self.study_id}
     Partner Species {self.partner_species}
     Partner Species Id {self.partner_species_id}
@@ -216,8 +218,7 @@ class Study(Base, Versioned):
 #    documents = relationship("Document")
     partner_species = relationship('PartnerSpeciesIdentifier',
                                    backref=backref('study', uselist=True))
-    expected_samples = relationship("ExpectedSamples",
-                                    backref=backref("study", uselist=True))
+    batches = relationship("Batch", backref=backref("study", uselist=True))
     countries = relationship("Country",
                              secondary=StudyCountry.__table__)
     @staticmethod
@@ -250,12 +251,12 @@ class Study(Base, Versioned):
             if not ps_item.taxa:
                 ps_item.taxa = []
             api_item.partner_species.append(ps_item)
-        if api_item.expected_samples:
-            # print(api_item.expected_samples)
-            for es in api_item.expected_samples:
-                for db_es in db_item.expected_samples:
+        if api_item.batches:
+            # print(api_item.batches)
+            for es in api_item.batches:
+                for db_es in db_item.batches:
                     # print(f'db_es {db_es}')
-                    if str(db_es.id) == es.expected_samples_id:
+                    if str(db_es.id) == es.batch_id:
                         ps_item = PartnerSpecies()
                         if not db_es.partner_species:
                             db_es.partner_species = PartnerSpeciesIdentifier()
@@ -271,14 +272,14 @@ class Study(Base, Versioned):
     def submapped_items(self):
         return {
             'partner_species': PartnerSpeciesIdentifier,
-            'expected_samples': ExpectedSamples,
+            'batches': Batch,
             'countries': None
         }
 
     def __repr__(self):
         return f'''<Study {self.name} {self.code}
     {self.partner_species}
-    {self.expected_samples}
+    {self.batches}
     {self.ethics_expiry}
     {self.countries}
     >'''
@@ -341,31 +342,35 @@ class BaseStudy(SimsDbBase):
                 db_item.countries.remove(country)
 
     def db_map_expected_samples(self, db, db_item, api_item, user):
-        if hasattr(api_item, 'expected_samples') and api_item.expected_samples:
-            new_expected_samples = []
-            for expected_sample in api_item.expected_samples:
-                db_expected_sample = ExpectedSamples.get_or_create(db,
+        if hasattr(api_item, 'batches') and api_item.batches:
+            new_batches = []
+            for expected_sample in api_item.batches:
+                db_expected_sample = Batch.get_or_create(db,
                                                                    expected_sample,
                                                                    db_item.id,
                                                                    user=user)
-                if db_expected_sample in new_expected_samples:
+                if db_expected_sample in new_batches:
                     raise DuplicateKeyException(f'Error duplicate expected_sample {expected_sample}')
-                new_expected_samples.append(db_expected_sample)
+                new_batches.append(db_expected_sample)
             # [] or None
-            if new_expected_samples:
-                db_item.expected_samples.extend(new_expected_samples)
+            if new_batches:
+                db_item.batches.extend(new_batches)
             expected_sample_to_remove = []
-            for expected_sample in db_item.expected_samples:
-                if expected_sample not in new_expected_samples:
+            for expected_sample in db_item.batches:
+                if expected_sample not in new_batches:
                     expected_sample_to_remove.append(expected_sample)
             for expected_sample in expected_sample_to_remove:
-                db_item.expected_samples.remove(expected_sample)
-        elif hasattr(db_item, 'expected_samples'):
+                db_item.batches.remove(expected_sample)
+                delete_item = db.query(Batch).get(expected_sample.id)
+                db.delete(delete_item)
+        elif hasattr(db_item, 'batches'):
             expected_sample_to_remove = []
-            for expected_sample in db_item.expected_samples:
+            for expected_sample in db_item.batches:
                 expected_sample_to_remove.append(expected_sample)
             for expected_sample in expected_sample_to_remove:
-                db_item.expected_samples.remove(expected_sample)
+                db_item.batches.remove(expected_sample)
+                delete_item = db.query(Batch).get(expected_sample.id)
+                db.delete(delete_item)
 
     def db_map_partner_species(self, db, db_item, api_item, user):
 

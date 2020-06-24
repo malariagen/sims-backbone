@@ -1,18 +1,24 @@
 components:
   schemas:
-    ExpectedSamples:
+    Batch:
       type: object
       properties:
-        expected_samples_id:
+        batch_id:
           type: string
   #        format: uuid
         version:
           type: integer
-        date_of_arrival:
+        expected_date_of_arrival:
           type: string
           format: date
           description: 'Date Samples expected to arrive'
+        date_of_arrival:
+          type: string
+          format: date
+          description: 'Date Samples arrived'
         sample_count:
+          type: integer
+        expected_sample_count:
           type: integer
         expected_species:
           type: string
@@ -20,3 +26,13 @@ components:
           type: array
           items:
               $ref: './original_sample.yaml#/components/schemas/Taxonomy'
+        parent_batch_id:
+          type: string
+  #        format: uuid
+        description:
+          type: string
+        source:
+          type: string
+        shipment_notes:
+          type: string
+  #

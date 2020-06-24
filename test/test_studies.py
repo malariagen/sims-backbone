@@ -201,11 +201,11 @@ class TestStudies(TestBase):
                 study1.ethics_expiry = date(2019, 11, 4)
                 study1.sequencescape_code = ['1234', '1235']
 
-                shipment = openapi_client.ExpectedSamples(None, date_of_arrival=date(2019, 1, 4),
+                shipment = openapi_client.Batch(None, date_of_arrival=date(2019, 1, 4),
                                                           sample_count=42,
                                                           expected_species='P.  vivax',
                                                           expected_taxonomies=[])
-                study1.expected_samples = [shipment]
+                study1.batches = [shipment]
 
                 study1.countries = [openapi_client.Country(alpha3='AFG')]
                 study1.title = 'Title of study'
@@ -241,9 +241,9 @@ class TestStudies(TestBase):
                 study3 = study_api.download_study('2004-MD-UP')
                 # print(study3)
 
-                study2.expected_samples[0].expected_samples_id = None
-                study2.expected_samples[0].version = None
-                assert study1.expected_samples[0] == study2.expected_samples[0]
+                study2.batches[0].batch_id = None
+                study2.batches[0].version = None
+                assert study1.batches[0] == study2.batches[0]
 
                 assert study1.sequencescape_code == study2.sequencescape_code
 
@@ -252,7 +252,7 @@ class TestStudies(TestBase):
                 api_instance.delete_original_sample(created.original_sample_id)
                 # Need to reset for test to work next time as it's not possible
                 # to delete studies
-                study2.expected_samples = []
+                study2.batches = []
                 study2.partner_species[0].taxa = []
                 study2.ethics_expiry = None
                 study2.num_collections = None

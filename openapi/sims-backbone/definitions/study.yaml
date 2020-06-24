@@ -87,9 +87,9 @@ components:
           type: integer
           description: Number of (original) samples which have been released (are in a release manifest)
           readOnly: true
-        expected_samples:
+        batches:
           type: array
           items:
-            $ref: './expected_samples.yaml#/components/schemas/ExpectedSamples'
+            $ref: './batch.yaml#/components/schemas/Batch'
         locations:
             $ref: './locations.yaml#/components/schemas/Locations'
